@@ -123,4 +123,45 @@ class test_jobs
         return $job_lst;
     }
 
+    /**
+     * fixture for admin_jobs_delayed and similar consumers; mixes open jobs with different request
+     * times against one already-closed job so callers can verify both the "open only" filter and the
+     * "longest delay first" ordering; the jobs are appended in non-sorted insertion order on purpose
+     * so any caller that sorts by request_time has to actually do the work
+     *
+     * @return job_list two delayed (open, end_time null) jobs and one not-delayed (closed) job
+     */
+    function job_list_delayed(): job_list
+    {
+        $t_usr = new test_users($this->env);
+        $sys_usr = $t_usr->system_user();
+        $job_lst = new job_list($sys_usr);
+
+        // delayed job, requested later and already started but never ended → shorter delay
+        $job_newer = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME_TWO));
+        $job_newer->id = 2;
+        $job_newer->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job_newer->start_time = new DateTime(sys_log_tests::TV_TIME_ASSIGNED);
+        $job_newer->priority = job_statuum::PRIO_LOWEST;
+        $job_lst->add_obj($job_newer);
+
+        // not-delayed job, end_time set → must be filtered out by admin_jobs_delayed
+        $job_closed = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME_ASSIGNED));
+        $job_closed->id = 3;
+        $job_closed->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job_closed->start_time = new DateTime(sys_log_tests::TV_TIME_ASSIGNED);
+        $job_closed->end_time = new DateTime(sys_log_tests::TV_TIME_CLOSED);
+        $job_closed->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_closed);
+
+        // delayed job, requested first and never started → longest delay; added last to exercise the sort
+        $job_oldest = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job_oldest->id = 1;
+        $job_oldest->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job_oldest->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_oldest);
+
+        return $job_lst;
+    }
+
 }

@@ -5,6 +5,7 @@
     web/phrase/term.php - to create the html code to display a word, triple, verb or formula
     --------------------
 
+    $trm is the suggested var name
 
     This file is part of zukunft.com - calc with words
 
@@ -41,6 +42,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
@@ -50,14 +52,17 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -222,12 +227,12 @@ class term extends combine_named
     private
     function load_word_by_id(int $id): bool
     {
-        global $sys;
+        global $ui_sys;
 
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK)) {
+            if ($wrd->type_id() == $ui_sys->typ_lst_cache->phr_typ->id(phrase_types::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -367,6 +372,7 @@ class term extends combine_named
             $vars[json_fields::TYPE] = $this->type_id();
             if ($this->is_formula()) {
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
+                $vars[json_fields::LATEX] = $this->obj()->get_latex();
             }
             // TODO add exclude field and move to a parent object?
             if ($this->obj()?->share_id() != null) {
@@ -374,6 +380,9 @@ class term extends combine_named
             }
             if ($this->obj()?->protection_id() != null) {
                 $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
+            }
+            if ($this->obj()?->impact != null) {
+                $vars[json_fields::IMPACT] = $this->obj()?->impact;
             }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -389,10 +398,14 @@ class term extends combine_named
      */
     function is_word(): bool
     {
-        if ($this->obj()::class == word::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == word::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -401,10 +414,14 @@ class term extends combine_named
      */
     function is_triple(): bool
     {
-        if ($this->obj()::class == triple::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == triple::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -413,10 +430,14 @@ class term extends combine_named
      */
     function is_verb(): bool
     {
-        if ($this->obj()::class == verb::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == verb::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -425,10 +446,14 @@ class term extends combine_named
      */
     function is_formula(): bool
     {
-        if ($this->obj()::class == formula::class) {
-            return true;
-        } else {
+        if ($this->obj() === null) {
             return false;
+        } else {
+            if ($this->obj()::class == formula::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -495,6 +520,15 @@ class term extends combine_named
     }
 
     /**
+     * @return float the system calculated impact of the wrapped word, triple, formula or verb;
+     *               used to sort a term list so that the most relevant term is shown first
+     */
+    function get_impact(): float
+    {
+        return $this->obj()->impact;
+    }
+
+    /**
      * @returns string the html code to display the phrase with reference links
      */
     function name_link(): string
@@ -512,6 +546,38 @@ class term extends combine_named
             log_err($msg);
             return $msg;
         }
+    }
+
+    /**
+     * @return string the html code of a "fas fa-edit" icon that links to the edit page of the
+     *                wrapped object e.g. /http/view.php?m=10&id=206 for triple 206
+     */
+    function edit_link(): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $url = $html->url_new($this->edit_view_id(), $this->obj_id());
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
+        return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT));
+    }
+
+    /**
+     * @return int the database id of the edit view that matches the wrapped object type
+     *             so that the edit link points to the right edit page (word, triple, formula or verb)
+     */
+    private function edit_view_id(): int
+    {
+        if ($this->is_triple()) {
+            $view_id = views::TRIPLE_EDIT_ID;
+        } elseif ($this->is_formula()) {
+            $view_id = views::FORMULA_EDIT_ID;
+        } elseif ($this->is_verb()) {
+            $view_id = views::VERB_EDIT_ID;
+        } else {
+            $view_id = views::WORD_EDIT_ID;
+        }
+        return $view_id;
     }
 
     /**
@@ -533,7 +599,8 @@ class term extends combine_named
     function dsp_unlink(int $link_id): string
     {
         $btn = new button();
-        $del_call = "/http/link_del.php?id=" . $link_id . "&back=" . $this->id();
+        $html = new html_base();
+        $del_call = $html->url_new(views::TRIPLE_DEL_ID, $link_id, '', (string)$this->id());
         $result = '    <td>' . "\n";
         $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";
@@ -581,6 +648,14 @@ class term extends combine_named
         // $sel->bs_class = $class;
 
         return $trm_lst->selector($form, $this->id(), $name);
+    }
+
+    /**
+     * @return string that best describes this object
+     */
+    function display(): string
+    {
+        return $this->name();
     }
 
 }

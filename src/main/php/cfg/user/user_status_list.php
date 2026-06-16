@@ -5,6 +5,7 @@
     model/user/user_status_list.php - a list of possible user statuum with the database id
     -------------------------------
 
+    $usr_sta_lst is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

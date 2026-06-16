@@ -52,6 +52,8 @@ include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::PHRASE . 'term.php';
 //include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -77,7 +79,10 @@ use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -93,10 +98,13 @@ class db_object extends TextIdObject
      * const
      */
 
-    // the fallback crud views that are expected to be overwritten by the child objects
+    // the fallback crud views that are expected to be overwritten by the child objects;
+    // the *_ID variants are the numeric view ids used in URLs (m=<id>) so links
+    // resolve through the view-by-id router instead of the slower code-id lookup
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
+    const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
 
     // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;
@@ -252,6 +260,26 @@ class db_object extends TextIdObject
         return $result;
     }
 
+    /**
+     * load the object by id AND ask the backend to include the related-objects view-model
+     * that the page-title renderer expects (see backend cfg/word/word::phrases_related and
+     * the title_of_named_with_edit_link symbol/category subtitle layouts).
+     *
+     * The base implementation is a no-op beyond load_by_id, so any frontend dbo type that
+     * does NOT publish a related-objects view-model (verb_ui, source_ui, …) behaves exactly
+     * like a plain load_by_id and the caller (frontend::url_to_html) can use this method
+     * polymorphically without a class check. Concrete classes that DO publish such a
+     * view-model (currently web/word/word.php) override this to attach the ?incl_related=1
+     * URL flag so the api handler builds an api_type_list with api_types::INCL_RELATED set
+     *
+     * @param int|string $id the database id of the object to load
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id): bool
+    {
+        return $this->load_by_id($id);
+    }
+
 
     /*
      * interface
@@ -399,13 +427,13 @@ class db_object extends TextIdObject
 
     /**
      * create the html url to create, change or delete this database object
-     * @param string $view_code_id the code id of the view as defined in the api controller class
+     * @param int|string $view the database id or the code id of the view that should be shown
      * @param string|null $back the back trace url for the undo functionality
      * @returns string the html code
      */
-    function obj_url(string $view_code_id, ?string $back = ''): string
+    function obj_url(int|string $view, ?string $back = ''): string
     {
-        return new html_base()->url($view_code_id, $this->id(), $back);
+        return new html_base()->url_new($view, $this->id(), '', $back);
     }
 
 
@@ -417,8 +445,8 @@ class db_object extends TextIdObject
     function name(): string|null
     {
         $msg = 'ERROR:  name not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        log_warning($msg);
+        return $this->id;
     }
 
     function get_description(): string
@@ -539,10 +567,10 @@ class db_object extends TextIdObject
      */
     function add_via_api(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $add_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -552,7 +580,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
     /**
@@ -564,10 +592,10 @@ class db_object extends TextIdObject
      */
     function update(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $upd_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -577,7 +605,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
     /**
@@ -589,10 +617,10 @@ class db_object extends TextIdObject
      */
     function del(user $usr, user_message $usr_msg): user_message
     {
-        $map_obj = new MapObject();
-        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $map = new MapObject();
+        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $db_usr = $map->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -602,7 +630,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $map_obj->convertMsgToUi($usr_msg_db);
+        return $map->convertMsgToUi($usr_msg_db);
     }
 
 
@@ -617,10 +645,28 @@ class db_object extends TextIdObject
     {
         $usr_msg = new user_message();
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'api_mapper',
+            msg_id::VAR_FUNCTION_NAME => 'url',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return $usr_msg->get_last_message();
+    }
+
+    /**
+     * create the user message that a selector function has been called
+     * that is not defined for this class and log a warning
+     * e.g. if a view component requests a selector that the shown object does not offer
+     *
+     * @param string $function_name the name of the selector function that is not defined for this class
+     * @return string the translated message to show to the user instead of the selector
+     */
+    private function selector_not_defined(string $function_name): string
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => $function_name,
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message_translated();
     }
 
     /**
@@ -631,9 +677,7 @@ class db_object extends TextIdObject
      */
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'phrase type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('phrase_type_selector');
     }
 
     /**
@@ -644,9 +688,7 @@ class db_object extends TextIdObject
      */
     public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'source type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('source_type_selector');
     }
 
     /**
@@ -657,9 +699,9 @@ class db_object extends TextIdObject
      */
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'reference type selector not defined for ' . $this::class;
+        $msg = 'reference type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
-        //log_err($msg);
+        //log_warning($msg);
         log_warning($msg);
         return $msg;
     }
@@ -672,9 +714,7 @@ class db_object extends TextIdObject
      */
     public function value_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'value type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('value_type_selector');
     }
 
     /**
@@ -685,9 +725,7 @@ class db_object extends TextIdObject
      */
     public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'formula type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('formula_type_selector');
     }
 
     /**
@@ -698,9 +736,9 @@ class db_object extends TextIdObject
      */
     public function view_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'view type selector not defined for ' . $this::class;
+        $msg = 'view type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
-        //log_err($msg);
+        //log_warning($msg);
         log_warning($msg);
         return $msg;
     }
@@ -715,9 +753,7 @@ class db_object extends TextIdObject
      */
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'view style selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('style_selector');
     }
 
     /**
@@ -728,9 +764,7 @@ class db_object extends TextIdObject
      */
     public function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'component type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('component_type_selector');
     }
 
     /**
@@ -741,9 +775,7 @@ class db_object extends TextIdObject
      */
     public function component_style_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'component style selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('component_style_selector');
     }
 
     /**
@@ -754,9 +786,7 @@ class db_object extends TextIdObject
      */
     public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'view relation type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('view_relation_type_selector');
     }
 
     /**
@@ -767,9 +797,7 @@ class db_object extends TextIdObject
      */
     public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'formula link type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('formula_link_type_selector');
     }
 
     /**
@@ -780,9 +808,7 @@ class db_object extends TextIdObject
      */
     public function view_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'view link type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('view_link_type_selector');
     }
 
     /**
@@ -793,9 +819,7 @@ class db_object extends TextIdObject
      */
     public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'component link type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('component_link_type_selector');
     }
 
     /**
@@ -806,9 +830,7 @@ class db_object extends TextIdObject
      */
     public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'share type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('share_type_selector');
     }
 
     /**
@@ -819,9 +841,7 @@ class db_object extends TextIdObject
      */
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'protection type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('protection_type_selector');
     }
 
     /**
@@ -831,22 +851,20 @@ class db_object extends TextIdObject
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
+        string     $name,
+        string     $form,
+        string     $label = '',
+        string     $col_class = '',
+        int        $selected = 0,
+        string     $pattern = '',
         ?phrase_ui $phr = null
     ): string
     {
-        $msg = 'phrase selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('phrase_selector_old');
     }
 
     /**
@@ -871,9 +889,7 @@ class db_object extends TextIdObject
         string      $style = view_styles::COL_SM_4
     ): string
     {
-        $msg = 'phrase selector ' . $name . ' for ' . $form . ' not defined in class ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('phrase_selector');
     }
 
     /**
@@ -883,13 +899,12 @@ class db_object extends TextIdObject
      * @return string the html code to select a view
      */
     public function value_selector(
-        string $form,
-        string $name = url_var::VALUE
+        string     $form,
+        value_list $val_lst,
+        string     $name = url_var::VALUE
     ): string
     {
-        $msg = 'view selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('value_selector');
     }
 
     /**
@@ -905,25 +920,23 @@ class db_object extends TextIdObject
         string       $name = url_var::FORMULA
     ): string
     {
-        $msg = 'formula selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('formula_selector');
     }
 
     /**
      * create the HTML code for a field to select a result by the group or phrase list
      * @param string $form the name of the html form
-     * @param string $name the unique html field name for the selection of the view
-     * @return string the html code to select a view
+     * @param result_list|null $res_lst with the suggested results
+     * @param string $name the unique html field name for the selection of the result
+     * @return string the html code to select a result
      */
     public function result_selector(
-        string $form,
-        string $name = url_var::RESULT
+        string      $form,
+        result_list $res_lst = null,
+        string      $name = url_var::RESULT
     ): string
     {
-        $msg = 'view selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('result_selector');
     }
 
     /**
@@ -940,9 +953,35 @@ class db_object extends TextIdObject
         msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
-        $msg = 'view selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('view_selector');
+    }
+
+    /**
+     * create the HTML code to select a file for im- or export
+     * @param string $form the name of the html form
+     * @param string|null $name the suggested name of the file
+     * @param array $lst with the suggested file names
+     * @return string the html code to select a view
+     */
+    public function file_selector(
+        string      $form,
+        string|null $name = '',
+        array       $lst = [],
+        msg_id      $msg_id = msg_id::FORM_SELECT_FILE
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
+        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
+        $result = '<' . html_base::FORM
+            . ' ' . html_base::ACTION . '="' . $action . '"'
+            . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
+            . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $frm_str
+            . '</' . html_base::FORM . '>';
+        return $result;
     }
 
     /**
@@ -954,15 +993,13 @@ class db_object extends TextIdObject
      * @return string the html code to select a component
      */
     public function component_selector(
-        string $form,
-        string $pattern,
-        int $id,
+        string         $form,
+        string         $pattern,
+        int            $id,
         component_list $cmp_lst
     ): string
     {
-        $msg = 'component selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('component_selector');
     }
 
     /**
@@ -973,9 +1010,7 @@ class db_object extends TextIdObject
      */
     public function verb_selector(string $form, ?type_lists $typ_lst, string $style = view_styles::COL_SM_3): string
     {
-        $msg = 'verb selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('verb_selector');
     }
 
     /**
@@ -987,9 +1022,7 @@ class db_object extends TextIdObject
      */
     public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
-        $msg = 'source selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('source_selector');
     }
 
     /**
@@ -1000,9 +1033,7 @@ class db_object extends TextIdObject
      */
     public function ref_selector(string $form, string $pattern): string
     {
-        $msg = 'reference selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        return $this->selector_not_defined('ref_selector');
     }
 
 }

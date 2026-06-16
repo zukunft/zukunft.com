@@ -57,7 +57,12 @@ class language_ui_tests
         $ts = 'unit ui html language ';
         $t->header($ts);
 
-        $src = new language($t_lan->language()->api_json());
+        $src = new language(
+            $t_lan->language()->id(),
+            $t_lan->language()->code_id,
+            $t_lan->language()->name,
+            $t_lan->language()->description
+        );
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';

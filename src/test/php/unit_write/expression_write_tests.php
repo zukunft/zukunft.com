@@ -35,9 +35,10 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -62,22 +63,22 @@ class expression_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_price = $t_db->test_word(words::TEST_PRICE);
-        $wrd_earning = $t_db->test_word(words::TEST_EARNING);
-        $wrd_pe = $t_db->test_word(words::TEST_PE);
-        $frm_ratio = $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP, $usr_msg);
-        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $wrd_price = $t_db->test_word(word_names::TEST_PRICE);
+        $wrd_earning = $t_db->test_word(word_names::TEST_EARNING);
+        $wrd_pe = $t_db->test_word(word_names::TEST_PE);
+        $frm_ratio = $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $usr_msg);
+        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         $back = '';
 
         // load formulas for expression testing
-        $frm_this = $t_db->load_formula(formulas::SYSTEM_TEST_THIS);
-        $frm = $t_db->load_formula(formulas::INCREASE);
-        $frm_pe = $t_db->load_formula(formulas::SYSTEM_TEST_RATIO);
+        $frm_this = $t_db->load_formula(formula_names::SYSTEM_TEST_THIS);
+        $frm = $t_db->load_formula(formula_names::INCREASE);
+        $frm_pe = $t_db->load_formula(formula_names::SYSTEM_TEST_RATIO);
 
         $result = $frm_sector->usr_text;
-        $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TEST_TOTAL . '"';
+        $target = '= "' . words::COUNTRY . '" "differentiator" "' . word_names::CANTON . '" / "' . word_names::TEST_TOTAL . '"';
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
@@ -92,14 +93,14 @@ class expression_write_tests
 
         // load the test ids
         $wrd_percent = $t_db->load_word(words::PCT);
-        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t_db->load_formula(formulas::PRIOR);
+        $frm_this = $t_db->load_formula(formula_names::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formula_names::PRIOR);
 
         // test the expression processing of the user readable part
         $target = '"' . words::PCT . '"';
         $result = $exp->res_part_usr();
         $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
-        $target = '( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
+        $target = '( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
         $target = 'true';
@@ -112,7 +113,7 @@ class expression_write_tests
         // test the expression processing of the database reference
         $exp_db = new expression($frm);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
-        $target = '"' . words::PERCENT . '"=( is.numeric( "' . formulas::THIS_NAME . '" ) & is.numeric( "' . formulas::PRIOR . '" ) ) ( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
+        $target = '"' . words::PERCENT . '"=( is.numeric( "' . formula_names::THIS_NAME . '" ) & is.numeric( "' . formula_names::PRIOR . '" ) ) ( "' . formula_names::THIS_NAME . '" - "' . formula_names::PRIOR . '" ) / "' . formula_names::PRIOR . '"';
         $result = $exp_db->user_text();
         $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
@@ -134,9 +135,9 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . words::TEST_EARNING . '","' . words::TEST_PRICE . '"';
+        $target = '"' . word_names::TEST_EARNING . '","' . word_names::TEST_PRICE . '"';
         if ($result != $target) {
-            $target = '"' . words::TEST_PRICE . '","' . words::TEST_EARNING . '"';
+            $target = '"' . word_names::TEST_PRICE . '","' . word_names::TEST_EARNING . '"';
         }
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
@@ -144,36 +145,35 @@ class expression_write_tests
         $trm_lst = $frm_sector->load_exp_terms($usr_msg, null, $exp_sector);
         $elm_lst = $exp_sector->element_list($usr_msg, $trm_lst);
         $result = $elm_lst->name();
-        $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
+        $target = '"country","can be used as a differentiator for","Canton","System Test Word Total"';
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
-        $elm_grp_lst = $exp_sector->element_grp_lst();
+        $elm_grp_lst = $exp_sector->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->name();
-        $target = '"Country,can be used as a differentiator for,Canton","System Test Word Total"';
-        // TODO Prio 0 activate
-        //$t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
+        $target = '"country,can be used as a differentiator for,Canton","System Test Word Total"';
+        $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting the phrases if the formula contains a verb
         // not sure if test is correct!
         // TODO Prio 0 activate
         //$phr_lst = $exp_sector->phr_verb_lst();
         //$result = $phr_lst->dsp_name();
-        $target = '"Canton","Country","System Test Word Total"';
+        $target = '"Canton","country","System Test Word Total"';
         // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
         $phr_lst = $exp->terms_following($usr_msg, $trm_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . formulas::THIS_NAME . '","' . formulas::PRIOR . '"';
+        $target = '"' . formula_names::THIS_NAME . '","' . formula_names::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
         $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
         $frm_lst = $exp->element_special_following_frm($usr_msg, $trm_lst);
         $result = $frm_lst->name();
-        $target = '' . formulas::THIS_NAME . ',' . formulas::PRIOR . '';
+        $target = '' . formula_names::THIS_NAME . ',' . formula_names::PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         $t->subheader($ts . 'cleanup');

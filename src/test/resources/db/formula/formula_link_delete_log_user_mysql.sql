@@ -31,5 +31,5 @@ SELECT formula_link_delete_log_user (
                'minute',
                1,
                2,
-               104,
+               103,
                1);

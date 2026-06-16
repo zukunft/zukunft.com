@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once html_paths::PHRASE . 'phrase.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_triples.php';
 include_once test_paths::CREATE . 'test_words.php';
@@ -49,8 +50,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -108,7 +109,7 @@ class phrase_tests
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
-        $wrd_company->set(words::CONST_ID, words::COMPANY);
+        $wrd_company->set(word_names::CONST_ID, word_names::COMPANY);
         $sql_name = 'phrase_list_related';
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);

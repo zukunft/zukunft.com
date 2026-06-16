@@ -1,0 +1,2782 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-22 09:00:00",
+  "user": "timon",
+  "selection": [
+    "sociology"
+  ],
+  "description": "Main sociological definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "sociology",
+      "description": "social science that studies human society and its development",
+      "refs": [
+        {
+          "name": "Sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q21201",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "criminology",
+      "description": "study of the causes and manifestations of crime",
+      "refs": [
+        {
+          "name": "Criminology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161733",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "demography",
+      "description": "science that deals with populations and their structures statistically and theoretically",
+      "refs": [
+        {
+          "name": "Demography",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q37732",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fertility",
+      "description": "natural capability to produce offspring",
+      "refs": [
+        {
+          "name": "Fertility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q964401",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "emigration",
+      "description": "act of leaving one's country or region with the intent to settle permanently or temporarily in another",
+      "refs": [
+        {
+          "name": "Emigration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187668",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "immigration",
+      "description": "movement of people into another country or region to which they are not native",
+      "refs": [
+        {
+          "name": "Immigration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q131288",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "crime",
+      "description": "unlawful act punishable by an authority",
+      "refs": [
+        {
+          "name": "Crime",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q83267",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "deviance",
+      "description": "action or behavior that violates social norms",
+      "refs": [
+        {
+          "name": "Deviance (sociology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q623184",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "anomie",
+      "description": "normlessness: the lack of social norms",
+      "refs": [
+        {
+          "name": "Anomie",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17930",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "conformity",
+      "description": "the act of matching attitudes, beliefs, and behaviors to group norms",
+      "refs": [
+        {
+          "name": "Conformity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q221284",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "urbanization",
+      "description": "longterm population movements (shift) from rural to urban areas",
+      "refs": [
+        {
+          "name": "Urbanization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q161078",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "suburbanization",
+      "description": "growth of suburbs and its areas on the fringes of cities",
+      "refs": [
+        {
+          "name": "Suburbanization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1091971",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gentrification",
+      "description": "urban socioeconomic process",
+      "refs": [
+        {
+          "name": "Gentrification",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q119380",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "authority",
+      "description": "legitimate power to decide or authorize",
+      "refs": [
+        {
+          "name": "Authority (sociology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q174834",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "legitimacy",
+      "description": "right and acceptance of an authority",
+      "refs": [
+        {
+          "name": "Legitimacy (political)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q207982",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bureaucracy",
+      "description": "administrative system governing any large institution",
+      "refs": [
+        {
+          "name": "Bureaucracy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72468",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "patriarchy",
+      "description": "social system dominated by men",
+      "refs": [
+        {
+          "name": "Patriarchy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q181339",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "caste",
+      "description": "fixed social group into which an individual is born within a particular system of social stratification",
+      "refs": [
+        {
+          "name": "Caste",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q484416",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "religion",
+      "description": "social-cultural system",
+      "refs": [
+        {
+          "name": "Religion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9174",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "secularization",
+      "description": "process by which society evolves towards secularity",
+      "refs": [
+        {
+          "name": "Secularization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q85502",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sect",
+      "description": "subgroup of a particular religious or ideological doctrine",
+      "refs": [
+        {
+          "name": "Sect",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19097",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cult",
+      "description": "social group with socially deviant or novel religious, philosophical or spiritual beliefs and practices",
+      "refs": [
+        {
+          "name": "Cult",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11038979",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "society",
+      "description": "group of people connected to each other",
+      "refs": [
+        {
+          "name": "Society",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8425",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "solidarity",
+      "description": "unity of feeling or action on a common interest (for the social movement see Q1003)",
+      "refs": [
+        {
+          "name": "Solidarity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q815726",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "modernization",
+      "description": "explanation for the process of modernization within societies",
+      "refs": [
+        {
+          "name": "Modernization theory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q856122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "globalization",
+      "description": "process of international integration arising from world views, products, ideas, and other aspects of culture",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7181",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "culture",
+      "description": "shared aspects of a society's way of life",
+      "refs": [
+        {
+          "name": "Culture",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11042",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "subculture",
+      "description": "social culture within a larger culture",
+      "refs": [
+        {
+          "name": "Subculture",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q264965",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "counterculture",
+      "description": "subculture whose values and norms of behavior deviate from those of mainstream society",
+      "refs": [
+        {
+          "name": "Counterculture",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188976",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "value",
+      "description": "personal value, basis for ethical action",
+      "refs": [
+        {
+          "name": "Value (ethics and social sciences)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q194112",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "belief",
+      "description": "psychological state in which an individual holds a proposition or premise to be true",
+      "refs": [
+        {
+          "name": "Belief",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q34394",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mores",
+      "description": "customary behaviour",
+      "refs": [
+        {
+          "name": "Mores",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1115221",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "taboo",
+      "description": "societal or cultural prohibition",
+      "refs": [
+        {
+          "name": "Taboo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q171180",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "McDonaldization",
+      "description": "sociological term; a metaphor that links the exploitative logic behind globalized modern culture to the principles and practices of running a fast-food outlet",
+      "refs": [
+        {
+          "name": "McDonaldization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1517005",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "feminism",
+      "description": "group of movements that come about defining, and defending women liberation and gender equity",
+      "refs": [
+        {
+          "name": "Feminism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7252",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "in-group",
+      "description": "a social group to which a person psychologically identifies as being a member",
+      "refs": [
+        {
+          "name": "In-group favoritism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6008637",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "prejudice",
+      "description": "prejudgment, or forming an opinion before becoming aware of the relevant facts of a case",
+      "refs": [
+        {
+          "name": "Prejudice",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179742",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "discrimination",
+      "description": "differential treatment based on membership of a certain group",
+      "refs": [
+        {
+          "name": "Discrimination",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q169207",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stereotype",
+      "description": "over-generalized belief about a particular category of people; often used in literature and films as means to emphasize characters",
+      "refs": [
+        {
+          "name": "Stereotype",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167172",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "racism",
+      "description": "race or ethnic-based discrimination",
+      "refs": [
+        {
+          "name": "Racism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8461",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "role",
+      "description": "set of behaviours, rights, obligations, beliefs, and norms expected from an individual that has a certain social status",
+      "refs": [
+        {
+          "name": "Role",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q214339",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "socialization",
+      "description": "lifelong process of inheriting and disseminating norms, customs and ideologies",
+      "refs": [
+        {
+          "name": "Socialization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q185467",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "resocialization",
+      "description": "process of reinsertion of former prisoners into society",
+      "refs": [
+        {
+          "name": "Resocialization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2638787",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dyad",
+      "description": "group of two people, the smallest possible social group",
+      "refs": [
+        {
+          "name": "Dyad (sociology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2700595",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "triad",
+      "description": "sociological term: group of three people",
+      "refs": [
+        {
+          "name": "Triad (sociology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q626432",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ethnocentrism",
+      "description": "judging other cultures, practices, behaviors, beliefs and people solely by the values, standards and frame of reference of one's own",
+      "refs": [
+        {
+          "name": "Ethnocentrism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189049",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gender",
+      "description": "social concept which distinguish the different gender categories",
+      "refs": [
+        {
+          "name": "Gender",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48277",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "race",
+      "description": "nonscientific human classification system primarily based on physical appearance",
+      "refs": [
+        {
+          "name": "Race (human categorization)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3254959",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ethnicity",
+      "description": "a person's ethnic background",
+      "refs": [
+        {
+          "name": "Ethnicity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5404323",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "family",
+      "description": "group of people affiliated by consanguinity, law, affinity, or co-residence",
+      "refs": [
+        {
+          "name": "Family",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8436",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "kinship",
+      "description": "human relationship term; web of social relationships that form an important part of the lives of most humans in most societies; form of social connection",
+      "refs": [
+        {
+          "name": "Kinship",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q171318",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "marriage",
+      "description": "social union or legal contract between people called spouses that creates kinship",
+      "refs": [
+        {
+          "name": "Marriage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8445",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "monogamy",
+      "description": "relationship form where each individual has only one partner during their lifetime or at any one time",
+      "refs": [
+        {
+          "name": "Monogamy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q184211",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "polygamy",
+      "description": "marriage to more than one spouse",
+      "refs": [
+        {
+          "name": "Polygamy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170585",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "divorce",
+      "description": "termination of a marital union",
+      "refs": [
+        {
+          "name": "Divorce",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q93190",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "theory"
+    },
+    {
+      "name": "urban"
+    },
+    {
+      "name": "political"
+    },
+    {
+      "name": "economic"
+    },
+    {
+      "name": "education"
+    },
+    {
+      "name": "medical"
+    },
+    {
+      "name": "environmental"
+    },
+    {
+      "name": "industrial"
+    },
+    {
+      "name": "psychology"
+    },
+    {
+      "name": "demographic"
+    },
+    {
+      "name": "transition"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "human"
+    },
+    {
+      "name": "migration"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "expectancy"
+    },
+    {
+      "name": "density"
+    },
+    {
+      "name": "infant"
+    },
+    {
+      "name": "dependency"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "sex"
+    },
+    {
+      "name": "control"
+    },
+    {
+      "name": "stigma"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "movement"
+    },
+    {
+      "name": "collective"
+    },
+    {
+      "name": "behavior"
+    },
+    {
+      "name": "class"
+    },
+    {
+      "name": "stratification"
+    },
+    {
+      "name": "mobility"
+    },
+    {
+      "name": "inequality"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "cultural"
+    },
+    {
+      "name": "denomination"
+    },
+    {
+      "name": "structure"
+    },
+    {
+      "name": "institution"
+    },
+    {
+      "name": "fact"
+    },
+    {
+      "name": "division"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "symbolic"
+    },
+    {
+      "name": "interactionism"
+    },
+    {
+      "name": "structural"
+    },
+    {
+      "name": "functionalism"
+    },
+    {
+      "name": "conflict"
+    },
+    {
+      "name": "consciousness"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "network"
+    },
+    {
+      "name": "relativism"
+    },
+    {
+      "name": "norm"
+    },
+    {
+      "name": "identity"
+    },
+    {
+      "name": "reference"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "status"
+    },
+    {
+      "name": "ascribed"
+    },
+    {
+      "name": "achieved"
+    },
+    {
+      "name": "cohesion"
+    },
+    {
+      "name": "integration"
+    },
+    {
+      "name": "minority"
+    },
+    {
+      "name": "nuclear"
+    },
+    {
+      "name": "extended"
+    },
+    {
+      "name": "doubling"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "births"
+    },
+    {
+      "name": "deaths"
+    },
+    {
+      "name": "immigrants"
+    },
+    {
+      "name": "emigrants"
+    },
+    {
+      "name": "live"
+    },
+    {
+      "name": "dependent"
+    },
+    {
+      "name": "working-age"
+    },
+    {
+      "name": "male"
+    },
+    {
+      "name": "female"
+    },
+    {
+      "name": "land"
+    },
+    {
+      "name": "area"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "crude"
+    },
+    {
+      "name": "birth"
+    },
+    {
+      "name": "death"
+    },
+    {
+      "name": "natural"
+    },
+    {
+      "name": "increase"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "replacement"
+    },
+    {
+      "name": "70"
+    },
+    {
+      "name": "rule"
+    }
+  ],
+  "triples": [
+    {
+      "name": "social science",
+      "from": "science",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "social theory",
+      "description": "analytical framework, or paradigm, that is used to study and interpret social phenomena",
+      "from": "theory",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social theory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1990987",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "urban sociology",
+      "description": "sociological study of life and human interaction in metropolitan areas",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "urban",
+      "refs": [
+        {
+          "name": "Urban sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q597680",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "political sociology",
+      "description": "branch of sociology",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "political",
+      "refs": [
+        {
+          "name": "Political sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q745692",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "economic sociology",
+      "description": "study of the social cause and effect of various economic phenomena",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "economic",
+      "refs": [
+        {
+          "name": "Economic sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q610859",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "branch of sociology",
+      "from": "sociology",
+      "verb": "of",
+      "to": "religion",
+      "refs": [
+        {
+          "name": "Sociology of religion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q461659",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "branch of sociology",
+      "from": "sociology",
+      "verb": "of",
+      "to": "education",
+      "refs": [
+        {
+          "name": "Sociology of education",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q829367",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "medical sociology",
+      "description": "branch of sociology concerned with sociological analysis of medical organizations and institutions",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "medical",
+      "refs": [
+        {
+          "name": "Medical sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1916660",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "environmental sociology",
+      "description": "study of interactions between societies and their natural environments",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "environmental",
+      "refs": [
+        {
+          "name": "Environmental sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2167019",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "industrial sociology",
+      "description": "branch of the discipline of sociology",
+      "from": "sociology",
+      "verb": "kind of",
+      "to": "industrial",
+      "refs": [
+        {
+          "name": "Industrial sociology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1302156",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social psychology",
+      "description": "area of sociology focused on social actions",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social psychology (sociology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3381154",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "demographic transition",
+      "description": "transition from high birth and death rates to lower birth and death rates as a country or region develops from a pre-industrial to an industrialized economic system",
+      "from": "transition",
+      "verb": "kind of",
+      "to": "demographic",
+      "refs": [
+        {
+          "name": "Demographic transition",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q381763",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mortality rate",
+      "description": "measure of the number of deaths in a population from a given cause, scaled by population, in a set period of time",
+      "from": "rate",
+      "verb": "of",
+      "to": "mortality",
+      "refs": [
+        {
+          "name": "Mortality rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q58702",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "human migration",
+      "description": "movement of people for resettlement",
+      "from": "migration",
+      "verb": "kind of",
+      "to": "human",
+      "refs": [
+        {
+          "name": "Human migration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q177626",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "life expectancy",
+      "description": "statistical measure of how long a person or organism may live, based on factors of their life",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "life",
+      "refs": [
+        {
+          "name": "Life expectancy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188419",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population density",
+      "description": "measurement of population per unit area or unit volume",
+      "from": "density",
+      "verb": "of",
+      "to": "population",
+      "refs": [
+        {
+          "name": "Population density",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22856",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "infant mortality",
+      "description": "statistical concept of infant deaths",
+      "from": "mortality",
+      "verb": "of",
+      "to": "infant",
+      "refs": [
+        {
+          "name": "Infant mortality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q835884",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dependency ratio",
+      "description": "age-population ratio of those typically not in the labor force (the dependent part ages 0 to 14 and 65+) and those typically in the labor force (the productive part ages 15 to 64)",
+      "from": "ratio",
+      "verb": "of",
+      "to": "dependency",
+      "refs": [
+        {
+          "name": "Dependency ratio",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4350180",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sex ratio",
+      "description": "ratio of males to females in a population",
+      "from": "ratio",
+      "verb": "of",
+      "to": "sex",
+      "refs": [
+        {
+          "name": "Sex ratio",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1068155",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social control",
+      "description": "concept within the disciplines of the social sciences and within political science",
+      "from": "control",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social control",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q623971",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social stigma",
+      "description": "type of discrimination or disapproval based on perceivable social characteristics that serve to distinguish a person from other members of a society",
+      "from": "stigma",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social stigma",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1137326",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social power",
+      "description": "ability to influence the behavior of others",
+      "from": "power",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Power (social and political)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25107",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social movement",
+      "description": "loosely organized effort by a large group of people to achieve a particular set of goals",
+      "from": "movement",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social movement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q49773",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "collective behavior",
+      "description": "social processes and events which do not reflect existing social structure, but which emerge in a \"spontaneous\" way",
+      "from": "behavior",
+      "verb": "kind of",
+      "to": "collective",
+      "refs": [
+        {
+          "name": "Collective behavior",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2548752",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social class",
+      "description": "group of people categorized in a hierarchy based on socioeconomic factors",
+      "from": "class",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social class",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social stratification",
+      "description": "society's categorization of its people into hierarchical groups based on socioeconomic factors",
+      "from": "stratification",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social stratification",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q841628",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social mobility",
+      "description": "mobility to move social classes",
+      "from": "mobility",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social mobility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q194417",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social inequality",
+      "description": "uneven distribution of resources in a society",
+      "from": "inequality",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social inequality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5431887",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social capital",
+      "description": "sociology concept",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social capital",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q214693",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cultural capital",
+      "description": "sociological concept",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "cultural",
+      "refs": [
+        {
+          "name": "Cultural capital",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q918002",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "religious denomination",
+      "description": "identifiable religious subgroup with a common structure and doctrine",
+      "from": "denomination",
+      "verb": "of",
+      "to": "religion",
+      "refs": [
+        {
+          "name": "Religious denomination",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13414953",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social structure",
+      "description": "aggregate of patterned social arrangements in society",
+      "from": "structure",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social structure",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q211606",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social institution",
+      "description": "structure or mechanism of social order and cooperation governing the behaviour of a set of individuals within a given community",
+      "from": "institution",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Institution",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178706",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social fact",
+      "description": "a category of facts, defined by Emile Durkheim, that consist of the ways of acting, thinking and feeling external to the individual and endowed with coercive power over them",
+      "from": "fact",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social fact",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q972877",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "description": "separation of tasks in any system (particularly the society) so that participants may specialize",
+      "from": "division",
+      "verb": "of",
+      "to": "labour",
+      "refs": [
+        {
+          "name": "Division of labour",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q207449",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "symbolic interactionism",
+      "description": "a sociological theory focused on cultural symbols exchanged during interpersonal interactions",
+      "from": "interactionism",
+      "verb": "kind of",
+      "to": "symbolic",
+      "refs": [
+        {
+          "name": "Symbolic interactionism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1163216",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "structural functionalism",
+      "description": "a sociological theory arguing that the stability of society is determined by functional institutions and individuals having a specific role",
+      "from": "functionalism",
+      "verb": "kind of",
+      "to": "structural",
+      "refs": [
+        {
+          "name": "Structural functionalism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q831725",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "conflict theory",
+      "description": "perspectives in sociology and social psychology that emphasize a materialist interpretation of history, dialectical method of analysis, a critical stance toward existing social arrangements, and political program of revolution or, at least, reform",
+      "from": "theory",
+      "verb": "of",
+      "to": "conflict",
+      "refs": [
+        {
+          "name": "Conflict theories",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1412640",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "collective consciousness",
+      "description": "shared beliefs and ideas in society",
+      "from": "consciousness",
+      "verb": "kind of",
+      "to": "collective",
+      "refs": [
+        {
+          "name": "Collective consciousness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q430880",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social change",
+      "description": "any significant alteration in societal order",
+      "from": "change",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social change",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1510761",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social network",
+      "description": "theoretical concept in sociology",
+      "from": "network",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social network",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2715623",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cultural relativism",
+      "description": "principle that cultures should be understood and evaluated on their own terms and not by universal or outsider standards",
+      "from": "relativism",
+      "verb": "kind of",
+      "to": "cultural",
+      "refs": [
+        {
+          "name": "Cultural relativism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q741550",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social norm",
+      "description": "informal understanding of acceptable conduct",
+      "from": "norm",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social norm",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q205665",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social identity",
+      "description": "qualities, beliefs, personality, looks and/or expressions that distinguish a person or group",
+      "from": "identity",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Identity (social science)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q844569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reference group",
+      "description": "social groups",
+      "from": "group",
+      "verb": "kind of",
+      "to": "reference",
+      "refs": [
+        {
+          "name": "Reference group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q112807602",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "role conflict",
+      "description": "lack of compatibility between different expectations from a job or position",
+      "from": "conflict",
+      "verb": "of",
+      "to": "role",
+      "refs": [
+        {
+          "name": "Role conflict",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q943496",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social status",
+      "description": "position within social structure",
+      "from": "status",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social status",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189970",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ascribed status",
+      "description": "social status based on immutable characteristics",
+      "from": "status",
+      "verb": "kind of",
+      "to": "ascribed",
+      "refs": [
+        {
+          "name": "Ascribed status",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1074223",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "achieved status",
+      "description": "social position achieved by actions",
+      "from": "status",
+      "verb": "kind of",
+      "to": "achieved",
+      "refs": [
+        {
+          "name": "Achieved status",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2461535",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social group",
+      "description": "two or more humans who interact with one another",
+      "from": "group",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q874405",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social cohesion",
+      "description": "bonding between members of a group",
+      "from": "cohesion",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Group cohesiveness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q553270",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "social integration",
+      "description": "social incorporation of outgroups",
+      "from": "integration",
+      "verb": "kind of",
+      "to": "social",
+      "refs": [
+        {
+          "name": "Social integration",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q370735",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gender role",
+      "description": "social role encompassing a range of behaviors and attitudes that are generally considered acceptable, appropriate, or desirable for people based on their actual or perceived sex or sexuality",
+      "from": "role",
+      "verb": "of",
+      "to": "gender",
+      "refs": [
+        {
+          "name": "Gender role",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2672163",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "minority group",
+      "description": "group of people by practices, race, religion, ethnicity, or other characteristics who are fewer in numbers than the main groups of those classifications",
+      "from": "group",
+      "verb": "kind of",
+      "to": "minority",
+      "refs": [
+        {
+          "name": "Minority group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30103",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nuclear family",
+      "description": "family group consisting of parents and their children (one or more)",
+      "from": "family",
+      "verb": "kind of",
+      "to": "nuclear",
+      "refs": [
+        {
+          "name": "Nuclear family",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q720069",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "extended family",
+      "description": "a joint family is a traditional family structure where multiple generations, like grandparents, parents, and children, live together under one roof",
+      "from": "family",
+      "verb": "kind of",
+      "to": "extended",
+      "refs": [
+        {
+          "name": "Extended family",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q721790",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "doubling time",
+      "from": "time",
+      "verb": "of",
+      "to": "doubling"
+    },
+    {
+      "description": "the number of live births in a population during a given period",
+      "from": "number",
+      "verb": "of",
+      "to": "births"
+    },
+    {
+      "description": "the number of deaths in a population during a given period",
+      "from": "number",
+      "verb": "of",
+      "to": "deaths"
+    },
+    {
+      "description": "the number of people moving into an area during a given period",
+      "from": "number",
+      "verb": "of",
+      "to": "immigrants"
+    },
+    {
+      "description": "the number of people leaving an area during a given period",
+      "from": "number",
+      "verb": "of",
+      "to": "emigrants"
+    },
+    {
+      "name": "infant deaths",
+      "description": "the number of deaths of children under one year of age during a given period",
+      "from": "deaths",
+      "verb": "kind of",
+      "to": "infant"
+    },
+    {
+      "name": "live births",
+      "description": "the number of children born alive during a given period",
+      "from": "births",
+      "verb": "kind of",
+      "to": "live"
+    },
+    {
+      "name": "dependent population",
+      "description": "the part of a population that is younger than the working age or older than it",
+      "from": "population",
+      "verb": "kind of",
+      "to": "dependent"
+    },
+    {
+      "name": "working-age population",
+      "description": "the part of a population that is of working age, typically 15 to 64 years",
+      "from": "population",
+      "verb": "kind of",
+      "to": "working-age"
+    },
+    {
+      "name": "male population",
+      "description": "the number of males in a population",
+      "from": "population",
+      "verb": "kind of",
+      "to": "male"
+    },
+    {
+      "name": "female population",
+      "description": "the number of females in a population",
+      "from": "population",
+      "verb": "kind of",
+      "to": "female"
+    },
+    {
+      "name": "land area",
+      "description": "the size of the land surface of an area",
+      "from": "area",
+      "verb": "of",
+      "to": "land"
+    },
+    {
+      "name": "population growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "population"
+    },
+    {
+      "name": "population growth rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "population growth"
+    },
+    {
+      "name": "birth rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "birth"
+    },
+    {
+      "name": "crude birth rate",
+      "description": "the number of live births per 1000 people in a population per year",
+      "from": "birth rate",
+      "verb": "kind of",
+      "to": "crude"
+    },
+    {
+      "name": "death rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "death"
+    },
+    {
+      "name": "crude death rate",
+      "description": "the number of deaths per 1000 people in a population per year",
+      "from": "death rate",
+      "verb": "kind of",
+      "to": "crude"
+    },
+    {
+      "name": "natural increase",
+      "from": "increase",
+      "verb": "kind of",
+      "to": "natural"
+    },
+    {
+      "description": "the difference between the crude birth rate and the crude death rate of a population",
+      "from": "rate",
+      "verb": "of",
+      "to": "natural increase"
+    },
+    {
+      "name": "migration rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "migration"
+    },
+    {
+      "name": "net migration rate",
+      "description": "the difference between the number of immigrants and emigrants per 1000 people per year",
+      "from": "migration rate",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "fertility rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "fertility"
+    },
+    {
+      "name": "replacement fertility rate",
+      "description": "the total fertility rate at which a population exactly replaces itself from one generation to the next, about 2.1 children per woman",
+      "from": "fertility rate",
+      "verb": "kind of",
+      "to": "replacement"
+    },
+    {
+      "description": "a rule of thumb that estimates the number of years for a quantity to double by dividing 70 by its percentage growth rate",
+      "from": "rule",
+      "verb": "of",
+      "to": "70"
+    },
+    {
+      "from": "sociology",
+      "verb": "is part of",
+      "to": "social science"
+    },
+    {
+      "from": "social theory",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "criminology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "demography",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "urban sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "political sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "economic sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "sociology of religion",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "sociology of education",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "medical sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "environmental sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "industrial sociology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "social psychology",
+      "verb": "is part of",
+      "to": "sociology"
+    },
+    {
+      "from": "demographic transition",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "fertility",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "mortality rate",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "human migration",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "emigration",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "immigration",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "life expectancy",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "population density",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "infant mortality",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "dependency ratio",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "sex ratio",
+      "verb": "is part of",
+      "to": "demography"
+    },
+    {
+      "from": "crime",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "deviance",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "social control",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "anomie",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "social stigma",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "conformity",
+      "verb": "is part of",
+      "to": "criminology"
+    },
+    {
+      "from": "urbanization",
+      "verb": "is part of",
+      "to": "urban sociology"
+    },
+    {
+      "from": "suburbanization",
+      "verb": "is part of",
+      "to": "urban sociology"
+    },
+    {
+      "from": "gentrification",
+      "verb": "is part of",
+      "to": "urban sociology"
+    },
+    {
+      "from": "social power",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "authority",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "legitimacy",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "bureaucracy",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "social movement",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "collective behavior",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "patriarchy",
+      "verb": "is part of",
+      "to": "political sociology"
+    },
+    {
+      "from": "social class",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "social stratification",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "social mobility",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "social inequality",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "caste",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "social capital",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "cultural capital",
+      "verb": "is part of",
+      "to": "economic sociology"
+    },
+    {
+      "from": "religion",
+      "verb": "is part of",
+      "to": "sociology of religion"
+    },
+    {
+      "from": "secularization",
+      "verb": "is part of",
+      "to": "sociology of religion"
+    },
+    {
+      "from": "sect",
+      "verb": "is part of",
+      "to": "sociology of religion"
+    },
+    {
+      "from": "cult",
+      "verb": "is part of",
+      "to": "sociology of religion"
+    },
+    {
+      "from": "religious denomination",
+      "verb": "is part of",
+      "to": "sociology of religion"
+    },
+    {
+      "from": "society",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social structure",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social institution",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social fact",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "division of labour",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "solidarity",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "symbolic interactionism",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "structural functionalism",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "conflict theory",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "collective consciousness",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social change",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "modernization",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "globalization",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social network",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "culture",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "subculture",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "counterculture",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "cultural relativism",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social norm",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "value",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "belief",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "mores",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "taboo",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "McDonaldization",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "feminism",
+      "verb": "is part of",
+      "to": "social theory"
+    },
+    {
+      "from": "social identity",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "in-group",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "reference group",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "prejudice",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "discrimination",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "stereotype",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "racism",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "role",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "role conflict",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "social status",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "ascribed status",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "achieved status",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "socialization",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "resocialization",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "dyad",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "triad",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "social group",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "social cohesion",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "social integration",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "ethnocentrism",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "gender",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "gender role",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "race",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "ethnicity",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "minority group",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "name": "world life expectancy",
+      "from": "life expectancy",
+      "verb": "of",
+      "to": "world"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of crude birth rate",
+      "expression": "\"crude birth rate\" = \"number of births\" / \"population\" * 1000",
+      "latex": "CBR = \\frac{B}{P} \\cdot 1000",
+      "assigned": [
+        "number of births",
+        "population"
+      ]
+    },
+    {
+      "name": "definition of crude death rate",
+      "expression": "\"crude death rate\" = \"number of deaths\" / \"population\" * 1000",
+      "latex": "CDR = \\frac{D}{P} \\cdot 1000",
+      "assigned": [
+        "number of deaths",
+        "population"
+      ]
+    },
+    {
+      "name": "definition of rate of natural increase",
+      "expression": "\"rate of natural increase\" = ( \"number of births\" - \"number of deaths\" ) / \"population\" * 1000",
+      "latex": "RNI = \\frac{B - D}{P} \\cdot 1000",
+      "assigned": [
+        "number of births",
+        "number of deaths",
+        "population"
+      ]
+    },
+    {
+      "name": "definition of net migration rate",
+      "expression": "\"net migration rate\" = ( \"number of immigrants\" - \"number of emigrants\" ) / \"population\" * 1000",
+      "latex": "NMR = \\frac{I - E}{P} \\cdot 1000",
+      "assigned": [
+        "number of immigrants",
+        "number of emigrants",
+        "population"
+      ]
+    },
+    {
+      "name": "definition of infant mortality",
+      "expression": "\"infant mortality\" = \"infant deaths\" / \"live births\" * 1000",
+      "latex": "IMR = \\frac{D_{<1}}{B} \\cdot 1000",
+      "assigned": [
+        "infant deaths",
+        "live births"
+      ]
+    },
+    {
+      "name": "definition of dependency ratio",
+      "expression": "\"dependency ratio\" = \"dependent population\" / \"working-age population\" * 100",
+      "latex": "DR = \\frac{P_{dep}}{P_{work}} \\cdot 100",
+      "assigned": [
+        "dependent population",
+        "working-age population"
+      ]
+    },
+    {
+      "name": "definition of sex ratio",
+      "expression": "\"sex ratio\" = \"male population\" / \"female population\" * 100",
+      "latex": "SR = \\frac{P_m}{P_f} \\cdot 100",
+      "assigned": [
+        "male population",
+        "female population"
+      ]
+    },
+    {
+      "name": "definition of population density",
+      "expression": "\"population density\" = \"population\" / \"land area\"",
+      "latex": "D = \\frac{P}{A}",
+      "assigned": [
+        "population",
+        "land area"
+      ]
+    },
+    {
+      "name": "doubling time by the rule of 70",
+      "expression": "\"doubling time\" = 70 / \"population growth rate\"",
+      "latex": "t \\approx \\frac{70}{r}",
+      "assigned": [
+        "population growth rate"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "by definition",
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "sociology reference data",
+      "description": "typical reference values for human populations as cited in sociology and demography textbooks"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "replacement fertility rate"
+      ],
+      "number": "2.1",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "rule of 70"
+      ],
+      "number": "70",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "world life expectancy"
+      ],
+      "number": "73",
+      "source": "sociology reference data"
+    }
+  ]
+}

@@ -1632,7 +1632,7 @@
       {
         "name": "German",
         "code_id": "de",
-        "description": "a normal translation to German",
+        "description": "a translation to standard German",
         "id": 3
       }
     ],
@@ -7424,7 +7424,7 @@
       {
         "name": "has a",
         "code_id": "has",
-        "description": "to assign potential properties e.g. a Country has a Human Development Index",
+        "description": "to assign potential properties e.g. a country has a Human Development Index",
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",

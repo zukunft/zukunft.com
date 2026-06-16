@@ -55,8 +55,8 @@ function run_user_test(all_tests $t): void
     $ts = 'db write user ';
     $t->header($ts);
 
-    $usr_dsp = new user_ui($usr->api_json());
-    $result = $usr_dsp->form_edit($back);
+    $usr_ui = new user_ui($usr->api_json());
+    $result = $usr_ui->form_edit($back);
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 

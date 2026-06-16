@@ -5,6 +5,8 @@
     model/phrase/phrase.php - either a word or a triple
     ---------------------
 
+    $phr is the suggested var name
+
     this object is not stored in the database in a separate table
     e.g. to build a selector the entries are caught either from the words or triples table
 
@@ -98,6 +100,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -520,6 +523,57 @@ class phrase extends combine_named
         return $this->obj()->protection_id();
     }
 
+    function from_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->from_id();
+        }
+    }
+
+    function get_verb_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->get_verb_id();
+        }
+    }
+
+    function name_given(): string
+    {
+        if ($this->is_word()) {
+            return '';
+        } else {
+            return $this->obj()->name_given();
+        }
+    }
+
+    function to_id(): int
+    {
+        if ($this->is_word()) {
+            return 0;
+        } else {
+            return $this->obj()->to_id();
+        }
+    }
+
+    function get_view_id(): int
+    {
+        return $this->obj()->get_view_id();
+    }
+
+    function usage(): int
+    {
+        return $this->obj()->usage;
+    }
+
+    function impact(): float
+    {
+        return $this->obj()->impact;
+    }
+
     function is_similar(phrase|term|type_object|sandbox|null $obj_to_check): bool
     {
         if ($obj_to_check::class == phrase::class or $obj_to_check::class == term::class) {
@@ -825,12 +879,12 @@ class phrase extends combine_named
         $this->reset(true);
 
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
-            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
-            if ($class == json_fields::CLASS_WORD)  {
+            $class = $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
-            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+            } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);
@@ -1550,7 +1604,7 @@ class phrase extends combine_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1560,11 +1614,17 @@ class phrase extends combine_named
         return $wrd->is_measure();
     }
 
-// return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
-    function is_scaling()
+    /**
+     * @return bool true if the word or triple of this phrase has one of the scaling types
+     *              (e.g. "million" or "one"; "one" is a hidden scaling type)
+     */
+    function is_scaling(): bool
     {
-        $wrd = $this->main_word();
-        return $wrd->is_scaling();
+        $result = false;
+        if ($this->obj() instanceof word or $this->obj() instanceof triple) {
+            $result = $this->obj()->is_scaling();
+        }
+        return $result;
     }
 
     /**
@@ -1764,11 +1824,6 @@ class phrase extends combine_named
         return '"' . $this->name() . '"';
     }
 
-    function name_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
     /**
      * get the related phrases
      * @param foaf_direction $direction up to select the parent phrases and dow for the children
@@ -1789,33 +1844,6 @@ class phrase extends combine_named
             }
         }
         return $phr_lst;
-    }
-
-    /**
-     * return the html code to display a word
-     */
-    function display(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * simply to display a single word or triple link
-     */
-    function display_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * similar to dsp_link
-     *
-     * @param $style
-     * @return string
-     */
-    function dsp_link_style($style): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words

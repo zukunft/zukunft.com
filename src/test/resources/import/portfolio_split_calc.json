@@ -1,0 +1,310 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-05 12:00:00",
+  "user": "timon",
+  "selection": [
+    "portfolio split calculation"
+  ],
+  "description": "General setup for inheritance splits across a securities portfolio with round-lot constraints. Defines the algorithm concepts (target weights, target/rounded shares, per-position deviation, running cumulative deviation), the three beneficiary portfolios (mother + child one + child two), and the formulas that drive the splitting walk. Companion files: portfolio_instruments.json (security catalogue + currency assignment), portfolio_report.json (bank-reported holdings, prices, FX rates), portfolio_split_parameters_sample.json (concrete 30/35/35 split agreement and sample per-position allocations). The algorithm walks positions in decreasing order of (share price * round lot), picks the rounded share count closest to child 1's residual target, mirrors that to child 2, leaves the rest to the mother, and rolls each rounding deviation into the next position so cumulative drift stays bounded.",
+  "words": [
+    {
+      "name": "portfolio",
+      "description": "a grouping of financial assets such as stocks, bonds, commodities, currencies and cash equivalents held by an investor",
+      "refs": [
+        {"name": "Portfolio (finance)", "type": "wikipedia"},
+        {"name": "Q1936956", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "original",
+      "description": "the starting state of the portfolio before the inheritance split is performed"
+    },
+    {
+      "name": "target",
+      "description": "an intended end state, here the value or share count a beneficiary should end up holding"
+    },
+    {
+      "name": "one",
+      "description": "the cardinal number 1, used here as the identifier of the first child's portfolio",
+      "refs": [
+        {"name": "1", "type": "wikipedia"},
+        {"name": "Q199", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "two",
+      "description": "the cardinal number 2, used here as the identifier of the second child's portfolio",
+      "refs": [
+        {"name": "2", "type": "wikipedia"},
+        {"name": "Q200", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "mother",
+      "description": "female parent; here the original owner of the portfolio who retains 30%",
+      "refs": [
+        {"name": "Mother", "type": "wikipedia"},
+        {"name": "Q7560", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "child",
+      "description": "offspring; here each of the two beneficiaries who receive 35% of the portfolio",
+      "refs": [
+        {"name": "Child", "type": "wikipedia"},
+        {"name": "Q7569", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "share",
+      "description": "unit of ownership of a corporation; one of the equal parts into which a company's capital is divided",
+      "refs": [
+        {"name": "Share (finance)", "type": "wikipedia"},
+        {"name": "Q160151", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "shares",
+      "description": "plural of share; the total count of equity units of a security held in a position"
+    },
+    {
+      "name": "price",
+      "description": "the amount of money expected, required, or given in payment for something; for bonds typically quoted as a percentage of nominal value",
+      "refs": [
+        {"name": "Price", "type": "wikipedia"}
+      ]
+    },
+    {
+      "name": "round",
+      "description": "qualifier indicating an integer multiple (e.g. of a lot size)"
+    },
+    {
+      "name": "lot",
+      "description": "in trading, a standard tradable unit size of a security",
+      "refs": [
+        {"name": "Lot (securities)", "type": "wikipedia"}
+      ]
+    },
+    {
+      "name": "nominal",
+      "description": "describing the face value of a security as opposed to its market value"
+    },
+    {
+      "name": "value",
+      "description": "the amount of money for which something can be exchanged in the market; in this file always denominated in CHF unless otherwise qualified",
+      "refs": [
+        {"name": "Value (economics)", "type": "wikipedia"},
+        {"name": "Q193912", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "position",
+      "description": "the amount of a particular security held by an investor",
+      "refs": [
+        {"name": "Position (finance)", "type": "wikipedia"},
+        {"name": "Q1378818", "type": "wikidata"}
+      ]
+    },
+    {
+      "name": "total",
+      "description": "qualifier denoting the sum across all elements of a set"
+    },
+    {
+      "name": "weight",
+      "description": "the relative share of a portfolio that a position or beneficiary accounts for",
+      "refs": [
+        {"name": "Asset allocation", "type": "wikipedia"}
+      ]
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "deviation",
+      "description": "in this file, the signed difference between the rounded allocated value and the unrounded target value for a beneficiary at a single position",
+      "refs": [
+        {"name": "Deviation (statistics)", "type": "wikipedia"}
+      ]
+    },
+    {
+      "name": "cumulative",
+      "description": "qualifier denoting a running sum across positions processed so far in the splitting walk"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "bond"
+    }
+  ],
+  "triples": [
+    {
+      "name": "round lot",
+      "description": "the minimum tradable quantity of a security (in shares for equities or in nominal currency units for bonds)",
+      "from": "lot",
+      "verb": "kind of",
+      "to": "round"
+    },
+    {
+      "name": "share price",
+      "description": "the per-share market price of an equity",
+      "from": "price",
+      "verb": "of",
+      "to": "share"
+    },
+    {
+      "name": "nominal value",
+      "description": "the face value of a bond holding (the amount on which the coupon is computed)",
+      "from": "value",
+      "verb": "kind of",
+      "to": "nominal"
+    },
+    {
+      "name": "position value",
+      "description": "the current market value of a single holding (shares * share price, or nominal * price percentage for bonds)",
+      "from": "value",
+      "verb": "of",
+      "to": "position"
+    },
+    {
+      "name": "portfolio value",
+      "description": "the sum of the market values of all positions in a portfolio, expressed in the portfolio reference currency (CHF here)",
+      "from": "value",
+      "verb": "of",
+      "to": "portfolio"
+    },
+    {
+      "name": "target weight",
+      "description": "the desired share of the portfolio value that a beneficiary should receive (mother 0.30, each child 0.35)",
+      "from": "weight",
+      "verb": "kind of",
+      "to": "target"
+    },
+    {
+      "name": "target value",
+      "description": "the absolute CHF amount a beneficiary should receive (portfolio value * target weight)",
+      "from": "value",
+      "verb": "kind of",
+      "to": "target"
+    },
+    {
+      "name": "target shares",
+      "description": "the unrounded number of shares of a given position that would exactly match a beneficiary's residual target value at that position's share price",
+      "from": "shares",
+      "verb": "kind of",
+      "to": "target"
+    },
+    {
+      "name": "rounded shares",
+      "description": "the number of shares actually allocated, equal to round(target shares / round lot) * round lot",
+      "from": "shares",
+      "verb": "kind of",
+      "to": "round"
+    },
+    {
+      "name": "cumulative deviation",
+      "description": "for a given beneficiary and position, the running sum (over positions already split) of (allocated value - target value); subtracted from the next position's target value to keep drift bounded",
+      "from": "deviation",
+      "verb": "kind of",
+      "to": "cumulative"
+    },
+    {
+      "name": "mother portfolio",
+      "description": "the parent's share of the original portfolio (target weight 0.30)",
+      "from": "portfolio",
+      "verb": "of",
+      "to": "mother"
+    },
+    {
+      "name": "portfolio one",
+      "description": "the first child's portfolio (target weight 0.35)",
+      "from": "portfolio",
+      "verb": "of",
+      "to": "one"
+    },
+    {
+      "name": "portfolio two",
+      "description": "the second child's portfolio (target weight 0.35)",
+      "from": "portfolio",
+      "verb": "of",
+      "to": "two"
+    },
+    {
+      "from": "portfolio one",
+      "verb": "is a",
+      "to": "portfolio"
+    },
+    {
+      "from": "portfolio two",
+      "verb": "is a",
+      "to": "portfolio"
+    },
+    {
+      "from": "mother portfolio",
+      "verb": "is a",
+      "to": "portfolio"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "stock position value",
+      "description": "market value of an equity position in its trading currency: number of shares held times current share price",
+      "expression": "\"position value\" = \"share\" * \"share price\"",
+      "assigned_word": "stock"
+    },
+    {
+      "name": "bond position value",
+      "description": "market value of a bond holding: nominal value times current price expressed as a percentage of par (e.g. 99.5%)",
+      "expression": "\"position value\" = \"nominal value\" * \"price\" / 100",
+      "assigned_word": "bond"
+    },
+    {
+      "name": "target value per beneficiary",
+      "description": "the CHF amount a beneficiary should receive in total, given the agreed split weights",
+      "expression": "\"target value\" = \"portfolio value\" * \"target weight\"",
+      "assigned_word": "target weight"
+    },
+    {
+      "name": "unrounded target shares",
+      "description": "how many shares of a given position would exactly match the residual target value for one beneficiary at the current share price; the residual subtracts cumulative deviation from previous, larger-round-lot positions",
+      "expression": "\"target shares\" = ( \"target value\" - \"cumulative deviation\" ) / \"share price\"",
+      "assigned_word": "share price"
+    },
+    {
+      "name": "rounded share allocation",
+      "description": "actual number of shares allocated to a beneficiary, snapped to the nearest multiple of the security's round lot",
+      "expression": "\"rounded shares\" = round( \"target shares\" / \"round lot\" ) * \"round lot\"",
+      "assigned_word": "round lot"
+    },
+    {
+      "name": "mirror second child",
+      "description": "child 2 receives the same rounded share count as child 1 to keep the two children's portfolios identical at every step; their drift accumulates symmetrically",
+      "expression": "\"rounded shares\" \"portfolio two\" = \"rounded shares\" \"portfolio one\"",
+      "assigned_word": "portfolio two"
+    },
+    {
+      "name": "mother gets the remainder",
+      "description": "the mother's allocation is whatever is left after both children have been served, so the original total in each position is conserved",
+      "expression": "\"share\" \"mother portfolio\" = \"share\" \"original\" - 2 * \"rounded shares\" \"portfolio one\"",
+      "assigned_word": "mother portfolio"
+    },
+    {
+      "name": "position-level deviation",
+      "description": "the per-position contribution to the running deviation for a child: how much the rounded allocation overshoots or undershoots the per-position target value",
+      "expression": "\"deviation\" = ( \"rounded shares\" - \"target shares\" ) * \"share price\"",
+      "assigned_word": "rounded shares"
+    },
+    {
+      "name": "cumulative deviation roll-forward",
+      "description": "the running deviation carried into the next, smaller-round-lot position; the algorithm walks positions in decreasing order of (share price * round lot) so later positions can compensate earlier rounding error",
+      "expression": "\"cumulative deviation\" = \"cumulative deviation\" \"prior\" + \"deviation\"",
+      "assigned_word": "cumulative deviation"
+    },
+    {
+      "name": "beneficiary portfolio total",
+      "description": "the realised total value each beneficiary ends up with; the sum of the position values across all of that beneficiary's allocations",
+      "expression": "\"portfolio value\" = sum( \"position value\" )",
+      "assigned_word": "portfolio"
+    }
+  ]
+}

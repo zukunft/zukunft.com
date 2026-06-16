@@ -1,0 +1,70 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-12 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message to validate the import values based on a pre-calculated result"
+  ],
+  "words": [
+    {
+      "name": "price"
+    },
+    {
+      "name": "quantity"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "apple"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "total formula",
+      "expression": "\"total\" = \"price\" * \"quantity\"",
+      "assigned": [
+        "price",
+        "quantity"
+      ]
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "apple",
+        "price",
+        "CHF"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "apple",
+        "quantity"
+      ],
+      "number": "5"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "apple",
+        "price",
+        "quantity",
+        "CHF"
+      ],
+      "formula": "total formula",
+      "words": [
+        "apple",
+        "total",
+        "CHF"
+      ],
+      "number": "10"
+    }
+  ]
+}

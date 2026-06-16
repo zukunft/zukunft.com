@@ -88,10 +88,7 @@
       ]
     },
     {
-      "name": "percent",
-      "comment": "to specify numbers in percent",
-      "type": "percent",
-      "protection": "admin_protection"
+      "name": "percent"
     },
     {
       "name": "climate",

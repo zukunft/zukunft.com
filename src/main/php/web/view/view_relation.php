@@ -5,6 +5,7 @@
     web/view/view_relation.php - create HTML code to display a n:m link between two views
     --------------------------
 
+    $mrl is the suggested var name
 
     This file is part of zukunft.com - calc with words
 
@@ -38,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -47,6 +50,8 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -193,6 +198,18 @@ class view_relation extends sandbox_link
         $this->tob = $view;
     }
 
+    /**
+     * @return string the display value of the tooltip where null is an empty string
+     */
+    function get_description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
+
 
     /*
      * display
@@ -249,12 +266,26 @@ class view_relation extends sandbox_link
     }
 
     /**
-     * TODO Prio 0 add cache to be able to return the type name
-     * @return string|null
+     * @return type_object|null the view relation type object from the preloaded cache
      */
-    function relation_type(): ?string
+    function relation_type(): ?type_object
     {
-        return $this->predicate_id;
+        global $ui_sys;
+        $result = null;
+        if ($this->predicate_id != null) {
+            $result = $ui_sys->typ_lst_cache->mrl_typ->get($this->predicate_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view relation type
+     */
+    public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        return $typ_lst->mrl_typ->selector($form, $this->predicate_id);
     }
 
 }

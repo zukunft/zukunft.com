@@ -5,6 +5,8 @@
     shared/helper/MapObject.php - temp helper object to map the frontend to backend objects until the api is fast enough
     ---------------------------
 
+    $map is the suggested var name
+
     TODO Prio 2 add the suggested var name to all classes and check automatically if all objects are named according to the suggestion
     $ui_map is the suggested var name
 

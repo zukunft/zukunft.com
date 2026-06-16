@@ -57,6 +57,7 @@ include_once html_paths::VERB . 'verb.php';
 
 /* open database */
 $app = new frontend();
+global $sys;
 $db_con = $app->start("link_type_add");
 $html = new html_base();
 $msg = '';
@@ -138,9 +139,9 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get the form to add a new verb

@@ -52,7 +52,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::USER . 'user.php';
+//include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
@@ -79,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -139,9 +140,14 @@ class ListBase extends ListOfIdObjects
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            $new = clone $dbo;
-            $new->api_mapper($value, $usr_msg);
-            $this->add_obj($new, true);
+            if (is_array($value)) {
+                $new = clone $dbo;
+                $new->api_mapper($value, $usr_msg);
+                $this->add_obj($new, true);
+            } else {
+                // e.g. an api error message should not stop the rendering of the other components
+                log_warning('unexpected api message part "' . $value . '" for a ' . $dbo::class . ' list');
+            }
         }
         return $usr_msg;
     }
@@ -237,9 +243,8 @@ class ListBase extends ListOfIdObjects
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
-        global $db_con;
         $api_msg = new api_message();
-        $pod_name = $api_msg->api_site_name($db_con);
+        $pod_name = $api_msg->api_site_name();
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
@@ -414,7 +419,7 @@ class ListBase extends ListOfIdObjects
      * @param string $code_id
      * @return int the database id for the given code_id
      */
-    function id(string $code_id): int
+    function id(string $code_id = ''): int
     {
         $lib = new library();
         $result = 0;
@@ -525,6 +530,35 @@ class ListBase extends ListOfIdObjects
         $sel->style = $style;
         $sel->type = $type;
         return $sel->display();
+    }
+
+    /**
+     * create the HTML code to select a file for im- or export
+     * @param string $form the name of the html form
+     * @param string|null $name the suggested name of the file
+     * @param array|null $lst with the suggested file names
+     * @param msg_id $msg_id the label shown to the user
+     * @return string the html code to select a file
+     */
+    public function file_selector(
+        string  $form,
+        ?string $name = '',
+        ?array  $lst = [],
+        msg_id  $msg_id = msg_id::FORM_SELECT_FILE
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $action = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $form;
+        $frm_str = $html->form_field('fileToUpload', $msg_id, $name, html_base::INPUT_FILE);
+        $frm_str .= $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_IMPORT));
+        $result = '<' . html_base::FORM
+            . ' ' . html_base::ACTION . '="' . $action . '"'
+            . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
+            . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $frm_str
+            . '</' . html_base::FORM . '>';
+        return $result;
     }
 
 }

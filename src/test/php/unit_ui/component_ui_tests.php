@@ -71,6 +71,7 @@ class component_ui_tests
         $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
+        $test_page .= $t->dsp_title_named_edit($cmp);
         $t->html_page_test($test_page, 'component', 'component', $t);
     }
 

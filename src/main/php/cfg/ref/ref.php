@@ -5,6 +5,8 @@
     model/ref/ref.php - a link between a phrase and another system such as wikidata
     -----------------
 
+    $ref is the suggested var name
+
     The reference is a concrete link between one phrase and an object in an external system
     the external system is defined by the reference type
 
@@ -752,9 +754,9 @@ class ref extends sandbox_link
     function get_key(): string
     {
         return
-            $this->escape_key_part($this->phrase_name()) .
+            $this->escape_key_part($this->phrase_name() ?? '') .
             $this->escape_key_part($this->type_name()) .
-            $this->escape_key_part($this->get_external_key());
+            $this->escape_key_part($this->get_external_key() ?? '');
     }
 
     /**

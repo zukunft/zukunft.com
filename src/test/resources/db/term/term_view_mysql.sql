@@ -16,7 +16,8 @@ CREATE OR REPLACE VIEW prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -36,7 +37,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -51,7 +53,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -66,7 +69,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -86,7 +90,8 @@ CREATE OR REPLACE VIEW terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -105,7 +110,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -119,7 +125,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -133,7 +140,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;
 
 --
@@ -152,7 +160,8 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -172,7 +181,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -187,7 +197,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -202,7 +213,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -222,7 +234,8 @@ CREATE OR REPLACE VIEW user_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -241,7 +254,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -255,7 +269,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -269,5 +284,6 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;

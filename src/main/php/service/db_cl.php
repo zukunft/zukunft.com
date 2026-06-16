@@ -125,8 +125,7 @@ class db_cl
     function view_id(string $code_id): int
     {
         global $sys;
-        global $sys_msk_cac;
-        return $sys_msk_cac->id($code_id);
+        return $sys->msk_cac->id($code_id);
     }
 
     function view_type_id(string $code_id): int
@@ -395,8 +394,8 @@ class db_cl
 
     function view_name(int $id): string
     {
-        global $sys_msk_cac;
-        return $sys_msk_cac->name($id);
+        global $sys;
+        return $sys->msk_cac->name($id);
     }
 
     function view_type_name(int $id): string

@@ -5,6 +5,7 @@
     model/value/value.php - the main numeric value object using the prime, norm and big value keys
     ---------------------
 
+    $val is the suggested var name
 
     The main sections of this object are
     - db const:          const for the database link

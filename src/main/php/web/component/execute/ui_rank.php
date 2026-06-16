@@ -35,9 +35,11 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 
 class ui_rank
@@ -54,6 +56,26 @@ class ui_rank
     {
         // TODO review
         return $phr->name() . ' is ranked by time of discovery';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the phrase whose ranking parameters should be displayed
+     * @return string the html code showing the parameters used to calculate the ranking
+     */
+    function ranking_parameters(db_object|combine_named|null $dbo = null): string
+    {
+        return 'ranking_parameters placeholder';
+    }
+
+    /**
+     * TODO Prio 0 fill with real code
+     * @param db_object|combine_named|null $dbo the phrase whose related items should be listed by ranking
+     * @return string the html code showing the items sorted by the calculated ranking
+     */
+    function ranking_list(db_object|combine_named|null $dbo = null): string
+    {
+        return 'ranking_list placeholder';
     }
 
 }

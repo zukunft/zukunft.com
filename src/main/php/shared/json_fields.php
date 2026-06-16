@@ -107,6 +107,7 @@ class json_fields
 
     // language
     const string WIKI_CODE = 'wikimedia_code';
+    const string LOCAL_NAME = 'local_name';
 
     // language forms
     const string LANGUAGE = 'language_id';
@@ -128,6 +129,16 @@ class json_fields
     // phrase types
     const string SCALE = 'scale';
     const string SYMBOL = 'symbol';
+
+    // for a phrase: the list of phrases that are related to this phrase via a triple
+    // (the phrase is the from or to of the triple, including the verb context);
+    // populated by the backend when api_types::INCL_RELATED is set on the request;
+    // each entry is a phrase wrapping a triple so the renderer can show the "other end"
+    // word as the link text and the triple's detail view as the link target — e.g. for
+    // the word "Zurich" the entries are the triples "City of Zurich", "Canton of Zurich",
+    // "Zurich Insurance" (their `to` words "City", "Canton", "Company" are the link labels);
+    // the number per verb is bounded by the related-per-verb config so the list stays compact
+    const string PHRASES_RELATED = 'phrases_related';
 
 
     /*
@@ -189,6 +200,7 @@ class json_fields
     const string IS_STD = 'is_std'; // flag if a value or result is user-specific or the default value for all users
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
+    const string LATEX = 'latex'; // the formula in latex format
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
@@ -202,6 +214,9 @@ class json_fields
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
     const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
     const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
+
+    // database cache job fields
+    const string CACHE_DATA = 'data'; // the json text of the cache with all the cached values
 
     // change log fields
     const string TIME = 'time'; // e.g. the timestamp of a log entry
@@ -268,6 +283,7 @@ class json_fields
     const string STD_ID = 'std_id';
 
     // to review
+    const string ACTION = 'action';
     const string USER_NAME = 'user';
     const string JOB_PARAMETER = 'job_parameter';
 
@@ -303,6 +319,8 @@ class json_fields
     const string LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string LIST_JOB_STATUUS = 'job_statuum';
     const string LIST_JOB_TYPES = 'job_types';
+    const string LIST_DB_CACHE_STATUUS = 'db_cache_statuum';
+    const string LIST_DB_CACHE_TYPES = 'db_cache_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';
     const string LIST_CHANGE_LOG_FIELDS = 'change_field_list';
@@ -374,14 +392,19 @@ class json_fields
     // for value lists
     const string VALUES = 'values';
 
+    // the recent change log entries of an object e.g. shown on the default word page
+    const string CHANGES = 'changes';
+
     // a list of the word names without further parameters
     const string WORD_LIST = 'word-list';
 
 
     // for formulas
     const string EXPRESSION = 'expression';
+    const string RESULT = 'result'; // the expected result of a check formula e.g. of the XBRL summation-item validation
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string RESULTS = 'results';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
     //             use phrase_type (without id) for im- and export where the name is used
@@ -415,10 +438,11 @@ class json_fields
 
     // list of json fields that are used for the api message to the frontend
     // but that are never used for the api message to the backend
+    // impact is not part of the unidirectional fields
+    // because it could potential be overwritten by and admin user
     const array UNIDIRECTIONAL = [
         self::REF_TEXT,
         self::USAGE,
-        self::IMPACT
     ];
 
 }

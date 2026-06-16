@@ -35,7 +35,9 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -47,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -78,11 +81,11 @@ class user_write_tests
         $test_name = 'add user ' . users::TEST_NAME;
         $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 
-        $t->subheader($ts . 'user write sandbox tests for ' . words::TEST_ADD);
-        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
+        $t->subheader($ts . 'user write sandbox tests for ' . word_names::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
 
-        $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
-        $wrd_time = $t->test_word(words::TEST_2021, phrase_type_shared::TIME);
+        $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . word_names::TEST_2021;
+        $wrd_time = $t->test_word(word_names::TEST_2021, phrase_type_shared::TIME);
         $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
@@ -91,22 +94,22 @@ class user_write_tests
 
 
         // load the main test words
-        $wrd_read = $t->load_word(words::MATH);
+        $wrd_read = $t->load_word(word_names::MATH);
 
         // create a parent test word
-        $wrd_parent = $t->test_word(words::TEST_PARENT);
+        $wrd_parent = $t->test_word(word_names::TEST_PARENT);
         $wrd_parent->add_child($wrd_read);
 
         // word children, so get all children of a parent
         // e.g. Zurich is s children of Canton
         $phr_lst = $wrd_parent->children();
-        $target = words::MATH;
+        $target = word_names::MATH;
         if ($phr_lst->does_contain($wrd_read)) {
             $result = $wrd_read->name_dsp();
         } else {
             $result = '';
         }
-        $t->assert('word->children for "' . words::TEST_PARENT . '"', $result, $target,
+        $t->assert('word->children for "' . word_names::TEST_PARENT . '"', $result, $target,
             $t::TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
         // ... word children excluding the start word, so the list of children should not include the parent
@@ -117,7 +120,7 @@ class user_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->children for "' . words::TEST_PARENT . '" excluding the start word', $result, $target,
+        $t->assert('word->children for "' . word_names::TEST_PARENT . '" excluding the start word', $result, $target,
             $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // TODO move read only tests like this to the db read or unit tests
@@ -131,7 +134,7 @@ class user_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->are for "' . words::TEST_PARENT . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->assert('word->are for "' . word_names::TEST_PARENT . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word are including the start word
         // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
@@ -141,7 +144,7 @@ class user_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->are for "' . words::TEST_PARENT . '" including the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->assert('word->are for "' . word_names::TEST_PARENT . '" including the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // word parents
         $phr_lst = $wrd_read->parents();
@@ -151,7 +154,7 @@ class user_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->parents for "' . words::MATH . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->assert('word->parents for "' . word_names::MATH . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word parents excluding the start word
         $target = '';
@@ -160,7 +163,7 @@ class user_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->parents for "' . words::MATH . '" excluding the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->assert('word->parents for "' . word_names::MATH . '" excluding the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
 
         */
@@ -188,23 +191,23 @@ class user_write_tests
         $ts = 'db validate test words ';
         $t->header($ts);
 
-        foreach (words::TEST_WORDS_CREATE as $word_name) {
+        foreach (word_names::TEST_WORDS_CREATE as $word_name) {
             $t_db->test_word($word_name);
         }
-        foreach (words::TEST_WORDS_MEASURE as $word_name) {
+        foreach (word_names::TEST_WORDS_MEASURE as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::MEASURE);
         }
-        foreach (words::TEST_WORDS_SCALING as $word_name) {
+        foreach (word_names::TEST_WORDS_SCALING as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::SCALING);
         }
-        foreach (words::TEST_WORDS_SCALING_HIDDEN as $word_name) {
+        foreach (word_names::TEST_WORDS_SCALING_HIDDEN as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
         }
-        foreach (words::TEST_WORDS_PERCENT as $word_name) {
+        foreach (word_names::TEST_WORDS_PERCENT as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::PERCENT);
         }
         $prev_word_name = null;
-        foreach (words::TEST_WORDS_TIME_YEAR as $word_name) {
+        foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {
             $t_db->test_triple($word_name, verbs::IS, words::YEAR_CAP);
             $t_db->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {

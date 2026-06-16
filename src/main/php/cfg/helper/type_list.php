@@ -58,6 +58,10 @@ include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_status.php';
+//include_once paths::MODEL_HELPER . 'db_cache_status_list.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
+//include_once paths::MODEL_HELPER . 'db_cache_type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 //include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_REF . 'source_type.php';
@@ -143,6 +147,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
@@ -374,10 +382,13 @@ class type_list extends ListOfIdNamedCodeObjects
         $qp = new sql_par($db_type);
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
+        // TODO Prio 0 use the object load_sql function overwrites
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
             $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
+        } elseif ($class == language::class) {
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, language::FLD_WIKI_CODE, language::FLD_LOCAL_NAME, sql_db::FLD_USAGE));
         } else {
             $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         }
@@ -434,6 +445,8 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_level::class => new sys_log_level(),
             sys_log_status::class, sys_log_statuum::class => new sys_log_status(),
             system_time_type::class => new system_time_type(),
+            db_cache_status::class => new db_cache_status(),
+            db_cache_type::class => new db_cache_type(),
             user_profile::class => new user_profile(),
             user_type::class => new user_type(),
             user_official_type::class => new user_official_type(),
@@ -477,6 +490,8 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_function_list::class => sys_log_function::class,
             sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
+            db_cache_status_list::class => db_cache_status::class,
+            db_cache_type_list::class => db_cache_type::class,
             user_profile_list::class => user_profile::class,
             user_type_list::class => user_type::class,
             user_status_list::class => user_status::class,
@@ -547,6 +562,8 @@ class type_list extends ListOfIdNamedCodeObjects
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } elseif ($class == job_status::class) {
                     $type_name = strval($db_row[job_status::FLD_NAME]);
+                } elseif ($class == db_cache_status::class) {
+                    $type_name = strval($db_row[db_cache_status::FLD_NAME]);
                 } else {
                     // TODO use a unique type name for each type
                     if (array_key_exists(sql_db::FLD_TYPE_NAME, $db_row)) {
@@ -557,7 +574,27 @@ class type_list extends ListOfIdNamedCodeObjects
                     }
                 }
                 $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
-                $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
+                // TODO Prio 0 use a class to object function
+                if ($class == language::class) {
+                    $type_obj = new language($type_code_id, $type_name, $type_comment, $type_id);
+                } else {
+                    $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
+                }
+
+                // TODO Prio 1 add other missing type fields
+                // TODO Prio 2 remove exceptions and use object mapper instead
+                if ($type_obj::class == language::class) {
+                    if (array_key_exists(language::FLD_WIKI_CODE, $db_row)) {
+                        $type_obj->wiki_code = strval($db_row[language::FLD_WIKI_CODE]);
+                    }
+                    if (array_key_exists(language::FLD_LOCAL_NAME, $db_row)) {
+                        $type_obj->local_name = strval($db_row[language::FLD_LOCAL_NAME]);
+                    }
+                    if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                        $type_obj->usage = strval($db_row[sql_db::FLD_USAGE]);
+                    }
+                }
+
                 $this->add($type_obj);
             }
         }
@@ -608,14 +645,15 @@ class type_list extends ListOfIdNamedCodeObjects
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
         $vars = [];
         foreach ($this->lst() as $typ) {
-            // TODO undo this exception
+            // TODO Prio 3 avoid this exceptions
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
-                or $typ::class == view::class) {
+                or $typ::class == view::class
+                or $typ::class == language::class) {
                 $typ_vars = $typ->api_json_array($typ_lst);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
@@ -651,6 +689,9 @@ class type_list extends ListOfIdNamedCodeObjects
             $id_col = 0;
             $name_col = 0;
             $desc_col = 0;
+            $wiki_code_col = 0;
+            $local_name_col = 0;
+            $usage_col = 0;
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
@@ -676,21 +717,45 @@ class type_list extends ListOfIdNamedCodeObjects
                             $name_col = array_search(change_field::FLD_NAME, $col_names);
                         } elseif (in_array(user_profile::FLD_NAME, $col_names)) {
                             $name_col = array_search(user_profile::FLD_NAME, $col_names);
+                        } elseif (in_array(language::FLD_NAME, $col_names)) {
+                            $name_col = array_search(language::FLD_NAME, $col_names);
                         } elseif (in_array(language_form::FLD_NAME, $col_names)) {
                             $name_col = array_search(language_form::FLD_NAME, $col_names);
                         }
 
+                        if (in_array(language::FLD_WIKI_CODE, $col_names)) {
+                            $wiki_code_col = array_search(language::FLD_WIKI_CODE, $col_names);
+                        }
+                        if (in_array(language::FLD_LOCAL_NAME, $col_names)) {
+                            $local_name_col = array_search(language::FLD_LOCAL_NAME, $col_names);
+                        }
+                        if (in_array(sql_db::FLD_USAGE, $col_names)) {
+                            $usage_col = array_search(sql_db::FLD_USAGE, $col_names);
+                        }
                         if (in_array(change_field::FLD_TABLE, $col_names)) {
                             $table_col = array_search(change_field::FLD_TABLE, $col_names);
+                        }
+                        if (in_array(sys_log_status::FLD_ACTION, $col_names)) {
+                            $action_col = array_search(sys_log_status::FLD_ACTION, $col_names);
                         }
                         if (in_array(json_fields::DESCRIPTION, $col_names)) {
                             $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
                     } else {
-                        if ($table_col > 0) {
-                            $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
+                        if ($list::class == language_list::class) {
+                            $typ_obj = new language();
+                            $typ_obj->wiki_code = $data[$wiki_code_col];
+                            $typ_obj->local_name = $data[$local_name_col];
+                            $typ_obj->usage = $data[$usage_col];
+                        } elseif ($list::class == sys_log_statuum::class) {
+                            $typ_obj = new sys_log_status();
+                            $typ_obj->action = $data[$action_col];
                         } else {
-                            $typ_obj = new type_object($data[$name_col]);
+                            if ($table_col > 0) {
+                                $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
+                            } else {
+                                $typ_obj = new type_object($data[$name_col]);
+                            }
                         }
                         $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
@@ -787,7 +852,7 @@ class type_list extends ListOfIdNamedCodeObjects
             } else {
                 $result = self::CODE_ID_NOT_FOUND;
                 if ($log_err) {
-                    log_err('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
+                    log_warning('Type id not found for name "' . $name . '" in ' . implode(',', $this->names()));
                 }
             }
         } else {

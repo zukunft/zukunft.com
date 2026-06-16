@@ -57,16 +57,16 @@ class view_list_read_tests
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';
         $pattern = substr(views::TEST_ALL_NAME, 0, -1);
-        $dsp_lst = new view_list($t->usr1);
-        $dsp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $dsp_lst->names(), views::TEST_ALL_NAME);
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->load_names($pattern);
+        $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
         // TODO do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
-        $dsp_lst = new view_list($t->usr1);
-        $dsp_lst->load_names(views::TEST_FORM_NAME);
-        $t->assert_contains_not($test_name, $dsp_lst->names(), views::TEST_FORM_NAME);
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->load_names(views::TEST_FORM_NAME);
+        $t->assert_contains_not($test_name, $msk_lst->names(), views::TEST_FORM_NAME);
 
 
         $test_name = 'loading by view list by component id ';
@@ -81,7 +81,7 @@ class view_list_read_tests
         $result = json_decode($msk_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(view_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
-        // TODO prio 1 use jso_contains and activate
+        // TODO Prio 1 use jso_contains and activate
         //$t->assert($test_name . $msk_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
 
         $test_name = 'loading by component list by pattern ';

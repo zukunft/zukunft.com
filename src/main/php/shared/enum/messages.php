@@ -166,6 +166,8 @@ enum messages: string
     const string VAR_FUNCTION_NAME = 'VarFunctionName';
     // value how many times the object is referenced
     const string VAR_USAGE = 'VarUsage';
+    // the search pattern used to select a list of terms, words, ...
+    const string VAR_PATTERN = 'VarPattern';
     // the share permission of a sandbox object
     const string VAR_SHARE = 'VarShare';
     // the share permission of the compare sandbox object
@@ -227,6 +229,8 @@ enum messages: string
     case LOADED = 'loaded';
     case DONE = 'done';
     case TOTAL = 'total';
+    case MORE = 'more';
+    case AND_MORE = '... more';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -442,6 +446,22 @@ enum messages: string
         . '" is missing';
     case VALUE_ID_MISSING = 'to add a value to the database at least one word must specify the value "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case SCALING_WORD_MISSING = 'to scale a value one word of '
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . ' needs to be of type scaling';
+    case SCALING_USER_MISSING = 'to scale the value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' the user must be set';
+    case SCALING_PHRASES_MISSING = 'to scale the value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' the phrases must be loaded by the calling function';
+    case SCALING_WORDS_AMBIGUOUS = 'only one scaling word is supported, but the value has the scaling words '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case SCALING_FORMULA_MISSING = 'no scaling formula found for the word '
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END;
+    case SCALING_FORMULA_RESULT_INVALID = 'the result part of the scaling formula '
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . ' does not contain exactly one word of type scaling';
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';
@@ -538,6 +558,9 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_RESULT_SOURCE_GROUP_MISSING = 'Import result: the source group of "'
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . '" could not be resolved and is skipped';
     case IMPORT_VALUE_NOT_NUMERIC = 'Import value: "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . '" is expected to be a number ('
@@ -597,6 +620,35 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case CALC_VALIDATION_FORMULA_MISSING = 'the formula "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" to validate the result of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in the import message';
+    case CALC_VALIDATION_VALUE_MISSING = 'the value for "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" to validate the result of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in the import message';
+    case CALC_VALIDATION_FAILED = 'the imported result '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' does not match the result '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' calculated based on the imported values';
+    case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" for the context "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" has the conflicting values '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' and '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END;
+    case XBRL_NO_FACTS = 'no XBRL facts found in the given input';
+    case FILE_WRITE_FAILED = 'could not write the file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '"';
     case FORMULA_ID_MISSING = 'formula id is missing in the import message '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_JSON_MISSING = 'formula JSON is missing in the import message '
@@ -605,6 +657,11 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case FORMULA_NAME_EQUALS_TERM = 'the formula name "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" is also used as a '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' name, which is not allowed because both are terms and the shared name leads to an ambiguous id assignment during the import';
     case FORMULA_CREATED = 'formula with name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
@@ -682,6 +739,19 @@ enum messages: string
     case VIEW_CREATED = 'view with name "'
         . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
         . '" created';
+    case VIEW_ROWS_NOT_CLOSED = 'the rows of the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '" are not balanced: a row opened with row_start or row_right is not closed with a matching row_end';
+    case VIEW_COMPONENT_POS_DOUBLE = 'the component position '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' is used more than once in the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '"';
+    case VIEW_COMPONENT_POS_MISSING = 'the component position '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' is missing in the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '"';
 
     case COMPONENT_MISSING_IMPORT = 'component "'
         . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
@@ -697,6 +767,9 @@ enum messages: string
     case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please use another name.';
+    case COMPONENT_DEFINED_TWICE = 'The view component with the name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" is defined more than once in the same import.';
     case FORMULA_RENAME_NOT_ALLOWED = 'formula names cannot be changed to "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '".';
@@ -881,10 +954,29 @@ enum messages: string
     case FORM_NAME_PASSWORD = 'password';
     case FORM_NAME_PASSWORD_RE = 're-type password';
     case FORM_NAME_LOGIN = 'Login';
+    case PASSWORD_TOO_SHORT = 'password must be at least '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case PASSWORD_TOO_LONG = 'password must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case PASSWORD_WRONG = 'Forgot password?';
     case PASSWORD_WRONG_TITLE = 'Request to reset the password';
     case SIGN_UP = 'Sign Up';
     case LOGIN_FAILED = 'Login failed';
+    case USERNAME_MISSING = 'username missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case USERNAME_TOO_LONG = 'username must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
+    case EMAIL_MISSING = 'email address missing for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+    case EMAIL_INVALID = 'email address "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is not valid';
+    case EMAIL_TOO_LONG = 'email address must not exceed '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' characters';
     case USER_NAME_NOT_FOUND = 'no user with the username '
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . ' found';
@@ -978,6 +1070,11 @@ enum messages: string
         . '" should be assigned to formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" but it is not defined.';
+    case IMPORT_FORMULA_ASSIGN_USE_ASSIGNED = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" tries to assign more than one phrase via "assigned_word"; use the "assigned" json array to assign several phrases';
 
     case IMPORT_FORMULA_FAILED = 'import of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
@@ -1194,6 +1291,17 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
 
+    case CACHE_STATUS_MISSING = 'cache status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case CACHE_TYPE_MISSING = 'cache type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+
     case SYS_LOG_TYPE_MISSING = 'system log type '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '
@@ -1251,6 +1359,8 @@ enum messages: string
     case DB_PHRASE_MISSING = 'phrase '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
+    case PHRASE_ID_AND_NAME_MISSING_IN = 'phrase id and name missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
     case DB_TERM_MISSING = 'term '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is unexpected missing in database during import';
@@ -1311,7 +1421,7 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' that links "'
         . self::VAR_START . self::VAR_NAME_FROM . self::VAR_END
-        . ' to "'
+        . '" to "'
         . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
         . '" ' . self::ALREADY_EXISTS->value . '. Please select another '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
@@ -1319,10 +1429,19 @@ enum messages: string
     case ALREADY_EXISTS = 'already exists';
     case KEY_TYPE_NAME = 'name';
     case KEY_TYPE_LINK = 'link';
+    case LINK_EXTENDS = 'extends';
     case KEY_TYPE_EXTERNAL_KEY = 'external key';
     case CLASS_LIST_UNEXPECTED = 'Cannot create type for the list class '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' because no matching type has been assigned in the code';
+
+    case CACHE_TYPE_INVALID = 'the database cache type for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case CACHE_STATUS_INVALID = 'the database cache status for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
 
     case JOB_TYPE_INVALID = 'the job type for job '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -1430,13 +1549,22 @@ enum messages: string
     // text to be shown in frontend
     // TODO add translation
     case AND_MORE_BEFORE = 'and';
-    case AND_MORE_AFTER = 'more';
+    case OR = 'or';
+    case SIGNUP = 'signup';
+    case GO = 'go';
+    case CANCEL_AND_GO = 'cancel_and_go';
+    case BACK_LINK = 'back';
     case THREE_POINTS = '...';
 
     // text to be shown in buttons
     case ADD = 'add';
     case EDIT = 'edit';
     case DEL = 'del';
+    case YES = 'yes';
+    case NO = 'no';
+    case UP = 'up';
+    case DOWN = 'down';
+    case CLOSE = 'close';
     case SEARCH_MAIN = 'search_main';
     case WORD_ADD = 'word_add';
     case WORD_EDIT = 'word_edit';
@@ -1563,11 +1691,13 @@ enum messages: string
     case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
+    case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
     case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
     case FORM_TITLE_SEARCH = 'system_title_search';
+    case FORM_TITLE_SEARCH_RESULT = 'system_title_search_result';
     case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
     case FORM_TITLE_SANDBOX = 'system_title_sandbox';
     case FORM_TITLE_UNDO = 'system_title_undo';
@@ -1582,18 +1712,62 @@ enum messages: string
     case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
     case FORM_TITLE_PROCESS = 'system_title_process';
 
+    // admin dashboard
+    case FORM_TITLE_ADMIN = 'system_title_admin';
+
     // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
+    case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
+    case SIGNUP_DATA_WARNING = 'signup_data_warning';
+    case SIGNUP_ERR_NAME_EXISTS = 'signup_err_name_exists';
+    case SIGNUP_ERR_EMAIL_EMPTY = 'signup_err_email_empty';
+    case SIGNUP_ERR_PW_EMPTY = 'signup_err_pw_empty';
+    case SIGNUP_ERR_PW_RETYPE_EMPTY = 'signup_err_pw_retype_empty';
+    case SIGNUP_ERR_PW_MISMATCH = 'signup_err_pw_mismatch';
+    case SIGNUP_ERR_FAILED = 'signup_err_failed';
     case SYSTEM_TITLE_LOGIN = 'system_title_login';
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
+    case ACTIVATE_SUBMIT = 'activate_submit';
+    case ACTIVATE_KEY_LABEL = 'activate_key_label';
+    case ACTIVATE_ERR_KEY_MISMATCH = 'activate_err_key_mismatch';
+    case ACTIVATE_ERR_KEY_EXPIRED = 'activate_err_key_expired';
+    case ACTIVATE_ERR_MISSING_ID = 'activate_err_missing_id';
+    case ACTIVATE_ERR_FAILED = 'activate_err_failed';
     case SYSTEM_TITLE_LOGIN_RESET = 'system_title_login_reset';
+    case RESET_SUBMIT = 'reset_submit';
+    case RESET_PROMPT = 'reset_prompt';
+    case RESET_ERR_NOT_FOUND = 'reset_err_not_found';
+    case RESET_ERR_KEY_GEN = 'reset_err_key_gen';
+    case RESET_MAIL_SUBJECT = 'reset_mail_subject';
+    case RESET_MAIL_HELLO = 'reset_mail_hello';
+    case RESET_MAIL_KEY_INTRO = 'reset_mail_key_intro';
+    case RESET_MAIL_LINK_INTRO = 'reset_mail_link_intro';
+    case RESET_MAIL_IGNORE = 'reset_mail_ignore';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
+    case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case TITLE_LANGUAGE_SELECT = 'title_language_select';
+    case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
+    case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
+    case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
+    case USER_SYSTEM_ERRORS = 'user_system_errors';
+    case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
+
+    // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
+    case PHRASE_HAS = 'phrase_has';
+    case PHRASE_ALIAS = 'phrase_alias';
+    case PHRASE_ALIASES = 'phrase_aliases';
+    case PHRASE_SYMBOL = 'phrase_symbol';
+    case PHRASE_SYMBOLS = 'phrase_symbols';
+
+    // if a non admin user tries to reduce the protection level of an object
+    case PROTECTION_REDUCE_DENIED = 'protection_reduce_denied';
 
 
     /*
@@ -1758,10 +1932,52 @@ enum messages: string
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_DEL = 'form_button_del';
+    case BUTTON_VIEW_OPEN = 'button_view_open';
+    case BUTTON_VIEW_SWITCH = 'button_view_switch';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
+
+    case BUTTON_ADD_LANGUAGES = 'button_add_languages';
+
+    // footer links
+    case PRIVACY_POLICY = 'privacy_policy';
+    case CC0 = 'cc0';
+    case CC0_LICENSE = 'cc0_license';
+    case PROGRAM_CODE = 'program_code';
+    case AGPL3 = 'agpl3';
+    case OPEN_SOURCE = 'open_source';
+
+    // footer text fragments
+    case FOOTER_DATA_LICENCE = 'footer_data_licence';
+    case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
+    case FOOTER_OF_VERSION = 'footer_of_version';
+    case FOOTER_UNDER_THE = 'footer_under_the';
+    case FOOTER_LICENCE = 'footer_licence';
+
+    // navbar text
+    case NAVBAR_SEARCH = 'navbar_search';
+    case NAVBAR_SEARCH_PLACEHOLDER = 'navbar_search_placeholder';
+    case NAVBAR_GET_NUMBERS = 'navbar_get_numbers';
+    case NAVBAR_ALTERNATIVE_VIEW = 'navbar_alternative_view';
+    case NAVBAR_CHANGE_VIEW = 'navbar_change_view';
+    case NAVBAR_ADD_VIEW = 'navbar_add_view';
+    case NAVBAR_LOGIN = 'navbar_login';
+    case NAVBAR_SIGNUP = 'navbar_signup';
+    case NAVBAR_SETTINGS = 'navbar_settings';
+    case NAVBAR_LOGOUT = 'navbar_logout';
+
+    // about page text
+    case ABOUT_SPONSORED_BY = 'about_sponsored_by';
+    case ABOUT_MAIN_IDEA = 'about_main_idea';
+    case ABOUT_PAPER_DELPHI = 'about_paper_delphi';
+    case ABOUT_ONCE_IMPLEMENTED = 'about_once_implemented';
+    case ABOUT_PAPER_IMPERATIVE = 'about_paper_imperative';
+    case ABOUT_SUPPORTS = 'about_supports';
+    case ABOUT_PORTFOLIO_MGMT = 'about_portfolio_mgmt';
+    case ABOUT_TREAM_DEMO = 'about_tream_demo';
+    case ABOUT_GITHUB_LINK = 'about_github_link';
 
     case UNDO = 'undo';
     case FIND = 'find';

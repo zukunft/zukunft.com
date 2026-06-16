@@ -40,9 +40,9 @@ include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_read_tests
@@ -63,19 +63,19 @@ class phrase_read_tests
 
         $t->subheader($ts . 'load');
 
-        $test_name = 'load phrase ' . words::MATH . ' by word name and id';
+        $test_name = 'load phrase ' . word_names::MATH . ' by word name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(words::MATH);
+        $phr->load_by_name(word_names::MATH);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
-        $t->assert($test_name, $wrd_by_id->name(), words::MATH);
+        $t->assert($test_name, $wrd_by_id->name(), word_names::MATH);
 
-        $test_name = 'load phrase ' . triples::PI . ' by triple name and id';
+        $test_name = 'load phrase ' . triple_names::PI . ' by triple name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(triples::PI);
+        $phr->load_by_name(triple_names::PI);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
-        $t->assert($test_name, $wrd_by_id->name(), triples::PI);
+        $t->assert($test_name, $wrd_by_id->name(), triple_names::PI);
 
 
         $t->subheader($ts . 'type');

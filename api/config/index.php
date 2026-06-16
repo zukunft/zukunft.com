@@ -87,7 +87,7 @@ if ($db_con->is_open()) {
         $cfg_lst = new config_numbers($usr);
         $msg = new user_message();
         if ($part == api::CONFIG_ALL or $part == '') {
-            $msg = $cfg_lst->load_cfg($usr);
+            $msg = $cfg_lst->load_cfg(null, $usr);
         } elseif ($part == api::CONFIG_FRONTEND) {
             $msg = $cfg_lst->load_frontend_cfg($usr);
         } elseif ($part == api::CONFIG_USER) {

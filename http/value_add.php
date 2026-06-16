@@ -53,6 +53,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("value_add");
 $html = new html_base();
 
@@ -80,7 +81,7 @@ if ($usr->id() > 0) {
     // before the value conversion, all phrases should be loaded to use the updated words for the conversion e.g. percent
     // get the linked phrases from url
     $phr_ids = array(); // suggested word for the new value that the user can change
-    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+    $type_ids = array(); // word to preselect the suggested words e.g. "country" to list all their countries first for the suggested word
     // if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
     if (isset($_GET['phrase1'])) {
         $phr_pos = 1;
@@ -144,13 +145,13 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the view header
-        $msk_dsp = new view_ui($msk->api_json());
+        $msk_ui = new view_ui($msk->api_json());
         $dto = new data_object();
-        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $msk_ui->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($usr_msg->all_message_text());
 
-        $val_dsp = new value_ui($val->api_json());
-        $result .= $val_dsp->dsp_edit($type_ids, $back);
+        $val_ui = new value_ui($val->api_json());
+        $result .= $val_ui->dsp_edit($type_ids, $back);
     }
 }
 

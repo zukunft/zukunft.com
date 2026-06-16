@@ -35,15 +35,18 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::HELPER . 'config.php';
+//include_once html_paths::HELPER . 'config.php';
 //include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -52,7 +55,9 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -61,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -154,7 +160,7 @@ class sandbox_list_named extends sandbox_list
             $additional_diff = $this->count() - $i;
             $dots = msg_id::THREE_POINTS->text();
             $and_txt = msg_id::AND_MORE_BEFORE->text();
-            $more_txt = msg_id::AND_MORE_AFTER->text();
+            $more_txt = msg_id::MORE->text();
             $msg .= $dots . ' ' . $and_txt . ' ' . $additional_diff . ' ' . $more_txt;
         }
         return implode(', ', $arr) . $msg;
@@ -178,7 +184,7 @@ class sandbox_list_named extends sandbox_list
      * @param int $limit the max number of entries to show
      * @return array with a list of the component names with html links
      */
-    private function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
         $i = 0;
@@ -265,12 +271,13 @@ class sandbox_list_named extends sandbox_list
      * add the names and other variables from the given list and add missing words, triples, ...
      * select the related object by the id
      *
-     * @param sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the name
+     * @param phrase_list|sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the name
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill_by_id(sandbox_list_named $lst_new): user_message
+    function fill_by_id(phrase_list|sandbox_list_named $lst_new): user_message
     {
-        global $usr;
+        global $ui_sys;
+        $usr = $ui_sys->usr;
 
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
@@ -355,6 +362,28 @@ class sandbox_list_named extends sandbox_list
         } else {
             return null;
         }
+    }
+
+    /**
+     * get the named objects (e.g. the terms) that match the given name pattern
+     * from the backend via the api and add them to this list
+     * the frontend (api based) counterpart of the backend load_by_pattern / load_like
+     *
+     * @param string $pattern the text part used to select the named objects e.g. "sec" to find "second"
+     * @return bool true if at least one matching object has been received from the backend
+     */
+    function get_by_pattern(string $pattern = '%'): bool
+    {
+        $result = false;
+
+        $data = array(url_var::PATTERN => $pattern);
+        $rest = new rest_call();
+        $json_body = $rest->api_get($this::class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
     }
 
 

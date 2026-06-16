@@ -5,6 +5,8 @@
     model/ref/source.php - the source object to define a source for values
     ------------------
 
+    $src is the suggested var name
+
     a source is always unidirectional
     in many cases a source is just a user base data source without any import
     the automatic import can be based on standard data format e.g. json, XML or HTML

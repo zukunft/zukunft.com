@@ -5,6 +5,8 @@
     model/result/result.php - the calculated numeric result of a formula
     -----------------------
 
+    $res is the suggested var name
+
     TODO: add these function
     TODO rename to result
     TODO create a separate table for the time series results
@@ -295,6 +297,15 @@ class result extends sandbox_value
             if ($msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
+            }
+        }
+
+        if (key_exists(json_fields::CONTEXT, $in_ex_json)) {
+            $src_phr_lst = new phrase_list($this->get_user());
+            $src_phr_lst->import_mapper($in_ex_json[json_fields::CONTEXT], $msg, $dto);
+            if ($msg->is_ok()) {
+                $src_grp = $src_phr_lst->get_grp_id(false);
+                $this->set_src_grp($src_grp);
             }
         }
 

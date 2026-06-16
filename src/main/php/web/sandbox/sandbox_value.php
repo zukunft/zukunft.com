@@ -39,21 +39,31 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 
@@ -252,6 +262,36 @@ class sandbox_value extends sandbox
 
 
     /*
+     * select
+     */
+
+    /**
+     * create the html code to select the value type (number, text, time, geo)
+     * overrides db_object::value_type_selector so that form_value_type returns a real selector for value and result objects
+     * the value class itself has no type_id; the choices come from the shared value_types enum
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache (unused for values; kept for signature compatibility)
+     * @return string the html code to select the value type
+     */
+    public function value_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $lst = [];
+        foreach (value_types::cases() as $case) {
+            $lst[$case->value] = $case->value;
+        }
+        $sel = new html_selector();
+        $sel->lst = $lst;
+        $sel->name = url_var::TYPE;
+        $sel->form = $form;
+        $sel->selected = value_types::NUMBER->value;
+        $sel->label_id = msg_id::FORM_SELECT_VALUE_TYPE;
+        $sel->style = view_styles::COL_SM_4;
+        $sel->type = html_selector::TYPE_SELECT;
+        return $sel->display();
+    }
+
+
+    /*
      * display
      */
 
@@ -272,17 +312,18 @@ class sandbox_value extends sandbox
      */
     function val_formatted(): string
     {
-        global $usr;
+        global $ui_sys;
+        $cfg = $ui_sys->cfg;
         $result = '';
 
         // TODO check that the phrases are set
 
         if (!$this->is_null()) {
             if ($this->is_percent()) {
-                $result = round($this->number() * 100, $usr->percent_decimals) . "%";
+                $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
-                    $result .= number_format($this->number(), 0, $usr->dec_point, $usr->thousand_sep);
+                    $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
                 } else {
                     $result = round($this->number(), 2);
                 }

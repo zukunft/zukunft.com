@@ -5,6 +5,8 @@
     web/word/triple.php - create the HTML code to display a triple (two linked words or triples)
     -------------------
 
+    $trp is the suggested var name
+
     The main sections of this object are
     - object vars:       the variables of this triple object
     - api:               set the object vars based on the api json message and create a json for the backend
@@ -58,9 +60,10 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 //include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::WORD . 'word.php';
+//include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -80,10 +83,12 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class triple extends sandbox_code_id
@@ -97,6 +102,7 @@ class triple extends sandbox_code_id
     const string VIEW_ADD = views::TRIPLE_ADD;
     const string VIEW_EDIT = views::TRIPLE_EDIT;
     const string VIEW_DEL = views::TRIPLE_DEL;
+    const int VIEW_EDIT_ID = views::TRIPLE_EDIT_ID;
 
     // crud message id
     const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
@@ -123,7 +129,10 @@ class triple extends sandbox_code_id
         }
     }
     // the impact used to sort the triples
-    private float $impact = 0.0;
+    public float $impact = 0.0;
+
+    // the phrases connected to this triple by another triple
+    public ?phrase_list $phr_lst = null;
 
 
     /*
@@ -249,6 +258,18 @@ class triple extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
+        if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
+            $value = $json_array[json_fields::PHRASES_RELATED];
+            if (is_array($value)) {
+                $lst = new phrase_list();
+                $lst->api_mapper($value);
+                $this->phr_lst = $lst;
+            } else {
+                $this->phr_lst = null;
+            }
+        } else {
+            $this->phr_lst = null;
+        }
         return $msg->is_ok();
     }
 
@@ -269,7 +290,11 @@ class triple extends sandbox_code_id
         $vars[json_fields::TO] = $this->get_to()->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
-        // usage and impact are not included here because this system value is never updated by the frontend
+        // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::IMPACT] = $this->impact;
+        if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
+        }
         return $vars;
     }
 
@@ -362,11 +387,11 @@ class triple extends sandbox_code_id
      */
     function set_type(?string $code_id): void
     {
-        global $sys;
+        global $ui_sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
+            $this->set_type_id($ui_sys->typ_lst_cache->phr_typ->id($code_id));
         }
     }
 
@@ -376,11 +401,11 @@ class triple extends sandbox_code_id
      */
     function type(): ?object
     {
-        global $sys;
+        global $ui_sys;
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $sys->typ_lst->phr_typ->get($this->type_id());
+            return $ui_sys->typ_lst_cache->phr_typ->get($this->type_id());
         }
     }
 
@@ -504,9 +529,9 @@ class triple extends sandbox_code_id
     {
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
     }
 
     /**
@@ -551,7 +576,7 @@ class triple extends sandbox_code_id
         } else {
             $id = 0;
         }
-        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB, $style);
+        return $typ_lst->vrb->selector($form, $id, url_var::VERB, $style);
     }
 
 
@@ -666,6 +691,116 @@ class triple extends sandbox_code_id
         $msk_lst = $msk_lst->ex_system();
         $msk_lst = $msk_lst->ex_non_phrase();
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
+    }
+
+    /**
+     * if this triple links a phrase with the given verb and direction
+     * create a html link to the linked phrase
+     *
+     * @param phrase $phr the staring phrase to select the link
+     * @param verb $vrb use only triples with this verb
+     * @param foaf_direction $dir to select either only parents or children
+     * @return string|null the html code to show the linked phrase if it matches
+     */
+    function get_link_by_verb(
+        phrase         $phr,
+        verb           $vrb,
+        foaf_direction $dir
+    ): string|null
+    {
+        $result = null;
+
+        $html = new html_base();
+        $lnk_phr = null;
+
+        // only act when this triple actually uses the requested verb and side
+        if ($this->get_verb()->id() === $vrb->id()) {
+            if ($dir == foaf_direction::DOWN) {
+                if ($this->get_from()->id() == $phr->id()) {
+                    $lnk_phr = $this->get_to();
+                }
+            } else {
+                if ($this->get_to()->id() == $phr->id()) {
+                    $lnk_phr = $this->get_from();
+                }
+            }
+        }
+
+        // build the link
+        if ($lnk_phr != null) {
+            $msk_id = views::WORD_ID;
+            if ($lnk_phr->is_triple()) {
+                $msk_id = views::TRIPLE_ID;
+            }
+            $url = $html->url_new($msk_id, $lnk_phr->id());
+            // the phrase description as link title so the user sees it as a tooltip
+            $result = $html->ref($url, $lnk_phr->name(), $lnk_phr->get_description() ?? '');
+        }
+        return $result;
+    }
+
+    /*
+     * to review
+     */
+
+    /**
+     * display one link to the user by returning the HTML code for the link to the calling function
+     * TODO include the user sandbox in the selection
+     */
+    function display(): string
+    {
+        log_debug("triple->dsp " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+
+        // prepare to show the triple
+        $result .= $this->get_from()->name() . ' ';   // e.g. Australia
+        $result .= $this->get_verb()->name() . ' ';   // e.g. is a
+        $result .= $this->get_to()->name();           // e.g. country
+
+        return $result;
+    }
+
+    /**
+     * similar to dsp, but display the reverse expression
+     */
+    private
+    function dsp_r(): string
+    {
+        log_debug("triple->dsp_r " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+
+        // prepare to show the triple in the reverse direction
+        // TODO use the reverse name of the verb e.g. "are" instead of "is a"
+        $result .= $this->get_to()->name() . ' ';     // e.g. Countries
+        $result .= $this->get_verb()->name() . ' ';   // e.g. are
+        $result .= $this->get_from()->name();         // e.g. Australia (and others)
+
+        return $result;
+    }
+
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function dsp_del(string $back = ''): string
+    {
+        log_debug("triple->dsp_del " . $this->id() . ".");
+        $result = ''; // reset the html code var
+
+        //$btn = new button();
+        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', rest_ctrl::PATH_FIXED .'link_del.php?id=' . $this->id() . '&back=' . $back);
+        $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
+
+        return $result;
+    }
+
+    /**
+     * simply to display a single triple in a table
+     */
+    function display_linked(): string
+    {
+        return (new html_base())->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
     }
 
 }

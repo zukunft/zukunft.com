@@ -52,10 +52,11 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("source_del");
 $html = new html_base();
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -71,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_DEL));
+    $msk->load_by_id($sys->msk_cac->id(views::SOURCE_DEL));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change if finished
 
@@ -91,9 +92,9 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Delete " . $src->name() . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
         }

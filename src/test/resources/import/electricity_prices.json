@@ -86,7 +86,7 @@
     {
       "from": "Euro",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
       "from": "cent",

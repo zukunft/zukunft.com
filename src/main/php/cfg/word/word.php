@@ -5,6 +5,8 @@
     model/word/word.php - the main word object
     -----------------
 
+    $wrd is the suggested var name
+
     TODO move plural to a linked word?
 
     TODO check if all objects follow these rules
@@ -80,16 +82,19 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -105,6 +110,7 @@ include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -116,6 +122,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -133,15 +140,18 @@ use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -151,6 +161,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -159,8 +170,10 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -219,6 +232,45 @@ class word extends sandbox_code_id
             $this->impact = $impact;
         }
     }
+
+    // the phrases connected to this word by a triple (this word is the from or the to
+    // of each triple — direction is "both"); populated lazily by load_phrases_related()
+    // and only emitted via api_json_array() when the api_types::INCL_RELATED flag is
+    // set on the caller's api_type_list; each entry is a phrase wrapping the connecting
+    // triple, so the frontend renderer can display the triple's "other end" word as the
+    // link label and the triple itself as the link target — e.g. for the word "Zurich"
+    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance";
+    // the per-verb count is bounded by the related-per-verb config so the list stays compact
+    public ?phrase_list $phrases_related = null;
+
+    // the values related to this word (this word is one of the phrases of the value's group);
+    // populated lazily by load_values_related() and only emitted via api_json_array() when the
+    // api_types::INCL_RELATED flag is set, so the default word view can show e.g. for "Zurich"
+    // the inhabitant numbers; the frontend caps and sorts the list by impact when rendering
+    public ?value_list $values_related = null;
+
+    // the formulas related to this word (this word is one of the formula's terms);
+    // populated lazily by load_formulas_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // formulas using the word; the frontend caps and sorts the list by impact when rendering
+    public ?formula_list $formulas_related = null;
+
+    // the external references of this word (e.g. its wikidata or wikipedia link);
+    // populated lazily by load_references_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // references; refs have no impact, so the frontend keeps the database (id) order
+    public ?ref_list $references_related = null;
+
+    // the most recent change log entries of this word;
+    // populated lazily by load_changes_related() and only emitted via api_json_array()
+    // when the api_types::INCL_RELATED flag is set, so the default word view can show the
+    // recent changes; the change log is ordered by time, latest first
+    public ?change_log_list $changes_related = null;
+
+    // the views that can show this word: its own default view plus the default views of
+    // its parent words; populated lazily by load_views_related() and only emitted via
+    // api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?view_list $views_related = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -326,6 +378,10 @@ class word extends sandbox_code_id
             }
         }
 
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
         if (array_key_exists(json_fields::VIEW, $api_json)) {
             $msk = new view($this->get_user());
             $id = $api_json[json_fields::VIEW];
@@ -368,6 +424,9 @@ class word extends sandbox_code_id
             if ($in_ex_json[json_fields::PLURAL] <> '') {
                 $this->plural = $in_ex_json[json_fields::PLURAL];
             }
+        }
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->impact = $in_ex_json[json_fields::IMPACT];
         }
 
         // remember the references
@@ -435,6 +494,57 @@ class word extends sandbox_code_id
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
+                if ($typ_lst->incl_related()) {
+                    if ($this->phrases_related == null and !$typ_lst->test_mode()) {
+                        $this->load_phrases_related();
+                    }
+                    if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                        // INCL_PHRASES so each related triple emits its from/verb/to phrases,
+                        // not just id+name — the page-title renderer needs the link names
+                        $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
+                    if ($this->values_related == null and !$typ_lst->test_mode()) {
+                        $this->load_values_related();
+                    }
+                    if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // INCL_PHRASES so each value carries its group phrases, which the
+                        // frontend needs for the value name and to sort the list by impact
+                        $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
+                    if ($this->formulas_related == null and !$typ_lst->test_mode()) {
+                        $this->load_formulas_related();
+                    }
+                    if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
+                        // their own name, id and impact, which the frontend needs to render
+                        // and sort the list by impact, without recursing back into relations
+                        $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->references_related == null and !$typ_lst->test_mode()) {
+                        $this->load_references_related();
+                    }
+                    if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->changes_related == null and !$typ_lst->test_mode()) {
+                        $this->load_changes_related();
+                    }
+                    if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+                        $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->views_related == null and !$typ_lst->test_mode()) {
+                        $this->load_views_related();
+                    }
+                    if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -443,6 +553,146 @@ class word extends sandbox_code_id
         }
 
         return $vars;
+    }
+
+    /**
+     * load the values related to this word into the in-memory values_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_values_related(): void
+    {
+        $this->values_related = $this->reload_value_list();
+    }
+
+    /**
+     * load the formulas related to this word into the in-memory formulas_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_formulas_related(): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        $frm_lst->load_by_phr($this->phrase());
+        $this->formulas_related = $frm_lst;
+    }
+
+    /**
+     * load the external references of this word into the in-memory references_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_references_related(): void
+    {
+        $ref_lst = new ref_list($this->get_user());
+        $ref_lst->load_by_phr_id($this->phrase()->id());
+        $this->references_related = $ref_lst;
+    }
+
+    /**
+     * load the most recent change log entries of this word into the in-memory
+     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_changes_related(): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user());
+        $this->changes_related = $chg_lst;
+    }
+
+    /**
+     * load the views related to this word into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; the list is the word's own
+     * default view plus the default views of its parent words (the phrases it "is a")
+     * each view is loaded by id because set_view_id() only stores the id, not the name that
+     * the api export and the frontend name_link need
+     * TODO the parent loop loads each parent word and its view one by one; replace with a
+     *      single list load once a view_list->load_by_word_list() exists
+     */
+    function load_views_related(): void
+    {
+        $msk_lst = new view_list($this->get_user());
+        $this->add_default_view_to($msk_lst);
+        foreach ($this->parents()->lst() as $phr) {
+            if ($phr->is_word()) {
+                $par_wrd = new word($this->get_user());
+                $par_wrd->load_by_id($phr->id());
+                $par_wrd->add_default_view_to($msk_lst);
+            }
+        }
+        $this->views_related = $msk_lst;
+    }
+
+    /**
+     * add the fully loaded default view of this word to the given list (skipping duplicates and
+     * words without a default view); the view is loaded by id so that it carries its name
+     * @param view_list $msk_lst the list the default view is added to
+     */
+    private function add_default_view_to(view_list $msk_lst): void
+    {
+        if ($this->view != null and $this->view->id() > 0) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($this->view->id());
+            $msk_lst->add($msk);
+        }
+    }
+
+    /**
+     * load the phrases related to this word via a triple
+     *
+     * @param int $per_verb_limit upper bound on triples kept per verb; the loader keeps one
+     *                            extra row so the caller can detect overflow without a count
+     */
+    function load_phrases_related(int $per_verb_limit = def_shared::LIMIT_RELATED_PER_VERB): void
+    {
+        $trp_lst = new triple_list($this->get_user());
+        $trp_lst->load_by_phr($this->phrase(), null, foaf_direction::BOTH);
+        $this->phrases_related = $this->select_phrases_related($trp_lst, $per_verb_limit);
+    }
+
+    /**
+     * select the most relevant phrases related to this word from the given triples
+     * sorted with the highest impact first so that e.g. the stocks with the highest
+     * market capitalisation are kept within the per verb limit and always shown in the same order
+     *
+     * @param triple_list $trp_lst the triples connected to this word
+     * @param int $per_verb_limit upper bound on triples kept per verb; one extra row is kept
+     *                            so the caller can detect overflow without a count
+     * @return phrase_list the kept triples as phrases with the highest impact first
+     */
+    function select_phrases_related(triple_list $trp_lst, int $per_verb_limit): phrase_list
+    {
+        $trp_lst->sort_by_impact();
+        $kept = new phrase_list($this->get_user());
+        $per_verb_count = [];
+        foreach ($trp_lst->lst() as $trp) {
+            $vrb_id = $trp->get_verb()?->id() ?? 0;
+            $seen = $per_verb_count[$vrb_id] ?? 0;
+            // keep one extra row beyond the limit so the renderer can show a "more" indicator
+            if ($seen <= $per_verb_limit) {
+                $kept->add($trp->phrase());
+                $per_verb_count[$vrb_id] = $seen + 1;
+            }
+        }
+        return $kept;
+    }
+
+    /**
+     * load a word by id and, in the same call, populate the related phrases and the related
+     * values that the default word view expects (the page-title renderer's City, Canton, ...
+     * inline list, the "is symbol for <X>" symbol line and the related values list). Used by the default-word-view path —
+     * test snapshot generation via test_base::assert_view and any other caller that wants
+     * the rendered HTML to reflect a word's connecting triples without going through the
+     * INCL_RELATED-gated api_json round-trip
+     *
+     * @param int $id the word id to load
+     * @return int the id of the loaded word, or 0 if not found
+     */
+    function load_by_id_with_related(int $id): int
+    {
+        $loaded_id = parent::load_by_id($id);
+        if ($loaded_id > 0) {
+            $this->load_phrases_related();
+            $this->load_values_related();
+        }
+        return $loaded_id;
     }
 
 
@@ -487,6 +737,10 @@ class word extends sandbox_code_id
                 $ref_lst[] = $ref->export_json([]);
             }
             $vars[json_fields::REFS] = $ref_lst;
+        }
+        // the impact is part of the im- and export so that it round-trips
+        if ($this->impact != null) {
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;
@@ -737,6 +991,9 @@ class word extends sandbox_code_id
     {
         $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr($this->phrase(), $size, $page);
+        // load the phrase names of each value group so that the related value list
+        // shows the phrase names (and not only the links) in the api and frontend
+        $val_lst->load_phrases();
         return $val_lst;
     }
 
@@ -880,7 +1137,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @returns bool true if the word has the type "measure" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -899,14 +1156,15 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     * @returns bool true if the word has one of the scaling types (e.g. "million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type_shared::SCALING)
-            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
-            $result = true;
+        foreach (phrase_type_shared::SCALING_TYPES as $scale_type) {
+            if ($this->is_type($scale_type)) {
+                $result = true;
+            }
         }
         return $result;
     }
@@ -1666,6 +1924,20 @@ class word extends sandbox_code_id
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
+            $change_typ = true;
+        } else {
+            $change_typ = false;
+        }
+        // TODO Prio 2 review
+        // do not overwrite a type with the default value
+        // because this is set also if not specified by the import
+        if ($this->type_id() == $sys->typ_lst->phr_typ->default_id() and $obj->type_id() !== null) {
+            // if not the user table
+            if (!$sc_par_lst->is_usr_tbl()) {
+                $change_typ = false;
+            }
+        }
+        if ($change_typ) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,

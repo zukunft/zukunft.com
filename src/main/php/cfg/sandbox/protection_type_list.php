@@ -5,6 +5,7 @@
     model/sandbox/protection_type_list.php - a database based enum list for the data protection types
     --------------------------------------
 
+    $ptc_typ is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

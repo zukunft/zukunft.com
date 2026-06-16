@@ -36,8 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -47,7 +49,6 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -59,15 +60,17 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -156,7 +159,7 @@ class test_cleanup extends test_api
                         $val->del($usr_msg, false);
                         $result .= $usr_msg->get_last_message();
                         $target = '';
-                        $this->assert('value->del test value for "' . words::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
+                        $this->assert('value->del test value for "' . word_names::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
                     }
                 }
             }
@@ -338,14 +341,14 @@ class test_cleanup extends test_api
             }
         }
 
-        $test_name = 'request to delete the added test reference "' . words::TEST_ADD . '" to "' . ref_types::WIKIDATA . '"';
-        $ref = $t_db->load_ref(words::TEST_ADD, ref_types::WIKIDATA);
+        $test_name = 'request to delete the added test reference "' . word_names::TEST_ADD . '" to "' . ref_types::WIKIDATA . '"';
+        $ref = $t_db->load_ref(word_names::TEST_ADD, ref_types::WIKIDATA);
         if ($ref->id() > 0) {
             $this->assert_true($test_name, $ref->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
 
         $test_name_loop = 'request to delete the added test formulas';
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
             $test_name = $test_name_loop . ' "' . $frm_name . '"';
             $frm = $t_db->load_formula($frm_name);
             if ($frm->id() > 0) {
@@ -361,7 +364,7 @@ class test_cleanup extends test_api
         }
 
         $test_name_loop = 'request to delete the added test phrases';
-        foreach (triples::TEST_TRIPLES as $phr_name) {
+        foreach (triple_names::TEST_TRIPLES as $phr_name) {
             $test_name = $test_name_loop . ' "' . $phr_name . '"';
             $phr = $t_db->load_phrase($phr_name);
             if ($phr->id() <> 0) {
@@ -370,39 +373,39 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $t_db->del_triple(words::YEAR_2019, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple(words::TEST_2021, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple(words::TEST_2022, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
-        $t_db->del_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
-        $t_db->del_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
-        $t_db->del_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
-        $t_db->del_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
-        $t_db->del_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
-        $t_db->del_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
-        $t_db->del_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
-        $t_db->del_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
+        $t_db->del_triple(word_names::YEAR_2019, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(word_names::YEAR_2020, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(word_names::TEST_2021, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(word_names::TEST_2022, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
+        $t_db->del_triple(word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
+        $t_db->del_triple(word_names::TEST_2022, verbs::FOLLOW, word_names::TEST_2021);
+        $t_db->del_triple(word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);
+        $t_db->del_triple(word_names::TEST_TAX_REPORT, verbs::PART_NAME, word_names::TEST_CASH_FLOW);
+        $t_db->del_triple(word_names::TEST_CASH, verbs::PART_NAME, word_names::TEST_ASSETS_CURRENT);
+        $t_db->del_triple(word_names::TEST_ASSETS_CURRENT, verbs::PART_NAME, word_names::TEST_ASSETS);
+        $t_db->del_triple(word_names::TEST_SECTOR, verbs::CAN_CONTAIN, word_names::TEST_ENERGY);
+        $t_db->del_triple(word_names::TEST_ENERGY, verbs::CAN_CONTAIN, word_names::TEST_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
-        $test_name = 'request to delete the added test word "' . words::TEST_ADD . '"';
-        $wrd = $t_db->load_word(words::TEST_ADD);
+        $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
+        $wrd = $t_db->load_word(word_names::TEST_ADD);
         if ($wrd->id() > 0) {
             $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
 
-        $test_name = 'request to delete the renamed test word  of "' . words::TEST_RENAMED . '"';
-        $wrd = $t_db->load_word(words::TEST_RENAMED);
+        $test_name = 'request to delete the renamed test word  of "' . word_names::TEST_RENAMED . '"';
+        $wrd = $t_db->load_word(word_names::TEST_RENAMED);
         if ($wrd->id() > 0) {
             $usr_msg->reset(true);
             $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
 
         $test_name_loop = 'request to delete the added test words';
-        foreach (words::TEST_WORDS as $wrd_name) {
+        foreach (word_names::TEST_WORDS as $wrd_name) {
             $test_name = $test_name_loop . ' "' . $wrd_name . '"';
-            if ($wrd_name != words::MATH) {
+            if ($wrd_name != word_names::MATH) {
                 $wrd = $t_db->load_word($wrd_name);
                 if ($wrd->id() > 0) {
                     $usr_msg->reset();
@@ -414,7 +417,7 @@ class test_cleanup extends test_api
                     $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
                 }
             } else {
-                log_info(' ... but keep the read only test word ' . words::MATH);
+                log_info(' ... but keep the read only test word ' . word_names::MATH);
             }
         }
 
@@ -535,8 +538,8 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triples::PI_NAME => triple::class,
-                formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
+                triple_names::PI_NAME => triple::class,
+                formula_names::SCALE_TO_SEC, formula_names::THIS_NAME, formula_names::PRIOR => formula::class,
                 verbs::NOT_SET, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
@@ -546,18 +549,18 @@ class test_cleanup extends test_api
             $trm->set_name($name);
 
             // set types of some special terms
-            if ($name == formulas::THIS_NAME) {
+            if ($name == formula_names::THIS_NAME) {
                 $trm->obj()->type_cl = formula_type::THIS;
-                $trm->set_obj_id(formulas::THIS_ID);
+                $trm->set_obj_id(formula_names::THIS_ID);
                 $wrd = new word($usr);
-                $wrd->set(words::THIS_ID, formula_type::THIS);
+                $wrd->set(word_names::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_wrd = $wrd;
             }
-            if ($name == formulas::PRIOR) {
+            if ($name == formula_names::PRIOR) {
                 $trm->obj()->type_cl = formula_type::PREV;
-                $trm->set_obj_id(formulas::PRIOR_ID);
+                $trm->set_obj_id(formula_names::PRIOR_ID);
                 $wrd = new word($usr);
-                $wrd->set(words::PRIOR_ID, formula_type::PREV);
+                $wrd->set(word_names::PRIOR_ID, formula_type::PREV);
                 $trm->obj()->name_wrd = $wrd;
             }
 
@@ -567,14 +570,14 @@ class test_cleanup extends test_api
         return $trm_lst;
     }
 
-    function html_page_test(string $body, string $title, string $filename): void
+    function html_page_test(string $body, string $title, string $filename): bool
     {
-        $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
+        return $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
     }
 
-    function html_view_test(string $body, string $filename): void
+    function html_view_test(string $body, string $filename): bool
     {
-        $this->html_test($body, 'view', test_paths::VIEWS . $filename);
+        return $this->html_test($body, 'view', test_paths::VIEWS . $filename);
     }
 
     /**
@@ -582,9 +585,9 @@ class test_cleanup extends test_api
      * @param string $body the generated html page body
      * @param string $title the page title name
      * @param string $file_path the file path starting from the resource path for the html resources
-     * @return void
+     * @return bool
      */
-    private function html_test(string $body, string $title, string $file_path): void
+    private function html_test(string $body, string $title, string $file_path): bool
     {
         $lib = new library();
 
@@ -594,14 +597,25 @@ class test_cleanup extends test_api
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $expected_html = $this->file(test_paths::HTML . $file_path . test_files::HTML);
-        $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        $resource_file = test_paths::HTML . $file_path . test_files::HTML;
+        $expected_html = $this->file($resource_file);
+        $token = test_const::DUMMY_SESSION_TOKEN;
+        $created_stable = $lib->fix_volatile_in_html($created_html, $token);
+        $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
+        $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $this->update_file($resource_file, $lib->format_html($created_stable));
+        }
+        return $result;
     }
 
     private function html_page(string $body, string $title): string
     {
         $html = new html_base();
-        return $html->header_test($title) . $body . $html->footer();
+        return $html->header($title)
+            . $html->navbar(views::START_ID)
+            . $html->main($body)
+            . $html->footer();
     }
 
 }

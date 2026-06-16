@@ -31,6 +31,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+
 class verbs
 {
 
@@ -138,6 +144,35 @@ class verbs
     const string SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
     const string SELECTOR_NAME = "is selector for";
     const int SELECTOR_ID = 28;
+    const string BETWEEN = "between"; // to define a range e.g. "12:00 to 13:00" can also be expressed as "12:00 between 13:00"
+    const string BETWEEN_NAME = "between";
+    const int BETWEEN_ID = 35;
+    const string BETWEEN_COM = "to define a range e.g. a value between a lower and an upper bound";
+    const string KIND_OF = "kind_of"; // to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula
+    const string KIND_OF_NAME = "kind of";
+    const int KIND_OF_ID = 36;
+    const string KIND_OF_COM = "to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula";
+    const string KIND_OF_PLURAL = "are kinds of";
+    const string KIND_OF_REVERSE = "has the kind";
+    const string KIND_OF_REV_PLURAL = "have the kinds";
+    const string NAME_OF = "name_of"; // to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras
+    const string NAME_OF_NAME = "name of";
+    const int NAME_OF_ID = 37;
+    const string NAME_OF_COM = "to assign a proper name to a category e.g. the Pythagorean theorem is named after Pythagoras";
+    const string NAME_OF_PLURAL = "are names of";
+    const string NAME_OF_REVERSE = "is named";
+    const string NAME_OF_REV_PLURAL = "are named";
+    const string BY_PARTS = "by_parts"; // to describe a method that operates on the parts of an expression e.g. integration by parts
+    const string BY_PARTS_NAME = "by parts";
+    const int BY_PARTS_ID = 38;
+    const string BY_PARTS_COM = "to describe a method that operates on the parts of an expression e.g. integration by parts";
+    const string BY_PARTS_PLURAL = "by parts";
+    const string BY_PARTS_REVERSE = "";
+    const string BY_PARTS_REV_PLURAL = "";
+    const string MUST_BE_ONE_OF = "must_be_one_of"; // to disambiguate a word with several meanings by pinning each meaning to its own qualifier triple e.g. "second (time unit)" and "second (ranking number)"
+    const string MUST_BE_ONE_OF_NAME = "must be one of";
+    const int MUST_BE_ONE_OF_ID = 39;
+    const string MUST_BE_ONE_OF_COM = "to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip";
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const string FOLLOWED_BY = "is followed by";
@@ -164,6 +199,22 @@ class verbs
     const string INFLUENCE = "influence";
     const string INFLUENCE_NAME = "influence";
     const int INFLUENCE_ID = 17;
+    const string USED_BY = "used_by"; // passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro
+    const string USED_BY_NAME = "is used by";
+    const int USED_BY_ID = 40;
+    const string USED_BY_COM = "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro";
+    const string CAN_BE_MADE_OF = "can_be_made_of"; // to specify possible materials or composition options e.g. a porringer can be made of plastic
+    const string CAN_BE_MADE_OF_NAME = "can be made of";
+    const int CAN_BE_MADE_OF_ID = 41;
+    const string CAN_BE_MADE_OF_COM = "to specify possible materials or composition options e.g. a porringer can be made of plastic";
+    const string CAN_BE_PACKED_IN = "can_be_packed_in"; // to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer
+    const string CAN_BE_PACKED_IN_NAME = "can be packed in";
+    const int CAN_BE_PACKED_IN_ID = 42;
+    const string CAN_BE_PACKED_IN_COM = "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer";
+    const string USED_FOR = "used_for"; // to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)
+    const string USED_FOR_NAME = "used for";
+    const int USED_FOR_ID = 43;
+    const string USED_FOR_COM = "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)";
 
     // persevered verb names for unit and integration tests based on the database
     const string TEST_ADD_NAME = "System Test Verb";
@@ -204,6 +255,69 @@ class verbs
     // list of verbs used by the back- or frontend for internal processes e.g. to sort objects
     const array SYSTEM_VERBS = array(
         self::RANK,
+    );
+
+    // ordered list of verbs to create the subtitle phrase category description;
+    // ordering goes from most specific naming/measuring relations to the broader
+    // taxonomy ones so the subtitle renderer prefers the tightest category label
+    // (e.g. a symbol-for or measure-type entry wins over a plain "is a" entry).
+    //
+    // each entry is a [code_id, direction] pair: the direction tells the load
+    // step which side the current phrase must be on for the connecting triple
+    // to count as a category. All category verbs run FROM the categorised phrase
+    // TO its category, so the direction is foaf_direction::DOWN throughout —
+    // when loading the category subtitle for CHF, the triple "CHF is symbol for
+    // Swiss Franc" matches because CHF is the FROM (i.e. looking DOWN at the
+    // TO), but when loading it for Swiss Franc the same triple does NOT match
+    // (Swiss Franc is the TO, so looking DOWN would yield nothing — CHF is just
+    // its symbol, not its category)
+    const array CATEGORY_VERBS = array(
+        [self::SYMBOL,         foaf_direction::DOWN], // "CHF is symbol for Swiss Franc"          — specific naming/representation
+        [self::MEASURE,        foaf_direction::DOWN], // "meter is measure type for length"       — specific measure category
+        [self::NAME_OF,        foaf_direction::DOWN], // "Newton is name of law"                  — specific naming of a category
+        [self::IS,             foaf_direction::DOWN], // "Zurich is a Canton"                     — main child-to-parent relation
+        [self::KIND_OF,        foaf_direction::DOWN], // "quadratic formula is a kind of formula" — sub-kind of a parent category
+        [self::MUST_BE_ONE_OF, foaf_direction::DOWN], // "second must be one of time unit"        — disambiguation as category pin
+        [self::PART,           foaf_direction::DOWN], // "Zurich is part of Switzerland"          — structural membership
+        [self::CAN_BE_PART_OF, foaf_direction::DOWN], // "income tax can be part of cash flow"    — potential structural membership
+    );
+
+    // ordered list of verbs that defines the behavior of a phrase;
+    // ordering starts with the strongest (definite) "has / uses" relations and
+    // moves toward potential/conditional capabilities so behavior renderers can
+    // surface the most concrete property the phrase carries first.
+    //
+    // each entry is a [code_id, direction] pair (same shape as CATEGORY_VERBS):
+    // every property verb runs FROM the owner/actor TO the property/effect, so the
+    // direction is foaf_direction::DOWN throughout — "Zurich has a population" is
+    // a property of Zurich, not of population; "global warming can cause flooding"
+    // is a property of global warming, not of flooding
+    const array PROPERTY_VERBS = array(
+        [self::HAS,         foaf_direction::DOWN], // "Zurich has a population"                       — definite possession
+        [self::CAN_USE,     foaf_direction::DOWN], // "Zurich can use the Swiss Franc"                — definite capability
+        [self::CAN_HAVE,    foaf_direction::DOWN], // "a city can have inhabitants"                   — potential possession
+        [self::CAN_GET,     foaf_direction::DOWN], // "a stock can get a price"                       — potential acquisition
+        [self::CAN_CAUSE,   foaf_direction::DOWN], // "global warming can cause flooding"             — potential effect
+        [self::CAN_CONTAIN, foaf_direction::DOWN], // "year can be used as a differentiator for population" — potential differentiator
+        [self::CAN_BE,      foaf_direction::DOWN], // "a city can be a canton"                        — potential state (Zurich is both)
+        [self::CAN,         foaf_direction::DOWN], // "a stock can rise"                              — general capability
+        [self::INFLUENCE,   foaf_direction::DOWN], // "interest rate influence stock prices"          — affects without ownership
+    );
+
+    // ordered list of verbs that defines the synonymy of a phrase; aliases come
+    // before acronyms because an alias is an explicit equivalence whereas an
+    // acronym is the narrower abbreviation form of one.
+    //
+    // each entry is a [code_id, direction] pair (same shape as CATEGORY_VERBS):
+    // - ALIAS is symmetric — "m/s is alias of meter per second" reads naturally
+    //   in both directions, so the subtitle should render whichever side the user
+    //   is viewing → foaf_direction::BOTH
+    // - ACRONYM is one-way — the short form IS an acronym for the long form, but
+    //   the long form is NOT an acronym for anything, so the subtitle only renders
+    //   when the user views the acronym (FROM side) → foaf_direction::DOWN
+    const array SYNONYM_VERBS = array(
+        [self::ALIAS,   foaf_direction::BOTH], // "m/s is alias of meter per second"                — explicit equivalence (symmetric)
+        [self::ACRONYM, foaf_direction::DOWN], // "CHF is an acronym for Confoederatio Helvetica Franc" — abbreviated form of a name (asymmetric)
     );
 
 }

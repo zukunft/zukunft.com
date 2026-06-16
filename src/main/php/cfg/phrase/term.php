@@ -5,6 +5,8 @@
     model/phrase/term.php - either a word, verb, triple or formula
     -------------------
 
+    $trm is the suggested var name
+
     TODO: load formula word
         check triple
 
@@ -141,7 +143,8 @@ class term extends combine_named
     const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION,
         formula_db::FLD_FORMULA_TEXT,
-        formula_db::FLD_FORMULA_USER_TEXT
+        formula_db::FLD_FORMULA_USER_TEXT,
+        formula_db::FLD_LATEX
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
@@ -188,7 +191,8 @@ class term extends combine_named
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_USER_TEXT],
+            ['', formula_db::FLD_LATEX]
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
@@ -202,7 +206,8 @@ class term extends combine_named
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_USER_TEXT],
+            ['', formula_db::FLD_LATEX]
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
@@ -216,7 +221,8 @@ class term extends combine_named
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             [formula_db::FLD_FORMULA_TEXT],
-            [formula_db::FLD_FORMULA_USER_TEXT]
+            [formula_db::FLD_FORMULA_USER_TEXT],
+            [formula_db::FLD_LATEX]
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
@@ -230,7 +236,8 @@ class term extends combine_named
             [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
             [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
             ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_USER_TEXT],
+            ['', formula_db::FLD_LATEX]
         ], ['', verb_db::FLD_ID]]
     ];
 

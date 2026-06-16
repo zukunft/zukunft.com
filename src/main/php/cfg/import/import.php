@@ -5,6 +5,8 @@
     model/import/import.php - import data - take a object from a json, yaml or XML message and trigger the object saves
     -----------------------
 
+    $imp is the suggested var name
+
     if the user is an admin the import can force to set the standard
 
     TODO
@@ -107,6 +109,11 @@ class import
 
     // import assumption
     const int IMPORT_VALIDATE_PCT_TIME = 10;
+
+    // the maximal processing time of one import in seconds
+    // longer than the default page request limit because a large import
+    // needs more cpu time but a hanging import should still be stopped
+    const int MAX_IMPORT_TIME_SEC = 3600;
 
     // the user who wants to import data
     public ?user $usr = null;
@@ -392,6 +399,10 @@ class import
     {
         global $cfg;
 
+        // allow a long but limited processing time
+        // because a large import needs more cpu time than a single page request
+        set_time_limit(self::MAX_IMPORT_TIME_SEC);
+
         // get the relevant config values
         $decode_per_sec = $cfg->get_by([
             words::DECODE,
@@ -472,8 +483,6 @@ class import
         ?data_object $dto = null
     ): bool
     {
-        global $usr;
-
         log_debug();
         $lib = new library();
         $this->last_display_time = microtime(true);
@@ -503,7 +512,8 @@ class import
         }
         // if no user is defined in the json to import use the active user
         if ($usr_import == null) {
-            $usr_import = $usr;
+            global $sys;
+            $usr_import = $sys->usr_req;
         }
 
         // remember the usr_msg and view that should be validated after the import
@@ -790,6 +800,7 @@ class import
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
+        $res_per_sec = $cfg->get_by([words::RESULTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $msk_per_sec = $cfg->get_by([words::VIEWS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $usr_per_sec = $cfg->get_by([words::USERS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -843,27 +854,38 @@ class import
                 $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
             if (key_exists(json_fields::REFERENCES, $json_array)) {
-                $ref_array = $json_array[json_fields::SOURCES];
+                $ref_array = $json_array[json_fields::REFERENCES];
                 $this->step_start(msg_id::COUNT, ref::class, count($ref_array), $step_time);
                 $usr_msg->merge($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
-            // TODO add json_fields::PHRASE_VALUES
+            // TODO Prio 0 add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
                 $usr_msg->merge($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
                 $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
-            // TODO add json_fields::VALUE_LIST
+            // TODO Prio 0 add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
                 $usr_msg->merge($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
                 $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
-            // TODO add json_fields::RESULTS
-            // TODO add json_fields::CALC_VALIDATION
+            if (key_exists(json_fields::RESULTS, $json_array)) {
+                $res_array = $json_array[json_fields::RESULTS];
+                $this->step_start(msg_id::COUNT, result::class, count($res_array), $step_time);
+                $usr_msg->merge($this->dto_get_results($res_array, $dto, $usr_msg, false, $res_per_sec));
+                $this->step_end($dto->result_list()->count(), $res_per_sec);
+            }
+            if (key_exists(json_fields::CALC_VALIDATION, $json_array)) {
+                $res_array = $json_array[json_fields::CALC_VALIDATION];
+                $this->step_start(msg_id::COUNT, result::class, count($res_array), $step_time);
+                $usr_msg->merge($this->dto_get_results($res_array, $dto, $usr_msg, true, $res_per_sec));
+                $this->step_end($dto->result_list()->count(), $res_per_sec);
+            }
+            // TODO Prio 0 add json_fields::CALC_VALIDATION
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
@@ -878,6 +900,15 @@ class import
             }
             // TODO add json_fields::VIEW_VALIDATION
         }
+
+        // check that the pre-calculated results can be reproduced
+        // based on the values and formulas of the import file
+        if (!$dto->result_check_list()->is_empty()) {
+            $failed = $dto->validate_results($usr_msg);
+            $this->calc_validations_failed += $failed;
+            $this->calc_validations_done += $dto->result_check_list()->count() - $failed;
+        }
+
         return $dto;
     }
 
@@ -1265,6 +1296,37 @@ class import
     }
 
     /**
+     * add the pre-calculated results from the json array to the data object
+     * @param array $json_array the result part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of results that can be analysed per second
+     * @param bool $use_to_check true if the results should be used to validate the import
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_results(
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        bool         $use_to_check = false,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $res_json) {
+            $res = new result($this->usr);
+            if ($res->import_mapper($res_json, $usr_msg, $dto)) {
+                $dto->add_result($res);
+                if ($use_to_check) {
+                    $dto->add_calc_validation($res);
+                }
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $res->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
      * add the views from the json array to the data object
      * @param array $json_array the view part of the import json
      * @param data_object $dto the data object that should be filled
@@ -1306,11 +1368,19 @@ class import
     ): user_message
     {
         $i = 0;
+        $names = [];
         foreach ($json_array as $cmp_json) {
             $cmp = new component($this->usr);
             if ($cmp->import_mapper($cmp_json, $usr_msg, $dto)) {
-                $dto->add_component($cmp);
-                $i++;
+                // a component name is the key used by the views, so it must be unique within one import
+                $name = $cmp->name();
+                if (in_array($name, $names)) {
+                    $usr_msg->add(msg_id::COMPONENT_DEFINED_TWICE, [msg_id::VAR_COMPONENT_NAME => $name]);
+                } else {
+                    $names[] = $name;
+                    $dto->add_component($cmp);
+                    $i++;
+                }
             }
             $this->display_progress($i, $per_sec, $cmp->dsp_id());
         }
@@ -1550,7 +1620,7 @@ class import
                 if ($to == null) {
                     $to = $wrd;
                 } else {
-                    log_err($key . ' is unexpect number of words for a triple (max 2 words are expected');
+                    log_err('"' . $key . '" is unexpect number of words for a triple (max 2 words are expected');
                 }
             }
         }

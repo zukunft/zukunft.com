@@ -5,6 +5,8 @@
     model/user/user.php - a person who uses zukunft.com
     -------------------
 
+    $usr is the suggested var name
+
     TODO make sure that no right gain is possible
     TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
     TODO log the access attempts to objects with a restricted access
@@ -165,10 +167,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTimeInterface;
 use DateTime;
 use Exception;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Random\RandomException;
 
 class user extends db_id_object_non_sandbox
 {
@@ -191,6 +194,14 @@ class user extends db_id_object_non_sandbox
     const string KEY_NAME = user_db::FLD_NAME;
     const string KEY_EMAIL = user_db::FLD_EMAIL;
 
+    // field length limits matching the db column type sql_field_type::NAME (VARCHAR 255)
+    const int NAME_MAX_LEN = 255;
+    const int EMAIL_MAX_LEN = 255;
+
+    // password policy limits; bcrypt silently truncates at 72 bytes
+    const int PW_MIN_LEN = 8;
+    const int PW_MAX_LEN = 72;
+
 
     /*
      * object vars
@@ -204,7 +215,7 @@ class user extends db_id_object_non_sandbox
 
     // log in and sighup
     // TODO Prio 0 check that all user vars are save and are included in the api message
-    public ?string $password = null;       // only used for the login and password change process
+    private ?string $password = null;      // only used for the login and password change process
     public ?string $activation_key = null; // var used for the registration and logon process
     public ?DateTime $activation_timeout = null;
     public ?DateTime $db_now = null;       // timestamp of the database server to have a reference with time zone e.g. for the activation timeout
@@ -522,8 +533,11 @@ class user extends db_id_object_non_sandbox
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            // only system and admin users are allowed to change the code od
-            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+            // only system and admin users are allowed to change the code id
+            if ($msg->usr === null) {
+                log_err('user not set in user_message', 'import_mapper');
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
@@ -743,6 +757,77 @@ class user extends db_id_object_non_sandbox
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
+    }
+
+    /**
+     * check the password and if it is fine prepare the hash for db save
+     * @param string $pw_txt the raw password text as written by the user
+     * @param user_message $msg enriched with the error message if there is an issue with the password
+     * @return void
+     */
+    function set_password(string $pw_txt, user_message $msg): void
+    {
+        $len = strlen($pw_txt);
+        if ($len < self::PW_MIN_LEN) {
+            $msg->add(msg_id::PASSWORD_TOO_SHORT, [msg_id::VAR_VALUE => self::PW_MIN_LEN]);
+            return;
+        }
+        if ($len > self::PW_MAX_LEN) {
+            $msg->add(msg_id::PASSWORD_TOO_LONG, [msg_id::VAR_VALUE => self::PW_MAX_LEN]);
+            return;
+        }
+        $this->password = password_hash($pw_txt, PASSWORD_BCRYPT);
+    }
+
+    /**
+     * set the password has directly
+     * should only be called for internal system testing
+     *
+     * @param string $pw_hash the password already hashed
+     * @return void
+     */
+    function set_password_hash(string $pw_hash): void
+    {
+        $this->password = $pw_hash;
+    }
+
+    function get_password(): ?string
+    {
+        return $this->password;
+    }
+
+    /**
+     * verify credentials, set up the session on success
+     *
+     * @param string $usr_name username or email as typed by the user
+     * @param string $pw raw password as typed by the user
+     * @param user_message $msg populated with PASSWORD_WRONG or USER_NAME_NOT_FOUND on failure
+     * @return bool true if login succeeded and session has been initialised
+     */
+    function login(string $usr_name, string $pw, user_message $msg): bool
+    {
+        $this->load_by_name($usr_name);
+        if (!$this->has_db_id()) {
+            $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
+        }
+        if (!password_verify($pw, $this->get_password())) {
+            $msg->add(msg_id::PASSWORD_WRONG, []);
+        }
+        if ($msg->is_ok()) {
+            session_start();
+            session_regenerate_id(true);
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
+            }
+            $_SESSION[url_var::SESSION_USER_ID] = $this->id();
+            $_SESSION[url_var::USERNAME_HUMAN] = $this->name();
+            $_SESSION[url_var::SESSION_LOGGED] = true;
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -1245,15 +1330,14 @@ class user extends db_id_object_non_sandbox
     {
         global $sys;
         global $db_con;
-        global $sys;
-        global $sys_msk_cac;
 
         $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $sys->usr_req = $this;
         $sys->typ_lst->vrb = new verb_list($this);
         $sys->typ_lst->vrb->load($db_con);
 
-        $sys_msk_cac = new view_sys_list($this);
-        $sys_msk_cac->load($db_con);
+        $sys->msk_cac = new view_sys_list($this);
+        $sys->msk_cac->load($db_con);
 
         $sys->times->switch(system_time_type::DEFAULT);
     }
@@ -1288,22 +1372,24 @@ class user extends db_id_object_non_sandbox
         $test_result = $ip_lst->includes($ip_addr);
         if (!$test_result->is_ok()) {
             $this->id = 0; // switch off the permission
+            log_info('ip_check rejects due to ' . $test_result->text());
         }
         return $test_result->all_message_text();
     }
 
     /**
+     * set the ip of the
      * @return string the ip address of the active user
      */
-    private function get_ip(): string
+    private function get_ip(): void
     {
         if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
             $this->ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
         }
+        // TODO Prio 1 switch this off!!
         if ($this->ip_addr == null) {
             $this->ip_addr = users::SYSTEM_ADMIN_IP;
         }
-        return $this->ip_addr;
     }
 
     /**
@@ -1313,15 +1399,21 @@ class user extends db_id_object_non_sandbox
     function get(): string
     {
         global $debug;
+        global $sys;
 
         $result = ''; // for the result message e.g. if the user is blocked
         $usr_msg = new user_message();
+
+        // remember this as the user requesting the current action so backend writes
+        // (e.g. the auto-created ip user via save_user) have a requesting user available;
+        // the web flow also sets this in load_usr_data, but the api flow only calls get()
+        $sys->usr_req = $this;
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug(' (' . $this->ip_addr . ')', $debug - 1);
+            log_debug('by given ip addr ' . $this->ip_addr, $debug - 1);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
@@ -1329,33 +1421,38 @@ class user extends db_id_object_non_sandbox
         if ($result == '') {
             // if the user has logged in use the logged in account
             if (isset($_SESSION[url_var::SESSION_LOGGED])) {
+                log_debug('use session');
                 if ($_SESSION[url_var::SESSION_LOGGED]) {
                     $this->load_by_id($_SESSION[url_var::SESSION_USER_ID]);
-                    log_debug('use (' . $this->id . ')');
+                    log_debug('use session id ' . $this->id);
                 }
             } else {
-                // else use the IP address (for testing don't overwrite any testing ip)
-                $this->load_by_ip($this->get_ip());
-                if ($this->id <= 0) {
-                    // use the ip address as the username and add the user
-                    $this->name = $this->get_ip();
-
-                    // allow to fill the database only if a local user has logged in
-                    if ($this->name == users::SYSTEM_ADMIN_IP) {
-
-                        // create the main system user upfront direct from the code
-                        // but only if needed and allowed which is only the case directly after the database structure creation
-                        // TODO switch this fallback off because it should anyway never be called
-                        $this->create_system_user($usr_msg);
-
-                    } else {
-                        $this->save_user($usr_msg);
-                    }
-                    $result = $usr_msg->get_last_message();
-                }
+                log_info('ip check result is ' . $result);
             }
         }
-        log_debug(' "' . $this->name . '" (' . $this->id . ')');
+        if ($this->id <= 0 and $result == '') {
+            // else use the IP address (for testing don't overwrite any testing ip)
+            log_debug('load by ip addr ' . $this->ip_addr);
+            $this->load_by_ip($this->ip_addr);
+            if ($this->id <= 0) {
+                // use the ip address as the username and add the user
+                $this->name = $this->ip_addr;
+
+                // allow to fill the database only if a local user has logged in
+                if ($this->name == users::SYSTEM_ADMIN_IP) {
+
+                    // create the main system user upfront direct from the code
+                    // but only if needed and allowed which is only the case directly after the database structure creation
+                    // TODO switch this fallback off because it should anyway never be called
+                    $this->create_system_user($usr_msg);
+
+                } else {
+                    $this->save_user($usr_msg);
+                }
+                $result = $usr_msg->get_last_message();
+            }
+        }
+        log_debug(' done with "' . $this->name . '" (' . $this->id . ')');
         return $result;
     }
 
@@ -1481,6 +1578,7 @@ class user extends db_id_object_non_sandbox
 
     /**
      * true if the login user is in general allowed to insert anything in this user
+     * TODO Prio 2 review and add mor profiles
      *
      * @param user $usr_req the user who has request the user adding
      * @return bool true if the logged-in user is the user itself or an admin
@@ -1497,6 +1595,9 @@ class user extends db_id_object_non_sandbox
         } elseif ($usr_req->is_normal()) {
             $can_add = true;
             log_info('user ' . $this->dsp_id() . ' is added by user ' . $usr_req->dsp_id());
+        } elseif ($this->is_normal()) {
+            $can_add = true;
+            log_info('normal user ' . $this->dsp_id() . ' is added by user ' . $usr_req->dsp_id());
         } else {
             log_warning('privileged user ' . $usr_req->dsp_id() . ' has requested to added by non admin user ' . $this->dsp_id() . ' without permission');
         }
@@ -1515,15 +1616,20 @@ class user extends db_id_object_non_sandbox
     {
         $can_change = false;
 
-        // if the user who wants to change it, is the owner, he can do it
-        // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($this->id == $usr_msg->usr->id) {
-            $can_change = true;
-        } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
-            $can_change = true;
-            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+        if ($usr_msg->usr === null) {
+            log_err('user not set in user_message', 'can_be_changed_by');
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            // if the user who wants to change it, is the owner, he can do it
+            // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
+            if ($this->id == $usr_msg->usr->id) {
+                $can_change = true;
+            } elseif ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                $can_change = true;
+                log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_msg->usr->dsp_id());
+            } else {
+                log_warning('user ' . $usr_msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            }
         }
 
         return $can_change;
@@ -1696,7 +1802,7 @@ class user extends db_id_object_non_sandbox
     ): bool
     {
         global $sys;
-        global $usr;
+        $usr = $sys?->usr_req;
 
         if ($usr_req == null) {
             $usr_req = $usr;
@@ -2130,6 +2236,20 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * @returns bool true if the user has admin rights and is local e.g. the development testing user
+     */
+    function is_admin_local(): bool
+    {
+        $result = false;
+        if ($this->is_admin()) {
+            if ($this->ip_addr == 'localhost') {
+                $result = true;
+            }
+            return $result;
+        }
+    }
+
+    /**
      * @returns bool true if the user is a system user e.g. the reserved word names can be used
      */
     function is_system(): bool
@@ -2225,12 +2345,6 @@ class user extends db_id_object_non_sandbox
         // TODO Prio 1 use a const
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
-    }
-
-    // create the HTML code to display the username with the HTML link
-    function display(): string
-    {
-        return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';
     }
 
     // remember the last source that the user has used
@@ -2385,10 +2499,12 @@ class user extends db_id_object_non_sandbox
         // use the already open database connection of the already started process
         global $db_con;
         // get the user that is logged in and is requesting the changes
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
 
         if ($usr_req == null) {
-            $usr_req = $usr;
+            // fall back to the user being saved when no requesting user is set on $sys
+            $usr_req = clone($usr ?? $this);
         }
 
         // configure the global database connection object for the select, insert, update and delete queries
@@ -2578,8 +2694,10 @@ class user extends db_id_object_non_sandbox
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
             $msg_txt = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg_txt, $msg)) {
-                $this->id = $msg->get_row_id();
+            if ($db_con->is_open()) {
+                if ($db_con->insert($qp, $msg_txt, $msg)) {
+                    $this->id = $msg->get_row_id();
+                }
             }
         } else {
             log_debug('no permission to add user ' . $this->dsp_id());
@@ -2606,7 +2724,8 @@ class user extends db_id_object_non_sandbox
      * @param user $usr_req the user who has request the user adding or update
      * @return user_message with the description of any problems for the user and the suggested solution
      */
-    private function db_update_user(sql_db $db_con, user $db_usr, user $usr_req): user_message
+    private
+    function db_update_user(sql_db $db_con, user $db_usr, user $usr_req): user_message
     {
         log_debug($this->dsp_id());
 
@@ -3456,8 +3575,8 @@ class user extends db_id_object_non_sandbox
                             . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
                     } else {
                         if ($usr_req == null) {
-                            global $usr;
-                            $usr_req = $usr;
+                            global $sys;
+                            $usr_req = $sys?->usr_req;
                         }
                         // TODO check if there are related log entries and if yes exclude it instead of delete
                         $msg->merge(parent::del_exe($usr_req));
@@ -3494,6 +3613,55 @@ class user extends db_id_object_non_sandbox
             $fld_name = user_db::FLD_IP_ADDR;
         }
         return $fld_name;
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can be added to the database
+     * e.g. reject if a reserved name is used or the username is missing
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected
+    function check(user_message $msg): bool
+    {
+        // the username must be set
+        if ($this->name == '' or $this->name == null) {
+            $msg->add_err(msg_id::USERNAME_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        // the username must fit the db column
+        if (strlen($this->name ?? '') > self::NAME_MAX_LEN) {
+            $msg->add_err(msg_id::USERNAME_TOO_LONG, [
+                msg_id::VAR_VALUE => self::NAME_MAX_LEN
+            ]);
+        }
+        // email is required for regular users (system users may have none)
+        if (!$this->is_system() and ($this->email == '' or $this->email == null)) {
+            $msg->add_err(msg_id::EMAIL_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
+        }
+        // if an email is given it must have a valid format and fit the db column
+        if ($this->email != '' and $this->email != null) {
+            if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+                $msg->add_err(msg_id::EMAIL_INVALID, [
+                    msg_id::VAR_VALUE => $this->email
+                ]);
+            }
+            if (strlen($this->email) > self::EMAIL_MAX_LEN) {
+                $msg->add_err(msg_id::EMAIL_TOO_LONG, [
+                    msg_id::VAR_VALUE => self::EMAIL_MAX_LEN
+                ]);
+            }
+        }
+        return $msg->is_ok();
     }
 
 

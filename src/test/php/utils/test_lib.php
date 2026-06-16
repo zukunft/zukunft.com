@@ -43,6 +43,7 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -183,12 +185,12 @@ class test_lib
      */
     function ui_test_cache(user $usr, test_cleanup $t): data_object_ui
     {
-        global $ui_cac;
+        global $ui_sys;
 
         $dto_ui = new data_object_ui();
         $dto_ui->usr = $this->cast_user($usr);
-        $dto_base_dsp = new data_object_ui();
-        $dto_base_dsp->usr = $this->cast_user($usr);
+        $dto_base_ui = new data_object_ui();
+        $dto_base_ui->usr = $this->cast_user($usr);
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
@@ -213,12 +215,12 @@ class test_lib
         $json_array = json_decode($json_str, true);
         $usr_msg = new backend_user_message($usr);
         $dto_base = $imp->get_data_object($json_array, $usr_msg, $size);
-        $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
+        $dto_base_ui->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id
-        $dto_base_dsp->add_id_to_views();
+        $dto_base_ui->add_id_to_views();
         // add the components to the views
-        //$dto_base_dsp->add_components_to_views();
-        $dto_ui->merge_view_list($dto_base_dsp->view_list());
+        //$dto_base_ui->add_components_to_views();
+        $dto_ui->merge_view_list($dto_base_ui->view_list());
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);
@@ -238,9 +240,11 @@ class test_lib
         $dto_ui->frm_lst = $t_frm->formula_list_ui();
         $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto_ui->chg_log = $t_log->log_list_named_ui();
+        // an empty config so that the getters return the shared defaults
+        $dto_ui->cfg = new config_ui();
 
         // set the global cache var
-        $ui_cac = $dto_ui;
+        $ui_sys = $dto_ui;
 
         return $dto_ui;
     }

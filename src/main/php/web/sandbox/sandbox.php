@@ -41,7 +41,8 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::USER . 'user.php';
+//include_once html_paths::USER . 'user.php';
+//include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 
 class sandbox extends db_object
 {
@@ -238,13 +240,13 @@ class sandbox extends db_object
      */
     public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $usr;
+        global $ui_sys;
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
-            $used_share_id = $typ_lst->html_share_types->default_id();
+            $used_share_id = $typ_lst->shr_typ->default_id();
         }
-        if ($usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_share_types->selector($form, $used_share_id);
+        if ($ui_sys->usr === $this->owner or $this->owner == null) {
+            return $typ_lst->shr_typ->selector($form, $used_share_id);
         } else {
             return '';
         }
@@ -257,15 +259,49 @@ class sandbox extends db_object
      */
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $usr;
+        global $ui_sys;
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
-            $used_protection_id = $typ_lst->html_protection_types->default_id();
+            $used_protection_id = $typ_lst->ptc_typ->default_id();
         }
-        if ($usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_protection_types->selector($form, $used_protection_id);
+        if ($ui_sys->usr === $this->owner or $this->owner == null) {
+            return $typ_lst->ptc_typ->selector($form, $used_protection_id);
         } else {
             return '';
+        }
+    }
+
+    /**
+     * @param string $form the name of the html form
+     * @param string $pattern the pattern used to filter the components by the name
+     * @param int $id the id of the component selected until now
+     * @param component_list $cmp_lst with the suggested components
+     * @return string the html code to select a component
+     */
+    public function component_selector(
+        string         $form,
+        string         $pattern,
+        int            $id,
+        component_list $cmp_lst
+    ): string
+    {
+        if ($pattern != '') {
+            $cmp_lst->load_like($pattern);
+        }
+        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT);
+    }
+
+    /**
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component link type
+     */
+    public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        if ($typ_lst->cmp_lnk_typ != null) {
+            return $typ_lst->cmp_lnk_typ->selector($form);
+        } else {
+            return 'no component types yet defined';
         }
     }
 

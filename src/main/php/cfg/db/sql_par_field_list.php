@@ -174,15 +174,16 @@ class sql_par_field_list
 
     /**
      * add a field based on the single parameters to the list
+     * TODO Prio 2 review all user links to include the name and the id
      *
      * @param string $name the field name in the change table, so view_id not view or view_name
      * @param string|int|float|DateTime|null $value the value that has been changed from the user point of view, so the view name not the view id
      * @param sql_par_type|sql_field_type|null $type the type of the user value e.g. name for the view name
      * @param string|int|float|DateTime|null $old the value before the user change from the user point of view, so the view name not the view id
-     * @param string $par_name
-     * @param string|int|null $id
-     * @param string|int|null $old_id
-     * @param sql_par_type|sql_field_type|null $type_id
+     * @param string $par_name used for table references like the link to the user table: the field name from the user point of view e.g. user_name
+     * @param string|int|null $id used for table references: the id that actually changes e.g. the user_id
+     * @param string|int|null $old_id used for table references: the id that actually changes e.g. the user_id before the change
+     * @param sql_par_type|sql_field_type|null $type_id used for table references: the type of the id so either bigint or smallint
      * @return void
      */
     function add_field(

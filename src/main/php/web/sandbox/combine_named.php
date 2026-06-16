@@ -124,7 +124,7 @@ class combine_named extends combine_object
      */
     function get_plural(): ?string
     {
-        return $this->obj()->get_plural();
+        return $this->obj()->plural;
     }
 
     /**

@@ -5,6 +5,8 @@
     model/component/component.php - a single display object like a headline or a table
     ---------------------------
 
+    $cmp is the suggested var name
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this component object
@@ -1405,10 +1407,10 @@ class component extends sandbox_code_id
      */
     function unlink(view $msk, user_message $usr_msg): bool
     {
-        $dsp_lnk = new component_link($this->get_user());
-        $dsp_lnk->load_by_link($msk, $this);
-        $dsp_lnk->reload_objects($usr_msg);
-        return $dsp_lnk->del($usr_msg);
+        $cmp_lnk_ui = new component_link($this->get_user());
+        $cmp_lnk_ui->load_by_link($msk, $this);
+        $cmp_lnk_ui->reload_objects($usr_msg);
+        return $cmp_lnk_ui->del($usr_msg);
     }
 
 

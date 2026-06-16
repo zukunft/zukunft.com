@@ -5,6 +5,7 @@
     model/system/pod.php - the technical details of the mash network pods
     ------------------
 
+    $pod is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

@@ -1,0 +1,2279 @@
+{
+  "version": "0.0.3",
+  "time": "2026-05-22 09:00:00",
+  "user": "timon",
+  "selection": [
+    "psychology"
+  ],
+  "description": "Main psychological definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "psychology",
+      "description": "study of mental functions and behaviours",
+      "refs": [
+        {
+          "name": "Psychology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9418",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "behaviorism",
+      "description": "approach to psychology",
+      "refs": [
+        {
+          "name": "Behaviorism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q168338",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neuropsychology",
+      "description": "study of the brain related to specific psychological processes and behaviors",
+      "refs": [
+        {
+          "name": "Neuropsychology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3872",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "psychometrics",
+      "description": "study of the theory and technique of psychological measurement",
+      "refs": [
+        {
+          "name": "Psychometrics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q506132",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "psychophysics",
+      "description": "scientific study of perceptual systems",
+      "refs": [
+        {
+          "name": "Psychophysics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q500096",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cognition",
+      "description": "mental action or process of acquiring knowledge and understanding through thought, experience, and the senses",
+      "refs": [
+        {
+          "name": "Cognition",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2200417",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "memory",
+      "description": "mental faculties and processes involved in storing and retrieving information",
+      "refs": [
+        {
+          "name": "Memory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q492",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "perception",
+      "description": "organization, identification, and interpretation of sensory information in order to represent and understand the environment in the brain",
+      "refs": [
+        {
+          "name": "Perception",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160402",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "attention",
+      "description": "behavioral and cognitive process of selectively concentrating on a discrete aspect of information, whether deemed subjective or objective, while ignoring other perceivable information",
+      "refs": [
+        {
+          "name": "Attention",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6501338",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reasoning",
+      "description": "the capacity of consciously making sense of things, applying logic, and adapting or justifying practices, institutions, and beliefs based on new or existing information",
+      "refs": [
+        {
+          "name": "Reason",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q178354",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "thought",
+      "description": "mental activity involving an individual's subjective consciousness",
+      "refs": [
+        {
+          "name": "Thought",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9420",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "consciousness",
+      "description": "knowledge that a being has of its external and internal existence and its environment",
+      "refs": [
+        {
+          "name": "Consciousness",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7087",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "creativity",
+      "description": "cognitive process whereby something new and somehow valuable is formed",
+      "refs": [
+        {
+          "name": "Creativity",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170658",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "encoding",
+      "description": "memory process",
+      "refs": [
+        {
+          "name": "Encoding (memory)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18653",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "recall",
+      "description": "retrieval of events or information from the past",
+      "refs": [
+        {
+          "name": "Recall (memory)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18733",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "recognition",
+      "description": "subcategory of declarative memory, referring to the ability to recognize previously encountered events, objects, or people",
+      "refs": [
+        {
+          "name": "Recognition memory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7302606",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "forgetting",
+      "description": "loss or failure to recall information stored in human memory",
+      "refs": [
+        {
+          "name": "Forgetting",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1377840",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "heuristic",
+      "description": "simple strategies, rules or mental processes involved in making quick judgments or decisions",
+      "refs": [
+        {
+          "name": "Heuristic (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5748260",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "behavior",
+      "description": "range of actions by entities, living or not, within a system",
+      "refs": [
+        {
+          "name": "Behavior",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9332",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "learning",
+      "description": "process of acquiring new knowledge",
+      "refs": [
+        {
+          "name": "Learning",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q133500",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reinforcement",
+      "description": "consequence that will strengthen an organism's future behavior whenever that behavior is preceded by a specific antecedent stimulus",
+      "refs": [
+        {
+          "name": "Reinforcement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1321905",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "punishment",
+      "description": "facet of operant conditioning; change in a human or animal's surroundings that occurs after a given behavior or response which reduces the likelihood of that behavior occurring again in the future",
+      "refs": [
+        {
+          "name": "Punishment (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3544090",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "habituation",
+      "description": "decrease in a behavioral response to a repeated stimulus",
+      "refs": [
+        {
+          "name": "Habituation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1136816",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "extinction",
+      "description": "fading of non-reinforced conditioned response over time",
+      "refs": [
+        {
+          "name": "Extinction (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1385098",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stimulus",
+      "description": "in psychology, an object or event that elicits a sensory or behavioral response in an organism",
+      "refs": [
+        {
+          "name": "Stimulus (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3771842",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "temperament",
+      "description": "term used to indicate the mixture of the innate aspects of the personality",
+      "refs": [
+        {
+          "name": "Temperament",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q80157",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "attitude",
+      "description": "psychological construct, a mental and emotional entity that inheres in, or characterizes a person",
+      "refs": [
+        {
+          "name": "Attitude (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q622645",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "obedience",
+      "description": "yielding to instructions from an authority figure",
+      "refs": [
+        {
+          "name": "Obedience (human behavior)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1456974",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "persuasion",
+      "description": "mode of social communication that aims to influence someone else's beliefs, attitudes, or intentions",
+      "refs": [
+        {
+          "name": "Persuasion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1231428",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "attribution",
+      "description": "process by which individuals explain the causes of behavior and events",
+      "refs": [
+        {
+          "name": "Attribution (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q900584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "empathy",
+      "description": "capacity to understand or feel what another person is experiencing from within the latter's frame of reference",
+      "refs": [
+        {
+          "name": "Empathy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q182263",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "personality",
+      "description": "psychological characteristics of an individual (usually referring to only humans)",
+      "refs": [
+        {
+          "name": "Personality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q641118",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "extraversion",
+      "description": "personality trait",
+      "refs": [
+        {
+          "name": "Extraversion and introversion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q127588",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neuroticism",
+      "description": "personality trait of the tendency to experience negative emotions",
+      "refs": [
+        {
+          "name": "Neuroticism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1540168",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "self-concept",
+      "description": "one's internal beliefs about oneself",
+      "refs": [
+        {
+          "name": "Self-concept",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1860557",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "self-esteem",
+      "description": "term used in psychology to reflect a person's overall emotional evaluation of their own worth",
+      "refs": [
+        {
+          "name": "Self-esteem",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10981881",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "phobia",
+      "description": "anxiety disorder defined by a persistent and excessive fear of a concept, an object or a situation",
+      "refs": [
+        {
+          "name": "Phobia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175854",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "schizophrenia",
+      "description": "psychotic disorder characterized by emotional responsiveness and disintegration of thought process",
+      "refs": [
+        {
+          "name": "Schizophrenia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41112",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "psychosis",
+      "description": "abnormal condition of the mind that involves hallucinations and delusions and is a symptom of any of various disorders or other causes",
+      "refs": [
+        {
+          "name": "Psychosis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170082",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "anxiety",
+      "description": "unpleasant complex combination of emotions that includes fear, apprehension and worry, and is often accompanied by physical sensations such as palpitations, nausea, chest pain and/or shortness of breath",
+      "refs": [
+        {
+          "name": "Anxiety",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q154430",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "depression",
+      "description": "state of low mood and aversion to activity",
+      "refs": [
+        {
+          "name": "Depression (mood)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4340209",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "psychotherapy",
+      "description": "clinically applied psychology for desired behavior change",
+      "refs": [
+        {
+          "name": "Psychotherapy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183257",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "counseling",
+      "description": "branch of psychology",
+      "refs": [
+        {
+          "name": "Counseling psychology",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12166572",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "psychoanalysis",
+      "description": "psychological theory that was founded in 1890 by the Viennese neurologist Sigmund Freud",
+      "refs": [
+        {
+          "name": "Psychoanalysis",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41630",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "id",
+      "description": "psychologist concepts by Sigmund Freud",
+      "refs": [
+        {
+          "name": "Id, ego and superego",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q486893",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neuron"
+    },
+    {
+      "name": "synapse",
+      "description": "junction between a nerve fiber of one neuron and another neuron, muscle fiber or glial cell",
+      "refs": [
+        {
+          "name": "Synapse",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q187181",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "neurotransmitter",
+      "description": "endogenous chemicals that transmit signals across a synapse from one neuron to another",
+      "refs": [
+        {
+          "name": "Neurotransmitter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q162657",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dopamine",
+      "description": "organic chemical that functions both as a hormone and a neurotransmitter",
+      "refs": [
+        {
+          "name": "Dopamine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170304",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "serotonin",
+      "description": "monoamine neurotransmitter",
+      "refs": [
+        {
+          "name": "Serotonin",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167934",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reflex",
+      "description": "automatic, subconscious response to a stimulus",
+      "refs": [
+        {
+          "name": "Reflex",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q179405",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amnesia",
+      "description": "cognitive disorder where the memory is disturbed or lost and involves the loss of memories previously established, loss of the ability to create new memories, continuous high blood pressure and severe shock may also cause amnesia",
+      "refs": [
+        {
+          "name": "Amnesia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11072",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sensation",
+      "description": "physiological capacity of organisms that provides data for perception",
+      "refs": [
+        {
+          "name": "Sensation (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q173253",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reliability",
+      "description": "consistency of a measure in psychometrics and statistics, that is if it produces similar results under consistent conditions",
+      "refs": [
+        {
+          "name": "Reliability (statistics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18748",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "validity",
+      "description": "extent to which a concept, conclusion or measurement is well-founded and corresponds accurately to the real world",
+      "refs": [
+        {
+          "name": "Validity (statistics)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18757",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "stress",
+      "description": "psychological feeling of strain and pressure, that could increase the risk of strokes, heart attacks, ulcers, and mental illnesses such as depression and aggravation of a pre-existing condition",
+      "refs": [
+        {
+          "name": "Stress (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3500368",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "coping",
+      "description": "strategies used during the confrontation with some events to reduce unpleasant emotions",
+      "refs": [
+        {
+          "name": "Coping",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1759895",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "placebo",
+      "description": "substance or treatment of no therapeutic value",
+      "refs": [
+        {
+          "name": "Placebo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q269829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "self-actualization",
+      "description": "term used in various psychology theories",
+      "refs": [
+        {
+          "name": "Self-actualization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q198827",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "emotion",
+      "description": "biological states associated with the nervous system",
+      "refs": [
+        {
+          "name": "Emotion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9415",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "motivation",
+      "description": "inner state causing goal-directed behavior",
+      "refs": [
+        {
+          "name": "Motivation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q644302",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "drive",
+      "description": "theory that attempts to define, analyze, or classify psychological drives",
+      "refs": [
+        {
+          "name": "Drive theory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11009445",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "instinct",
+      "description": "inherent inclination of a living organism",
+      "refs": [
+        {
+          "name": "Instinct",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q18237",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "need",
+      "description": "thing that is necessary for an organism to live a healthy life",
+      "refs": [
+        {
+          "name": "Need",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190258",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "mood",
+      "description": "relatively long lasting emotional, internal and subjective state",
+      "refs": [
+        {
+          "name": "Mood (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q331769",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "affect",
+      "description": "experience of feeling or emotion",
+      "refs": [
+        {
+          "name": "Affect (psychology)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159904",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fear",
+      "description": "emotion induced by perceived danger or threat",
+      "refs": [
+        {
+          "name": "Fear",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q44619",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "mean"
+    },
+    {
+      "name": "clinical"
+    },
+    {
+      "name": "cognitive"
+    },
+    {
+      "name": "developmental"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "educational"
+    },
+    {
+      "name": "industrial"
+    },
+    {
+      "name": "organizational"
+    },
+    {
+      "name": "abnormal"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "positive"
+    },
+    {
+      "name": "evolutionary"
+    },
+    {
+      "name": "forensic"
+    },
+    {
+      "name": "gestalt"
+    },
+    {
+      "name": "depth"
+    },
+    {
+      "name": "optical"
+    },
+    {
+      "name": "illusion"
+    },
+    {
+      "name": "classical"
+    },
+    {
+      "name": "operant"
+    },
+    {
+      "name": "conditioning"
+    },
+    {
+      "name": "attachment"
+    },
+    {
+      "name": "theory"
+    },
+    {
+      "name": "object"
+    },
+    {
+      "name": "permanence"
+    },
+    {
+      "name": "development"
+    },
+    {
+      "name": "nature"
+    },
+    {
+      "name": "nurture"
+    },
+    {
+      "name": "dissonance"
+    },
+    {
+      "name": "bystander"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "influence"
+    },
+    {
+      "name": "trait"
+    },
+    {
+      "name": "Big"
+    },
+    {
+      "name": "Five"
+    },
+    {
+      "name": "traits"
+    },
+    {
+      "name": "mental"
+    },
+    {
+      "name": "disorder"
+    },
+    {
+      "name": "bipolar"
+    },
+    {
+      "name": "behavioral"
+    },
+    {
+      "name": "therapy"
+    },
+    {
+      "name": "defence"
+    },
+    {
+      "name": "mechanism"
+    },
+    {
+      "name": "unconscious"
+    },
+    {
+      "name": "mind"
+    },
+    {
+      "name": "absolute"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "law"
+    },
+    {
+      "name": "signal"
+    },
+    {
+      "name": "detection"
+    },
+    {
+      "name": "intelligence"
+    },
+    {
+      "name": "quotient"
+    },
+    {
+      "name": "hierarchy"
+    },
+    {
+      "name": "needs"
+    },
+    {
+      "name": "magical"
+    },
+    {
+      "name": "seven"
+    },
+    {
+      "name": "age"
+    },
+    {
+      "name": "chronological"
+    },
+    {
+      "name": "fraction"
+    },
+    {
+      "name": "intensity"
+    },
+    {
+      "name": "perceived"
+    },
+    {
+      "name": "scaling"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "exponent"
+    },
+    {
+      "name": "raw"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "score"
+    },
+    {
+      "name": "deviation"
+    },
+    {
+      "name": "term"
+    },
+    {
+      "name": "short"
+    },
+    {
+      "name": "long"
+    },
+    {
+      "name": "working"
+    },
+    {
+      "name": "sensory"
+    },
+    {
+      "name": "bias"
+    },
+    {
+      "name": "confirmation"
+    },
+    {
+      "name": "Weber"
+    },
+    {
+      "name": "Fechner"
+    },
+    {
+      "name": "just"
+    },
+    {
+      "name": "noticeable"
+    },
+    {
+      "name": "obsessive"
+    },
+    {
+      "name": "compulsive"
+    },
+    {
+      "name": "post"
+    },
+    {
+      "name": "traumatic"
+    },
+    {
+      "name": "Maslow's"
+    },
+    {
+      "name": "Dunbar's"
+    },
+    {
+      "name": "Stevens"
+    },
+    {
+      "name": "number"
+    }
+  ],
+  "triples": [
+    {
+      "name": "clinical psychology",
+      "description": "integration of science and clinical knowledge for the purpose of relieving psychologically based dysfunction. see Wikipedia: Clinical psychology (Q199906)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "clinical"
+    },
+    {
+      "name": "cognitive psychology",
+      "description": "subdiscipline of psychology. see Wikipedia: Cognitive psychology (Q23373)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "cognitive"
+    },
+    {
+      "name": "developmental psychology",
+      "description": "scientific study of changes that occur in human beings over the course of their lives. see Wikipedia: Developmental psychology (Q175002)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "developmental"
+    },
+    {
+      "name": "social psychology",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "educational psychology",
+      "description": "branch of psychology concerned with the scientific study of human learning. see Wikipedia: Educational psychology (Q59157)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "educational"
+    },
+    {
+      "from": "industrial",
+      "verb": "and",
+      "to": "organizational"
+    },
+    {
+      "name": "industrial and organizational psychology",
+      "description": "branch of psychology. see Wikipedia: Industrial and organizational psychology (Q2045692)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "industrial and organizational"
+    },
+    {
+      "name": "personality psychology",
+      "description": "branch of psychology focused on personality. see Wikipedia: Personality psychology (Q271716)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "personality"
+    },
+    {
+      "name": "abnormal psychology",
+      "description": "branch of psychology that studies unusual patterns of behavior, emotion, and thought, which could possibly be understood as a mental disorder. see Wikipedia: Abnormal psychology (Q1987782)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "abnormal"
+    },
+    {
+      "name": "health psychology",
+      "description": "the study of psychological and behavioral processes in health, illness, and healthcare. see Wikipedia: Health psychology (Q1403186)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "health"
+    },
+    {
+      "name": "positive psychology",
+      "description": "scientific study of the positive aspects of the human experience that make life worth living. see Wikipedia: Positive psychology (Q718809)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "positive"
+    },
+    {
+      "name": "evolutionary psychology",
+      "description": "branch of psychology. see Wikipedia: Evolutionary psychology (Q219695)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "evolutionary"
+    },
+    {
+      "name": "forensic psychology",
+      "description": "the intersection between psychology and the justice system. see Wikipedia: Forensic psychology (Q932219)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "forensic"
+    },
+    {
+      "name": "short-term",
+      "from": "term",
+      "verb": "kind of",
+      "to": "short"
+    },
+    {
+      "name": "short-term memory",
+      "description": "the memory process that deals with the storage, retrieval and modification of information received a short time (up to about 30 minutes) ago. see Wikipedia: Short-term memory (Q18599)",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "short-term"
+    },
+    {
+      "name": "long-term",
+      "from": "term",
+      "verb": "kind of",
+      "to": "long"
+    },
+    {
+      "name": "long-term memory",
+      "description": "memory process that deals with the storage, retrieval and modification of information a long time (typically weeks, months or years) after receiving that information. see Wikipedia: Long-term memory (Q18601)",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "long-term"
+    },
+    {
+      "name": "working memory",
+      "description": "cognitive system with a limited capacity that is responsible for temporarily holding information available for processing. see Wikipedia: Working memory (Q11337567)",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "working"
+    },
+    {
+      "name": "sensory memory",
+      "description": "bodily experienced sensations from the past. see Wikipedia: Sensory memory (Q1080996)",
+      "from": "memory",
+      "verb": "kind of",
+      "to": "sensory"
+    },
+    {
+      "name": "cognitive bias",
+      "description": "systematic pattern of deviation from norm or rationality in judgment due to subjective perception of reality. see Wikipedia: Cognitive bias (Q1127759)",
+      "from": "bias",
+      "verb": "kind of",
+      "to": "cognitive"
+    },
+    {
+      "name": "confirmation bias",
+      "description": "tendency of people to favor information that confirms their beliefs or hypotheses. see Wikipedia: Confirmation bias (Q431498)",
+      "from": "bias",
+      "verb": "kind of",
+      "to": "confirmation"
+    },
+    {
+      "name": "gestalt psychology",
+      "description": "theory of mind examining human perception, structures and organizing principles in sensory impressions. see Wikipedia: Gestalt psychology (Q272021)",
+      "from": "psychology",
+      "verb": "kind of",
+      "to": "gestalt"
+    },
+    {
+      "name": "depth perception",
+      "description": "visual ability to perceive the world in three dimensions (3D). see Wikipedia: Depth perception (Q1749840)",
+      "from": "perception",
+      "verb": "of",
+      "to": "depth"
+    },
+    {
+      "name": "optical illusion",
+      "description": "distortion of the senses or perception of reality, which may reveal how the human brain normally organizes and interprets sensory stimulation. see Wikipedia: Illusion (Q182593)",
+      "from": "illusion",
+      "verb": "kind of",
+      "to": "optical"
+    },
+    {
+      "name": "classical conditioning",
+      "description": "learning procedure in which biologically potent stimulus is paired with a neutral stimulus. see Wikipedia: Classical conditioning (Q212737)",
+      "from": "conditioning",
+      "verb": "kind of",
+      "to": "classical"
+    },
+    {
+      "name": "operant conditioning",
+      "description": "learning to anticipate future events on the basis of past experience with the consequences of one's own behavior. see Wikipedia: Operant conditioning (Q847079)",
+      "from": "conditioning",
+      "verb": "kind of",
+      "to": "operant"
+    },
+    {
+      "name": "attachment theory",
+      "description": "psychological ethological theory about human relationships. see Wikipedia: Attachment theory (Q909609)",
+      "from": "theory",
+      "verb": "of",
+      "to": "attachment"
+    },
+    {
+      "name": "cognitive development",
+      "description": "field of study in neuroscience and psychology. see Wikipedia: Cognitive development (Q2910672)",
+      "from": "development",
+      "verb": "kind of",
+      "to": "cognitive"
+    },
+    {
+      "name": "object permanence",
+      "description": "understanding that objects continue to exist even when they cannot be observed. see Wikipedia: Object permanence (Q1417978)",
+      "from": "permanence",
+      "verb": "of",
+      "to": "object"
+    },
+    {
+      "name": "nature versus nurture",
+      "description": "relative importance of an individual's innate qualities (\"nature\" in the sense of nativism or innatism) as compared to an individual's personal experiences (\"nurture\" in the sense of empiricism or behaviorism). see Wikipedia: Nature versus nurture (Q1773859)",
+      "from": "nature",
+      "verb": "and",
+      "to": "nurture"
+    },
+    {
+      "name": "cognitive dissonance",
+      "description": "mental stress or discomfort experienced by an individual who holds two or more contradictory beliefs, ideas, or values at the same time. see Wikipedia: Cognitive dissonance (Q209722)",
+      "from": "dissonance",
+      "verb": "kind of",
+      "to": "cognitive"
+    },
+    {
+      "name": "bystander effect",
+      "description": "social psychological phenomenon in which individuals are less likely to offer help to a victim when other people are present. see Wikipedia: Bystander effect (Q230749)",
+      "from": "effect",
+      "verb": "of",
+      "to": "bystander"
+    },
+    {
+      "name": "social influence",
+      "description": "alteration of attitudes and behaviors based on outside influences. see Wikipedia: Social influence (Q1307337)",
+      "from": "influence",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "trait theory",
+      "description": "approach to the study of human personality. see Wikipedia: Trait theory (Q18773)",
+      "from": "theory",
+      "verb": "of",
+      "to": "trait"
+    },
+    {
+      "name": "Big Five",
+      "from": "Five",
+      "verb": "kind of",
+      "to": "Big"
+    },
+    {
+      "name": "personality traits",
+      "from": "traits",
+      "verb": "of",
+      "to": "personality"
+    },
+    {
+      "name": "Big Five personality traits",
+      "description": "personality model consisting of five broad dimensions of personality. see Wikipedia: Big Five personality traits (Q378132)",
+      "from": "personality traits",
+      "verb": "kind of",
+      "to": "Big Five"
+    },
+    {
+      "name": "mental disorder",
+      "description": "distressing thought or behavior pattern. see Wikipedia: Mental disorder (Q12135)",
+      "from": "disorder",
+      "verb": "kind of",
+      "to": "mental"
+    },
+    {
+      "name": "bipolar disorder",
+      "description": "mental illness characterized by mood changes. see Wikipedia: Bipolar disorder (Q131755)",
+      "from": "disorder",
+      "verb": "kind of",
+      "to": "bipolar"
+    },
+    {
+      "name": "obsessive-compulsive",
+      "from": "obsessive",
+      "verb": "and",
+      "to": "compulsive"
+    },
+    {
+      "name": "obsessive-compulsive disorder",
+      "description": "mental disorder involving obsessions and compulsions. see Wikipedia: Obsessive–compulsive disorder (Q178190)",
+      "from": "disorder",
+      "verb": "kind of",
+      "to": "obsessive-compulsive"
+    },
+    {
+      "name": "post-traumatic",
+      "from": "traumatic",
+      "verb": "kind of",
+      "to": "post"
+    },
+    {
+      "name": "stress disorder",
+      "from": "disorder",
+      "verb": "of",
+      "to": "stress"
+    },
+    {
+      "name": "post-traumatic stress disorder",
+      "description": "psychiatric disorder that developed after experiencing or witnessing a terrifying or life-threatening event. see Wikipedia: Post-traumatic stress disorder (Q202387)",
+      "from": "stress disorder",
+      "verb": "kind of",
+      "to": "post-traumatic"
+    },
+    {
+      "name": "behavioral therapy",
+      "from": "therapy",
+      "verb": "kind of",
+      "to": "behavioral"
+    },
+    {
+      "name": "cognitive behavioral therapy",
+      "description": "psychotherapeutic approach that addresses dysfunctional emotions, behaviors and cognitions. see Wikipedia: Cognitive behavioral therapy (Q1147152)",
+      "from": "behavioral therapy",
+      "verb": "kind of",
+      "to": "cognitive"
+    },
+    {
+      "name": "defence mechanism",
+      "description": "unconscious psychological mechanism that reduces anxiety arising from unacceptable or potentially harmful stimuli. see Wikipedia: Defence mechanism (Q2866472)",
+      "from": "mechanism",
+      "verb": "of",
+      "to": "defence"
+    },
+    {
+      "name": "unconscious mind",
+      "description": "group of psychic characters and processes that are reflected in behaviour, even though not shown in the conciousness. see Wikipedia: Unconscious mind (Q192105)",
+      "from": "mind",
+      "verb": "kind of",
+      "to": "unconscious"
+    },
+    {
+      "name": "absolute threshold",
+      "description": "term in neuroscience and psychophysics. see Wikipedia: Absolute threshold (Q2609467)",
+      "from": "threshold",
+      "verb": "kind of",
+      "to": "absolute"
+    },
+    {
+      "name": "just-noticeable",
+      "from": "noticeable",
+      "verb": "kind of",
+      "to": "just"
+    },
+    {
+      "name": "just-noticeable difference",
+      "description": "amount that a stimulus must be changed to be detected. see Wikipedia: Just-noticeable difference (Q1224386)",
+      "from": "difference",
+      "verb": "kind of",
+      "to": "just-noticeable"
+    },
+    {
+      "name": "Weber-Fechner",
+      "from": "Weber",
+      "verb": "and",
+      "to": "Fechner"
+    },
+    {
+      "name": "Weber-Fechner law",
+      "description": "psychophysics law that the minimum perceptible increase of stimulus is proportional to the stimulus and that intensity of our sensation increases logarithmically. see Wikipedia: Weber–Fechner law (Q835216)",
+      "from": "law",
+      "verb": "of",
+      "to": "Weber-Fechner"
+    },
+    {
+      "name": "signal detection",
+      "from": "detection",
+      "verb": "of",
+      "to": "signal"
+    },
+    {
+      "name": "signal detection theory",
+      "description": "analyzed the detection of difficult to detect signals and provides a measure of the quality of the detection. see Wikipedia: Detection theory (Q120811)",
+      "from": "theory",
+      "verb": "of",
+      "to": "signal detection"
+    },
+    {
+      "name": "intelligence quotient",
+      "description": "score from a test designed to assess intelligence. see Wikipedia: Intelligence quotient (Q170277)",
+      "from": "quotient",
+      "verb": "of",
+      "to": "intelligence"
+    },
+    {
+      "from": "hierarchy",
+      "verb": "of",
+      "to": "needs"
+    },
+    {
+      "name": "Maslow's hierarchy of needs",
+      "description": "theory in developmental psychology proposed by Abraham Maslow, comprising a five-tier model of human needs: physiological, safety, love and belonging, esteem, and self-actualization. see Wikipedia: Maslow's hierarchy of needs (Q179515)",
+      "from": "hierarchy of needs",
+      "verb": "of",
+      "to": "Maslow's"
+    },
+    {
+      "name": "Dunbar's number",
+      "description": "value important in sociology and anthropology. see Wikipedia: Dunbar's number (Q1137451)",
+      "from": "number",
+      "verb": "of",
+      "to": "Dunbar's"
+    },
+    {
+      "name": "magical number",
+      "from": "number",
+      "verb": "kind of",
+      "to": "magical"
+    },
+    {
+      "name": "the magical number seven",
+      "description": "1956 thesis by George Miller on working memory capacity. see Wikipedia: The Magical Number Seven, Plus or Minus Two (Q1542532)",
+      "from": "seven",
+      "verb": "of",
+      "to": "magical number"
+    },
+    {
+      "name": "mental age",
+      "description": "the age level at which a person performs intellectually, as measured by a standardized test",
+      "from": "age",
+      "verb": "kind of",
+      "to": "mental"
+    },
+    {
+      "name": "chronological age",
+      "description": "the actual age of a person measured in years since birth",
+      "from": "age",
+      "verb": "kind of",
+      "to": "chronological"
+    },
+    {
+      "name": "Weber fraction",
+      "description": "the constant ratio of the just-noticeable difference to the magnitude of the original stimulus",
+      "from": "fraction",
+      "verb": "of",
+      "to": "Weber"
+    },
+    {
+      "name": "stimulus intensity",
+      "description": "the physical magnitude of a stimulus presented to a sense organ",
+      "from": "intensity",
+      "verb": "of",
+      "to": "stimulus"
+    },
+    {
+      "name": "perceived intensity",
+      "description": "the subjective magnitude of a sensation as experienced by a person",
+      "from": "intensity",
+      "verb": "kind of",
+      "to": "perceived"
+    },
+    {
+      "name": "scaling constant",
+      "description": "a constant of proportionality relating a sensation to the physical stimulus that produces it",
+      "from": "constant",
+      "verb": "kind of",
+      "to": "scaling"
+    },
+    {
+      "name": "Stevens exponent",
+      "description": "the exponent in Stevens' power law that depends on the type of stimulus being judged",
+      "from": "exponent",
+      "verb": "of",
+      "to": "Stevens"
+    },
+    {
+      "name": "raw score",
+      "description": "an original measurement or test result before it is converted to a standardized score",
+      "from": "score",
+      "verb": "kind of",
+      "to": "raw"
+    },
+    {
+      "name": "standard score",
+      "description": "the number of standard deviations by which a raw score lies above or below the mean",
+      "from": "score",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "name": "standard deviation",
+      "description": "a measure of the amount of variation or dispersion of a set of values around their mean",
+      "from": "deviation",
+      "verb": "kind of",
+      "to": "standard"
+    },
+    {
+      "from": "psychology",
+      "verb": "is part of",
+      "to": "science"
+    },
+    {
+      "from": "clinical psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "cognitive psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "developmental psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "social psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "behaviorism",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "neuropsychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "educational psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "industrial and organizational psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "personality psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "abnormal psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "health psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "positive psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "evolutionary psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "psychometrics",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "forensic psychology",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "psychophysics",
+      "verb": "is part of",
+      "to": "psychology"
+    },
+    {
+      "from": "cognition",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "memory",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "perception",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "attention",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "reasoning",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "thought",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "consciousness",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "creativity",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "short-term memory",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "long-term memory",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "working memory",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "sensory memory",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "encoding",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "recall",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "recognition",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "forgetting",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "cognitive bias",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "heuristic",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "confirmation bias",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "gestalt psychology",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "depth perception",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "optical illusion",
+      "verb": "is part of",
+      "to": "cognitive psychology"
+    },
+    {
+      "from": "behavior",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "learning",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "reinforcement",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "punishment",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "classical conditioning",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "operant conditioning",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "habituation",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "extinction",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "stimulus",
+      "verb": "is part of",
+      "to": "behaviorism"
+    },
+    {
+      "from": "attachment theory",
+      "verb": "is part of",
+      "to": "developmental psychology"
+    },
+    {
+      "from": "cognitive development",
+      "verb": "is part of",
+      "to": "developmental psychology"
+    },
+    {
+      "from": "object permanence",
+      "verb": "is part of",
+      "to": "developmental psychology"
+    },
+    {
+      "from": "nature versus nurture",
+      "verb": "is part of",
+      "to": "developmental psychology"
+    },
+    {
+      "from": "temperament",
+      "verb": "is part of",
+      "to": "developmental psychology"
+    },
+    {
+      "from": "attitude",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "cognitive dissonance",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "obedience",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "bystander effect",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "social influence",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "persuasion",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "attribution",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "empathy",
+      "verb": "is part of",
+      "to": "social psychology"
+    },
+    {
+      "from": "personality",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "trait theory",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "Big Five personality traits",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "extraversion",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "neuroticism",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "self-concept",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "self-esteem",
+      "verb": "is part of",
+      "to": "personality psychology"
+    },
+    {
+      "from": "mental disorder",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "phobia",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "schizophrenia",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "bipolar disorder",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "obsessive-compulsive disorder",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "post-traumatic stress disorder",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "psychosis",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "anxiety",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "depression",
+      "verb": "is part of",
+      "to": "abnormal psychology"
+    },
+    {
+      "from": "psychotherapy",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "cognitive behavioral therapy",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "counseling",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "psychoanalysis",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "defence mechanism",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "id",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "unconscious mind",
+      "verb": "is part of",
+      "to": "clinical psychology"
+    },
+    {
+      "from": "neuron",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "synapse",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "neurotransmitter",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "dopamine",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "serotonin",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "reflex",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "amnesia",
+      "verb": "is part of",
+      "to": "neuropsychology"
+    },
+    {
+      "from": "sensation",
+      "verb": "is part of",
+      "to": "psychophysics"
+    },
+    {
+      "from": "absolute threshold",
+      "verb": "is part of",
+      "to": "psychophysics"
+    },
+    {
+      "from": "just-noticeable difference",
+      "verb": "is part of",
+      "to": "psychophysics"
+    },
+    {
+      "from": "Weber-Fechner law",
+      "verb": "is part of",
+      "to": "psychophysics"
+    },
+    {
+      "from": "signal detection theory",
+      "verb": "is part of",
+      "to": "psychophysics"
+    },
+    {
+      "from": "intelligence quotient",
+      "verb": "is part of",
+      "to": "psychometrics"
+    },
+    {
+      "from": "reliability",
+      "verb": "is part of",
+      "to": "psychometrics"
+    },
+    {
+      "from": "validity",
+      "verb": "is part of",
+      "to": "psychometrics"
+    },
+    {
+      "from": "stress",
+      "verb": "is part of",
+      "to": "health psychology"
+    },
+    {
+      "from": "coping",
+      "verb": "is part of",
+      "to": "health psychology"
+    },
+    {
+      "from": "placebo",
+      "verb": "is part of",
+      "to": "health psychology"
+    },
+    {
+      "from": "self-actualization",
+      "verb": "is part of",
+      "to": "positive psychology"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of intelligence quotient",
+      "expression": "\"intelligence quotient\" = \"mental age\" / \"chronological age\" * 100",
+      "latex": "IQ = \\frac{MA}{CA} \\cdot 100",
+      "assigned": [
+        "mental age",
+        "chronological age"
+      ]
+    },
+    {
+      "name": "Weber's law",
+      "expression": "\"just-noticeable difference\" = \"Weber fraction\" * \"stimulus intensity\"",
+      "latex": "\\Delta I = k \\cdot I",
+      "assigned": [
+        "Weber fraction",
+        "stimulus intensity"
+      ]
+    },
+    {
+      "name": "Fechner's law",
+      "expression": "\"perceived intensity\" = \"scaling constant\" * log(\"stimulus intensity\" / \"absolute threshold\")",
+      "latex": "S = k \\ln\\frac{I}{I_0}",
+      "assigned": [
+        "stimulus intensity"
+      ]
+    },
+    {
+      "name": "Stevens' power law",
+      "expression": "\"perceived intensity\" = \"scaling constant\" * \"stimulus intensity\" ^ \"Stevens exponent\"",
+      "latex": "\\psi = k\\,I^{a}",
+      "assigned": [
+        "stimulus intensity",
+        "Stevens exponent"
+      ]
+    },
+    {
+      "name": "definition of standard score",
+      "expression": "\"standard score\" = ( \"raw score\" - \"mean\" ) / \"standard deviation\"",
+      "latex": "z = \\frac{x - \\mu}{\\sigma}",
+      "assigned": [
+        "raw score",
+        "mean",
+        "standard deviation"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "by definition",
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    },
+    {
+      "name": "psychology reference data",
+      "description": "commonly cited estimates from psychology research used as reference values"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "intelligence quotient"
+      ],
+      "number": "100",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "the magical number seven"
+      ],
+      "number": "7",
+      "source": "psychology reference data"
+    },
+    {
+      "words": [
+        "Dunbar's number"
+      ],
+      "number": "150",
+      "source": "psychology reference data"
+    }
+  ]
+}

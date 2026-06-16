@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views as views;
 
 $app = new frontend();
+global $sys;
 $db_con = $app->start("formula_edit");
 $html = new html_base();
 
@@ -149,16 +150,16 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // display the view to change the formula
             $frm->load_by_id($frm_id); // reload to formula object to display the real database values
             $add_link = $_GET['add_link'] ?? 0;
-            $frm_dsp = new formula_ui($frm->api_json());
-            $result .= $frm_dsp->dsp_edit($add_link, 0, $back); // with add_link to add a link and display a word selector
+            $frm_ui = new formula_ui($frm->api_json());
+            $result .= $frm_ui->dsp_edit($add_link, 0, $back); // with add_link to add a link and display a word selector
         }
     }
 }

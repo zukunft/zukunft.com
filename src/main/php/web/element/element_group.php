@@ -108,7 +108,7 @@ class element_group extends ListBase
     }
 
     // TODO handle multi entry cases if needed
-    function id(string $code_id): int
+    function id(string $code_id = ''): int
     {
         if (count($this->lst()) == 1) {
             return $this->lst()[0]->obj->id();
@@ -165,9 +165,9 @@ class element_group extends ListBase
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
             $api_json = $fig->api_json([api_types::INCL_PHRASES]);
-            $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json, $usr_msg);
-            $result .= $fig_dsp->display_linked($back);
+            $fig_ui = new figure();
+            $fig_ui->set_from_json($api_json, $usr_msg);
+            $result .= $fig_ui->display_linked($back);
         }
 
         // TODO: show the time phrase only if it differs from the main time phrase
@@ -415,9 +415,9 @@ class element_group extends ListBase
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
             $api_json = $fig->api_json([api_types::INCL_PHRASES]);
-            $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json, $usr_msg);
-            $result .= $fig_dsp->display_linked($back);
+            $fig_ui = new figure();
+            $fig_ui->set_from_json($api_json, $usr_msg);
+            $result .= $fig_ui->display_linked($back);
         }
 
         // TODO: show the time phrase only if it differs from the main time phrase

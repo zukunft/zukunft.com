@@ -2,7 +2,7 @@
 
 /*
 
-    shared/const/components.php - const components with name and id used by the system
+    shared/const/components.php - all component code id used in the code and some with name, id and comment used by the system
     ---------------------------
 
 
@@ -41,12 +41,25 @@ class components
     // *_ID is the mask id that is expected never to change
     // *_NAME is the name of the view if it differs from the code id
     // *_COM is the comment or description used for the tooltip
+
+    // general components used several times
     const string WORD_NAME = 'Word';
     const string WORD_COM = 'simply show the word or triple name';
     const int WORD_ID = 1;
     const string MATRIX_NAME = 'spreadsheet';
     const string MATRIX_COM = 'changeable sheet with words, number and formulas';
     const int MATRIX_ID = 2;
+
+    // text components to test the side or below position types
+    // with ids that are far above the component ids used in the database
+    const string COL_FIRST_NAME = 'first column';
+    const int COL_FIRST_ID = 901;
+    const string COL_SECOND_NAME = 'second column';
+    const int COL_SECOND_ID = 902;
+    const string COL_THIRD_NAME = 'third column';
+    const int COL_THIRD_ID = 903;
+    const string COL_FOURTH_NAME = 'fourth column';
+    const int COL_FOURTH_ID = 904;
 
     // for system views
     const string FORM_TITLE = 'form_title';
@@ -119,6 +132,8 @@ class components
     const string LINK_LIST_WORD = "link_list_word";
     const string USAGE_WORD = "usage_word";
     const string CHANGE_LOG_WORD = "change_log_word";
+    const string VIEW_LIST_WORD = "view_list_word";
+    const string VIEW_TAB_BOX_WORD = "view_tab_box_word";
 
     // persevered view component names for unit and integration tests
     const string TEST_ADD_NAME = 'System Test View Component';

@@ -52,6 +52,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
 //include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
@@ -84,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -182,10 +184,10 @@ class value_list extends ListBase
     /**
      * get a list with the values related directly to the given word, triple or source
      *
-     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
-    function filter(word|triple|source|formula|db_object|null $dbo = null): value_list
+    function filter(word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class or $dbo::class == triple::class) {
@@ -203,6 +205,22 @@ class value_list extends ListBase
             }
         }
         return $val_lst;
+    }
+
+    /**
+     * sort this value list in place so that the value with the highest impact is first
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * @return void
+     */
+    function sort_by_impact(): void
+    {
+        $lst = $this->lst();
+        // impact first, then number, then the value (group) id so that values with the
+        // same impact and number keep a deterministic order independent of the db/api row order
+        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
+            ?: $b->number() <=> $a->number()
+            ?: $a->id() <=> $b->id());
+        $this->set_lst($lst);
     }
 
 
@@ -234,9 +252,15 @@ class value_list extends ListBase
         $result = '';
 
         if (!$this->is_empty()) {
+            // sort so the highest impact value is shown first and the order is always deterministic
+            $this->sort_by_impact();
             if ($limit == null) {
-                global $cfg;
-                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                global $ui_sys;
+                if ($ui_sys?->cfg !== null) {
+                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                } else {
+                    $limit = config::LIMIT_VALUE_LIST;
+                }
             }
 
             $i = 0;
@@ -281,8 +305,12 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             if ($limit == null) {
-                global $cfg;
-                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                global $ui_sys;
+                if ($ui_sys?->cfg !== null) {
+                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                } else {
+                    $limit = config::LIMIT_VALUE_LIST;
+                }
             }
 
             $i = 0;
@@ -314,6 +342,9 @@ class value_list extends ListBase
     function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
+
+        // sort so the highest impact value is shown first and the order is always deterministic
+        $this->sort_by_impact();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
@@ -408,7 +439,7 @@ class value_list extends ListBase
     /*
     function dsp_table($phr_row, $back): string
     {
-        global $usr;
+        $usr = $ui_sys->usr;
 
         $result = '';
         $html = new html_base();
@@ -898,19 +929,19 @@ class value_list extends ListBase
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(views::VALUE_ADD, $val->id(), $back);
+                    $url = $html->url_new(views::VALUE_ADD_ID, $val->id(), '', $back);
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(views::VALUE_EDIT, $val->id(), $back);
+                $url = $html->url_new(views::VALUE_EDIT_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(views::VALUE_DEL, $val->id(), $back);
+                $url = $html->url_new(views::VALUE_DEL_ID, $val->id(), '', $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
@@ -940,8 +971,8 @@ class value_list extends ListBase
         if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr);
-                $phr_lst_dsp = new phrase_list($common_phr_lst->api_json());
-                $result .= $phr_lst_dsp->btn_add_value($back);
+                $phr_lst_ui = new phrase_list($common_phr_lst->api_json());
+                $result .= $phr_lst_ui->btn_add_value($back);
             }
         }
 

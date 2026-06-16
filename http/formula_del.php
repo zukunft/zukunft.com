@@ -51,9 +51,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 $app = new frontend();
+global $sys;
 $db_con = $app->start("formula_del");
 
-global $sys_msk_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 $usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
@@ -71,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::FORMULA_DEL));
+    $msk->load_by_id($sys->msk_cac->id(view_shared::FORMULA_DEL));
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]);
 
@@ -92,9 +93,9 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             if ($frm->is_used()) {
                 $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno("Exclude \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);

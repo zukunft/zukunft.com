@@ -59,7 +59,7 @@ class job_type_list extends type_list
         string   $form = '',
         int|null $selected = null,
         string   $name = self::NAME,
-        string $style = view_styles::COL_SM_4
+        string   $style = view_styles::COL_SM_4
     ): string
     {
         return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_JOB_TYPE, $style);

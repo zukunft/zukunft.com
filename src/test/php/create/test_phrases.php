@@ -73,6 +73,12 @@ class test_phrases
         return $t_wrd->word()->phrase();
     }
 
+    function phrase_filled(): phrase
+    {
+        $t_trp = new test_triples($this->env);
+        return $t_trp->triple_filled()->phrase();
+    }
+
     function phrase_pi(): phrase
     {
         $t_trp = new test_triples($this->env);
@@ -700,6 +706,46 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list as ch_inhabitants_in_mio_2019 but with "mio" missing the scaling type
+     *                     to test the scaling type check
+     */
+    function ch_inhabitants_in_mio_2019_unscaled(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_ch()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_mio_unscaled()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the target phrases to scale a value to single inhabitants
+     */
+    function inhabitant_one_phrase_list(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_one()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list as inhabitant_one_phrase_list but with "one" missing the scaling type
+     *                     to test the scaling type check
+     */
+    function inhabitant_one_unscaled_phrase_list(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_one_unscaled()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
     function phrase_list_zh_mio_2020(): phrase_list
@@ -775,9 +821,190 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_dsp(): phrase_list_ui
+    /**
+     * a list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich
+     *
+     * @return phrase_list with symbol triples
+     */
+    function list_zh(): phrase_list
     {
-        return new phrase_list_ui($this->phrase_list()->api_json());
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_city()->phrase());
+        $lst->add($t_trp->zh_city()->phrase());
+        $lst->add($t_wrd->word_canton()->phrase());
+        $lst->add($t_trp->zh_canton()->phrase());
+        $lst->add($t_wrd->word_company()->phrase());
+        $lst->add($t_trp->company_zurich()->phrase());
+        return $lst;
+    }
+
+    /**
+     * a list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich in a different order
+     *
+     * @return phrase_list with symbol triples
+     */
+    function list_zh_impact(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_zh();
+        $lst_imp = new phrase_list($this->env->usr1);
+        $lst_imp->add($t_trp->zh_city_low_impact()->phrase());
+        $lst_imp->add($t_trp->zh_canton_low_impact()->phrase());
+        $lst_imp->add($t_trp->company_zurich_high_impact()->phrase());
+        $lst_imp->fill_by_id($lst);
+        return $lst_imp;
+    }
+
+    /**
+     * a frontend list of all test phrases e.g. to check if the selections are fine
+     *
+     * @return phrase_list_ui with all phrases used for testing
+     */
+    function list_ui(): phrase_list_ui
+    {
+        $lst = $this->list_symbols_ui();
+        $lst->merge($this->list_zh_ui());
+        return $lst;
+    }
+
+    /**
+     * a list of symbol triples to test the selection of the relevant symbols
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_symbols_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->symbol_chf()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases related to the word "Swiss franc" as loaded with the word from the backend
+     * e.g. to test the related phrases shown on the default word page
+     *
+     * @return phrase_list_ui with the symbol and the category triple of the Swiss franc
+     */
+    function list_swiss_franc_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->symbol_chf()->phrase());
+        $lst->add($t_trp->swiss_franc_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases related to the word "US dollar" as loaded with the word from the backend
+     * e.g. to test the alias and symbol lines shown on the default word page
+     *
+     * @return phrase_list_ui with the alias, symbol, prefix and category triples of the US dollar
+     */
+    function list_us_dollar_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->alias_dollar()->phrase());
+        $lst->add($t_trp->alias_u_s_dollar()->phrase());
+        $lst->add($t_trp->symbol_usd()->phrase());
+        $lst->add($t_trp->in_usd()->phrase());
+        $lst->add($t_trp->usd_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases related to the word "company" as loaded with the word from the backend
+     * in a not sorted order e.g. to test that the related stocks are shown
+     * sorted by the market capitalisation on the default word page
+     *
+     * @return phrase_list_ui with the stock triples of the company word
+     */
+    function list_company_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->vestas_company()->phrase());
+        $lst->add($t_trp->company_zurich_market_cap()->phrase());
+        $lst->add($t_trp->abb_company()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the frontend list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_zh_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_zh());
+    }
+
+    /**
+     * a list of currencies and their common parent "currency" linked via the "is a" verb
+     * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
+     *
+     * @return phrase_list with the currency words and the "is a currency" triples
+     */
+    function list_currency(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->currency()->phrase());
+        $lst->add($t_wrd->swiss_franc()->phrase());
+        $lst->add($t_trp->swiss_franc_currency()->phrase());
+        $lst->add($t_wrd->euro()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        $lst->add($t_wrd->us_dollar()->phrase());
+        $lst->add($t_trp->usd_currency()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend list of currency related phrases for the word::similar test
+     */
+    function list_currency_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_currency());
+    }
+
+    /**
+     * the frontend list of city and canton related phrases
+     * e.g. to test the subtitle for the city zurich in a different order
+     *
+     * @return phrase_list_ui with symbol triples
+     */
+    function list_zh_impact_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_zh_impact());
+    }
+
+    function ui_phrase_list(): phrase_list_ui
+    {
+        return $this->ui_list($this->phrase_list());
+    }
+
+
+    /*
+     * convert
+     */
+
+    /**
+     * convert a backend phrase list to a frontend list
+     *
+     * @param phrase_list $lst tbe backend list to convert
+     * @return phrase_list_ui the converted frontend list
+     */
+    private function ui_list(phrase_list $lst): phrase_list_ui
+    {
+        return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));
     }
 
 }

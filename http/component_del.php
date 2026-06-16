@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $app = new frontend();
+global $sys;
 $db_con = $app->start("component_del");
 $html = new html_base();
 
@@ -90,13 +91,13 @@ if ($usr->id > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_ui($msk->api_json());
+            $msk_ui = new view_ui($msk->api_json());
             $dto = new data_object();
-            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $msk_ui->dsp_navbar($dto, $back);
 
             // TODO: display how the views would be changed
 
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', '/http/component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', rest_ctrl::PATH_FIXED .'component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

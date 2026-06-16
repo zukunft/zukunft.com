@@ -2760,30 +2760,31 @@ class sandbox_multi extends db_object_multi_user
             if ($this->id() == 0) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar($msg);
-                if ($similar->id() <> 0) {
-                    // check that the get_similar function has really found a similar object and report potential program errors
-                    if (!$this->is_similar($similar)) {
-                        $msg->add(msg_id::SANDBOX_NOT_SIMILAR, [
-                            msg_id::VAR_ID => $this->dsp_id(),
-                            msg_id::VAR_ID_CHK => $similar->dsp_id()
-                        ]);
-                    } else {
-                        // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id); // e.g. to get the type_id
-                        // prevent that the id of a formula is used for the word with the type formula link
-                        if (get_class($this) == get_class($similar)) {
-                            $this->id = $similar->id();
+                if ($similar !== null) {
+                    if ($similar->id() <> 0) {
+                        // check that the get_similar function has really found a similar object and report potential program errors
+                        if (!$this->is_similar($similar)) {
+                            $msg->add(msg_id::SANDBOX_NOT_SIMILAR, [
+                                msg_id::VAR_ID => $this->dsp_id(),
+                                msg_id::VAR_ID_CHK => $similar->dsp_id()
+                            ]);
                         } else {
-                            if (!((get_class($this) == word::class and get_class($similar) == formula::class)
-                                or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $msg->merge($similar->id_used_msg($this));
+                            // if similar is found set the id to trigger the updating instead of adding
+                            $similar->load_by_id($similar->id); // e.g. to get the type_id
+                            // prevent that the id of a formula is used for the word with the type formula link
+                            if (get_class($this) == get_class($similar)) {
+                                $this->id = $similar->id();
+                            } else {
+                                if (!((get_class($this) == word::class and get_class($similar) == formula::class)
+                                    or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
+                                    $msg->merge($similar->id_used_msg($this));
+                                }
                             }
                         }
+                    } else {
+                        $similar = null;
                     }
-                } else {
-                    $similar = null;
                 }
-
             }
         }
 

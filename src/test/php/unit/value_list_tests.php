@@ -86,8 +86,8 @@ class value_list_tests
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t_val->value_list()->api_json();
-        $val_lst_dsp = new value_list_ui($api_json);
-        $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
+        $val_lst_ui = new value_list_ui($api_json);
+        $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
@@ -113,6 +113,9 @@ class value_list_tests
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->canton_zh_phrase_list());
+        $test_name = 'load values related to all phrases of a two phrase list '
+            . 'e.g. the inhabitants of Switzerland over time';
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->ch_inhabitant_phrase_list());
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
         // temp line until the function usage is checked correctly by the ide

@@ -125,8 +125,8 @@ class view_sys_list extends type_list
     function load_sql_list(sql_creator $sc): sql_par
     {
         $this->reset();
-        $dsp_lst = new view_list($this->usr);
-        $qp = $dsp_lst->load_sql($sc, 'sys_views');
+        $msk_lst = new view_list($this->usr);
+        $qp = $msk_lst->load_sql($sc, 'sys_views');
         $sc->set_name($qp->name);
         $msk = new view($this->get_user());
         $sc->set_id_field($msk->id_field());

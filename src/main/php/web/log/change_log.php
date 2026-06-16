@@ -5,6 +5,7 @@
     web/log/change_log.php - the common change log object for the frontend API
     ----------------------
 
+    $cng is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

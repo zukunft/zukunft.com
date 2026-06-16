@@ -43,6 +43,11 @@
       "protection": "admin_protection"
     },
     {
+      "name": "100 km",
+      "type": "scaled_measure",
+      "protection": "admin_protection"
+    },
+    {
       "name": "per km",
       "type": "measure divisor",
       "protection": "admin_protection"
@@ -237,11 +242,28 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "consumed"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    },
+    {
+      "name": "2014",
+      "type": "time"
+    },
+    {
+      "name": "2015",
+      "type": "time"
     }
   ],
   "triples": [
     {
-      "name": "",
       "from": "CHF",
       "verb": "is a",
       "to": "currency"
@@ -265,19 +287,17 @@
       "to": "tonne"
     },
     {
-      "name": "",
       "from": "luxury hybrid car",
       "verb": "is a",
       "to": "car"
     },
     {
-      "name": "",
       "from": "electric car",
       "verb": "is a",
       "to": "car"
     },
     {
-      "name": "",
+      "name": "diesel fuel",
       "from": "diesel",
       "verb": "is a",
       "to": "fuel"
@@ -351,7 +371,7 @@
         "at purchase",
         "2014"
       ],
-      "number": "11,000",
+      "number": "11000",
       "share": "public"
     },
     {
@@ -361,7 +381,7 @@
         "at purchase",
         "2014"
       ],
-      "number": "41,000",
+      "number": "41000",
       "share": "public"
     },
     {
@@ -382,7 +402,7 @@
         "min",
         "2020"
       ],
-      "number": "4,000",
+      "number": "4000",
       "share": "public"
     },
     {
@@ -417,7 +437,7 @@
         "per t",
         "2020"
       ],
-      "number": "1,100",
+      "number": "1100",
       "share": "public"
     },
     {
@@ -429,7 +449,7 @@
         "CHF",
         "2020"
       ],
-      "number": "1,800",
+      "number": "1800",
       "share": "public"
     },
     {
@@ -452,7 +472,7 @@
         "CHF",
         "2020"
       ],
-      "number": "1,500",
+      "number": "1500",
       "share": "public"
     },
     {
@@ -516,7 +536,7 @@
       "words": [
         "diesel",
         "CHF",
-        "per litre",
+        "per l",
         "2020"
       ],
       "number": "1.50",
@@ -527,7 +547,7 @@
         "diesel",
         "CO2",
         "emission",
-        "pre litre",
+        "per l",
         "2020"
       ],
       "number": "157",
@@ -558,16 +578,22 @@
       "source": "personal agreement"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
   "views": [
     {
       "name": "car cost agreement",
       "comment": "view the cost agreement of car usage",
-      "type": "detail view",
+      "type": "detail_view",
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }

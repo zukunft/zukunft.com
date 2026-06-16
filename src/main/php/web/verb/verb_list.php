@@ -116,13 +116,14 @@ class verb_list extends type_list
     function dsp_list(string $item_type = 'link_type'): string
     {
         $result = "";
+        $html = new html_base();
 
         $item_lst = $this->lst();
         $item_type = 'link_type';
         $edit_script = $item_type . "_edit.php";
         $add_script = $item_type . "_add.php";
         foreach ($item_lst as $item) {
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
+            $result .= $html->ref(rest_ctrl::PATH_FIXED . $edit_script . '?id=' . $item->id, $item->name) . '<br> ';
         }
         $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('Add ' . $item_type, $add_script);
         $result .= '<br>';

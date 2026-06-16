@@ -173,7 +173,8 @@ class ref_list extends type_list
      */
     protected function load_list(sql_db $db_con, string $class): array
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
@@ -199,6 +200,35 @@ class ref_list extends type_list
         return $this->load($qp);
     }
 
+    /**
+     * load all references of one phrase (e.g. the wikidata and wikipedia link of a word)
+     * uses the ref query with the correct ref columns instead of the generic type_list load,
+     * which selects a non-existing code_id column for the refs table
+     *
+     * @param int $phr_id the database id of the phrase whose references should be loaded
+     * @return bool true if at least one reference has been loaded
+     */
+    function load_by_phr_id(int $phr_id): bool
+    {
+        global $db_con;
+        $this->reset();
+        $ref = new ref($this->get_user());
+        $sc = $db_con->sql_creator();
+        $qp = $ref->load_sql($sc, 'by_phr');
+        $sc->add_where(ref::FLD_FROM, $phr_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        $db_lst = $db_con->get($qp);
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_row) {
+                $ref_obj = new ref($this->get_user());
+                $ref_obj->row_mapper_sandbox($db_row);
+                $this->add($ref_obj);
+            }
+        }
+        return !$this->is_empty();
+    }
+
     function load_sql_by_names(): sql_db
     {
         $qp = new sql_db();
@@ -218,7 +248,8 @@ class ref_list extends type_list
      */
     function load_dummy(): void
     {
-        global $usr;
+        global $sys;
+        $usr = $sys?->usr_req;
         $type = new ref($usr);
         $type->id = 1;
         $type->set_name(refs::WIKIDATA_TYPE);

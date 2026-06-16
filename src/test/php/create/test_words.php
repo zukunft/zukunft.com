@@ -47,6 +47,7 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class test_words extends test_objects
@@ -76,7 +78,7 @@ class test_words extends test_objects
      */
     function cleanup(string $ts): void
     {
-        parent::cleanup_objects($ts, words::TEST_WORDS, new word($this->env->usr1));
+        parent::cleanup_objects($ts, word_names::TEST_WORDS, new word($this->env->usr1));
     }
 
 
@@ -90,8 +92,8 @@ class test_words extends test_objects
     function word(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::MATH_ID, words::MATH);
-        $wrd->description = words::MATH_COM;
+        $wrd->set(word_names::MATH_ID, word_names::MATH);
+        $wrd->description = word_names::MATH_COM;
         $wrd->set_type(phrase_types::NORMAL, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -115,7 +117,7 @@ class test_words extends test_objects
     function word_name_only(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::MATH);
+        $wrd->set_name(word_names::MATH);
         return $wrd;
     }
 
@@ -126,7 +128,7 @@ class test_words extends test_objects
     {
         global $sys;
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->set(word_names::COMPANY_ID, word_names::COMPANY);
         $msk = new view($this->env->usr1);
         $msk->set(views::HISTORIC_ID);
         $wrd->view = $msk;
@@ -141,7 +143,7 @@ class test_words extends test_objects
     {
         global $sys;
         $wrd = new word($this->env->usr2);
-        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->set(word_names::COMPANY_ID, word_names::COMPANY);
         $wrd->exclude();
         return $wrd;
     }
@@ -165,11 +167,11 @@ class test_words extends test_objects
         $t_msk = new test_views($this->env);
         global $sys;
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::MATH_ID, words::MATH);
-        $wrd->description = words::MATH_COM;
+        $wrd->set(word_names::MATH_ID, word_names::MATH);
+        $wrd->description = word_names::MATH_COM;
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
-        $wrd->set_code_id(words::MATH, $this->env->usr_system);
-        $wrd->plural = words::MATH_PLURAL;
+        $wrd->set_code_id(word_names::MATH, $this->env->usr_system);
+        $wrd->plural = word_names::MATH_PLURAL;
         $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
         $wrd->impact = test_const::DUMMY_IMPACT;
@@ -185,7 +187,7 @@ class test_words extends test_objects
     function word_add(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD);
+        $wrd->set_name(word_names::TEST_ADD);
         return $wrd;
     }
 
@@ -197,8 +199,8 @@ class test_words extends test_objects
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->id = 0;
-        $wrd->set_name(words::TEST_ADD);
-        $wrd->set_code_id(words::TEST_ADD_CODE_ID, $this->env->usr_system);
+        $wrd->set_name(word_names::TEST_ADD);
+        $wrd->set_code_id(word_names::TEST_ADD_CODE_ID, $this->env->usr_system);
         return $wrd;
     }
 
@@ -210,7 +212,7 @@ class test_words extends test_objects
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->id = 0;
-        $wrd->set_name(words::TEST_ADD_TO);
+        $wrd->set_name(word_names::TEST_ADD_TO);
         return $wrd;
     }
 
@@ -220,7 +222,7 @@ class test_words extends test_objects
     function word_add_by_func(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD_VIA_FUNC);
+        $wrd->set_name(word_names::TEST_ADD_VIA_FUNC);
         return $wrd;
     }
 
@@ -231,8 +233,8 @@ class test_words extends test_objects
     {
         global $sys;
         $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD_API);
-        $wrd->description = words::TEST_ADD_API_COM;
+        $wrd->set_name(word_names::TEST_ADD_API);
+        $wrd->description = word_names::TEST_ADD_API_COM;
         $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::NORMAL);
         return $wrd;
     }
@@ -244,8 +246,8 @@ class test_words extends test_objects
     {
         global $sys;
         $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_UPD_API);
-        $wrd->description = words::TEST_UPD_API_COM;
+        $wrd->set_name(word_names::TEST_UPD_API);
+        $wrd->description = word_names::TEST_UPD_API_COM;
         $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $wrd;
     }
@@ -260,13 +262,51 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word_ui the word "CHF" (Swiss Franc currency code) for frontend
+     *                unit testing — used as the canonical "is symbol for" example
+     *                in the page-title category subtitle renderer tests
+     */
+    function chf_ui(): word_ui
+    {
+        $wrd = $this->word_chf();
+        return new word_ui($wrd->api_json());
+    }
+
+    /**
+     * @return word_ui the word "Zurich" for frontend unit testing — the canonical
+     *                multi-related-entry example (city/canton/company) used by the
+     *                page-title category subtitle and inline-related renderer tests
+     */
+    function zh_ui(): word_ui
+    {
+        $wrd = $this->word_zh();
+        return new word_ui($wrd->api_json());
+    }
+
+    /**
+     * @return word_ui "Zurich" with related phrases, a non-default type, share and protection
+     *                 to test the full page-title subtitle (category, type, share and protection)
+     */
+    function zh_full_ui(): word_ui
+    {
+        global $ui_sys;
+        $t_phr = new test_phrases($this->env);
+        $wrd = $this->zh_ui();
+        $wrd->phr_lst = $t_phr->list_zh_ui();
+        $wrd->set_type(phrase_types::MEASURE);
+        $wrd->share_id = $ui_sys?->typ_lst_cache?->shr_typ?->id(share_types::PERSONAL);
+        $wrd->protection_id = $ui_sys?->typ_lst_cache?->ptc_typ?->id(protection_types::ADMIN);
+        return $wrd;
+    }
+
+    /**
      * @return word "constant" to create the main triple for unit testing
      */
     function word_const(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CONST_ID, words::CONST_NAME);
-        $wrd->description = words::CONST_COM;
+        $wrd->set(word_names::CONST_ID, word_names::CONST_NAME);
+        $wrd->description = word_names::CONST_COM;
         $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -279,8 +319,8 @@ class test_words extends test_objects
     function word_pi_symbol(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::PI_SYMBOL_ID, words::PI_SYMBOL);
-        $wrd->description = words::PI_SYMBOL_COM;
+        $wrd->set(word_names::PI_SYMBOL_ID, word_names::PI_SYMBOL);
+        $wrd->description = word_names::PI_SYMBOL_COM;
         $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -293,8 +333,8 @@ class test_words extends test_objects
     function word_pi(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::PI_ID, words::PI);
-        $wrd->description = words::PI_COM;
+        $wrd->set(word_names::PI_ID, word_names::PI);
+        $wrd->description = word_names::PI_COM;
         $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
@@ -307,7 +347,7 @@ class test_words extends test_objects
     function word_cf(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CIRCUMFERENCE_ID, words::CIRCUMFERENCE);
+        $wrd->set(word_names::CIRCUMFERENCE_ID, word_names::CIRCUMFERENCE);
         return $wrd;
     }
 
@@ -317,7 +357,7 @@ class test_words extends test_objects
     function word_diameter(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::DIAMETER_ID, words::DIAMETER);
+        $wrd->set(word_names::DIAMETER_ID, word_names::DIAMETER);
         return $wrd;
     }
 
@@ -327,7 +367,7 @@ class test_words extends test_objects
     function word_e_symbol(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::E_SYMBOL_ID, words::E_SYMBOL);
+        $wrd->set(word_names::E_SYMBOL_ID, word_names::E_SYMBOL);
         $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         return $wrd;
     }
@@ -338,7 +378,7 @@ class test_words extends test_objects
     function word_e(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::E_ID, words::E);
+        $wrd->set(word_names::E_ID, word_names::E);
         $wrd->set_type(phrase_types::MATH_CONST, $this->env->usr1);
         return $wrd;
     }
@@ -350,72 +390,72 @@ class test_words extends test_objects
     function speed(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::SPEED_ID, words::SPEED);
+        $wrd->set(word_names::SPEED_ID, word_names::SPEED);
         return $wrd;
     }
 
     function light(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::LIGHT_ID, words::LIGHT);
+        $wrd->set(word_names::LIGHT_ID, word_names::LIGHT);
         return $wrd;
     }
 
-    function meter(): word
+    function metre(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::METER_ID, words::METER);
+        $wrd->set(word_names::METRE_ID, word_names::METRE);
         return $wrd;
     }
 
     function definition(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::DEFINITION_ID, words::DEFINITION);
+        $wrd->set(word_names::DEFINITION_ID, word_names::DEFINITION);
         return $wrd;
     }
 
     function hyperfine(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::HYPERFINE_ID, words::HYPERFINE);
+        $wrd->set(word_names::HYPERFINE_ID, word_names::HYPERFINE);
         return $wrd;
     }
 
     function transition(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::TRANSITION_ID, words::TRANSITION);
+        $wrd->set(word_names::TRANSITION_ID, word_names::TRANSITION);
         return $wrd;
     }
 
     function frequency(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::FREQUENCY_ID, words::FREQUENCY);
+        $wrd->set(word_names::FREQUENCY_ID, word_names::FREQUENCY);
         return $wrd;
     }
 
     function cs_133(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CS_133_ID, words::CS_133);
+        $wrd->set(word_names::CS_133_ID, word_names::CS_133);
         return $wrd;
     }
 
     function hz(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::HZ_ID, words::HZ);
+        $wrd->set(word_names::HZ_ID, word_names::HZ);
         $wrd->set_type(phrase_types::MEASURE, $this->env->usr1);
-        $wrd->set_description(words::HZ_COM);
+        $wrd->set_description(word_names::HZ_COM);
         return $wrd;
     }
 
     function word_1967(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::YEAR_1967_ID, words::YEAR_1967);
+        $wrd->set(word_names::YEAR_1967_ID, word_names::YEAR_1967);
         $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
@@ -423,7 +463,7 @@ class test_words extends test_objects
     function word_1983(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::YEAR_1983_ID, words::YEAR_1983);
+        $wrd->set(word_names::YEAR_1983_ID, word_names::YEAR_1983);
         $wrd->set_type(phrase_types::TIME, $this->env->usr1);
         return $wrd;
     }
@@ -444,7 +484,7 @@ class test_words extends test_objects
      */
     function word_2019(): word
     {
-        return $this->year_x(words::YEAR_2019_ID, words::YEAR_2019);
+        return $this->year_x(word_names::YEAR_2019_ID, word_names::YEAR_2019);
     }
 
     /**
@@ -453,60 +493,60 @@ class test_words extends test_objects
     function word_2020(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::YEAR_2020_ID, words::YEAR_2020);
+        $wrd->set(word_names::YEAR_2020_ID, word_names::YEAR_2020);
         $wrd->set_type(phrase_types::TIME, $this->env->usr1);
-        $wrd->set_description(words::YEAR_2020_COM);
+        $wrd->set_description(word_names::YEAR_2020_COM);
         return $wrd;
     }
 
     function word_2021(): word
     {
-        return $this->year_x(words::YEAR_2021_ID, words::YEAR_2021);
+        return $this->year_x(word_names::YEAR_2021_ID, word_names::YEAR_2021);
     }
 
     function word_2022(): word
     {
-        return $this->year_x(words::YEAR_2022_ID, words::YEAR_2022);
+        return $this->year_x(word_names::YEAR_2022_ID, word_names::YEAR_2022);
     }
 
     function word_2023(): word
     {
-        return $this->year_x(words::YEAR_2023_ID, words::YEAR_2023);
+        return $this->year_x(word_names::YEAR_2023_ID, word_names::YEAR_2023);
     }
 
     function word_2024(): word
     {
-        return $this->year_x(words::YEAR_2024_ID, words::YEAR_2024);
+        return $this->year_x(word_names::YEAR_2024_ID, word_names::YEAR_2024);
     }
 
     function word_2025(): word
     {
-        return $this->year_x(words::YEAR_2025_ID, words::YEAR_2025);
+        return $this->year_x(word_names::YEAR_2025_ID, word_names::YEAR_2025);
     }
 
     function word_2026(): word
     {
-        return $this->year_x(words::YEAR_2026_ID, words::YEAR_2026);
+        return $this->year_x(word_names::YEAR_2026_ID, word_names::YEAR_2026);
     }
 
     function word_2027(): word
     {
-        return $this->year_x(words::YEAR_2027_ID, words::YEAR_2027);
+        return $this->year_x(word_names::YEAR_2027_ID, word_names::YEAR_2027);
     }
 
     function word_2028(): word
     {
-        return $this->year_x(words::YEAR_2028_ID, words::YEAR_2028);
+        return $this->year_x(word_names::YEAR_2028_ID, word_names::YEAR_2028);
     }
 
     function word_2029(): word
     {
-        return $this->year_x(words::YEAR_2029_ID, words::YEAR_2029);
+        return $this->year_x(word_names::YEAR_2029_ID, word_names::YEAR_2029);
     }
 
     function word_2030(): word
     {
-        return $this->year_x(words::YEAR_2030_ID, words::YEAR_2030);
+        return $this->year_x(word_names::YEAR_2030_ID, word_names::YEAR_2030);
     }
 
     /**
@@ -586,7 +626,7 @@ class test_words extends test_objects
     function word_this(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::THIS_ID, words::THIS_NAME);
+        $wrd->set(word_names::THIS_ID, word_names::THIS_NAME);
         $wrd->set_type(phrase_types::THIS, $this->env->usr1);
         return $wrd;
     }
@@ -594,7 +634,7 @@ class test_words extends test_objects
     function word_prior(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::PRIOR_ID, words::PRIOR_NAME);
+        $wrd->set(word_names::PRIOR_ID, word_names::PRIOR_NAME);
         $wrd->set_type(phrase_types::PRIOR, $this->env->usr1);
         return $wrd;
     }
@@ -602,37 +642,57 @@ class test_words extends test_objects
     function word_one(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::ONE_ID, words::ONE);
+        $wrd->set(word_names::ONE_ID, word_names::ONE);
         $wrd->set_type(phrase_types::SCALING_HIDDEN, $this->env->usr1);
+        return $wrd;
+    }
+
+    /**
+     * @return word "one" without the scaling type to test the scaling type check
+     */
+    function word_one_unscaled(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ONE_ID, word_names::ONE);
         return $wrd;
     }
 
     function word_math(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::MATH_ID, words::MATH);
+        $wrd->set(word_names::MATH_ID, word_names::MATH);
         return $wrd;
     }
 
     function word_mio(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::MIO_ID, words::MIO_SHORT);
+        $wrd->set(word_names::MIO_ID, word_names::MIO_SHORT);
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
+        return $wrd;
+    }
+
+    /**
+     * @return word "mio" without the scaling type to test the scaling type check
+     */
+    function word_mio_unscaled(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MIO_ID, word_names::MIO_SHORT);
         return $wrd;
     }
 
     function word_minute(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::MINUTE_ID, words::MINUTE);
+        $wrd->set(word_names::MINUTE_ID, word_names::MINUTE);
         return $wrd;
     }
 
     function word_hour(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::HOUR_ID, words::HOUR);
+        $wrd->set(word_names::HOUR_ID, word_names::HOUR);
         return $wrd;
     }
 
@@ -656,7 +716,7 @@ class test_words extends test_objects
     function word_city(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CITY_ID, words::CITY);
+        $wrd->set(word_names::CITY_ID, word_names::CITY);
         return $wrd;
     }
 
@@ -666,7 +726,7 @@ class test_words extends test_objects
     function word_canton(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CANTON_ID, words::CANTON);
+        $wrd->set(word_names::CANTON_ID, word_names::CANTON);
         return $wrd;
     }
 
@@ -676,7 +736,7 @@ class test_words extends test_objects
     function word_zh(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::ZH_ID, words::ZH);
+        $wrd->set(word_names::ZH_ID, word_names::ZH);
         return $wrd;
     }
 
@@ -686,7 +746,7 @@ class test_words extends test_objects
     function word_bern(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::BE_ID, words::BE);
+        $wrd->set(word_names::BE_ID, word_names::BE);
         return $wrd;
     }
 
@@ -696,22 +756,22 @@ class test_words extends test_objects
     function word_ge(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::GE_ID, words::GE);
+        $wrd->set(word_names::GE_ID, word_names::GE);
         return $wrd;
     }
 
     function word_inhabitant(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::INHABITANT_ID, words::INHABITANTS);
-        $wrd->plural = words::INHABITANTS;
+        $wrd->set(word_names::INHABITANT_ID, word_names::INHABITANTS);
+        $wrd->plural = word_names::INHABITANTS;
         return $wrd;
     }
 
     function word_parts(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::PARTS_ID, words::PARTS);
+        $wrd->set(word_names::PARTS_ID, word_names::PARTS);
         return $wrd;
     }
 
@@ -725,63 +785,63 @@ class test_words extends test_objects
     function word_global(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::GLOBAL_ID, words::GLOBAL);
+        $wrd->set(word_names::GLOBAL_ID, word_names::GLOBAL);
         return $wrd;
     }
 
     function word_problem(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::PROBLEM_ID, words::PROBLEM);
+        $wrd->set(word_names::PROBLEM_ID, word_names::PROBLEM);
         return $wrd;
     }
 
     function word_potential(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::POTENTIAL_ID, words::POTENTIAL);
+        $wrd->set(word_names::POTENTIAL_ID, word_names::POTENTIAL);
         return $wrd;
     }
 
     function word_climate(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::CLIMATE_ID, words::CLIMATE);
+        $wrd->set(word_names::CLIMATE_ID, word_names::CLIMATE);
         return $wrd;
     }
 
     function word_warmer(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::WARMER_ID, words::WARMER);
+        $wrd->set(word_names::WARMER_ID, word_names::WARMER);
         return $wrd;
     }
 
     function word_health(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::HEALTH_ID, words::HEALTH);
+        $wrd->set(word_names::HEALTH_ID, word_names::HEALTH);
         return $wrd;
     }
 
     function word_populism(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::POPULISM_ID, words::POPULISM);
+        $wrd->set(word_names::POPULISM_ID, word_names::POPULISM);
         return $wrd;
     }
 
     function word_poverty(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::POVERTY_ID, words::POVERTY);
+        $wrd->set(word_names::POVERTY_ID, word_names::POVERTY);
         return $wrd;
     }
 
     function word_education(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::EDUCATION_ID, words::EDUCATION);
+        $wrd->set(word_names::EDUCATION_ID, word_names::EDUCATION);
         return $wrd;
     }
 
@@ -809,14 +869,14 @@ class test_words extends test_objects
     function word_trillion(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::TRILLION_ID, words::TRILLION);
+        $wrd->set(word_names::TRILLION_ID, word_names::TRILLION);
         return $wrd;
     }
 
     function word_billion(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::BILLION_ID, words::BILLION);
+        $wrd->set(word_names::BILLION_ID, word_names::BILLION);
         return $wrd;
     }
 
@@ -827,44 +887,159 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the currency "Swiss franc" — the target of the "CHF is symbol for
+     *              Swiss franc" triple used as the canonical symbol example
+     */
+    function swiss_franc(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SWISS_FRANC_ID, word_names::SWISS_FRANC);
+        $wrd->description = word_names::SWISS_FRANC_COM;
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "Swiss franc" word for frontend unit testing (e.g. as the
+     *                 symbol target a CHF page-title category subtitle links to);
+     *                 the *_ui suffix marks this as a frontend/UI factory per the
+     *                 naming rule in docs/llm/coding.md
+     */
+    function swiss_franc_ui(): word_ui
+    {
+        $wrd = $this->swiss_franc();
+        return new word_ui($wrd->api_json());
+    }
+
+    /**
+     * @return word_ui "Swiss franc" with the related symbol and category phrases as loaded
+     *                 with the word from the backend e.g. to test the related phrases
+     *                 shown on the default word page
+     */
+    function swiss_franc_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = $this->swiss_franc_ui();
+        $wrd->phr_lst = $t_phr->list_swiss_franc_related_ui();
+        return $wrd;
+    }
+
+    function euro(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::EURO_ID, word_names::EURO);
+        return $wrd;
+    }
+
     function word_eur(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::EUR_ID, words::EUR);
+        $wrd->set(word_names::EUR_ID, word_names::EUR);
+        return $wrd;
+    }
+
+    function us_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::US_DOLLAR_ID, word_names::US_DOLLAR);
         return $wrd;
     }
 
     function word_usd(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::USD_ID, words::USD);
+        $wrd->set(word_names::USD_ID, word_names::USD);
+        return $wrd;
+    }
+
+    /**
+     * @return word the dollar sign "$" used as an alias of "US dollar"
+     */
+    function word_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::DOLLAR_ID, word_names::DOLLAR);
+        return $wrd;
+    }
+
+    /**
+     * @return word the spelling variant "U.S. dollar" used as an alias of "US dollar"
+     */
+    function word_u_s_dollar(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::U_S_DOLLAR_ID, word_names::U_S_DOLLAR);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui "US dollar" with the related alias, symbol and category phrases as loaded
+     *                 with the word from the backend e.g. to test the alias and symbol lines
+     *                 shown on the default word page
+     */
+    function us_dollar_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->us_dollar()->api_json());
+        $wrd->phr_lst = $t_phr->list_us_dollar_related_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word the "currency" word, the common parent of "Swiss franc", "Euro" and "US Dollar"
+     *              used to test word::similar
+     */
+    function currency(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CURRENCY_ID, word_names::CURRENCY);
         return $wrd;
     }
 
     function word_htp(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::HTP_ID, words::HTP);
+        $wrd->set(word_names::HTP_ID, word_names::HTP);
         return $wrd;
     }
 
     function word_company(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $wrd->set(word_names::COMPANY_ID, word_names::COMPANY);
         return $wrd;
     }
 
     function word_abb(): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set(words::ABB_ID, words::ABB);
+        $wrd->set(word_names::ABB_ID, word_names::ABB);
+        return $wrd;
+    }
+
+    function word_vestas(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::VESTAS_ID, word_names::VESTAS);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui "company" with the related stock triples as loaded with the word
+     *                 from the backend e.g. to test that the related phrases are sorted
+     *                 by the impact which is the market capitalisation for stocks
+     */
+    function company_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->word_company()->api_json());
+        $wrd->phr_lst = $t_phr->list_company_related_ui();
         return $wrd;
     }
 
     function words_canton_zh_inhabitants(): array
     {
-        return [words::ZH, words::CANTON, words::INHABITANTS, words::MIO];
+        return [word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO];
     }
 
     /**
@@ -973,7 +1148,7 @@ class test_words extends test_objects
 
         $wrd = new word($test_usr);
         $wrd->id = $id;
-        $wrd->set_name(words::TEST_SPEED_PREFIX . $id);
+        $wrd->set_name(word_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());
         $wrd->set_type_id($type_id, $test_usr);

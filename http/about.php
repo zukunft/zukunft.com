@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 $app = new frontend();
 // TODO Prio 0 use message in all frontend calls
 $msg = new Message();
+global $sys;
 $db_con = $app->start("about", $msg);
 
 // display the view

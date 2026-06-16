@@ -1,23 +1,23 @@
 [
   {
     "id": 2,
+    "protection": 3,
     "name": "constant",
     "description": "fixed and well-defined number",
-    "protection": 3,
-    "type_id": 1
+    "type_id": 17
   },
   {
     "id": 1,
+    "protection": 3,
     "name": "mathematics",
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-    "protection": 3,
     "type_id": 1
   },
   {
     "id": 17,
+    "protection": 3,
     "name": "Pi",
     "description": "ratio of the circumference of a circle to its diameter",
-    "protection": 3,
     "type_id": 17
   }
 ]

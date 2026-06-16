@@ -51,7 +51,7 @@ SELECT ref_update_log_0042442002000 (
                17,
                null,
                0,
-               22,
+               29,
                161,
                'wikidata',
                2,

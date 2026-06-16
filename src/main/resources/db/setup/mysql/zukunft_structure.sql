@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS sys_log_statuum
     status_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    action            varchar(255) DEFAULT NULL COMMENT 'description of the action to get to this status',
+    action            varchar(255) DEFAULT NULL COMMENT 'human written description of the action to get to this status',
     PRIMARY KEY (sys_log_status_id)
 )
     ENGINE = InnoDB
@@ -176,6 +176,7 @@ CREATE TABLE IF NOT EXISTS system_times
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time of the monitoring period',
     end_time            timestamp DEFAULT NULL COMMENT 'end time of the monitoring period',
     system_time_type_id smallint      NOT NULL COMMENT 'the area of the execution time e.g. db write',
+    `url`               text      DEFAULT NULL COMMENT 'the request url as received from the frontend by a user action',
     milliseconds        bigint        NOT NULL COMMENT 'the execution time in milliseconds',
     PRIMARY KEY (system_time_id)
 )
@@ -188,6 +189,80 @@ CREATE TABLE IF NOT EXISTS system_times
 --
 ALTER TABLE system_times
     MODIFY system_time_id bigint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure for predefined database cache type e.g. system config or user config
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_types
+(
+    type_id smallint    NOT NULL COMMENT 'the internal unique primary index',
+    type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (type_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined database cache type e.g. system config or user config';
+
+--
+-- AUTO_INCREMENT for table db_cache_types
+--
+ALTER TABLE db_cache_types
+    MODIFY type_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure  for predefined database cache status e.g. dirty,updating or outdated
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_statuum
+(
+    status_id smallint    NOT NULL COMMENT 'the internal unique primary index',
+    status_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (status_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined database cache status e.g. dirty,updating or outdated';
+
+--
+-- AUTO_INCREMENT for table db_cache_statuum
+--
+ALTER TABLE db_cache_statuum
+    MODIFY status_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure precollected data for faster response times in the json format
+--
+
+CREATE TABLE IF NOT EXISTS db_caches
+(
+    db_cache_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
+    type_id   smallint      NOT NULL COMMENT 'to separate the system, user and frontend configuration',
+    data               text      DEFAULT NULL COMMENT 'the cached data as text',
+    user_id            bigint        NOT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    status_id smallint      NOT NULL DEFAULT 1 COMMENT 'clean, dirty, updating, outdated or unused',
+    last_update        timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the last update of the cache',
+    PRIMARY KEY (db_cache_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'precollected data for faster response times in the json format';
+
+--
+-- AUTO_INCREMENT for table db_caches
+--
+ALTER TABLE db_caches
+    MODIFY db_cache_id bigint NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -1194,10 +1269,12 @@ ALTER TABLE share_types
 CREATE TABLE IF NOT EXISTS languages
 (
     language_id    smallint         NOT NULL COMMENT 'the internal unique primary index',
-    language_name  varchar(255)     NOT NULL,
-    code_id        varchar(100) DEFAULT NULL,
+    language_name  varchar(255)     NOT NULL COMMENT 'the name of the language in the system language,which is English',
+    code_id        varchar(100) DEFAULT NULL COMMENT 'the ISO 639-1 language code plus BCP 47 plus additional language codes requested by zukunft.com users',
     description    text         DEFAULT NULL,
-    wikimedia_code varchar(100) DEFAULT NULL,
+    wikimedia_code varchar(100) DEFAULT NULL COMMENT 'wikimedia language code e.g. no instead of nb (Norwegian Bokmål in ISO) for a full link to wikipedia',
+    local_name     varchar(255) DEFAULT NULL COMMENT 'the name of the language in the language',
+    `usage`        bigint       DEFAULT NULL COMMENT 'the number of speakers worldwide',
     PRIMARY KEY (language_id)
 )
     ENGINE = InnoDB
@@ -2501,6 +2578,7 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
     formula_text      text      DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
     resolved_text     text      DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    latex             text      DEFAULT NULL COMMENT 'the formula in latex format',
     description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
     formula_type_id   smallint  DEFAULT NULL COMMENT 'the id of the formula type',
     all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
@@ -2534,6 +2612,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_name      varchar(255) DEFAULT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
     formula_text      text         DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
     resolved_text     text         DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    latex             text         DEFAULT NULL COMMENT 'the formula in latex format',
     description       text         DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
     formula_type_id   smallint     DEFAULT NULL COMMENT 'the id of the formula type',
     all_values_needed smallint     DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
@@ -4228,7 +4307,8 @@ CREATE OR REPLACE VIEW prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -4248,7 +4328,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -4263,7 +4344,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -4278,7 +4360,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -4298,7 +4381,8 @@ CREATE OR REPLACE VIEW terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -4317,7 +4401,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -4331,7 +4416,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -4345,7 +4431,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;
 
 --
@@ -4364,7 +4451,8 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
@@ -4384,7 +4472,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
      WHERE t.triple_id < 32767
 UNION
@@ -4399,7 +4488,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
      WHERE f.formula_id < 32767
 UNION
@@ -4414,7 +4504,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v
      WHERE v.verb_id < 32767;
 
@@ -4434,7 +4525,8 @@ CREATE OR REPLACE VIEW user_terms AS
            w.share_type_id,
            w.protect_id,
            ''                AS formula_text,
-           ''                AS resolved_text
+           ''                AS resolved_text,
+           ''                AS latex
       FROM user_words AS w
      WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
 UNION
@@ -4453,7 +4545,8 @@ UNION
            t.share_type_id,
            t.protect_id,
            ''                   AS formula_text,
-           ''                   AS resolved_text
+           ''                   AS resolved_text,
+           ''                   AS latex
       FROM user_triples AS t
 UNION
     SELECT f.formula_id * 2  AS term_id,
@@ -4467,7 +4560,8 @@ UNION
            f.share_type_id,
            f.protect_id,
            f.formula_text,
-           f.resolved_text
+           f.resolved_text,
+           f.latex
       FROM user_formulas AS f
 UNION
     SELECT v.verb_id * -2 AS term_id,
@@ -4481,7 +4575,8 @@ UNION
            1              AS share_type_id,
            3              AS protect_id,
            ''             AS formula_text,
-           ''             AS resolved_text
+           ''             AS resolved_text,
+           ''             AS latex
       FROM verbs AS v;
 
 
@@ -4593,6 +4688,36 @@ ALTER TABLE job_statuum
 
 ALTER TABLE job_types
     ADD KEY job_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_types
+--
+
+ALTER TABLE db_cache_types
+    ADD KEY db_cache_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_statuum
+--
+
+ALTER TABLE db_cache_statuum
+    ADD KEY db_cache_statuum_status_name_idx (status_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_caches
+--
+
+ALTER TABLE db_caches
+    ADD KEY db_caches_type_idx (type_id),
+    ADD KEY db_caches_user_idx (user_id),
+    ADD KEY db_caches_status_idx (status_id),
+    ADD KEY db_caches_last_update_idx (last_update);
 
 -- --------------------------------------------------------
 
@@ -4951,7 +5076,8 @@ ALTER TABLE share_types
 --
 
 ALTER TABLE languages
-    ADD KEY languages_language_name_idx (language_name);
+    ADD KEY languages_language_name_idx (language_name),
+    ADD KEY languages_local_name_idx (local_name);
 
 -- --------------------------------------------------------
 
@@ -6319,6 +6445,15 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_level_fk FOREIGN KEY (sys_log_level_id) REFERENCES sys_log_levels (sys_log_level_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_statuum (sys_log_status_id);
+
+--
+-- constraints for table db_caches
+--
+
+ALTER TABLE db_caches
+    ADD CONSTRAINT db_caches_db_cache_type_fk   FOREIGN KEY (type_id)   REFERENCES db_cache_types   (type_id),
+    ADD CONSTRAINT db_caches_user_fk            FOREIGN KEY (user_id)            REFERENCES users            (user_id),
+    ADD CONSTRAINT db_caches_db_cache_status_fk FOREIGN KEY (status_id) REFERENCES db_cache_statuum (status_id);
 
 --
 -- constraints for table job_times

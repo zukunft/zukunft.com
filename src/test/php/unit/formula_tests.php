@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -80,7 +80,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql read default and user changes by id');
         $frm = new formula($usr);
-        $frm->id = formulas::SCALE_HOUR_ID;
+        $frm->id = formula_names::SCALE_HOUR_ID;
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);
@@ -88,7 +88,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql read default by name');
         $frm = new formula($usr);
-        $frm->set_name(formulas::SCALE_MIO_EXP);
+        $frm->set_name(formula_names::SCALE_MIO_EXP);
         $t->assert_sql_standard_by_name($sc, $frm);
 
         $t->subheader($ts . 'sql write insert');
@@ -105,7 +105,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql write update');
         $frm = $t_frm->formula_name_only();
-        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEST_RENAMED);
+        $frm_renamed = $frm->cloned(formula_names::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);

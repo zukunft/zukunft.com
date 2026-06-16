@@ -1,0 +1,1796 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-04 12:00:00",
+  "user": "timon",
+  "selection": [
+    "accounting"
+  ],
+  "description": "Main accounting definitions and formulas that are not part of the units, physics, math or chemistry base data.",
+  "words": [
+    {
+      "name": "accounting",
+      "description": "measurement, processing and communication of financial information about economic entities",
+      "refs": [
+        {
+          "name": "Accounting",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4116214",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "auditing",
+      "description": "systematic and independent examination of books, accounts, documents and vouchers of an organization",
+      "refs": [
+        {
+          "name": "Audit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q181487",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bookkeeping",
+      "description": "recording and picking up business transactions",
+      "refs": [
+        {
+          "name": "Bookkeeping",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3707847",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "accrual",
+      "description": "in finance, adding together of interest or different investments over a period of time",
+      "refs": [
+        {
+          "name": "Accrual",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q384475",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "dividend",
+      "description": "payment made by a corporation to its shareholders to distribute profits",
+      "refs": [
+        {
+          "name": "Dividend",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q181201",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inventory",
+      "description": "goods held for resale, or raw materials stocked to produce those goods",
+      "refs": [
+        {
+          "name": "Inventory",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q815410",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "goodwill",
+      "description": "accounting term for the intangible asset recognized when a firm is purchased as a going concern",
+      "refs": [
+        {
+          "name": "Goodwill (accounting)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q157499",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "expense",
+      "description": "use or service to be provided to achieve a certain benefit",
+      "refs": [
+        {
+          "name": "Expense",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q13516686",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "EBITDA",
+      "description": "accounting measure: net earnings, before interest expenses, taxes, depreciation, and amortization are subtracted",
+      "refs": [
+        {
+          "name": "EBITDA",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5322573",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "amortization",
+      "description": "accounting term for the spreading of payments over multiple periods",
+      "refs": [
+        {
+          "name": "Amortization (accounting)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q474182",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "write-off",
+      "description": "reduction in recognized value of an entity",
+      "refs": [
+        {
+          "name": "Write-off",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5551716",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "provision",
+      "description": "account which records a present liability of an entity",
+      "refs": [
+        {
+          "name": "Provision (accounting)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q703087",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "account",
+      "description": "central data structure in the practice of accounting",
+      "refs": [
+        {
+          "name": "Account (bookkeeping)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q508295",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "ledger",
+      "description": "book registering economic transactions",
+      "refs": [
+        {
+          "name": "Ledger",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2732056",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "invoice",
+      "description": "commercial document issued by a seller to a buyer, relating to a sale transaction and indicating the products, quantities, and agreed prices for products or services the seller has provided the buyer",
+      "refs": [
+        {
+          "name": "Invoice",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q190581",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "overhead",
+      "description": "ongoing operating expense which do not directly generate profits, but which is vital to to profit making",
+      "refs": [
+        {
+          "name": "Overhead (business)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2334952",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "payroll",
+      "description": "list of a company's employees and the amount of money they are to be paid",
+      "refs": [
+        {
+          "name": "Payroll",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12740336",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "solvency",
+      "description": "financial term",
+      "refs": [
+        {
+          "name": "Solvency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1137437",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "leverage",
+      "description": "the use of borrowed funds rather than fresh equity in the purchase of an asset",
+      "refs": [
+        {
+          "name": "Leverage (finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1148384",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "budget",
+      "description": "balance sheet or statement of estimated receipts and expenditures",
+      "refs": [
+        {
+          "name": "Budget",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41263",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "creditor",
+      "description": "person or organization that has a right to a benefit",
+      "refs": [
+        {
+          "name": "Creditor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q157165",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "debtor",
+      "description": "natural or legal person who enters into a debt relationship; entity that owes a debt to another entity",
+      "refs": [
+        {
+          "name": "Debtor",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q157470",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "shareholder",
+      "description": "individual or organization that owns part of a corporation through shares of its stock",
+      "refs": [
+        {
+          "name": "Shareholder",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q381136",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "asset"
+    },
+    {
+      "name": "liability"
+    },
+    {
+      "name": "equity"
+    },
+    {
+      "name": "revenue"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "depreciation"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "debt"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "month"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "financial"
+    },
+    {
+      "name": "management"
+    },
+    {
+      "name": "forensic"
+    },
+    {
+      "name": "balance"
+    },
+    {
+      "name": "sheet"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "statement"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "equation"
+    },
+    {
+      "name": "basis"
+    },
+    {
+      "name": "matching"
+    },
+    {
+      "name": "principle"
+    },
+    {
+      "name": "recognition"
+    },
+    {
+      "name": "going"
+    },
+    {
+      "name": "concern"
+    },
+    {
+      "name": "period"
+    },
+    {
+      "name": "fiscal"
+    },
+    {
+      "name": "retained"
+    },
+    {
+      "name": "earnings"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "common"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "book"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "accounts"
+    },
+    {
+      "name": "payable"
+    },
+    {
+      "name": "receivable"
+    },
+    {
+      "name": "fixed"
+    },
+    {
+      "name": "current"
+    },
+    {
+      "name": "intangible"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "operating"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "accumulated"
+    },
+    {
+      "name": "salvage"
+    },
+    {
+      "name": "deferred"
+    },
+    {
+      "name": "bad"
+    },
+    {
+      "name": "expenditure"
+    },
+    {
+      "name": "accrued"
+    },
+    {
+      "name": "historical"
+    },
+    {
+      "name": "tangible"
+    },
+    {
+      "name": "property"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "general"
+    },
+    {
+      "name": "journal"
+    },
+    {
+      "name": "entry"
+    },
+    {
+      "name": "double"
+    },
+    {
+      "name": "debits"
+    },
+    {
+      "name": "credits"
+    },
+    {
+      "name": "chart"
+    },
+    {
+      "name": "trial"
+    },
+    {
+      "name": "transaction"
+    },
+    {
+      "name": "petty"
+    },
+    {
+      "name": "bank"
+    },
+    {
+      "name": "reconciliation"
+    },
+    {
+      "name": "margin"
+    },
+    {
+      "name": "working"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "quick"
+    },
+    {
+      "name": "liquidity"
+    },
+    {
+      "name": "turnover"
+    },
+    {
+      "name": "center"
+    },
+    {
+      "name": "internal"
+    },
+    {
+      "name": "control"
+    },
+    {
+      "name": "standard"
+    },
+    {
+      "name": "International"
+    },
+    {
+      "name": "Reporting"
+    },
+    {
+      "name": "Standards"
+    },
+    {
+      "name": "Financial"
+    },
+    {
+      "name": "audit"
+    },
+    {
+      "name": "FIFO"
+    },
+    {
+      "name": "LIFO"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "variable"
+    },
+    {
+      "name": "useful"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "shares"
+    },
+    {
+      "name": "beginning"
+    },
+    {
+      "name": "commercial"
+    },
+    {
+      "name": "goods"
+    },
+    {
+      "name": "sold"
+    }
+  ],
+  "triples": [
+    {
+      "name": "social science",
+      "from": "science",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "financial accounting",
+      "from": "accounting",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "field of accounting concerned with the summary, analysis and reporting of financial transactions related to a business. see Wikipedia: Financial accounting (Q949180)"
+    },
+    {
+      "name": "management accounting",
+      "from": "accounting",
+      "verb": "kind of",
+      "to": "management",
+      "description": "field of business administration, part of the internal accounting system of a company. see Wikipedia: Management accounting (Q2990807)"
+    },
+    {
+      "name": "cost accounting",
+      "from": "accounting",
+      "verb": "kind of",
+      "to": "cost",
+      "description": "systematic set of procedures for recording and reporting measurements of the cost of manufacturing goods and performing services in the aggregate and in detail. see Wikipedia: Cost accounting (Q1077518)"
+    },
+    {
+      "name": "forensic accounting",
+      "from": "accounting",
+      "verb": "kind of",
+      "to": "forensic",
+      "description": "accounting of engagements from disputes or litigation which have or are expected to happen. see Wikipedia: Forensic accounting (Q2663158)"
+    },
+    {
+      "name": "balance sheet",
+      "from": "sheet",
+      "verb": "of",
+      "to": "balance",
+      "description": "accounting financial summary. see Wikipedia: Balance sheet (Q46834)"
+    },
+    {
+      "name": "income statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "income",
+      "description": "financial statement of a company: shows the company's revenues and expenses during a particular period. see Wikipedia: Income statement (Q243460)"
+    },
+    {
+      "name": "cash flow",
+      "from": "cash",
+      "verb": "can",
+      "to": "flow"
+    },
+    {
+      "name": "cash flow statement",
+      "from": "statement",
+      "verb": "of",
+      "to": "cash flow",
+      "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)"
+    },
+    {
+      "name": "financial statement",
+      "from": "statement",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "formal record of the financial activities and position of a business, person, or other entity. see Wikipedia: Financial statement (Q192907)"
+    },
+    {
+      "name": "accounting equation",
+      "from": "equation",
+      "verb": "of",
+      "to": "accounting",
+      "description": "fundamental equation of the double-entry bookkeeping model. see Wikipedia: Accounting equation (Q864368)"
+    },
+    {
+      "name": "basis of accounting",
+      "from": "basis",
+      "verb": "of",
+      "to": "accounting",
+      "description": "time when financial transactions are reported. see Wikipedia: Basis of accounting (Q832927)"
+    },
+    {
+      "name": "matching principle",
+      "from": "principle",
+      "verb": "of",
+      "to": "matching",
+      "description": "accounting method. see Wikipedia: Matching principle (Q4388479)"
+    },
+    {
+      "name": "revenue recognition",
+      "from": "recognition",
+      "verb": "of",
+      "to": "revenue",
+      "description": "accounting method. see Wikipedia: Revenue recognition (Q2146785)"
+    },
+    {
+      "name": "going concern",
+      "from": "concern",
+      "verb": "kind of",
+      "to": "going",
+      "description": "business not under threat of substantially curtailing its operation. see Wikipedia: Going concern (Q565043)"
+    },
+    {
+      "name": "accounting period",
+      "from": "period",
+      "verb": "of",
+      "to": "accounting",
+      "description": "accounting method. see Wikipedia: Accounting period (Q1754678)"
+    },
+    {
+      "name": "fiscal year",
+      "from": "year",
+      "verb": "kind of",
+      "to": "fiscal",
+      "description": "one-year term for government and business financial reporting. see Wikipedia: Fiscal year (Q191891)"
+    },
+    {
+      "name": "retained earnings",
+      "from": "earnings",
+      "verb": "kind of",
+      "to": "retained",
+      "description": "accumulated net income (or loss) of the corporation that is retained by the corporation. see Wikipedia: Retained earnings (Q240691)"
+    },
+    {
+      "name": "share capital",
+      "from": "capital",
+      "verb": "of",
+      "to": "share",
+      "description": "portion of a company's equity that has been obtained by trading stock to a shareholder for cash. see Wikipedia: Share capital (Q330601)"
+    },
+    {
+      "name": "common stock",
+      "from": "stock",
+      "verb": "kind of",
+      "to": "common",
+      "description": "form of corporate equity ownership; a type of security. see Wikipedia: Common stock (Q1081659)"
+    },
+    {
+      "name": "book value",
+      "from": "value",
+      "verb": "of",
+      "to": "book",
+      "description": "in accounting, the value of an asset according to its balance sheet account balance. see Wikipedia: Book value (Q1761731)"
+    },
+    {
+      "name": "accounts payable",
+      "from": "accounts",
+      "verb": "kind of",
+      "to": "payable",
+      "description": "money owed by a business to its suppliers. see Wikipedia: Accounts payable (Q250058)"
+    },
+    {
+      "name": "accounts receivable",
+      "from": "accounts",
+      "verb": "kind of",
+      "to": "receivable",
+      "description": "legally enforceable claim for payment to a business by its customer/ clients for goods supplied and/or services rendered in execution of the customer's order. see Wikipedia: Accounts receivable (Q328554)"
+    },
+    {
+      "name": "fixed asset",
+      "from": "asset",
+      "verb": "kind of",
+      "to": "fixed",
+      "description": "assets and property that cannot easily be converted into cash, like property, plant or equipment. see Wikipedia: Fixed asset (Q955421)"
+    },
+    {
+      "name": "current asset",
+      "from": "asset",
+      "verb": "kind of",
+      "to": "current",
+      "description": "an asset which can either be converted to cash or used to pay current liabilities within 12 months. see Wikipedia: Current asset (Q730884)"
+    },
+    {
+      "name": "current liability",
+      "from": "liability",
+      "verb": "kind of",
+      "to": "current",
+      "description": "all liabilities of the business that are to be settled in cash within the fiscal year or the operating cycle of a given firm. see Wikipedia: Current liability (Q2353682)"
+    },
+    {
+      "name": "intangible asset",
+      "from": "asset",
+      "verb": "kind of",
+      "to": "intangible",
+      "description": "asset that lacks physical substance and usually is very hard to evaluate. see Wikipedia: Intangible asset (Q427581)"
+    },
+    {
+      "name": "net income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "net",
+      "description": "measure of the profitability of a business venture. see Wikipedia: Net income (Q570938)"
+    },
+    {
+      "name": "gross profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "sum of all earnings before taxes. see Wikipedia: Gross income (Q3683077)"
+    },
+    {
+      "name": "operating expense",
+      "from": "expense",
+      "verb": "kind of",
+      "to": "operating",
+      "description": "ongoing cost for running a product, business, or system. see Wikipedia: Operating expense (Q831940)"
+    },
+    {
+      "name": "interest and taxes",
+      "from": "interest",
+      "verb": "and",
+      "to": "taxes"
+    },
+    {
+      "name": "earnings before interest and taxes",
+      "from": "earnings",
+      "verb": "kind of",
+      "to": "interest and taxes",
+      "description": "measure of a firm's profit. see Wikipedia: Earnings before interest and taxes (Q720862)"
+    },
+    {
+      "name": "accumulated depreciation",
+      "from": "depreciation",
+      "verb": "kind of",
+      "to": "accumulated",
+      "description": "allocating the cost of a (tangible) asset over a period of time. see Wikipedia: Depreciation (Q114403)"
+    },
+    {
+      "name": "salvage value",
+      "from": "value",
+      "verb": "of",
+      "to": "salvage",
+      "description": "one of the constituents of a leasing calculus which describes the future value of a good in terms of absolute value. see Wikipedia: Residual value (Q754849)"
+    },
+    {
+      "name": "deferred income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "deferred",
+      "description": "term in accounting. see Wikipedia: Deferred income (Q885383)"
+    },
+    {
+      "name": "bad debt",
+      "from": "debt",
+      "verb": "kind of",
+      "to": "bad",
+      "description": "monetary amount owed to a creditor that is unlikely to be paid. see Wikipedia: Bad debt (Q1365583)"
+    },
+    {
+      "name": "capital expenditure",
+      "from": "expenditure",
+      "verb": "of",
+      "to": "capital",
+      "description": "costs associated with the procurement and maintenance of, and improvements to, the fixed assets of an organisation. see Wikipedia: Capital expenditure (Q302208)"
+    },
+    {
+      "name": "earnings per share",
+      "from": "earnings",
+      "verb": "per",
+      "to": "share",
+      "description": "value of earnings per outstanding share of common stock for a company. see Wikipedia: Earnings per share (Q1134378)"
+    },
+    {
+      "name": "accrued liability",
+      "from": "liability",
+      "verb": "kind of",
+      "to": "accrued",
+      "description": "an expense that has been incurred but not yet paid or recorded in the accounts at the end of a period. see Wikipedia: Accrued liabilities (Q4672887)"
+    },
+    {
+      "name": "historical cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "historical",
+      "description": "original monetary value of an item. see Wikipedia: Historical cost (Q362098)"
+    },
+    {
+      "name": "tangible property",
+      "from": "property",
+      "verb": "kind of",
+      "to": "tangible",
+      "description": "property which can be touched. see Wikipedia: Tangible property (Q7682959)"
+    },
+    {
+      "name": "price-earnings",
+      "from": "price",
+      "verb": "and",
+      "to": "earnings"
+    },
+    {
+      "name": "price-earnings ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "price-earnings",
+      "description": "the ratio of a company's share price to the company's earnings per share. see Wikipedia: Price-earnings ratio (Q127473)"
+    },
+    {
+      "name": "general ledger",
+      "from": "ledger",
+      "verb": "kind of",
+      "to": "general",
+      "description": "central repository for accounting data. see Wikipedia: General ledger (Q1977520)"
+    },
+    {
+      "name": "general journal",
+      "from": "journal",
+      "verb": "kind of",
+      "to": "general",
+      "description": "volume used in bookkeeping containing daily records of receipts and expenditures in the order of their occurrence. see Wikipedia: General journal (Q608971)"
+    },
+    {
+      "name": "journal entry",
+      "from": "entry",
+      "verb": "of",
+      "to": "journal",
+      "description": "logging of a transaction into accounting journal items. see Wikipedia: Journal entry (Q3935376)"
+    },
+    {
+      "name": "double-entry",
+      "from": "entry",
+      "verb": "kind of",
+      "to": "double"
+    },
+    {
+      "name": "double-entry bookkeeping",
+      "from": "bookkeeping",
+      "verb": "kind of",
+      "to": "double-entry",
+      "description": "seamless, chronological and factual ordered recording of all business processes in a company based of documented evidence. see Wikipedia: Double-entry bookkeeping (Q192803)"
+    },
+    {
+      "name": "debits and credits",
+      "from": "debits",
+      "verb": "and",
+      "to": "credits",
+      "description": "amounts added or subtracted to account ledgers. see Wikipedia: Debits and credits (Q1120961)"
+    },
+    {
+      "name": "chart of accounts",
+      "from": "chart",
+      "verb": "of",
+      "to": "accounts",
+      "description": "list of financial accounts used in the organization's general ledger. see Wikipedia: Chart of accounts (Q1406649)"
+    },
+    {
+      "name": "trial balance",
+      "from": "balance",
+      "verb": "kind of",
+      "to": "trial",
+      "description": "list of all business accounts in a ledger. see Wikipedia: Trial balance (Q1192485)"
+    },
+    {
+      "name": "financial transaction",
+      "from": "transaction",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "agreement, or communication, carried out between a buyer and a seller to exchange an asset for payment. see Wikipedia: Financial transaction (Q1166072)"
+    },
+    {
+      "name": "petty cash",
+      "from": "cash",
+      "verb": "kind of",
+      "to": "petty",
+      "description": "proxy. see Wikipedia: Petty cash (Q3523818)"
+    },
+    {
+      "name": "bank reconciliation",
+      "from": "reconciliation",
+      "verb": "of",
+      "to": "bank",
+      "description": "accounting term. see Wikipedia: Reconciliation (accounting) (Q332836)"
+    },
+    {
+      "name": "operating margin",
+      "from": "margin",
+      "verb": "kind of",
+      "to": "operating",
+      "description": "relating operating profits to net sales. see Wikipedia: Operating margin (Q722249)"
+    },
+    {
+      "name": "working capital",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "working",
+      "description": "financial metric. see Wikipedia: Working capital (Q823288)"
+    },
+    {
+      "name": "current ratio",
+      "from": "ratio",
+      "verb": "kind of",
+      "to": "current",
+      "description": "liquidity ratio that measures whether or not a firm has enough resources to meet its short-term obligations. see Wikipedia: Current ratio (Q2210989)"
+    },
+    {
+      "name": "quick ratio",
+      "from": "ratio",
+      "verb": "kind of",
+      "to": "quick",
+      "description": "company's liquid assets divided by its current liabilities. see Wikipedia: Quick ratio (Q1310347)"
+    },
+    {
+      "name": "debt-to-equity",
+      "from": "debt",
+      "verb": "to",
+      "to": "equity"
+    },
+    {
+      "name": "debt-to-equity ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "debt-to-equity",
+      "description": "financial ratio indicating the relative proportion of shareholders' equity and debt used to finance a company's assets. see Wikipedia: Debt-to-equity ratio (Q167064)"
+    },
+    {
+      "name": "accounting liquidity",
+      "from": "liquidity",
+      "verb": "of",
+      "to": "accounting",
+      "description": "measure of the ability of a debtor to pay their debts as and when they fall due. see Wikipedia: Accounting liquidity (Q1827667)"
+    },
+    {
+      "name": "asset turnover",
+      "from": "turnover",
+      "verb": "of",
+      "to": "asset",
+      "description": "sales generated per dollar of assets. see Wikipedia: Asset turnover (Q1728600)"
+    },
+    {
+      "name": "cost center",
+      "from": "center",
+      "verb": "of",
+      "to": "cost",
+      "description": "management accounting term. see Wikipedia: Cost centre (business) (Q1785269)"
+    },
+    {
+      "name": "internal control",
+      "from": "control",
+      "verb": "kind of",
+      "to": "internal",
+      "description": "process or system used by an organization to manage risk and diminish the occurrence of fraud. see Wikipedia: Internal control (Q1667931)"
+    },
+    {
+      "name": "accounting standard",
+      "from": "standard",
+      "verb": "of",
+      "to": "accounting",
+      "description": "the specific accounting discipline followed (IFRS, US GAAP, Chinese AS, France GAAP, Germany GAAP, Russian GAAP, UK GAAP, etc.). see Wikipedia: Accounting standard (Q1779838)"
+    },
+    {
+      "name": "Financial Reporting",
+      "from": "Reporting",
+      "verb": "kind of",
+      "to": "Financial"
+    },
+    {
+      "name": "International Financial Reporting",
+      "from": "Financial Reporting",
+      "verb": "kind of",
+      "to": "International"
+    },
+    {
+      "name": "International Financial Reporting Standards",
+      "from": "Standards",
+      "verb": "of",
+      "to": "International Financial Reporting",
+      "description": "accounting standard issued by the IFRS Foundation. see Wikipedia: International Financial Reporting Standards (Q176831)"
+    },
+    {
+      "name": "financial audit",
+      "from": "audit",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "audit conducted to ensure financial statements are in accordance with specified criteria. see Wikipedia: Financial audit (Q740419)"
+    },
+    {
+      "name": "FIFO and LIFO",
+      "from": "FIFO",
+      "verb": "and",
+      "to": "LIFO"
+    },
+    {
+      "name": "FIFO and LIFO accounting",
+      "from": "accounting",
+      "verb": "kind of",
+      "to": "FIFO and LIFO",
+      "description": "method in managing inventory and financial matters. see Wikipedia: FIFO and LIFO accounting (Q1265942)"
+    },
+    {
+      "name": "goods sold",
+      "from": "goods",
+      "verb": "kind of",
+      "to": "sold"
+    },
+    {
+      "name": "cost of goods sold",
+      "from": "cost",
+      "verb": "of",
+      "to": "goods sold"
+    },
+    {
+      "name": "variable cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "variable"
+    },
+    {
+      "name": "useful life",
+      "from": "life",
+      "verb": "kind of",
+      "to": "useful",
+      "description": "the estimated period over which a fixed asset is expected to be usable by a business"
+    },
+    {
+      "name": "number of shares",
+      "from": "number",
+      "verb": "of",
+      "to": "shares",
+      "description": "the count of shares of common stock outstanding"
+    },
+    {
+      "name": "beginning retained earnings",
+      "from": "retained earnings",
+      "verb": "kind of",
+      "to": "beginning",
+      "description": "the balance of retained earnings at the start of an accounting period"
+    },
+    {
+      "name": "commercial year",
+      "from": "year",
+      "verb": "kind of",
+      "to": "commercial",
+      "description": "a year of 360 days (twelve 30-day months) used by convention in interest and accounting calculations"
+    },
+    {
+      "name": "accounting is part of social science",
+      "from": "accounting",
+      "verb": "is part of",
+      "to": "social science"
+    },
+    {
+      "name": "financial accounting is part of accounting",
+      "from": "financial accounting",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "management accounting is part of accounting",
+      "from": "management accounting",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "cost accounting is part of accounting",
+      "from": "cost accounting",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "auditing is part of accounting",
+      "from": "auditing",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "bookkeeping is part of accounting",
+      "from": "bookkeeping",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "forensic accounting is part of accounting",
+      "from": "forensic accounting",
+      "verb": "is part of",
+      "to": "accounting"
+    },
+    {
+      "name": "balance sheet is part of financial accounting",
+      "from": "balance sheet",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "income statement is part of financial accounting",
+      "from": "income statement",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "cash flow statement is part of financial accounting",
+      "from": "cash flow statement",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "financial statement is part of financial accounting",
+      "from": "financial statement",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accounting equation is part of financial accounting",
+      "from": "accounting equation",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accrual is part of financial accounting",
+      "from": "accrual",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "basis of accounting is part of financial accounting",
+      "from": "basis of accounting",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "matching principle is part of financial accounting",
+      "from": "matching principle",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "revenue recognition is part of financial accounting",
+      "from": "revenue recognition",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "going concern is part of financial accounting",
+      "from": "going concern",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accounting period is part of financial accounting",
+      "from": "accounting period",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "fiscal year is part of financial accounting",
+      "from": "fiscal year",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "retained earnings is part of financial accounting",
+      "from": "retained earnings",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "dividend is part of financial accounting",
+      "from": "dividend",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "share capital is part of financial accounting",
+      "from": "share capital",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "common stock is part of financial accounting",
+      "from": "common stock",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "book value is part of financial accounting",
+      "from": "book value",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accounts payable is part of financial accounting",
+      "from": "accounts payable",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accounts receivable is part of financial accounting",
+      "from": "accounts receivable",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "inventory is part of financial accounting",
+      "from": "inventory",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "fixed asset is part of financial accounting",
+      "from": "fixed asset",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "current asset is part of financial accounting",
+      "from": "current asset",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "current liability is part of financial accounting",
+      "from": "current liability",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "intangible asset is part of financial accounting",
+      "from": "intangible asset",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "goodwill is part of financial accounting",
+      "from": "goodwill",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "net income is part of financial accounting",
+      "from": "net income",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "gross profit is part of financial accounting",
+      "from": "gross profit",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "expense is part of financial accounting",
+      "from": "expense",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "operating expense is part of financial accounting",
+      "from": "operating expense",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "EBITDA is part of financial accounting",
+      "from": "EBITDA",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "earnings before interest and taxes is part of financial accounting",
+      "from": "earnings before interest and taxes",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accumulated depreciation is part of financial accounting",
+      "from": "accumulated depreciation",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "amortization is part of financial accounting",
+      "from": "amortization",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "salvage value is part of financial accounting",
+      "from": "salvage value",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "deferred income is part of financial accounting",
+      "from": "deferred income",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "bad debt is part of financial accounting",
+      "from": "bad debt",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "write-off is part of financial accounting",
+      "from": "write-off",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "capital expenditure is part of financial accounting",
+      "from": "capital expenditure",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "earnings per share is part of financial accounting",
+      "from": "earnings per share",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "accrued liability is part of financial accounting",
+      "from": "accrued liability",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "provision is part of financial accounting",
+      "from": "provision",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "historical cost is part of financial accounting",
+      "from": "historical cost",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "tangible property is part of financial accounting",
+      "from": "tangible property",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "price-earnings ratio is part of financial accounting",
+      "from": "price-earnings ratio",
+      "verb": "is part of",
+      "to": "financial accounting"
+    },
+    {
+      "name": "account is part of bookkeeping",
+      "from": "account",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "ledger is part of bookkeeping",
+      "from": "ledger",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "general ledger is part of bookkeeping",
+      "from": "general ledger",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "general journal is part of bookkeeping",
+      "from": "general journal",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "journal entry is part of bookkeeping",
+      "from": "journal entry",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "double-entry bookkeeping is part of bookkeeping",
+      "from": "double-entry bookkeeping",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "debits and credits is part of bookkeeping",
+      "from": "debits and credits",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "chart of accounts is part of bookkeeping",
+      "from": "chart of accounts",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "trial balance is part of bookkeeping",
+      "from": "trial balance",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "financial transaction is part of bookkeeping",
+      "from": "financial transaction",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "invoice is part of bookkeeping",
+      "from": "invoice",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "petty cash is part of bookkeeping",
+      "from": "petty cash",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "bank reconciliation is part of bookkeeping",
+      "from": "bank reconciliation",
+      "verb": "is part of",
+      "to": "bookkeeping"
+    },
+    {
+      "name": "operating margin is part of management accounting",
+      "from": "operating margin",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "working capital is part of management accounting",
+      "from": "working capital",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "current ratio is part of management accounting",
+      "from": "current ratio",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "quick ratio is part of management accounting",
+      "from": "quick ratio",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "debt-to-equity ratio is part of management accounting",
+      "from": "debt-to-equity ratio",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "accounting liquidity is part of management accounting",
+      "from": "accounting liquidity",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "solvency is part of management accounting",
+      "from": "solvency",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "leverage is part of management accounting",
+      "from": "leverage",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "asset turnover is part of management accounting",
+      "from": "asset turnover",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "budget is part of management accounting",
+      "from": "budget",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "overhead is part of management accounting",
+      "from": "overhead",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "cost center is part of management accounting",
+      "from": "cost center",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "payroll is part of management accounting",
+      "from": "payroll",
+      "verb": "is part of",
+      "to": "management accounting"
+    },
+    {
+      "name": "internal control is part of auditing",
+      "from": "internal control",
+      "verb": "is part of",
+      "to": "auditing"
+    },
+    {
+      "name": "accounting standard is part of auditing",
+      "from": "accounting standard",
+      "verb": "is part of",
+      "to": "auditing"
+    },
+    {
+      "name": "International Financial Reporting Standards is part of auditing",
+      "from": "International Financial Reporting Standards",
+      "verb": "is part of",
+      "to": "auditing"
+    },
+    {
+      "name": "financial audit is part of auditing",
+      "from": "financial audit",
+      "verb": "is part of",
+      "to": "auditing"
+    },
+    {
+      "name": "FIFO and LIFO accounting is part of cost accounting",
+      "from": "FIFO and LIFO accounting",
+      "verb": "is part of",
+      "to": "cost accounting"
+    },
+    {
+      "name": "months in a fiscal year",
+      "from": "month",
+      "verb": "in",
+      "to": "fiscal year"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of accounting equation",
+      "expression": "\"asset\" = \"liability\" + \"equity\"",
+      "latex": "A = L + E",
+      "assigned": [
+        "liability",
+        "equity"
+      ]
+    },
+    {
+      "name": "definition of net income",
+      "expression": "\"net income\" = \"revenue\" - \"expense\"",
+      "latex": "NI = R - E",
+      "assigned": [
+        "revenue",
+        "expense"
+      ]
+    },
+    {
+      "name": "definition of gross profit",
+      "expression": "\"gross profit\" = \"revenue\" - \"cost of goods sold\"",
+      "latex": "GP = R - COGS",
+      "assigned": [
+        "revenue",
+        "cost of goods sold"
+      ]
+    },
+    {
+      "name": "definition of working capital",
+      "expression": "\"working capital\" = \"current asset\" - \"current liability\"",
+      "latex": "WC = CA - CL",
+      "assigned": [
+        "current asset",
+        "current liability"
+      ]
+    },
+    {
+      "name": "definition of current ratio",
+      "expression": "\"current ratio\" = \"current asset\" / \"current liability\"",
+      "latex": "CR = \\frac{CA}{CL}",
+      "assigned": [
+        "current asset",
+        "current liability"
+      ]
+    },
+    {
+      "name": "definition of quick ratio",
+      "expression": "\"quick ratio\" = ( \"current asset\" - \"inventory\" ) / \"current liability\"",
+      "latex": "QR = \\frac{CA - I}{CL}",
+      "assigned": [
+        "current asset",
+        "inventory",
+        "current liability"
+      ]
+    },
+    {
+      "name": "definition of debt-to-equity ratio",
+      "expression": "\"debt-to-equity ratio\" = \"liability\" / \"equity\"",
+      "latex": "\\frac{D}{E} = \\frac{L}{E}",
+      "assigned": [
+        "liability",
+        "equity"
+      ]
+    },
+    {
+      "name": "straight-line depreciation",
+      "expression": "\"depreciation\" = ( \"cost\" - \"salvage value\" ) / \"useful life\"",
+      "latex": "D = \\frac{C - S}{n}",
+      "assigned": [
+        "cost",
+        "salvage value",
+        "useful life"
+      ]
+    },
+    {
+      "name": "definition of book value",
+      "expression": "\"book value\" = \"cost\" - \"accumulated depreciation\"",
+      "latex": "BV = C - D_{acc}",
+      "assigned": [
+        "cost",
+        "accumulated depreciation"
+      ]
+    },
+    {
+      "name": "definition of earnings per share",
+      "expression": "\"earnings per share\" = \"net income\" / \"number of shares\"",
+      "latex": "EPS = \\frac{NI}{N}",
+      "assigned": [
+        "net income",
+        "number of shares"
+      ]
+    },
+    {
+      "name": "definition of retained earnings",
+      "expression": "\"retained earnings\" = \"beginning retained earnings\" + \"net income\" - \"dividend\"",
+      "latex": "RE = RE_0 + NI - Div",
+      "assigned": [
+        "beginning retained earnings",
+        "net income",
+        "dividend"
+      ]
+    },
+    {
+      "name": "definition of asset turnover",
+      "expression": "\"asset turnover\" = \"revenue\" / \"asset\"",
+      "latex": "AT = \\frac{R}{A}",
+      "assigned": [
+        "revenue",
+        "asset"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "by definition",
+      "description": "a value that is fixed by an unambiguous definition or convention rather than measured"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "commercial year"
+      ],
+      "number": "360",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "months in a fiscal year"
+      ],
+      "number": "12",
+      "source": "by definition"
+    }
+  ]
+}

@@ -35,25 +35,29 @@ namespace Zukunft\ZukunftCom\main\php\web\system;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sys_log_list
 {
@@ -113,6 +117,29 @@ class sys_log_list
 
 
     /*
+     * load
+     */
+
+    /**
+     * request the system log entries related to the session user from the backend
+     * @param string $dsp_type which log entries should be loaded e.g. 'all' or only the entries relevant for the user
+     * @param int $size the maximal number of log entries to load
+     * @param int $page the offset in pages of the given size to load additional entries
+     * @return user_message ok or the reason why loading has failed
+     */
+    function load_by_user(string $dsp_type, int $size, int $page = 0): user_message
+    {
+        $data = [];
+        $data[url_var::LOG_STATUS] = $dsp_type;
+        $data[url_var::LOG_SIZE] = $size;
+        $data[url_var::LOG_PAGE] = $page;
+        $rest = new rest_call();
+        $json_body = $rest->api_get($this::class, $data);
+        return $this->set_from_json_array($json_body);
+    }
+
+
+    /*
      * api
      */
 
@@ -124,9 +151,8 @@ class sys_log_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
-        global $db_con;
         $api_msg = new api_message();
-        $pod_name = $api_msg->api_site_name($db_con);
+        $pod_name = $api_msg->api_site_name();
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
@@ -163,6 +189,26 @@ class sys_log_list
     {
         $this->lst[] = $sys_log;
         return true;
+    }
+
+    /**
+     * @return bool true when the list contains no entries; mirrors the ListBase API so callers
+     *              that pre-load the list can decide between rendering the table and an empty-state notice
+     */
+    function is_empty(): bool
+    {
+        return count($this->lst) === 0;
+    }
+
+    /**
+     * @param int $limit the maximal number of log entries to keep
+     * @return sys_log_list with only the first and most relevant entries of this list
+     */
+    function head(int $limit): sys_log_list
+    {
+        $err_lst = new sys_log_list();
+        $err_lst->lst = array_slice($this->lst, 0, $limit);
+        return $err_lst;
     }
 
 
@@ -221,17 +267,17 @@ class sys_log_list
         if (count($this->lst) > 0) {
             // prepare to show a system log entry
             $row_nbr = 0;
-            foreach ($this->lst as $log_dsp) {
+            foreach ($this->lst as $log_ui) {
                 $row_nbr++;
                 if ($row_nbr == 1) {
                     $rows .= $this->headline_html();
                 }
-                $rows .= $log_dsp->get_html($usr, $back);
+                $rows .= $log_ui->get_html($usr, $back);
             }
             $result = $html->tbl($rows);
         }
 
-        return $result;
+        return $html->main($result);
     }
 
     /**
@@ -254,7 +300,10 @@ class sys_log_list
 
     function get_html_page(?user $usr = null, string $back = ''): string
     {
-        return $this->get_html_header('System log') . $this->get_html($usr, $back) . $this->get_html_footer();
+        return $this->get_html_header('System log')
+            . $this->get_html_navbar()
+            . $this->get_html($usr, $back)
+            . $this->get_html_footer();
     }
 
     /*
@@ -270,6 +319,12 @@ class sys_log_list
         }
         $html = new html_base();
         return $html->header($title);
+    }
+
+    function get_html_navbar(): string
+    {
+        $html = new html_base();
+        return $html->navbar(views::SYSTEM_LOG_ID);
     }
 
     function get_html_footer(): string

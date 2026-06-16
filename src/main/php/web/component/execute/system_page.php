@@ -42,13 +42,29 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::SYSTEM . 'job_list.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\system\job;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class system_page extends component
 {
@@ -56,18 +72,48 @@ class system_page extends component
     /**
      * HTML for a page title
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
+     * @param array $url_array the URL params; used to add the search pattern to the search result title
      * @return string the html code to start a new form and display the tile
      */
-    function system_tile(?msg_id $ui_msg_code_id = null): string
+    function system_tile(?msg_id $ui_msg_code_id = null, array $url_array = []): string
     {
         global $mtr;
 
         $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            // on the search page show "search result for <pattern>" instead of the plain "search" title
+            if ($ui_msg_code_id == msg_id::FORM_TITLE_SEARCH) {
+                $result .= $html->text_h2($this->search_title($url_array));
+            } else {
+                $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            }
         }
         return $result;
+    }
+
+    /**
+     * build the search page title; with a pattern it reads "search result for <pattern>",
+     * without a pattern it falls back to the plain search title
+     * @param array $url_array the URL params; the pattern is read from url_var::PATTERN with the
+     *                         human-readable url_var::PATTERN_HUMAN as fallback (see body_search)
+     * @return string the language specific search page title
+     */
+    private function search_title(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
+        if ($pattern == '') {
+            $title = $mtr->txt(msg_id::FORM_TITLE_SEARCH);
+        } else {
+            $title = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_SEARCH_RESULT),
+                msg_id::VAR_PATTERN,
+                $pattern);
+        }
+        return $title;
     }
 
     /**
@@ -107,7 +153,7 @@ class system_page extends component
 
         $html = new html_base();
         $result = '';
-        if ($value_exception != null and $value_numeric == $value_exception) {
+        if ($value_exception !== null and $value_numeric === $value_exception) {
             if ($ui_msg_code_id_exception != null) {
                 $result .= $html->text_h3($mtr->txt($ui_msg_code_id_exception));
             }
@@ -135,10 +181,13 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+    /**
+     * show a view zoomed to 1/3 of its original size as a preview so that the user can see a
+     * preview of the original page based on a different view mask
+     */
     function preview(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'preview placeholder';
     }
 
     // TODO Prio 0 fill with real code
@@ -149,136 +198,366 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+    /**
+     * request from the user the values relevant for the initial setup
+     * so the main question ist that the user confirms the admin username and password from the .env for
+     * or fill the admin user of the .env file entry is empty
+     *
+     * additional all values from the .env.example file should be show and be changeable
+     *
+     */
     function setup_body(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'setup_body placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function signup_body(): string
+    /**
+     * build the signup form HTML
+     *
+     * @param array $url_array the POST parameters from the signup form submission; used to pre-fill fields after a validation error
+     * @return string the complete signup page body HTML (without notification bar; caller renders that separately)
+     */
+    function signup_body(array $url_array): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $usr_name = $url_array[url_var::USERNAME] ?? '';
+        $email = $url_array[url_var::EMAIL] ?? '';
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::SIGNUP_ID);
+        foreach (url_var::back_par($url_array) as $key => $val) {
+            $extra_hidden .= $html->form_hidden($key, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_signup($extra_hidden, $usr_name, $email);
+
+        $result = $html->p($mtr->txt(msg_id::SIGNUP_ALPHA_NOTICE));
+        $result .= $html->p($html->dsp_err($mtr->txt(msg_id::SIGNUP_DATA_WARNING)));
+        $result .= $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
+    }
+
+    function login_body(array $url_array = []): string
+    {
+
+        $html = new html_base();
+        $_SESSION[url_var::SESSION_LOGGED] = false;
+
+        // embed the login mask and any BACK-prefixed params as hidden fields so they survive the POST
+        // view.php dispatches on url_var::MASK in url_to_action; without LOGIN_ID the POST has no routing key and action_login is never called
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ID);
+        foreach (url_var::back_par($url_array) as $key => $val) {
+            $extra_hidden .= $html->form_hidden($key, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $back_url = html_base::url_from_back($url_array);
+        $form_str = $web_usr->form_login($extra_hidden, $back_url);
+
+        return $html->logo_flex() . $html->br2() . $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+    }
+
+    /**
+     * build the account activation (password change) form HTML
+     *
+     * @param array $url_array the URL params; expects id and optionally key from the activation link
+     * @return string the complete activation page body HTML
+     */
+    function activate_body(array $url_array): string
     {
         $html = new html_base();
-        return $html->about_body();
+        $usr_id = (int)($url_array[url_var::ID] ?? 0);
+        $key = $url_array[url_var::POST_KEY] ?? '';
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_ACTIVATE_ID);
+        foreach (url_var::back_par($url_array) as $key_par => $val) {
+            $extra_hidden .= $html->form_hidden($key_par, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $form_str = $web_usr->form_activate($extra_hidden, $usr_id, $key);
+
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
-    function login_body(): string
+    /**
+     * build the password reset request form HTML
+     *
+     * @param array $url_array the URL params; back params are forwarded as hidden fields
+     * @return string the complete reset page body HTML
+     */
+    function reset_body(array $url_array): string
     {
+        global $mtr;
+
         $html = new html_base();
-        return $html->about_body();
+
+        $extra_hidden = $html->form_hidden(url_var::MASK, (string)views::LOGIN_RESET_ID);
+        foreach (url_var::back_par($url_array) as $key => $val) {
+            $extra_hidden .= $html->form_hidden($key, $val);
+        }
+
+        $web_usr = new user_dsp();
+        $back_url = html_base::url_from_back($url_array);
+        $form_str = $mtr->txt(msg_id::RESET_PROMPT) . $html->br2() . $web_usr->form_reset($extra_hidden, $back_url);
+
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($form_str, html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
-    function activate_body(): string
-    {
-        $html = new html_base();
-        return $html->about_body();
-    }
-
-    // TODO Prio 0 fill with real code
-    function reset_body(): string
-    {
-        $html = new html_base();
-        return $html->about_body();
-    }
-
-    // TODO Prio 0 fill with real code
+    /**
+     * HTML shown on the logout confirmation page
+     * @return string the logout page body HTML
+     */
     function logout_body(): string
     {
+        global $mtr;
+
         $html = new html_base();
-        return $html->about_body();
+        $result = $html->logo_flex();
+        $result .= $html->br2();
+        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)), html_base::CLASS_INPUT_SECTION);
+        return $result;
     }
 
-    // TODO Prio 0 fill with real code
-    function body_search(): string
+    /**
+     * the HTML code to show the search results with words, verbs, triple, formulas
+     * and allow to narrow or widen the selection
+     * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
+     * limit the number of search and selection fields so that it matches a small screen
+     *
+     * @param array $url_array the URL params; the search pattern is read from url_var::PATTERN
+     *                          (the key the navbar search form submits) and falls back to the
+     *                          human-readable url_var::PATTERN_HUMAN alias, because the human->standard
+     *                          url remap only runs for human mask urls (mask_id=), not for a short mask (m=)
+     * @param term_list|null $trm_lst the terms matching the pattern; normally null so the list is
+     *                                loaded from the backend via the api, but it can be injected
+     *                                (e.g. for unit tests) to render a pre-loaded list without a backend call
+     * @return string with the HTML code of the search body
+     */
+    function body_search(array $url_array = [], ?term_list $trm_lst = null): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        $result = '';
+
+        // the search input field is part of the navbar search form, so it is not repeated here
+        $pattern = $url_array[url_var::PATTERN] ?? $url_array[url_var::PATTERN_HUMAN] ?? '';
+
+        // TODO Prio 0: if the search pattern is 'global' show the title 'search results for 'global*'
+
+        // show the terms (word, triple, formula or verb) that match the search pattern,
+        // most relevant (highest impact) first
+        if ($trm_lst === null and $pattern != '') {
+            $trm_lst = new term_list();
+            $trm_lst->get_by_pattern($pattern);
+        }
+        if ($trm_lst !== null and !$trm_lst->is_empty()) {
+            $result .= $trm_lst->links_with_context();
+        }
+
+        return $result;
     }
 
     // TODO Prio 0 fill with real code
+
+    /**
+     * like body_search but with all possible fields
+     * @return string
+     */
     function body_search_full(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'body_search_full placeholder';
     }
 
     // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code to show all relations of a value
+     * e.g. where it is used and are it causes an impact
+     */
     function value_details(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'value_details placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function result_explain(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'result_explain placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function formula_test(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'formula_test placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function sandbox(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'sandbox placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function undo(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'undo placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function user_setting(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'user_setting placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function process(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'process placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function error_log(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'error_log placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-    function error_update(): string
+    /**
+     * render the admin error-update page body: a table of unresolved program issues an admin can
+     * review and re-status; mirrors the display path of /http/error_update.php — the actual sys_log
+     * status change is dispatched by the URL action handler so this body only renders the data
+     *
+     * @param sys_log_list|null $errors pre-loaded list of unresolved program issues; when null or
+     *                                  empty the "no open errors" notice is shown
+     * @param user_dsp|null $usr the session user; when null or not an admin a permission notice is
+     *                           rendered instead of the issue list — default-deny matches the
+     *                           legacy /http/error_update.php behaviour where anyone but an admin
+     *                           saw the permission notice; the same user is forwarded to the
+     *                           per-row renderer so each status-change link carries the right context
+     * @param string $back back-link forwarded to each row's status-change link so navigation is preserved
+     * @return string the HTML body for the error_update page
+     */
+    function error_update(
+        ?sys_log_list $errors = null,
+        ?user_dsp     $usr = null,
+        string        $back = ''
+    ): string
     {
+        global $mtr;
+
         $html = new html_base();
-        return $html->about_body();
+
+        // default-deny: only an explicit admin sees the issue list; everyone else gets the permission notice
+        if ($usr === null or !$usr->is_admin()) {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PERMISSION_DENIED));
+        } elseif ($errors !== null and !$errors->is_empty()) {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PROGRAM_ISSUES))
+                . $errors->get_html($usr, $back);
+        } else {
+            $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
+        }
+        return $result;
     }
 
     // TODO Prio 0 fill with real code
     function process_progress(): string
     {
-        $html = new html_base();
-        return $html->about_body();
+        return 'process_progress placeholder';
     }
 
     // TODO Prio 0 fill with real code
     function process_list(): string
     {
+        return 'process_list placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that contains the most relevant user response delay within a time period defined in the system configuration
+     */
+    function admin_url_delay(): string
+    {
+        return 'admin_url_delay placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that contains the last failed user logins
+     */
+    function admin_login_fails(): string
+    {
+        return 'admin_login_fails placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that all internal system errors that are not yet assigned to a developer
+     */
+    function admin_errors_unassigned(): string
+    {
+        return 'admin_errors_unassigned placeholder';
+    }
+
+    // TODO Prio 0 fill with real code
+
+    /**
+     * @return string with the HTML code that all internal system errors that have not been updated since a some time (as defined in the system config)
+     */
+    function admin_errors_delayed_fix(): string
+    {
+        return 'admin_errors_delayed_fix placeholder';
+    }
+
+    /**
+     * render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
+     * "delay" is the time elapsed between request_time and now, and a job is "not yet closed" when end_time is null;
+     * sorting by request_time ascending puts the longest-waiting job at the top of the table
+     *
+     * @param job_list|null $jobs the open-jobs list to render; when null or empty an empty-state row is shown
+     *                            so the column headers stay visible to the admin
+     * @return string the HTML code of the delayed-jobs table
+     */
+    function admin_jobs_delayed(?job_list $jobs = null): string
+    {
+        global $mtr;
+
         $html = new html_base();
-        return $html->about_body();
+
+        // keep only jobs that have not yet ended and sort by request_time ascending so the longest-waiting job is first
+        $open = [];
+        if ($jobs !== null and !$jobs->is_empty()) {
+            foreach ($jobs->lst() as $job_obj) {
+                if ($job_obj->end_time() === null) {
+                    $open[] = $job_obj;
+                }
+            }
+            usort($open, fn(job $a, job $b) => $a->request_time() <=> $b->request_time());
+        }
+
+        // build the body: one row per open job, or a single empty-state cell when no open jobs are available
+        $body = '';
+        foreach ($open as $job_obj) {
+            $body .= $html->tr($job_obj->display());
+        }
+        if ($body === '') {
+            $body = $html->tr($html->td($mtr->txt(msg_id::ADMIN_NO_OPEN_JOBS)));
+        }
+
+        // TODO Prio 1 wire the data source: load via web/system/job_list with the cut_off_time from the system config
+        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance is used to render the header
+        $result = $html->tbl(new job()->header() . $body);
+        return $result;
     }
 
 }

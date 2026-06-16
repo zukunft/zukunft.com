@@ -43,6 +43,8 @@ enum change_actions: string
     const string ADD_COM = '';
     const string UPDATE = 'update';
     const string DELETE = 'del';
-    const string SUB = 'sub';
+    const string SUB = 'sub'; // a sub part of another view?
+    const string STEP = 'step'; // a process step that does only indirect updates an object e.g. the login form
+    const string SEARCH = 'search'; // a form for interactive and complex object selection
 
 }

@@ -33,14 +33,16 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_read_tests
@@ -69,10 +71,10 @@ class word_list_read_tests
         $wrd_lst->load_names();
         $t->assert_greater($test_name, 2, $wrd_lst->count(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'loading word names with pattern return the expected word';
-        $pattern = substr(words::MATH, 0, -1);
+        $pattern = substr(word_names::MATH, 0, -1);
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern);
-        $t->assert_contains($test_name, $wrd_lst->names(), words::MATH);
+        $t->assert_contains($test_name, $wrd_lst->names(), word_names::MATH);
         $test_name = 'loading word names with page size one return only one word';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern, 1, 0);
@@ -80,30 +82,30 @@ class word_list_read_tests
         $test_name = 'next page with page size one does not return the pattern word';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern, 1, 1);
-        $t->assert_contains_not($test_name, $wrd_lst->names(), words::MATH);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), word_names::MATH);
         $test_name = 'formula names are not included in the normal word list';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_names(formulas::SCALE_TO_SEC);
-        $t->assert_contains_not($test_name, $wrd_lst->names(), formulas::SCALE_TO_SEC);
+        $wrd_lst->load_names(formula_names::SCALE_TO_SEC);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), formula_names::SCALE_TO_SEC);
 
 
         // test load by word list by ids
         $test_name = 'load words by ids';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_ids(array(1,words::PI_ID));
-        $target = '"' . words::MATH . '","' . words::PI . '"'; // order adjusted based on the number of usage
+        $wrd_lst->load_by_ids(array(1,word_names::PI_ID));
+        $target = '"' . word_names::MATH . '","' . word_names::PI . '"'; // order adjusted based on the number of usage
         $t->assert($test_name, $wrd_lst->name(), $target);
         $test_name = 'load words by names';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_names(array(words::MATH,words::PI));
-        $t->assert_contains($test_name, $wrd_lst->ids(), array(1,words::PI_ID));
+        $wrd_lst->load_by_names(array(word_names::MATH,word_names::PI));
+        $t->assert_contains($test_name, $wrd_lst->ids(), array(1,word_names::PI_ID));
         $test_name = 'load words staring with P';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_like('P');
-        $t->assert_contains($test_name, $wrd_lst->names(), words::PI);
+        $t->assert_contains($test_name, $wrd_lst->names(), word_names::PI);
 
         $test_name = 'all expected test words are in the database';
-        $t->assert_db_test_id_list($test_name, words::TEST_WORD_IDS, new word($t->usr1), new word_list($t->usr1));
+        $t->assert_db_test_id_list($test_name, word_names::TEST_WORD_IDS, new word($t->usr1), new word_list($t->usr1));
 
     }
 

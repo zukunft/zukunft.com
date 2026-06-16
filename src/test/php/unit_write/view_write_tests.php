@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -44,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -128,7 +130,7 @@ class view_write_tests
 
         $test_name = 'check if the view adding has been logged for '. views::TEST_ADD_NAME;
         $result = $t->log_last_by_field($msk, view_db::FLD_NAME, $msk->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "System Test View"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test View"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if adding a view with name '. views::TEST_ADD_NAME . ' again creates a correct error message';
@@ -160,7 +162,7 @@ class view_write_tests
 
         $test_name = 'check if the view renaming has been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_renamed, view_db::FLD_NAME, $msk_renamed->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view parameters (e.g. type) can be added to '. views::TEST_RENAMED_NAME;
@@ -182,12 +184,12 @@ class view_write_tests
 
         $test_name = 'check if the description view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_reloaded, sql_db::FLD_DESCRIPTION, $msk_reloaded->id(), true);
-        $target = 'zukunft.com system test changed "Just added for testing" to "Just added for testing the user sandbox"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed "Just added for testing" to "Just added for testing the user sandbox"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view_type view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_reloaded, view_db::FLD_TYPE, $msk_reloaded->id(), true);
-        $target = users::SYSTEM_TEST_NAME . ' added "word default"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "word default"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if a user-specific view is created if another user changes the view to ' . views::TEST_RENAMED_NAME;

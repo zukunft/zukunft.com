@@ -59,8 +59,8 @@ class view_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load the system views
-        $sys_dsp_lst = new view_sys_list($usr);
-        $this->assert_sql_sys_views($t, $sc, $sys_dsp_lst);
+        $sys_msk_lst = new view_sys_list($usr);
+        $this->assert_sql_sys_views($t, $sc, $sys_msk_lst);
 
         // load of non system view
         $msk_lst = new view_list($usr);

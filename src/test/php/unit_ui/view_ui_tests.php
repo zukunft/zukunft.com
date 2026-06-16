@@ -35,8 +35,12 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_ui_tests
@@ -59,10 +63,31 @@ class view_ui_tests
         $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $msk->type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows = $msk->view_type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
+        $test_page .= $t->dsp_title_named_edit($msk);
+
+        // show a view with a side-or-below group where the columns
+        // are shown side by side on wide screens and stacked on small screens
+        $t_wrd = new test_words($t);
+        $wrd = new word($t_wrd->word()->api_json());
+        $msk_cols = new view($t_msk->view_side_or_below()->api_json([api_types::INCL_COMPONENTS]));
+        $cols_html = $msk_cols->show($wrd, $ui->dto, '', '', true);
+        $test_page .= $html->text_h2('side or below columns');
+        $test_page .= $cols_html;
         $t->html_page_test($test_page, 'view', 'view', $t);
+
+        $t->subheader($ts . 'side or below columns');
+        $test_name = 'each column limits the minimal width so that up to four fit at the wide side width';
+        $t->assert_text_contains($test_name, $cols_html, 'min-width: 700px');
+        $test_name = 'the first column is shown before the side-or-first-below column';
+        $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
+        $test_name = 'the side-or-below column is shown before the side-or-last-below column';
+        $t->assert_text_order($test_name, $cols_html, components::COL_THIRD_NAME, components::COL_FOURTH_NAME);
+        $test_name = 'without the side or below position types no minimal width is set';
+        $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $ui->dto, '', '', true), 'min-width');
     }
 
 }

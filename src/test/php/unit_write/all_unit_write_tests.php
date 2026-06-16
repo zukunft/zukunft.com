@@ -82,7 +82,7 @@ class all_unit_write_tests extends all_unit_read_tests
     {
         global $usr;
         global $db_con;
-        global $errors;
+        global $sys;
 
         // init
         $t_db = new test_db_load($this);
@@ -114,7 +114,7 @@ class all_unit_write_tests extends all_unit_read_tests
             // start testing the system functionality
             // --------------------------------------
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 run_system_test($t);
                 run_user_test($t);
             }
@@ -124,12 +124,12 @@ class all_unit_write_tests extends all_unit_read_tests
             //$this->test_api_write_no_rest_all();
             //$this->test_api_write_all();
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 run_db_link_test($t);
                 run_sandbox_test($t);
             }
 
-            if ($errors <= ERROR_LIMIT) {
+            if ($sys->errors <= ERROR_LIMIT) {
                 new lib_tests()->run($t); // test functions not yet split into single unit tests
 
                 // create the test dataset to check the basic write functions
@@ -138,8 +138,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // run the general db write tests
                 new user_write_tests()->run($t);
+                new sys_log_write_tests()->run($t);
                 // TODO Prio 0 activate
-                //new sys_log_write_tests()->run($t);
                 //new horizontal_write_tests()->run($t);
 
                 // run object specific db write tests
@@ -203,9 +203,8 @@ class all_unit_write_tests extends all_unit_read_tests
                 // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
                 run_word_display_test($t);
 
-                $import = new import_file();
-                $import->import_base_config($usr);
-                $this->import_test_files($usr);
+                // import_test_data() and import_base_data($usr) is intentionally not called here to keep test.php fast
+                // run test_full_load.php to load all test data into the database
             }
 
             // testing cleanup to remove any remaining test records
@@ -272,94 +271,13 @@ class all_unit_write_tests extends all_unit_read_tests
 
     }
 
-    function reset_db(): void
-    {
-        global $usr;
-        global $db_con;
-        global $errors;
-
-        $t_db = new test_db_load($this);
-
-        // use the system user for the database updates
-        $usr = new user;
-        $usr->load_by_id(users::SYSTEM_ID);
-        $sys_usr = $usr;
-        $usr_msg = new user_message($sys_usr);
-
-        // run reset the main database tables
-        $db_con->run_db_truncate($sys_usr);
-        $db_con->truncate_table_all();
-        $db_con->reset_seq_all();
-        $db_con->reset_config();
-        $db_con->import_system_users();
-
-        // recreate the code link database rows
-        $db_con->db_fill_code_links();
-        $db_con->import_verbs($usr);
-
-        // reopen the database to reload the list cache
-        $db_con->close();
-        $app = new application();
-        $db_con = $app->open_db("test_reset_db");
-
-        // reload the session user parameters
-        $usr = new user;
-        $usr->get();
-
-        // reopen the database to reload the verb cache
-        $db_con->close();
-        $app = new application();
-        $db_con = $app->open_db("test_reset_db");
-
-        // reload the base configuration
-        $job = new job($sys_usr);
-        $job->set_type(job_types::BASE_IMPORT, $sys_usr);
-        $job->save($usr_msg);
-
-        $import = new import_file();
-        $import->import_base_config($sys_usr);
-        $import->import_config_yaml($usr);
-
-        // use the system user again to create the database test datasets
-        global $usr;
-        $usr = new user;
-        $usr->load_by_id(users::SYSTEM_ID);
-
-        // create the test dataset to check the basic write functions
-        $t = new all_tests();
-        $t->set_users();
-        $t_db->create_test_db_entries($t);
-
-        // remove the test dataset for a clean database
-        $t->cleanup($usr_msg);
-
-        // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
-
-        // reload the session user parameters
-        $usr = new user;
-        $usr->get();
-
-        /*
-         * For testing the system setup
-         */
-
-        // drop the database
-
-        // create the database from the sql structure file
-
-        // reload the system database rows (all db rows, that have a code id)
-
-        echo "\n";
-        echo $errors . ' internal errors';
-
-    }
-
     /**
-     * TODO move HTML code to frontend
-     * import some zukunft.com test json files
+     * TODO fill a user_message with the warning and error messages and return true if successful
+     * import all zukunft.com data via json files for the unit and db read testing
+     * @param user $usr the user who should be owner of the data
+     * @return string any error or warning message during import
      */
-    function import_test_files(user $usr): string
+    function import_base_data(user $usr): string
     {
         $result = '';
         log_info('test import',
@@ -371,12 +289,57 @@ class all_unit_write_tests extends all_unit_read_tests
 
         $imf = new import_file();
 
-        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
+        // import initial data used for the main demo pages e.g. the start page
+        // the bare file names need the message path prepended (as in import_system_data)
+        foreach (files::BASE_DATA_FILES as $filename) {
+            $result .= $imf->json_file(files::MESSAGE_PATH . $filename, $usr, false)->get_last_message();
+        }
+
+        // import initial data used for the main demo pages e.g. the start page
+        foreach (files::BASE_DATA_PATH_FILES as $filename) {
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
-        foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
+
+        log_debug('import test data ... done');
+
+        return $result;
+    }
+
+    /**
+     * TODO fill a user_message with the warning and error messages and return true if successful
+     * import all zukunft.com initial setup data vie json files
+     * should not include data used for system testing to prevent volatile test data
+     * @param user $usr the user who should be owner of the data
+     * @return string any error or warning message during import
+     */
+    function import_test_data(user $usr): string
+    {
+        $result = '';
+        log_info('test import',
+            sys_log_functions::IMPORT_TEST_CONFIG_NAME,
+            'import of the some test json files',
+            'import_test_files',
+            $usr, true
+        );
+
+        $imf = new import_file();
+
+        // import json files to test the import and fill the database with initial data
+        foreach (test_files::TEST_DATA_FILES as $filename) {
+            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
+        }
+
+        // TODO Prio 2 complete data object base import and move these file to TEST_IMPORT_FILES
+        // import JSON files that cannot jet be fully imported via data object
+        foreach (test_files::TEST_DATA_FILES_DIRECT as $filename) {
             // TODO Prio 1 fix error reports
             $result .= $imf->json_file($filename, $usr, true, true)->get_last_message();
+        }
+
+        // TODO Prio 3 test the import and if fine move these file to TEST_IMPORT_FILES
+        // import JSON files that are not jet reviewed
+        foreach (test_files::TEST_DATA_FILES_NOT_REVIEWED as $filename) {
+            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
 
 

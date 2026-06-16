@@ -27,8 +27,8 @@ SELECT value_text_prime_p4_delete_log
        (3::bigint,
         3::smallint,
         421::smallint,
-        59673584134226012::bigint,
-        212::smallint,
-        207::smallint,
-        203::smallint,
-        -92::smallint);
+        59955063405969505::bigint,
+        213::smallint,
+        208::smallint,
+        204::smallint,
+        -97::smallint);

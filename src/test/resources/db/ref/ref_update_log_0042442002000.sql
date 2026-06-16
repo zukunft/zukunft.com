@@ -52,7 +52,7 @@ SELECT ref_update_log_0042442002000 (
                17::bigint,
                null::text,
                0::bigint,
-               22::bigint,
+               29::bigint,
                161::smallint,
                'wikidata'::text,
                2::smallint,

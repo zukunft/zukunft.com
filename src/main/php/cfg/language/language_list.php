@@ -52,13 +52,8 @@ class language_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(
-            languages::DEFAULT,
-            languages::DEFAULT_NAME,
-            languages::DEFAULT_COM,
-            languages::DEFAULT_ID);
-        $this->add($type);
-
+        // read the corresponding names and description from the internal config csv files
+        $this->read_from_config_csv($this);
     }
 
     /**

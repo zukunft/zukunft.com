@@ -32,9 +32,11 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
@@ -42,20 +44,24 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -91,7 +97,7 @@ class value_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
 
         $t->subheader($ts . 'create');
         $test_name = 'create test word used for test values';
@@ -99,21 +105,21 @@ class value_write_tests
 
         // test another rebuild_grp_id by value id
         $chk_phr_grp = $t_db->load_word_list(array(
-            words::CANTON,
-            words::ZH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2020))->get_grp();
+            word_names::CANTON,
+            word_names::ZH,
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2020))->get_grp();
         $chk_val = new value($t->usr1);
         if ($chk_phr_grp != null) {
             $chk_val->load_by_grp($chk_phr_grp);
         }
         if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t_db->load_word_list(array(
-                words::CANTON,
-                words::ZH,
-                words::INHABITANTS,
-                words::MIO))->get_grp();
+                word_names::CANTON,
+                word_names::ZH,
+                word_names::INHABITANTS,
+                word_names::MIO))->get_grp();
             $chk_val = new value($t->usr1);
             if ($chk_phr_grp != null) {
                 $chk_val->load_by_grp($chk_phr_grp);
@@ -133,11 +139,11 @@ class value_write_tests
 
             // ... and check the words loaded
             $result = $chk_val->name();
-            $target = words::YEAR_2020 . ','
-                . words::CANTON . ','
-                . words::INHABITANTS . ','
-                . words::MIO . ','
-                . words::ZH;
+            $target = word_names::YEAR_2020 . ','
+                . word_names::CANTON . ','
+                . word_names::INHABITANTS . ','
+                . word_names::MIO . ','
+                . word_names::ZH;
             $t->assert(', value->load words', $result, $target);
 
             // ... and check the word reloading by group
@@ -155,11 +161,11 @@ class value_write_tests
 
         // test load the word list object
         $phr_lst = $t_db->load_word_list(array(
-            words::CANTON,
-            words::ZH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2020));
+            word_names::CANTON,
+            word_names::ZH,
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2020));
         //$phr_lst->ex_time();
         $grp = $phr_lst->get_grp();
         if (!$grp->is_id_set()) {
@@ -184,57 +190,59 @@ class value_write_tests
 
         // test the formatting of a value (percent)
         $pct_val = $t_db->load_value(array(
-            words::CANTON,
-            words::ZH,
+            word_names::CANTON,
+            word_names::ZH,
             words::CH,
-            words::INHABITANTS,
+            word_names::INHABITANTS,
             words::PCT,
-            words::YEAR_2020));
+            word_names::YEAR_2020));
         $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
-        $val_dsp = new value_ui($api_msg);
-        $result = $val_dsp->value(0);
+        $val_ui = new value_ui($api_msg);
+        $result = $val_ui->value(0);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value
-        $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        // the scaling itself and the user messages for missing scaling types
+        // are covered by the unit tests in value_tests "scaling"
+        $phr_lst = $t_db->load_phrase_list(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $dest_phr_lst = new phrase_list($t->usr1);
-        $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
+        $dest_phr_lst->load_by_names(array(word_names::INHABITANTS, word_names::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        // TODO Prio 0 activate
-        //$result = $mio_val->scale($dest_phr_lst);
+        $result = $mio_val->scale($dest_phr_lst, $usr_msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
-        //$t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert_true(', value->val_scaling reports no problem', $usr_msg->is_ok());
 
         // test the figure object creation
-        $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $phr_lst = $t_db->load_phrase_list(array(word_names::CANTON, word_names::ZH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $mio_val_dsp = new value_ui();
-        $mio_val_dsp->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
+        $mio_val_ui = new value_ui();
+        $mio_val_ui->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
         $fig = $mio_val->figure();
-        $fig_dsp = $tl->ui_obj($fig, new figure_ui());
-        $result = $fig_dsp->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
+        $fig_ui = $tl->ui_obj($fig, new figure_ui());
+        $result = $fig_ui->display_linked('1');
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
-        $result = $mio_val_dsp->value();
+        $result = $mio_val_ui->value();
         $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, shared_config::DEFAULT_DEC_POINT, shared_config::DEFAULT_THOUSAND_SEP);
         $t->assert(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink
-        $result = $mio_val_dsp->value_edit('1');
+        $result = $mio_val_ui->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=value_edit&id=' . $mio_val_ui->id() . '&back=1">1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
-        $mio_val_dsp->number = values::SAMPLE_INT;
-        $result = $mio_val_dsp->value_edit('1');
+        $mio_val_ui->number = values::SAMPLE_INT;
+        $result = $mio_val_ui->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1" title="123\'456">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=value_edit&id=' . $mio_val_ui->id() . '&back=1">123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
@@ -252,7 +260,7 @@ class value_write_tests
         // test adding a value in the database
         // as it is call from value_add.php with all phrases in an id list including the time phrase,
         // so the time phrase must be excluded
-        $phr_grp = $t_db->load_phrase_group(array(words::TEST_RENAMED, words::INHABITANTS, words::MIO, words::YEAR_2020));
+        $phr_grp = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
@@ -288,7 +296,7 @@ class value_write_tests
         $test_val_lst[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
-        $phr_grp2 = $t_db->load_phrase_group(array(words::TEST_RENAMED, words::INHABITANTS, words::MIO, words::YEAR_2019));
+        $phr_grp2 = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
@@ -353,7 +361,7 @@ class value_write_tests
         $added_val->load_by_id($added_val_id);
         $result = $added_val->number();
         $target = self::NUMBER_ADD;
-        $t->assert(', value->load the value previous updated for "' . words::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert(', value->load the value previous updated for "' . word_names::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific value is created if another user changes the value
         // TODO check loaded value matches the value for usr1
@@ -407,7 +415,7 @@ class value_write_tests
             $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back
@@ -484,11 +492,11 @@ class value_write_tests
         // e.g. inhabitants in the canton of zurich in the year 2020
         // used to test if loading the value without time returns this value a the last available
         $t_db->test_value(array(
-            words::CANTON,
-            words::ZH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2020
+            word_names::CANTON,
+            word_names::ZH,
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2020
         ),
             values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
@@ -497,76 +505,76 @@ class value_write_tests
         // using the triple zurich (city) instead of two single words
         // used to test if requesting the value with the separate words returns the value
         $t_db->test_value(array(
-            triples::CITY_ZH,
-            words::INHABITANTS
+            triple_names::CITY_ZH,
+            word_names::INHABITANTS
         ),
             values::CITY_ZH_INHABITANTS_2019);
 
         // ... same with the concrete year
         $t_db->test_value(array(
-            triples::CITY_ZH,
-            words::INHABITANTS,
-            words::YEAR_2019
+            triple_names::CITY_ZH,
+            word_names::INHABITANTS,
+            word_names::YEAR_2019
         ),
             values::CITY_ZH_INHABITANTS_2019);
 
         // add the number of inhabitants in switzerland without time definition
         $t_db->test_value(array(
             words::CH,
-            words::INHABITANTS,
-            words::MIO
+            word_names::INHABITANTS,
+            word_names::MIO
         ),
             values::CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the concrete year
         $t_db->test_value(array(
             words::CH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2020
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2020
         ),
             values::CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the previous year
         $t_db->test_value(array(
             words::CH,
-            words::INHABITANTS,
-            words::MIO,
-            words::YEAR_2019
+            word_names::INHABITANTS,
+            word_names::MIO,
+            word_names::YEAR_2019
         ),
             values::CH_INHABITANTS_2019_IN_MIO);
 
         // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
         $t_db->test_value(array(
-            words::CANTON,
-            words::ZH,
+            word_names::CANTON,
+            word_names::ZH,
             words::CH,
-            words::INHABITANTS,
+            word_names::INHABITANTS,
             words::PCT,
-            words::YEAR_2020
+            word_names::YEAR_2020
         ),
             values::SAMPLE_PCT);
 
         // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
         $t_db->test_value(array(
             words::CH,
-            words::INHABITANTS,
-            words::TEST_INCREASE,
+            word_names::INHABITANTS,
+            word_names::TEST_INCREASE,
             words::PCT,
-            words::YEAR_2020
+            word_names::YEAR_2020
         ),
             values::INCREASE);
 
         // add some simple number for formula testing
         $t_db->test_value(array(
-            words::TEST_SHARE,
-            words::TEST_CHF
+            word_names::TEST_SHARE,
+            word_names::TEST_CHF
         ),
             values::SHARE_PRICE);
 
         $t_db->test_value(array(
-            words::TEST_EARNING,
-            words::TEST_CHF
+            word_names::TEST_EARNING,
+            word_names::TEST_CHF
         ),
             values::EARNINGS_PER_SHARE);
 

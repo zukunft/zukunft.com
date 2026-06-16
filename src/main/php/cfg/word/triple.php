@@ -5,6 +5,8 @@
     model/word/triple.php - the object that links two words (an RDF triple)
     ---------------------
 
+    $trp is the suggested var name
+
     A link can also be used in replacement for a word
     e.g. "Zurich (company)" where the link "Zurich is a company" is used
 
@@ -396,6 +398,10 @@ class triple extends sandbox_link_named
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
+        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        }
+
         // TODO move plural to language forms
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
@@ -531,6 +537,9 @@ class triple extends sandbox_link_named
 
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
             $this->weight = $in_ex_json[json_fields::WEIGHT];
+        }
+        if (key_exists(json_fields::IMPACT, $in_ex_json)) {
+            $this->set_impact($in_ex_json[json_fields::IMPACT]);
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
@@ -812,10 +821,11 @@ class triple extends sandbox_link_named
             }
             $vars[json_fields::REFS] = $ref_lst;
         }
-        // the impact is only included in the export as an indication to validate the consistency
+        // the usage is only included in the export as an indication to validate the consistency
         if ($this->usage != null) {
             $vars[json_fields::USAGE] = $this->usage;
         }
+        // the impact is part of the im- and export so that it round-trips
         if ($this->impact != null) {
             $vars[json_fields::IMPACT] = $this->impact;
         }
@@ -1293,7 +1303,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1312,14 +1322,15 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "scaling" (e.g. "a million", "a million" or "one"; "one" is a hidden scaling type)
+     * @return bool true if the triple has one of the scaling types (e.g. "a million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type_shared::SCALING)
-            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
-            $result = true;
+        foreach (phrase_type_shared::SCALING_TYPES as $scale_type) {
+            if ($this->is_type($scale_type)) {
+                $result = true;
+            }
         }
         return $result;
     }
@@ -2383,8 +2394,9 @@ class triple extends sandbox_link_named
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $usr;
+        global $sys;
         global $mtr;
+        $usr = $sys?->usr_req;
 
         // init
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
@@ -2764,6 +2776,20 @@ class triple extends sandbox_link_named
         // for triple the type is the phrase type
         // the type is object-specific that why it is not part of sandbox_link_types
         if ($obj->type_id() !== $this->type_id()) {
+            $change_typ = true;
+        } else {
+            $change_typ = false;
+        }
+        // TODO Prio 2 review
+        // do not overwrite a type with the default value
+        // because this is set also if not specified by the import
+        if ($this->type_id() == $sys->typ_lst->phr_typ->default_id() and $obj->type_id() !== null) {
+            // if not the user table
+            if (!$sc_par_lst->is_usr_tbl()) {
+                $change_typ = false;
+            }
+        }
+        if ($change_typ) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
@@ -3028,11 +3054,11 @@ class triple extends sandbox_link_named
         if ($from?->name <> '' and $vrb_name <> '' and $to?->name <> '') {
             $result .= '"' . $from?->name . '" "'; // e.g. Australia
             $result .= $vrb_name . '" "'; // e.g. is a
-            $result .= $to?->name . '"';       // e.g. Country
+            $result .= $to?->name . '"';       // e.g. country
         } elseif ($from?->name <> '' and $to?->name <> '') {
             $result .= '"' . $from?->name . '" "'; // e.g. Australia
             $result .= 'id ' . $this->predicate_id . '" "'; // e.g. is a
-            $result .= $to?->name . '"';       // e.g. Country
+            $result .= $to?->name . '"';       // e.g. country
         } elseif ($this->name_given() != '') {
             $result .= $this->name_given(); // e.g. Canton Zurich
         } elseif ($this->name() != '') {
@@ -3048,7 +3074,7 @@ class triple extends sandbox_link_named
 
     /**
      * either the user edited description
-     * or the generic name e.g. Australia is a Country
+     * or the generic name e.g. Australia is a country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
     function name(bool $ignore_excluded = false): string|null
@@ -3074,7 +3100,7 @@ class triple extends sandbox_link_named
 
     /**
      * either the user edited description
-     * or the generic name e.g. Australia is a Country
+     * or the generic name e.g. Australia is a country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
     function name_ex_generated(bool $ignore_excluded = false): string
@@ -3092,80 +3118,6 @@ class triple extends sandbox_link_named
         }
 
         return $result;
-    }
-
-
-    /*
-     * display
-     * TODO to be moved to the frontend object
-     */
-
-    /**
-     * display one link to the user by returning the HTML code for the link to the calling function
-     * TODO include the user sandbox in the selection
-     */
-    private
-    function display(): string
-    {
-        log_debug("triple->dsp " . $this->id() . ".");
-
-        $result = ''; // reset the html code var
-        $msg = new user_message();
-
-        // get the link from the database
-        $this->reload_objects($msg);
-
-        // prepare to show the triple
-        $result .= $this->get_from()->name() . ' '; // e.g. Australia
-        $result .= $this->get_verb_name() . ' '; // e.g. is a
-        $result .= $this->get_to()->name();       // e.g. Country
-
-        return $result;
-    }
-
-    /**
-     * similar to dsp, but display the reverse expression
-     */
-    private
-    function dsp_r(): string
-    {
-        log_debug("triple->dsp_r " . $this->id() . ".");
-
-        $result = ''; // reset the html code var
-        $msg = new user_message();
-
-        // get the link from the database
-        $this->reload_objects($msg);
-
-        // prepare to show the triple
-        $result .= $this->get_to()->name() . ' ';   // e.g. Countries
-        $result .= $this->get_verb_name() . ' '; // e.g. are
-        $result .= $this->get_from()->name();     // e.g. Australia (and others)
-
-        return $result;
-    }
-
-    /**
-     * display a form to adjust the link between too words or triples
-     */
-    function dsp_del(string $back = ''): string
-    {
-        log_debug("triple->dsp_del " . $this->id() . ".");
-        $result = ''; // reset the html code var
-
-        //$btn = new button();
-        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
-        $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
-
-        return $result;
-    }
-
-    /**
-     * simply to display a single triple in a table
-     */
-    function display_linked(): string
-    {
-        return '<a href="/http/view.php?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
     }
 
 }

@@ -40,11 +40,9 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_read_tests
@@ -62,36 +60,47 @@ class formula_list_read_tests
 
         // test loading formula names
         $test_name = 'loading formula names with pattern return the expected formula';
-        $pattern = substr(formulas::SCALE_TO_SEC, 0, -1);
+        $pattern = substr(formula_names::SCALE_TO_SEC, 0, -1);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_names($pattern);
-        $t->assert_contains($test_name, $frm_lst->names(), formulas::SCALE_TO_SEC);
+        $t->assert_contains($test_name, $frm_lst->names(), formula_names::SCALE_TO_SEC);
 
         // test load by formula list by ids
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_ids([1, 2]);
         $result = $frm_lst->name();
-        $target = formulas::SCALE_TO_SEC . ',' . formulas::SCALE_HOUR; // order adjusted based on the number of usage
+        $target = formula_names::SCALE_TO_SEC . ',' . formula_names::SCALE_HOUR; // order adjusted based on the number of usage
         if ($result != $target) {
-            $target = formulas::SCALE_HOUR . ',' . formulas::SCALE_TO_SEC; // try another order
+            $target = formula_names::SCALE_HOUR . ',' . formula_names::SCALE_TO_SEC; // try another order
         }
         $t->assert('load by ids for ' . $frm_lst->dsp_id(), $result, $target);
 
         // test loading the formulas that use the results related to the word second
+        // TODO Prio 0 activate
+        /*
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $wrd_sec = new word($t->usr1);
-        $wrd_sec->load_by_name(words::SECOND);
+        $wrd_sec->load_by_name(words::SECOND_TIME);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_word_ref($wrd_sec);
-        $t->assert_contains($test_name, $frm_lst->names(), [formulas::SCALE_TO_SEC]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_names::SCALE_TO_SEC]);
+        */
+
+        // test loading the formulas that use the results related to the word second
+        $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
+        $trp_sec = new triple($t->usr1);
+        $trp_sec->load_by_name(triple_names::SECOND);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_triple_ref($trp_sec);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_names::SCALE_TO_SEC]);
 
         // test loading the formulas that use the results related to the triple "Zurich (City)"
         $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
-        $trp_zh->load_by_name(triples::CITY_ZH);
+        $trp_zh->load_by_name(triple_names::CITY_ZH);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_triple_ref($trp_zh);
-        $t->assert_contains($test_name, $frm_lst->names(), [formulas::BIGGEST_CITY]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_names::BIGGEST_CITY]);
 
         // test loading the formulas that use the results related to the verb "time step"
         $test_name = 'formulas that use the verb "time step" are at least "prior"';
@@ -99,20 +108,20 @@ class formula_list_read_tests
         $vrb_time_step->load_by_name(verbs::TIME_STEP_NAME_FORMULA);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_time_step);
-        $t->assert_contains($test_name, $frm_lst->names(), [formulas::PRIOR]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_names::PRIOR]);
 
         // test loading the formulas that use the results of a given formula
         $test_name = 'formulas that use the formula "this" are at least "increase"';
         $frm_this = new formula($t->usr1);
-        $frm_this->load_by_name(formulas::THIS_NAME);
+        $frm_this->load_by_name(formula_names::THIS_NAME);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_formula_ref($frm_this);
-        $t->assert_contains($test_name, $frm_lst->names(), [formulas::INCREASE]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_names::INCREASE]);
 
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_like('i');
-        $t->assert_contains($test_name, $frm_lst->names(), formulas::INCREASE);
+        $t->assert_contains($test_name, $frm_lst->names(), formula_names::INCREASE);
     }
 
 }

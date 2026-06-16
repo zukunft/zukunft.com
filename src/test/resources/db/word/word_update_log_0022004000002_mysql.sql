@@ -19,14 +19,14 @@ CREATE PROCEDURE word_update_log_0022004000002
      _protect_id              smallint)
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name_old,_word_name,_word_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,                                            row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_name,     _word_name_old,       _word_name,                                           _word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,                                            row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,   _description_old,     _description,                                         _word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,        old_id,             new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name_old,_phrase_type_name,_phrase_type_id_old,_phrase_type_id,_word_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_protect_id,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,                                            row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,    _protect_id_old,      _protect_id,                                          _word_id ;
 
     UPDATE words
        SET word_name      = _word_name,
@@ -57,4 +57,4 @@ SELECT word_update_log_0022004000002
         null,
         87,
         3,
-        null);
+        2);

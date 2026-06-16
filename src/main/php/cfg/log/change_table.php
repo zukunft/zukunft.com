@@ -5,6 +5,7 @@
     model/log/change_table.php - the table where a user has done a change including deprecated table names
     ------------------------
 
+    $tbl is the suggested var name
 
     This file is part of zukunft.com - calc with words
 

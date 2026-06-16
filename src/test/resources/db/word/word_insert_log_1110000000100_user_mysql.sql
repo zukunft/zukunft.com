@@ -28,6 +28,6 @@ SELECT word_insert_log_1110000000100_user
          1,
          10,
          'company',
-         188,
+         190,
          14,
          1);

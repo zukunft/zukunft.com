@@ -37,13 +37,20 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use ReflectionClass;
 
 class coding_rule_tests
 {
@@ -79,12 +86,20 @@ class coding_rule_tests
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
         $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $obj_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$obj_upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_OBJECTS, $md_txt);
+        }
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
         $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
-        $t->assert($test_name, $md_txt, $doc_txt);
+        $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$fnc_upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
+        }
+
+        $this->php_class_name_check($t);
 
         $this->php_include_tests($t, paths::MODEL);
         // TODO Prio 1 activate but take into account the const
@@ -92,6 +107,88 @@ class coding_rule_tests
         $this->php_include_tests($t, paths::WEB);
         $this->php_include_tests($t, test_paths::CREATE);
 
+        $this->php_cfg_no_web_tests($t);
+
+        $t->subheader($ts . 'frontend globals');
+        $this->php_web_only_allowed_globals_tests($t);
+
+        $t->subheader($ts . 'frontend config cache');
+        $this->php_web_config_from_cache_tests($t);
+
+        $t->subheader($ts . 'backend globals');
+        $this->php_cfg_only_allowed_globals_tests($t);
+
+        $t->subheader($ts . 'config.yaml consistency');
+        $this->config_yaml_word_triple_tests($t);
+
+    }
+
+    /**
+     * verify that every word / triple key used in src/main/resources/config.yaml has a matching
+     * string constant in either src/main/php/shared/const/words.php or
+     * src/main/php/shared/const/triples.php; structural meta keys that are read directly by
+     * the config loader (tooltip-comment, sys-conf-value, source-name, source-description,
+     * pod-user-config) are skipped because they are not domain words
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function config_yaml_word_triple_tests(test_cleanup $t): void
+    {
+        // meta keys consumed directly by the config loader; they are structural, not domain words
+        $meta_keys = [
+            words::TOOLTIP_COMMENT,
+            words::SYS_CONF_VALUE,
+            words::SYS_CONF_SOURCE,
+            words::SYS_CONF_SOURCE_COM,
+            words::SYS_CONF_USER,
+        ];
+
+        // collect every yaml key referenced in config.yaml (deduplicated, sorted for stable output)
+        $yaml_tree = yaml_parse_file(files::CONFIG_YAML);
+        $yaml_keys = [];
+        if (is_array($yaml_tree)) {
+            $this->collect_yaml_keys($yaml_tree, $yaml_keys, $meta_keys);
+        }
+
+        // collect every string constant value defined by words and triples for an O(1) lookup
+        $word_vals = array_values(array_filter(
+            new ReflectionClass(words::class)->getConstants(), 'is_string'));
+        $triple_vals = array_values(array_filter(
+            new ReflectionClass(triples::class)->getConstants(), 'is_string'));
+        $known_names = array_flip(array_merge($word_vals, $triple_vals));
+
+        $missing = [];
+        foreach (array_keys($yaml_keys) as $key) {
+            if (!array_key_exists($key, $known_names)) {
+                $missing[] = $key;
+            }
+        }
+        sort($missing);
+
+        $test_name = 'every config.yaml key has a const in words.php or triples.php';
+        $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * recursively walk a parsed yaml subtree and collect every string key into $keys (keyed by
+     * the key value so the caller gets unique keys for free); meta keys are skipped
+     *
+     * @param array $data the parsed yaml subtree
+     * @param array $keys (in/out) accumulator keyed by yaml key for uniqueness
+     * @param array $meta_keys keys to skip because they are structural, not domain words
+     * @return void
+     */
+    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys): void
+    {
+        foreach ($data as $key => $value) {
+            if (is_string($key) and !in_array($key, $meta_keys, true)) {
+                $keys[$key] = true;
+            }
+            if (is_array($value)) {
+                $this->collect_yaml_keys($value, $keys, $meta_keys);
+            }
+        }
     }
 
     function php_class_tree(): string
@@ -104,6 +201,171 @@ class coding_rule_tests
         $class_tree = $this->classTree($class_lst);
         $class_parents = $this->classTreeParents($class_lst);
         return $this->php_class_list_to_md($class_tree);
+    }
+
+    /**
+     * check that objects are created with the suggested var name of their class
+     * and keep docs/code_object_name_exceptions.md up to date with the deviations
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_class_name_check(test_cleanup $t): void
+    {
+        $test_name = 'check that the object name exceptions doc is updated';
+        $md_txt = $this->php_class_name_exceptions();
+        $doc_txt = file_get_contents(test_files::DOCS_NAME_EXCEPTIONS);
+        $upd = $t->assert($test_name, $md_txt, $doc_txt);
+        if (!$upd and test_files::AUTO_UPDATE_TEST_FILES) {
+            $t->update_path_file(test_files::DOCS_NAME_EXCEPTIONS, $md_txt);
+        }
+    }
+
+    /**
+     * build the markdown report of object creations that do not use the suggested var name
+     * the first section lists classes that have a suggested var name but are created with
+     * another name (e.g. 'word: $wrd_ge, $wrd_zh'); the second section lists the classes
+     * without a suggested var name and the names used to create them; both sorted by class
+     * and var name
+     *
+     * @return string the markdown content for docs/code_object_name_exceptions.md
+     */
+    private function php_class_name_exceptions(): string
+    {
+        $suggested = $this->php_suggested_var_names(paths::PHP_LIB);
+        $usage = [];
+        $this->php_collect_new_usage(paths::PHP_LIB, $usage);
+        $this->php_collect_new_usage(TEST_PHP_PATH, $usage);
+        ksort($usage, SORT_STRING);
+
+        $exceptions = [];
+        $no_suggestion = [];
+        foreach ($usage as $class => $vars) {
+            sort($vars, SORT_STRING);
+            if (array_key_exists($class, $suggested)) {
+                $deviations = [];
+                foreach ($vars as $var) {
+                    if ($var != $suggested[$class]) {
+                        $deviations[] = '$' . $var;
+                    }
+                }
+                if ($deviations != []) {
+                    $exceptions[] = $class . ': ' . implode(', ', $deviations);
+                }
+            } else {
+                $names = [];
+                foreach ($vars as $var) {
+                    $names[] = '$' . $var;
+                }
+                $no_suggestion[] = $class . ': ' . implode(', ', $names);
+            }
+        }
+
+        $lines = [];
+        $lines[] = '# Object name exceptions';
+        $lines[] = '';
+        $lines[] = 'generated by coding_rule_tests::php_class_name_check - do not edit manually';
+        $lines[] = '';
+        $lines[] = '## Classes with a suggested var name created with a different name';
+        $lines[] = '';
+        $lines = array_merge($lines, $exceptions);
+        $lines[] = '';
+        $lines[] = '## Classes without a suggested var name';
+        $lines[] = '';
+        $lines = array_merge($lines, $no_suggestion);
+        return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * collect the suggested var name of every class that declares one in its file docblock
+     * the suggestion line has the fixed format '$abbr is the suggested var name'
+     *
+     * @param string $root the directory to scan recursively for php class files
+     * @return array map of class short name to its suggested var name (without the leading '$')
+     */
+    private function php_suggested_var_names(string $root): array
+    {
+        $suggested = [];
+        foreach ($this->php_file_list($root) as $file) {
+            $lines = explode("\n", file_get_contents($file));
+            $class = '';
+            $var = '';
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($class == '' and str_starts_with($line, 'class ')) {
+                    $class = preg_split('/\s+/', $line)[1];
+                }
+                $found = [];
+                if ($var == '' and preg_match('/^\$([A-Za-z_]\w*)\s+is the suggested var name/', $line, $found)) {
+                    $var = $found[1];
+                }
+            }
+            if ($class != '' and $var != '') {
+                $suggested[$class] = $var;
+            }
+        }
+        return $suggested;
+    }
+
+    /**
+     * collect every '$var = new <class>' object creation under the given directory
+     * a class imported with an alias (use ... as x) is resolved back to its real class name
+     *
+     * @param string $root the directory to scan recursively for php files
+     * @param array $usage (in/out) map of class short name to the list of var names used
+     * @return void
+     */
+    private function php_collect_new_usage(string $root, array &$usage): void
+    {
+        foreach ($this->php_file_list($root) as $file) {
+            $code = file_get_contents($file);
+            // per-file alias map e.g. 'use Zukunft\...\word as word_ui;' -> word_ui => word
+            $aliases = [];
+            $alias = [];
+            foreach (explode("\n", $code) as $line) {
+                if (preg_match('/^use\s+(.+?)\s+as\s+(\w+)\s*;/', trim($line), $alias)) {
+                    $full = $alias[1];
+                    $aliases[$alias[2]] = str_contains($full, '\\')
+                        ? substr($full, strrpos($full, '\\') + 1)
+                        : $full;
+                }
+            }
+            // collect every '$var = new <class>(' creation
+            $hits = [];
+            preg_match_all('/\$(\w+)\s*=\s*new\s+(\w+)\s*\(/', $code, $hits, PREG_SET_ORDER);
+            foreach ($hits as $hit) {
+                $var = $hit[1];
+                $token = $hit[2];
+                if (in_array($token, ['self', 'static', 'parent'])) {
+                    continue;
+                }
+                $class = array_key_exists($token, $aliases) ? $aliases[$token] : $token;
+                if (!array_key_exists($class, $usage)) {
+                    $usage[$class] = [];
+                }
+                if (!in_array($var, $usage[$class])) {
+                    $usage[$class][] = $var;
+                }
+            }
+        }
+    }
+
+    /**
+     * list all php files found recursively under a directory
+     * @param string $root the directory to scan
+     * @return array flat list of php file paths
+     */
+    private function php_file_list(string $root): array
+    {
+        $lib = new library();
+        $files = $lib->array_to_path($lib->dir_to_array($root), $root);
+        $result = [];
+        foreach ($files as $file) {
+            if (str_ends_with($file, '.php')) {
+                $result[] = $file;
+            }
+        }
+        return $result;
     }
 
     function php_function_tree(): string
@@ -143,23 +405,24 @@ class coding_rule_tests
         return $md_txt;
     }
 
-    private function php_class_list_to_md_row(array $class_tree, string $intent = '+-- '): string
+     private function php_class_list_to_md_row(array $class_tree, string $prefix = ''): string
     {
         $md_txt = '';
+        $count = count($class_tree);
+        $pos = 0;
         foreach ($class_tree as $child => $info_lst) {
+            $is_last = ($pos == $count - 1);
+            // box-drawing connector: last child gets the corner, others a tee
+            $connector = $is_last ? '└── ' : '├── ';
             if (is_string($info_lst)) {
-                $md_txt .= $intent . $child . ' - ' . $info_lst . "\n";
+                $md_txt .= $prefix . $connector . $child . ' - ' . $info_lst . "\n";
             } else {
-                if ($intent == '+-- ') {
-                    $this_intent = '\-- ';
-                    $next_intent = '    ' . $this_intent;
-                } else {
-                    $this_intent = $intent;
-                    $next_intent = '    ' . $intent;
-                }
-                $md_txt .= $this_intent . $child . "\n";
-                $md_txt .= $this->php_class_list_to_md_row($info_lst, $next_intent);
+                $md_txt .= $prefix . $connector . $child . "\n";
+                // children of a last node align with spaces, others keep the vertical bar
+                $child_prefix = $prefix . ($is_last ? '    ' : '│   ');
+                $md_txt .= $this->php_class_list_to_md_row($info_lst, $child_prefix);
             }
+            $pos++;
         }
         return $md_txt;
     }
@@ -226,6 +489,184 @@ class coding_rule_tests
             }
         }
         return $class_lst;
+    }
+
+    /**
+     * check that no class in cfg uses a class from web
+     * because the backend model layer must not depend on the frontend web layer
+     *
+     * @param test_cleanup $t
+     * @return void
+     */
+    function php_cfg_no_web_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::MODEL);
+        $code_files = $lib->array_to_path($file_array);
+        $pos = 1;
+        foreach ($code_files as $code_file) {
+            $ctrl_code = file(paths::MODEL . $code_file);
+            $use_classes = $lib->php_code_use($ctrl_code);
+            foreach ($use_classes as $use) {
+                $class = $use[0];
+                $path = $use[1];
+                if (str_contains($path, '\main\php\web\\')) {
+                    $sub_path = $lib->str_right_of(paths::MODEL, '../');
+                    $test_name = 'cfg must not use web class ' . $path . '\\' . $class
+                        . ' in ' . $sub_path . $code_file
+                        . ' (' . $pos . ' of ' . count($code_files) . ')';
+                    // TODO Prio 2 remove exception
+                    if ($code_file != '/log_text/text_log_functions.php') {
+                        $t->assert($test_name, '', $class);
+                    }
+
+                }
+            }
+            $pos++;
+        }
+    }
+
+    /**
+     * check that files in src/main/php/web/** declare no PHP global other than
+     * $ui_sys and $mtr — the only frontend-scoped globals allowed by
+     * docs/llm/state-and-messages.md
+     *
+     * each violation produces one failing assertion identifying the file, line
+     * and offending name; a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "global $sys;" inside
+     *     web/ flags the rule violation
+     * negative (test tolerates good code): "global $ui_sys;" and "global $mtr;"
+     *     in web/ pass without an assertion
+     *
+     * web/frontend.php is excluded for now because its deprecated direct-db
+     * bootstrap (start/open_db/end/load_cache) still needs the backend globals
+     * $sys/$cac/$cfg; see the TODO below
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_only_allowed_globals_tests(test_cleanup $t): void
+    {
+        // TODO Prio 1 use the api instead of the direct database connection in
+        //      web/frontend.php so the deprecated start/open_db/end/load_cache
+        //      bootstrap no longer needs the backend globals ($sys/$cac/$cfg) and
+        //      the 'frontend.php' exception below can be removed
+        $this->php_only_allowed_globals_tests(
+            $t,
+            paths::WEB,
+            ['ui_sys', 'mtr'],
+            'web/ must declare only $ui_sys and $mtr as globals',
+            ['frontend.php']
+        );
+    }
+
+    /**
+     * check that no file in src/main/php/web/** creates its own config object:
+     * frontend config values always come from the request cache $ui_sys->cfg,
+     * which http/view.php fills once at request start (and test_lib::ui_test_cache
+     * for unit tests); a freshly created config is empty, so get_by() would
+     * silently return the fallback instead of the user setting
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "$cfg = new config();"
+     *     inside web/ flags the rule violation
+     * negative (test tolerates good code): "$cfg = $ui_sys->cfg;" in web/ passes
+     *     without an assertion
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_config_from_cache_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array(paths::WEB);
+        $code_files = $lib->array_to_path($file_array);
+        foreach ($code_files as $code_file) {
+            $ctrl_code = file(paths::WEB . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                if (str_contains($line, 'new config(')) {
+                    $test_name = 'web/ must read the user config from $ui_sys->cfg'
+                        . ' but found new config() in ' . $code_file . ':' . ($line_idx + 1);
+                    $t->assert($test_name, '', $line);
+                }
+            }
+        }
+    }
+
+    /**
+     * check that files in src/main/php/cfg/** declare no PHP global other than
+     * $sys, $db_con, $cfg, $cac, $mtr and $debug — the only backend-scoped globals
+     * allowed by docs/llm/state-and-messages.md
+     *
+     * each violation produces one failing assertion identifying the file, line
+     * and offending name; a clean tree produces no assertions
+     *
+     * positive (test fires when it should): a line like "global $usr;" inside
+     *     cfg/ flags the rule violation
+     * negative (test tolerates good code): "global $sys;", "global $db_con;",
+     *     "global $cfg;", "global $cac;", "global $mtr;" and "global $debug;" in
+     *     cfg/ pass without an assertion
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_cfg_only_allowed_globals_tests(test_cleanup $t): void
+    {
+        $this->php_only_allowed_globals_tests(
+            $t,
+            paths::MODEL,
+            ['sys', 'db_con', 'cfg', 'cac', 'mtr', 'debug'],
+            'cfg/ must declare only $sys, $db_con, $cfg, $cac, $mtr and $debug as globals'
+        );
+    }
+
+    /**
+     * shared scanner for the global-declaration coding rules: assert that no file
+     * under $base_path declares a PHP global whose name is not in $allowed
+     *
+     * each violation produces one failing assertion identifying the file, line and
+     * offending name; a clean tree produces no assertions
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::WEB or paths::MODEL
+     * @param array $allowed the permitted global names without the leading $ e.g. ['ui_sys', 'mtr']
+     * @param string $rule_msg the rule description shown before the offending name e.g.
+     *     'web/ must declare only $ui_sys and $mtr as globals'
+     * @param array $exclude relative file paths (within $base_path) to skip e.g. ['frontend.php']
+     * @return void
+     */
+    private function php_only_allowed_globals_tests(
+        test_cleanup $t,
+        string       $base_path,
+        array        $allowed,
+        string       $rule_msg,
+        array        $exclude = []
+    ): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array($base_path);
+        $code_files = $lib->array_to_path($file_array);
+        foreach ($code_files as $code_file) {
+            if (in_array(ltrim($code_file, '/\\'), $exclude, true)) {
+                continue;
+            }
+            $ctrl_code = file($base_path . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                if (preg_match_all('/global\s+\$([a-zA-Z_][a-zA-Z0-9_]*)/', $line, $matches)) {
+                    foreach ($matches[1] as $name) {
+                        if (!in_array($name, $allowed, true)) {
+                            $test_name = $rule_msg
+                                . ' but found $' . $name
+                                . ' in ' . $code_file . ':' . ($line_idx + 1);
+                            $t->assert($test_name, '', $name);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

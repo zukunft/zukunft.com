@@ -86,18 +86,30 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "currency"
+    },
+    {
+      "name": "g"
+    },
+    {
+      "name": "t"
+    },
+    {
+      "name": "CO2"
     }
   ],
   "triples": [
     {
       "from": "Euro",
       "verb": "is a",
-      "to": "Currency"
+      "to": "currency"
     },
     {
-      "from": "cent",
-      "verb": "is used by",
-      "to": "Euro"
+      "from": "Euro",
+      "verb": "uses",
+      "to": "cent"
     },
     {
       "from": "€",
@@ -107,13 +119,13 @@
     {
       "name": "plastic porringer",
       "from": "porringer",
-      "verb": "can be made of",
+      "verb": "of",
       "to": "plastic"
     },
     {
       "name": "blueberry porringer",
       "from": "blueberry",
-      "verb": "can be packed in",
+      "verb": "in",
       "to": "plastic porringer"
     },
     {
@@ -125,8 +137,14 @@
     {
       "name": "jet fuel",
       "from": "fuel",
-      "verb": "used for",
+      "verb": "kind of",
       "to": "jet"
+    },
+    {
+      "name": "t CO2 / t",
+      "from": "CO2",
+      "verb": "per",
+      "to": "t"
     }
   ],
   "sources": [
@@ -154,7 +172,7 @@
     {
       "words": [
         "blueberry porringer",
-        "Diesel fuel",
+        "diesel fuel",
         "g"
       ],
       "number": 250
