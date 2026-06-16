@@ -1932,6 +1932,8 @@ enum messages: string
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_DEL = 'form_button_del';
+    case BUTTON_VIEW_OPEN = 'button_view_open';
+    case BUTTON_VIEW_SWITCH = 'button_view_switch';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';

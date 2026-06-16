@@ -1432,6 +1432,41 @@ class html_base
         return $result;
     }
 
+    /**
+     * a Bootstrap tab box that shows the given tabs side by side with the first tab active
+     * e.g. on the word page a "Views" tab next to a "Changes" tab
+     *
+     * @param array $tabs an ordered map of tab label => tab html content
+     * @return string the html code of the tab box or an empty string if no tab has content
+     */
+    function tab_box(array $tabs): string
+    {
+        $result = '';
+        // drop tabs without content so an empty change log or view list shows no empty tab
+        $tabs = array_filter($tabs, fn($content) => $content !== '');
+        if ($tabs != []) {
+            $nav = '';
+            $panes = '';
+            $first = true;
+            foreach ($tabs as $label => $content) {
+                $tab_id = str_replace(' ', '_', strtolower($label));
+                $active = $first ? ' active' : '';
+                $selected = $first ? 'true' : 'false';
+                $show = $first ? ' active show' : '';
+                $nav .= '<' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
+                $nav .= '<' . self::A . ' ' . self::CLASS_HTML . '="nav-link' . $active . '" ' . self::ID . '="' . $tab_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $tab_id . '" role="tab" aria-controls="' . $tab_id . '" aria-selected="' . $selected . '">' . $label . '</' . self::A . '>';
+                $nav .= '</' . self::LI . '>';
+                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade' . $show . '" ' . self::ID . '="' . $tab_id . '" role="tabpanel" aria-labelledby="' . $tab_id . '-tab">';
+                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="container">' . $content . '</' . self::DIV . '>';
+                $panes .= '</' . self::DIV . '>';
+                $first = false;
+            }
+            $result = '<' . self::UL . ' ' . self::CLASS_HTML . '="nav nav-tabs">' . $nav . '</' . self::UL . '>';
+            $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom">' . $panes . '</' . self::DIV . '>';
+        }
+        return $result;
+    }
+
 // -----------------------
 // table element functions
 // -----------------------

@@ -133,6 +133,7 @@ class components
     const string USAGE_WORD = "usage_word";
     const string CHANGE_LOG_WORD = "change_log_word";
     const string VIEW_LIST_WORD = "view_list_word";
+    const string VIEW_TAB_BOX_WORD = "view_tab_box_word";
 
     // persevered view component names for unit and integration tests
     const string TEST_ADD_NAME = 'System Test View Component';

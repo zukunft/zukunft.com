@@ -441,6 +441,44 @@ class ui_list extends ui_base
     }
 
     /**
+     * HTML for the col-4 tab box of the word page: a "Views" tab with the related views
+     * (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
+     * with the change log of the word, latest first
+     * TODO Prio 3 replace the view preview placeholder with a real miniature preview
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param bool $test_mode true to create a reproducible result without a backend call
+     * @return string the html code of the tab box or an empty string for a non-word object
+     */
+    function view_tab_box(db_object $dbo, bool $test_mode = false): string
+    {
+        global $mtr;
+        $result = '';
+        if ($dbo::class == word::class) {
+            $html = new html_base();
+            // tab 1: each related view as a preview placeholder with the open and switch buttons
+            $views_html = '';
+            if ($dbo->view_lst != null) {
+                foreach ($dbo->view_lst->lst() as $msk) {
+                    $preview = $html->div('view preview', view_styles::COL_SM_12);
+                    $buttons = $msk->open_link($dbo->id()) . ' ' . $msk->switch_link($dbo->id());
+                    $views_html .= $html->div($preview . $msk->name() . ' ' . $buttons);
+                }
+            }
+            // tab 2: the change log of the word, latest first
+            $log_html = '';
+            if ($dbo->chg_log != null) {
+                $log_html = $dbo->chg_log->filter($dbo)->dsp(null, false, false, $test_mode);
+            }
+            $result = $html->tab_box([
+                $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
+                $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,
+            ]);
+        }
+        return $result;
+    }
+
+    /**
      * @param db_object $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code of links that can be changes
@@ -473,6 +511,11 @@ class ui_list extends ui_base
     {
         global $ui_sys;
 
+        // TODO Prio 3 on the word page this formula column should also show the most relevant
+        //      results and, on top, a result chart (mirroring value_chart() for the value
+        //      column); a result_chart component plus a word-carried results_related list are
+        //      still missing
+
         // a word loaded for its page carries its related formulas directly (like the
         // related values), so use that list; otherwise fall back to the formula link
         // cache or, outside the unit tests, an api load
@@ -502,6 +545,29 @@ class ui_list extends ui_base
             $row_limit = config::LIMIT_NAME_LIST;
         }
         return $frm_lst->name_link('', $row_limit);
+    }
+
+    /**
+     * HTML for a chart of the most relevant values of the given word, shown on top of the
+     * value list; only rendered if the word actually has a related value
+     * TODO Prio 3 replace the placeholder with a real chart of the most relevant values by
+     *      impact (e.g. a bar chart rendered client side)
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param data_object|null $cfg the cached lists for initial display without backend call
+     * @return string the html code of the value chart or an empty string if there is no value
+     */
+    function value_chart(db_object $dbo, ?data_object $cfg = null): string
+    {
+        $result = '';
+        if ($dbo::class == word::class) {
+            $val_lst = $this->value_related_list($dbo, $cfg);
+            if ($val_lst != null and !$val_lst->is_empty()) {
+                $html = new html_base();
+                $result = $html->div('value chart', view_styles::COL_SM_12);
+            }
+        }
+        return $result;
     }
 
     /**

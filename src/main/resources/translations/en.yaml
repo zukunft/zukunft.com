@@ -233,6 +233,8 @@ messages:
   form_button_cancel: "cancel"
   form_button_save: "save"
   form_button_del: "delete"
+  button_view_open: "view"
+  button_view_switch: "switch"
   system_button_import: "import"
   system_button_export: "export"
   add: "Add"

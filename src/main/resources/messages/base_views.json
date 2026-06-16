@@ -82,6 +82,11 @@
       "type": "values_related"
     },
     {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
+    },
+    {
       "name": "related results",
       "description": "show the most relevant and related results",
       "type": "results_related"
@@ -246,6 +251,12 @@
       "description": "show the default view of this word and of its parent words",
       "type": "view_list",
       "code_id": "view_list_word"
+    },
+    {
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
     }
   ],
   "views": [
@@ -265,65 +276,67 @@
         },
         {
           "position": "3",
-          "name": "system show field plural"
+          "name": "system show field plural",
+          "position_type": "combine"
         },
         {
           "position": "4",
           "name": "phrase aliases",
-          "style": "col-md-4"
+          "position_type": "combine"
         },
         {
           "position": "5",
           "name": "phrase symbols",
-          "style": "col-md-4"
+          "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "related phrases without subtitles"
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "children of word"
+          "name": "children of word",
+          "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "system sub title values"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "9",
-          "name": "related values"
+          "name": "value chart",
+          "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "system sub title formulas"
+          "name": "related values",
+          "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "formula list"
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
         },
         {
           "position": "12",
-          "name": "system sub title references"
+          "name": "formula list",
+          "position_type": "combine"
         },
         {
           "position": "13",
-          "name": "ref list word"
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         },
         {
           "position": "14",
-          "name": "system sub title views"
+          "name": "system sub title references"
         },
         {
           "position": "15",
-          "name": "view list word"
-        },
-        {
-          "position": "16",
-          "name": "system sub title log"
-        },
-        {
-          "position": "17",
-          "name": "change log word"
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },
