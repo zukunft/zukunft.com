@@ -598,8 +598,9 @@ class phrase_list extends sandbox_list_named
     /**
      * sort this phrase list in place so that the phrase with the highest impact is first
      * the impact is the system calculated relevance of the wrapped word or triple
-     * phrases with the same (or no) impact are sorted by name so that the order is always
-     * deterministic and the html does not change between runs e.g. for the snapshot tests
+     * phrases with the same (or no) impact are sorted by name and finally by id so that the
+     * order is always deterministic and the html does not change between runs e.g. for the
+     * snapshot tests, also when the phrase names are not loaded (only the ids are known)
      * @return void
      */
     function sort_by_impact(): void
@@ -607,7 +608,8 @@ class phrase_list extends sandbox_list_named
         $lst = $this->lst();
         usort($lst, function (phrase $a, phrase $b) {
             return $b->impact() <=> $a->impact()
-                ?: strcmp($a->name() ?? '', $b->name() ?? '');
+                ?: strcmp($a->name() ?? '', $b->name() ?? '')
+                ?: $a->id() <=> $b->id();
         });
         $this->set_lst($lst);
     }

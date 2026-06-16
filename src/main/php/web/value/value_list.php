@@ -215,8 +215,11 @@ class value_list extends ListBase
     function sort_by_impact(): void
     {
         $lst = $this->lst();
-        usort($lst, fn(value $a, value $b) => $b->number() <=> $a->number());
-        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact());
+        // impact first, then number, then the value (group) id so that values with the
+        // same impact and number keep a deterministic order independent of the db/api row order
+        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
+            ?: $b->number() <=> $a->number()
+            ?: $a->id() <=> $b->id());
         $this->set_lst($lst);
     }
 

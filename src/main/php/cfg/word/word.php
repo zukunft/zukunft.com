@@ -940,6 +940,9 @@ class word extends sandbox_code_id
     {
         $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr($this->phrase(), $size, $page);
+        // load the phrase names of each value group so that the related value list
+        // shows the phrase names (and not only the links) in the api and frontend
+        $val_lst->load_phrases();
         return $val_lst;
     }
 
