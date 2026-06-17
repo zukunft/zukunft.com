@@ -116,6 +116,7 @@ group_list: $grp_lst, $lst, $phr_grp_lst_val
 html_base: $html, $html_base, $url
 id: $grp_id
 import_file: $imf, $import
+import_wikidata: $imp
 ip_range: $ip, $ip_range
 ip_range_list: $db_lst, $ip_lst, $ip_range_lst
 job_list: $job_lst, $result

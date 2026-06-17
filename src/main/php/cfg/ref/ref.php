@@ -140,6 +140,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use DateTime;
 
 class ref extends sandbox_link
 {
@@ -191,6 +192,8 @@ class ref extends sandbox_link
     public ?string $url;
     public ?string $code_id = null;
     public ?string $description = null;
+    public ?float $impact = null;          // a cached number used for the default sorting and as an importance indicator
+    private ?DateTime $last_update = null; // timestamp of the last successful update used to trigger the next refresh job
 
     // TODO deprecate
     public ?string $name = null;
@@ -260,6 +263,13 @@ class ref extends sandbox_link
             $this->set_url($db_row[ref_db::FLD_URL]);
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[sql_db::FLD_IMPACT];
+            }
+            if (array_key_exists(ref_db::FLD_LAST_UPDATE, $db_row)
+                and $db_row[ref_db::FLD_LAST_UPDATE] != null) {
+                $this->set_last_update(new DateTime($db_row[ref_db::FLD_LAST_UPDATE]));
+            }
             if ($this->reload_objects($msg)) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
@@ -299,6 +309,14 @@ class ref extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
             if ($api_json[json_fields::DESCRIPTION] != '') {
                 $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+        if (array_key_exists(json_fields::IMPACT, $api_json)) {
+            $this->impact = $api_json[json_fields::IMPACT];
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
+            if ($api_json[json_fields::LAST_UPDATE] != '') {
+                $this->set_last_update(new DateTime($api_json[json_fields::LAST_UPDATE]));
             }
         }
 
@@ -416,6 +434,12 @@ class ref extends sandbox_link
                 $vars[json_fields::SOURCE_ID] = $this->get_source()?->id();
             }
             $vars[json_fields::DESCRIPTION] = $this->description;
+            if ($this->impact !== null) {
+                $vars[json_fields::IMPACT] = $this->impact;
+            }
+            if ($this->last_update() != null) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format('Y-m-d H:i:s');
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -669,6 +693,22 @@ class ref extends sandbox_link
     function get_url(): ?string
     {
         return $this->url;
+    }
+
+    /**
+     * @param DateTime|null $last_update the timestamp when this reference has last been updated from the source
+     */
+    function set_last_update(?DateTime $last_update): void
+    {
+        $this->last_update = $last_update;
+    }
+
+    /**
+     * @return DateTime|null the timestamp when this reference has last been updated from the source
+     */
+    function last_update(): ?DateTime
+    {
+        return $this->last_update;
     }
 
     /**

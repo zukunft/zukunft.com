@@ -418,6 +418,13 @@ class ui_list extends ui_base
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($phr_lst);
         }
+        // wrap the reference list in a block div so each reference name and its refresh icon
+        // stay on one line; without it the bare inline elements land directly in the
+        // flex-column main container and each is pushed onto its own line (same as the value list)
+        if ($result != '') {
+            $html = new html_base();
+            $result = $html->div($result, view_styles::COL_SM_12);
+        }
         return $result;
     }
 

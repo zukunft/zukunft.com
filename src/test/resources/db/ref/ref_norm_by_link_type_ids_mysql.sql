@@ -2,6 +2,8 @@ PREPARE ref_norm_by_link_type_ids FROM
     'SELECT ref_id,
             phrase_id,
             ref_type_id,
+            impact,
+            last_update,
             external_key,
             `url`,
             description,

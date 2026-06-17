@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-06-16T22:21:08+00:00",
+    "timestamp": "2026-06-17T13:10:53+00:00",
     "body": {
         "user_profiles": [
             {
@@ -64,7 +64,7 @@
             {
                 "name": "link admin",
                 "code_id": "maintainer",
-                "description": "humans that have the permissions to maintain a system link / reference",
+                "description": "humans that have the permissions to maintain a system link \/ reference",
                 "id": 10
             },
             {
@@ -200,8 +200,8 @@
                 "id": 1
             },
             {
-                "name": "cfg/system/sys_log",
-                "code_id": "cfg/system/sys_log",
+                "name": "cfg\/system\/sys_log",
+                "code_id": "cfg\/system\/sys_log",
                 "description": "for errors on the system log functions itself",
                 "id": 2
             },
@@ -224,20 +224,20 @@
                 "id": 5
             },
             {
-                "name": "api/config",
-                "code_id": "api/config",
+                "name": "api\/config",
+                "code_id": "api\/config",
                 "description": "request the configuration via api",
                 "id": 6
             },
             {
-                "name": "cfg/application",
-                "code_id": "cfg/application",
+                "name": "cfg\/application",
+                "code_id": "cfg\/application",
                 "description": "fallback entry to log system errors",
                 "id": 7
             },
             {
-                "name": "cfg/helper/config_numbers",
-                "code_id": "cfg/helper/config_numbers",
+                "name": "cfg\/helper\/config_numbers",
+                "code_id": "cfg\/helper\/config_numbers",
                 "description": "loader for the system and user configuration",
                 "id": 8
             }
@@ -6388,6 +6388,18 @@
                 "code_id": "114action",
                 "description": "",
                 "id": 888
+            },
+            {
+                "name": "22impact",
+                "code_id": "22impact",
+                "description": "",
+                "id": 889
+            },
+            {
+                "name": "22last_update",
+                "code_id": "22last_update",
+                "description": "",
+                "id": 890
             }
         ],
         "db_cache_types": [
@@ -6709,9 +6721,9 @@
                 "id": 4,
                 "name": "French",
                 "code_id": "fr",
-                "description": "Le français est une langue indo-européenne de la famille des langues romanes dont les locuteurs sont appelés francophones",
+                "description": "Le fran\u00e7ais est une langue indo-europ\u00e9enne de la famille des langues romanes dont les locuteurs sont appel\u00e9s francophones",
                 "wiki_code": "fr",
-                "local_name": "Français",
+                "local_name": "Fran\u00e7ais",
                 "usage": 320000000,
                 "wikimedia_code": "fr"
             },
@@ -6719,9 +6731,9 @@
                 "id": 5,
                 "name": "Spanish",
                 "code_id": "es",
-                "description": "El español o castellano es una lengua romance procedente del latín hablado, perteneciente a la familia de lenguas indoeuropeas",
+                "description": "El espa\u00f1ol o castellano es una lengua romance procedente del lat\u00edn hablado, perteneciente a la familia de lenguas indoeuropeas",
                 "wiki_code": "es",
-                "local_name": "Español",
+                "local_name": "Espa\u00f1ol",
                 "usage": 500000000,
                 "wikimedia_code": "es"
             },
@@ -6729,9 +6741,9 @@
                 "id": 6,
                 "name": "Chinese",
                 "code_id": "zh",
-                "description": "漢語又稱中文 是源自东亚的一类分析语，为汉民族的母语",
+                "description": "\u6f22\u8a9e\u53c8\u7a31\u4e2d\u6587 \u662f\u6e90\u81ea\u4e1c\u4e9a\u7684\u4e00\u7c7b\u5206\u6790\u8bed\uff0c\u4e3a\u6c49\u6c11\u65cf\u7684\u6bcd\u8bed",
                 "wiki_code": "zh",
-                "local_name": "漢語",
+                "local_name": "\u6f22\u8a9e",
                 "usage": 1300000000,
                 "wikimedia_code": "zh"
             },
@@ -6739,9 +6751,9 @@
                 "id": 7,
                 "name": "Arabic",
                 "code_id": "ar",
-                "description": "ٱللُّغَةُ ٱلْعَرَبِيَّة هي أكثر اللغات السامية تحدثًا، وإحدى أكثر اللغات انتشاراً في العالم، يتحدثها أكثر من 467 مليون نسمة.",
+                "description": "\u0671\u0644\u0644\u064f\u0651\u063a\u064e\u0629\u064f \u0671\u0644\u0652\u0639\u064e\u0631\u064e\u0628\u0650\u064a\u064e\u0651\u0629 \u0647\u064a \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0644\u0633\u0627\u0645\u064a\u0629 \u062a\u062d\u062f\u062b\u064b\u0627\u060c \u0648\u0625\u062d\u062f\u0649 \u0623\u0643\u062b\u0631 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0646\u062a\u0634\u0627\u0631\u0627\u064b \u0641\u064a \u0627\u0644\u0639\u0627\u0644\u0645\u060c \u064a\u062a\u062d\u062f\u062b\u0647\u0627 \u0623\u0643\u062b\u0631 \u0645\u0646 467 \u0645\u0644\u064a\u0648\u0646 \u0646\u0633\u0645\u0629.",
                 "wiki_code": "ar",
-                "local_name": "العربية",
+                "local_name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
                 "usage": 380000000,
                 "wikimedia_code": "ar"
             }
@@ -6834,7 +6846,7 @@
             {
                 "name": "not set",
                 "code_id": "not_set",
-                "description": "no verb / predicate selected",
+                "description": "no verb \/ predicate selected",
                 "plural": null,
                 "reverse": null,
                 "rev_plural": null,
@@ -7146,7 +7158,7 @@
             {
                 "name": "times",
                 "code_id": "times",
-                "description": "to multiply the two given phrases to one unit e.g. Joule times second (J⋅s) for the Plank constant",
+                "description": "to multiply the two given phrases to one unit e.g. Joule times second (J\u22c5s) for the Plank constant",
                 "plural": "times",
                 "reverse": "times",
                 "rev_plural": "times",
@@ -7398,7 +7410,7 @@
                 "id": 8
             },
             {
-                "name": "view / layer",
+                "name": "view \/ layer",
                 "code_id": "view",
                 "description": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n",
                 "id": 9
@@ -7523,21 +7535,21 @@
                 "name": "wikipedia",
                 "code_id": "wikipedia",
                 "description": "wikipedia",
-                "url": "https://en.wikipedia.org/wiki/",
+                "url": "https:\/\/en.wikipedia.org\/wiki\/",
                 "id": 1
             },
             {
                 "name": "wikidata",
                 "code_id": "wikidata",
                 "description": "wikidata",
-                "url": "https://www.wikidata.org/wiki/",
+                "url": "https:\/\/www.wikidata.org\/wiki\/",
                 "id": 2
             },
             {
                 "name": "conceptnet",
                 "code_id": "conceptnet",
                 "description": "conceptnet",
-                "url": "http://api.conceptnet.io/",
+                "url": "http:\/\/api.conceptnet.io\/",
                 "id": 3
             }
         ],
@@ -7607,13 +7619,13 @@
             {
                 "name": "reversible",
                 "code_id": "reversible",
-                "description": "a formula that can be included also in the reversed version e.g. \"minute = second / 60\" and \"second = minute * 60\"",
+                "description": "a formula that can be included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\"",
                 "id": 5
             },
             {
                 "name": "scaling",
                 "code_id": "scaling",
-                "description": "a formula that adjust the scaling e.g. \"million = one / 1000000\"",
+                "description": "a formula that adjust the scaling e.g. \"million = one \/ 1000000\"",
                 "id": 6
             },
             {
@@ -7793,15 +7805,15 @@
         ],
         "view_styles": [
             {
-                "name": "1/3 width",
+                "name": "1\/3 width",
                 "code_id": "col-md-4",
-                "description": "use 1/3 of the width (col-md-4)",
+                "description": "use 1\/3 of the width (col-md-4)",
                 "id": 1
             },
             {
-                "name": "2/3 width",
+                "name": "2\/3 width",
                 "code_id": "col-md-8",
-                "description": "use 2/3 of the width (col-md-8)",
+                "description": "use 2\/3 of the width (col-md-8)",
                 "id": 2
             },
             {
@@ -8951,7 +8963,7 @@
             {
                 "name": "button request new",
                 "code_id": "button_request",
-                "description": "show a button to request a new e.g. type item that needs to be confirmed and / or modified by an admin",
+                "description": "show a button to request a new e.g. type item that needs to be confirmed and \/ or modified by an admin",
                 "id": 187
             },
             {
@@ -8961,9 +8973,9 @@
                 "id": 188
             },
             {
-                "name": "phrases with details on 1/3 screen",
-                "code_id": "phrases_related_1/3",
-                "description": "show a number of related phrases with so many details that it fits 1/3 of the screen; the number of related phrases if taken from the user configuration var selections/target",
+                "name": "phrases with details on 1\/3 screen",
+                "code_id": "phrases_related_1\/3",
+                "description": "show a number of related phrases with so many details that it fits 1\/3 of the screen; the number of related phrases if taken from the user configuration var selections\/target",
                 "id": 189
             },
             {
@@ -10073,7 +10085,7 @@
                 "id": 6,
                 "protection": 3,
                 "name": "Add new verb",
-                "description": "Request to add a new verb/predicate",
+                "description": "Request to add a new verb\/predicate",
                 "type_id": 7,
                 "code_id": "verb_add",
                 "components": [
@@ -10224,7 +10236,7 @@
                 "id": 7,
                 "protection": 3,
                 "name": "Change verb",
-                "description": "Rename a verb/predicate",
+                "description": "Rename a verb\/predicate",
                 "type_id": 7,
                 "code_id": "verb_edit",
                 "components": [
