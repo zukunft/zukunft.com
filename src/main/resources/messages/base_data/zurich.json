@@ -1,0 +1,850 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-17 12:00:00",
+  "user": "timon",
+  "selection": [
+    "Zurich",
+    "city",
+    "canton",
+    "statistics"
+  ],
+  "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Measured values carry the 'measured value' provenance triple and a source; derived values carry 'assumed value' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
+  "words": [
+    {
+      "name": "Zurich",
+      "refs": [
+        {
+          "name": "Zurich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "city",
+      "refs": [
+        {
+          "name": "Zurich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "canton",
+      "refs": [
+        {
+          "name": "Canton_of_Zurich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11943",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population",
+      "refs": [
+        {
+          "name": "Population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "area",
+      "refs": [
+        {
+          "name": "Area",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11500",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "density",
+      "refs": [
+        {
+          "name": "Population_density",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183334",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "GDP",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12796",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "GDP per capita",
+      "refs": [
+        {
+          "name": "GDP_per_capita",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17312912",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Now"
+    },
+    {
+      "name": "foreign nationals",
+      "refs": [
+        {
+          "name": "Foreign_national",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "birth",
+      "refs": [
+        {
+          "name": "Birth_rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170452",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "death",
+      "refs": [
+        {
+          "name": "Mortality_rate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q58702",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "natural balance",
+      "refs": [
+        {
+          "name": "Rate_of_natural_increase",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "welfare",
+      "refs": [
+        {
+          "name": "Welfare",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q189760",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "waking",
+      "description": "waking, net-positive part of lived time"
+    },
+    {
+      "name": "fraction",
+      "refs": [
+        {
+          "name": "Fraction",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159375",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "share",
+      "description": "attributable proportion of a whole, 0..1"
+    },
+    {
+      "name": "year",
+      "type": "time",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "person",
+      "refs": [
+        {
+          "name": "Person",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q215627",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "km2",
+      "refs": [
+        {
+          "name": "Square_kilometre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q712226",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "CHF",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25344",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "HTP",
+      "type": "measure",
+      "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit"
+    },
+    {
+      "name": "percent",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "measured",
+      "description": "qualifier: value taken from an official measurement/statistic"
+    },
+    {
+      "name": "assumed",
+      "description": "qualifier: value is an explicit modelling assumption"
+    },
+    {
+      "name": "value",
+      "description": "a stored number; reference the provenance qualifier triple, not this bare word"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "type": "time"
+    },
+    {
+      "name": "2022",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "measured value",
+      "from": "value",
+      "verb": "must be one of",
+      "to": "measured"
+    },
+    {
+      "name": "assumed value",
+      "from": "value",
+      "verb": "must be one of",
+      "to": "assumed"
+    },
+    {
+      "name": "city area",
+      "from": "area",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "canton area",
+      "from": "area",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "city density",
+      "from": "density",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "canton density",
+      "from": "density",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "canton GDP",
+      "from": "GDP",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "canton GDP per capita",
+      "from": "GDP per capita",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "foreign share",
+      "from": "share",
+      "verb": "of",
+      "to": "foreign nationals"
+    },
+    {
+      "name": "city foreign count",
+      "from": "foreign nationals",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "canton foreign count",
+      "from": "foreign nationals",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "city birth count",
+      "from": "birth",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "city death count",
+      "from": "death",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "city natural balance",
+      "from": "natural balance",
+      "verb": "of",
+      "to": "city"
+    },
+    {
+      "name": "city share of canton",
+      "from": "city",
+      "verb": "is part of",
+      "to": "canton"
+    },
+    {
+      "name": "canton welfare",
+      "from": "welfare",
+      "verb": "of",
+      "to": "canton"
+    },
+    {
+      "name": "waking welfare fraction",
+      "from": "fraction",
+      "verb": "of",
+      "to": "waking"
+    },
+    {
+      "from": "2022",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2025",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2025",
+      "verb": "is follower of",
+      "to": "2024"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Statistik Stadt Zuerich 2025",
+      "description": "Statistik Stadt Zuerich, population 31.12.2025 (definitive): 452421 residents, 33.9% foreign, 4535 births, 3043 deaths.",
+      "url": "https://www.stadt-zuerich.ch/de/aktuell/medienmitteilungen/2026/02/bevoelkerungswachstum-weniger-vorschulkinder.html"
+    },
+    {
+      "name": "Statistisches Amt Kanton Zuerich 2025",
+      "description": "Statistisches Amt des Kantons Zuerich, civil-law population 31.12.2025 (provisional): 1628081 residents, ~29% foreign, +0.8% growth.",
+      "url": "https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2026/02/bevoelkerung-im-kanton-zuerich-waechst-weiter-jedoch-langsamer.html"
+    },
+    {
+      "name": "BFS cantonal GDP 2022",
+      "description": "Bundesamt fuer Statistik, cantonal GDP/gross value added 2022: Kanton Zuerich ~159.8 bn CHF (nominal).",
+      "url": "https://www.bfs.admin.ch/"
+    },
+    {
+      "name": "Wikipedia Canton of Zurich",
+      "description": "Canton of Zurich area ~1729 km2; city of Zurich area ~91.88 km2.",
+      "url": "https://de.wikipedia.org/wiki/Kanton_Z%C3%BCrich"
+    },
+    {
+      "name": "zukunft.com Fermi assumption",
+      "description": "explicit modelling assumption set by the analyst, not a measurement"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "city",
+        "population",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "number": "452421",
+      "source": "Statistik Stadt Zuerich 2025"
+    },
+    {
+      "words": [
+        "canton",
+        "population",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "number": "1628081",
+      "source": "Statistisches Amt Kanton Zuerich 2025"
+    },
+    {
+      "words": [
+        "canton",
+        "population",
+        "2024",
+        "person",
+        "measured value"
+      ],
+      "number": "1615112",
+      "source": "Statistisches Amt Kanton Zuerich 2025"
+    },
+    {
+      "words": [
+        "city area",
+        "km2",
+        "measured value"
+      ],
+      "number": "91.88",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "canton area",
+        "km2",
+        "measured value"
+      ],
+      "number": "1729",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "foreign share",
+        "city",
+        "percent",
+        "measured value"
+      ],
+      "number": "33.9",
+      "source": "Statistik Stadt Zuerich 2025"
+    },
+    {
+      "words": [
+        "foreign share",
+        "canton",
+        "percent",
+        "measured value"
+      ],
+      "number": "29",
+      "source": "Statistisches Amt Kanton Zuerich 2025"
+    },
+    {
+      "words": [
+        "city birth count",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "number": "4535",
+      "source": "Statistik Stadt Zuerich 2025"
+    },
+    {
+      "words": [
+        "city death count",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "number": "3043",
+      "source": "Statistik Stadt Zuerich 2025"
+    },
+    {
+      "words": [
+        "canton GDP",
+        "2022",
+        "CHF",
+        "measured value"
+      ],
+      "number": "159800000000",
+      "source": "BFS cantonal GDP 2022"
+    },
+    {
+      "words": [
+        "waking welfare fraction",
+        "assumed value"
+      ],
+      "number": "0.6",
+      "source": "zukunft.com Fermi assumption"
+    },
+    {
+      "words": [
+        "city density",
+        "person",
+        "km2"
+      ],
+      "number": "4924.042228994341"
+    },
+    {
+      "words": [
+        "canton density",
+        "person",
+        "km2"
+      ],
+      "number": "941.6315789473684"
+    },
+    {
+      "words": [
+        "city share of canton",
+        "percent"
+      ],
+      "number": "27.7886051123992"
+    },
+    {
+      "words": [
+        "city natural balance",
+        "2025",
+        "person"
+      ],
+      "number": "1492"
+    },
+    {
+      "words": [
+        "canton GDP per capita",
+        "CHF"
+      ],
+      "number": "98152.36465507552"
+    },
+    {
+      "words": [
+        "city foreign count",
+        "person"
+      ],
+      "number": "153370.71899999998"
+    },
+    {
+      "words": [
+        "canton foreign count",
+        "person"
+      ],
+      "number": "472143.49"
+    },
+    {
+      "words": [
+        "canton welfare",
+        "HTP",
+        "year"
+      ],
+      "number": "976848.6"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "city density formula",
+      "expression": "\"city density\" = \"population\" / \"city area\"",
+      "assigned": [
+        "city"
+      ]
+    },
+    {
+      "name": "canton density formula",
+      "expression": "\"canton density\" = \"population\" / \"canton area\"",
+      "assigned": [
+        "canton"
+      ]
+    },
+    {
+      "name": "share of canton (formula)",
+      "expression": "\"city share of canton\" = \"city\" / \"canton\" * 100",
+      "assigned": [
+        "city",
+        "canton"
+      ]
+    },
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "population"
+    },
+    {
+      "name": "natural balance (formula)",
+      "expression": "\"city natural balance\" = \"city birth count\" - \"city death count\"",
+      "assigned": [
+        "city"
+      ]
+    },
+    {
+      "name": "GDP per capita (formula)",
+      "expression": "\"canton GDP per capita\" = \"canton GDP\" / \"population\"",
+      "assigned": [
+        "canton"
+      ]
+    },
+    {
+      "name": "foreign count (formula)",
+      "expression": "\"foreign nationals\" = \"population\" * \"foreign share\" / 100",
+      "assigned": [
+        "city",
+        "canton"
+      ]
+    },
+    {
+      "name": "welfare (formula)",
+      "expression": "\"canton welfare\" = \"population\" * \"waking welfare fraction\"",
+      "assigned": [
+        "canton"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "city",
+        "population",
+        "city area",
+        "2025",
+        "person",
+        "km2",
+        "measured value"
+      ],
+      "formula": "city density formula",
+      "words": [
+        "city density",
+        "person",
+        "km2"
+      ],
+      "number": "4924.042228994341",
+      "note": "452421 / 91.88"
+    },
+    {
+      "context": [
+        "canton",
+        "population",
+        "canton area",
+        "2025",
+        "person",
+        "km2",
+        "measured value"
+      ],
+      "formula": "canton density formula",
+      "words": [
+        "canton density",
+        "person",
+        "km2"
+      ],
+      "number": "941.6315789473684",
+      "note": "1628081 / 1729"
+    },
+    {
+      "context": [
+        "city",
+        "canton",
+        "population",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "formula": "share of canton (formula)",
+      "words": [
+        "city share of canton",
+        "percent"
+      ],
+      "number": "27.7886051123992",
+      "note": "452421 / 1628081 * 100"
+    },
+    {
+      "context": [
+        "city birth count",
+        "city death count",
+        "2025",
+        "person",
+        "measured value"
+      ],
+      "formula": "natural balance (formula)",
+      "words": [
+        "city natural balance",
+        "2025",
+        "person"
+      ],
+      "number": "1492",
+      "note": "4535 - 3043; cross-checks the reported natural balance"
+    },
+    {
+      "context": [
+        "canton GDP",
+        "canton",
+        "population",
+        "2022",
+        "2025",
+        "CHF",
+        "person",
+        "measured value"
+      ],
+      "formula": "GDP per capita (formula)",
+      "words": [
+        "canton GDP per capita",
+        "CHF"
+      ],
+      "number": "98152.36465507552",
+      "note": "159.8e9 / 1628081 (GDP 2022 over population 2025; mixed years, see note)"
+    },
+    {
+      "context": [
+        "population",
+        "foreign share",
+        "city",
+        "2025",
+        "person",
+        "percent",
+        "measured value"
+      ],
+      "formula": "foreign count (formula)",
+      "words": [
+        "city foreign count",
+        "person"
+      ],
+      "number": "153370.71899999998",
+      "note": "452421 * 0.339"
+    },
+    {
+      "context": [
+        "population",
+        "foreign share",
+        "canton",
+        "2025",
+        "person",
+        "percent",
+        "measured value"
+      ],
+      "formula": "foreign count (formula)",
+      "words": [
+        "canton foreign count",
+        "person"
+      ],
+      "number": "472143.49",
+      "note": "1628081 * 0.29; cross-checks reported ~472000"
+    },
+    {
+      "context": [
+        "canton",
+        "waking welfare fraction",
+        "population",
+        "2025",
+        "person",
+        "measured value",
+        "assumed value"
+      ],
+      "formula": "welfare (formula)",
+      "words": [
+        "canton welfare",
+        "HTP",
+        "year"
+      ],
+      "number": "976848.6",
+      "note": "1628081 * 0.6 waking net-positive fraction"
+    }
+  ]
+}
