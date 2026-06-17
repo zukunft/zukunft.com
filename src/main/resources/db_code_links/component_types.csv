@@ -198,3 +198,4 @@ component_type_id, type_name, description, code_id
 197, 'related phrases without subtitles', 'list of phrases related to the given phrase excluding the alias, symbol and is a entries that are already shown by the alias, symbol and subtitle components', 'list_phrases_related_ex_subtitle'
 198, 'value chart', 'show a chart of the most relevant values by impact on top of the value list', 'value_chart'
 199, 'view tab box', 'a tab box with the related views (preview plus open and switch buttons) and the change log of the word', 'view_tab_box'
+200, 'title of triple with edit link', 'show the from, verb and to of a triple with links as the page title plus the edit link and subtitle', 'title_of_triple_with_edit_link'

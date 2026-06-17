@@ -42,6 +42,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 
@@ -506,6 +507,7 @@ class test_api extends test_base
     }
 
     /**
+     * TODO Prio 1 add the $msg parameter because an api call fail and also the developer should get a easy to read message
      * check if the REST GET call of a user sandbox objects returns the expected JSON message
      * for testing the local deployments need to be updated using an external script
      *
@@ -523,9 +525,49 @@ class test_api extends test_base
         string       $filename = '',
         bool         $contains = false): bool
     {
+        $actual = $this->assert_result_api_get_list($class, $ids, $id_fld);
+        $filename = $this->assert_parameter_api_list_filename($class, $id_fld, $filename);
+        return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
+    }
+
+    /**
+     * get the actual api result for a list
+     *
+     * @param string $class the class that should be tested e.g. type_lists::class
+     * @param array|string $ids the database ids of the db rows that should be used for testing
+     * @param string $id_fld the field name for the object id e.g. word_id
+     * @return array the json as an array to avoid differences due to formatting
+     */
+    function assert_result_api_get(
+        object              $usr_obj,
+        api_type_list|array $typ_lst = []
+    ): array
+    {
+        // check and norm the parameters
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $typ_lst->add(api_types::TEST_MODE);
+
+        // create the api json message and revert it to an array for better compare
+        return json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
+    }
+
+    /**
+     * get the actual api result for a list
+     *
+     * @param string $class the class that should be tested e.g. type_lists::class
+     * @param array|string $ids the database ids of the db rows that should be used for testing
+     * @param string $id_fld the field name for the object id e.g. word_id
+     * @return array the json as an array to avoid differences due to formatting
+     */
+    function assert_result_api_get_list(
+        string       $class,
+        array|string $ids = [1, 2],
+        string       $id_fld = url_var::ID_LST
+    ): array
+    {
         $lib = new library();
-        $url_map = new url_mapper();
-        $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
         $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
@@ -534,24 +576,65 @@ class test_api extends test_base
             $data = array($id_fld => $ids);
         }
         $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        return json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+    }
 
-        // TODO Prio 0 remove
-        if ($class == $lib->class_to_name(phrase_list::class)) {
+    /**
+     * create the filepath of the expected test result of an api test
+     *
+     * @param string $class the class that should be tested e.g. type_lists::class
+     * @param string $id_fld optiona the id field if not just an id list
+     * @param string $filename optional an overwrite of the filename that should be used within the test chain
+     * @return string the adjusted filename
+     */
+    function assert_parameter_api_list_filepath(
+        string $class,
+        string $id_fld = url_var::ID_LST,
+        string $filename = ''
+    ): string
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        return self::API_PATH . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR
+            . $this->assert_parameter_api_list_filename($class, $id_fld, $filename) . self::JSON_EXT;
+    }
+
+    /**
+     * create the filename of the expected test result of an api test
+     *
+     * @param string $class the class that should be tested e.g. type_lists::class
+     * @param string $id_fld optiona the id field if not just an id list
+     * @param string $filename optional an overwrite of the filename that should be used within the test chain
+     * @return string the adjusted filename
+     */
+    function assert_parameter_api_list_filename(
+        string $class,
+        string $id_fld = url_var::ID_LST,
+        string $filename = ''
+    ): string
+    {
+        $usr_msg = new user_message_ui();
+        $lib = new library();
+        $url_map = new url_mapper();
+        $name = $lib->class_to_name($class);
+        if ($class == phrase_list::class) {
             if ($filename == '' and $id_fld != url_var::ID_LST) {
                 $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
-                $filename = $class . '_without_link' . '_by_' . $file_by_name;
+                $filename = $name . '_without_link' . '_by_' . $file_by_name;
             } else {
-                $filename = $class . '_without_link';
+                $filename = $name . '_without_link';
             }
         }
 
-        if ($filename == '' and $id_fld != url_var::ID_LST) {
-            $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
-            $filename = $class . '_by_' . $file_by_name;
+        if ($filename == '') {
+            if ($id_fld != url_var::ID_LST) {
+                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $filename = $name . '_by_' . $file_by_name;
+            } else {
+                $filename = $name;
+            }
         }
-
-        return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
+        return $filename;
     }
 
     /**

@@ -181,6 +181,18 @@ class triple extends sandbox_code_id
     }
 
     /**
+     * load the triple for its page including the related data, in particular the from, verb
+     * and to phrases with their names so the page title can link each part (like the word,
+     * the INCL_RELATED flag triggers the backend to add the phrase names)
+     * @param int|string $id the database id of the triple to load
+     * @return bool true if the triple has been loaded
+     */
+    function load_by_id_with_related(int|string $id): bool
+    {
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+    }
+
+    /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match

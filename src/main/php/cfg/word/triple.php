@@ -591,26 +591,33 @@ class triple extends sandbox_link_named
                 $vars[json_fields::NAME] = $this->name();
             } else {
                 $vars = parent::api_json_array($typ_lst, $usr);
+                // the from, verb and to names are included for a page request (incl_related)
+                // or when the phrases are explicitly requested, so the frontend can show e.g.
+                // the triple page title "<from> <verb> <to>" with a link to each part
+                $with_names = ($typ_lst->include_phrases() or $typ_lst->incl_related());
                 $from = $this->get_from()->obj();
                 if ($from != null) {
                     if ($from->id() <> 0 or $from->name() != '') {
-                        //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
                         $vars[json_fields::FROM] = $this->from_id();
-                        if ($typ_lst->include_phrases()) {
+                        if ($with_names) {
                             // create the json based on the phrase not the object to include the class type
                             $vars[json_fields::FROM_PHRASE] = $this->get_from()->api_json_array($typ_lst);
                         }
                     }
                 }
                 if ($this->get_verb() != null) {
-                    $vars[json_fields::VERB] = $this->get_verb()->id();
+                    if ($with_names) {
+                        // include the verb name so the frontend can link the verb
+                        $vars[json_fields::VERB] = $this->get_verb()->api_json_array($typ_lst);
+                    } else {
+                        $vars[json_fields::VERB] = $this->get_verb()->id();
+                    }
                 }
                 $to = $this->get_to()->obj();
                 if ($to != null) {
                     if ($to->id() <> 0 or $to->name() != '') {
-                        //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
                         $vars[json_fields::TO] = $this->to_id();
-                        if ($typ_lst->include_phrases()) {
+                        if ($with_names) {
                             // create the json based on the phrase not the object to include the class type
                             $vars[json_fields::TO_PHRASE] = $this->get_to()->api_json_array($typ_lst);
                         }

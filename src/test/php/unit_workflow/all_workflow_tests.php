@@ -68,6 +68,15 @@ class all_workflow_tests
             // url tests
             new word_url_tests()->run($t);
 
+            /*
+             * TODO Prio 1 easy workflow
+             * the easy workflow (without extra confirm of the change) should be change be to
+             * to add a number
+             * to add w word, triple, language form or translation
+             * and if set in the config:
+             * to change a number
+             */
+
         }
         return $usr_msg->is_ok();
     }

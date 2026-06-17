@@ -4,6 +4,9 @@
 
 ### word frontend
 
+show above the description a subtitle:
+
+
 show the description of the word in the word default page on the left 1/3 of the screen
 
 The default view for a word should have four columns for width screens > 2800 pixel (config parameter):
@@ -24,12 +27,31 @@ mainly copy the word default view to the triple default view
 
 ### backend
 
+add to the json import a 'view_validation' section that contains some relevant screen outputs in the '.md' format based on a given human readable url
+
+add to the json import a 'jobs_starts' section where jobs starts could be triggered before or after the import e.g. request adding a verb or creating a wikipedia article
+
+add a job to add or link a new verb
+
+add a script that updates the verb section in docs/llm/json_structure.md based on docs/llm/json_structure.md
+
+split the jobs_starts into jobs_before and jobs_after
+
+add the src/main/resources/messages/start_page/theses_complex_simple.json to the full import
+
+add a job to create a wikipedia article
+
+if type_list_check fails update the json and reload the config and try again
+
+
+
 add the default date format 'd-m-Y H:i' to the config.yaml that the user can overwrite to display a date and use the config value where 'd-m-Y H:i' is used until now. For any system tests used a fixed const to replace 'd-m-Y H:i'
 
 move time zone setting to .env
 
-
 create a job to update the usage of a word
+
+add a config parameter that the api message should include the message header (or not) and apply this to the api
 
 ### workflow
 

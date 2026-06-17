@@ -186,6 +186,7 @@ class component_exe extends component
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo),
+            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
