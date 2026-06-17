@@ -335,7 +335,7 @@ class views
 
     // full list of phrases related to a word/triple — the "..." link target shown in the
     // page title when the title's truncated related-list overflows the per-verb config limit
-    // (e.g. for Zurich with limit=2 the title 'Zurich (City, Canton, ...)' links the '...'
+    // (e.g. for Zurich with limit=2 the title 'Zurich (city, canton, ...)' links the '...'
     // to this view, which then renders every related triple grouped by verb)
     const string WORD_RELATED = 'word_related';
     const int WORD_RELATED_ID = 111;

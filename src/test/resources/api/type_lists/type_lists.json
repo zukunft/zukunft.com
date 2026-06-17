@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-06-17T18:57:09+00:00",
+    "timestamp": "2026-06-17T22:06:51+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6864,7 +6864,7 @@
             {
                 "name": "is a",
                 "code_id": "is",
-                "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
+                "description": "the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich, Bern, ...",
                 "plural": "are",
                 "reverse": "are",
                 "rev_plural": "are",
@@ -7889,7 +7889,7 @@
             {
                 "name": "word list up",
                 "code_id": "word_list_up",
-                "description": "Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
+                "description": "Show a list of words related with a specified verb e.g. for the triple <canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
                 "id": 7
             },
             {
@@ -7901,7 +7901,7 @@
             {
                 "name": "word list down",
                 "code_id": "word_list_down",
-                "description": "Show a list of words related with a specified verb e.g. for word <canton> list <Canton of Zurich> and others, because they are linked with verb <is a>",
+                "description": "Show a list of words related with a specified verb e.g. for word <canton> list <canton of Zurich> and others, because they are linked with verb <is a>",
                 "id": 9
             },
             {
@@ -8423,7 +8423,7 @@
             {
                 "name": "parents of this word",
                 "code_id": "list_parents_of_word",
-                "description": "lists of words or triples lead to this word e.g. at least City and Canton if this word is Zurich",
+                "description": "lists of words or triples lead to this word e.g. at least city and canton if this word is Zurich",
                 "id": 96
             },
             {

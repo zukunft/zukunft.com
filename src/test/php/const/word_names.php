@@ -154,9 +154,9 @@ class word_names
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
-    const string CANTON = 'Canton';
+    const string CANTON = 'canton';
     const int CANTON_ID = 187;
-    const string CITY = 'City';
+    const string CITY = 'city';
     const int CITY_ID = 189;
     const string ZH = 'Zurich';
     const int ZH_ID = 214;

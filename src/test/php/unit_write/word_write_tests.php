@@ -155,7 +155,7 @@ class word_write_tests
         $wrd_parent->add_child($wrd_read, $usr_msg);
 
         // word children, so get all children of a parent
-        // e.g. Zurich is s children of Canton
+        // e.g. Zurich is s children of canton
         $phr_lst = $wrd_parent->children();
         $target = word_names::MATH;
         if ($phr_lst->does_contain($wrd_read)) {
@@ -167,7 +167,7 @@ class word_write_tests
             $t::TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
         // ... word children excluding the start word, so the list of children should not include the parent
-        // e.g. the list of Cantons does not include the word Canton itself
+        // e.g. the list of cantons does not include the word canton itself
         $target = '';
         if ($phr_lst->does_contain($wrd_parent)) {
             $result = $wrd_read->name_dsp();
@@ -179,8 +179,8 @@ class word_write_tests
 
         // TODO move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
-        // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
-        //      "Cantons are Zurich, Bern, ... and valid is also everything related to the Word Canton itself"
+        // e.g. which is for parent canton the phrase "Zurich (canton)", but not, as tested later, the phrase "Zurich (city)"
+        //      "cantons are Zurich, Bern, ... and valid is also everything related to the Word canton itself"
         $phr_lst = $wrd_parent->are();
         $target = $wrd_read->name();
         if ($phr_lst->does_contain($wrd_parent)) {
@@ -191,7 +191,7 @@ class word_write_tests
         $t->assert('word->are for "' . word_names::TEST_PARENT . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word are including the start word
-        // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
+        // e.g. to get also formulas related to cantons all formulas related to "Zurich (canton)" and the word "canton" itself must be selected
         $target = $wrd_read->name();
         if ($phr_lst->does_contain($wrd_read)) {
             $result = $wrd_read->name();
@@ -219,9 +219,9 @@ class word_write_tests
         }
         $t->assert('word->parents for "' . word_names::MATH . '" excluding the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
-        // create category test words for "Zurich is a Canton" and "Zurich is a City"
-        // which implies that Canton contains Zurich and City contains Zurich
-        // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
+        // create category test words for "Zurich is a canton" and "Zurich is a city"
+        // which implies that canton contains Zurich and city contains Zurich
+        // to avoid conflicts the test words actually used are 'System Test Word Category e.g. canton' as category word
         // and 'System Test Word Member e.g. Zurich' as member
         $wrd_canton = $t_db->test_word(word_names::CANTON);
         $wrd_city = $t_db->test_word(word_names::CITY);
@@ -229,7 +229,7 @@ class word_write_tests
         $t_db->test_triple(word_names::ZH, verbs::IS, word_names::CANTON);
         $t_db->test_triple(word_names::ZH, verbs::IS, word_names::CITY);
 
-        // word is e.g. Zurich as a Canton ...
+        // word is e.g. Zurich as a canton ...
         $target = $wrd_canton->name();
         $phr_lst = $wrd_ZH->is_phrases();
         if ($phr_lst->does_contain($wrd_canton)) {
@@ -239,7 +239,7 @@ class word_write_tests
         }
         $t->assert('word->is "' . word_names::ZH . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
-        // ... and Zurich is a City
+        // ... and Zurich is a city
         $target = $wrd_city->name();
         $phr_lst = $wrd_ZH->is_phrases();
         if ($phr_lst->does_contain($wrd_city)) {

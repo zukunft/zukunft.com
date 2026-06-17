@@ -88,7 +88,7 @@ SELECT verb_update_log_1111111111
       'is',
       25,
       null,
-      'the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich,Bern,...',
+      'the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich,Bern,...',
       26,
       null,
       'are',

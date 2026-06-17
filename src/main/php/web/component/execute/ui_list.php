@@ -102,7 +102,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -113,7 +113,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -279,7 +279,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples linked to the given formula in order of impact
-     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param data_object|null $cac the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */

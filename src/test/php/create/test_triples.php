@@ -548,7 +548,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (City)" used for unit testing
+     * @return triple "Zurich (city)" used for unit testing
      */
     function zh_city(): triple
     {
@@ -565,7 +565,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (City)" with a low impact to test sort by impact
+     * @return triple "Zurich (city)" with a low impact to test sort by impact
      */
     function zh_city_low_impact(): triple
     {
@@ -575,7 +575,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (Canton)" used for unit testing
+     * @return triple "Zurich (canton)" used for unit testing
      */
     function zh_canton(): triple
     {
@@ -591,7 +591,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (Canton)" with a medium impact to test sort by impact
+     * @return triple "Zurich (canton)" with a medium impact to test sort by impact
      */
     function zh_canton_low_impact(): triple
     {
@@ -798,7 +798,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Bern (City)" used for unit testing
+     * @return triple "Bern (city)" used for unit testing
      */
     function triple_bern(): triple
     {
@@ -813,7 +813,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Geneva (City)" used for unit testing
+     * @return triple "Geneva (city)" used for unit testing
      */
     function triple_ge(): triple
     {

@@ -101,7 +101,7 @@ class user_write_tests
         $wrd_parent->add_child($wrd_read);
 
         // word children, so get all children of a parent
-        // e.g. Zurich is s children of Canton
+        // e.g. Zurich is s children of canton
         $phr_lst = $wrd_parent->children();
         $target = word_names::MATH;
         if ($phr_lst->does_contain($wrd_read)) {
@@ -113,7 +113,7 @@ class user_write_tests
             $t::TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
         // ... word children excluding the start word, so the list of children should not include the parent
-        // e.g. the list of Cantons does not include the word Canton itself
+        // e.g. the list of cantons does not include the word canton itself
         $target = '';
         if ($phr_lst->does_contain($wrd_parent)) {
             $result = $wrd_read->name_dsp();
@@ -125,8 +125,8 @@ class user_write_tests
 
         // TODO move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
-        // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
-        //      "Cantons are Zurich, Bern, ... and valid is also everything related to the Word Canton itself"
+        // e.g. which is for parent canton the phrase "Zurich (canton)", but not, as tested later, the phrase "Zurich (city)"
+        //      "cantons are Zurich, Bern, ... and valid is also everything related to the Word canton itself"
         $phr_lst = $wrd_parent->are();
         $target = $wrd_read->name();
         if ($phr_lst->does_contain($wrd_parent)) {
@@ -137,7 +137,7 @@ class user_write_tests
         $t->assert('word->are for "' . word_names::TEST_PARENT . '"', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word are including the start word
-        // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
+        // e.g. to get also formulas related to cantons all formulas related to "Zurich (canton)" and the word "canton" itself must be selected
         $target = $wrd_read->name();
         if ($phr_lst->does_contain($wrd_read)) {
             $result = $wrd_read->name();

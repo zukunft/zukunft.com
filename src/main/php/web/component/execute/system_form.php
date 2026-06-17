@@ -140,8 +140,8 @@ class system_form extends component
      *
      * example outputs:
      * - no related loaded:   "Zurich <edit-icon>"
-     * - related limit=2:     "Zurich" /n "is a <City>, <Canton>, ... <edit-icon>"
-     * - related limit=high:  "Zurich" /n "is a City, Canton, Company <edit-icon>"
+     * - related limit=2:     "Zurich" /n "is a <city>, <canton>, ... <edit-icon>"
+     * - related limit=high:  "Zurich" /n "is a city, canton, Company <edit-icon>"
      * - related symbol:      "CHF" /n "is symbol for <Swiss Franc> <edit-icon>"
      *
      * @param db_object $dbo the object whose name is shown as the page title

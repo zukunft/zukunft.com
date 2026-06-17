@@ -3067,7 +3067,7 @@ class triple extends sandbox_link_named
             $result .= 'id ' . $this->predicate_id . '" "'; // e.g. is a
             $result .= $to?->name . '"';       // e.g. country
         } elseif ($this->name_given() != '') {
-            $result .= $this->name_given(); // e.g. Canton Zurich
+            $result .= $this->name_given(); // e.g. canton Zurich
         } elseif ($this->name() != '') {
             $result .= $this->name();
         }
@@ -3082,7 +3082,7 @@ class triple extends sandbox_link_named
     /**
      * either the user edited description
      * or the generic name e.g. Australia is a country
-     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     * or for the verb is 'is' the category in brackets e.g. Zurich (canton) or Zurich (city)
      */
     function name(bool $ignore_excluded = false): string|null
     {
@@ -3108,7 +3108,7 @@ class triple extends sandbox_link_named
     /**
      * either the user edited description
      * or the generic name e.g. Australia is a country
-     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     * or for the verb is 'is' the category in brackets e.g. Zurich (canton) or Zurich (city)
      */
     function name_ex_generated(bool $ignore_excluded = false): string
     {

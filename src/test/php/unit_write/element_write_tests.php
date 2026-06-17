@@ -93,7 +93,7 @@ class element_write_tests
                 } elseif ($pos == 1) {
                     $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 2) {
-                    $target = 'word "Canton" (' . $wrd_canton->id . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "canton" (' . $wrd_canton->id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 3) {
                     $target = 'word "System Test Word Total" (' . $wrd_total->id . ') for user 3 (zukunft.com system test)';
                 }
@@ -105,7 +105,7 @@ class element_write_tests
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = 'Canton';
+                    $target = 'canton';
                 } elseif ($pos == 3) {
                     $target = 'System Test Word Total';
                 }
@@ -119,7 +119,7 @@ class element_write_tests
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = $url . $wrd_canton->id . '&back=0" title="Canton">Canton</a>';
+                    $target = $url . $wrd_canton->id . '&back=0" title="canton">canton</a>';
                 } elseif ($pos == 3) {
                     $target = $url . $wrd_total->id . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
@@ -164,7 +164,7 @@ class element_write_tests
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
-            $target = '"country","can be used as a differentiator for","Canton","System Test Word Total"';
+            $target = '"country","can be used as a differentiator for","canton","System Test Word Total"';
             $t->dsp_contains(', element_list->dsp_id', $target, $result);
         } else {
             $result = 'formula element list not set';

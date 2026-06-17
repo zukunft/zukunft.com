@@ -9,8 +9,8 @@
   "words": [
     { "name": "country"},
     { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
-    { "name": "Canton"},
-    { "name": "City"},
+    { "name": "canton"},
+    { "name": "city"},
     { "name": "Zurich"},
     { "name": "Bern"},
     { "name": "Geneva"},
@@ -62,19 +62,19 @@
     {"from": "country", "verb": "can use", "to": "ranking"},
     {"from": "Switzerland", "verb": "is a", "to": "country"},
     {"from": "Germany", "verb": "is a", "to": "country"},
-    {"name": "Zurich (Canton)", "from": "Zurich", "verb": "is a", "to": "Canton",
-      "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" },
+    {"name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton",
+      "refs": [ { "name": "canton of Zürich", "type": "wikipedia" },
                 { "name": "Q11943", "type": "wikidata" } ]
     },
-    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City"},
-    {"name": "Bern (City)", "from": "Bern", "verb": "is a", "to": "City"},
-    {"name": "Geneva (City)", "from": "Geneva", "verb": "is a", "to": "City",
+    {"name": "Zurich (city)", "from": "Zurich", "verb": "is a", "to": "city"},
+    {"name": "Bern (city)", "from": "Bern", "verb": "is a", "to": "city"},
+    {"name": "Geneva (city)", "from": "Geneva", "verb": "is a", "to": "city",
       "refs": [ { "name": "Zürich", "type": "wikipedia" },
                 { "name": "Q72", "type": "wikidata" },
                 { "name": "zurich", "type": "conceptnet" } ]
     },
-    {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
-    {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
+    {"from": "Zurich (canton)", "verb": "is part of", "to": "Switzerland"},
+    {"name": "Zurich (city) share of Zurich (canton)", "from": "Zurich (city)", "verb": "is part of", "to": "Zurich (canton)"},
     {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company"},
     {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
     {"from": "2013", "verb": "is a", "to": "year"},
@@ -176,7 +176,7 @@
     },
     {
       "name": "city population",
-      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"City\" )",
+      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"city\" )",
       "assigned_word": "country"
     },
     {
@@ -196,7 +196,7 @@
     },
     {
       "name": "population in the city of Zurich in percent of Switzerland",
-      "expression": "\"percent\" = \"inhabitants\" \"Zurich (City)\" / \"inhabitants\" \"Switzerland\"",
+      "expression": "\"percent\" = \"inhabitants\" \"Zurich (city)\" / \"inhabitants\" \"Switzerland\"",
       "assigned_word": "Switzerland"
     }
   ],

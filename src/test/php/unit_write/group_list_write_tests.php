@@ -58,12 +58,12 @@ class group_list_write_tests
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
         $country_grp = $phr_lst->get_grp_id();
 
-        // Canton of Zurich inhabitants
+        // canton of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO));
         $canton_grp = $phr_lst->get_grp_id();
 
-        // City of Zurich inhabitants
+        // city of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CITY, word_names::INHABITANTS, word_names::MIO));
         $city_grp = $phr_lst->get_grp_id();

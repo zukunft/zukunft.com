@@ -239,7 +239,7 @@ class word extends sandbox_code_id
     // set on the caller's api_type_list; each entry is a phrase wrapping the connecting
     // triple, so the frontend renderer can display the triple's "other end" word as the
     // link label and the triple itself as the link target — e.g. for the word "Zurich"
-    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance";
+    // the entries are the triples "city of Zurich", "canton of Zurich", "Zurich Insurance";
     // the per-verb count is bounded by the related-per-verb config so the list stays compact
     public ?phrase_list $phrases_related = null;
 
@@ -676,7 +676,7 @@ class word extends sandbox_code_id
 
     /**
      * load a word by id and, in the same call, populate the related phrases and the related
-     * values that the default word view expects (the page-title renderer's City, Canton, ...
+     * values that the default word view expects (the page-title renderer's city, canton, ...
      * inline list, the "is symbol for <X>" symbol line and the related values list). Used by the default-word-view path —
      * test snapshot generation via test_base::assert_view and any other caller that wants
      * the rendered HTML to reflect a word's connecting triples without going through the
@@ -1288,7 +1288,7 @@ class word extends sandbox_code_id
 
     /**
      * returns a list of words (actually phrases) that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "company", but not "Zurich" itself
+     * e.g. for "Zurich" it will return "canton", "city" and "company", but not "Zurich" itself
      */
     function parents(): phrase_list
     {
@@ -1303,7 +1303,7 @@ class word extends sandbox_code_id
     /**
      * TODO maybe collect the single words or this is a third case
      * returns a list of words that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "company" and "Zurich" itself
+     * e.g. for "Zurich" it will return "canton", "city" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
      */
     function is_phrases(): phrase_list
@@ -1330,7 +1330,7 @@ class word extends sandbox_code_id
 
     /**
      * add a child word to this word
-     * e.g. Zurich (child) is a Canton (Parent)
+     * e.g. Zurich (child) is a canton (Parent)
      * @param word $child the word that should be added as a child
      * @param user_message $usr_msg
      * @return bool
@@ -1352,7 +1352,7 @@ class word extends sandbox_code_id
 
     /**
      * get all phrases that are linked to this word with the "is a" verb
-     * e.g. for "Canton" it will return "Zurich (Canton)" and others, but not "Canton" itself
+     * e.g. for "canton" it will return "Zurich (canton)" and others, but not "canton" itself
      *
      * @return phrase_list a list of words that are related to this word
      */
@@ -1367,7 +1367,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a City
+     * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a city
      */
     private
     function verb_list_up(): verb_list
@@ -1400,8 +1400,8 @@ class word extends sandbox_code_id
 
     /**
      * get all phrases that are linked to this word with the "is a" verb including the parent word
-     * e.g. for "Canton" it will return "Zurich (Canton)" and "Canton", but not "Zurich (City)"
-     * used to collect e.g. all formulas used for Canton
+     * e.g. for "canton" it will return "Zurich (canton)" and "canton", but not "Zurich (city)"
+     * used to collect e.g. all formulas used for canton
      *
      * @return phrase_list a list of words that are related to the given word
      */
@@ -1414,7 +1414,7 @@ class word extends sandbox_code_id
 
     /**
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
-     * e.g. for "Switzerland" it will return "Zurich (Canton)" and "Zurich (City)" which is part of the Canton
+     * e.g. for "Switzerland" it will return "Zurich (canton)" and "Zurich (city)" which is part of the canton
      */
     function parts(): phrase_list
     {
@@ -1425,7 +1425,7 @@ class word extends sandbox_code_id
 
     /**
      * returns the more general word as defined by "is part of"
-     * e.g. for "Meilen (District)" it will return "Zürich (Canton)"
+     * e.g. for "Meilen (District)" it will return "Zürich (canton)"
      * for the value selection this should be tested level by level
      * to use by default the most specific value
      */
@@ -1442,7 +1442,7 @@ class word extends sandbox_code_id
 
     /**
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
-     * e.g. for "Switzerland" it will return "Zurich (Canton)" but not "Zurich (City)"
+     * e.g. for "Switzerland" it will return "Zurich (canton)" but not "Zurich (city)"
      */
     function direct_parts(): phrase_list
     {

@@ -135,8 +135,8 @@ class json_fields
     // populated by the backend when api_types::INCL_RELATED is set on the request;
     // each entry is a phrase wrapping a triple so the renderer can show the "other end"
     // word as the link text and the triple's detail view as the link target — e.g. for
-    // the word "Zurich" the entries are the triples "City of Zurich", "Canton of Zurich",
-    // "Zurich Insurance" (their `to` words "City", "Canton", "Company" are the link labels);
+    // the word "Zurich" the entries are the triples "city of Zurich", "canton of Zurich",
+    // "Zurich Insurance" (their `to` words "city", "canton", "Company" are the link labels);
     // the number per verb is bounded by the related-per-verb config so the list stays compact
     const string PHRASES_RELATED = 'phrases_related';
 

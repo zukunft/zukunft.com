@@ -87,7 +87,7 @@ class formula_names
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
     const int CITY_POPULATION_ID = 26;
-    const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "City" )';
+    const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
@@ -100,7 +100,7 @@ class formula_names
     const string SYSTEM_TEST_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const string SYSTEM_TEST_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
     const string SYSTEM_TEST_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const string SYSTEM_TEST_SECTOR_EXP = '= "country" "differentiator" "Canton" / "System Test Word Total"';
+    const string SYSTEM_TEST_SECTOR_EXP = '= "country" "differentiator" "canton" / "System Test Word Total"';
     const string SYSTEM_TEST_SCALE_K = 'System Test Formula scale thousand to one';
     const string SYSTEM_TEST_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
     const string SYSTEM_TEST_SCALE_TO_K = 'System Test Formula scale one to thousand';

@@ -40,7 +40,7 @@
       "name": "canton",
       "refs": [
         {
-          "name": "Canton_of_Zurich",
+          "name": "canton_of_Zurich",
           "type": "wikipedia"
         },
         {
@@ -294,9 +294,59 @@
     {
       "name": "2022",
       "type": "time"
+    },
+    {
+      "name": "birth count",
+      "description": "number of live births in the period"
+    },
+    {
+      "name": "death count",
+      "description": "number of deaths in the period"
+    },
+    {
+      "name": "foreign count",
+      "description": "number of foreign nationals"
     }
   ],
   "triples": [
+    {
+      "name": "Zurich (city)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "city",
+      "description": "Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",
+      "refs": [
+        {
+          "name": "Zurich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        }
+      ],
+      "impact": 71152,
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Zurich (canton)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "canton",
+      "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
+      "refs": [
+        {
+          "name": "canton_of_Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11943",
+          "type": "wikidata"
+        }
+      ],
+      "impact": 32400,
+      "protection": "admin_protection"
+    },
     {
       "name": "measured value",
       "from": "value",
@@ -352,48 +402,6 @@
       "to": "foreign nationals"
     },
     {
-      "name": "city foreign count",
-      "from": "foreign nationals",
-      "verb": "of",
-      "to": "city"
-    },
-    {
-      "name": "canton foreign count",
-      "from": "foreign nationals",
-      "verb": "of",
-      "to": "canton"
-    },
-    {
-      "name": "city birth count",
-      "from": "birth",
-      "verb": "of",
-      "to": "city"
-    },
-    {
-      "name": "city death count",
-      "from": "death",
-      "verb": "of",
-      "to": "city"
-    },
-    {
-      "name": "city natural balance",
-      "from": "natural balance",
-      "verb": "of",
-      "to": "city"
-    },
-    {
-      "name": "city share of canton",
-      "from": "city",
-      "verb": "is part of",
-      "to": "canton"
-    },
-    {
-      "name": "canton welfare",
-      "from": "welfare",
-      "verb": "of",
-      "to": "canton"
-    },
-    {
       "name": "waking welfare fraction",
       "from": "fraction",
       "verb": "of",
@@ -418,6 +426,12 @@
       "from": "2025",
       "verb": "is follower of",
       "to": "2024"
+    },
+    {
+      "name": "Zurich (city) share of Zurich (canton)",
+      "from": "Zurich (city)",
+      "verb": "is part of",
+      "to": "Zurich (canton)"
     }
   ],
   "sources": [
@@ -437,8 +451,8 @@
       "url": "https://www.bfs.admin.ch/"
     },
     {
-      "name": "Wikipedia Canton of Zurich",
-      "description": "Canton of Zurich area ~1729 km2; city of Zurich area ~91.88 km2.",
+      "name": "Wikipedia canton of Zurich",
+      "description": "canton of Zurich area ~1729 km2; city of Zurich area ~91.88 km2.",
       "url": "https://de.wikipedia.org/wiki/Kanton_Z%C3%BCrich"
     },
     {
@@ -449,7 +463,7 @@
   "values": [
     {
       "words": [
-        "city",
+        "Zurich (city)",
         "population",
         "2025",
         "person",
@@ -460,7 +474,7 @@
     },
     {
       "words": [
-        "canton",
+        "Zurich (canton)",
         "population",
         "2025",
         "person",
@@ -471,7 +485,7 @@
     },
     {
       "words": [
-        "canton",
+        "Zurich (canton)",
         "population",
         "2024",
         "person",
@@ -482,26 +496,28 @@
     },
     {
       "words": [
-        "city area",
+        "Zurich (city)",
+        "area",
         "km2",
         "measured value"
       ],
       "number": "91.88",
-      "source": "Wikipedia Canton of Zurich"
+      "source": "Wikipedia canton of Zurich"
     },
     {
       "words": [
-        "canton area",
+        "Zurich (canton)",
+        "area",
         "km2",
         "measured value"
       ],
       "number": "1729",
-      "source": "Wikipedia Canton of Zurich"
+      "source": "Wikipedia canton of Zurich"
     },
     {
       "words": [
+        "Zurich (city)",
         "foreign share",
-        "city",
         "percent",
         "measured value"
       ],
@@ -510,8 +526,8 @@
     },
     {
       "words": [
+        "Zurich (canton)",
         "foreign share",
-        "canton",
         "percent",
         "measured value"
       ],
@@ -520,7 +536,8 @@
     },
     {
       "words": [
-        "city birth count",
+        "Zurich (city)",
+        "birth count",
         "2025",
         "person",
         "measured value"
@@ -530,7 +547,8 @@
     },
     {
       "words": [
-        "city death count",
+        "Zurich (city)",
+        "death count",
         "2025",
         "person",
         "measured value"
@@ -540,7 +558,8 @@
     },
     {
       "words": [
-        "canton GDP",
+        "Zurich (canton)",
+        "GDP",
         "2022",
         "CHF",
         "measured value"
@@ -558,7 +577,8 @@
     },
     {
       "words": [
-        "city density",
+        "Zurich (city)",
+        "density",
         "person",
         "km2"
       ],
@@ -566,7 +586,8 @@
     },
     {
       "words": [
-        "canton density",
+        "Zurich (canton)",
+        "density",
         "person",
         "km2"
       ],
@@ -574,14 +595,15 @@
     },
     {
       "words": [
-        "city share of canton",
+        "Zurich (city) share of Zurich (canton)",
         "percent"
       ],
       "number": "27.7886051123992"
     },
     {
       "words": [
-        "city natural balance",
+        "Zurich (city)",
+        "natural balance",
         "2025",
         "person"
       ],
@@ -589,28 +611,34 @@
     },
     {
       "words": [
-        "canton GDP per capita",
+        "Zurich (canton)",
+        "GDP per capita",
         "CHF"
       ],
       "number": "98152.36465507552"
     },
     {
       "words": [
-        "city foreign count",
+        "Zurich (city)",
+        "foreign count",
+        "2025",
         "person"
       ],
       "number": "153370.71899999998"
     },
     {
       "words": [
-        "canton foreign count",
+        "Zurich (canton)",
+        "foreign count",
+        "2025",
         "person"
       ],
       "number": "472143.49"
     },
     {
       "words": [
-        "canton welfare",
+        "Zurich (canton)",
+        "welfare",
         "HTP",
         "year"
       ],
@@ -619,25 +647,19 @@
   ],
   "formulas": [
     {
-      "name": "city density formula",
-      "expression": "\"city density\" = \"population\" / \"city area\"",
+      "name": "density (formula)",
+      "expression": "\"density\" = \"population\" / \"area\"",
       "assigned": [
-        "city"
-      ]
-    },
-    {
-      "name": "canton density formula",
-      "expression": "\"canton density\" = \"population\" / \"canton area\"",
-      "assigned": [
-        "canton"
+        "Zurich (city)",
+        "Zurich (canton)"
       ]
     },
     {
       "name": "share of canton (formula)",
-      "expression": "\"city share of canton\" = \"city\" / \"canton\" * 100",
+      "expression": "\"Zurich (city) share of Zurich (canton)\" = \"Zurich (city)\" / \"Zurich (canton)\" * 100",
       "assigned": [
-        "city",
-        "canton"
+        "Zurich (city)",
+        "Zurich (canton)"
       ]
     },
     {
@@ -671,48 +693,49 @@
     },
     {
       "name": "natural balance (formula)",
-      "expression": "\"city natural balance\" = \"city birth count\" - \"city death count\"",
+      "expression": "\"natural balance\" = \"birth count\" - \"death count\"",
       "assigned": [
-        "city"
+        "Zurich (city)"
       ]
     },
     {
       "name": "GDP per capita (formula)",
-      "expression": "\"canton GDP per capita\" = \"canton GDP\" / \"population\"",
+      "expression": "\"GDP per capita\" = \"GDP\" / \"population\"",
       "assigned": [
-        "canton"
+        "Zurich (canton)"
       ]
     },
     {
       "name": "foreign count (formula)",
-      "expression": "\"foreign nationals\" = \"population\" * \"foreign share\" / 100",
+      "expression": "\"foreign count\" = \"population\" * \"foreign share\" / 100",
       "assigned": [
-        "city",
-        "canton"
+        "Zurich (city)",
+        "Zurich (canton)"
       ]
     },
     {
       "name": "welfare (formula)",
-      "expression": "\"canton welfare\" = \"population\" * \"waking welfare fraction\"",
+      "expression": "\"welfare\" = \"population\" * \"waking welfare fraction\"",
       "assigned": [
-        "canton"
+        "Zurich (canton)"
       ]
     }
   ],
   "calc-validation": [
     {
       "context": [
-        "city",
+        "Zurich (city)",
         "population",
-        "city area",
+        "area",
         "2025",
         "person",
         "km2",
         "measured value"
       ],
-      "formula": "city density formula",
+      "formula": "density (formula)",
       "words": [
-        "city density",
+        "Zurich (city)",
+        "density",
         "person",
         "km2"
       ],
@@ -721,17 +744,18 @@
     },
     {
       "context": [
-        "canton",
+        "Zurich (canton)",
         "population",
-        "canton area",
+        "area",
         "2025",
         "person",
         "km2",
         "measured value"
       ],
-      "formula": "canton density formula",
+      "formula": "density (formula)",
       "words": [
-        "canton density",
+        "Zurich (canton)",
+        "density",
         "person",
         "km2"
       ],
@@ -740,8 +764,8 @@
     },
     {
       "context": [
-        "city",
-        "canton",
+        "Zurich (city)",
+        "Zurich (canton)",
         "population",
         "2025",
         "person",
@@ -749,7 +773,7 @@
       ],
       "formula": "share of canton (formula)",
       "words": [
-        "city share of canton",
+        "Zurich (city) share of Zurich (canton)",
         "percent"
       ],
       "number": "27.7886051123992",
@@ -757,25 +781,27 @@
     },
     {
       "context": [
-        "city birth count",
-        "city death count",
+        "Zurich (city)",
+        "birth count",
+        "death count",
         "2025",
         "person",
         "measured value"
       ],
       "formula": "natural balance (formula)",
       "words": [
-        "city natural balance",
+        "Zurich (city)",
+        "natural balance",
         "2025",
         "person"
       ],
       "number": "1492",
-      "note": "4535 - 3043; cross-checks the reported natural balance"
+      "note": "4535 - 3043"
     },
     {
       "context": [
-        "canton GDP",
-        "canton",
+        "Zurich (canton)",
+        "GDP",
         "population",
         "2022",
         "2025",
@@ -785,17 +811,18 @@
       ],
       "formula": "GDP per capita (formula)",
       "words": [
-        "canton GDP per capita",
+        "Zurich (canton)",
+        "GDP per capita",
         "CHF"
       ],
       "number": "98152.36465507552",
-      "note": "159.8e9 / 1628081 (GDP 2022 over population 2025; mixed years, see note)"
+      "note": "159.8e9 / 1628081 (GDP 2022 over population 2025)"
     },
     {
       "context": [
+        "Zurich (city)",
         "population",
         "foreign share",
-        "city",
         "2025",
         "person",
         "percent",
@@ -803,7 +830,9 @@
       ],
       "formula": "foreign count (formula)",
       "words": [
-        "city foreign count",
+        "Zurich (city)",
+        "foreign count",
+        "2025",
         "person"
       ],
       "number": "153370.71899999998",
@@ -811,9 +840,9 @@
     },
     {
       "context": [
+        "Zurich (canton)",
         "population",
         "foreign share",
-        "canton",
         "2025",
         "person",
         "percent",
@@ -821,17 +850,19 @@
       ],
       "formula": "foreign count (formula)",
       "words": [
-        "canton foreign count",
+        "Zurich (canton)",
+        "foreign count",
+        "2025",
         "person"
       ],
       "number": "472143.49",
-      "note": "1628081 * 0.29; cross-checks reported ~472000"
+      "note": "1628081 * 0.29"
     },
     {
       "context": [
-        "canton",
-        "waking welfare fraction",
+        "Zurich (canton)",
         "population",
+        "waking welfare fraction",
         "2025",
         "person",
         "measured value",
@@ -839,12 +870,13 @@
       ],
       "formula": "welfare (formula)",
       "words": [
-        "canton welfare",
+        "Zurich (canton)",
+        "welfare",
         "HTP",
         "year"
       ],
       "number": "976848.6",
-      "note": "1628081 * 0.6 waking net-positive fraction"
+      "note": "1628081 * 0.6"
     }
   ]
 }
