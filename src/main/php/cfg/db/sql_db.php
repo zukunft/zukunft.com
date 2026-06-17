@@ -1247,6 +1247,8 @@ class sql_db
             $import->import_system_data($usr);
             $this->create_internal_words($usr);
             $import->import_config_yaml($usr);
+            // load the view unit-test sample data once the system config it references is in place
+            $import->import_sample_view_data($usr);
             $import->import_pod_config($usr);
 
             // add the admin users if defined in the env file

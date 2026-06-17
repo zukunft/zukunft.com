@@ -215,6 +215,11 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
+    ];
+
+    // sample data for the view unit tests, imported in the db setup right after the system config
+    // so that the views can be tested by name without relying on database ids
+    const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
     ];
 

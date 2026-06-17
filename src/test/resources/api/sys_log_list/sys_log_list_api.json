@@ -8,21 +8,21 @@
     {
       "id": 3,
       "user_id": 3,
-      "function_id": 5,
-      "trace": "import_test_files",
-      "type_id": 3,
-      "text": "test import",
-      "description": "import of the some test json files",
-      "status": 1
-    },
-    {
-      "id": 2,
-      "user_id": 3,
       "function_id": 4,
       "trace": "import_test_config",
       "type_id": 3,
       "text": "pod setup",
       "description": "import of the pod base setup",
+      "status": 1
+    },
+    {
+      "id": 2,
+      "user_id": 3,
+      "function_id": 9,
+      "trace": "import_sample_view_data",
+      "type_id": 3,
+      "text": "sample view data setup",
+      "description": "import of the sample view test data",
       "status": 1
     },
     {

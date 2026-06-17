@@ -19,7 +19,7 @@
     },
     {
       "name": "Triple title",
-      "description": "show the from, verb and to of the triple with links as the page title",
+      "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
       "type": "title_of_triple_with_edit_link",
       "code_id": "title_of_triple_with_edit_link_triple"
     },

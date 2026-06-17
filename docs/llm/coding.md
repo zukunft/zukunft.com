@@ -142,7 +142,6 @@ noun definitions: `docs/llm/architecture.md`.
 - Phrase names start lower-case unless the first token is a proper noun / ticker / acronym; sentence-case caption copies (`"Gross profit"`) split the same concept in two.
 - Import files are self-consistent: every assigned phrase, and every triple `from`/`to`, is defined in the same file (re-declare base words name-only).
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
-- Assign a formula to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Qualify a value as specifically as the data allows; build qualifiers as triples from single words; omit `"share":"public"` (the default).
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.

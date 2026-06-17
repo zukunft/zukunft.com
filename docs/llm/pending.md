@@ -4,7 +4,9 @@
 
 ### word frontend
 
-show above the description a subtitle:
+show above the description a subtitle
+
+
 
 
 show the description of the word in the word default page on the left 1/3 of the screen
@@ -26,6 +28,12 @@ add the values as a table where the word ist used to the word_default view using
 mainly copy the word default view to the triple default view
 
 ### backend
+
+create a list CONST array "SAMPLE_VIEW_DATA_FILES" that contains test data for the unit tests of the views. These test data is used for unit tests without using the database id, so these files can be imported in setup_db after the import of the system config. At the moment this const array contains only this file: src/main/resources/messages/base_data/zurich.json . create a function for the import and call it after the config loading
+
+add a config section to the json import format that can be used to overwrite the system and user config for the import and add positive and negative unit tests for the overwrite of the number of decimals
+
+add in the float value object the var 'precision' which defines how accurate the value is. include this field not only in the database (but not for standard values), the api, the frontend and also in the im- end export json 
 
 add to the json import a 'view_validation' section that contains some relevant screen outputs in the '.md' format based on a given human readable url
 
@@ -52,6 +60,10 @@ move time zone setting to .env
 create a job to update the usage of a word
 
 add a config parameter that the api message should include the message header (or not) and apply this to the api
+
+Allow the users to define their own workflow → which view follow which under which conditions
+
+Add the component type 'form validation' that checks based on phrase list and formulas the changed form values and create an info, warning or error message and redirects the workflow if needed 
 
 ### workflow
 
