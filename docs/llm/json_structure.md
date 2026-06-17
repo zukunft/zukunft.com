@@ -471,6 +471,49 @@ If a formula's inputs all live elsewhere — e.g. `"molar mass" = "mass" /
 redefined — either define the formula in the file owning its inputs, or leave
 it **unassigned**.
 
+### Name the formula for the most *general* concept, not the instance
+
+A formula's `name` describes the **general operation** it performs, never the
+specific phrase it happens to compute in one file. Name it `foreign count`,
+`natural balance`, `welfare` — not `canton foreign count` or `city natural
+balance`. A general name lets the *one* formula be reused for every phrase it is
+assigned to (see *Assign the formula to the most parent phrase* below), so the
+general name and the parent-phrase assignment go together: a single
+`foreign count (formula)` assigned to `["city", "canton"]` serves both, where a
+`city foreign count formula` plus a `canton foreign count formula` would
+duplicate the same logic.
+
+The result variable **inside** the `expression` may be general (resolved per
+entity by the context, as below) or a specific instance (`"canton GDP per
+capita" = …`) — what must stay general is the formula's own `name`:
+
+- **Right** — general name, parent assignment:
+
+```json
+{ "name": "foreign count (formula)",
+  "expression": "\"foreign nationals\" = \"population\" * \"foreign share\" / 100",
+  "assigned": [ "city", "canton" ] }
+```
+
+- **Wrong** — instance-specific name duplicated per child phrase:
+
+```json
+{ "name": "city foreign count formula",   "expression": "...", "assigned": [ "city" ] },
+{ "name": "canton foreign count formula", "expression": "...", "assigned": [ "canton" ] }
+```
+
+A single general formula can only address every entity when each operand has a
+phrase the per-entity context resolves uniquely (here the genus word `population`
+plus the `foreign share` triple — see *Naming a formula operand: triple vs flat atoms*). If
+an operand has no such shared phrase (e.g. the area values are only keyed
+`city area` / `canton area`), the validator cannot pick it per entity, and you
+fall back to one specific formula per entity (`city density formula`,
+`canton density formula`).
+
+Append the ` formula` / ` (formula)` suffix only to break a clash with a word or
+triple of the same general name (see *Formula name uniqueness across types*) —
+never to dress an instance-specific name up as generic.
+
 ### Assign the formula to the most *parent* phrase
 
 Assign a formula at the highest level of the phrase hierarchy where it
@@ -493,6 +536,31 @@ A formula whose result is assigned to `percent` and that computes a ratio
 explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
+
+### Period-over-period change: reuse the system `increase` formula
+
+Do **not** write a bespoke "growth rate" / "year-over-year change" formula. The
+base data ships the canonical one in `time_definition.json`:
+
+```json
+{ "name": "increase", "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"", "assigned_word": "year" }
+```
+
+`this` and `prior` are hardcoded **time-jump** formulas (`type: time_this` /
+`time_prior`) that fetch the current and previous period's value through the time
+dimension. To apply it to your measure, mirror `country.json`: re-declare the
+time block (`this`, `next`, `prior`, the `Now` word, and `increase` with its
+`assigned_word` set to your measure, e.g. `population`), mark each year
+`{"type": "time"}`, link each `… is a year`, and chain them
+`{"from": "2025", "verb": "is follower of", "to": "2024"}` so `prior` can step
+back. Tag the year on the values (`["canton", "population", "2025", …]`); the
+increase is then derived for every entity that has both a year and its
+predecessor. The result goes to `percent`, so there is **no `* 100`** (above).
+
+`increase` resolves `this`/`prior` only at calc time through the time dimension,
+so it **cannot be reproduced by `calc-validation`** (which does literal value
+lookup — see below). That is why no base file calc-validates `increase`: leave
+the period-over-period result out of your `calc-validation` block.
 
 ### Formula name uniqueness across types
 
@@ -581,6 +649,39 @@ could change the meaning:
 - `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
   fact tagged by entity, measure and period.
 
+### Naming a formula operand: triple vs flat atoms
+
+The order test above decides triple-vs-flat for a value that is only ever **read
+back as data**. A value a **formula** consumes adds a second consideration: an
+`expression` (and `assigned`) references each input by a *single phrase name* that
+the one calc-validation `context` must resolve to exactly one value. Two shapes
+satisfy that, and the order is irrelevant to both:
+
+- **Triple operand** (`city population`): self-documenting —
+  `"city population" / "canton population"` plainly divides two populations — and
+  it resolves unambiguously whatever other values exist. Cost: a named triple and
+  a row, with the single-word atoms locked inside it.
+- **Flat atoms + context**: tag the value with single words
+  (`["city", "population", "2025", …]`) and let the expression name a
+  distinguishing atom — the entity (`"city" / "canton"`) or the genus
+  (`"population" * "foreign share"`) — with the per-entity context picking the
+  right value. Keeps the atoms reusable (the project's default leaning — see *Word
+  vs triple in a value*), at the cost of an expression that only reads correctly
+  with its context in hand and stays correct only while the context excludes every
+  other `city` / … value.
+
+It is a genuine trade-off, not a rule: weigh **self-documentation** against
+**atomic reuse** per case. `zurich.json` (a base-data file, where reusable atoms
+matter most) takes the flat route — `share of canton` is `"city" / "canton"`, and
+one general `foreign count = "population" * "foreign share" / 100` serves both
+entities because the shared atom `population` and the `foreign share` triple
+resolve per entity by context. A file that prizes legible formulas over atom reuse
+would instead keep `city population` / `canton population` triples and divide
+those. Either way the single calc-validation `context` must uniquely resolve every
+operand (see *Calc-validation*), and two same-measure operands that share *one*
+context can only be told apart by distinct names (entity atoms or triples), never
+by a bare genus word alone.
+
 ### `"share": "public"` is the default and must be omitted
 
 Only add `share` when it differs from `public`.
@@ -603,14 +704,24 @@ as a failed validation, never saved as a value.
 }
 ```
 
-- `context` — the **input** phrases the formula reads (the result's source group);
-  each must be a phrase the file's values are assigned to.
+- `context` — the phrases that select the **input** values. The match is
+  **literal, with no parent/child inheritance**: the validator takes each value
+  whose phrase group is *wholly contained* in `context`, so `context` must be a
+  **superset of every input value's full group** — include every qualifier the
+  values carry (measure, period, `measured value`, …), not just the phrase the
+  expression names. A value tagged `city population` is therefore *not* found by a
+  bare `population` unless the value also carries the word `population`; and to
+  tell two same-measure inputs apart, put the distinguishing word (`city` /
+  `canton`) in the context so the wrong one is excluded.
 - `formula` — the name of the formula (defined in this file's `formulas`) that
   computes the result.
 - `words` — the phrases that identify the **result itself** (its group): what the
   `number` is about.
-- `number` — the expected calculated value, as a string; the import recomputes it
-  and flags any mismatch.
+- `number` — the expected calculated value, as a string. The import recomputes it
+  and compares **rounded to `data_object::CALC_VALIDATION_DECIMALS` decimals**
+  (currently 2), so floating-point roundoff between the stored number and the
+  recalculation is tolerated — you need not store full machine precision. A
+  difference larger than that rounding is reported as a failed validation.
 - `note` — optional, ignored by the importer.
 
 ### Keep every entry reproducible and order-independent

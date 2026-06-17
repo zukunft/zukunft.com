@@ -62,6 +62,7 @@ class files
     const string SYSTEM_UNIT_TEST_DATA_PATH = self::MESSAGE_PATH . 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string SYSTEM_UNIT_TEST_DATA_FOLDER = 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
+    const string BASE_DATA_PATH = self::MESSAGE_PATH . 'base_data' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -162,6 +163,9 @@ class files
     CONST string IMPORT_DEMOCRACY_INDEX = self::SYSTEM_UNIT_TEST_DATA_PATH . 'democracy_index_table' . self::JSON;
     CONST string IMPORT_WIND_INVESTMENT = self::SYSTEM_UNIT_TEST_DATA_PATH . 'wind_investment' . self::JSON;
 
+    // key figures for the city and canton of Zurich used as a real-world demo and for system testing
+    const string ZURICH_FILE = self::BASE_DATA_PATH . 'zurich' . self::JSON;
+
     /*
      * file lists
      */
@@ -211,6 +215,7 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
+        self::ZURICH_FILE,
     ];
 
 }

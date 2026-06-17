@@ -48,7 +48,6 @@ ZipArchive: $zip
 a_selected_test: $t_sel
 all_api_tests: $t_api
 all_tests: $all
-all_unit_write_tests: $ta
 all_workflow_tests: $t_wf
 api: $ctrl
 api_message: $api_msg, $msg
