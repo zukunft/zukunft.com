@@ -1,0 +1,551 @@
+{
+    "version": "0.0.3",
+    "words": [
+        {
+            "name": "price",
+            "refs": [
+                {
+                    "name": "P2284",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "United States dollar",
+            "refs": [
+                {
+                    "name": "Q4917",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "euro",
+            "refs": [
+                {
+                    "name": "Q4916",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": 2016,
+            "type": "time"
+        },
+        {
+            "name": 2015,
+            "type": "time"
+        },
+        {
+            "name": 2014,
+            "type": "time"
+        },
+        {
+            "name": 2013,
+            "type": "time"
+        },
+        {
+            "name": 2012,
+            "type": "time"
+        },
+        {
+            "name": 2011,
+            "type": "time"
+        },
+        {
+            "name": 2010,
+            "type": "time"
+        },
+        {
+            "name": 2009,
+            "type": "time"
+        },
+        {
+            "name": 2008,
+            "type": "time"
+        },
+        {
+            "name": 2007,
+            "type": "time"
+        },
+        {
+            "name": 2006,
+            "type": "time"
+        },
+        {
+            "name": 2005,
+            "type": "time"
+        },
+        {
+            "name": "Caribbean guilder",
+            "refs": [
+                {
+                    "name": "Q737779",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Saudi riyal",
+            "refs": [
+                {
+                    "name": "Q199857",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Belize dollar",
+            "refs": [
+                {
+                    "name": "Q275112",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Qatari riyal",
+            "refs": [
+                {
+                    "name": "Q206386",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "nakfa",
+            "refs": [
+                {
+                    "name": "Q171503",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Jordanian dinar",
+            "refs": [
+                {
+                    "name": "Q203722",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Aruban florin",
+            "refs": [
+                {
+                    "name": "Q232270",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Djiboutian franc",
+            "refs": [
+                {
+                    "name": "Q4594",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Eastern Caribbean dollar",
+            "refs": [
+                {
+                    "name": "Q26365",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Hong Kong dollar",
+            "refs": [
+                {
+                    "name": "Q31015",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Kuwaiti dinar",
+            "refs": [
+                {
+                    "name": "Q193098",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Lebanese pound",
+            "refs": [
+                {
+                    "name": "Q201880",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Netherlands Antillean guilder",
+            "refs": [
+                {
+                    "name": "Q522701",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "United Arab Emirates dirham",
+            "refs": [
+                {
+                    "name": "Q200294",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": 2020,
+            "type": "time"
+        },
+        {
+            "name": "pound sterling",
+            "refs": [
+                {
+                    "name": "Q25224",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "Turkmenistan new manat",
+            "refs": [
+                {
+                    "name": "Q486637",
+                    "type": "wikidata"
+                }
+            ]
+        }
+    ],
+    "triples": [
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "euro"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Caribbean guilder"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Saudi riyal"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Belize dollar"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Qatari riyal"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "nakfa"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Jordanian dinar"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Aruban florin"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Djiboutian franc"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Eastern Caribbean dollar"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Hong Kong dollar"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Kuwaiti dinar"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Lebanese pound"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Netherlands Antillean guilder"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "United Arab Emirates dirham"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "pound sterling"
+        },
+        {
+            "name": "",
+            "from": "United States dollar",
+            "verb": "in",
+            "to": "Turkmenistan new manat"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2016"
+            ],
+            "number": "0.888375605"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2015"
+            ],
+            "number": "0.918273646"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2014"
+            ],
+            "number": "0.826377985"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2013"
+            ],
+            "number": "0.725742071"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2012"
+            ],
+            "number": "0.7583801"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2011"
+            ],
+            "number": "0.771010023130301"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2010"
+            ],
+            "number": "0.753636295123973"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2009"
+            ],
+            "number": "0.697739324588334"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2008"
+            ],
+            "number": "0.71844241684029"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2007"
+            ],
+            "number": "0.684790796411696"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2006"
+            ],
+            "number": "0.757747973024172"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2005"
+            ],
+            "number": "0.844451950684006"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Caribbean guilder"
+            ],
+            "number": "1.79"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Saudi riyal"
+            ],
+            "number": "3.75"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Belize dollar"
+            ],
+            "number": "1.97"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Qatari riyal"
+            ],
+            "number": "3.64"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in nakfa"
+            ],
+            "number": "15"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Jordanian dinar"
+            ],
+            "number": "0.709"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Aruban florin"
+            ],
+            "number": "1.79"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Djiboutian franc"
+            ],
+            "number": "177.721"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Eastern Caribbean dollar"
+            ],
+            "number": "2.70"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Hong Kong dollar"
+            ],
+            "number": "7.80"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Kuwaiti dinar"
+            ],
+            "number": "0.29963"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Lebanese pound"
+            ],
+            "number": "1507.5"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Netherlands Antillean guilder"
+            ],
+            "number": "1.79"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in United Arab Emirates dirham"
+            ],
+            "number": "3.6725"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in euro",
+                "2020"
+            ],
+            "number": "0.8403"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in pound sterling",
+                "2020"
+            ],
+            "number": "1.2929"
+        },
+        {
+            "words": [
+                "price",
+                "United States dollar in Turkmenistan new manat"
+            ],
+            "number": "3.50"
+        }
+    ]
+}

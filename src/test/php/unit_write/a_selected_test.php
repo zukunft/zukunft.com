@@ -295,6 +295,7 @@ class a_selected_test extends test_cleanup
             //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
             new xbrl_write_tests()->run($this);
+            new wikidata_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);

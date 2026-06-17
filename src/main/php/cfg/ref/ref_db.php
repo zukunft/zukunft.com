@@ -79,11 +79,15 @@ class ref_db
     const string FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const string FLD_SOURCE = 'source_id';
     const string FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
+    const string FLD_LAST_UPDATE = 'last_update';
+    const string FLD_LAST_UPDATE_COM = 'timestamp of the last successful update of the reference used to trigger the next refresh job';
 
     // field names that cannot be user-specific
     const array FLD_NAMES = array(
         phrase::FLD_ID,
-        self::FLD_TYPE
+        self::FLD_TYPE,
+        sql_db::FLD_IMPACT,
+        self::FLD_LAST_UPDATE
     );
     // list of user-specific text field names
     const array FLD_NAMES_USR = array(
@@ -123,6 +127,8 @@ class ref_db
     const array FLD_LST_NON_CHANGEABLE = array(
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
         [ref_type::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
+        [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
     );
 
 }
