@@ -156,7 +156,7 @@ class a_selected_test extends test_cleanup
              * unit testing - with system users
              */
             $t_db = new test_db_load($this);
-            //$t_db->type_list_check($this, $this->usr1);
+            $t_db->type_list_check($this, $this->usr1);
 
 
             global $sys;

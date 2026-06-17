@@ -18,6 +18,12 @@
       "code_id": "title_of_named_with_edit_link_word"
     },
     {
+      "name": "Triple title",
+      "description": "show the from, verb and to of the triple with links as the page title",
+      "type": "title_of_triple_with_edit_link",
+      "code_id": "title_of_triple_with_edit_link_triple"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -80,6 +86,16 @@
       "name": "related values",
       "description": "show the most relevant and related values",
       "type": "values_related"
+    },
+    {
+      "name": "values by triple",
+      "description": "show the most relevant values where this triple is used",
+      "type": "values_by_triple"
+    },
+    {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
     },
     {
       "name": "related results",
@@ -184,6 +200,12 @@
       "code_id": "list_phrases_related_ex_symbols"
     },
     {
+      "name": "related phrases without subtitles",
+      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+      "type": "list_phrases_related_ex_subtitle",
+      "code_id": "list_phrases_related_ex_subtitle"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -227,6 +249,25 @@
       "description": "show the change log of this word",
       "type": "change_log",
       "code_id": "change_log_word"
+    },
+    {
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
+    },
+    {
+      "name": "view list word",
+      "description": "show the default view of this word and of its parent words",
+      "type": "view_list",
+      "code_id": "view_list_word"
+    },
+    {
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
     }
   ],
   "views": [
@@ -246,61 +287,67 @@
         },
         {
           "position": "3",
-          "name": "system show field plural"
+          "name": "system show field plural",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "system sub title usage number"
+          "name": "phrase aliases",
+          "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase aliases",
-          "style": "col-md-4"
+          "name": "phrase symbols",
+          "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "phrase symbols",
-          "style": "col-md-4"
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "related phrases without symbols"
+          "name": "children of word",
+          "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "children of word"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "9",
-          "name": "system sub title values"
+          "name": "value chart",
+          "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "related values"
+          "name": "related values",
+          "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas"
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
         },
         {
           "position": "12",
-          "name": "formula list"
+          "name": "formula list",
+          "position_type": "combine"
         },
         {
           "position": "13",
-          "name": "system sub title references"
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         },
         {
           "position": "14",
-          "name": "ref list word"
+          "name": "system sub title references"
         },
         {
           "position": "15",
-          "name": "system sub title log"
-        },
-        {
-          "position": "16",
-          "name": "change log word"
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },
@@ -328,11 +375,56 @@
       "components": [
         {
           "position": "1",
-          "name": "triple name"
+          "name": "Triple title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title references",
+          "position_type": "side_or_last_below"
+        },
+        {
+          "position": "11",
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },

@@ -618,6 +618,39 @@ class view extends view_exe
      */
 
     /**
+     * the 'view' button that opens the given word rendered with this view
+     * TODO Prio 3 add the back trace url so the user can return after opening the view
+     *
+     * @param int $wrd_id the id of the word to open in this view
+     * @return string the html link of the open button
+     */
+    function open_link(int $wrd_id): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
+            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
+        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_OPEN));
+    }
+
+    /**
+     * the 'switch' button that sets this view as the default view of the given word
+     * TODO Prio 3 add the back trace url so the user can return after the switch
+     *
+     * @param int $wrd_id the id of the word whose default view is set to this view
+     * @return string the html link of the switch button
+     */
+    function switch_link(int $wrd_id): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $url = rest_ctrl::PATH_FIXED . 'word_edit.php' . url_var::PAR . url_var::ID . url_var::EQ . $wrd_id
+            . url_var::ADD . url_var::VIEW . url_var::EQ . $this->id()
+            . url_var::ADD . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . '1';
+        return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
+    }
+
+    /**
      * return the html code to display a view name with the link
      */
     function name_linked($wrd, $back): string

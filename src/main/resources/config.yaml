@@ -327,6 +327,9 @@ zukunft.com:
               min:
                 sys-conf-value: 1000
                 tooltip-comment: "the minimal screen width in pixel to show a 'side or below' component beside the previous component; on smaller screens the component is shown below"
+              max:
+                sys-conf-value: 2800
+                tooltip-comment: "the screen width in pixel from which the full set of 'side or below' columns (up to four) is shown side by side; on smaller screens the columns wrap onto fewer rows and finally stack"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20

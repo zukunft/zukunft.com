@@ -70,6 +70,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 //include_once test_paths::CONST . 'triple_names.php';
 //include_once test_paths::CONST . 'word_names.php';
 
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use RuntimeException;
@@ -1209,11 +1211,7 @@ class import_convert_xbrl
         $facts = $this->extract_facts($instance_xml);
 
         $data = $this->build_data($segments, $file_name, $time, $statement, $currency, $calc_arcs, $concepts, $facts, $msg);
-        $result = json_encode(
-            $data,
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-        );
-        return $result;
+        return library::json_for_humans($data);
     }
 
     /**
@@ -1313,8 +1311,7 @@ class import_convert_xbrl
         $triples = $this->unique_triples($triples);
 
         $data = $this->data_envelope($time, $words, $triples, [], $sources, $values);
-        $result = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        return $result;
+        return library::json_for_humans($data);
     }
 
     /**

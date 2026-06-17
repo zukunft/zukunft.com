@@ -74,6 +74,9 @@ class component_types
     // (will be done via the sandbox language field once it has been added to all sandbox objects)
     const string TITLE_NAMED_EDIT = "title_of_named_with_edit_link";
     const int TITLE_NAMED_EDIT_ID = 192;
+    const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
+    const int TITLE_TRIPLE_EDIT_ID = 200;
+    const string TITLE_TRIPLE_EDIT_COM = "show the from, verb and to of a triple with links as the page title plus the edit link and subtitle";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -411,6 +414,15 @@ class component_types
     const string LIST_PHRASES_RELATED_EX_SYMBOLS = "list_phrases_related_ex_symbols";
     const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 196;
     const string LIST_PHRASES_RELATED_EX_SYMBOLS_COM = "list of phrases related to the given phrase excluding the alias and symbol entries";
+    const string LIST_PHRASES_RELATED_EX_SUBTITLE = "list_phrases_related_ex_subtitle";
+    const int LIST_PHRASES_RELATED_EX_SUBTITLE_ID = 197;
+    const string LIST_PHRASES_RELATED_EX_SUBTITLE_COM = "list of phrases related to the given phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components";
+    const string VALUE_CHART = "value_chart";
+    const int VALUE_CHART_ID = 198;
+    const string VALUE_CHART_COM = "show a chart of the most relevant values by impact on top of the value list";
+    const string VIEW_TAB_BOX = "view_tab_box";
+    const int VIEW_TAB_BOX_ID = 199;
+    const string VIEW_TAB_BOX_COM = "a tab box with the related views (preview plus open and switch buttons) and the change log of the word";
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
     const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
@@ -688,6 +700,8 @@ class component_types
         self::SYSTEM_SUB_TITLE,
         self::SYSTEM_SUB_TITLE_VAR,
         self::VALUES_RELATED,
+        self::VALUE_CHART,
+        self::VIEW_TAB_BOX,
         self::LIST_REF,
     );
 
@@ -713,6 +727,7 @@ class component_types
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
+        [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
@@ -837,6 +852,9 @@ class component_types
         [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
         [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
         [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],
+        [self::LIST_PHRASES_RELATED_EX_SUBTITLE, self::LIST_PHRASES_RELATED_EX_SUBTITLE_ID],
+        [self::VALUE_CHART, self::VALUE_CHART_ID],
+        [self::VIEW_TAB_BOX, self::VIEW_TAB_BOX_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
         [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
         [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],

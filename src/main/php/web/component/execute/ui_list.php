@@ -130,7 +130,7 @@ class ui_list extends ui_base
      * @param phrase_list|null $phr_lst the cached list of phrases given by the caller
      * @return phrase_list|null the related phrases of the object or the given cache list
      */
-    private function related_list(word|db_object $wrd, ?phrase_list $phr_lst): ?phrase_list
+    private function related_list(word|phrase|db_object $wrd, ?phrase_list $phr_lst): ?phrase_list
     {
         if ($wrd::class == word::class or $wrd::class == triple::class) {
             if ($wrd->phr_lst != null) {
@@ -171,7 +171,6 @@ class ui_list extends ui_base
     /**
      * HTML for the phrases related to the given phrase excluding the alias and symbol entries
      * because these are already shown by the phrase_aliases and phrase_symbols components
-     * sorted with the highest impact first e.g. for stocks the highest market capitalisation
      *
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
@@ -179,14 +178,57 @@ class ui_list extends ui_base
      */
     function phrases_related_ex_symbols(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS]);
+    }
+
+    /**
+     * HTML for the phrases related to the given phrase excluding the alias, symbol and "is a"
+     * entries, because the alias and symbol have their own components and the "is a" parents
+     * are already shown in the page subtitle (e.g. on the default word page)
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code with the remaining related phrases
+     */
+    function phrases_related_ex_subtitle(word|db_object $wrd, ?phrase_list $phr_lst = null): string
+    {
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS]);
+    }
+
+    /**
+     * HTML for the phrases related to the given phrase excluding the triples linked by the
+     * verbs in $ex_vrb_lst (an empty list shows all related phrases)
+     * sorted with the highest impact first e.g. for stocks the highest market capitalisation
+     *
+     * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @param array $ex_vrb_lst the code ids of the verbs whose triples should not be shown
+     * @return string the html code with the remaining related phrases
+     */
+    private function phrases_related_ex_verbs(
+        word|phrase|db_object $wrd,
+        ?phrase_list          $phr_lst,
+        array                 $ex_vrb_lst
+    ): string
+    {
         global $ui_sys;
 
+        // the object can be a phrase directly (e.g. the related-phrases component) or a
+        // word/triple that carries one
+        if ($wrd::class == phrase::class) {
+            $phr = $wrd;
+        } else {
+            $phr = $wrd->phrase();
+        }
         $result = '';
         $phr_cac = $this->related_list($wrd, $phr_lst);
         $vrb_cac = $ui_sys?->typ_lst_cache?->vrb;
         if ($phr_cac != null and $vrb_cac != null) {
-            $vrb_ids = [$vrb_cac->id(verbs::ALIAS), $vrb_cac->id(verbs::SYMBOL)];
-            $result = $phr_cac->parent_triples_ex_verbs($wrd->phrase(), $vrb_ids)->name_link_by_impact();
+            $vrb_ids = [];
+            foreach ($ex_vrb_lst as $vrb_code_id) {
+                $vrb_ids[] = $vrb_cac->id($vrb_code_id);
+            }
+            $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
         }
         return $result;
     }
@@ -387,6 +429,63 @@ class ui_list extends ui_base
     }
 
     /**
+     * HTML for the views related to the given word: its own default view plus the default
+     * views of its parent words; a word loaded for its page carries the list directly in
+     * view_lst (filled from the INCL_RELATED api message)
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param data_object|null $cfg the context used to create the view
+     * @return string the html code with the linked names of the related views
+     */
+    function views_related(db_object $dbo, ?data_object $cfg = null): string
+    {
+        $result = '';
+        if ($dbo::class == word::class and $dbo->view_lst != null) {
+            // name_link() renders the views in a deterministic, name-sorted order
+            $result = $dbo->view_lst->name_link();
+        }
+        return $result;
+    }
+
+    /**
+     * HTML for the col-4 tab box of the word page: a "Views" tab with the related views
+     * (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
+     * with the change log of the word, latest first
+     * TODO Prio 3 replace the view preview placeholder with a real miniature preview
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param bool $test_mode true to create a reproducible result without a backend call
+     * @return string the html code of the tab box or an empty string for a non-word object
+     */
+    function view_tab_box(db_object $dbo, bool $test_mode = false): string
+    {
+        global $mtr;
+        $result = '';
+        if ($dbo::class == word::class) {
+            $html = new html_base();
+            // tab 1: each related view as a preview placeholder with the open and switch buttons
+            $views_html = '';
+            if ($dbo->view_lst != null) {
+                foreach ($dbo->view_lst->lst() as $msk) {
+                    $preview = $html->div('view preview', view_styles::COL_SM_12);
+                    $buttons = $msk->open_link($dbo->id()) . ' ' . $msk->switch_link($dbo->id());
+                    $views_html .= $html->div($preview . $msk->name() . ' ' . $buttons);
+                }
+            }
+            // tab 2: the change log of the word, latest first
+            $log_html = '';
+            if ($dbo->chg_log != null) {
+                $log_html = $dbo->chg_log->filter($dbo)->dsp(null, false, false, $test_mode);
+            }
+            $result = $html->tab_box([
+                $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
+                $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,
+            ]);
+        }
+        return $result;
+    }
+
+    /**
      * @param db_object $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code of links that can be changes
@@ -419,6 +518,11 @@ class ui_list extends ui_base
     {
         global $ui_sys;
 
+        // TODO Prio 3 on the word page this formula column should also show the most relevant
+        //      results and, on top, a result chart (mirroring value_chart() for the value
+        //      column); a result_chart component plus a word-carried results_related list are
+        //      still missing
+
         // a word loaded for its page carries its related formulas directly (like the
         // related values), so use that list; otherwise fall back to the formula link
         // cache or, outside the unit tests, an api load
@@ -448,6 +552,29 @@ class ui_list extends ui_base
             $row_limit = config::LIMIT_NAME_LIST;
         }
         return $frm_lst->name_link('', $row_limit);
+    }
+
+    /**
+     * HTML for a chart of the most relevant values of the given word, shown on top of the
+     * value list; only rendered if the word actually has a related value
+     * TODO Prio 3 replace the placeholder with a real chart of the most relevant values by
+     *      impact (e.g. a bar chart rendered client side)
+     *
+     * @param db_object $dbo the word that should be shown to the user
+     * @param data_object|null $cfg the cached lists for initial display without backend call
+     * @return string the html code of the value chart or an empty string if there is no value
+     */
+    function value_chart(db_object $dbo, ?data_object $cfg = null): string
+    {
+        $result = '';
+        if ($dbo::class == word::class) {
+            $val_lst = $this->value_related_list($dbo, $cfg);
+            if ($val_lst != null and !$val_lst->is_empty()) {
+                $html = new html_base();
+                $result = $html->div('value chart', view_styles::COL_SM_12);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -683,7 +810,11 @@ class ui_list extends ui_base
      */
     function phrases_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
-        return 'phrases_related placeholder';
+        $result = '';
+        if ($dbo != null) {
+            $result = $this->phrases_related_ex_verbs($dbo, $cfg?->phrase_list(), []);
+        }
+        return $result;
     }
 
     /**

@@ -186,6 +186,7 @@ class component_exe extends component
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo),
+            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
@@ -366,6 +367,7 @@ class component_exe extends component
             component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $cfg->phrase_list()),
             component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $cfg->phrase_list()),
+            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $cfg->phrase_list()),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
@@ -427,10 +429,13 @@ class component_exe extends component
             // table
             component_types::VALUES_ALL => $base->all($dbo, $back),
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
+            component_types::VALUE_CHART => $list->value_chart($dbo, $cfg),
+            component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $test_mode),
             component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related
             component_types::LIST_REF => $list->ref_list_word($dbo, $cfg),
+            component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
             component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
             component_types::FORMULAS => $list->formulas($dbo, $cfg, $test_mode),

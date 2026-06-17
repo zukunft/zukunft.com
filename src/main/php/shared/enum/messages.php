@@ -1691,6 +1691,7 @@ enum messages: string
     case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
+    case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
@@ -1931,6 +1932,8 @@ enum messages: string
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_DEL = 'form_button_del';
+    case BUTTON_VIEW_OPEN = 'button_view_open';
+    case BUTTON_VIEW_SWITCH = 'button_view_switch';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';

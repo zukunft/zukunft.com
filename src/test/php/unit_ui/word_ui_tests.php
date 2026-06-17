@@ -199,7 +199,7 @@ class word_ui_tests
         $t->assert($test_name, $list->formulas($wrd_zh, $dto), '');
 
         $t->subheader($ts . 'related sorted by impact');
-        $stock_html = $list->phrases_related_ex_symbols($wrd_company_rel);
+        $stock_html = $list->phrases_related($wrd_company_rel);
         $test_name = 'the stock with the highest market capitalisation is first';
         $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ABB, triple_names::COMPANY_ZURICH);
         $test_name = 'the stock with the lowest market capitalisation is last';

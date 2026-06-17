@@ -73,6 +73,12 @@ class position_types
         self::SIDE_OR_LAST_BELOW,
     ];
 
+    // the maximal number of side-or-below columns shown side by side on the widest screen;
+    // each column gets a minimal width of 'max side width' / this count so that up to this
+    // many columns fit at the configured wide width and the row wraps to fewer columns
+    // (down to one) as the screen gets narrower
+    const int MAX_SIDE_COLUMNS = 4;
+
     const string DEFAULT = self::BELOW;
     const int DEFAULT_ID = 1;
 

@@ -79,8 +79,8 @@ class view_ui_tests
         $t->html_page_test($test_page, 'view', 'view', $t);
 
         $t->subheader($ts . 'side or below columns');
-        $test_name = 'each column limits the minimal width to half of the configured side width';
-        $t->assert_text_contains($test_name, $cols_html, 'min-width: 500px');
+        $test_name = 'each column limits the minimal width so that up to four fit at the wide side width';
+        $t->assert_text_contains($test_name, $cols_html, 'min-width: 700px');
         $test_name = 'the first column is shown before the side-or-first-below column';
         $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
         $test_name = 'the side-or-below column is shown before the side-or-last-below column';

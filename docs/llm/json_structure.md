@@ -25,7 +25,11 @@ Every import JSON has this top-level shape:
   "triples":   [ ... ],
   "formulas":  [ ... ],
   "sources":   [ ... ],
-  "values":    [ ... ]
+  "values":    [ ... ],
+  "calc-validation": [ ... ],
+  "components": [ ... ],
+  "views":      [ ... ],
+  "view-validation": [ ... ]
 }
 ```
 
@@ -73,6 +77,26 @@ A word is the atomic phrase:
 - `name` is the unique key. Descriptions and `refs` are optional.
 - `type` is set only when the word is a measure (SI unit, `percent`, etc.).
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
+
+### Prefer a Wikipedia link over a free-text description
+
+Reach for a Wikipedia `ref` before writing a `description`: a
+`{ "name": "<article slug>", "type": "wikipedia" }` entry ties the word to a
+shared, maintained definition instead of prose that drifts. Add the matching
+Wikidata Q-id (`"type": "wikidata"`) too when you know it.
+
+When the Wikipedia article does **not** really match the meaning you need, do not
+force a near-miss description. Break the concept down into the single,
+well-defined items it is composed of — each its own word with its own Wikipedia
+ref — and combine them with triples, so the precise meaning emerges from
+referenced parts. E.g. rather than an unreferenced word `jet fuel for short-haul`,
+define `jet fuel` (wiki) and `short-haul flight` (wiki) and link them
+`jet fuel` `used for` `short-haul flight`.
+
+When something needed for a full match is missing from Wikipedia entirely, leave
+a **todo** by starting a job from the JSON rather than inventing an unreferenced
+description — the job records the gap so a maintained reference can be added (or
+created) later, and the word keeps its best partial reference until then.
 
 ### Words are the most atomic text — no spaces if it can be avoided
 
@@ -234,6 +258,84 @@ A triple combines two phrases with a verb:
   same file).
 - `verb` must be one of the predicates in `src/main/resources/verbs.json`.
 - `name` is the unique display name of the triple.
+
+### Allowed verbs
+
+`verb` must be one of the predicates below (use the **name**; the `code_id` is the
+stable internal key). This is the set defined in `src/main/resources/verbs.json`
+at the moment:
+
+| name | code_id | use |
+|---|---|---|
+| `is a` | `is` | child → parent category (Zurich is a Canton) |
+| `is part of` | `contains` | membership; the parts sum to the same total |
+| `can be part of` | `can_be_part_of` | optional membership in both directions |
+| `kind of` | `kind_of` | a sub-kind of a parent category |
+| `must be one of` | `must_be_one_of` | disambiguate a word's several meanings |
+| `of` | `of` | narrow a selection (population of humans) |
+| `with` | `with` | same-by-same comparison |
+| `has a` | `has` | assign a potential property |
+| `uses` | `uses` | real use (a turbine uses wind) |
+| `is used by` | `used_by` | passive form of `uses` |
+| `used for` | `used_for` | intended purpose (fuel used for a jet) |
+| `issue` | `issue` | issuer relation (a company issues a report) |
+| `influences` | `influence` | a directed influence |
+| `is an acronym for` | `acronym` | acronym expansion |
+| `is alias of` | `alias` | alternative name for the same phrase |
+| `is symbol for` | `symbol` | a symbol for a phrase (USD for US dollar) |
+| `name of` | `name_of` | a proper name of a category |
+| `can` | `can` | assign a behavior (GDP can decline) |
+| `can be` | `can_be` | a possible state |
+| `can get` | `can_get` | a possible acquisition |
+| `can have` | `can_have` | a possible possession |
+| `can cause` | `can_cause` | a causal relation with a factor |
+| `can use` | `can_use` | a possible use that creates a new result |
+| `can be made of` | `can_be_made_of` | a possible material / composition |
+| `can be packed in` | `can_be_packed_in` | a possible packaging option |
+| `can be used as a differentiator for` | `can_contain` | table differentiator (row hidden when no value) |
+| `per` | `per` | quotient unit (metre per second) |
+| `times` | `times` | product unit (J⋅s for the Planck constant) |
+| `and` | `and` | combine two phrases into one |
+| `scaled by` | `scaled` | the usual scaling (kWh) |
+| `in` | `in` | the measure unit |
+| `on` | `on` | a subgroup (taxes on income) |
+| `to` | `to` | a time range or assignment type |
+| `between` | `between` | a range (lower–upper bound) |
+| `by parts` | `by_parts` | a method on the parts (integration by parts) |
+| `is selector for` | `selector` | group a selection list to shorten it |
+| `is ranked by` | `rank` | the sort key for related objects |
+| `is time jump for` | `time_jump` | the default time period |
+| `is term jump for` | `term_jump` | the default term jump |
+| `is measure type for` | `measure_type` | the default measure type |
+| `is follower of` | `follow` | sequence / successor |
+| `term type needed` | `term_needed` | the formula needs the linked term type |
+| `not set` | `not_set` | none — no verb selected |
+
+### Adding a new verb
+
+A verb not in the list above can be proposed in the **same object shape** as the
+entries in `src/main/resources/verbs.json` — `name` + `code_id` + `description`,
+plus the display forms `name_plural`, `name_reverse`, `name_plural_reverse` (leave
+a form empty when the reverse reading is not used, as `per` and `to` do), and the
+optional `formula_name` / `protection`:
+
+```json
+{
+  "name": "is supplier of",
+  "code_id": "supplier",
+  "description": "...",
+  "name_plural": "are suppliers of",
+  "name_reverse": "is supplied by",
+  "name_plural_reverse": "are supplied by"
+}
+```
+
+**Approval process.** A proposed verb is private to the requesting user until an
+**admin confirms** the request; only after that confirmation can other users use
+the new verb. The confirmation also raises a **request to the developer** to add
+fixed (coded) functionality for the verb — or at least to link it to an existing
+verb's code functionality — so the new predicate behaves consistently across the
+app rather than being a name-only relation.
 
 ### `from`/`verb`/`to` is unique within an import
 
@@ -483,6 +585,66 @@ could change the meaning:
 
 Only add `share` when it differs from `public`.
 
+## Calc-validation
+
+Optional. A list of *expected* formula results: instead of being stored, each
+entry is **recomputed** from the file's own values and formulas and compared, so
+a broken formula or a mistyped input is caught at import time. Same shape as a
+stored `result`, but routed through `validate_results` — a mismatch is reported
+as a failed validation, never saved as a value.
+
+```json
+{
+  "context": [ "status quo harm weight", "exposure duration", "DALY", "year", "adult" ],
+  "formula": "status quo harm per person formula",
+  "words":   [ "status quo harm per person", "DALY", "adult" ],
+  "number":  "0.08",
+  "note":    "optional human comment, ignored by the importer"
+}
+```
+
+- `context` — the **input** phrases the formula reads (the result's source group);
+  each must be a phrase the file's values are assigned to.
+- `formula` — the name of the formula (defined in this file's `formulas`) that
+  computes the result.
+- `words` — the phrases that identify the **result itself** (its group): what the
+  `number` is about.
+- `number` — the expected calculated value, as a string; the import recomputes it
+  and flags any mismatch.
+- `note` — optional, ignored by the importer.
+
+### Keep every entry reproducible and order-independent
+
+Each entry must be reproducible from the file's values and formulas alone — no
+hidden state — and independent of the order the values are imported, so the check
+stays stable. Encode an alternative scenario (e.g. an upper-bound sign-flip) as
+its own value + `calc-validation` chain, never as prose in a `note`.
+
+## View-validation
+
+Optional. The counterpart of `calc-validation` for *pages* instead of numbers:
+each entry pins the most relevant output a page should show **after** the import,
+so a layout or wiring regression is caught at import time. An entry is a
+human-readable page URL plus the expected rendering as **Markdown** (the compact,
+diff-friendly form of the page — not the full HTML):
+
+```json
+{
+  "url": "http://localhost/http/view.php?words=Pi",
+  "result": "# Pi\n\nis a *mathematical constant*\n\n## Values\n\n- 3.14159265359\n"
+}
+```
+
+- `url` — the page to render, written in the **human-readable** url form
+  (`?words=Pi`, `?mask_id=word&id=…`, `…&show`), never with raw internal ids.
+- `result` — the expected most-relevant output of that page as Markdown; the
+  import renders the page and compares, reporting a mismatch as a failed
+  validation (it is not saved).
+
+Keep `result` to the *relevant* output — the title, the key related phrases and
+the top values/formulas — not every pixel, so the check stays stable across
+cosmetic layout changes.
+
 ## Components
 
 ```json
@@ -529,6 +691,58 @@ inserted, so the unique `ui_msg_code_id` is not duplicated.
 
 This mirrors the "define once, link many" pattern already used inside
 `system_views.json`.
+
+## Views
+
+A view is a named page layout that links an ordered list of components to a main
+object type:
+
+```json
+{
+  "name": "Word (default)",
+  "description": "the default view for words",
+  "code_id": "word_default",
+  "type": "word",
+  "components": [
+    { "position": "1", "name": "Word title" },
+    { "position": "2", "name": "system show field description" },
+    { "position": "3", "name": "phrase aliases", "position_type": "combine" }
+  ]
+}
+```
+
+- `name` is the unique display name; `code_id` is the stable internal key
+  (`word_default`, `triple_default`, …).
+- `type` is the main object the view renders (`word`, `triple`, `verb`, `source`,
+  `formula`, …).
+- `components` is the ordered list of component links. Each entry references a
+  component **by `name`** — defined in the `components` block above or re-declared
+  canonically (see *Components*) — plus the link-only fields `position`,
+  `position_type`, `style`.
+
+### Component positions are contiguous, starting at 1
+
+`position` is `1, 2, 3, …` with **no gaps**: the importer rejects a hole
+(`the component position 4 is missing in the view "…"`, and every later component
+reported as "position N instead of N-1"). When you remove a component, renumber
+the rest so the sequence stays gapless.
+
+### `position_type` places the component in the row/column flow
+
+Optional, default `below`. The values that have coded layout behaviour:
+
+| value | effect |
+|---|---|
+| `below` | start a new full-width row (the default) |
+| `combine` | stack below the previous component **within the same column** |
+| `side_or_first_below` | start the first column of a side-by-side group |
+| `side_or_below` | start a following column of that group |
+| `side_or_last_below` | start the last column of that group |
+
+A side-or-below group shows its columns next to each other on wide screens and
+wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
+column by giving its first component the `side_or_*` type and the rest `combine`.
+`style` is an optional Bootstrap column class (e.g. `col-md-4`).
 
 ## `import_mapper` reads only from the per-file `$dto`
 

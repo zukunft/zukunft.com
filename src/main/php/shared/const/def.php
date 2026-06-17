@@ -56,8 +56,12 @@ class def
     // overridden by config.yaml entry frontend.lists.separator.entry
     const string FALLBACK_ENTRY_SEPARATOR = ', ';
     // fallback for the minimal screen width in pixel to show 'side or below' components side by side;
-    // overridden by config.yaml entry frontend.layout.min side width
+    // overridden by config.yaml entry frontend.layout.side width.min
     const int FALLBACK_MIN_SIDE_WIDTH = 1000;
+    // fallback for the screen width in pixel from which the full set of 'side or below' columns
+    // (up to position_types::MAX_SIDE_COLUMNS) is shown side by side;
+    // overridden by config.yaml entry frontend.layout.side width.max
+    const int FALLBACK_WIDE_SIDE_WIDTH = 2800;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
 

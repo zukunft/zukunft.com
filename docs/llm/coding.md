@@ -21,6 +21,50 @@ nothing left to remove. Prefer the smallest change that does the job: fewer
 lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
 it out — every rule below is subordinate to this one.
 
+## The second most relevant rule
+
+Write code a human reads at a glance. A line carries **one logical element —
+three at most**: one assignment, one call, one condition. When a line packs more,
+split it into named steps. Fewer lines is still better (don't pad a simple
+expression across many lines), so the goal is the *fewest* lines on which *each*
+line still reads at a glance — minimise lines subject to that limit, never by
+cramming.
+
+Wrong — five logical elements on one line (ternary, two getters, two calls, a
+concat); the reader has to unpack it:
+
+```php
+$title = $trp->get_from() != null ? $trp->get_from()->name_link() . ' ' . $trp->get_verb()->name_link() : '';
+```
+
+Right — each line does one thing, named for what it is:
+
+```php
+$from = $trp->get_from();
+$title = '';
+if ($from != null) {
+    $title = $from->name_link() . ' ' . $trp->get_verb()->name_link();
+}
+```
+
+Better still — a small function is not a sin. Pushing a two-step chain like
+`get_verb()->name_link()` behind a name on the owning class turns the call site
+into one self-describing element and lets the next reader (and every other call
+site) skip the detail:
+
+```php
+$title = $from->name_link() . ' ' . $trp->verb_name_link();
+// or, if the verb has no other kind of link, just $trp->verb_link()
+```
+
+So the cure for a crowded line is often a well-named helper, not only a local
+variable — naming the *operation* beats inlining it. (This is the same DRY move
+as the always-on "a 3+ step call chain belongs behind a function on the owning
+class" rule below; it costs a method but each call site reads at a glance.)
+
+The companion limit — function bodies fit on one screen page (~50 lines) — is in
+the always-on rules below and detailed in `docs/llm/structure.md`.
+
 ## Build / test / commit
 
 ```bash
@@ -50,7 +94,9 @@ detail file. Order is by how often they fire, not importance.
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
+- Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
+- Function names are spelled out in full (`load_by_phrase_list`, not `load_by_phr_lst`); the abbreviations are for variables only. → `docs/llm/architecture.md`
 - Every class file declares its suggested `$abbr` var name in the opening docblock. → `docs/llm/architecture.md`
 - Every parameter gets a `@param` line stating its purpose and the effect of each meaningful value.
 - `@param` / `@return` descriptions stay on one line where possible; longer rationale belongs in a `docs/` file the docblock can point to.
