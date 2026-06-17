@@ -152,7 +152,7 @@ class system_views_read_tests
         $t->header($ts);
 
         $html = new html_base();
-        $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
+        $target = htmlspecialchars(trim('<title>Header test - zukunft.com</title>'));
         $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
 

@@ -63,7 +63,13 @@ add a config parameter that the api message should include the message header (o
 
 Allow the users to define their own workflow → which view follow which under which conditions
 
-Add the component type 'form validation' that checks based on phrase list and formulas the changed form values and create an info, warning or error message and redirects the workflow if needed 
+Add the component type 'form validation' that checks based on phrase list and formulas the changed form values and create an info, warning or error message and redirects the workflow if needed
+
+add the user types 'corporation', 'government', ...
+
+add the table 'user_relation' that defines the relation between two users e.g. if user_a has a high trust level for user_b
+
+add the table 'user_relation_types' with the entires 'is part of', 'high trust', 'medium trust', 'low trust', 'ignores', ...
 
 ### workflow
 

@@ -55,6 +55,9 @@ class def
     // fallback separator between list entries e.g. the share and protection subtitle in a page title;
     // overridden by config.yaml entry frontend.lists.separator.entry
     const string FALLBACK_ENTRY_SEPARATOR = ', ';
+    // fallback separator between the object, view and pod name in the html (browser tab) page title;
+    // overridden by config.yaml entry frontend.lists.separator.title
+    const string FALLBACK_TITLE_SEPARATOR = ' - ';
     // fallback for the minimal screen width in pixel to show 'side or below' components side by side;
     // overridden by config.yaml entry frontend.layout.side width.min
     const int FALLBACK_MIN_SIDE_WIDTH = 1000;

@@ -5235,6 +5235,7 @@
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
     \-- concat_entry_text - section for function concat_entry_text not yet defined that it should be internal in /html/html_base.php
     \-- concat_category_text - section for function concat_category_text not yet defined that it should be internal in /html/html_base.php
+    \-- concat_title_text - section for function concat_title_text not yet defined that it should be internal in /html/html_base.php
     \-- nav - section for function nav not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
@@ -7433,6 +7434,8 @@
         \-- html_base - concatenate two text snippets with the configured list entry separator e.g. ", "
     \-- concat_category_text
         \-- html_base - concatenate two text snippets with the configured list category separator e.g. " / "
+    \-- concat_title_text
+        \-- html_base - concatenate two text snippets with the configured page-title separator e.g. " - "
     \-- nav
         \-- html_base - wrap the nav tag around html code
     \-- div_bs

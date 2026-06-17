@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -66,6 +67,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -279,7 +281,9 @@ class view_base extends sandbox_code_id
 
     function title(db_object|type_object|combine_named|sandbox_list $dbo): string
     {
-        return $this->name() . ' ' . $dbo->name();
+        // the object name comes first, then the view name, joined by the configured title separator
+        $html = new html_base();
+        return $html->concat_title_text($dbo->name(), $this->name());
     }
 
 
