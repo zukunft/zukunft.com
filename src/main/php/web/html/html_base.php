@@ -2107,6 +2107,23 @@ class html_base
     }
 
     /**
+     * concatenate two text snippets with the configured page-title separator e.g. " - "
+     * used to join the object, view and pod name in the html (browser tab) page title
+     *
+     * @param string $left the first text snippet
+     * @param string $right the second text snippet
+     * @return string the two snippets joined by the title separator
+     */
+    function concat_title_text(string $left, string $right): string
+    {
+        global $ui_sys;
+        $separator = $ui_sys?->cfg?->get_by(
+            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+        ) ?? def::FALLBACK_TITLE_SEPARATOR;
+        return $this->concat_text($left, $right, $separator);
+    }
+
+    /**
      * wrap the nav tag around html code
      * @param string $txt the html code
      * @param string $style the html class name
@@ -2283,14 +2300,13 @@ class html_base
      */
     private function title(string $txt, string $pod_name): string
     {
-        if ($txt == "") {
-            $txt = $pod_name;
+        // append the pod name with the configured title separator e.g. "US dollar - Word (default) - zukunft.com"
+        if ($txt == $pod_name) {
+            $title = $pod_name;
         } else {
-            if ($pod_name <> "" && $txt != $pod_name) {
-                $txt = $txt . ' (' . $pod_name . ')';
-            }
+            $title = $this->concat_title_text($txt, $pod_name);
         }
-        return '<' . self::TITLE . '>' . $txt . '</' . self::TITLE . '>';
+        return '<' . self::TITLE . '>' . $title . '</' . self::TITLE . '>';
     }
 
     /**

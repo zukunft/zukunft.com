@@ -321,6 +321,7 @@ zukunft.com:
               tooltip-comment: "the default separator for horizontal lists e.g. entry one, entry two / next topic"
               entry: ", "
               category: " / "
+              title: " - "
           layout:
             tooltip-comment: "the settings to position the components on the screen"
             side width:
