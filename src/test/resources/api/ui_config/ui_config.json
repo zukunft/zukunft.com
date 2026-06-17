@@ -1,10 +1,10 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 1,
+    "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-17T13:09:10+00:00",
+    "timestamp": "2026-06-17T18:58:06+00:00",
     "body": {
         "user_profiles": [
             {
@@ -240,6 +240,12 @@
                 "code_id": "cfg\/helper\/config_numbers",
                 "description": "loader for the system and user configuration",
                 "id": 8
+            },
+            {
+                "name": "Import sample view data",
+                "code_id": "import_sample_view_data",
+                "description": "Import the sample view test data used by the view unit tests",
+                "id": 9
             }
         ],
         "sys_log_levels": [
@@ -20637,7 +20643,7 @@
                         "link_id": 1006,
                         "id": 271,
                         "name": "Triple title",
-                        "description": "show the from, verb and to of the triple with links as the page title",
+                        "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
                         "type_id": 200,
                         "code_id": "title_of_triple_with_edit_link_triple",
                         "position": 1,

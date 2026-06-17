@@ -166,7 +166,8 @@
           "type": "wikidata"
         }
       ],
-      "impact": 71152
+      "impact": 71152,
+      "protection": "admin_protection"
     },
     {
       "name": "Zurich (Canton)",
@@ -183,7 +184,8 @@
           "type": "wikidata"
         }
       ],
-      "impact": 32400
+      "impact": 32400,
+      "protection": "admin_protection"
     },
     {
       "name": "Bern (City)",

@@ -158,11 +158,11 @@ class system_form extends component
     }
 
     /**
-     * the page title for a triple: instead of the generated triple name show the from, verb
-     * and to with a link to each word/triple and the verb, but with the same edit link and
-     * subtitle as the named title
+     * the page title for a triple: show the triple name big as the title (not as a link)
+     * and the from, verb and to with a link to each word/triple and the verb in the
+     * subtitle, with the same edit link and category subtitle as the named title
      *
-     * @param db_object $dbo the triple whose from, verb and to are shown as the page title
+     * @param db_object $dbo the triple whose name is the title and whose from, verb and to are the subtitle
      * @param int $max to limit the number of related phrases shown before a "..." link
      * @return string the html code for the triple page title
      */
@@ -171,29 +171,32 @@ class system_form extends component
         int $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
-        $heading_content = $dbo->name();
+        // the from/verb/to links move to the subtitle; the title shows the plain triple name
+        $from_verb_to = '';
         if ($dbo::class == triple::class) {
-            $heading_content = $dbo->get_from()?->name_link() . ' '
+            $from_verb_to = $dbo->get_from()?->name_link() . ' '
                 . $dbo->get_verb()->name_link() . ' '
                 . $dbo->get_to()?->name_link();
         }
-        return $this->title_box($dbo, $heading_content, $max);
+        return $this->title_box($dbo, $dbo->name(), $max, $from_verb_to);
     }
 
     /**
      * the shared page-title box with the edit link and the category, type, share and
-     * protection subtitles; only the big heading content differs between a named object
-     * (its name) and a triple (its from, verb and to with links)
+     * protection subtitles; the big heading content is the object name, and a triple
+     * additionally passes its from/verb/to links shown first in the same subtitle line
      *
      * @param db_object $dbo the object whose page title is shown
      * @param string $heading_content the html shown big in the title heading
      * @param int $max to limit the number of related phrases shown before a "..." link
+     * @param string $lead_subtitle optional html prepended to the subtitle (e.g. a triple's from/verb/to links)
      * @return string the html code for the page title
      */
     private function title_box(
         db_object $dbo,
         string    $heading_content,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB,
+        string    $lead_subtitle = ''
     ): string
     {
         $html = new html_base();
@@ -212,7 +215,10 @@ class system_form extends component
         $ptc = $this->protection_subtitle($dbo);
         $shr_ptc = $html->concat_entry_text($shr, $ptc);
 
+        // join all subtitle parts with the category separator " / "; a triple prepends its
+        // from/verb/to links so the whole subtitle stays on one parenthesized line
         $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
+        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
             . $heading_content . '</' . html_base::H4 . '>';

@@ -76,7 +76,7 @@ class component_types
     const int TITLE_NAMED_EDIT_ID = 192;
     const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
     const int TITLE_TRIPLE_EDIT_ID = 200;
-    const string TITLE_TRIPLE_EDIT_COM = "show the from, verb and to of a triple with links as the page title plus the edit link and subtitle";
+    const string TITLE_TRIPLE_EDIT_COM = "show the triple name as the page title and the from, verb and to with links in the subtitle, plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";

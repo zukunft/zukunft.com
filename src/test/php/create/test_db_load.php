@@ -1259,18 +1259,16 @@ class test_db_load
             $t->update_path_file($filepath, $lib->json_for_dev($created));
         }
 
-        if ($result) {
-            // check if the list of types matches the expected json file
-            // called upfront also from the reset db run because this is used for the unit tests
-            $result = $t->assert_api_get_list(type_lists::class);
+        // check if the list of types matches the expected json file
+        // called upfront also from the reset db run because this is used for the unit tests
+        $result = $t->assert_api_get_list(type_lists::class);
 
-            // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
-            if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
-                $lib = new library();
-                $created = $t->assert_result_api_get_list(type_lists::class);
-                $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath(type_lists::class);
-                $t->update_path_file($filepath, $lib->json_for_dev($created));
-            }
+        // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $lib = new library();
+            $created = $t->assert_result_api_get_list(type_lists::class);
+            $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath(type_lists::class);
+            $t->update_path_file($filepath, $lib->json_for_dev($created));
         }
 
         return $result;
