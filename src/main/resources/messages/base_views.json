@@ -18,6 +18,12 @@
       "code_id": "title_of_named_with_edit_link_word"
     },
     {
+      "name": "Triple title",
+      "description": "show the from, verb and to of the triple with links as the page title",
+      "type": "title_of_triple_with_edit_link",
+      "code_id": "title_of_triple_with_edit_link_triple"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -80,6 +86,11 @@
       "name": "related values",
       "description": "show the most relevant and related values",
       "type": "values_related"
+    },
+    {
+      "name": "values by triple",
+      "description": "show the most relevant values where this triple is used",
+      "type": "values_by_triple"
     },
     {
       "name": "value chart",
@@ -364,11 +375,56 @@
       "components": [
         {
           "position": "1",
-          "name": "triple name"
+          "name": "Triple title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title references",
+          "position_type": "side_or_last_below"
+        },
+        {
+          "position": "11",
+          "name": "ref list word",
+          "position_type": "combine"
         }
       ]
     },

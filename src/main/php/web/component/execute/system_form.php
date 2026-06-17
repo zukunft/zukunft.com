@@ -153,6 +153,49 @@ class system_form extends component
         int $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
+        // for a named object the page title is simply its name shown big
+        return $this->title_box($dbo, $dbo->name(), $max);
+    }
+
+    /**
+     * the page title for a triple: instead of the generated triple name show the from, verb
+     * and to with a link to each word/triple and the verb, but with the same edit link and
+     * subtitle as the named title
+     *
+     * @param db_object $dbo the triple whose from, verb and to are shown as the page title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the triple page title
+     */
+    function title_triple(
+        db_object $dbo,
+        int $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        $heading_content = $dbo->name();
+        if ($dbo::class == triple::class) {
+            $heading_content = $dbo->get_from()?->name_link() . ' '
+                . $dbo->get_verb()->name_link() . ' '
+                . $dbo->get_to()?->name_link();
+        }
+        return $this->title_box($dbo, $heading_content, $max);
+    }
+
+    /**
+     * the shared page-title box with the edit link and the category, type, share and
+     * protection subtitles; only the big heading content differs between a named object
+     * (its name) and a triple (its from, verb and to with links)
+     *
+     * @param db_object $dbo the object whose page title is shown
+     * @param string $heading_content the html shown big in the title heading
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the page title
+     */
+    private function title_box(
+        db_object $dbo,
+        string    $heading_content,
+        int       $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
         $html = new html_base();
 
         $lnk = $this->edit_link($dbo);
@@ -172,7 +215,7 @@ class system_form extends component
         $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
-            . $dbo->name() . '</' . html_base::H4 . '>';
+            . $heading_content . '</' . html_base::H4 . '>';
         $txt = $html->div($heading . $lnk, styles::HEADING_LINE);
 
         if ($sub_txt !== '') {

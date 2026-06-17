@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -46,10 +48,6 @@ $app = new application();
 $db_con = $app->start_api("triple", "", false);
 
 if ($db_con->is_open()) {
-
-    // get the parameters
-    $trp_id = $_GET[url_var::ID] ?? 0;
-    $trp_name = $_GET[url_var::NAME] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string
@@ -61,13 +59,21 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
+        // get the parameters
+        $trp_id = $_GET[url_var::ID] ?? 0;
+        $trp_name = $_GET[url_var::NAME] ?? '';
+
+        // INCL_RELATED is opt-in via the ?incl_related=1 url param so that the triple page
+        // gets the from, verb and to names for the title while a plain fetch stays cheap
+        $typ_lst = api_type_list::from_url_array($_GET);
+
         $trp = new triple($usr);
         if ($trp_id > 0) {
             $trp->load_by_id($trp_id);
-            $result = $trp->api_json();
+            $result = $trp->api_json($typ_lst, $usr);
         } elseif ($trp_name > 0) {
             $trp->load_by_name($trp_name);
-            $result = $trp->api_json();
+            $result = $trp->api_json($typ_lst, $usr);
         } else {
             $msg = 'triple id or name is missing';
         }

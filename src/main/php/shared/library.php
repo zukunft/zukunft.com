@@ -2631,6 +2631,26 @@ class library
 
     }
 
+    /**
+     * format a json for compare by developers
+     * @param array $data the json as array
+     * @return string the formatted json
+     */
+    function json_for_dev(array $data): string
+    {
+        return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * format a json how "normal" humans (not developers) would like to read (if they ever want)
+     * @param array $data the json as array
+     * @return string the formatted json
+     */
+    static function json_for_humans(array $data): string
+    {
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
     private
     static function sort_array_by_class($a, $b): int
     {

@@ -74,6 +74,9 @@ class component_types
     // (will be done via the sandbox language field once it has been added to all sandbox objects)
     const string TITLE_NAMED_EDIT = "title_of_named_with_edit_link";
     const int TITLE_NAMED_EDIT_ID = 192;
+    const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
+    const int TITLE_TRIPLE_EDIT_ID = 200;
+    const string TITLE_TRIPLE_EDIT_COM = "show the from, verb and to of a triple with links as the page title plus the edit link and subtitle";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -724,6 +727,7 @@ class component_types
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
+        [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],

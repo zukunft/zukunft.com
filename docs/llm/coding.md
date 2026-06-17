@@ -21,6 +21,50 @@ nothing left to remove. Prefer the smallest change that does the job: fewer
 lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
 it out — every rule below is subordinate to this one.
 
+## The second most relevant rule
+
+Write code a human reads at a glance. A line carries **one logical element —
+three at most**: one assignment, one call, one condition. When a line packs more,
+split it into named steps. Fewer lines is still better (don't pad a simple
+expression across many lines), so the goal is the *fewest* lines on which *each*
+line still reads at a glance — minimise lines subject to that limit, never by
+cramming.
+
+Wrong — five logical elements on one line (ternary, two getters, two calls, a
+concat); the reader has to unpack it:
+
+```php
+$title = $trp->get_from() != null ? $trp->get_from()->name_link() . ' ' . $trp->get_verb()->name_link() : '';
+```
+
+Right — each line does one thing, named for what it is:
+
+```php
+$from = $trp->get_from();
+$title = '';
+if ($from != null) {
+    $title = $from->name_link() . ' ' . $trp->get_verb()->name_link();
+}
+```
+
+Better still — a small function is not a sin. Pushing a two-step chain like
+`get_verb()->name_link()` behind a name on the owning class turns the call site
+into one self-describing element and lets the next reader (and every other call
+site) skip the detail:
+
+```php
+$title = $from->name_link() . ' ' . $trp->verb_name_link();
+// or, if the verb has no other kind of link, just $trp->verb_link()
+```
+
+So the cure for a crowded line is often a well-named helper, not only a local
+variable — naming the *operation* beats inlining it. (This is the same DRY move
+as the always-on "a 3+ step call chain belongs behind a function on the owning
+class" rule below; it costs a method but each call site reads at a glance.)
+
+The companion limit — function bodies fit on one screen page (~50 lines) — is in
+the always-on rules below and detailed in `docs/llm/structure.md`.
+
 ## Build / test / commit
 
 ```bash
