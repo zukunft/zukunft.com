@@ -59,6 +59,7 @@ messages:
   system_sub_title_value_usage: "Used z$VarUsage$z times"
   system_sub_title_no_usage: "Not used"
   system_sub_title_triples: "Triples"
+  system_sub_title_description: "Description"
   system_sub_title_references: "References"
   system_sub_title_values: "Values"
   system_sub_title_formulas: "Formulas"

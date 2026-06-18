@@ -125,6 +125,7 @@ class system_views_read_tests
         // FORMULA
         // increase is the example for the assigned-phrase subtitle of the "Formula title" component
         $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::INCREASE_ID, $cfg);
+        $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::CITY_POPULATION_ID, $cfg);
         $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
         $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1, $cfg);
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);

@@ -4,11 +4,11 @@
 
 ### word frontend
 
-move the references in the word default view to the first column at the end
+in the component 'related phrases without subtitles' und in the views 'Word (default)' and 'Triple (default)' group the phrases by the verb sorted by impact and name and for each verb group show the verb first with a link to the verb default view  
+
+for the formula 'bid-ask spread absolut' the assigned word is 'currency
 
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
-
-show above the description a subtitle
 
 rename component "change log word" to "change log term" or add "change log triple"
 

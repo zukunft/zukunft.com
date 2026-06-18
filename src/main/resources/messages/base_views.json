@@ -212,6 +212,13 @@
       "code_id": "list_phrases_related_ex_subtitle"
     },
     {
+      "name": "system sub title description",
+      "description": "show the language specific sub title for the description column",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_description",
+      "ui_msg_code_id": "system_sub_title_description"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -289,71 +296,77 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description"
         },
         {
           "position": "3",
-          "name": "system show field plural",
+          "name": "system show field description",
           "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "phrase aliases",
+          "name": "system show field plural",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase symbols",
+          "name": "phrase aliases",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "related phrases without subtitles",
+          "name": "phrase symbols",
           "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "children of word",
+          "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "children of word",
+          "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "value chart",
+          "name": "system sub title references",
           "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "related values",
+          "name": "ref list word",
           "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "12",
-          "name": "formula list",
+          "name": "value chart",
           "position_type": "combine"
         },
         {
           "position": "13",
-          "name": "view tab box",
-          "position_type": "side_or_last_below"
+          "name": "related values",
+          "position_type": "combine"
         },
         {
           "position": "14",
-          "name": "system sub title references"
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
         },
         {
           "position": "15",
-          "name": "ref list word",
+          "name": "formula list",
           "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -385,55 +398,60 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description"
         },
         {
           "position": "3",
-          "name": "phrase aliases",
+          "name": "system show field description",
           "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "phrase symbols",
+          "name": "phrase aliases",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "related phrases without subtitles",
+          "name": "phrase symbols",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "values by triple",
+          "name": "system sub title references",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
-        },
-        {
-          "position": "9",
-          "name": "formula list",
-          "position_type": "combine"
-        },
-        {
-          "position": "10",
-          "name": "system sub title references",
-          "position_type": "side_or_below"
-        },
-        {
-          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
+          "position": "9",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "10",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
           "position": "12",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
