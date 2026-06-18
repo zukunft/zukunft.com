@@ -986,6 +986,54 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word the "€" euro sign word, the euro equivalent of word_dollar ("$")
+     */
+    function word_euro_sign(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::EURO_SIGN_ID, word_names::EURO_SIGN);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "Euro" word with its related phrases (alias, symbol, in EUR and the
+     * "is a currency" triple) - the euro equivalent of us_dollar_related_ui
+     */
+    function euro_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->euro()->api_json());
+        $wrd->phr_lst = $t_phr->list_euro_related_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "currency" word with its related phrases, used to show the
+     * children (subclasses) of the word, e.g. "Euro" and "Swiss franc" are a currency
+     */
+    function currency_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->currency()->api_json());
+        $wrd->plural = word_names::CURRENCIES;
+        $wrd->phr_lst = $t_phr->list_currency_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "currency" word with a single child, used to show the
+     * single-child case of the "children of word" component, e.g. "Euro is a currency"
+     */
+    function single_currency_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->currency()->api_json());
+        $wrd->plural = word_names::CURRENCIES;
+        $wrd->phr_lst = $t_phr->list_single_currency_ui();
+        return $wrd;
+    }
+
+    /**
      * @return word the "currency" word, the common parent of "Swiss franc", "Euro" and "US Dollar"
      *              used to test word::similar
      */

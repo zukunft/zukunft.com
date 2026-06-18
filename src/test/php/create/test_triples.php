@@ -718,6 +718,54 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "EUR is symbol for Euro" - the euro equivalent of symbol_usd
+     */
+    function eur_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EUR_SYMBOL_ID, triple_names::EUR_SYMBOL);
+        $trp->set_from($t_wrd->word_eur()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::SYMBOL_EUR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "€ is alias of Euro" - the euro equivalent of alias_dollar
+     */
+    function euro_sign_alias(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EURO_SIGN_ALIAS_ID, triple_names::EURO_SIGN_ALIAS);
+        $trp->set_from($t_wrd->word_euro_sign()->phrase());
+        $trp->set_verb($t_vrb->verb_alias());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::ALIAS_EURO);
+        return $trp;
+    }
+
+    /**
+     * @return triple "in EUR" - the euro equivalent of in_usd
+     */
+    function in_eur(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::IN_EUR_ID, triple_names::IN_EUR);
+        $trp->set_from($t_wrd->word_eur()->phrase());
+        $trp->set_verb($t_vrb->verb_in());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::IN_EUR);
+        return $trp;
+    }
+
+    /**
      * @return triple "$ is alias of US dollar" used for unit testing the alias display
      */
     function alias_dollar(): triple

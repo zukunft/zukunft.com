@@ -919,6 +919,23 @@ class test_phrases
     }
 
     /**
+     * the phrases related to the word "Euro" as loaded with the word from the backend
+     * (the euro equivalent of list_us_dollar_related_ui)
+     *
+     * @return phrase_list_ui with the alias, symbol, "in EUR" and category triples of the euro
+     */
+    function list_euro_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->euro_sign_alias()->phrase());
+        $lst->add($t_trp->eur_symbol()->phrase());
+        $lst->add($t_trp->in_eur()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * the phrases related to the word "company" as loaded with the word from the backend
      * in a not sorted order e.g. to test that the related stocks are shown
      * sorted by the market capitalisation on the default word page
@@ -973,6 +990,22 @@ class test_phrases
     function list_currency_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_currency());
+    }
+
+    /**
+     * a currency related list with a single child (only "Euro is a currency") so that the
+     * "children of word" component shows the single-child case "Euro is a currency"
+     * @return phrase_list_ui with the currency word and the one "Euro is a currency" triple
+     */
+    function list_single_currency_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->currency()->phrase());
+        $lst->add($t_wrd->euro()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        return $this->ui_list($lst);
     }
 
     /**

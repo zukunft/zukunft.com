@@ -77,6 +77,9 @@ class component_types
     const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
     const int TITLE_TRIPLE_EDIT_ID = 200;
     const string TITLE_TRIPLE_EDIT_COM = "show the triple name as the page title and the from, verb and to with links in the subtitle, plus the edit link";
+    const string TITLE_FORMULA_EDIT = "title_of_formula_with_edit_link";
+    const int TITLE_FORMULA_EDIT_ID = 201;
+    const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle, plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";

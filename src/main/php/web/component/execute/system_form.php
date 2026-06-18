@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::CONST . 'def.php';
@@ -81,6 +82,7 @@ include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -182,6 +184,23 @@ class system_form extends component
     }
 
     /**
+     * the page title for a formula: like the named title (formula name big plus the edit link),
+     * but the subtitle lists the phrases the formula is assigned to instead of parent phrases
+     * (the assigned phrases are rendered by category_subtitle() from the formula's phr_lst)
+     *
+     * @param db_object $dbo the formula whose name is the title and whose assigned phrases are the subtitle
+     * @param int $max to limit the number of assigned phrases shown before a "..." link
+     * @return string the html code for the formula page title
+     */
+    function title_formula(
+        db_object $dbo,
+        int $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        return $this->title_named($dbo, $max);
+    }
+
+    /**
      * the shared page-title box with the edit link and the category, type, share and
      * protection subtitles; the big heading content is the object name, and a triple
      * additionally passes its from/verb/to links shown first in the same subtitle line
@@ -248,6 +267,12 @@ class system_form extends component
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             if ($dbo->phr_lst != null) {
                 $result = $dbo->phr_lst->category_subtitle($dbo->phrase(), $max);
+            }
+        } elseif ($dbo::class == formula::class) {
+            // a formula is not verb-linked to its phrases, so show the assigned phrases as a
+            // plain comma-separated list of links instead of the verb-grouped category subtitle
+            if ($dbo->phr_lst != null) {
+                $result = $dbo->phr_lst->assigned_subtitle($max);
             }
         } else {
             $lib = new library();
