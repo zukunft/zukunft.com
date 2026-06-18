@@ -78,6 +78,17 @@ class math_tests
         $result = $calc->parse($math_text);
         $t->assert($ts . 'test multiply bracket rule with "' . $math_text . '"', $result, 2);
 
+        // test the sign combiner that reduces "+ -" to "-" and "- -" to "+" before the calculation
+        $t->assert($ts . 'calc plus a negative "2 + -1"', $calc->parse("2 + -1"), 1);
+        $t->assert($ts . 'calc minus a negative "2 - -1"', $calc->parse("2 - -1"), 3);
+
+        // test a sum with a negative term as produced by a formula like
+        // "GDP" = "consumption" + "investment" + "government spending" + "net exports"
+        $math_text = "18799600000000 + 4945100000000 + 4562600000000 + -945300000000";
+        $target = 27362000000000;
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'test plus minus sign rule with "' . $math_text . '"', $result, $target);
+
     }
 
 }

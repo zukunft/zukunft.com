@@ -98,6 +98,41 @@ a **todo** by starting a job from the JSON rather than inventing an unreferenced
 description — the job records the gap so a maintained reference can be added (or
 created) later, and the word keeps its best partial reference until then.
 
+### Still carry the Wikipedia lead sentence as the `description`
+
+Preferring the `ref` does **not** mean leaving `description` empty. Even when a
+word or triple already has a Wikipedia (or Wikidata) `ref`, also fill its
+`description` with the **first sentence — or two — of the Wikipedia lead**, so the
+UI has tooltip text to show without a live fetch. The two work together: the
+`ref` does not *replace* the description, it *keeps it fresh* — a refresh job
+follows the Wikipedia link and re-pulls the lead, so the copied text is a cached
+snapshot the link refreshes, not hand-written prose that drifts (which is what the
+rule above warns against).
+
+Copy the lead as **clean prose**, stripped down to the defining sentence(s):
+
+- drop the inline wiki-links (keep the words, remove the markup),
+- drop the bracketed **alternative names / native spellings**,
+- drop the **pronunciation / IPA** parentheses,
+- drop the bold restatement of the name itself (the `name` already carries it).
+
+- **Wrong** — raw lead pasted in, with pronunciation, native name, link markup
+  and the repeated name:
+
+```json
+{ "name": "Zurich",
+  "description": "Zürich (/ˈzjʊərɪk/ ZURE-ik; Swiss Standard German: [ˈtsyːrɪç]) is the largest [[city]] in [[Switzerland]], in the north-central part of the country.",
+  "refs": [ { "name": "Zurich", "type": "wikipedia" } ] }
+```
+
+- **Right** — cleaned defining sentence; the `ref` still drives the refresh:
+
+```json
+{ "name": "Zurich",
+  "description": "the largest city in Switzerland, in the north-central part of the country.",
+  "refs": [ { "name": "Zurich", "type": "wikipedia" } ] }
+```
+
 ### Words are the most atomic text — no spaces if it can be avoided
 
 A word is the smallest reusable unit of meaning in the graph. Pick the

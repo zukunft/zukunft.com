@@ -98,6 +98,9 @@ class calc_internal
                 $result = substr($result, 1);
             }
 
+            // reduce sign pairs e.g. "+ -9" to "- 9" before the calculation is started
+            $result = $this->combine_signs($result);
+
             $result = $this->math_if($result);
             log_debug("math_parse after if:" . $result);
             $result = $this->math_bracket($result);
@@ -564,6 +567,27 @@ class calc_internal
     private function math_sub(string $formula): string
     {
         return $this->calc($formula, chars::SUB);
+    }
+
+    /**
+     * combine a binary operator directly followed by the sign of the next number into a single operator
+     * so that e.g. "4 + -9" is calculated as "4 - 9" and "4 - -9" as "4 + 9"
+     * this runs before the calculation is started, because a sum formula with a negative input
+     * (e.g. GDP = consumption + investment + government spending + net exports) produces "+ -" pairs
+     * @param string $formula the math expression that may contain a "+ -", "- -", "+ +" or "- +" sign pair
+     * @returns string the expression with each sign pair reduced to a single "+" or "-" operator
+     */
+    private function combine_signs(string $formula): string
+    {
+        $result = preg_replace_callback(
+            '/\s*([+\-])\s*([+\-])\s*(?=\d)/',
+            function (array $match): string {
+                $sign = ($match[1] === $match[2]) ? chars::ADD : chars::SUB;
+                return ' ' . $sign . ' ';
+            },
+            $formula
+        );
+        return $result ?? $formula;
     }
 
     /**
