@@ -169,6 +169,15 @@ class files
     // most relevant base data around the gross domestic product (GDP) used as a real-world demo and for system testing
     const string GDP_FILE = self::BASE_DATA_PATH . 'GDP' . self::JSON;
 
+    // most relevant base data around global warming used as a real-world demo and for system testing
+    const string GLOBAL_WARMING_FILE = self::BASE_DATA_PATH . 'global_warming' . self::JSON;
+
+    // most relevant base data around populism, disinformation and the risks of social media used as a real-world demo and for system testing
+    const string POPULISM_FILE = self::BASE_DATA_PATH . 'populism' . self::JSON;
+
+    // most relevant base data around the world population, children per woman and DALY used as a real-world demo and for system testing
+    const string POPULATION_FILE = self::BASE_DATA_PATH . 'population' . self::JSON;
+
     /*
      * file lists
      */
@@ -224,7 +233,10 @@ class files
     // so that the views can be tested by name without relying on database ids
     const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
-        files::GDP_FILE,
+        self::GDP_FILE,
+        self::GLOBAL_WARMING_FILE,
+        self::POPULISM_FILE,
+        self::POPULATION_FILE,
     ];
 
 }

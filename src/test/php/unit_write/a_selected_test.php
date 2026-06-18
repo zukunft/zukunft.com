@@ -77,7 +77,10 @@ class a_selected_test extends test_cleanup
     // the import json files to load for a fast single-file debugging cycle
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
-        files::GDP_FILE,
+        files::POPULATION_FILE,
+        //files::POPULISM_FILE,
+        //files::GLOBAL_WARMING_FILE,
+        //files::GDP_FILE,
         //files::ZURICH_FILE,
         //files::MESSAGE_PATH . files::TIME_FILE,
         //files::MESSAGE_PATH . files::BASE_VIEWS_FILE,
