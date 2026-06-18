@@ -101,6 +101,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
@@ -153,6 +154,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -275,6 +277,9 @@ class triple extends sandbox_link_named
     // the most recent change log entries of this triple; populated lazily by load_changes_related()
     // and only emitted via api_json_array() when the api_types::INCL_RELATED flag is set
     public ?change_log_list $changes_related = null;
+    // the views suggested for this triple (currently its own default view); populated lazily by
+    // load_views_related() and only emitted via api_json_array() when the INCL_RELATED flag is set
+    public ?view_list $views_related = null;
 
 
     /*
@@ -651,6 +656,24 @@ class triple extends sandbox_link_named
         $this->changes_related = $chg_lst;
     }
 
+    /**
+     * load the views related to this triple into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; currently the triple's own
+     * default view, loaded by id so that it carries the name the api and frontend name_link need
+     * TODO add the default views of the parent phrases once the triple exposes a parents() list,
+     *      mirroring word::load_views_related()
+     */
+    function load_views_related(): void
+    {
+        $msk_lst = new view_list($this->get_user());
+        if ($this->view != null and $this->get_view_id() > 0) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($this->get_view_id());
+            $msk_lst->add($msk);
+        }
+        $this->views_related = $msk_lst;
+    }
+
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
@@ -734,6 +757,13 @@ class triple extends sandbox_link_named
                     }
                     if ($this->changes_related != null and !$this->changes_related->is_empty()) {
                         $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->views_related == null and !$typ_lst->test_mode()) {
+                        $this->load_views_related();
+                    }
+                    if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }
                 }

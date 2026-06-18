@@ -4,17 +4,19 @@
 
 ### word frontend
 
+show the references in triple as it is in the word default view. src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html is expected to have at least some references
+
+move the references in the word default view to the first column at the end
+
+in the triple subtitle and the links the the phrase
+
+create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
+
+similar to the component 'Word Title' and 'Triple title' create a component 'Formula title' that almost exactly repeats 'Wort title' but obviously the word name is replace by the formula name. And in the subtitle instead of the parent phrases the assigned phrases are shown.  
+
 show above the description a subtitle
 
 rename component "change log word" to "change log term" or add "change log triple"
-
-show the formulas in triple as it is in the word default view
-
-add 'public ?view_list $view_lst = null;' and the related function to web/.../triple.php as it is in web/.../word.php
-
-show in web/.../triple.php the changes and views in tabs as it is in web/.../word.php
-
-move the references in the word default view to the first column at the end
 
 
 

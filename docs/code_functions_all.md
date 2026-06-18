@@ -340,6 +340,7 @@
     \-- load_formulas_related - section for function load_formulas_related is expected to be load in /word/triple.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/triple.php
     \-- load_changes_related - section for function load_changes_related is expected to be load in /word/triple.php
+    \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
     \-- name_given - section for function name_given not yet defined that it should be set and get in /word/triple.php
     \-- name_generated - section for function name_generated not yet defined that it should be set and get in /word/triple.php
@@ -6907,7 +6908,7 @@
     \-- views_related
         \-- ui_list - HTML for the views related to the given word: its own default view plus the default
     \-- view_tab_box
-        \-- ui_list - HTML for the col-4 tab box of the word page: a "Views" tab with the related views
+        \-- ui_list - HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list

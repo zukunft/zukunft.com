@@ -453,20 +453,20 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of the word page: a "Views" tab with the related views
-     * (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
-     * with the change log of the word, latest first
+     * HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
+     * views (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
+     * with the change log of the object, latest first
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
-     * @param db_object $dbo the word that should be shown to the user
+     * @param db_object $dbo the word or triple that should be shown to the user
      * @param bool $test_mode true to create a reproducible result without a backend call
-     * @return string the html code of the tab box or an empty string for a non-word object
+     * @return string the html code of the tab box or an empty string for an unsupported object
      */
     function view_tab_box(db_object $dbo, bool $test_mode = false): string
     {
         global $mtr;
         $result = '';
-        if ($dbo::class == word::class) {
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
             $html = new html_base();
             // tab 1: each related view as a preview placeholder with the open and switch buttons
             $views_html = '';

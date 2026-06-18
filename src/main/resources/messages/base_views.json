@@ -265,7 +265,7 @@
     },
     {
       "name": "view tab box",
-      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
       "type": "view_tab_box",
       "code_id": "view_tab_box_word"
     }
@@ -428,13 +428,8 @@
         },
         {
           "position": "12",
-          "name": "system sub title log",
+          "name": "view tab box",
           "position_type": "side_or_last_below"
-        },
-        {
-          "position": "13",
-          "name": "change log word",
-          "position_type": "combine"
         }
       ]
     },

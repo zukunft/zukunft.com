@@ -55,5 +55,5 @@ formula_id,user_id,formula_name,formula_text,resolved_text,latex,description,for
 54,1,share of canton (formula),{t139}={t98}/{t99}*100,"Zurich (city) share of Zurich (canton)" = "Zurich (city)" / "Zurich (canton)" * 100,,,1,,,,,,,
 55,1,natural balance (formula),{w709}={w718}-{w719},"natural balance" = "birth count" - "death count",,,1,,,,,,,
 56,1,GDP per capita (formula),{w706}={w261}/{w254},"GDP per capita" = "GDP" / "population",,,1,,,,,,,
-57,1,foreign count (formula),{w720}={w254}*{t555}/100,"foreign count" = "population" * "foreign share" / 100,,,1,,,,,,,
-58,1,welfare (formula),{w710}={w254}*{t556},"welfare" = "population" * "waking welfare fraction",,,1,,,,,,,
+57,1,foreign count (formula),{w720}={w254}*{t554}/100,"foreign count" = "population" * "foreign share" / 100,,,1,,,,,,,
+58,1,welfare (formula),{w710}={w254}*{t555},"welfare" = "population" * "waking welfare fraction",,,1,,,,,,,

@@ -63,7 +63,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VERB . 'verb.php';
-//include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -161,6 +161,9 @@ class triple extends sandbox_code_id
     // the most recent change log entries of this triple; filled from the INCL_RELATED api
     // message and shown by the "change log word" component
     public ?change_log_list $chg_log = null;
+
+    // the views suggested for this triple; filled from the INCL_RELATED api message
+    public ?view_list $view_lst = null;
 
 
     /*
@@ -357,6 +360,18 @@ class triple extends sandbox_code_id
             }
         } else {
             $this->chg_log = null;
+        }
+        if (array_key_exists(json_fields::VIEWS, $json_array)) {
+            $view = $json_array[json_fields::VIEWS];
+            if (is_array($view)) {
+                $lst = new view_list();
+                $lst->api_mapper($view);
+                $this->view_lst = $lst;
+            } else {
+                $this->view_lst = null;
+            }
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }
