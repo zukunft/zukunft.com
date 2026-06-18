@@ -419,11 +419,21 @@
         {
           "position": "10",
           "name": "system sub title references",
-          "position_type": "side_or_last_below"
+          "position_type": "side_or_below"
         },
         {
           "position": "11",
           "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "system sub title log",
+          "position_type": "side_or_last_below"
+        },
+        {
+          "position": "13",
+          "name": "change log word",
           "position_type": "combine"
         }
       ]

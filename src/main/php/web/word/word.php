@@ -153,6 +153,14 @@ class word extends sandbox_code_id
     // the main parent phrase
     public ?phrase $parent = null;
 
+    // the system calculated impact of this word used to sort the words by relevance
+    // (highest impact first); same field name as triple, formula and verb so a term can
+    // read the impact of its wrapped object without knowing the concrete class
+    public float $impact = 0.0;
+
+    // TODO Prio 2
+    // cache values that should later be moved to the general data_object cache
+
     // the phrases connected to this word by a triple
     public ?phrase_list $phr_lst = null;
 
@@ -163,11 +171,6 @@ class word extends sandbox_code_id
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
-
-    // the system calculated impact of this word used to sort the words by relevance
-    // (highest impact first); same field name as triple, formula and verb so a term can
-    // read the impact of its wrapped object without knowing the concrete class
-    public float $impact = 0.0;
 
 
     /*

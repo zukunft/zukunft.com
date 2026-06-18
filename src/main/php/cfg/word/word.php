@@ -494,7 +494,9 @@ class word extends sandbox_code_id
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
-                if ($typ_lst->incl_related()) {
+                // related data is keyed by the word's phrase id, so a fresh
+                // word (id 0, e.g. the add form) has none to load
+                if ($typ_lst->incl_related() and $this->id() != 0) {
                     if ($this->phrases_related == null and !$typ_lst->test_mode()) {
                         $this->load_phrases_related();
                     }

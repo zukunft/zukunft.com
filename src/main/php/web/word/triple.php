@@ -47,17 +47,21 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VERB . 'verb.php';
 //include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::WORD . 'word.php';
@@ -71,15 +75,19 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -131,8 +139,28 @@ class triple extends sandbox_code_id
     // the impact used to sort the triples
     public float $impact = 0.0;
 
+    // TODO Prio 2
+    // cache values that should later be moved to the general data_object cache, so that the
+    // related values/formulas live in exactly one place (DRY) instead of on each frontend object
+
     // the phrases connected to this triple by another triple
     public ?phrase_list $phr_lst = null;
+
+    // the values where this triple is used, e.g. for "Zurich (canton)" the population and GDP;
+    // filled from the INCL_RELATED api message and shown by the "values by triple" component
+    public ?value_list $val_lst = null;
+
+    // the formulas related to this triple; filled from the INCL_RELATED api message and
+    // shown by the formula list component
+    public ?formula_list $frm_lst = null;
+
+    // the external references of this triple; filled from the INCL_RELATED api message and
+    // shown by the "ref list word" component
+    public ?ref_list $ref_lst = null;
+
+    // the most recent change log entries of this triple; filled from the INCL_RELATED api
+    // message and shown by the "change log word" component
+    public ?change_log_list $chg_log = null;
 
 
     /*
@@ -281,6 +309,54 @@ class triple extends sandbox_code_id
             }
         } else {
             $this->phr_lst = null;
+        }
+        if (array_key_exists(json_fields::VALUES, $json_array)) {
+            $value = $json_array[json_fields::VALUES];
+            if (is_array($value)) {
+                $lst = new value_list();
+                $lst->api_mapper($value);
+                $this->val_lst = $lst;
+            } else {
+                $this->val_lst = null;
+            }
+        } else {
+            $this->val_lst = null;
+        }
+        if (array_key_exists(json_fields::FORMULAS, $json_array)) {
+            $formula = $json_array[json_fields::FORMULAS];
+            if (is_array($formula)) {
+                $lst = new formula_list();
+                $lst->api_mapper($formula);
+                $this->frm_lst = $lst;
+            } else {
+                $this->frm_lst = null;
+            }
+        } else {
+            $this->frm_lst = null;
+        }
+        if (array_key_exists(json_fields::REFERENCES, $json_array)) {
+            $reference = $json_array[json_fields::REFERENCES];
+            if (is_array($reference)) {
+                $lst = new ref_list();
+                $lst->api_mapper($reference);
+                $this->ref_lst = $lst;
+            } else {
+                $this->ref_lst = null;
+            }
+        } else {
+            $this->ref_lst = null;
+        }
+        if (array_key_exists(json_fields::CHANGES, $json_array)) {
+            $change = $json_array[json_fields::CHANGES];
+            if (is_array($change)) {
+                $lst = new change_log_list();
+                $lst->api_mapper($change);
+                $this->chg_log = $lst;
+            } else {
+                $this->chg_log = null;
+            }
+        } else {
+            $this->chg_log = null;
         }
         return $msg->is_ok();
     }

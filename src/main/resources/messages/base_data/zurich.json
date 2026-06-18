@@ -8,7 +8,7 @@
     "canton",
     "statistics"
   ],
-  "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Measured values carry the 'measured value' provenance triple and a source; derived values carry 'assumed value' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
+  "description": "Key figures for the city and canton of Zurich as of 31.12.2025 (population definitive, other 2025 values provisional), with derived results computed by formulas and reproduced in the calc-validation block (except the canton population year-over-year growth, which the system 'increase' formula derives through the time dimension and is therefore not calc-validated). Derived values carry 'assumed value' only where a modelling assumption (e.g. waking welfare fraction) enters, otherwise they are pure formula outputs. Words prefer a Wikipedia ref over a free-text description per schema guidance.",
   "words": [
     {
       "name": "Zurich",
@@ -348,12 +348,6 @@
       "protection": "admin_protection"
     },
     {
-      "name": "measured value",
-      "from": "value",
-      "verb": "must be one of",
-      "to": "measured"
-    },
-    {
       "name": "assumed value",
       "from": "value",
       "verb": "must be one of",
@@ -465,9 +459,7 @@
       "words": [
         "Zurich (city)",
         "population",
-        "2025",
-        "person",
-        "measured value"
+        "2025"
       ],
       "number": "452421",
       "source": "Statistik Stadt Zuerich 2025"
@@ -476,9 +468,7 @@
       "words": [
         "Zurich (canton)",
         "population",
-        "2025",
-        "person",
-        "measured value"
+        "2025"
       ],
       "number": "1628081",
       "source": "Statistisches Amt Kanton Zuerich 2025"
@@ -487,9 +477,7 @@
       "words": [
         "Zurich (canton)",
         "population",
-        "2024",
-        "person",
-        "measured value"
+        "2024"
       ],
       "number": "1615112",
       "source": "Statistisches Amt Kanton Zuerich 2025"
@@ -498,8 +486,7 @@
       "words": [
         "Zurich (city)",
         "area",
-        "km2",
-        "measured value"
+        "km2"
       ],
       "number": "91.88",
       "source": "Wikipedia canton of Zurich"
@@ -508,8 +495,7 @@
       "words": [
         "Zurich (canton)",
         "area",
-        "km2",
-        "measured value"
+        "km2"
       ],
       "number": "1729",
       "source": "Wikipedia canton of Zurich"
@@ -518,8 +504,7 @@
       "words": [
         "Zurich (city)",
         "foreign share",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "33.9",
       "source": "Statistik Stadt Zuerich 2025"
@@ -528,8 +513,7 @@
       "words": [
         "Zurich (canton)",
         "foreign share",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "number": "29",
       "source": "Statistisches Amt Kanton Zuerich 2025"
@@ -539,8 +523,7 @@
         "Zurich (city)",
         "birth count",
         "2025",
-        "person",
-        "measured value"
+        "person"
       ],
       "number": "4535",
       "source": "Statistik Stadt Zuerich 2025"
@@ -550,8 +533,7 @@
         "Zurich (city)",
         "death count",
         "2025",
-        "person",
-        "measured value"
+        "person"
       ],
       "number": "3043",
       "source": "Statistik Stadt Zuerich 2025"
@@ -561,8 +543,7 @@
         "Zurich (canton)",
         "GDP",
         "2022",
-        "CHF",
-        "measured value"
+        "CHF"
       ],
       "number": "159800000000",
       "source": "BFS cantonal GDP 2022"
@@ -728,9 +709,7 @@
         "population",
         "area",
         "2025",
-        "person",
-        "km2",
-        "measured value"
+        "km2"
       ],
       "formula": "density (formula)",
       "words": [
@@ -748,9 +727,7 @@
         "population",
         "area",
         "2025",
-        "person",
-        "km2",
-        "measured value"
+        "km2"
       ],
       "formula": "density (formula)",
       "words": [
@@ -767,9 +744,7 @@
         "Zurich (city)",
         "Zurich (canton)",
         "population",
-        "2025",
-        "person",
-        "measured value"
+        "2025"
       ],
       "formula": "share of canton (formula)",
       "words": [
@@ -785,8 +760,7 @@
         "birth count",
         "death count",
         "2025",
-        "person",
-        "measured value"
+        "person"
       ],
       "formula": "natural balance (formula)",
       "words": [
@@ -805,9 +779,7 @@
         "population",
         "2022",
         "2025",
-        "CHF",
-        "person",
-        "measured value"
+        "CHF"
       ],
       "formula": "GDP per capita (formula)",
       "words": [
@@ -824,9 +796,7 @@
         "population",
         "foreign share",
         "2025",
-        "person",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "formula": "foreign count (formula)",
       "words": [
@@ -844,9 +814,7 @@
         "population",
         "foreign share",
         "2025",
-        "person",
-        "percent",
-        "measured value"
+        "percent"
       ],
       "formula": "foreign count (formula)",
       "words": [
@@ -864,8 +832,6 @@
         "population",
         "waking welfare fraction",
         "2025",
-        "person",
-        "measured value",
         "assumed value"
       ],
       "formula": "welfare (formula)",

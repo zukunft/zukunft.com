@@ -6,6 +6,16 @@
 
 show above the description a subtitle
 
+rename component "change log word" to "change log term" or add "change log triple"
+
+show the formulas in triple as it is in the word default view
+
+add 'public ?view_list $view_lst = null;' and the related function to web/.../triple.php as it is in web/.../word.php
+
+show in web/.../triple.php the changes and views in tabs as it is in web/.../word.php
+
+move the references in the word default view to the first column at the end
+
 
 
 

@@ -78,6 +78,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
@@ -86,6 +87,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
@@ -93,6 +95,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
@@ -108,6 +111,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -131,6 +135,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -141,6 +146,8 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
@@ -156,6 +163,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -253,6 +261,20 @@ class triple extends sandbox_link_named
         }
     }
     private ?array $ref_lst = [];
+
+    // values where this triple is used; populated lazily by load_values_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the default
+    // triple view can show e.g. for "Zurich (canton)" the population, area and GDP values
+    public ?value_list $values_related = null;
+    // formulas related to this triple; populated lazily by load_formulas_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?formula_list $formulas_related = null;
+    // external references of this triple; populated lazily by load_references_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?ref_list $references_related = null;
+    // the most recent change log entries of this triple; populated lazily by load_changes_related()
+    // and only emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?change_log_list $changes_related = null;
 
 
     /*
@@ -582,6 +604,53 @@ class triple extends sandbox_link_named
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
+    /**
+     * load the values where this triple is used into the in-memory values_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_values_related(): void
+    {
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr($this->phrase());
+        // load the phrase names of each value group so that the related value list
+        // shows the phrase names (and not only the links) in the api and frontend
+        $val_lst->load_phrases();
+        $this->values_related = $val_lst;
+    }
+
+    /**
+     * load the formulas related to this triple into the in-memory formulas_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_formulas_related(): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        $frm_lst->load_by_phr($this->phrase());
+        $this->formulas_related = $frm_lst;
+    }
+
+    /**
+     * load the external references of this triple into the in-memory references_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_references_related(): void
+    {
+        $ref_lst = new ref_list($this->get_user());
+        $ref_lst->load_by_phr_id($this->phrase()->id());
+        $this->references_related = $ref_lst;
+    }
+
+    /**
+     * load the most recent change log entries of this triple into the in-memory
+     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_changes_related(): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user());
+        $this->changes_related = $chg_lst;
+    }
+
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
@@ -631,6 +700,43 @@ class triple extends sandbox_link_named
                 }
                 $vars[json_fields::USAGE] = $this->usage;
                 $vars[json_fields::IMPACT] = $this->impact;
+                // related data is keyed by the triple's phrase id, so a fresh
+                // triple (id 0, e.g. the add form) has none to load
+                if ($typ_lst->incl_related() and $this->id() != 0) {
+                    if ($this->values_related == null and !$typ_lst->test_mode()) {
+                        $this->load_values_related();
+                    }
+                    if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // INCL_PHRASES so each value carries its group phrases, which the
+                        // frontend needs for the value name and to sort the list by impact
+                        $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
+                    if ($this->formulas_related == null and !$typ_lst->test_mode()) {
+                        $this->load_formulas_related();
+                    }
+                    if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
+                        // their own name, id and impact, which the frontend needs to render
+                        // and sort the list by impact, without recursing back into relations
+                        $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->references_related == null and !$typ_lst->test_mode()) {
+                        $this->load_references_related();
+                    }
+                    if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->changes_related == null and !$typ_lst->test_mode()) {
+                        $this->load_changes_related();
+                    }
+                    if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+                        $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();

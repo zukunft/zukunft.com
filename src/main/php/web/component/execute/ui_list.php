@@ -343,15 +343,20 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        $frm_lst = clone $cfg->frm_lst;
         if ($dbo::class == verb::class) {
+            $frm_lst = clone $cfg->frm_lst;
             $frm_lst = $frm_lst->get_by_verb($dbo);
             $result = $frm_lst->name_link();
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            }
+        } elseif ($dbo::class == word::class or $dbo::class == triple::class) {
+            // the word/triple carries its own related formulas from the INCL_RELATED api message
+            if ($dbo->frm_lst != null) {
+                $result = $dbo->frm_lst->name_link();
+            }
         } else {
-            log_err($dbo::class . '  is not expected to be a selection for formulas');
-        }
-        if ($result == '') {
-            $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            log_err($dbo::class . ' is not expected to be a selection for formulas');
         }
         return $result;
     }
@@ -407,9 +412,9 @@ class ui_list extends ui_base
             $phr = $dbo->phrase();
         }
         if ($phr != null) {
-            // a word loaded for its page carries its references directly (like the related
-            // values and formulas); otherwise fall back to the page reference cache
-            if ($dbo::class == word::class and $dbo->ref_lst != null) {
+            // a word or triple loaded for its page carries its references directly (like the
+            // related values and formulas); otherwise fall back to the page reference cache
+            if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
                 $ref_lst = $dbo->ref_lst;
             } else {
                 $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
@@ -634,6 +639,10 @@ class ui_list extends ui_base
     ): string
     {
         $val_lst = $dto->val_lst?->filter($dbo);
+        // the triple carries its own related values from the INCL_RELATED api message
+        if ($dbo::class == triple::class and $dbo->val_lst != null) {
+            $val_lst = $dbo->val_lst;
+        }
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);
