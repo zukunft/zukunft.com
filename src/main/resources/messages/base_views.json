@@ -321,12 +321,12 @@
         },
         {
           "position": "7",
-          "name": "related phrases without subtitles",
+          "name": "children of word",
           "position_type": "combine"
         },
         {
           "position": "8",
-          "name": "children of word",
+          "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {

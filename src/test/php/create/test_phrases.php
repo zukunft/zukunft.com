@@ -993,6 +993,22 @@ class test_phrases
     }
 
     /**
+     * a currency related list with a single child (only "Euro is a currency") so that the
+     * "children of word" component shows the single-child case "Euro is a currency"
+     * @return phrase_list_ui with the currency word and the one "Euro is a currency" triple
+     */
+    function list_single_currency_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->currency()->phrase());
+        $lst->add($t_wrd->euro()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * the frontend list of city and canton related phrases
      * e.g. to test the subtitle for the city zurich in a different order
      *

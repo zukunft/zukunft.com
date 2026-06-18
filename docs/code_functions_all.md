@@ -5335,7 +5335,6 @@
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_list.php
     \-- parent_triples_ex_verbs - section for function parent_triples_ex_verbs not yet defined that it should be select in /phrase/phrase_list.php
-    \-- child_triples_ex_verbs - section for function child_triples_ex_verbs not yet defined that it should be select in /phrase/phrase_list.php
     \-- assume_time - section for function assume_time not yet defined that it should be select in /phrase/phrase_list.php
     \-- wrd_lst_all - section for function wrd_lst_all not yet defined that it should be select in /phrase/phrase_list.php
     \-- word_list - section for function word_list not yet defined that it should be select in /phrase/phrase_list.php
@@ -5994,8 +5993,6 @@
         \-- phrase_list - get all triples that are connected to the given phrase
     \-- parent_triples_ex_verbs
         \-- phrase_list - get the triples that point to the given phrase excluding the given verbs
-    \-- child_triples_ex_verbs
-        \-- phrase_list - get the triples that start from the given phrase excluding the given verbs
     \-- 1
         \-- word_list - add the word list default values to the selector function
     \-- assume_time

@@ -444,29 +444,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * get the triples that start from the given phrase excluding the given verbs
-     * e.g. to show the children on the default word page without the "is a" category triples
-     * that are already shown in the page subtitle (and without the alias and symbol entries)
-     * @param phrase $phr the source phrase
-     * @param array $vrb_ids the database ids of the verbs to exclude
-     * @return phrase_list the triples from the given phrase without the excluded verbs
-     */
-    function child_triples_ex_verbs(phrase $phr, array $vrb_ids): phrase_list
-    {
-        $result = new phrase_list;
-        foreach ($this->lst() as $trp) {
-            if ($trp->is_triple()) {
-                if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
-                    if ($trp->get_from()->id() == $phr->id()) {
-                        $result->add($trp);
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * to select a phrase from this list
      * @param string $name the unique name within the html form for this selector
      * @param string $form the name of the html form

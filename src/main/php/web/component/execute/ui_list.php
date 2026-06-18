@@ -122,17 +122,32 @@ class ui_list extends ui_base
         global $ui_sys;
         $result = '';
         $phr_cac = $this->related_list($wrd, $phr_lst);
-        $vrb_cac = $ui_sys?->typ_lst_cache?->vrb;
-        if ($phr_cac != null and $vrb_cac != null) {
-            // exclude the "is a" category triples (already shown in the page subtitle) and the
-            // alias and symbol triples (shown by their own components), so only genuine
-            // children remain - mirrors phrases_related_ex_subtitle for the down direction
-            $vrb_ids = [
-                $vrb_cac->id(verbs::SYMBOL),
-                $vrb_cac->id(verbs::ALIAS),
-                $vrb_cac->id(verbs::IS)
-            ];
-            $result = $phr_cac->child_triples_ex_verbs($wrd->phrase(), $vrb_ids)->name_link();
+        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        if ($phr_cac != null and $is_vrb != null) {
+            $phr = $wrd->phrase();
+            // the children of a word are its subclasses, i.e. the phrases that "are a" this word
+            $children = $phr_cac->parents($phr, $is_vrb);
+            if (!$children->is_empty()) {
+                $html = new html_base();
+                if ($children->count() == 1) {
+                    // a single child reads as the full statement, e.g. "Euro is a currency"
+                    $header = $children->name_link() . ' ' . $is_vrb->name() . ' ' . $phr->name();
+                } else {
+                    // several children get a header of the word plural and the verb plural,
+                    // e.g. "currencies are", followed by the list of the child phrases
+                    $plural = $wrd->get_plural();
+                    if ($plural == null or $plural == '') {
+                        $plural = $phr->name();
+                    }
+                    $header = $plural . ' ' . $is_vrb->plural_reverse();
+                }
+                // start with a line break and the header as an h4 subtitle, then (for several
+                // children) the linked child phrases
+                $result = $html->br() . $html->dsp_text_h2($header);
+                if ($children->count() > 1) {
+                    $result .= $children->name_link();
+                }
+            }
         }
         return $result;
     }

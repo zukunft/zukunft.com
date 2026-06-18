@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-06-18T21:20:19+00:00",
+    "timestamp": "2026-06-18T22:39:01+00:00",
     "body": {
         "user_profiles": [
             {
@@ -20529,21 +20529,21 @@
                     },
                     {
                         "link_id": 995,
-                        "id": 301,
-                        "name": "related phrases without subtitles",
-                        "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
-                        "type_id": 197,
-                        "code_id": "list_phrases_related_ex_subtitle",
-                        "position": 7,
-                        "position_type": 3
-                    },
-                    {
-                        "link_id": 996,
                         "id": 227,
                         "name": "children of word",
                         "description": "list of words or triples where this word leading to",
                         "type_id": 47,
                         "code_id": "list_children_of_word",
+                        "position": 7,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 996,
+                        "id": 301,
+                        "name": "related phrases without subtitles",
+                        "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+                        "type_id": 197,
+                        "code_id": "list_phrases_related_ex_subtitle",
                         "position": 8,
                         "position_type": 3
                     },

@@ -119,6 +119,18 @@ class word_ui_tests
         $test_page .= 'symbols and aliases: ' . $list->parents_of_word($wrd_chf_rel) . '<br>';
         $test_page .= 'children without categories: ' . $list->children_of_word($wrd_chf_rel) . '<br>';
 
+        // the children of a word are its subclasses; with several children the component starts
+        // with a header of the word plural and the verb plural, e.g. "currencies are", followed
+        // by the child phrases "Euro", "Swiss franc" and "US Dollar"
+        $wrd_currency_rel = $t_wrd->currency_related_ui();
+        $test_page .= $html->text_h2('children of ' . $wrd_currency_rel->name());
+        $test_page .= 'children: ' . $list->children_of_word($wrd_currency_rel) . '<br>';
+
+        // with a single child the component reads as the full statement "Euro is a currency"
+        $wrd_currency_single = $t_wrd->single_currency_related_ui();
+        $test_page .= $html->text_h2('single child of ' . $wrd_currency_single->name());
+        $test_page .= 'child: ' . $list->children_of_word($wrd_currency_single) . '<br>';
+
         // show the alias and symbol phrases as on the default word page
         $wrd_eur_rel = $t_wrd->euro_related_ui();
         $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_eur_rel->name());
@@ -160,8 +172,22 @@ class word_ui_tests
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';
         $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel), words::CHF);
-        $test_name = 'the category (is a) triple is excluded from the children as it is shown in the subtitle';
+        $test_name = 'a word category is not shown among its children, which are its subclasses';
         $t->assert_text_not_contains($test_name, $list->children_of_word($wrd_chf_rel), word_names::CURRENCY);
+        // the children of a word are its subclasses (the phrases that "are a" the word)
+        $currency_children = $list->children_of_word($wrd_currency_rel);
+        $test_name = 'the subclasses of currency include Euro';
+        $t->assert_text_contains($test_name, $currency_children, word_names::EURO);
+        $test_name = 'the subclasses of currency include Swiss franc';
+        $t->assert_text_contains($test_name, $currency_children, word_names::SWISS_FRANC);
+        $test_name = 'with several children the header uses the word plural "currencies"';
+        $t->assert_text_contains($test_name, $currency_children, word_names::CURRENCIES);
+        // a single child is shown as the full statement, e.g. "Euro is a currency"
+        $currency_single = $list->children_of_word($wrd_currency_single);
+        $test_name = 'a single child statement names the child Euro';
+        $t->assert_text_contains($test_name, $currency_single, word_names::EURO);
+        $test_name = 'a single child statement names the parent currency';
+        $t->assert_text_contains($test_name, $currency_single, word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($wrd_chf, new phrase_list()), '');
 
