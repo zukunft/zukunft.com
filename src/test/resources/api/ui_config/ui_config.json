@@ -1,10 +1,10 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 3,
+    "user_id": 1,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-17T18:58:06+00:00",
+    "timestamp": "2026-06-18T08:42:40+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6864,7 +6864,7 @@
             {
                 "name": "is a",
                 "code_id": "is",
-                "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
+                "description": "the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich, Bern, ...",
                 "plural": "are",
                 "reverse": "are",
                 "rev_plural": "are",
@@ -7889,7 +7889,7 @@
             {
                 "name": "word list up",
                 "code_id": "word_list_up",
-                "description": "Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
+                "description": "Show a list of words related with a specified verb e.g. for the triple <canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
                 "id": 7
             },
             {
@@ -7901,7 +7901,7 @@
             {
                 "name": "word list down",
                 "code_id": "word_list_down",
-                "description": "Show a list of words related with a specified verb e.g. for word <canton> list <Canton of Zurich> and others, because they are linked with verb <is a>",
+                "description": "Show a list of words related with a specified verb e.g. for word <canton> list <canton of Zurich> and others, because they are linked with verb <is a>",
                 "id": 9
             },
             {
@@ -8423,7 +8423,7 @@
             {
                 "name": "parents of this word",
                 "code_id": "list_parents_of_word",
-                "description": "lists of words or triples lead to this word e.g. at least City and Canton if this word is Zurich",
+                "description": "lists of words or triples lead to this word e.g. at least city and canton if this word is Zurich",
                 "id": 96
             },
             {
@@ -20576,7 +20576,7 @@
                         "link_id": 1001,
                         "id": 304,
                         "name": "view tab box",
-                        "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+                        "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
                         "code_id": "view_tab_box_word",
                         "position": 13,
@@ -20738,7 +20738,7 @@
                         "code_id": "system_sub_title_references",
                         "ui_msg_code_id": "system_sub_title_references",
                         "position": 10,
-                        "position_type": 7
+                        "position_type": 6
                     },
                     {
                         "link_id": 1016,
@@ -20749,6 +20749,16 @@
                         "code_id": "ref_list_word",
                         "position": 11,
                         "position_type": 3
+                    },
+                    {
+                        "link_id": 1017,
+                        "id": 304,
+                        "name": "view tab box",
+                        "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_word",
+                        "position": 12,
+                        "position_type": 7
                     }
                 ]
             },
@@ -20760,7 +20770,7 @@
                 "code_id": "source_default",
                 "components": [
                     {
-                        "link_id": 1017,
+                        "link_id": 1018,
                         "id": 276,
                         "name": "source name",
                         "description": "simply show the name of a source",
@@ -20769,7 +20779,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1018,
+                        "link_id": 1019,
                         "id": 283,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20787,7 +20797,7 @@
                 "code_id": "ref_default",
                 "components": [
                     {
-                        "link_id": 1019,
+                        "link_id": 1020,
                         "id": 277,
                         "name": "reference name",
                         "description": "simply show the name of a reference",
@@ -20796,7 +20806,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1020,
+                        "link_id": 1021,
                         "id": 283,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20814,7 +20824,7 @@
                 "code_id": "language_default",
                 "components": [
                     {
-                        "link_id": 1021,
+                        "link_id": 1022,
                         "id": 278,
                         "name": "language name",
                         "description": "simply show the name of a language",
@@ -20823,7 +20833,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1022,
+                        "link_id": 1023,
                         "id": 283,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20841,7 +20851,7 @@
                 "code_id": "value_default",
                 "components": [
                     {
-                        "link_id": 1023,
+                        "link_id": 1024,
                         "id": 282,
                         "name": "main value",
                         "description": "show one most relevant value",
@@ -20859,7 +20869,7 @@
                 "code_id": "formula_default",
                 "components": [
                     {
-                        "link_id": 1024,
+                        "link_id": 1025,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -20868,7 +20878,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1025,
+                        "link_id": 1026,
                         "id": 272,
                         "name": "Expression",
                         "type_id": 62,
@@ -20876,7 +20886,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1026,
+                        "link_id": 1027,
                         "id": 286,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -20894,7 +20904,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1027,
+                        "link_id": 1028,
                         "id": 286,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -20912,7 +20922,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1028,
+                        "link_id": 1029,
                         "id": 287,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -20921,7 +20931,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1029,
+                        "link_id": 1030,
                         "id": 288,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -20930,7 +20940,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1030,
+                        "link_id": 1031,
                         "id": 289,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21004,7 +21014,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1031,
+                        "link_id": 1032,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21013,7 +21023,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1032,
+                        "link_id": 1033,
                         "id": 281,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21022,7 +21032,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1033,
+                        "link_id": 1034,
                         "id": 280,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21040,7 +21050,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1034,
+                        "link_id": 1035,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21049,7 +21059,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1035,
+                        "link_id": 1036,
                         "id": 290,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21058,7 +21068,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1036,
+                        "link_id": 1037,
                         "id": 291,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21067,7 +21077,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1037,
+                        "link_id": 1038,
                         "id": 292,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -21101,7 +21111,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1038,
+                        "link_id": 1039,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21110,7 +21120,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1039,
+                        "link_id": 1040,
                         "id": 293,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -21119,7 +21129,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1040,
+                        "link_id": 1041,
                         "id": 283,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21128,7 +21138,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1041,
+                        "link_id": 1042,
                         "id": 294,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",

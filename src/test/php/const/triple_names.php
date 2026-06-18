@@ -111,7 +111,7 @@ class triple_names
     const int SYSTEM_TEST_ADD_USAGE = 12;
     const float SYSTEM_TEST_ADD_IMPACT = 23.4;
     const string SYSTEM_TEST_RENAMED = 'System Test Triple renamed';
-    const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
+    const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the city of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
 
     // triple used in the default start view
@@ -153,17 +153,17 @@ class triple_names
     const int SECOND_ID = 20;
     const string TN_CUBIC_METER = 'm3';
 
-    const string CANTON_ZURICH = 'Zurich (Canton)';
+    const string CANTON_ZURICH = 'Zurich (canton)';
     const int CANTON_ZURICH_ID = 99;
-    const string CITY_ZH = 'Zurich (City)';
+    const string CITY_ZH = 'Zurich (city)';
     const int CITY_ZH_ID = 98;
-    const string CITY_ZH_NAME = 'City of Zurich';
+    const string CITY_ZH_NAME = 'city of Zurich';
     const string CITY_ZH_COM = 'the city of Zurich';
-    const string CITY_BE = 'Bern (City)';
+    const string CITY_BE = 'Bern (city)';
     const int CITY_BE_ID = 100;
-    const string CITY_GE = 'Geneva (City)';
+    const string CITY_GE = 'Geneva (city)';
     const int CITY_GE_ID = 101;
-    const string CANTON_ZURICH_NAME = 'Canton Zurich';
+    const string CANTON_ZURICH_NAME = 'canton Zurich';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";

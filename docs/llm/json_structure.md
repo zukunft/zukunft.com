@@ -196,6 +196,17 @@ source `name`, triple `from`/`to`, formula `assigned`/`assigned_word`, value
 an existing file, fix it everywhere in that file — a partial rename creates the
 same split-identity problem as a partial trim.
 
+**Refs are the exception — they carry an external key, not an internal name.**
+For a `ref` the identifying part is the **external key** (the Wikipedia article
+slug or the Wikidata Q-id, with its `type` / `ref_type`), and that key follows
+the **external source's** spelling and casing — Wikipedia and Wikidata
+capitalise (`Zurich (City)`, `Canton_of_Zürich`, `Q72`). Never lower-case a
+ref to match an internal phrase, and never assume a ref tracks the phrase name:
+the lower-case-first and byte-for-byte rules above govern *phrase names only*;
+in a `ref` the external key is what counts and the internal name is irrelevant,
+so leave refs exactly as the external system spells them even when the phrase
+they belong to is lower-cased.
+
 ### Intentional symbol / abbreviation aliasing
 
 A short symbol may alias several phrases on purpose. `m` is the symbol for the
@@ -267,7 +278,7 @@ at the moment:
 
 | name | code_id | use |
 |---|---|---|
-| `is a` | `is` | child → parent category (Zurich is a Canton) |
+| `is a` | `is` | child → parent category (Zurich is a canton) |
 | `is part of` | `contains` | membership; the parts sum to the same total |
 | `can be part of` | `can_be_part_of` | optional membership in both directions |
 | `kind of` | `kind_of` | a sub-kind of a parent category |
@@ -616,6 +627,41 @@ triple over a flat extra word**:
 - **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
 - **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
 
+### Name the entity globally, not just locally
+
+"As specific as the data allows" is judged from the **global** point of view, not
+only within the file: the `words` group must pin the number down to **one** real
+quantity in the whole graph. The qualifier that usually decides this is the
+**entity**, and a generic word is not specific enough.
+
+- **Wrong** — generic entity word, group is not globally unique:
+
+```json
+{ "words": ["canton", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+```
+
+There are 26 cantons, so this never says *which* canton's GDP it is — another
+canton's 2022 GDP would map to an indistinguishable group, and the row reads as
+no unique fact.
+
+- **Right** — name the actual entity as its own (disambiguated) triple, then
+  reference it:
+
+```json
+{ "name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton" }
+```
+
+```json
+{ "words": ["Zurich (canton)", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+```
+
+Now the group identifies one number globally. The shared atoms (`canton`, `GDP`,
+`2022`, `CHF`, `measured value`) stay reusable across every entity; only the
+entity phrase carries the global identity. Apply it to every value —
+`Zurich (city)` not bare `city`, `Vestas` not bare `company`. The entity triple
+doubles as the disambiguation of the ambiguous name (`Zurich` the canton vs the
+city — see *Disambiguate an ambiguous word with qualifier triples*).
+
 ### Word vs triple in a value — does the order carry meaning?
 
 A value's `words` array is an **unordered set**: the import cannot tell `["A", "B"]`
@@ -644,7 +690,7 @@ could change the meaning:
 
 - `{"words": ["Vestas", "revenue", "2024"], "number": "..."}` — "Vestas's revenue
   in 2024" reads the same whatever the qualifier order; no triple needed.
-- `{"words": ["City of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
+- `{"words": ["city of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
   entity, measure and period have no direction among themselves.
 - `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
   fact tagged by entity, measure and period.

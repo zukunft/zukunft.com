@@ -1,6 +1,6 @@
 verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_reverse,name_plural,name_reverse,usage,impact
 1,not set,not_set,no verb / predicate selected,,,,,,,
-2,is a,is,the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...,,of all,are,are,are,,
+2,is a,is,the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich, Bern, ...,,of all,are,are,are,,
 3,is part of,contains,if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings,,,contains,is part of,contains,,
 4,can be part of,can_be_part_of,if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units,,,contains,can be part of,contains,,
 5,of,of,to narrow a selection e.g. the world population is usually the population of all humans,,,of,of,of,,

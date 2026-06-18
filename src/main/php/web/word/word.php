@@ -153,6 +153,14 @@ class word extends sandbox_code_id
     // the main parent phrase
     public ?phrase $parent = null;
 
+    // the system calculated impact of this word used to sort the words by relevance
+    // (highest impact first); same field name as triple, formula and verb so a term can
+    // read the impact of its wrapped object without knowing the concrete class
+    public float $impact = 0.0;
+
+    // TODO Prio 2
+    // cache values that should later be moved to the general data_object cache
+
     // the phrases connected to this word by a triple
     public ?phrase_list $phr_lst = null;
 
@@ -163,11 +171,6 @@ class word extends sandbox_code_id
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
-
-    // the system calculated impact of this word used to sort the words by relevance
-    // (highest impact first); same field name as triple, formula and verb so a term can
-    // read the impact of its wrapped object without knowing the concrete class
-    public float $impact = 0.0;
 
 
     /*
@@ -349,7 +352,7 @@ class word extends sandbox_code_id
      * load the word by id AND ask the backend to include the related-phrases view-model
      * (the connecting triples in both directions, capped by the per-verb config limit)
      * so the page-title renderer can produce the category subtitle below the heading
-     * (e.g. for "CHF": "is symbol for Swiss Franc"; for "Zurich": "is a City, Canton, ...")
+     * (e.g. for "CHF": "is symbol for Swiss Franc"; for "Zurich": "is a city, canton, ...")
      *
      * Overrides the no-op base implementation by attaching the ?incl_related=1 URL flag
      * to the REST GET call. The backend handler (api/word/index.php) translates that flag
@@ -442,8 +445,8 @@ class word extends sandbox_code_id
      * get the parent phrases of the given phrase (foaf_direction::UP)
      * if a phrase list is given get only the parent phrases within the list (no api call)
      * if no phrase list is given get the phrases from the api
-     * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
-     * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and country
+     * e.g. for Zurich the list is city and canton based on a phrase list with city, canton and country
+     * but  for Zurich the list is city, canton and company based on a phrase list with company, city, canton and country
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of parent levels
      * @return phrase_list capped by the user-specific frontend config limit
@@ -786,8 +789,8 @@ class word extends sandbox_code_id
     /**
      * display a word as the view header
      * @param phrase|null $is_part_of the word group as a hint to the user
-     *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
-     *             that the Zurich (City) is the phrase to select
+     *        e.g. city Zurich because in many cases if just the word Zurich is given the assumption is,
+     *             that the Zurich (city) is the phrase to select
      * @returns string the HTML code to display a word
      */
     function header(?phrase $is_part_of = null): string

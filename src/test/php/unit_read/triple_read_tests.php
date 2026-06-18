@@ -64,7 +64,7 @@ class triple_read_tests
         $t->subheader($ts . 'prepare');
         // load the verb used for testing
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
-        // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
+        // load the words used for testing the triples (Zurich (city) and Zurich (canton)
         $wrd_zh = $t_db->load_word(word_names::ZH);
         $wrd_canton = $t_db->load_word(word_names::CANTON);
         // create the group test word

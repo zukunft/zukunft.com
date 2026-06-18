@@ -599,7 +599,7 @@ class db_object_seq_id extends db_object
     /**
      * load a row from the database selected by id AND populate the "most often used
      * related objects" view-models that the page-title renderer expects (e.g. the
-     * phrases_related list on a word, which feeds the "(City, Canton, ...)" inline and
+     * phrases_related list on a word, which feeds the "(city, canton, ...)" inline and
      * the "is symbol for <X>" symbol-line layout in title_of_named_with_edit_link)
      *
      * the base implementation is a no-op beyond the plain load_by_id, so any object

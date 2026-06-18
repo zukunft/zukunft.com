@@ -78,7 +78,7 @@ class value_list_tests
         $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
         $val_ids = $t_val->value_list()->grp_ids()->dsp_id();
-        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
+        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich city inhabitants (2019)');
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
@@ -92,10 +92,10 @@ class value_list_tests
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
-        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
-        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich but only text values';
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich but only text values';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr, value_types::TEXT);
         $test_name = $test_names . 'a list of ids';
@@ -111,7 +111,7 @@ class value_list_tests
         $grp_lst = $t_phr->phrase_list_small();
         $this->assert_sql_by_grp_lst($test_name, $t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
-            . 'e.g. the inhabitants of Canton Zurich over time';
+            . 'e.g. the inhabitants of canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->canton_zh_phrase_list());
         $test_name = 'load values related to all phrases of a two phrase list '
             . 'e.g. the inhabitants of Switzerland over time';

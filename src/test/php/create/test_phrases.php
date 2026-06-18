@@ -564,7 +564,7 @@ class test_phrases
     }
 
     /**
-     * @return phrase_list to get all inhabitant related to the Canton Zurich
+     * @return phrase_list to get all inhabitant related to the canton Zurich
      */
     function canton_zh_phrase_list(): phrase_list
     {
@@ -577,7 +577,7 @@ class test_phrases
     }
 
     /**
-     * @return phrase_list to get all inhabitant related to the Canton Zurich
+     * @return phrase_list to get all inhabitant related to the canton Zurich
      */
     function ch_inhabitant_phrase_list(): phrase_list
     {

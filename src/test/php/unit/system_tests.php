@@ -184,11 +184,11 @@ class system_tests
         $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,159,161,-1,-2,-99,-100,-101) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group(), '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group_list(), 'Pi (math)');
-        $t->assert_dsp_id($t_grp->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
+        $t->assert_dsp_id($t_grp->group_list_long(), 'Pi (math) / Zurich city inhabitants (2019) / Zurich city inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
         $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t_val->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 214,198,139,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 214,198,139,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');

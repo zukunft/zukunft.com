@@ -160,4 +160,4 @@ object's identity then lives in exactly one place — the backend factory.
 
 - **Right**: build a backend `phrase_list` from the backend factories and
   convert once — `$lst->add($t_trp->zh_city()->phrase()); … return new phrase_list_ui($lst->api_json());`
-- **Wrong**: `related_phrase_ui(triples::CITY_ZH_ID, 'City')` — re-states the id and a hand-picked label, so the same object lives in two places and can drift
+- **Wrong**: `related_phrase_ui(triples::CITY_ZH_ID, 'city')` — re-states the id and a hand-picked label, so the same object lives in two places and can drift

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -54,6 +55,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -71,6 +73,19 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class a_selected_test extends test_cleanup
 {
+
+    // the import json files to load for a fast single-file debugging cycle
+    // comment out the entries that are not needed to import just one file at a time
+    const array SELECTED_IMPORT_FILES = [
+        files::ZURICH_FILE,
+        //files::MESSAGE_PATH . files::TIME_FILE,
+        //files::MESSAGE_PATH . files::BASE_VIEWS_FILE,
+        //files::MESSAGE_PATH . files::START_PAGE_DATA_FILE,
+        //files::MESSAGE_PATH . files::COMPANY_FILE,
+        //files::MESSAGE_PATH . files::COUNTRY_FILE,
+        //files::IMPORT_COUNTRY_ISO,
+        //files::IMPORT_WIND_INVESTMENT,
+    ];
 
     /**
      * run some manual selected tests for faster debugging

@@ -72,7 +72,7 @@ class result_list_tests
         $t->subheader($ts . 'sql creation');
 
         $test_name = 'load a list of results that are a related to all phrases of a list '
-            . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
+            . 'e.g. the yearly increase of inhabitants of canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $res_lst, $t_phr->canton_zh_phrase_list());
         $test_name = 'load a list of results that are a related a formula '
             . 'e.g. to update the results if the formula has been updated';

@@ -121,10 +121,10 @@ class phrase_list_read_tests
         $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR], def::FALLBACK_RETRY);
         $t->assert_greater($test_name, 0, $auto_years);
 
-        // Canton is related to Switzerland and Zurich
+        // canton is related to Switzerland and Zurich
         $phr_canton = $t_db->load_phrase(word_names::CANTON);
         $phr_lst = $phr_canton->all_related();
-        $test_name = 'The word Canton is related to Switzerland and Zurich';
+        $test_name = 'The word canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company
         //      but Switzerland is expected to be related
         //$t->assert_contains($test_name, $phr_lst->names(), array(words::TN_ZH, words::TN_CH));

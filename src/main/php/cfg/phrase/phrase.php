@@ -1182,7 +1182,7 @@ class phrase extends combine_named
 
     /**
      * get a list of verbs either pointing to or from this phrase
-     * e.g. for Zurich and direction up the list contains at least the verb "is", because Zurich is a Canton is default triple
+     * e.g. for Zurich and direction up the list contains at least the verb "is", because Zurich is a canton is default triple
      *
      * @param foaf_direction $direction UP or DOWN to select the direction
      * @returns verb_list with all used verbs in the given direction
@@ -1482,7 +1482,7 @@ class phrase extends combine_named
                                            AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
-                // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
+                // ... out of all those get the phrase ids that have also other types e.g. Zurich (canton)
                 $sql_wrd_other = 'SELECT from_phrase_id FROM (
                                         SELECT DISTINCT
                                                l.from_phrase_id,    

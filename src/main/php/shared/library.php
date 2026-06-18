@@ -902,7 +902,7 @@ class library
      * convert an HTML fragment to the plain text a user would see in the browser
      * so the result of a *_ui display function can be checked or logged in one line
      * e.g. the page title html of "Zurich" becomes
-     * 'Zurich <fas fa-edit> (is a City, Canton, ... / measure) (personal, admin protection)'
+     * 'Zurich <fas fa-edit> (is a city, canton, ... / measure) (personal, admin protection)'
      * an icon is kept as a readable placeholder of its css class (e.g.
      * '<i class="fas fa-edit"></i>' -> '<fas fa-edit>'); every other tag is removed
      * and its text kept; a block tag (e.g. div, h4) becomes a single space so the

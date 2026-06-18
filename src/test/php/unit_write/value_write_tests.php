@@ -544,7 +544,7 @@ class value_write_tests
         ),
             values::CH_INHABITANTS_2019_IN_MIO);
 
-        // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
+        // add the percentage of inhabitants in canton Zurich compared to Switzerland for calculation validation
         $t_db->test_value(array(
             word_names::CANTON,
             word_names::ZH,

@@ -140,9 +140,9 @@ class lib_tests
         $test_name = 'html_to_text';
         $text = '<div class="heading-line"><h4 class="heading-inline">Zurich</h4>'
             . '<a href="#"><i class="fas fa-edit"></i></a></div>'
-            . '<div class="subtitle">(is a City, Canton, ...) / measure</div>'
+            . '<div class="subtitle">(is a city, canton, ...) / measure</div>'
             . '<div class="subtitle">(personal, admin protection)</div>';
-        $target = 'Zurich <fas fa-edit> (is a City, Canton, ...) / measure (personal, admin protection)';
+        $target = 'Zurich <fas fa-edit> (is a city, canton, ...) / measure (personal, admin protection)';
         $result = $lib->html_to_text($text);
         $t->assert($test_name, $result, $target);
 

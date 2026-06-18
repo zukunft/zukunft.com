@@ -151,7 +151,7 @@ class verb_list extends type_list
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
             // set the where clause depending on the values given
-            // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
+            // definition of up: if "Zurich" is a city, then "Zurich" is "from" and "city" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
                 $qp->sql = $db_con->select_by_field(triple_db::FLD_FROM);

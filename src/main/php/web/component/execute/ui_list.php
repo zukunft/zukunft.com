@@ -102,7 +102,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -113,7 +113,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -279,7 +279,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples linked to the given formula in order of impact
-     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param data_object|null $cac the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -343,15 +343,20 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        $frm_lst = clone $cfg->frm_lst;
         if ($dbo::class == verb::class) {
+            $frm_lst = clone $cfg->frm_lst;
             $frm_lst = $frm_lst->get_by_verb($dbo);
             $result = $frm_lst->name_link();
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            }
+        } elseif ($dbo::class == word::class or $dbo::class == triple::class) {
+            // the word/triple carries its own related formulas from the INCL_RELATED api message
+            if ($dbo->frm_lst != null) {
+                $result = $dbo->frm_lst->name_link();
+            }
         } else {
-            log_err($dbo::class . '  is not expected to be a selection for formulas');
-        }
-        if ($result == '') {
-            $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            log_err($dbo::class . ' is not expected to be a selection for formulas');
         }
         return $result;
     }
@@ -407,9 +412,9 @@ class ui_list extends ui_base
             $phr = $dbo->phrase();
         }
         if ($phr != null) {
-            // a word loaded for its page carries its references directly (like the related
-            // values and formulas); otherwise fall back to the page reference cache
-            if ($dbo::class == word::class and $dbo->ref_lst != null) {
+            // a word or triple loaded for its page carries its references directly (like the
+            // related values and formulas); otherwise fall back to the page reference cache
+            if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
                 $ref_lst = $dbo->ref_lst;
             } else {
                 $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
@@ -448,20 +453,20 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of the word page: a "Views" tab with the related views
-     * (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
-     * with the change log of the word, latest first
+     * HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
+     * views (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
+     * with the change log of the object, latest first
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
-     * @param db_object $dbo the word that should be shown to the user
+     * @param db_object $dbo the word or triple that should be shown to the user
      * @param bool $test_mode true to create a reproducible result without a backend call
-     * @return string the html code of the tab box or an empty string for a non-word object
+     * @return string the html code of the tab box or an empty string for an unsupported object
      */
     function view_tab_box(db_object $dbo, bool $test_mode = false): string
     {
         global $mtr;
         $result = '';
-        if ($dbo::class == word::class) {
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
             $html = new html_base();
             // tab 1: each related view as a preview placeholder with the open and switch buttons
             $views_html = '';
@@ -634,6 +639,10 @@ class ui_list extends ui_base
     ): string
     {
         $val_lst = $dto->val_lst?->filter($dbo);
+        // the triple carries its own related values from the INCL_RELATED api message
+        if ($dbo::class == triple::class and $dbo->val_lst != null) {
+            $val_lst = $dbo->val_lst;
+        }
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);

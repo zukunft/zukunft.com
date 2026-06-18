@@ -23,13 +23,13 @@
       "name": "Bern"
     },
     {
-      "name": "Canton"
+      "name": "canton"
     },
     {
       "name": "configuration"
     },
     {
-      "name": "City"
+      "name": "city"
     },
     {
       "name": "company"
@@ -152,13 +152,14 @@
       "to": "configuration"
     },
     {
-      "name": "Zurich (City)",
+      "name": "Zurich (city)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "City",
+      "to": "city",
+      "description": "Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",
       "refs": [
         {
-          "name": "Zürich",
+          "name": "Zurich",
           "type": "wikipedia"
         },
         {
@@ -170,13 +171,14 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Zurich (Canton)",
+      "name": "Zurich (canton)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "Canton",
+      "to": "canton",
+      "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
       "refs": [
         {
-          "name": "Canton_of_Zürich",
+          "name": "canton_of_Zürich",
           "type": "wikipedia"
         },
         {
@@ -188,16 +190,16 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Bern (City)",
+      "name": "Bern (city)",
       "from": "Bern",
       "verb": "is a",
-      "to": "City"
+      "to": "city"
     },
     {
-      "name": "Geneva (City)",
+      "name": "Geneva (city)",
       "from": "Geneva",
       "verb": "is a",
-      "to": "City"
+      "to": "city"
     }
   ]
 }

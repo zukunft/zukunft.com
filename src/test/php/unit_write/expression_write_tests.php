@@ -145,13 +145,13 @@ class expression_write_tests
         $trm_lst = $frm_sector->load_exp_terms($usr_msg, null, $exp_sector);
         $elm_lst = $exp_sector->element_list($usr_msg, $trm_lst);
         $result = $elm_lst->name();
-        $target = '"country","can be used as a differentiator for","Canton","System Test Word Total"';
+        $target = '"country","can be used as a differentiator for","canton","System Test Word Total"';
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
         $elm_grp_lst = $exp_sector->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->name();
-        $target = '"country,can be used as a differentiator for,Canton","System Test Word Total"';
+        $target = '"country,can be used as a differentiator for,canton","System Test Word Total"';
         $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting the phrases if the formula contains a verb
@@ -159,7 +159,7 @@ class expression_write_tests
         // TODO Prio 0 activate
         //$phr_lst = $exp_sector->phr_verb_lst();
         //$result = $phr_lst->dsp_name();
-        $target = '"Canton","country","System Test Word Total"';
+        $target = '"canton","country","System Test Word Total"';
         // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases

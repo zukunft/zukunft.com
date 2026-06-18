@@ -171,11 +171,11 @@ class group_tests
         //      and not on the value selection phrase list for the formula
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '
-            . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
+            . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase()),
             6052132915249350);
         $t->assert('128 bit result_id for the formula increase, '
-            . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
+            . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase()),
             '9234844886612976128');
         $t->assert('512 bit result_id ',

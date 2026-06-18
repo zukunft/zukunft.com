@@ -252,7 +252,7 @@ class phrase_list extends sandbox_list_named
      * based on the verbs::CATEGORY_VERBS priority list
      *
      * e.g. "CHF is symbol for <Swiss Franc>"
-     * or if not a symbol e.g. "Zurich is a <City>, <Canton>, <Company>")
+     * or if not a symbol e.g. "Zurich is a <city>, <canton>, <Company>")
      *
      * @param phrase $phr the starting phrase whose category subtitle is being rendered
      * @param int|null $max the maximal number of links to show

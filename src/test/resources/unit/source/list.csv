@@ -15,3 +15,8 @@ source_id,user_id,source_name,description,source_type_id,url,code_id,usage,exclu
 14,1,Nestlé Financial Statement 2016,,,https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf,,,,,
 15,1,Migros Facts & figures 2016,,,https://www.migros.ch/dam/jcr...9877.../EN_MGB_Zahlen_und_Fakten_2016.pdf,,,,,
 16,1,config.yaml,internal system configuration yaml file,,,,,,,
+17,1,Statistik Stadt Zuerich 2025,Statistik Stadt Zuerich, population 31.12.2025 (definitive): 452421 residents, 33.9% foreign, 4535 births, 3043 deaths.,,https://www.stadt-zuerich.ch/de/aktuell/medienmitteilungen/2026/02/bevoelkerungswachstum-weniger-vorschulkinder.html,,,,,
+18,1,Statistisches Amt Kanton Zuerich 2025,Statistisches Amt des Kantons Zuerich, civil-law population 31.12.2025 (provisional): 1628081 residents, ~29% foreign, +0.8% growth.,,https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2026/02/bevoelkerung-im-kanton-zuerich-waechst-weiter-jedoch-langsamer.html,,,,,
+19,1,BFS cantonal GDP 2022,Bundesamt fuer Statistik, cantonal GDP/gross value added 2022: Kanton Zuerich ~159.8 bn CHF (nominal).,,https://www.bfs.admin.ch/,,,,,
+20,1,Wikipedia canton of Zurich,canton of Zurich area ~1729 km2; city of Zurich area ~91.88 km2.,,https://de.wikipedia.org/wiki/Kanton_Z%C3%BCrich,,,,,
+21,1,zukunft.com Fermi assumption,explicit modelling assumption set by the analyst, not a measurement,,,,,,,
