@@ -1,0 +1,395 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "health",
+    "disease",
+    "life expectancy",
+    "statistics"
+  ],
+  "description": "Most relevant base data around health: illness and disease, wellbeing, mortality and morbidity, life expectancy and the health-adjusted life expectancy (HALE), and the epidemiology measures prevalence, incidence and the health-adjusted life years (HALY) such as the QALY and DALY, drawn from published science. The formulas reproduce three relationships in the calc-validation block: the global health gap as life expectancy minus HALE (WHO 2021), the steady-state identity prevalence = incidence times duration (Rothman, Modern Epidemiology) for an illustrative chronic disease, and the QALY as life years times the health-utility weight (Weinstein and Stason 1977). Base words owned by other files (world, DALY, percent, year) are re-declared name-only so the import does not overwrite their canonical description; the topic-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "health",
+      "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
+      "refs": [
+        {
+          "name": "Health",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "disease",
+      "description": "a particular abnormal condition that negatively affects the structure or function of all or part of an organism.",
+      "refs": [
+        {
+          "name": "Disease",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "illness",
+      "description": "a state of poor health; the subjective experience of being unwell"
+    },
+    {
+      "name": "wellbeing",
+      "description": "the state of being comfortable, healthy, or happy.",
+      "refs": [
+        {
+          "name": "Well-being",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mortality",
+      "description": "the number of deaths in a population, scaled to the size of that population per unit of time.",
+      "refs": [
+        {
+          "name": "Mortality_rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "morbidity",
+      "description": "the rate or condition of being diseased in a population; the prevalence or incidence of ill health"
+    },
+    {
+      "name": "life expectancy",
+      "description": "a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.",
+      "refs": [
+        {
+          "name": "Life_expectancy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "HALE",
+      "description": "the average number of years a person can expect to live in full health, adjusting for time lived in less than full health.",
+      "refs": [
+        {
+          "name": "Health-adjusted_life_expectancy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "prevalence",
+      "description": "the proportion of a population found to be affected by a medical condition at a specific time.",
+      "refs": [
+        {
+          "name": "Prevalence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "incidence",
+      "description": "the rate of new cases of a condition in a population over a specified period of time.",
+      "refs": [
+        {
+          "name": "Incidence_(epidemiology)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "duration",
+      "description": "the average length of time a health condition lasts"
+    },
+    {
+      "name": "QALY",
+      "description": "a measure that combines the quality and the quantity of life lived, used to assess the value of medical interventions.",
+      "refs": [
+        {
+          "name": "Quality-adjusted_life_year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "HALY",
+      "description": "health-adjusted life year, an umbrella measure of disease burden combining the length and the quality of life, such as the QALY and the DALY"
+    },
+    {
+      "name": "utility",
+      "description": "the health-related quality-of-life weight of a state, from 0 (death) to 1 (full health)"
+    },
+    {
+      "name": "life",
+      "description": "a quality that distinguishes living organisms from inorganic matter, marked by growth, reproduction and response to stimuli.",
+      "refs": [
+        {
+          "name": "Life",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "treatment",
+      "description": "the attempted remediation of a health problem, usually following a medical diagnosis.",
+      "refs": [
+        {
+          "name": "Therapy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "chronic",
+      "description": "persisting for a long time or constantly recurring"
+    },
+    {
+      "name": "gap",
+      "description": "the difference between a quantity and a reference level"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "DALY"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "2021",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "DALY",
+      "verb": "kind of",
+      "to": "HALY"
+    },
+    {
+      "from": "QALY",
+      "verb": "kind of",
+      "to": "HALY"
+    },
+    {
+      "from": "wellbeing",
+      "verb": "is part of",
+      "to": "health"
+    },
+    {
+      "from": "illness",
+      "verb": "kind of",
+      "to": "morbidity"
+    },
+    {
+      "from": "disease",
+      "verb": "can cause",
+      "to": "mortality"
+    },
+    {
+      "name": "chronic disease",
+      "from": "disease",
+      "verb": "kind of",
+      "to": "chronic",
+      "description": "a disease that is long-lasting or constantly recurring"
+    },
+    {
+      "name": "health gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "health",
+      "description": "the years of life lived in less than full health, as life expectancy minus HALE"
+    },
+    {
+      "name": "life year",
+      "from": "year",
+      "verb": "of",
+      "to": "life",
+      "description": "a year of life lived, the quantity weighted by health utility to give a QALY"
+    }
+  ],
+  "sources": [
+    {
+      "name": "WHO Global Health Observatory 2021",
+      "description": "World Health Organization, Global Health Observatory: global life expectancy at birth about 71.3 years and health-adjusted life expectancy (HALE) about 61.9 years in 2021; global crude death rate about 8.5 per 1000.",
+      "url": "https://www.who.int/data/gho"
+    },
+    {
+      "name": "Rothman Modern Epidemiology 2008",
+      "description": "Rothman KJ, Greenland S, Lash TL (2008). Modern Epidemiology, 3rd ed. In a steady state the prevalence of a condition equals its incidence rate times its average duration.",
+      "url": "https://shop.lww.com/Modern-Epidemiology/p/9781451190052"
+    },
+    {
+      "name": "Weinstein Stason 1977 NEJM",
+      "description": "Weinstein MC, Stason WB (1977). Foundations of cost-effectiveness analysis for health and medical practices. New England Journal of Medicine 296:716-721. A QALY is a life year weighted by a health-utility factor between 0 and 1.",
+      "url": "https://doi.org/10.1056/NEJM197703312961304"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "world",
+        "life expectancy",
+        "2021",
+        "year"
+      ],
+      "number": "71.3",
+      "source": "WHO Global Health Observatory 2021"
+    },
+    {
+      "words": [
+        "world",
+        "HALE",
+        "2021",
+        "year"
+      ],
+      "number": "61.9",
+      "source": "WHO Global Health Observatory 2021"
+    },
+    {
+      "words": [
+        "world",
+        "health gap",
+        "2021",
+        "year"
+      ],
+      "number": "9.4"
+    },
+    {
+      "words": [
+        "world",
+        "mortality",
+        "2021",
+        "percent"
+      ],
+      "number": "0.85",
+      "source": "WHO Global Health Observatory 2021"
+    },
+    {
+      "words": [
+        "chronic disease",
+        "incidence",
+        "2021"
+      ],
+      "number": "0.005",
+      "source": "Rothman Modern Epidemiology 2008"
+    },
+    {
+      "words": [
+        "chronic disease",
+        "duration"
+      ],
+      "number": "10",
+      "source": "Rothman Modern Epidemiology 2008"
+    },
+    {
+      "words": [
+        "chronic disease",
+        "prevalence",
+        "2021"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "treatment",
+        "life year"
+      ],
+      "number": "10",
+      "source": "Weinstein Stason 1977 NEJM"
+    },
+    {
+      "words": [
+        "treatment",
+        "utility"
+      ],
+      "number": "0.7",
+      "source": "Weinstein Stason 1977 NEJM"
+    },
+    {
+      "words": [
+        "treatment",
+        "QALY"
+      ],
+      "number": "7"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "health gap (formula)",
+      "expression": "\"health gap\" = \"life expectancy\" - \"HALE\"",
+      "assigned": [
+        "world"
+      ]
+    },
+    {
+      "name": "prevalence (formula)",
+      "expression": "\"prevalence\" = \"incidence\" * \"duration\"",
+      "assigned": [
+        "chronic disease"
+      ]
+    },
+    {
+      "name": "QALY (formula)",
+      "expression": "\"QALY\" = \"life year\" * \"utility\"",
+      "assigned": [
+        "treatment"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "world",
+        "life expectancy",
+        "HALE",
+        "2021",
+        "year"
+      ],
+      "formula": "health gap (formula)",
+      "words": [
+        "world",
+        "health gap",
+        "2021",
+        "year"
+      ],
+      "number": "9.4",
+      "note": "71.3 - 61.9"
+    },
+    {
+      "context": [
+        "chronic disease",
+        "incidence",
+        "duration",
+        "2021"
+      ],
+      "formula": "prevalence (formula)",
+      "words": [
+        "chronic disease",
+        "prevalence",
+        "2021"
+      ],
+      "number": "0.05",
+      "note": "0.005 * 10"
+    },
+    {
+      "context": [
+        "treatment",
+        "life year",
+        "utility"
+      ],
+      "formula": "QALY (formula)",
+      "words": [
+        "treatment",
+        "QALY"
+      ],
+      "number": "7",
+      "note": "10 * 0.7"
+    }
+  ]
+}

@@ -178,6 +178,15 @@ class files
     // most relevant base data around the world population, children per woman and DALY used as a real-world demo and for system testing
     const string POPULATION_FILE = self::BASE_DATA_PATH . 'population' . self::JSON;
 
+    // most relevant base data around health, disease, mortality, life expectancy and prevalence used as a real-world demo and for system testing
+    const string HEALTH_FILE = self::BASE_DATA_PATH . 'health' . self::JSON;
+
+    // most relevant base data around poverty, inequality, the poverty line and the Gini coefficient used as a real-world demo and for system testing
+    const string POVERTY_FILE = self::BASE_DATA_PATH . 'poverty' . self::JSON;
+
+    // most relevant base data around learning, cognition, Bloom's taxonomy and the zone of proximal development used as a real-world demo and for system testing
+    const string EDUCATION_FILE = self::BASE_DATA_PATH . 'education' . self::JSON;
+
     /*
      * file lists
      */
@@ -237,6 +246,9 @@ class files
         self::GLOBAL_WARMING_FILE,
         self::POPULISM_FILE,
         self::POPULATION_FILE,
+        self::HEALTH_FILE,
+        self::POVERTY_FILE,
+        self::EDUCATION_FILE,
     ];
 
 }
