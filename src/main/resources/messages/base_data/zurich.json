@@ -12,7 +12,7 @@
   "words": [
     {
       "name": "Zurich",
-      "description": "place name used for both the city and the canton of Zurich; reference the qualifier triple, not this bare word",
+      "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.",
       "refs": [
         {
           "name": "Zurich",

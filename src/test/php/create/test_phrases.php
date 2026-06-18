@@ -919,6 +919,23 @@ class test_phrases
     }
 
     /**
+     * the phrases related to the word "Euro" as loaded with the word from the backend
+     * (the euro equivalent of list_us_dollar_related_ui)
+     *
+     * @return phrase_list_ui with the alias, symbol, "in EUR" and category triples of the euro
+     */
+    function list_euro_related_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->euro_sign_alias()->phrase());
+        $lst->add($t_trp->eur_symbol()->phrase());
+        $lst->add($t_trp->in_eur()->phrase());
+        $lst->add($t_trp->euro_currency()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * the phrases related to the word "company" as loaded with the word from the backend
      * in a not sorted order e.g. to test that the related stocks are shown
      * sorted by the market capitalisation on the default word page

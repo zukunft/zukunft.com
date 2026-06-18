@@ -117,14 +117,16 @@ class word_ui_tests
         $wrd_chf_rel = $t_wrd->swiss_franc_related_ui();
         $test_page .= $html->text_h2('phrases related to ' . $wrd_chf_rel->name());
         $test_page .= 'symbols and aliases: ' . $list->parents_of_word($wrd_chf_rel) . '<br>';
-        $test_page .= 'categories: ' . $list->children_of_word($wrd_chf_rel) . '<br>';
+        $test_page .= 'children without categories: ' . $list->children_of_word($wrd_chf_rel) . '<br>';
 
         // show the alias and symbol phrases as on the default word page
-        $wrd_usd_rel = $t_wrd->us_dollar_related_ui();
-        $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_usd_rel->name());
-        $test_page .= $list->phrase_aliases($wrd_usd_rel) . '<br>';
-        $test_page .= $list->phrase_symbols($wrd_usd_rel) . '<br>';
-        $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_usd_rel) . '<br>';
+        $wrd_eur_rel = $t_wrd->euro_related_ui();
+        $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_eur_rel->name());
+        $test_page .= $list->phrase_aliases($wrd_eur_rel) . '<br>';
+        $test_page .= $list->phrase_symbols($wrd_eur_rel) . '<br>';
+        $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_eur_rel) . '<br>';
+        // the "related phrases without subtitles" component groups the related phrases by verb
+        $test_page .= 'related phrases without subtitles: ' . $list->phrases_related_ex_subtitle($wrd_eur_rel) . '<br>';
 
         // show the related stocks sorted by the market capitalisation as on the default company page
         $wrd_company_rel = $t_wrd->company_related_ui();
@@ -158,29 +160,37 @@ class word_ui_tests
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';
         $t->assert_text_contains($test_name, $list->parents_of_word($wrd_chf_rel), words::CHF);
-        $test_name = 'the category triple of the word is shown';
-        $t->assert_text_contains($test_name, $list->children_of_word($wrd_chf_rel), word_names::CURRENCY);
+        $test_name = 'the category (is a) triple is excluded from the children as it is shown in the subtitle';
+        $t->assert_text_not_contains($test_name, $list->children_of_word($wrd_chf_rel), word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($wrd_chf, new phrase_list()), '');
 
         $t->subheader($ts . 'aliases and symbols');
-        $alias_html = $list->phrase_aliases($wrd_usd_rel);
-        $test_name = 'two aliases are shown with the plural text';
-        $t->assert_text_contains($test_name, $alias_html, $mtr->txt(msg_id::PHRASE_ALIASES));
+        $alias_html = $list->phrase_aliases($wrd_eur_rel);
+        $test_name = 'one alias is shown with the singular text';
+        $t->assert_text_contains($test_name, $alias_html, $mtr->txt(msg_id::PHRASE_ALIAS));
         $test_name = 'the alias line is not broken across lines';
         $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
-        $test_name = 'the dollar sign is linked as alias';
-        $t->assert_text_contains($test_name, $alias_html, word_names::DOLLAR);
-        $symbol_html = $list->phrase_symbols($wrd_usd_rel);
+        $test_name = 'the euro sign is linked as alias';
+        $t->assert_text_contains($test_name, $alias_html, word_names::EURO_SIGN);
+        $symbol_html = $list->phrase_symbols($wrd_eur_rel);
         $test_name = 'one symbol is shown with the singular text';
         $t->assert_text_not_contains($test_name, $symbol_html, $mtr->txt(msg_id::PHRASE_SYMBOLS));
         $test_name = 'the currency code is linked as symbol';
-        $t->assert_text_contains($test_name, $symbol_html, word_names::USD);
-        $ex_html = $list->phrases_related_ex_symbols($wrd_usd_rel);
+        $t->assert_text_contains($test_name, $symbol_html, word_names::EUR);
+        $ex_html = $list->phrases_related_ex_symbols($wrd_eur_rel);
         $test_name = 'the other related phrases are listed';
-        $t->assert_text_contains($test_name, $ex_html, triple_names::IN_USD);
+        $t->assert_text_contains($test_name, $ex_html, triple_names::IN_EUR);
         $test_name = 'the alias triples are excluded from the related phrases';
-        $t->assert_text_not_contains($test_name, $ex_html, triple_names::DOLLAR_ALIAS);
+        $t->assert_text_not_contains($test_name, $ex_html, triple_names::EURO_SIGN_ALIAS);
+        // the "related phrases without subtitles" component groups the related triples by verb,
+        // showing the verb (linked to its page) followed by the linked phrases instead of the
+        // full triple name (e.g. the "in" group with "EUR" instead of "in EUR")
+        $sub_html = $list->phrases_related_ex_subtitle($wrd_eur_rel);
+        $test_name = 'the linked phrase is shown in its verb group';
+        $t->assert_text_contains($test_name, $sub_html, word_names::EUR);
+        $test_name = 'the full triple name is replaced by the verb group';
+        $t->assert_text_not_contains($test_name, $sub_html, triple_names::IN_EUR);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($wrd_chf_rel), '');
 

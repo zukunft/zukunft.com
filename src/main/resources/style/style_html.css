@@ -9,6 +9,12 @@ body {
     text-align: center; /* Centers all inline text content globally */
 }
 
+/* opt-in left alignment for a column or component that should not inherit the body's */
+/* centre alignment, e.g. the description column of the default word and triple views */
+.text-left {
+    text-align: left;
+}
+
 /* header / navbar */
 .site-header {
     background: #f9fafb; /* Light grey-blue background for the top header */

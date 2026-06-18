@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-18T15:41:30+00:00",
+    "timestamp": "2026-06-18T21:21:09+00:00",
     "body": {
         "user_profiles": [
             {
@@ -7022,8 +7022,8 @@
                 "code_id": "acronym",
                 "description": "is an acronym for",
                 "plural": "are an acronyms for",
-                "reverse": "is an acronym of",
-                "rev_plural": "are an acronyms of",
+                "reverse": "has acronym",
+                "rev_plural": "has acronyms",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
@@ -7833,6 +7833,12 @@
                 "code_id": "col-md-12",
                 "description": "use the full screen width (col-md-12)",
                 "id": 4
+            },
+            {
+                "name": "left aligned",
+                "code_id": "text-left",
+                "description": "align the column content to the left instead of the inherited centre",
+                "id": 5
             }
         ],
         "view_link_types": [
@@ -20478,7 +20484,8 @@
                         "code_id": "system_sub_title_description",
                         "ui_msg_code_id": "system_sub_title_description",
                         "position": 2,
-                        "position_type": 1
+                        "position_type": 1,
+                        "style": 5
                     },
                     {
                         "link_id": 991,
@@ -20675,7 +20682,8 @@
                         "code_id": "system_sub_title_description",
                         "ui_msg_code_id": "system_sub_title_description",
                         "position": 2,
-                        "position_type": 1
+                        "position_type": 1,
+                        "style": 5
                     },
                     {
                         "link_id": 1009,

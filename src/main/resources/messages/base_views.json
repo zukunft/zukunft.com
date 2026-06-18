@@ -296,7 +296,8 @@
         },
         {
           "position": "2",
-          "name": "system sub title description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",
@@ -398,7 +399,8 @@
         },
         {
           "position": "2",
-          "name": "system sub title description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",

@@ -4,7 +4,7 @@
 
 ### word frontend
 
-in the component 'related phrases without subtitles' und in the views 'Word (default)' and 'Triple (default)' group the phrases by the verb sorted by impact and name and for each verb group show the verb first with a link to the verb default view  
+in the views 'Word (default)' and 'Triple (default)' format the first 'Description' column 'left' instead of 'centre' but keep the option that the same 'description' components could be used in other views with the parameter 'center'
 
 for the formula 'bid-ask spread absolut' the assigned word is 'currency
 

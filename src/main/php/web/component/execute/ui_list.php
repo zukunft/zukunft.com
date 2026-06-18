@@ -119,7 +119,22 @@ class ui_list extends ui_base
      */
     function children_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::DOWN, $this->related_list($wrd, $phr_lst));
+        global $ui_sys;
+        $result = '';
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        $vrb_cac = $ui_sys?->typ_lst_cache?->vrb;
+        if ($phr_cac != null and $vrb_cac != null) {
+            // exclude the "is a" category triples (already shown in the page subtitle) and the
+            // alias and symbol triples (shown by their own components), so only genuine
+            // children remain - mirrors phrases_related_ex_subtitle for the down direction
+            $vrb_ids = [
+                $vrb_cac->id(verbs::SYMBOL),
+                $vrb_cac->id(verbs::ALIAS),
+                $vrb_cac->id(verbs::IS)
+            ];
+            $result = $phr_cac->child_triples_ex_verbs($wrd->phrase(), $vrb_ids)->name_link();
+        }
+        return $result;
     }
 
     /**
@@ -192,7 +207,7 @@ class ui_list extends ui_base
      */
     function phrases_related_ex_subtitle(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS]);
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], true);
     }
 
     /**
@@ -203,12 +218,15 @@ class ui_list extends ui_base
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @param array $ex_vrb_lst the code ids of the verbs whose triples should not be shown
+     * @param bool $grouped true to group the phrases by verb (each verb a linked header) as on
+     *                      the default word/triple page; false for a flat impact-sorted list
      * @return string the html code with the remaining related phrases
      */
     private function phrases_related_ex_verbs(
         word|phrase|db_object $wrd,
         ?phrase_list          $phr_lst,
-        array                 $ex_vrb_lst
+        array                 $ex_vrb_lst,
+        bool                  $grouped = false
     ): string
     {
         global $ui_sys;
@@ -228,7 +246,11 @@ class ui_list extends ui_base
             foreach ($ex_vrb_lst as $vrb_code_id) {
                 $vrb_ids[] = $vrb_cac->id($vrb_code_id);
             }
-            $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
+            if ($grouped) {
+                $result = $phr_cac->name_link_grouped_by_verb($phr, $vrb_ids);
+            } else {
+                $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
+            }
         }
         return $result;
     }

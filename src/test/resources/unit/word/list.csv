@@ -212,7 +212,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 211,1,work,,,1,,,,,,,,
 212,1,world,,,1,,,,,,,,
 213,1,zukunft.com,,,1,,,,,zukunft.com,,,3
-214,1,Zurich,,place name used for both the city and the canton of Zurich; reference the qualifier triple, not this bare word,1,,,,,,,,
+214,1,Zurich,,place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.,1,,,,,,,,
 215,1,solution,,,1,,,,,,,,
 216,1,priority,,,1,,,,,,,,
 217,1,potential,,,1,,,,,,,,
