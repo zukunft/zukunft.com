@@ -199,3 +199,4 @@ component_type_id, type_name, description, code_id
 198, 'value chart', 'show a chart of the most relevant values by impact on top of the value list', 'value_chart'
 199, 'view tab box', 'a tab box with the related views (preview plus open and switch buttons) and the change log of the word', 'view_tab_box'
 200, 'title of triple with edit link', 'show the from, verb and to of a triple with links as the page title plus the edit link and subtitle', 'title_of_triple_with_edit_link'
+201, 'title of formula with edit link', 'show the formula name as the page title and the assigned phrases with links in the subtitle plus the edit link', 'title_of_formula_with_edit_link'

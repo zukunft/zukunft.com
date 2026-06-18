@@ -118,9 +118,9 @@
       "name": "is an acronym for",
       "code_id": "acronym",
       "description": "is an acronym for",
-      "name_plural_reverse": "are an acronyms of",
+      "name_plural_reverse": "has acronyms",
       "name_plural": "are an acronyms for",
-      "name_reverse": "is an acronym of"
+      "name_reverse": "has acronym"
     },
     {
       "name": "can be used as a differentiator for",

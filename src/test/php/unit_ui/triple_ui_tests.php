@@ -36,12 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -77,7 +79,25 @@ class triple_ui_tests
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));
         $test_page .= $t->dsp_title_named_edit($trp);
+
+        // show the related phrases grouped by verb as on the default triple page
+        // ("related phrases without subtitles": the verb linked to its page, then the linked
+        // phrases); the "global problem" parents are health/education (via "can be", shown)
+        // and poverty/populism (via "is a", excluded)
+        $list = new ui_list();
+        $trp_problem = new triple($t_trp->global_problem()->api_json());
+        $trp_problem->phr_lst = $t_phr->phrase_list_start_view_ui();
+        $test_page .= $html->text_h2('related phrases without subtitles of ' . $trp_problem->name());
+        $test_page .= $list->phrases_related_ex_subtitle($trp_problem) . '<br>';
+
         $t->html_page_test($test_page, 'triple', 'triple', $t);
+
+        $t->subheader($ts . 'related phrases without subtitles');
+        $sub_html = $list->phrases_related_ex_subtitle($trp_problem);
+        $test_name = 'the "can be" related phrase is shown grouped under its verb';
+        $t->assert_text_contains($test_name, $sub_html, word_names::HEALTH);
+        $test_name = 'the is-a parents are excluded from the related phrases without subtitles';
+        $t->assert_text_not_contains($test_name, $sub_html, word_names::POVERTY);
     }
 
 }

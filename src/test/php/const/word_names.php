@@ -196,6 +196,7 @@ class word_names
 
     // base words that are fixed part of the base setup
     const string CURRENCY = 'currency';
+    const string CURRENCIES = 'currencies';
     // the differentiator word used to qualify a value by business segment e.g. in the XBRL import
     const string SECTOR = 'sector';
     // base income statement words defined in accounting.json and re-declared on import
@@ -273,6 +274,8 @@ class word_names
     const int U_S_DOLLAR_ID = 2427;
     const string DOLLAR = '$';
     const int DOLLAR_ID = 274;
+    const string EURO_SIGN = '€';
+    const int EURO_SIGN_ID = 275;
     const int CURRENCY_ID = 2397;
     const string US = 'US';
     const string GAAP = 'GAAP';

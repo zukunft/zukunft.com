@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -122,6 +123,9 @@ class system_views_read_tests
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
+        // increase is the example for the assigned-phrase subtitle of the "Formula title" component
+        $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::INCREASE_ID, $cfg);
+        $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::CITY_POPULATION_ID, $cfg);
         $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
         $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1, $cfg);
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);

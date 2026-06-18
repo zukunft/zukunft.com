@@ -4,17 +4,11 @@
 
 ### word frontend
 
-show the references in triple as it is in the word default view. src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html is expected to have at least some references
+in the views 'Word (default)' and 'Triple (default)' format the first 'Description' column 'left' instead of 'centre' but keep the option that the same 'description' components could be used in other views with the parameter 'center'
 
-move the references in the word default view to the first column at the end
-
-in the triple subtitle and the links the the phrase
+for the formula 'bid-ask spread absolut' the assigned word is 'currency
 
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
-
-similar to the component 'Word Title' and 'Triple title' create a component 'Formula title' that almost exactly repeats 'Wort title' but obviously the word name is replace by the formula name. And in the subtitle instead of the parent phrases the assigned phrases are shown.  
-
-show above the description a subtitle
 
 rename component "change log word" to "change log term" or add "change log triple"
 

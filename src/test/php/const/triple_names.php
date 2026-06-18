@@ -178,6 +178,12 @@ class triple_names
     const int U_S_DOLLAR_ALIAS_ID = 2847;
     const string IN_USD = "in USD";
     const int IN_USD_ID = 2842;
+    const string EUR_SYMBOL = "EUR is symbol for Euro";
+    const int EUR_SYMBOL_ID = 2845;
+    const string EURO_SIGN_ALIAS = "€ is alias of Euro";
+    const int EURO_SIGN_ALIAS_ID = 2844;
+    const string IN_EUR = "in EUR";
+    const int IN_EUR_ID = 2843;
     const string COMPANY_VESTAS = "Vestas SA";
     const int COMPANY_VESTAS_ID = 142;
     const string COMPANY_ABB = "ABB (company)";
