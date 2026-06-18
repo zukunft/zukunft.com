@@ -594,6 +594,24 @@ class triple extends sandbox_link_named
             $this->name = $this->name_generated;
         }
 
+        // map the external references and register them with the data object so that the import
+        // persists them linked to this triple's phrase (mirrors word::import_mapper); the phrase
+        // id (negative for a triple) is resolved from the saved phrase list in data_object::save
+        if (key_exists(json_fields::REFS, $in_ex_json)) {
+            if ($in_ex_json[json_fields::REFS] <> '') {
+                $ref_json = $in_ex_json[json_fields::REFS];
+                foreach ($ref_json as $ref_data) {
+                    $ref_obj = new ref($this->get_user());
+                    $ref_obj->set_phrase($this->phrase());
+                    $ref_obj->import_mapper($ref_data, $msg, $dto);
+                    $dto?->add_reference($ref_obj);
+                    if ($msg->is_ok()) {
+                        $this->ref_lst[] = $ref_obj;
+                    }
+                }
+            }
+        }
+
         return $msg->is_ok();
     }
 
@@ -881,21 +899,9 @@ class triple extends sandbox_link_named
     {
         global $db_con;
 
-        $this->import_mapper($in_ex_json, $msg, $dto);
+        // the references are mapped and registered by import_mapper (like word)
 
-        // add related parameters to the triple object
-        if ($msg->is_ok()) {
-            if (key_exists(json_fields::REFS, $in_ex_json)) {
-                $ref_json = $in_ex_json[json_fields::REFS];
-                foreach ($ref_json as $ref_data) {
-                    $ref_obj = new ref($this->get_user());
-                    $ref_obj->set_phrase($this->phrase());
-                    if ($ref_obj->import_obj($ref_data, $msg, $dto)) {
-                        $this->ref_lst[] = $ref_obj;
-                    }
-                }
-            }
-        }
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         // save the triple in the database
         if ($db_con->is_open()) {
