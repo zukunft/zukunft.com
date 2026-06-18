@@ -42,6 +42,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
@@ -78,6 +79,49 @@ class ref_list extends ListBase
             }
         }
         return $ref_lst;
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * show the references below each other, sorted first so the html order is deterministic
+     * and independent of the api/db row order (see the frontend "sort every rendered list" rule)
+     * @param phrase_list $context_phr_lst phrases not repeated in the reference name
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style to define e.g. the width of the list
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
+     * @return string the html code to show the references
+     */
+    function list(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string      $back = '',
+        string      $style = '',
+        ?int        $limit = null,
+        ?int        $page = null
+    ): string
+    {
+        $this->sort_by_impact_and_type();
+        return parent::list($context_phr_lst, $back, $style, $limit, $page);
+    }
+
+    /**
+     * sort the references by impact (highest first) and then by reference type name, with the
+     * external key as the final tiebreaker, so the rendered order is always deterministic
+     * @return void
+     */
+    function sort_by_impact_and_type(): void
+    {
+        $lst = $this->lst();
+        usort($lst, function (ref $a, ref $b) {
+            return ($b->impact ?? 0.0) <=> ($a->impact ?? 0.0)
+                ?: strcmp($a->type_name(), $b->type_name())
+                ?: strcmp($a->external_key() ?? '', $b->external_key() ?? '');
+        });
+        $this->set_lst($lst);
     }
 
 }

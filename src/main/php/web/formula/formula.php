@@ -143,6 +143,10 @@ class formula extends sandbox_code_id
     // the impact used to sort the triples
     public float $impact = 0.0;
 
+    // the phrases this formula is assigned to; filled from the INCL_RELATED api message and
+    // shown in the subtitle of the "Formula title" component (like a word's related phrases)
+    public ?phrase_list $phr_lst = null;
+
 
     /*
      * construct and map
@@ -233,6 +237,18 @@ class formula extends sandbox_code_id
             }
         } else {
             $this->impact = 0.0;
+        }
+        if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
+            $value = $json_array[json_fields::PHRASES_RELATED];
+            if (is_array($value)) {
+                $lst = new phrase_list();
+                $lst->api_mapper($value);
+                $this->phr_lst = $lst;
+            } else {
+                $this->phr_lst = null;
+            }
+        } else {
+            $this->phr_lst = null;
         }
         return $msg->is_ok();
     }

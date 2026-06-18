@@ -12,6 +12,7 @@
   "words": [
     {
       "name": "Zurich",
+      "description": "place name used for both the city and the canton of Zurich; reference the qualifier triple, not this bare word",
       "refs": [
         {
           "name": "Zurich",
@@ -25,6 +26,7 @@
     },
     {
       "name": "city",
+      "description": "a large, permanent human settlement",
       "refs": [
         {
           "name": "Zurich",
@@ -38,6 +40,7 @@
     },
     {
       "name": "canton",
+      "description": "a member state of the Swiss Confederation",
       "refs": [
         {
           "name": "canton_of_Zurich",

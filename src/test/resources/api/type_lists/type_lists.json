@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-06-18T08:42:43+00:00",
+    "timestamp": "2026-06-18T11:34:52+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9049,6 +9049,12 @@
                 "code_id": "title_of_triple_with_edit_link",
                 "description": "show the from, verb and to of a triple with links as the page title plus the edit link and subtitle",
                 "id": 200
+            },
+            {
+                "name": "title of formula with edit link",
+                "code_id": "title_of_formula_with_edit_link",
+                "description": "show the formula name as the page title and the assigned phrases with links in the subtitle plus the edit link",
+                "id": 201
             }
         ],
         "component_link_types": [
@@ -20475,7 +20481,7 @@
                     },
                     {
                         "link_id": 991,
-                        "id": 295,
+                        "id": 296,
                         "name": "system show field plural",
                         "description": "show the plural form of a word as read only text",
                         "type_id": 190,
@@ -20485,7 +20491,7 @@
                     },
                     {
                         "link_id": 992,
-                        "id": 297,
+                        "id": 298,
                         "name": "phrase aliases",
                         "description": "show the phrases that are an alias of this phrase",
                         "type_id": 194,
@@ -20495,7 +20501,7 @@
                     },
                     {
                         "link_id": 993,
-                        "id": 298,
+                        "id": 299,
                         "name": "phrase symbols",
                         "description": "show the symbols of this phrase",
                         "type_id": 195,
@@ -20505,7 +20511,7 @@
                     },
                     {
                         "link_id": 994,
-                        "id": 300,
+                        "id": 301,
                         "name": "related phrases without subtitles",
                         "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
                         "type_id": 197,
@@ -20536,7 +20542,7 @@
                     },
                     {
                         "link_id": 997,
-                        "id": 285,
+                        "id": 286,
                         "name": "value chart",
                         "description": "show a chart of the most relevant values by impact on top of the value list",
                         "type_id": 198,
@@ -20545,7 +20551,7 @@
                     },
                     {
                         "link_id": 998,
-                        "id": 283,
+                        "id": 284,
                         "name": "related values",
                         "description": "show the most relevant and related values",
                         "type_id": 11,
@@ -20565,7 +20571,7 @@
                     },
                     {
                         "link_id": 1000,
-                        "id": 301,
+                        "id": 302,
                         "name": "formula list",
                         "description": "list of formulas",
                         "type_id": 12,
@@ -20574,7 +20580,7 @@
                     },
                     {
                         "link_id": 1001,
-                        "id": 304,
+                        "id": 305,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -20614,7 +20620,7 @@
                 "components": [
                     {
                         "link_id": 1004,
-                        "id": 273,
+                        "id": 274,
                         "name": "Verb",
                         "description": "simply show the verb name",
                         "type_id": 37,
@@ -20623,7 +20629,7 @@
                     },
                     {
                         "link_id": 1005,
-                        "id": 274,
+                        "id": 275,
                         "name": "related triples",
                         "description": "triples where this verb is used",
                         "type_id": 47,
@@ -20661,7 +20667,7 @@
                     },
                     {
                         "link_id": 1008,
-                        "id": 297,
+                        "id": 298,
                         "name": "phrase aliases",
                         "description": "show the phrases that are an alias of this phrase",
                         "type_id": 194,
@@ -20671,7 +20677,7 @@
                     },
                     {
                         "link_id": 1009,
-                        "id": 298,
+                        "id": 299,
                         "name": "phrase symbols",
                         "description": "show the symbols of this phrase",
                         "type_id": 195,
@@ -20681,7 +20687,7 @@
                     },
                     {
                         "link_id": 1010,
-                        "id": 300,
+                        "id": 301,
                         "name": "related phrases without subtitles",
                         "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
                         "type_id": 197,
@@ -20702,7 +20708,7 @@
                     },
                     {
                         "link_id": 1012,
-                        "id": 284,
+                        "id": 285,
                         "name": "values by triple",
                         "description": "show the most relevant values where this triple is used",
                         "type_id": 151,
@@ -20722,7 +20728,7 @@
                     },
                     {
                         "link_id": 1014,
-                        "id": 301,
+                        "id": 302,
                         "name": "formula list",
                         "description": "list of formulas",
                         "type_id": 12,
@@ -20752,7 +20758,7 @@
                     },
                     {
                         "link_id": 1017,
-                        "id": 304,
+                        "id": 305,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -20771,7 +20777,7 @@
                 "components": [
                     {
                         "link_id": 1018,
-                        "id": 276,
+                        "id": 277,
                         "name": "source name",
                         "description": "simply show the name of a source",
                         "type_id": 58,
@@ -20780,7 +20786,7 @@
                     },
                     {
                         "link_id": 1019,
-                        "id": 283,
+                        "id": 284,
                         "name": "related values",
                         "description": "show the most relevant and related values",
                         "type_id": 11,
@@ -20798,7 +20804,7 @@
                 "components": [
                     {
                         "link_id": 1020,
-                        "id": 277,
+                        "id": 278,
                         "name": "reference name",
                         "description": "simply show the name of a reference",
                         "type_id": 59,
@@ -20807,7 +20813,7 @@
                     },
                     {
                         "link_id": 1021,
-                        "id": 283,
+                        "id": 284,
                         "name": "related values",
                         "description": "show the most relevant and related values",
                         "type_id": 11,
@@ -20825,7 +20831,7 @@
                 "components": [
                     {
                         "link_id": 1022,
-                        "id": 278,
+                        "id": 279,
                         "name": "language name",
                         "description": "simply show the name of a language",
                         "type_id": 60,
@@ -20834,7 +20840,7 @@
                     },
                     {
                         "link_id": 1023,
-                        "id": 283,
+                        "id": 284,
                         "name": "related values",
                         "description": "show the most relevant and related values",
                         "type_id": 11,
@@ -20852,7 +20858,7 @@
                 "components": [
                     {
                         "link_id": 1024,
-                        "id": 282,
+                        "id": 283,
                         "name": "main value",
                         "description": "show one most relevant value",
                         "type_id": 38,
@@ -20870,16 +20876,17 @@
                 "components": [
                     {
                         "link_id": 1025,
-                        "id": 1,
-                        "name": "Word",
-                        "description": "simply show the word or triple name",
-                        "type_id": 8,
+                        "id": 272,
+                        "name": "Formula title",
+                        "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
+                        "type_id": 201,
+                        "code_id": "title_of_formula_with_edit_link_formula",
                         "position": 1,
                         "position_type": 1
                     },
                     {
                         "link_id": 1026,
-                        "id": 272,
+                        "id": 273,
                         "name": "Expression",
                         "type_id": 62,
                         "position": 2,
@@ -20887,7 +20894,7 @@
                     },
                     {
                         "link_id": 1027,
-                        "id": 286,
+                        "id": 287,
                         "name": "related results",
                         "description": "show the most relevant and related results",
                         "type_id": 61,
@@ -20905,7 +20912,7 @@
                 "components": [
                     {
                         "link_id": 1028,
-                        "id": 286,
+                        "id": 287,
                         "name": "related results",
                         "description": "show the most relevant and related results",
                         "type_id": 61,
@@ -20923,7 +20930,7 @@
                 "components": [
                     {
                         "link_id": 1029,
-                        "id": 287,
+                        "id": 288,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
                         "type_id": 8,
@@ -20932,7 +20939,7 @@
                     },
                     {
                         "link_id": 1030,
-                        "id": 288,
+                        "id": 289,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
                         "type_id": 45,
@@ -20941,7 +20948,7 @@
                     },
                     {
                         "link_id": 1031,
-                        "id": 289,
+                        "id": 290,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
                         "type_id": 46,
@@ -21024,7 +21031,7 @@
                     },
                     {
                         "link_id": 1033,
-                        "id": 281,
+                        "id": 282,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
                         "type_id": 9,
@@ -21033,7 +21040,7 @@
                     },
                     {
                         "link_id": 1034,
-                        "id": 280,
+                        "id": 281,
                         "name": "formulas",
                         "description": "simply show all related formulas",
                         "type_id": 12,
@@ -21060,7 +21067,7 @@
                     },
                     {
                         "link_id": 1036,
-                        "id": 290,
+                        "id": 291,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
                         "type_id": 188,
@@ -21069,7 +21076,7 @@
                     },
                     {
                         "link_id": 1037,
-                        "id": 291,
+                        "id": 292,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
                         "type_id": 188,
@@ -21078,7 +21085,7 @@
                     },
                     {
                         "link_id": 1038,
-                        "id": 292,
+                        "id": 293,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
                         "type_id": 188,
@@ -21121,7 +21128,7 @@
                     },
                     {
                         "link_id": 1040,
-                        "id": 293,
+                        "id": 294,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
                         "type_id": 188,
@@ -21130,7 +21137,7 @@
                     },
                     {
                         "link_id": 1041,
-                        "id": 283,
+                        "id": 284,
                         "name": "related values",
                         "description": "show the most relevant and related values",
                         "type_id": 11,
@@ -21139,7 +21146,7 @@
                     },
                     {
                         "link_id": 1042,
-                        "id": 294,
+                        "id": 295,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
                         "type_id": 188,

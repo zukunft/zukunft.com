@@ -24,6 +24,12 @@
       "code_id": "title_of_triple_with_edit_link_triple"
     },
     {
+      "name": "Formula title",
+      "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
+      "type": "title_of_formula_with_edit_link",
+      "code_id": "title_of_formula_with_edit_link_formula"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -501,7 +507,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "Formula title"
         },
         {
           "position": "2",

@@ -75,9 +75,12 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -96,7 +99,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 class formula extends formula_map
 {
@@ -109,6 +115,11 @@ class formula extends formula_map
     // in memory-only fields
     // list of phrase that links to this formula
     public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
+
+    // the phrases this formula is assigned to; populated lazily by load_phrases_related() and
+    // only emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the
+    // default formula view can show the assigned phrases in the "Formula title" subtitle
+    public ?phrase_list $phrases_related = null;
 
 
     /*
@@ -361,6 +372,44 @@ class formula extends formula_map
     function assign_phr_ulst_direct(): ?phrase_list
     {
         return $this->assign_phr_glst_direct(true);
+    }
+
+    /**
+     * load the phrases this formula is assigned to into the in-memory phrases_related list so
+     * that api_json_array() can emit them under the INCL_RELATED flag (like word::load_phrases_related)
+     */
+    function load_phrases_related(): void
+    {
+        $phr_lst = $this->assign_phr_lst_direct();
+        if ($phr_lst == null) {
+            $phr_lst = new phrase_list($this->get_user());
+        }
+        $this->phrases_related = $phr_lst;
+    }
+
+    /**
+     * extend the formula api message with the assigned phrases so the frontend "Formula title"
+     * component can show them in the subtitle; only added for a page request (INCL_RELATED)
+     * of a saved formula (a fresh formula with id 0 has no assigned phrases)
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the filled api json array
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($typ_lst->incl_related() and $this->id() != 0) {
+            if ($this->phrases_related == null and !$typ_lst->test_mode()) {
+                $this->load_phrases_related();
+            }
+            if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                // INCL_PHRASES so each assigned phrase carries its name (and description for the
+                // tooltip) needed by the subtitle links, sorted by impact in the frontend
+                $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+            }
+        }
+        return $vars;
     }
 
     /**

@@ -309,6 +309,34 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * subtitle for a formula page: the assigned phrases as a plain comma-separated list of
+     * links (each carrying its description as a tooltip), sorted by impact for a deterministic
+     * order and capped at $max with a trailing "..." when more phrases are assigned
+     * @param int|null $max the max number of phrases shown before the "..." placeholder
+     * @return string the html code of the assigned-phrase links
+     */
+    function assigned_subtitle(?int $max = null): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            $this->sort_by_impact();
+            $links = [];
+            $i = 0;
+            foreach ($this->lst() as $phr) {
+                if ($max === null or $i < $max) {
+                    $links[] = $phr->name_link();
+                }
+                $i++;
+            }
+            if ($max !== null and $this->count() > $max) {
+                $links[] = '...';
+            }
+            $result = implode(', ', $links);
+        }
+        return $result;
+    }
+
+    /**
      * placeholder link to all related object for a (too) long list
      * @param int $parent_id the id of the object who related objects should be shown
      * @return ?string the html code of the more placeholder

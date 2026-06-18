@@ -4,10 +4,6 @@
 
 ### word frontend
 
-in the triple subtitle and the links to the phrases should have a tooltip, so the html title tag should be filled with the related description including the tooltip for the verb
-
-similar to the component 'Word Title' and 'Triple title' create a component 'Formula title' that almost exactly repeats 'Wort title' but obviously the word name is replace by the formula name. And in the subtitle instead of the parent phrases the assigned phrases are shown.
-
 move the references in the word default view to the first column at the end
 
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
