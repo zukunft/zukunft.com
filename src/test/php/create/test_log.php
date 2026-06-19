@@ -382,6 +382,43 @@ class test_log
     }
 
     /**
+     * @return change log entry created by adding the increase formula name
+     */
+    function log_formula_increase_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::FORMULA);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->new_value = formula_names::INCREASE;
+        $chg->row_id = formula_names::INCREASE_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by setting the expression of the increase formula
+     */
+    function log_formula_increase_exp(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::FORMULA);
+        $chg->set_field(change_fields::FLD_FORMULA_USR_TEXT);
+        $chg->new_value = formula_names::INCREASE_EXP;
+        $chg->row_id = formula_names::INCREASE_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change_log_list the changes of creating the increase formula (name and expression)
+     */
+    function log_list_formula_increase(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_formula_increase_add());
+        $log_lst->add($this->log_formula_increase_exp());
+        return $log_lst;
+    }
+
+    /**
      * @return change log entry created by adding a view
      */
     function log_view_add(): change

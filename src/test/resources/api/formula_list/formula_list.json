@@ -2,9 +2,9 @@
   {
     "id": 1,
     "name": "scale minute to sec",
+    "description": "to convert times in minutes to seconds and the other way round",
     "type_id": 1,
     "user_text": "\"second (time)\" = \"minute\" * 60",
-    "ref_text": "{t20}={w103}*60",
     "latex": "\\text{s} = 60 \\cdot \\text{min}"
   }
 ]

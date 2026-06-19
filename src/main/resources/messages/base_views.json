@@ -39,6 +39,11 @@
       "type": "expression"
     },
     {
+      "name": "Expression with links",
+      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
+      "type": "expression_latex_link"
+    },
+    {
       "name": "Verb",
       "description": "simply show the verb name",
       "type": "verb_name"
@@ -520,7 +525,7 @@
       ]
     },
     {
-      "name": "Formula",
+      "name": "Formula (default)",
       "description": "Show a formula and the related results and words",
       "code_id": "formula_default",
       "type": "formula",
@@ -531,7 +536,7 @@
         },
         {
           "position": "2",
-          "name": "Expression"
+          "name": "Expression with links"
         },
         {
           "position": "3",

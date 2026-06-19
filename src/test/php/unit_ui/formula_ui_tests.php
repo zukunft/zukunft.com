@@ -32,9 +32,19 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::LOG . 'change_log_list.php';
+
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
@@ -57,6 +67,31 @@ class formula_ui_tests
         $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
         $test_page .= $t->dsp_title_named_edit($frm);
+
+        // the formula page title shows the formula name with its assigned phrases as subtitle,
+        // e.g. "increase" with the assigned "year" phrase
+        $frm_increase = $t_frm->formula_increase_ui();
+        $test_page .= $t->dsp_title_formula($frm_increase);
+
+        // the expression in latex format with a tooltip and a link for each term, e.g. the
+        // "definition of joule" formula joule = ( kg * metre * metre ) / ( second * second )
+        $frm_joule = $t_frm->formula_joule_ui();
+        $test_page .= $html->text_h2('expression in latex format with term links');
+        $test_page .= 'latex with links: ' . $frm_joule->expression_latex_link() . '<br>';
+
+        // the same component without a term list shows the expression in latex format without
+        // links, e.g. the increase formula "percent = ( this - prior ) / prior"
+        $test_page .= $html->text_h2('expression in latex format without term links');
+        $test_page .= 'latex without links: ' . $frm_increase->expression_latex_link() . '<br>';
+
+        // the changes of the increase formula as a table, e.g. the name and expression added
+        $t_log = new test_log($t);
+        $back = new back_trace();
+        $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
+        $log_lst = new change_log_list($t_log->log_list_formula_increase()->api_json($api_typ_lst));
+        $test_page .= $html->text_h2('changes of the formula increase');
+        $test_page .= $log_lst->tbl($back);
+
         $t->html_page_test($test_page, 'formula', 'formula', $t);
 
         // TODO review

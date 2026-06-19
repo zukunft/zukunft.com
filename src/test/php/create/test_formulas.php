@@ -51,6 +51,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once test_paths::CONST . 'formula_names.php';
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -114,6 +116,7 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
         $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
+        $frm->set_description(formula_names::SCALE_TO_SEC_COM);
         $frm->set_latex(formula_names::SCALE_TO_SEC_LATEX);
         $frm->set_type(formula_type::CALC, $this->env->usr1);
         return $frm;
@@ -247,6 +250,47 @@ class test_formulas extends test_objects
         $frm->set(formula_names::INCREASE_ID, formula_names::INCREASE);
         $frm->set_user_text(formula_names::INCREASE_EXP, $t_trm->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->env->usr1);
+        return $frm;
+    }
+
+    /**
+     * @return formula_ui the web "increase" formula with the phrase it is assigned to ("year"),
+     *         used to show the formula page title with the assigned-phrase subtitle
+     */
+    function formula_increase_ui(): formula_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $frm = new formula_ui($this->formula_increase()->api_json());
+        $frm->set_latex(formula_names::INCREASE_LATEX);
+        $frm->phr_lst = $t_phr->list_increase_assigned_ui();
+        return $frm;
+    }
+
+    /**
+     * @return formula the "definition of joule" formula joule = ( kg * metre * metre ) / ( second * second )
+     */
+    function formula_joule(): formula
+    {
+        $t_trm = new test_terms($this->env);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::JOULE_DEF_ID, formula_names::JOULE_DEF);
+        $frm->set_user_text(formula_names::JOULE_DEF_EXP, $t_trm->term_list_joule());
+        $frm->set_latex(formula_names::JOULE_DEF_LATEX);
+        $frm->set_type(formula_type::CALC, $this->env->usr1);
+        $frm->description = formula_names::JOULE_DEF_COM;
+        return $frm;
+    }
+
+    /**
+     * @return formula_ui the web "definition of joule" formula with its latex and term list,
+     *         used to show the expression in latex format with the term links and tooltips
+     */
+    function formula_joule_ui(): formula_ui
+    {
+        $t_trm = new test_terms($this->env);
+        $frm = new formula_ui($this->formula_joule()->api_json());
+        $frm->set_latex(formula_names::JOULE_DEF_LATEX);
+        $frm->trm_lst = $t_trm->term_list_joule_ui();
         return $frm;
     }
 

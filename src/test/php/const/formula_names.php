@@ -76,6 +76,14 @@ class formula_names
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
+    // the latex uses plain term names (no quotes) so the expression is shown without term links
+    const string INCREASE_LATEX = words::PERCENT . ' = \frac{ ' . word_names::THIS_NAME . ' - ' . word_names::PRIOR_NAME . ' }{ ' . word_names::PRIOR_NAME . ' }';
+    const string JOULE_DEF = 'definition of joule';
+    const int JOULE_DEF_ID = 27;
+    const string JOULE_DEF_EXP = '"' . word_names::JOULE . '" = ( "' . word_names::KG . '" * "' . word_names::METRE . '" * "' . word_names::METRE . '" ) / ( "' . words::SECOND . '" * "' . words::SECOND . '" )';
+    // the latex uses the same quoted term names as the expression so the term links can be created by replacing each quoted name with the term link
+    const string JOULE_DEF_LATEX = '"' . word_names::JOULE . '" = \frac{ "' . word_names::KG . '" \cdot "' . word_names::METRE . '"^2 }{ "' . words::SECOND . '"^2 }';
+    const string JOULE_DEF_COM = 'the SI definition of the unit joule';
     const string LITRE_TO_M3 = 'scale litre to m3';
     const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';

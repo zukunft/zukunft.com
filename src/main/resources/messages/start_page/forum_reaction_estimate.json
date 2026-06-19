@@ -1,0 +1,560 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-19 12:30:00",
+  "user": "zukunftcom",
+  "selection": [
+    "thread fit calibration"
+  ],
+  "description": "Calibration log for the thread-selection judgement behind the forum-outreach Fermi model, using the real ZEIT-online forum reaction measures. For each building-block post (anchored by its forum URL as a ref of type forum_zeit.de) a forecast of each reaction count is recorded BEFORE posting (assumed value, committed in its own git commit so the timestamp proves it predates the result), and the observed counts are recorded AFTER (measured value). The measures are the five ZEIT reaction icons (star = positive/agreeing, smile = friendly/amused, astonished = surprised, frown = rejecting/displeased, eyebrow = skeptical) plus the count of substantive text replies. The calibration error (forecast minus observed) is calc-validated per measure per post, so over time the graph shows whether the pre-post thread-fit judgement is well calibrated or systematically too optimistic. Replace the example post with real ones; add the measured values and their calc-validation in a later commit once each thread's reaction has settled.",
+  "words": [
+    {
+      "name": "post",
+      "description": "a single message submitted to an online forum or comment thread."
+    },
+    {
+      "name": "thread",
+      "description": "a series of forum messages on one topic, shown as a connected sequence.",
+      "refs": [
+        {
+          "name": "Conversation_threading",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reply",
+      "description": "a message written in answer to an earlier message."
+    },
+    {
+      "name": "substantive",
+      "description": "engaging with the content of an argument rather than with its tone or the person."
+    },
+    {
+      "name": "reaction",
+      "description": "a reader response to a post, on ZEIT online registered by clicking one of the reaction icons."
+    },
+    {
+      "name": "icon",
+      "description": "a small pictogram a reader clicks to react to a post.",
+      "refs": [
+        {
+          "name": "Icon_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "star",
+      "description": "the ZEIT online star reaction icon, expressing a positive, agreeing response."
+    },
+    {
+      "name": "smile",
+      "description": "the ZEIT online smile reaction icon, expressing a friendly or amused response."
+    },
+    {
+      "name": "astonished",
+      "description": "the ZEIT online astonished reaction icon, expressing surprise."
+    },
+    {
+      "name": "frown",
+      "description": "the ZEIT online frown reaction icon, expressing a rejecting or displeased response."
+    },
+    {
+      "name": "eyebrow",
+      "description": "the ZEIT online raised-eyebrow reaction icon, expressing skepticism."
+    },
+    {
+      "name": "fit",
+      "description": "how well a thing matches a purpose or context."
+    },
+    {
+      "name": "forecast",
+      "description": "an estimate of a future value made before it is observed.",
+      "refs": [
+        {
+          "name": "Forecasting",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "calibration",
+      "description": "the degree to which forecast quantities match observed outcomes.",
+      "refs": [
+        {
+          "name": "Calibration_(statistics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "error",
+      "description": "the difference between an estimated value and its observed value."
+    },
+    {
+      "name": "count",
+      "description": "the number of items in a set."
+    },
+    {
+      "name": "measured value",
+      "description": "a value taken from an observation or a cited source."
+    },
+    {
+      "name": "assumed value",
+      "description": "a value set by reasoned assumption before observation, not measured."
+    },
+    {
+      "name": "2026-06-19",
+      "description": "the date 19 June 2026.",
+      "type": "measure"
+    }
+  ],
+  "triples": [
+    {
+      "name": "substantive reply",
+      "from": "reply",
+      "verb": "kind of",
+      "to": "substantive",
+      "description": "a reply that engages with the content of the building-block argument."
+    },
+    {
+      "name": "star reaction",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "star",
+      "description": "a reader reaction registered with the ZEIT star icon (positive/agreeing)."
+    },
+    {
+      "name": "smile reaction",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "smile",
+      "description": "a reader reaction registered with the ZEIT smile icon (friendly/amused)."
+    },
+    {
+      "name": "astonished reaction",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "astonished",
+      "description": "a reader reaction registered with the ZEIT astonished icon (surprised)."
+    },
+    {
+      "name": "frown reaction",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "frown",
+      "description": "a reader reaction registered with the ZEIT frown icon (rejecting/displeased)."
+    },
+    {
+      "name": "eyebrow reaction",
+      "from": "reaction",
+      "verb": "kind of",
+      "to": "eyebrow",
+      "description": "a reader reaction registered with the ZEIT raised-eyebrow icon (skeptical)."
+    },
+    {
+      "name": "star reaction count",
+      "from": "count",
+      "verb": "of",
+      "to": "star reaction",
+      "description": "the number of star reactions a post draws."
+    },
+    {
+      "name": "smile reaction count",
+      "from": "count",
+      "verb": "of",
+      "to": "smile reaction",
+      "description": "the number of smile reactions a post draws."
+    },
+    {
+      "name": "astonished reaction count",
+      "from": "count",
+      "verb": "of",
+      "to": "astonished reaction",
+      "description": "the number of astonished reactions a post draws."
+    },
+    {
+      "name": "frown reaction count",
+      "from": "count",
+      "verb": "of",
+      "to": "frown reaction",
+      "description": "the number of frown reactions a post draws."
+    },
+    {
+      "name": "eyebrow reaction count",
+      "from": "count",
+      "verb": "of",
+      "to": "eyebrow reaction",
+      "description": "the number of eyebrow reactions a post draws."
+    },
+    {
+      "name": "substantive reply count",
+      "from": "count",
+      "verb": "of",
+      "to": "substantive reply",
+      "description": "the number of substantive text replies a post draws."
+    },
+    {
+      "name": "thread fit",
+      "from": "fit",
+      "verb": "of",
+      "to": "thread",
+      "description": "how well a thread matches the goal of reaching a qualified reader; the pre-post forecast of the reaction counts is its operational form."
+    },
+    {
+      "name": "post 2026-06-19",
+      "from": "post",
+      "verb": "of",
+      "to": "2026-06-19",
+      "description": "the building-block post made on 19 June 2026 (example; replace ref URL and counts with the real post).",
+      "refs": [
+        {
+          "name": "https://www.zeit.de/politik/ausland/2026-06/example-thread/comments?cid=example#cid-example",
+          "ref_type": "forum_zeit.de"
+        }
+      ]
+    },
+    {
+      "name": "star reaction count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "star reaction count",
+      "description": "the pre-post forecast of the star reaction count."
+    },
+    {
+      "name": "smile reaction count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "smile reaction count",
+      "description": "the pre-post forecast of the smile reaction count."
+    },
+    {
+      "name": "astonished reaction count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "astonished reaction count",
+      "description": "the pre-post forecast of the astonished reaction count."
+    },
+    {
+      "name": "frown reaction count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "frown reaction count",
+      "description": "the pre-post forecast of the frown reaction count."
+    },
+    {
+      "name": "eyebrow reaction count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "eyebrow reaction count",
+      "description": "the pre-post forecast of the eyebrow reaction count."
+    },
+    {
+      "name": "substantive reply count forecast",
+      "from": "forecast",
+      "verb": "of",
+      "to": "substantive reply count",
+      "description": "the pre-post forecast of the substantive reply count."
+    },
+    {
+      "name": "star reaction calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "star reaction count",
+      "description": "forecast minus observed star reaction count for one post; positive means too optimistic."
+    },
+    {
+      "name": "smile reaction calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "smile reaction count",
+      "description": "forecast minus observed smile reaction count for one post."
+    },
+    {
+      "name": "astonished reaction calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "astonished reaction count",
+      "description": "forecast minus observed astonished reaction count for one post."
+    },
+    {
+      "name": "frown reaction calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "frown reaction count",
+      "description": "forecast minus observed frown reaction count for one post."
+    },
+    {
+      "name": "eyebrow reaction calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "eyebrow reaction count",
+      "description": "forecast minus observed eyebrow reaction count for one post."
+    },
+    {
+      "name": "substantive reply calibration error",
+      "from": "error",
+      "verb": "of",
+      "to": "substantive reply count",
+      "description": "forecast minus observed substantive reply count for one post."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "star reaction calibration error (formula)",
+      "expression": "\"star reaction calibration error\" = \"star reaction count forecast\" - \"star reaction count\"",
+      "assigned": [
+        "star reaction count forecast",
+        "star reaction count"
+      ]
+    },
+    {
+      "name": "smile reaction calibration error (formula)",
+      "expression": "\"smile reaction calibration error\" = \"smile reaction count forecast\" - \"smile reaction count\"",
+      "assigned": [
+        "smile reaction count forecast",
+        "smile reaction count"
+      ]
+    },
+    {
+      "name": "astonished reaction calibration error (formula)",
+      "expression": "\"astonished reaction calibration error\" = \"astonished reaction count forecast\" - \"astonished reaction count\"",
+      "assigned": [
+        "astonished reaction count forecast",
+        "astonished reaction count"
+      ]
+    },
+    {
+      "name": "frown reaction calibration error (formula)",
+      "expression": "\"frown reaction calibration error\" = \"frown reaction count forecast\" - \"frown reaction count\"",
+      "assigned": [
+        "frown reaction count forecast",
+        "frown reaction count"
+      ]
+    },
+    {
+      "name": "eyebrow reaction calibration error (formula)",
+      "expression": "\"eyebrow reaction calibration error\" = \"eyebrow reaction count forecast\" - \"eyebrow reaction count\"",
+      "assigned": [
+        "eyebrow reaction count forecast",
+        "eyebrow reaction count"
+      ]
+    },
+    {
+      "name": "substantive reply calibration error (formula)",
+      "expression": "\"substantive reply calibration error\" = \"substantive reply count forecast\" - \"substantive reply count\"",
+      "assigned": [
+        "substantive reply count forecast",
+        "substantive reply count"
+      ]
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "star reaction count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "smile reaction count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "astonished reaction count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "frown reaction count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "eyebrow reaction count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "substantive reply count forecast",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "star reaction count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "smile reaction count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "astonished reaction count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "frown reaction count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "eyebrow reaction count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "substantive reply count",
+        "post 2026-06-19",
+        "measured value"
+      ],
+      "number": "1"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "star reaction count forecast",
+        "star reaction count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "star reaction calibration error (formula)",
+      "words": [
+        "star reaction calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "3.00",
+      "note": "forecast 8 star - observed 5 = 3 (too optimistic on agreement)."
+    },
+    {
+      "context": [
+        "smile reaction count forecast",
+        "smile reaction count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "smile reaction calibration error (formula)",
+      "words": [
+        "smile reaction calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "2.00",
+      "note": "forecast 4 smile - observed 2 = 2."
+    },
+    {
+      "context": [
+        "astonished reaction count forecast",
+        "astonished reaction count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "astonished reaction calibration error (formula)",
+      "words": [
+        "astonished reaction calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "1.00",
+      "note": "forecast 2 astonished - observed 1 = 1."
+    },
+    {
+      "context": [
+        "frown reaction count forecast",
+        "frown reaction count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "frown reaction calibration error (formula)",
+      "words": [
+        "frown reaction calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "-3.00",
+      "note": "forecast 3 frown - observed 6 = -3 (more rejection than expected; the negative sign flags an under-forecast)."
+    },
+    {
+      "context": [
+        "eyebrow reaction count forecast",
+        "eyebrow reaction count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "eyebrow reaction calibration error (formula)",
+      "words": [
+        "eyebrow reaction calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "1.00",
+      "note": "forecast 5 eyebrow - observed 4 = 1."
+    },
+    {
+      "context": [
+        "substantive reply count forecast",
+        "substantive reply count",
+        "post 2026-06-19",
+        "thread fit",
+        "assumed value",
+        "measured value"
+      ],
+      "formula": "substantive reply calibration error (formula)",
+      "words": [
+        "substantive reply calibration error",
+        "post 2026-06-19"
+      ],
+      "number": "1.00",
+      "note": "forecast 2 replies - observed 1 = 1."
+    }
+  ]
+}

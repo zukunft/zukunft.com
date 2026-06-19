@@ -233,7 +233,8 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "assigned_word": "year"
+      "assigned_word": "year",
+      "protection": "admin_protection"
     }
   ]
 }

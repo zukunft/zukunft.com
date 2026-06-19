@@ -33,16 +33,19 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_terms
@@ -178,6 +181,29 @@ class test_terms
         $lst->add($t_wrd->word_minute()->term());
         $lst->add($t_wrd->word_hour()->term());
         return $lst;
+    }
+
+    /**
+     * @return term_list the terms used in the "definition of joule" formula: joule, kg, metre and second
+     */
+    function term_list_joule(): term_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->joule()->term());
+        $lst->add($t_wrd->kg()->term());
+        $lst->add($t_wrd->metre()->term());
+        $lst->add($t_wrd->second()->term());
+        return $lst;
+    }
+
+    /**
+     * @return term_list_ui the frontend term list for the "definition of joule" formula,
+     *         used to create the term links of the expression_latex_link component
+     */
+    function term_list_joule_ui(): term_list_ui
+    {
+        return new term_list_ui($this->term_list_joule()->api_json());
     }
 
     /**

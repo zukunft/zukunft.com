@@ -1,0 +1,393 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-19 12:00:00",
+  "user": "zukunftcom",
+  "selection": [
+    "forum outreach Fermi estimate"
+  ],
+  "description": "Fermi / expected-value model for the question 'is it worth dropping a recycled zukunft.com building-block into a comment thread as bait for one (n=1) qualified collaborator?'. The chain multiplies posting rate, readers, substantive-reply rate, qualified share and collaboration probability to an expected number of collaborators per hour of forum work, and inverts it to expected hours per collaborator. All probability operands are assumed values with stated grounds; the readable per-post and per-hour results are calc-validated. The vanishingly small intermediate products (qualified per post, collaborator per post) are deliberately left out of calc-validation because they round to 0.00 at two decimals and cannot be reproduced by the literal lookup.",
+  "words": [
+    {
+      "name": "Fermi",
+      "description": "an estimation problem solved by reasonable assumptions to reach an order-of-magnitude answer.",
+      "refs": [
+        {
+          "name": "Fermi_problem",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "outreach",
+      "description": "the activity of an organisation or individual building relationships with people outside it to spread an idea or recruit."
+    },
+    {
+      "name": "forum",
+      "description": "an online discussion site where people hold conversations as posted messages.",
+      "refs": [
+        {
+          "name": "Internet_forum",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1059391",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "post",
+      "description": "a single message submitted to an online forum or comment thread."
+    },
+    {
+      "name": "reader",
+      "description": "a person who reads a text."
+    },
+    {
+      "name": "reply",
+      "description": "a message written in answer to an earlier message."
+    },
+    {
+      "name": "substantive",
+      "description": "engaging with the content of an argument rather than with its tone or the person."
+    },
+    {
+      "name": "qualified",
+      "description": "meeting the competence bar required for a task."
+    },
+    {
+      "name": "collaborator",
+      "description": "a person who works jointly with another on a shared project."
+    },
+    {
+      "name": "collaboration",
+      "description": "the action of working with someone to produce something.",
+      "refs": [
+        {
+          "name": "Collaboration",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "philosophy",
+      "description": "the study of general and fundamental questions about existence, knowledge, values, reason and mind.",
+      "refs": [
+        {
+          "name": "Philosophy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5891",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "informatics",
+      "description": "the study of computational systems and the structured representation and processing of information.",
+      "refs": [
+        {
+          "name": "Informatics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "competence",
+      "description": "the ability to do something successfully or efficiently."
+    },
+    {
+      "name": "hour",
+      "description": "a unit of time equal to 60 minutes.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Hour",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25235",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "count",
+      "description": "the number of items in a set."
+    },
+    {
+      "name": "rate",
+      "description": "a ratio of one quantity to another, often per unit time or per item."
+    },
+    {
+      "name": "share",
+      "description": "a part or proportion of a whole."
+    },
+    {
+      "name": "probability",
+      "description": "a measure of the likelihood of an event, between 0 and 1.",
+      "refs": [
+        {
+          "name": "Probability",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q9492",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "work",
+      "description": "activity involving effort done to achieve a purpose or result."
+    },
+    {
+      "name": "project",
+      "description": "an individual or collaborative undertaking planned to achieve a particular aim."
+    },
+    {
+      "name": "measured value",
+      "description": "a value taken from an observation or a cited source."
+    },
+    {
+      "name": "assumed value",
+      "description": "a value set by reasoned assumption for a Fermi estimate, not measured."
+    }
+  ],
+  "triples": [
+    {
+      "name": "forum outreach",
+      "from": "outreach",
+      "verb": "of",
+      "to": "forum",
+      "description": "outreach carried out by posting in online forums and comment threads."
+    },
+    {
+      "name": "qualified collaborator",
+      "from": "collaborator",
+      "verb": "kind of",
+      "to": "qualified",
+      "description": "a collaborator who meets the competence bar for the project."
+    },
+    {
+      "name": "philosophy and informatics",
+      "from": "philosophy",
+      "verb": "and",
+      "to": "informatics",
+      "description": "the joint competence in both philosophy and informatics that the project requires of a single collaborator."
+    },
+    {
+      "name": "philosophy and informatics competence",
+      "from": "competence",
+      "verb": "of",
+      "to": "philosophy and informatics",
+      "description": "competence spanning both philosophy and informatics."
+    },
+    {
+      "name": "post rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "post",
+      "description": "the number of recycled building-block posts produced per hour of forum work, including time to adapt the block and find a fitting thread; about 5 minutes per post, so 12 per hour."
+    },
+    {
+      "name": "reader per post",
+      "from": "reader",
+      "verb": "per",
+      "to": "post",
+      "description": "how many people realistically read a single post (not the whole thread)."
+    },
+    {
+      "name": "substantive reply",
+      "from": "reply",
+      "verb": "kind of",
+      "to": "substantive",
+      "description": "a reply that engages with the content of the building-block argument."
+    },
+    {
+      "name": "substantive reply rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "substantive reply",
+      "description": "the share of readers of a post who leave a substantive reply."
+    },
+    {
+      "name": "qualified share",
+      "from": "share",
+      "verb": "of",
+      "to": "qualified",
+      "description": "the share of substantive repliers who actually carry the required philosophy-and-informatics competence."
+    },
+    {
+      "name": "collaboration probability",
+      "from": "probability",
+      "verb": "of",
+      "to": "collaboration",
+      "description": "the probability that one qualified contact turns into real collaboration on the project."
+    },
+    {
+      "name": "substantive reply per post",
+      "from": "substantive reply",
+      "verb": "per",
+      "to": "post",
+      "description": "expected number of substantive replies produced by one post; readers per post times the substantive reply rate."
+    },
+    {
+      "name": "qualified collaborator per post",
+      "from": "qualified collaborator",
+      "verb": "per",
+      "to": "post",
+      "description": "expected number of qualified collaborators produced by one post; substantive replies per post times the qualified share times the collaboration probability."
+    },
+    {
+      "name": "qualified collaborator per hour",
+      "from": "qualified collaborator",
+      "verb": "per",
+      "to": "hour",
+      "description": "expected number of qualified collaborators produced per hour of forum work; collaborators per post times the post rate."
+    },
+    {
+      "name": "hour per qualified collaborator",
+      "from": "hour",
+      "verb": "per",
+      "to": "qualified collaborator",
+      "description": "expected hours of forum work needed to land one qualified collaborator; the inverse of collaborators per hour."
+    }
+  ],
+  "sources": [
+    {
+      "name": "thread engagement observation",
+      "description": "Observation from the comment thread itself: a carefully referenced Fermi post with 15 sources drew essentially no substantive replies, while the thread carries roughly 15'000 comments per day, grounding the low substantive-reply rate and the n=1 framing."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "substantive reply per post (formula)",
+      "expression": "\"substantive reply per post\" = \"reader per post\" * \"substantive reply rate\"",
+      "latex": "r_{sub} = n_{read} \\cdot p_{sub}",
+      "assigned": [
+        "reader per post",
+        "substantive reply rate"
+      ]
+    },
+    {
+      "name": "qualified collaborator per post (formula)",
+      "expression": "\"qualified collaborator per post\" = \"substantive reply per post\" * \"qualified share\" * \"collaboration probability\"",
+      "latex": "c_{post} = r_{sub} \\cdot s_{qual} \\cdot p_{collab}",
+      "assigned": [
+        "substantive reply per post",
+        "qualified share",
+        "collaboration probability"
+      ]
+    },
+    {
+      "name": "qualified collaborator per hour (formula)",
+      "expression": "\"qualified collaborator per hour\" = \"qualified collaborator per post\" * \"post rate\"",
+      "latex": "c_{hour} = c_{post} \\cdot r_{post}",
+      "assigned": [
+        "qualified collaborator per post",
+        "post rate"
+      ]
+    },
+    {
+      "name": "hour per qualified collaborator (formula)",
+      "expression": "\"hour per qualified collaborator\" = 1 / \"qualified collaborator per hour\"",
+      "latex": "h_{collab} = 1 / c_{hour}",
+      "assigned_word": "qualified collaborator per hour"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "post rate",
+        "forum outreach",
+        "assumed value"
+      ],
+      "number": "12",
+      "source": "thread engagement observation"
+    },
+    {
+      "words": [
+        "reader per post",
+        "forum outreach",
+        "measured value"
+      ],
+      "number": "200",
+      "source": "thread engagement observation"
+    },
+    {
+      "words": [
+        "substantive reply rate",
+        "forum outreach",
+        "assumed value"
+      ],
+      "number": "0.005",
+      "source": "thread engagement observation"
+    },
+    {
+      "words": [
+        "qualified share",
+        "philosophy and informatics competence",
+        "assumed value"
+      ],
+      "number": "0.001"
+    },
+    {
+      "words": [
+        "collaboration probability",
+        "assumed value"
+      ],
+      "number": "0.2"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "reader per post",
+        "substantive reply rate",
+        "forum outreach",
+        "measured value",
+        "assumed value"
+      ],
+      "formula": "substantive reply per post (formula)",
+      "words": [
+        "substantive reply per post",
+        "forum outreach"
+      ],
+      "number": "1.00",
+      "note": "200 readers * 0.005 substantive reply rate = 1 substantive reply per post."
+    },
+    {
+      "context": [
+        "post rate",
+        "reader per post",
+        "substantive reply rate",
+        "qualified share",
+        "collaboration probability",
+        "forum outreach",
+        "philosophy and informatics competence",
+        "measured value",
+        "assumed value"
+      ],
+      "formula": "hour per qualified collaborator (formula)",
+      "words": [
+        "hour per qualified collaborator",
+        "forum outreach"
+      ],
+      "number": "416.67",
+      "note": "1 / (1 substantive reply per post * 0.001 qualified share * 0.2 collaboration probability * 12 posts per hour) = 416.67 hours of forum work per expected qualified collaborator. The qualified-collaborator-per-post (0.0002) and per-hour intermediates round to 0.00 at two decimals and are therefore not calc-validated, only this readable end figure is."
+    }
+  ]
+}

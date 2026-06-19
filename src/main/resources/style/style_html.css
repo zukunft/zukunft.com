@@ -288,3 +288,22 @@ a:hover {
     padding: 20px; /* Adds space inside the footer */
     font-size: 0.8rem; /* Makes the footer text slightly smaller than main text */
 }
+
+/* formula fraction: render a latex \frac as the numerator over the denominator */
+.frac {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+}
+.frac > .num {
+    display: block;
+    border-bottom: 1px solid black;
+    padding: 0 0.3em;
+}
+.frac > .den {
+    display: block;
+    padding: 0 0.3em;
+}
+.frac sup {
+    font-size: 0.7em;
+}

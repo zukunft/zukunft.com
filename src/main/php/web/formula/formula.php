@@ -56,6 +56,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::FORMULA . 'expression.php';
 //include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -90,6 +91,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -146,6 +148,10 @@ class formula extends sandbox_code_id
     // the phrases this formula is assigned to; filled from the INCL_RELATED api message and
     // shown in the subtitle of the "Formula title" component (like a word's related phrases)
     public ?phrase_list $phr_lst = null;
+
+    // the terms used in the formula expression; filled from the api message and used to create
+    // the term links of the "expression_latex_link" component (web has no direct db access)
+    public ?term_list $trm_lst = null;
 
 
     /*
@@ -441,6 +447,60 @@ class formula extends sandbox_code_id
     function user_expression(): string
     {
         return str_replace('"', '&quot;', $this->usr_text);
+    }
+
+    /**
+     * the formula expression in the latex format with each term shown as a link to the term
+     * that displays the term description as a tooltip; each quoted term name in the latex
+     * (e.g. "joule") is replaced by the term link, so the latex must use the same quoted term
+     * names as the user expression; the terms are taken from the preloaded term list because
+     * the frontend has no direct database access
+     * @return string the latex expression with the quoted term names replaced by the term links
+     */
+    function expression_latex_link(): string
+    {
+        $result = '';
+        $latex = $this->get_latex();
+        // replace each quoted term name with its link incl. the description as tooltip
+        if ($this->trm_lst != null) {
+            foreach ($this->trm_lst->lst() as $trm) {
+                $latex = str_replace('"' . $trm->name() . '"', $trm->name_link(), $latex);
+            }
+        }
+        if ($latex != '') {
+            // render the latex math markup (exponents, products and fractions) as html and
+            // keep the whole expression on one line with the "text-nowrap" wrapper
+            $html = new html_base();
+            $result = $html->span($this->latex_to_html($latex), styles::TEXT_NOWRAP);
+        }
+        return $result;
+    }
+
+    /**
+     * convert the supported latex math markup to html so the expression can be shown without a
+     * latex engine: an exponent "^2" becomes a superscript, the product "\cdot" becomes a middle
+     * dot and a fraction "\frac{a}{b}" becomes a numerator-over-denominator block styled by css
+     * @param string $latex the latex expression with the term names already replaced by their links
+     * @return string the html code that renders the expression with the same layout as latex
+     */
+    private function latex_to_html(string $latex): string
+    {
+        $html = new html_base();
+        // an exponent "^2" becomes a superscript "<sup>2</sup>"
+        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $latex);
+        // the latex product "\cdot" becomes the html middle dot
+        $result = str_replace('\cdot', '&middot;', $result);
+        // a fraction "\frac{a}{b}" becomes the numerator shown above the denominator
+        $result = preg_replace_callback(
+            '/\\\\frac\{([^{}]*)}\{([^{}]*)}/',
+            function ($m) use ($html) {
+                $num = $html->span(trim($m[1]), styles::FRAC_NUM);
+                $den = $html->span(trim($m[2]), styles::FRAC_DEN);
+                return $html->span($num . $den, styles::FRAC);
+            },
+            $result
+        );
+        return $result;
     }
 
     /**

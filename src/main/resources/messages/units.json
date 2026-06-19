@@ -2623,6 +2623,7 @@
       "name": "scale minute to sec",
       "expression": "\"second (time)\" = \"minute\" * 60",
       "latex": "\\text{s} = 60 \\cdot \\text{min}",
+      "description": "to convert times in minutes to seconds and the other way round",
       "assigned_word": "minute"
     },
     {
@@ -2701,6 +2702,7 @@
       "name": "definition of joule",
       "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / ( \"second (time)\" * \"second (time)\" )",
       "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}",
+      "description": "the SI definition of the unit joule",
       "assigned_word": "joule"
     }
   ],
