@@ -4,13 +4,6 @@
 
 ### word frontend
 
-add to /docs/llm/json_structure.md the usage of 'is symbol for' as the formula replacer versus 'is alias for' that combines the two phrase more or less to one
-
-in src/test/resources/web/html/object_pages/formula.html add a sample of the results of the formula increase
-
-in src/test/resources/web/html/object_pages/formula.html add a sample of the values of the phrases of the formula increase
-
-similar to the 'Word default' view add to the 'Formula' view the components in 4 columns, but add before the description text the latex_link_expression
 
 add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values  
 

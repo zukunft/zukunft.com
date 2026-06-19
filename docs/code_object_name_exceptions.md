@@ -89,7 +89,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui
+data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui, $res_cfg
 db_cache: $cac, $db_cache
 db_cache_status: $dbc_sta
 db_cache_type: $dbc_typ, $typ

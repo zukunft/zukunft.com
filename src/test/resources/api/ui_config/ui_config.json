@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-19T14:58:07+00:00",
+    "timestamp": "2026-06-19T22:09:28+00:00",
     "body": {
         "user_profiles": [
             {
@@ -20927,24 +20927,68 @@
                         "description": "show the formula expression in the latex format with a tooltip and a link for each term",
                         "type_id": 202,
                         "position": 2,
-                        "position_type": 1
+                        "position_type": 1,
+                        "style": 5
                     },
                     {
                         "link_id": 1029,
-                        "id": 273,
-                        "name": "Expression",
-                        "type_id": 62,
+                        "id": 303,
+                        "name": "system sub title description",
+                        "description": "show the language specific sub title for the description column",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_description",
+                        "ui_msg_code_id": "system_sub_title_description",
                         "position": 3,
-                        "position_type": 1
+                        "position_type": 3
                     },
                     {
                         "link_id": 1030,
+                        "id": 194,
+                        "name": "system show field description",
+                        "description": "the object description as read only",
+                        "type_id": 147,
+                        "code_id": "show_field_description",
+                        "position": 4,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 1031,
+                        "id": 61,
+                        "name": "system sub title values",
+                        "description": "show the language specific sub title for a value list",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_values",
+                        "ui_msg_code_id": "system_sub_title_values",
+                        "position": 5,
+                        "position_type": 5
+                    },
+                    {
+                        "link_id": 1032,
+                        "id": 285,
+                        "name": "related values",
+                        "description": "show the most relevant and related values",
+                        "type_id": 11,
+                        "position": 6,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 1033,
                         "id": 288,
                         "name": "related results",
                         "description": "show the most relevant and related results",
                         "type_id": 61,
-                        "position": 4,
-                        "position_type": 1
+                        "position": 7,
+                        "position_type": 6
+                    },
+                    {
+                        "link_id": 1034,
+                        "id": 307,
+                        "name": "view tab box",
+                        "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
+                        "type_id": 199,
+                        "code_id": "view_tab_box_word",
+                        "position": 8,
+                        "position_type": 7
                     }
                 ]
             },
@@ -20956,7 +21000,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1031,
+                        "link_id": 1035,
                         "id": 288,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -20974,7 +21018,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1032,
+                        "link_id": 1036,
                         "id": 289,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -20983,7 +21027,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1033,
+                        "link_id": 1037,
                         "id": 290,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -20992,7 +21036,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1034,
+                        "link_id": 1038,
                         "id": 291,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21066,7 +21110,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1035,
+                        "link_id": 1039,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21075,7 +21119,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1036,
+                        "link_id": 1040,
                         "id": 283,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21084,7 +21128,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1037,
+                        "link_id": 1041,
                         "id": 282,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21102,7 +21146,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1038,
+                        "link_id": 1042,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21111,7 +21155,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1039,
+                        "link_id": 1043,
                         "id": 292,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21120,7 +21164,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1040,
+                        "link_id": 1044,
                         "id": 293,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21129,7 +21173,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1041,
+                        "link_id": 1045,
                         "id": 294,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -21163,7 +21207,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1042,
+                        "link_id": 1046,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21172,7 +21216,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1043,
+                        "link_id": 1047,
                         "id": 295,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -21181,7 +21225,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1044,
+                        "link_id": 1048,
                         "id": 285,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21190,7 +21234,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1045,
+                        "link_id": 1049,
                         "id": 296,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",

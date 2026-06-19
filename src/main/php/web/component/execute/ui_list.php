@@ -845,7 +845,13 @@ class ui_list extends ui_base
      */
     function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
-        return 'results_related placeholder';
+        // the results of e.g. a formula are loaded into the data object result list and shown
+        // as a table of the result phrases and their value
+        $result = '';
+        if ($cfg != null and !$cfg->res_lst->is_empty()) {
+            $result = $cfg->res_lst->table();
+        }
+        return $result;
     }
 
     /**

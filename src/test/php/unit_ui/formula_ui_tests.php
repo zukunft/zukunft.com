@@ -37,14 +37,19 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::LOG . 'change_log_list.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
@@ -97,6 +102,21 @@ class formula_ui_tests
         $log_lst = new change_log_list($t_log->log_list_formula_increase()->api_json($api_typ_lst));
         $test_page .= $html->text_h2('changes of the formula increase');
         $test_page .= $log_lst->tbl($back);
+
+        // the results of the increase formula as a table of the result phrases and the value
+        $t_res = new test_results($t);
+        $list = new ui_list();
+        $res_cfg = new data_object();
+        $res_cfg->set_result_list(new result_list(
+            $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES])));
+        $test_page .= $html->text_h2('results of the formula increase');
+        $test_page .= $list->results_related($frm_increase, $res_cfg);
+
+        // the values of the phrases used by the increase formula shown as a table,
+        // e.g. the inhabitants of the regions that the increase is calculated for
+        $t_val = new test_values($t);
+        $test_page .= $html->text_h2('values of the phrases used for the formula increase');
+        $test_page .= $t_val->value_list_zh_ui()->table();
 
         $t->html_page_test($test_page, 'formula', 'formula', $t);
 

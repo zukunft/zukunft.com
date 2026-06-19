@@ -536,15 +536,38 @@
         },
         {
           "position": "2",
-          "name": "Expression with links"
+          "name": "Expression with links",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "Expression"
+          "name": "system sub title description",
+          "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "related results"
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ],
       "assigned": [
