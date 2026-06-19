@@ -76,8 +76,9 @@ class formula_names
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
-    // the latex uses plain term names (no quotes) so the expression is shown without term links
-    const string INCREASE_LATEX = words::PERCENT . ' = \frac{ ' . word_names::THIS_NAME . ' - ' . word_names::PRIOR_NAME . ' }{ ' . word_names::PRIOR_NAME . ' }';
+    // the latex uses the same quoted term names as the expression (like the joule formula);
+    // the increase object page sample renders it without a term list, so without term links
+    const string INCREASE_LATEX = '"' . words::PERCENT . '" = \frac{ "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" }{ "' . word_names::PRIOR_NAME . '" }';
     const string JOULE_DEF = 'definition of joule';
     const int JOULE_DEF_ID = 27;
     const string JOULE_DEF_EXP = '"' . word_names::JOULE . '" = ( "' . word_names::KG . '" * "' . word_names::METRE . '" * "' . word_names::METRE . '" ) / ( "' . words::SECOND . '" * "' . words::SECOND . '" )';

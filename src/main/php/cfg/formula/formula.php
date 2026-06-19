@@ -67,6 +67,7 @@ include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
@@ -80,10 +81,15 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -146,6 +152,145 @@ class formula extends formula_map
         parent::reset($keep_user);
 
         $this->ref_text_r = '';
+    }
+
+
+    /*
+     * latex
+     */
+
+    /**
+     * create the latex format of this formula from the resolved text (usr_text): each phrase is
+     * shown as its symbol (the phrase linked via the "is symbol for" verb) or, if no symbol is
+     * linked, as its name; a product becomes "\cdot", a repeated factor a superscript and a
+     * division a "\frac"; the result is stored in the latex object field
+     * @param term_list|null $trm_lst preloaded terms to avoid database access where possible
+     * @return string the created latex format that is also stored in the latex object field
+     */
+    function update_latex(?term_list $trm_lst = null): string
+    {
+        $result = '';
+        if ($this->usr_text != null and $this->usr_text != '') {
+            $result = $this->latex_from_usr_text($this->usr_text, $this->symbol_map($trm_lst));
+            $this->set_latex($result);
+        }
+        return $result;
+    }
+
+    /**
+     * @param term_list|null $trm_lst preloaded terms to avoid database access where possible
+     * @return array the map of each expression phrase name to its symbol (the phrase linked via
+     *               the "is symbol for" verb) or, if no symbol is linked, to the phrase name
+     */
+    private function symbol_map(?term_list $trm_lst = null): array
+    {
+        $map = [];
+        $usr_msg = new user_message();
+        $phr_lst = $this->expression($trm_lst)->phrases($usr_msg, $trm_lst);
+        foreach ($phr_lst->lst() as $phr) {
+            $map[$phr->name()] = $this->phrase_symbol($phr) ?? $phr->name();
+        }
+        return $map;
+    }
+
+    /**
+     * @param phrase $phr the phrase whose symbol should be loaded
+     * @return string|null the name of the phrase that "is symbol for" the given phrase, or null
+     *                     if no symbol is linked
+     */
+    private function phrase_symbol(phrase $phr): ?string
+    {
+        $result = null;
+        $trp_lst = new triple_list($this->get_user());
+        $trp_lst->load_by_phr($phr, null, foaf_direction::BOTH);
+        foreach ($trp_lst->lst() as $trp) {
+            if ($trp->get_verb_code_id() == verbs::SYMBOL and $trp->get_to()?->id() == $phr->id()) {
+                $result = $trp->get_from()?->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * convert a resolved formula text to the latex format using the given phrase symbol map
+     * @param string $usr_text the resolved text e.g. '"joule" = ( "kg" * "metre" * "metre" ) / ...'
+     * @param array $symbol_map the map of each phrase name to the symbol (or name) used in latex
+     * @return string the latex format e.g. '\text{J} = \frac{\text{kg} \cdot \text{m}^2}{\text{s}^2}'
+     */
+    private function latex_from_usr_text(string $usr_text, array $symbol_map): string
+    {
+        // replace each quoted phrase name with its symbol wrapped in \text{}
+        $text = preg_replace_callback(
+            '/"([^"]*)"/',
+            fn($m) => '\text{' . ($symbol_map[$m[1]] ?? $m[1]) . '}',
+            $usr_text
+        );
+        // convert the right side of the first "=" (a fraction or a product)
+        $result = $text;
+        $parts = explode(' = ', $text, 2);
+        if (count($parts) == 2) {
+            $result = $parts[0] . ' = ' . $this->latex_side($parts[1]);
+        }
+        return $result;
+    }
+
+    /**
+     * convert one side of an expression to latex: a division becomes a fraction, otherwise the
+     * products are converted
+     * @param string $part the expression side e.g. '( \text{kg} * \text{m} ) / ( \text{s} * \text{s} )'
+     * @return string the latex format e.g. '\frac{\text{kg} \cdot \text{m}}{\text{s}^2}'
+     */
+    private function latex_side(string $part): string
+    {
+        $factor = '(\([^()]*\)|\\\\text\{[^}]*\}|[\d.]+)';
+        $division = '/^\s*' . $factor . '\s*\/\s*' . $factor . '\s*$/';
+        $result = '';
+        if (preg_match($division, trim($part), $m)) {
+            $result = '\frac{' . $this->latex_factor($m[1]) . '}{' . $this->latex_factor($m[2]) . '}';
+        } else {
+            $result = $this->latex_factor($part);
+        }
+        return $result;
+    }
+
+    /**
+     * strip the surrounding parentheses of one factor and convert its products
+     * @param string $factor e.g. '( \text{kg} * \text{m} * \text{m} )'
+     * @return string the latex format e.g. '\text{kg} \cdot \text{m}^2'
+     */
+    private function latex_factor(string $factor): string
+    {
+        $inner = preg_replace('/^\(\s*(.*?)\s*\)$/', '$1', trim($factor));
+        return $this->latex_product($inner);
+    }
+
+    /**
+     * convert the products of an expression part: a "*" becomes "\cdot" and a repeated factor a
+     * superscript e.g. '\text{m} * \text{m}' becomes '\text{m}^2'; other operators are kept
+     * @param string $product the expression part e.g. '\text{kg} * \text{m} * \text{m}'
+     * @return string the latex format e.g. '\text{kg} \cdot \text{m}^2'
+     */
+    private function latex_product(string $product): string
+    {
+        if (!str_contains($product, '*')) {
+            return $product;
+        }
+        $factors = array_map('trim', explode('*', $product));
+        $out = [];
+        $i = 0;
+        while ($i < count($factors)) {
+            $count = 1;
+            while ($i + $count < count($factors) and $factors[$i + $count] === $factors[$i]) {
+                $count++;
+            }
+            if ($count > 1) {
+                $out[] = $factors[$i] . '^' . $count;
+            } else {
+                $out[] = $factors[$i];
+            }
+            $i += $count;
+        }
+        return implode(' \cdot ', $out);
     }
 
 

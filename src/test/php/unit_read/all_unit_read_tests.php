@@ -156,7 +156,7 @@ class all_unit_read_tests extends all_unit_tests
         $t_db->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
         $t_db->test_triple(
-            word_names::E_SYMBOL, verbs::ALIAS, word_names::E,
+            word_names::E_SYMBOL, verbs::SYMBOL, word_names::E,
             triple_names::E, triple_names::E
         );
         $phr_grp = $t_db->add_phrase_group(array(triple_names::E), groups::TN_READ);

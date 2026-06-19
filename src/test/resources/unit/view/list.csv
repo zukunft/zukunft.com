@@ -95,7 +95,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 94,1,Reference,the default view for references,15,,,ref_default,,,
 95,1,Language,the default view for languages,16,,,language_default,,,
 96,1,Display Number,the default view for values,17,,,value_default,,,
-97,1,Formula,Show a formula and the related results and words,18,,,formula_default,,,
+97,1,Formula (default),Show a formula and the related results and words,18,,,formula_default,,,
 98,1,Result,the default view for results,19,,,result_default,,,
 99,1,Ranking,the default view for all phrases where a better could be selected,,,,ranking,,,
 100,1,Science,show mainly related words that are relevant in sciences,,,,science,,,

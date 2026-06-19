@@ -1761,7 +1761,7 @@
     {
       "name": "π (unit symbol)",
       "from": "π",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "Pi",
       "type": "hidden_triple"
     },
@@ -1769,7 +1769,7 @@
       "name": "\uD835\uDC52 (unit symbol)",
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "\uD835\uDC52",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "Euler's number",
       "type": "hidden_triple"
     },
@@ -1984,31 +1984,31 @@
     {
       "name": "s (unit symbol)",
       "from": "s",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "second"
     },
     {
       "name": "m (unit symbol)",
       "from": "m",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "metre"
     },
     {
       "name": "kg (unit symbol)",
       "from": "kg",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "kilogram"
     },
     {
       "name": "A (unit symbol)",
       "from": "A",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "ampere"
     },
     {
       "name": "K (unit symbol)",
       "from": "K",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "kelvin"
     },
     {
@@ -2020,7 +2020,7 @@
     {
       "name": "cd (unit symbol)",
       "from": "cd",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "candela"
     },
     {
@@ -2401,7 +2401,7 @@
     {
       "name": "l (unit symbol)",
       "from": "l",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "litre"
     },
     {

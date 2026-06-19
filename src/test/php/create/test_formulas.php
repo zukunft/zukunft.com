@@ -254,15 +254,21 @@ class test_formulas extends test_objects
     }
 
     /**
-     * @return formula_ui the web "increase" formula with the phrase it is assigned to ("year"),
-     *         used to show the formula page title with the assigned-phrase subtitle
+     * @param bool $with_links set to true to also add the term list so the latex expression can
+     *                         be shown with the term links (percent, this and prior)
+     * @return formula_ui the web "increase" formula with the phrase it is assigned to ("year")
+     *         and its latex, used to show the formula page title and the expression in latex
      */
-    function formula_increase_ui(): formula_ui
+    function formula_increase_ui(bool $with_links = false): formula_ui
     {
         $t_phr = new test_phrases($this->env);
         $frm = new formula_ui($this->formula_increase()->api_json());
         $frm->set_latex(formula_names::INCREASE_LATEX);
         $frm->phr_lst = $t_phr->list_increase_assigned_ui();
+        if ($with_links) {
+            $t_trm = new test_terms($this->env);
+            $frm->trm_lst = $t_trm->term_list_increase_ui();
+        }
         return $frm;
     }
 

@@ -13,7 +13,7 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 12,uses,uses,real use e.g. wind energy is used by a wind turbine,,,are used by,uses,is used by,,
 13,issue,issue,e.g. a company issues an annual report,,,are issued by,issues,is issued by,,
 14,is measure type for,measure_type,is the default measure type for,,measure type,have the measure type,are measure type for,has the measure type,,
-15,is an acronym for,acronym,is an acronym for,,,are an acronyms of,are an acronyms for,is an acronym of,,
+15,is an acronym for,acronym,is an acronym for,,,has acronyms,are an acronyms for,has acronym,,
 16,can be used as a differentiator for,can_contain,similar to contains, but in a table view the row will not be shown if there is no corresponding value,,differentiator,can be differentiated by,can be used as a differentiator for,can be differentiated by,,
 17,influences,influence,,,,is influenced by,influences,is influenced by,,
 18,is alias of,alias,,,,is alias of,is alias of,is alias of,,

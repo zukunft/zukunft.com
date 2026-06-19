@@ -207,6 +207,21 @@ class test_terms
     }
 
     /**
+     * @return term_list_ui the frontend term list of the "increase" formula (percent, this and
+     *         prior), used to create the term links of the expression_latex_link component
+     */
+    function term_list_increase_ui(): term_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_frm = new test_formulas($this->env);
+        $lst = new term_list($this->env->usr1);
+        $lst->add($t_wrd->word_percent()->term());
+        $lst->add($t_frm->formula_this()->term());
+        $lst->add($t_frm->formula_prior()->term());
+        return new term_list_ui($lst->api_json());
+    }
+
+    /**
      * @return term_list a term list with the time terms e.g. minute and second
      */
     function term_list_years(): term_list

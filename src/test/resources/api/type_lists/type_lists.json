@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-06-19T10:55:11+00:00",
+    "timestamp": "2026-06-19T14:57:19+00:00",
     "body": {
         "user_profiles": [
             {
@@ -20931,11 +20931,19 @@
                     },
                     {
                         "link_id": 1029,
+                        "id": 273,
+                        "name": "Expression",
+                        "type_id": 62,
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1030,
                         "id": 288,
                         "name": "related results",
                         "description": "show the most relevant and related results",
                         "type_id": 61,
-                        "position": 3,
+                        "position": 4,
                         "position_type": 1
                     }
                 ]
@@ -20948,7 +20956,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1030,
+                        "link_id": 1031,
                         "id": 288,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -20966,7 +20974,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1031,
+                        "link_id": 1032,
                         "id": 289,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -20975,7 +20983,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1032,
+                        "link_id": 1033,
                         "id": 290,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -20984,7 +20992,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1033,
+                        "link_id": 1034,
                         "id": 291,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21058,7 +21066,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1034,
+                        "link_id": 1035,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21067,7 +21075,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1035,
+                        "link_id": 1036,
                         "id": 283,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21076,7 +21084,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1036,
+                        "link_id": 1037,
                         "id": 282,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21094,7 +21102,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1037,
+                        "link_id": 1038,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21103,7 +21111,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1038,
+                        "link_id": 1039,
                         "id": 292,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21112,7 +21120,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1039,
+                        "link_id": 1040,
                         "id": 293,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21121,7 +21129,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1040,
+                        "link_id": 1041,
                         "id": 294,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -21155,7 +21163,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1041,
+                        "link_id": 1042,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21164,7 +21172,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1042,
+                        "link_id": 1043,
                         "id": 295,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -21173,7 +21181,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1043,
+                        "link_id": 1044,
                         "id": 285,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21182,7 +21190,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1044,
+                        "link_id": 1045,
                         "id": 296,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",

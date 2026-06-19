@@ -108,6 +108,22 @@ class formula_read_tests
         } else {
             log_err($ts . $test_name . ' failed');
         }
+
+        $t->subheader($ts . 'update latex');
+        // the increase formula "percent" = ( "this" - "prior" ) / "prior" creates a fraction
+        // with each term wrapped in \text and the result is stored in the latex object field
+        $test_name = 'the division creates a \frac';
+        $frm = $t_db->load_formula(formula_names::INCREASE);
+        $latex = $frm->update_latex();
+        $t->assert_text_contains($test_name, $latex, '\frac{');
+        $test_name = 'each term is wrapped in \text';
+        $t->assert_text_contains($test_name, $latex, '\text{');
+        $test_name = 'the created latex is stored in the latex field';
+        $t->assert($test_name, $frm->get_latex(), $latex);
+        // a formula without an expression cannot create a latex and returns an empty string
+        $test_name = 'no expression creates no latex';
+        $frm_empty = new formula($t->usr1);
+        $t->assert($test_name, $frm_empty->update_latex(), '');
     }
 
 }

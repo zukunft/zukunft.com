@@ -12,6 +12,7 @@
     \-- component_id - section for function component_id not yet defined that it should be set and get in /component/component_link.php
     \-- delta - section for function delta is expected to be del in /component/component_link.php
 \-- formula
+    \-- update_latex - section for function update_latex not yet defined that it should be latex in /formula/formula.php
     \-- ref_exp_is_valid - section for function ref_exp_is_valid not yet defined that it should be info in /formula/formula.php
     \-- user_exp_is_valid - section for function user_exp_is_valid not yet defined that it should be info in /formula/formula.php
     \-- expression_may_match - section for function expression_may_match not yet defined that it should be info in /formula/formula.php
@@ -679,11 +680,11 @@
     \-- is_key_updated
         \-- component_link - check if the id parameters are supposed to be changed
     \-- ref_exp_is_valid
-        \-- formula - clear the view component object values
+        \-- formula - convert the products of an expression part: a "*" becomes "\cdot" and a repeated factor a
     \-- user_exp_is_valid
-        \-- formula - clear the view component object values
+        \-- formula - convert the products of an expression part: a "*" becomes "\cdot" and a repeated factor a
     \-- expression_may_match
-        \-- formula - clear the view component object values
+        \-- formula - convert the products of an expression part: a "*" becomes "\cdot" and a repeated factor a
     \-- no_ref_needed
         \-- formula_map - check if the formula in the database needs to be updated
 \-- modify
@@ -776,6 +777,9 @@
         \-- component_link - get a list of database field names, values and types that have been updated
     \-- message_to_invalid
         \-- component_link - get a list of database field names, values and types that have been updated
+\-- latex
+    \-- update_latex
+        \-- formula - create the latex format of this formula from the resolved text (usr_text): each phrase is
 \-- predefined
     \-- calc_predefined
         \-- formula - return the result of a special formula
@@ -5005,6 +5009,7 @@
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /formula/formula.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /formula/formula.php
     \-- user_expression - section for function user_expression not yet defined that it should be overwrites in /formula/formula.php
+    \-- expression_latex - section for function expression_latex not yet defined that it should be overwrites in /formula/formula.php
     \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be overwrites in /formula/formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php

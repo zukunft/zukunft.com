@@ -233,6 +233,7 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "latex": "\"percent\" = \\frac{ \"this\" - \"prior\" }{ \"prior\" }",
       "assigned_word": "year",
       "protection": "admin_protection"
     }

@@ -450,6 +450,16 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * the formula expression in the latex format rendered as html without term links,
+     * e.g. for the increase formula "percent" = ( "this" - "prior" ) / "prior"
+     * @return string the html code of the latex expression on one line
+     */
+    function expression_latex(): string
+    {
+        return $this->latex_html($this->get_latex());
+    }
+
+    /**
      * the formula expression in the latex format with each term shown as a link to the term
      * that displays the term description as a tooltip; each quoted term name in the latex
      * (e.g. "joule") is replaced by the term link, so the latex must use the same quoted term
@@ -459,7 +469,6 @@ class formula extends sandbox_code_id
      */
     function expression_latex_link(): string
     {
-        $result = '';
         $latex = $this->get_latex();
         // replace each quoted term name with its link incl. the description as tooltip
         if ($this->trm_lst != null) {
@@ -467,9 +476,19 @@ class formula extends sandbox_code_id
                 $latex = str_replace('"' . $trm->name() . '"', $trm->name_link(), $latex);
             }
         }
+        return $this->latex_html($latex);
+    }
+
+    /**
+     * render the given latex math markup as html and keep the whole expression on one line with
+     * the "text-nowrap" wrapper; shared by expression_latex and expression_latex_link
+     * @param string $latex the latex expression, the term names already replaced by links if wanted
+     * @return string the html code or an empty string if the latex is empty
+     */
+    private function latex_html(string $latex): string
+    {
+        $result = '';
         if ($latex != '') {
-            // render the latex math markup (exponents, products and fractions) as html and
-            // keep the whole expression on one line with the "text-nowrap" wrapper
             $html = new html_base();
             $result = $html->span($this->latex_to_html($latex), styles::TEXT_NOWRAP);
         }
@@ -478,21 +497,26 @@ class formula extends sandbox_code_id
 
     /**
      * convert the supported latex math markup to html so the expression can be shown without a
-     * latex engine: an exponent "^2" becomes a superscript, the product "\cdot" becomes a middle
-     * dot and a fraction "\frac{a}{b}" becomes a numerator-over-denominator block styled by css
+     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" becomes
+     * a superscript, the product "\cdot" becomes a middle dot and a fraction "\frac{a}{b}" (or the
+     * display variant "\dfrac{a}{b}") becomes a numerator-over-denominator block styled by css
      * @param string $latex the latex expression with the term names already replaced by their links
      * @return string the html code that renders the expression with the same layout as latex
      */
     private function latex_to_html(string $latex): string
     {
         $html = new html_base();
+        // unwrap the "\text{...}" wrapper so the symbol or name is shown as plain text and its
+        // braces do not interfere with the fraction conversion below
+        $result = preg_replace('/\\\\text\{([^{}]*)}/', '$1', $latex);
         // an exponent "^2" becomes a superscript "<sup>2</sup>"
-        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $latex);
+        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $result);
         // the latex product "\cdot" becomes the html middle dot
         $result = str_replace('\cdot', '&middot;', $result);
-        // a fraction "\frac{a}{b}" becomes the numerator shown above the denominator
+        // a fraction "\frac{a}{b}" or the display variant "\dfrac{a}{b}" becomes the numerator
+        // shown above the denominator
         $result = preg_replace_callback(
-            '/\\\\frac\{([^{}]*)}\{([^{}]*)}/',
+            '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
             function ($m) use ($html) {
                 $num = $html->span(trim($m[1]), styles::FRAC_NUM);
                 $den = $html->span(trim($m[2]), styles::FRAC_DEN);

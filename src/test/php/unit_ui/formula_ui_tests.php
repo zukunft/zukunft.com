@@ -79,10 +79,16 @@ class formula_ui_tests
         $test_page .= $html->text_h2('expression in latex format with term links');
         $test_page .= 'latex with links: ' . $frm_joule->expression_latex_link() . '<br>';
 
-        // the same component without a term list shows the expression in latex format without
-        // links, e.g. the increase formula "percent = ( this - prior ) / prior"
-        $test_page .= $html->text_h2('expression in latex format without term links');
-        $test_page .= 'latex without links: ' . $frm_increase->expression_latex_link() . '<br>';
+        // the increase formula expression in latex format with a tooltip and a link for each
+        // term (percent, this and prior)
+        $frm_increase_linked = $t_frm->formula_increase_ui(true);
+        $test_page .= $html->text_h2('increase expression in latex format with term links');
+        $test_page .= 'latex with links: ' . $frm_increase_linked->expression_latex_link() . '<br>';
+
+        // expression_latex shows the same expression in latex format without the term links,
+        // e.g. the increase formula "percent = ( this - prior ) / prior"
+        $test_page .= $html->text_h2('increase expression in latex format without term links');
+        $test_page .= 'latex without links: ' . $frm_increase->expression_latex() . '<br>';
 
         // the changes of the increase formula as a table, e.g. the name and expression added
         $t_log = new test_log($t);

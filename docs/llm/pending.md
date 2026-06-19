@@ -4,6 +4,8 @@
 
 ### word frontend
 
+add to /docs/llm/json_structure.md the usage of 'is symbol for' as the formula replacer versus 'is alias for' that combines the two phrase more or less to one
+
 in src/test/resources/web/html/object_pages/formula.html add a sample of the results of the formula increase
 
 in src/test/resources/web/html/object_pages/formula.html add a sample of the values of the phrases of the formula increase
@@ -13,9 +15,7 @@ similar to the 'Word default' view add to the 'Formula' view the components in 4
 add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values  
 
 
-for the formula 'bid-ask spread absolut' the assigned word is 'currency
-
-create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
+create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default word and triple views below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
 
 rename component "change log word" to "change log term" or add "change log triple"
 
