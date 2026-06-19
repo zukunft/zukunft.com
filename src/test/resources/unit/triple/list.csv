@@ -34,15 +34,15 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 33,34,18,33,1,K (unit symbol),,,,,,,,,,,,,,
 34,36,18,35,1,mol (unit symbol),,,,,,,,,,,,,,
 35,38,18,37,1,cd (unit symbol),,,,,,,,,,,,,,
-36,-11,4,-15,1,named SI derived unit,,,,,,3,,,,,,,,3
+36,-11,4,-15,1,named SI derived unit,,,SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.,,,3,,,,,,,,3
 37,-12,4,-15,1,kinematic SI derived unit,,,,,,3,,,,,,,,3
 38,-13,4,-15,1,mechanics SI derived unit,,,,,,3,,,,,,,,3
-39,27,26,24,1,metre per second,,,,,,3,,,,,,,,3
+39,27,26,24,1,metre per second,,,The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.,,,3,,,,,,,,3
 40,24,20,89,1,second squared,,,,,,,,,,,,,,3
 41,24,20,90,1,second cubed,,,,,,,,,,,,,,3
-42,27,20,89,1,square metre,,,,,,,,,,,,,,3
-43,27,20,90,1,cubic metre,,,,,,,,,,,,,,3
-44,-43,26,24,1,cubic metre per second,,,,,,,,,,,,,,3
+42,27,20,89,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,,,,,,,,,3
+43,27,20,90,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
+44,-43,26,24,1,cubic metre per second,,,The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.,,,,,,,,,,,3
 45,0,18,-44,1,m3/s,,,,,,,,,,,,,,
 46,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
 47,2,5,109,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
@@ -54,14 +54,14 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 53,35,26,4,1,mol−1,,,is the unit of the Avogadro constant.,,,,,,,,,,,3
 54,93,20,94,1,luminous efficacy,,,Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ,,,,,,,,,,,3
 55,73,26,53,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
-56,27,26,-40,1,metre per second squared,,,,,,3,,,,,,,,3
+56,27,26,-40,1,metre per second squared,,,The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.,,,3,,,,,,,,3
 57,0,18,-56,1,m/s2,,,,,,3,,,,,,,,3
-58,27,26,-41,1,metre per second cubed,,,,,,3,,,,,,,,3
+58,27,26,-41,1,metre per second cubed,,,The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.,,,3,,,,,,,,3
 59,0,18,-58,1,m/s3,,,,,,3,,,,,,,,3
 60,43,26,24,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
 61,0,18,-60,1,rad/s,,,,,,3,,,,,,,,3
-62,97,26,96,1,angular velocity,,,,,,3,,,,,,,,3
-63,88,26,96,1,angular acceleration,,,,,,3,,,,,,,,3
+62,97,26,96,1,angular velocity,,,In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.,,,3,,,,,,,,3
+63,88,26,96,1,angular acceleration,,,In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.,,,3,,,,,,,,3
 64,43,26,-40,1,radian per second squared,,,,,,3,,,,,,,,3
 65,0,18,-64,1,rad/s2,,,,,,3,,,,,,,,3
 66,124,18,123,1,l (unit symbol),,,,,,,,,,,,,,
@@ -71,7 +71,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 70,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
 71,0,18,-70,1,Hz/s,,,,,,3,,,,,,,,3
 72,101,5,100,1,flow rate,,,,,,3,,,,,,,,3
-73,99,5,-72,1,volumetric flow rate,,,,,,3,,,,,,,,3
+73,99,5,-72,1,volumetric flow rate,,,In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.,,,3,,,,,,,,3
 74,113,2,-38,1,distance (mechanics SI derived unit),,,,,,,,,,,,,,
 75,655,1,105,1,per day,,,,,,18,,,,,,,,3
 76,0,26,115,1,per km,,,,,,18,,,,,,,,3
@@ -81,7 +81,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 80,655,1,108,1,per year,,,,,,18,,,,,,,,3
 81,131,20,130,1,hyperfine transition,,,,,,,,,,,,,,3
 82,-81,7,132,1,hyperfine transition frequency,,,,,,,,,,,,,,3
-83,-82,5,134,1,hyperfine transition frequency of Cs,,,,,,,,,,,,,,3
+83,-82,5,134,1,hyperfine transition frequency of Cs,,,The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.,,,,,,,,,,,3
 84,136,2,108,1,1967 (year),,,,,,,,,,,,,,
 85,137,2,108,1,1979 (year),,,,,,,,,,,,,,
 86,138,2,108,1,1983 (year),,,,,,,,,,,,,,

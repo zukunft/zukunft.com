@@ -1422,6 +1422,7 @@
     },
     {
       "name": "Avogadro",
+      "description": "Italian scientist, most noted for his contribution to molecular theory now known as Avogadro's law, which states that equal volumes of gases under the same conditions of temperature and pressure contain equal numbers of molecules.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1451,6 +1452,7 @@
     },
     {
       "name": "distance",
+      "description": "Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1466,16 +1468,29 @@
     },
     {
       "name": "kilometre",
+      "description": "A kilometre is a unit of length in the International System of Units (SI) equal to one thousand metres.",
       "type": "measure",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kilometre",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q828224",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "km",
+      "description": "Is a symbol for kilometre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "area",
+      "description": "Area is the measure of a region's size on a surface.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1491,6 +1506,7 @@
     },
     {
       "name": "are",
+      "description": "A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1506,11 +1522,13 @@
     },
     {
       "name": "m2",
+      "description": "Is a symbol for square metre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "hectare",
+      "description": "A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1526,11 +1544,13 @@
     },
     {
       "name": "ha",
+      "description": "Is a symbol for hectare",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "volume",
+      "description": "Volume is a measure of regions in three-dimensional space. It is often quantified numerically using SI derived units such as the cubic metre and litre, or by various imperial or US customary units.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1546,11 +1566,13 @@
     },
     {
       "name": "m3",
+      "description": "Is a symbol for cubic metre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "litre",
+      "description": "The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1566,11 +1588,13 @@
     },
     {
       "name": "l",
+      "description": "Is a symbol for litre",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "kWh",
+      "description": "A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -1586,26 +1610,51 @@
     },
     {
       "name": "gram",
+      "description": "The gram is a unit of mass in the International System of Units (SI) equal to one thousandth of a kilogram.",
       "type": "measure",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Gram",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41803",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "g",
+      "description": "Is a symbol for gram",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "tonne",
+      "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
       "type": "measure",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Tonne",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q191118",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "t",
+      "description": "Is a symbol for tonne",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "hyperfine",
+      "description": "In atomic physics, hyperfine structure refers to small shifts in otherwise degenerate electronic energy levels caused by electromagnetic interactions between atomic nuclei and electron clouds.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1635,6 +1684,7 @@
     },
     {
       "name": "frequency",
+      "description": "A frequency standard is a stable oscillator used for frequency calibration or reference that generates a fundamental frequency with high accuracy and precision.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1649,6 +1699,7 @@
     },
     {
       "name": "Caesium",
+      "description": "Caesium is a soft, silvery-golden alkali metal with a melting point of 28.5 °C, making it one of only five elemental metals that are liquid at or near room temperature.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1663,6 +1714,7 @@
     },
     {
       "name": "Caesium-133",
+      "description": "Caesium-133 is the only stable isotope of caesium. The SI base unit of time, the second, is defined by the unperturbed ground-state hyperfine transition frequency of this atom, set at 9192631770 Hz.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1677,6 +1729,7 @@
     },
     {
       "name": "definition",
+      "description": "A definition is a semantic statement that attaches meaning to a term, such as a word or phrase. Definitions can be classified into intensional definitions, which convey the sense of a term, and extensional definitions, which list the objects a term describes.",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1715,10 +1768,28 @@
       "protection": "admin_protection"
     },
     {
-      "name": "number"
+      "name": "number",
+      "description": "A number is a mathematical object used to count, measure, and label.",
+      "refs": [
+        {
+          "name": "Number",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11563",
+          "type": "wikidata"
+        }
+      ]
     },
     {
-      "name": "ranking"
+      "name": "ranking",
+      "description": "A ranking is a relationship between a set of items such that each is ranked higher, lower, or equal to the others according to some criterion.",
+      "refs": [
+        {
+          "name": "Ranking",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "triples": [
@@ -2025,6 +2096,7 @@
     },
     {
       "name": "named SI derived unit",
+      "description": "SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.",
       "from": "named derived unit",
       "verb": "can be part of",
       "to": "International System of Units (SI)",
@@ -2059,6 +2131,7 @@
     },
     {
       "name": "metre per second",
+      "description": "The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.",
       "from": "metre",
       "verb": "per",
       "to": "second",
@@ -2091,6 +2164,7 @@
     },
     {
       "name": "square metre",
+      "description": "The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.",
       "from": "metre",
       "verb": "can be",
       "to": "square",
@@ -2108,6 +2182,7 @@
     },
     {
       "name": "cubic metre",
+      "description": "The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.",
       "from": "metre",
       "verb": "can be",
       "to": "cube",
@@ -2125,6 +2200,7 @@
     },
     {
       "name": "cubic metre per second",
+      "description": "The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.",
       "from": "cubic metre",
       "verb": "per",
       "to": "second",
@@ -2277,6 +2353,7 @@
     },
     {
       "name": "metre per second squared",
+      "description": "The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.",
       "from": "metre",
       "verb": "per",
       "to": "second squared",
@@ -2302,6 +2379,7 @@
     },
     {
       "name": "metre per second cubed",
+      "description": "The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.",
       "from": "metre",
       "verb": "per",
       "to": "second cubed",
@@ -2349,6 +2427,7 @@
     },
     {
       "name": "angular velocity",
+      "description": "In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.",
       "from": "velocity",
       "verb": "per",
       "to": "angle",
@@ -2367,6 +2446,7 @@
     },
     {
       "name": "angular acceleration",
+      "description": "In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.",
       "from": "acceleration",
       "verb": "per",
       "to": "angle",
@@ -2465,6 +2545,7 @@
     },
     {
       "name": "volumetric flow rate",
+      "description": "In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.",
       "from": "volumetric",
       "verb": "of",
       "to": "flow rate",
@@ -2544,6 +2625,7 @@
     },
     {
       "name": "hyperfine transition frequency of Cs",
+      "description": "The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.",
       "from": "hyperfine transition frequency",
       "verb": "of",
       "to": "Caesium-133",
