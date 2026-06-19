@@ -34,15 +34,15 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 33,34,29,33,1,K (unit symbol),,,,,,,,,,,,,,
 34,36,18,35,1,mol (unit symbol),,,,,,,,,,,,,,
 35,38,29,37,1,cd (unit symbol),,,,,,,,,,,,,,
-36,-11,4,-15,1,named SI derived unit,,,,,,3,,,,,,,,3
+36,-11,4,-15,1,named SI derived unit,,,SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.,,,3,,,,,,,,3
 37,-12,4,-15,1,kinematic SI derived unit,,,,,,3,,,,,,,,3
 38,-13,4,-15,1,mechanics SI derived unit,,,,,,3,,,,,,,,3
-39,27,26,24,1,metre per second,,,,,,3,,,,,,,,3
+39,27,26,24,1,metre per second,,,The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.,,,3,,,,,,,,3
 40,24,20,89,1,second squared,,,,,,,,,,,,,,3
 41,24,20,90,1,second cubed,,,,,,,,,,,,,,3
-42,27,20,89,1,square metre,,,,,,,,,,,,,,3
-43,27,20,90,1,cubic metre,,,,,,,,,,,,,,3
-44,-43,26,24,1,cubic metre per second,,,,,,,,,,,,,,3
+42,27,20,89,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,,,,,,,,,3
+43,27,20,90,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
+44,-43,26,24,1,cubic metre per second,,,The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.,,,,,,,,,,,3
 45,0,18,-44,1,m3/s,,,,,,,,,,,,,,
 46,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
 47,2,5,109,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
@@ -54,14 +54,14 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 53,35,26,4,1,mol−1,,,is the unit of the Avogadro constant.,,,,,,,,,,,3
 54,93,20,94,1,luminous efficacy,,,Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ,,,,,,,,,,,3
 55,73,26,53,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
-56,27,26,-40,1,metre per second squared,,,,,,3,,,,,,,,3
+56,27,26,-40,1,metre per second squared,,,The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.,,,3,,,,,,,,3
 57,0,18,-56,1,m/s2,,,,,,3,,,,,,,,3
-58,27,26,-41,1,metre per second cubed,,,,,,3,,,,,,,,3
+58,27,26,-41,1,metre per second cubed,,,The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.,,,3,,,,,,,,3
 59,0,18,-58,1,m/s3,,,,,,3,,,,,,,,3
 60,43,26,24,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
 61,0,18,-60,1,rad/s,,,,,,3,,,,,,,,3
-62,97,26,96,1,angular velocity,,,,,,3,,,,,,,,3
-63,88,26,96,1,angular acceleration,,,,,,3,,,,,,,,3
+62,97,26,96,1,angular velocity,,,In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.,,,3,,,,,,,,3
+63,88,26,96,1,angular acceleration,,,In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.,,,3,,,,,,,,3
 64,43,26,-40,1,radian per second squared,,,,,,3,,,,,,,,3
 65,0,18,-64,1,rad/s2,,,,,,3,,,,,,,,3
 66,124,29,123,1,l (unit symbol),,,,,,,,,,,,,,
@@ -71,7 +71,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 70,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
 71,0,18,-70,1,Hz/s,,,,,,3,,,,,,,,3
 72,101,5,100,1,flow rate,,,,,,3,,,,,,,,3
-73,99,5,-72,1,volumetric flow rate,,,,,,3,,,,,,,,3
+73,99,5,-72,1,volumetric flow rate,,,In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.,,,3,,,,,,,,3
 74,113,2,-38,1,distance (mechanics SI derived unit),,,,,,,,,,,,,,
 75,655,1,105,1,per day,,,,,,18,,,,,,,,3
 76,0,26,115,1,per km,,,,,,18,,,,,,,,3
@@ -81,7 +81,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 80,655,1,108,1,per year,,,,,,18,,,,,,,,3
 81,131,20,130,1,hyperfine transition,,,,,,,,,,,,,,3
 82,-81,7,132,1,hyperfine transition frequency,,,,,,,,,,,,,,3
-83,-82,5,134,1,hyperfine transition frequency of Cs,,,,,,,,,,,,,,3
+83,-82,5,134,1,hyperfine transition frequency of Cs,,,The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.,,,,,,,,,,,3
 84,136,2,108,1,1967 (year),,,,,,,,,,,,,,
 85,137,2,108,1,1979 (year),,,,,,,,,,,,,,
 86,138,2,108,1,1983 (year),,,,,,,,,,,,,,
@@ -553,3 +553,82 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 552,706,5,187,1,canton GDP per capita,,,,,,,,,,,,,,
 553,713,5,707,1,foreign share,,,,,,,,,,,,,,
 554,712,5,711,1,waking welfare fraction,,,,,,,,,,,,,,
+555,727,2,292,1,United States (country),,,,,,,,,,,,,,
+556,248,5,194,1,government spending,,,all spending by the government on consumption, investment, and transfer payments.,,,,,,,,,,,
+557,730,30,569,1,net exports,,,exports minus imports of goods and services, the trade-balance term of the GDP expenditure identity.,,,,,,,,,,,
+558,261,36,732,1,nominal GDP,,,gross domestic product measured at current market prices, not adjusted for inflation.,,,,,,,,,,,
+559,261,36,733,1,real GDP,,,gross domestic product adjusted for inflation and expressed in constant base-year prices.,,,,,,,,,,,
+560,731,5,261,1,GDP growth,,,the increase in a country's gross domestic product from one period to the next.,,,,,,,,,,,
+561,736,18,737,1,global warming is alias of climate change,,,,,,,,,,,,,,
+562,738,2,739,1,CO2 (greenhouse gas),,,,,,,,,,,,,,
+563,739,22,736,1,greenhouse gas can cause global warming,,,,,,,,,,,,,,
+564,739,22,741,1,greenhouse gas can cause radiative forcing,,,,,,,,,,,,,,
+565,738,5,742,1,pre-industrial CO2,,,the atmospheric CO2 concentration before the Industrial Revolution, about 280 parts per million,,,,,,,,,,,
+566,738,36,743,1,excess CO2,,,the atmospheric CO2 concentration above the pre-industrial baseline,,,,,,,,,,,
+567,713,5,-566,1,excess CO2 share,,,the excess CO2 as a percentage of the pre-industrial level,,,,,,,,,,,
+568,751,36,750,1,false news kind of misinformation,,,,,,,,,,,,,,
+569,749,36,750,1,disinformation kind of misinformation,,,,,,,,,,,,,,
+570,754,22,749,1,social media can cause disinformation,,,,,,,,,,,,,,
+571,754,22,753,1,social media can cause brain rot,,,,,,,,,,,,,,
+572,754,22,756,1,social media can cause polarization,,,,,,,,,,,,,,
+573,749,22,757,1,disinformation can cause ignorance,,,,,,,,,,,,,,
+574,749,17,227,1,disinformation influences populism,,,,,,,,,,,,,,
+575,587,5,755,1,internet user,,,,,,,,,,,,,,
+576,587,5,754,1,social media user,,,,,,,,,,,,,,
+577,713,5,755,1,internet share,,,the share of the world population that uses the internet,,,,,,,,,,,
+578,713,5,754,1,social media share,,,the share of the world population that uses social media,,,,,,,,,,,
+579,185,26,210,1,children per woman,,,the total fertility rate: the average number of children a woman would bear over her lifetime at current age-specific rates.,,,,,,,,,,,
+580,-579,36,764,1,replacement fertility,,,the children per woman at which a population exactly replaces itself, about 2.1,,,,,,,,,,,
+581,-579,36,765,1,fertility surplus,,,the children per woman above the replacement level,,,,,,,,,,,
+582,762,3,761,1,YLL is part of disease burden,,,,,,,,,,,,,,
+583,763,3,761,1,YLD is part of disease burden,,,,,,,,,,,,,,
+584,253,36,779,1,DALY kind of HALY,,,,,,,,,,,,,,
+585,778,36,779,1,QALY kind of HALY,,,,,,,,,,,,,,
+586,770,3,243,1,wellbeing is part of health,,,,,,,,,,,,,,
+587,769,36,772,1,illness kind of morbidity,,,,,,,,,,,,,,
+588,768,22,771,1,disease can cause mortality,,,,,,,,,,,,,,
+589,768,36,782,1,chronic disease,,,a disease that is long-lasting or constantly recurring,,,,,,,,,,,
+590,783,5,243,1,health gap,,,the years of life lived in less than full health, as life expectancy minus HALE,,,,,,,,,,,
+591,108,5,12,1,life year,,,a year of life lived, the quantity weighted by health utility to give a QALY,,,,,,,,,,,
+592,245,36,793,1,absolute poverty,,,poverty measured against a fixed minimum standard of basic needs,,,,,,,,,,,
+593,245,36,794,1,relative poverty,,,poverty measured relative to the typical income of the surrounding society,,,,,,,,,,,
+594,245,36,795,1,extreme poverty,,,living below the international poverty line of 2.15 USD per person per day,,,,,,,,,,,
+595,245,36,796,1,subjective poverty,,,poverty based on people's own assessment of their situation,,,,,,,,,,,
+596,245,36,797,1,multidimensional poverty,,,poverty measured across health, education and living-standard deprivations,,,,,,,,,,,
+597,799,5,245,1,poverty line,,,the income or consumption level below which a person is counted as poor,,,,,,,,,,,
+598,673,5,245,1,poverty threshold,,,the level of income or consumption that marks the boundary of poverty,,,,,,,,,,,
+599,-597,36,23,1,international poverty line,,,the World Bank line for extreme poverty, 2.15 USD per person per day in 2017 PPP,,,,,,,,,,,
+600,-597,36,794,1,relative poverty line,,,a poverty line set at a fraction, often 60 percent, of the median income,,,,,,,,,,,
+601,788,5,288,1,income inequality,,,,,,,,,,,,,,
+602,680,5,789,1,wealth distribution,,,,,,,,,,,,,,
+603,804,36,801,1,economic mobility,,,the ability of a person or family to improve their economic status over time,,,,,,,,,,,
+604,800,5,245,1,poverty trap,,,a self-reinforcing mechanism that keeps people in poverty,,,,,,,,,,,
+605,288,36,798,1,median income,,,,,,,,,,,,,,
+606,101,5,245,1,poverty rate,,,the share of a population living below the poverty line,,,,,,,,,,,
+607,713,5,675,1,top income share,,,the share of total income received by the richest 20 percent,,,,,,,,,,,
+608,713,5,676,1,bottom income share,,,the share of total income received by the poorest 20 percent,,,,,,,,,,,
+609,803,5,288,1,income ratio,,,the income quintile share ratio S80/S20, the top income share divided by the bottom income share,,,,,,,,,,,
+610,792,36,245,1,deprivation kind of poverty,,,,,,,,,,,,,,
+611,788,17,245,1,inequality influences poverty,,,,,,,,,,,,,,
+612,-604,17,-603,1,poverty trap on mobility,,,,,,,,,,,,,,
+613,819,5,836,1,learning outcome,,,a measurable result that a learner is expected to achieve,,,,,,,,,,,
+614,838,5,836,1,transfer of learning,,,the application of skills or knowledge learned in one context to another,,,,,,,,,,,
+615,820,5,808,1,knowledge retention,,,the proportion of learned knowledge still remembered after a delay,,,,,,,,,,,
+616,822,5,810,1,working memory capacity,,,the number of chunks that working memory can hold, about seven (Miller) or four (Cowan),,,,,,,,,,,
+617,811,17,836,1,metacognition influences learning,,,,,,,,,,,,,,
+618,814,3,813,1,ZPD is part of constructivism,,,,,,,,,,,,,,
+619,813,17,836,1,constructivism influences learning,,,,,,,,,,,,,,
+620,810,17,836,1,working memory influences learning,,,,,,,,,,,,,,
+621,838,36,829,1,near transfer,,,,,,,,,,,,,,
+622,838,36,830,1,far transfer,,,,,,,,,,,,,,
+623,831,3,815,1,remember is part of Bloom's taxonomy,,,,,,,,,,,,,,
+624,832,3,815,1,understand is part of Bloom's taxonomy,,,,,,,,,,,,,,
+625,833,3,815,1,apply is part of Bloom's taxonomy,,,,,,,,,,,,,,
+626,834,3,815,1,analyze is part of Bloom's taxonomy,,,,,,,,,,,,,,
+627,835,3,815,1,evaluate is part of Bloom's taxonomy,,,,,,,,,,,,,,
+628,556,3,815,1,create is part of Bloom's taxonomy,,,,,,,,,,,,,,
+629,837,36,824,1,tutored score,,,the test score of students taught one-to-one by a tutor,,,,,,,,,,,
+630,837,36,825,1,classroom score,,,the test score of students taught in a conventional class,,,,,,,,,,,
+631,821,36,826,1,trained performance,,,performance on the task on which the learner was trained,,,,,,,,,,,
+632,821,36,838,1,transfer performance,,,performance on a new task that requires transfer of learning,,,,,,,,,,,
+633,839,5,838,1,transfer efficiency,,,the transfer performance as a share of the trained performance,,,,,,,,,,,

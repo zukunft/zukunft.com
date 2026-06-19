@@ -19,7 +19,7 @@ formula_id,user_id,formula_name,formula_text,resolved_text,latex,description,for
 18,1,this,={w167},="Now",,hardcoded formula to select now, today, this year, ...,4,,,,,,,3
 19,1,next,=value[{v8}->,{v11}->{w167}],=value["time jump"->,"follower"->"Now"],,hardcoded formula to select tomorrow, next week, next year, ...,2,,,,,,,3
 20,1,prior,=value[{v8}->,{w167}->{v11}],=value["time jump"->,"Now"->"follower"],,hardcoded formula to select yesterday, previous week, last year, ...,3,,,,,,,3
-21,1,increase,{w161}=({f18}-{f20})/{f20},"percent" = ( "this" - "prior" ) / "prior","percent" = \frac{ "this" - "prior" }{ "prior" },calculate the increase in percent e.g. yearly,1,,,,,,,3
+21,1,increase,{w161}=({f18}-{f20})/{f20},"percent" = ( "this" - "prior" ) / "prior",\text{percent} = \frac{ \text{this} - \text{prior} }{ \text{prior} },calculate the increase in percent e.g. yearly,1,,,,,,,3
 22,1,scale trillion to one,{w4}={w256}*1000000000000,"one" = "trillion" * 1000000000000,,,1,,,,,,,
 23,1,global happy time points,{w255}={w255},{w161}*{w195},{w14},{w254},"htp" = "htp","percent" * "global","human","population",,,1,,,,,,,
 24,1,PE Ratio,={t134}/{w284},= "Share Price" / "Earnings",,,1,,,,,,,
@@ -57,3 +57,20 @@ formula_id,user_id,formula_name,formula_text,resolved_text,latex,description,for
 56,1,GDP per capita (formula),{w706}={w261}/{w254},"GDP per capita" = "GDP" / "population",,,1,,,,,,,
 57,1,foreign count (formula),{w720}={w254}*{t553}/100,"foreign count" = "population" * "foreign share" / 100,,,1,,,,,,,
 58,1,welfare (formula),{w710}={w254}*{t554},"welfare" = "population" * "waking welfare fraction",,,1,,,,,,,
+59,1,net exports (formula),{t557}={w730}-{w569},"net exports" = "export" - "import",,,1,,,,,,,
+60,1,GDP (expenditure),{w261}={w728}+{w729}+{t556}+{t557},"GDP" = "consumption" + "investment" + "government spending" + "net exports",,,1,,,,,,,
+61,1,excess CO2 (formula),{t566}={w738}-{t565},"excess CO2" = "CO2" - "pre-industrial CO2",,,1,,,,,,,
+62,1,excess CO2 share (formula),{t567}=({w738}-{t565})/{t565}*100,"excess CO2 share" = ( "CO2" - "pre-industrial CO2" ) / "pre-industrial CO2" * 100,,,1,,,,,,,
+63,1,internet share (formula),{t577}={t575}/{w254}*100,"internet share" = "internet user" / "population" * 100,,,1,,,,,,,
+64,1,social media share (formula),{t578}={t576}/{w254}*100,"social media share" = "social media user" / "population" * 100,,,1,,,,,,,
+65,1,disease burden (formula),{w761}={w762}+{w763},"disease burden" = "YLL" + "YLD",,,1,,,,,,,
+66,1,fertility above replacement (formula),{t581}={t579}-{t580},"fertility surplus" = "children per woman" - "replacement fertility",,,1,,,,,,,
+67,1,health gap (formula),{t590}={w773}-{w774},"health gap" = "life expectancy" - "HALE",,,1,,,,,,,
+68,1,prevalence (formula),{w775}={w776}*{w777},"prevalence" = "incidence" * "duration",,,1,,,,,,,
+69,1,QALY (formula),{w778}={t591}*{w780},"QALY" = "life year" * "utility",,,1,,,,,,,
+70,1,poverty rate (formula),{t606}={t594}/{w254}*100,"poverty rate" = "extreme poverty" / "population" * 100,,,1,,,,,,,
+71,1,relative poverty line (formula),{t600}={t605}*0.6,"relative poverty line" = "median income" * 0.6,,,1,,,,,,,
+72,1,income ratio (formula),{t609}={t607}/{t608},"income ratio" = "top income share" / "bottom income share",,,1,,,,,,,
+73,1,knowledge retention (formula),{t615}={w828}/{w827}*100,"knowledge retention" = "recalled" / "learned" * 100,,,1,,,,,,,
+74,1,effect size (formula),{w816}=({t629}-{t630})/{w817},"effect size" = ( "tutored score" - "classroom score" ) / "standard deviation",,,1,,,,,,,
+75,1,transfer efficiency (formula),{t633}={t632}/{t631}*100,"transfer efficiency" = "transfer performance" / "trained performance" * 100,,,1,,,,,,,
