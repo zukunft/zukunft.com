@@ -244,6 +244,12 @@ class word_names
     const int SPEED_ID = 87;
     const string METRE = 'metre';
     const int METRE_ID = 27;
+    const string JOULE = 'joule';
+    const int JOULE_ID = 51;
+    const string JOULE_COM = 'One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.';
+    const string KG = 'kg';
+    const int KG_ID = 30;
+    const string KG_COM = 'The kilogram is the SI base unit of mass.';
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 130;
     const string TRANSITION = 'transition';
@@ -496,6 +502,8 @@ class word_names
         self::LIGHT_ID => self::LIGHT,
         self::SPEED_ID => self::SPEED,
         self::METRE_ID => self::METRE,
+        self::JOULE_ID => self::JOULE,
+        self::KG_ID => self::KG,
         self::HYPERFINE_ID => self::HYPERFINE,
         self::TRANSITION_ID => self::TRANSITION,
         self::FREQUENCY_ID => self::FREQUENCY,

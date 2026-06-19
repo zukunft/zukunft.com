@@ -201,6 +201,7 @@ class json_fields
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string LATEX = 'latex'; // the formula in latex format
+    const string LATEX_TERMS = 'latex_terms'; // the terms shown in the latex format, used to link each \text{} token
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export

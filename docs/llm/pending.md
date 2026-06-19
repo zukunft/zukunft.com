@@ -4,11 +4,11 @@
 
 ### word frontend
 
-in the views 'Word (default)' and 'Triple (default)' format the first 'Description' column 'left' instead of 'centre' but keep the option that the same 'description' components could be used in other views with the parameter 'center'
 
-for the formula 'bid-ask spread absolut' the assigned word is 'currency
+add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values  
 
-create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default triple view below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
+
+create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default word and triple views below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
 
 rename component "change log word" to "change log term" or add "change log triple"
 
