@@ -124,6 +124,16 @@ class formula_read_tests
         $test_name = 'no expression creates no latex';
         $frm_empty = new formula($t->usr1);
         $t->assert($test_name, $frm_empty->update_latex(), '');
+
+        $t->subheader($ts . 'latex terms');
+        // the \text{} tokens of the latex are resolved to terms so the frontend can link them
+        $test_name = 'the latex terms of the increase formula are loaded';
+        $frm->load_latex_terms();
+        $t->assert_greater_zero($test_name, $frm->latex_terms->count());
+        // a formula without a latex has no latex terms to link
+        $test_name = 'no latex has no latex terms';
+        $frm_empty->load_latex_terms();
+        $t->assert($test_name, $frm_empty->latex_terms->is_empty(), true);
     }
 
 }

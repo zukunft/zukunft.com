@@ -66,6 +66,7 @@ include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -126,6 +128,11 @@ class formula extends formula_map
     // only emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the
     // default formula view can show the assigned phrases in the "Formula title" subtitle
     public ?phrase_list $phrases_related = null;
+
+    // the terms shown in the latex format (one per "\text{...}" token); populated lazily by
+    // load_latex_terms() and emitted via api_json_array() under the INCL_RELATED flag so the
+    // "expression_latex_link" component can turn each latex token into a link to the term
+    public ?term_list $latex_terms = null;
 
 
     /*
@@ -533,6 +540,45 @@ class formula extends formula_map
     }
 
     /**
+     * load the terms shown in the latex format into the in-memory latex_terms list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; each "\text{...}" token of the
+     * latex is resolved to a term by its name (the symbol word or the phrase name)
+     */
+    function load_latex_terms(): void
+    {
+        $trm_lst = new term_list($this->get_user());
+        $latex = $this->get_latex();
+        if ($latex != null and $latex != '') {
+            if (preg_match_all('/\\\\text\{([^{}]*)}/', $latex, $matches)) {
+                foreach ($matches[1] as $name) {
+                    $trm = new term($this->get_user());
+                    if ($trm->load_by_name($name) != 0) {
+                        $trm_lst->add($trm);
+                    }
+                }
+            }
+        }
+        $this->latex_terms = $trm_lst;
+    }
+
+    /**
+     * load the formula and, in the same call, the related view-models the default formula view
+     * expects: the assigned phrases for the "Formula title" subtitle and the latex terms for the
+     * "expression_latex_link" component (like word::load_by_id_with_related)
+     * @param int $id the formula id to load
+     * @return int the id of the loaded formula, or 0 if not found
+     */
+    function load_by_id_with_related(int $id): int
+    {
+        $loaded_id = parent::load_by_id($id);
+        if ($loaded_id > 0) {
+            $this->load_phrases_related();
+            $this->load_latex_terms();
+        }
+        return $loaded_id;
+    }
+
+    /**
      * extend the formula api message with the assigned phrases so the frontend "Formula title"
      * component can show them in the subtitle; only added for a page request (INCL_RELATED)
      * of a saved formula (a fresh formula with id 0 has no assigned phrases)
@@ -551,6 +597,15 @@ class formula extends formula_map
                 // INCL_PHRASES so each assigned phrase carries its name (and description for the
                 // tooltip) needed by the subtitle links, sorted by impact in the frontend
                 $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+            }
+            if ($this->latex_terms == null and !$typ_lst->test_mode()) {
+                $this->load_latex_terms();
+            }
+            if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
+                // INCL_PHRASES so each latex term carries its name (and description for the
+                // tooltip) needed by the "expression_latex_link" component to create the links
+                $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
                     new api_type_list([api_types::INCL_PHRASES]), $usr);
             }
         }

@@ -22,6 +22,8 @@
     \-- assign_phr_lst_direct - section for function assign_phr_lst_direct not yet defined that it should be assign in /formula/formula.php
     \-- assign_phr_ulst_direct - section for function assign_phr_ulst_direct not yet defined that it should be assign in /formula/formula.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /formula/formula.php
+    \-- load_latex_terms - section for function load_latex_terms is expected to be load in /formula/formula.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formula.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
     \-- assign_phr_glst - section for function assign_phr_glst not yet defined that it should be assign in /formula/formula.php
     \-- assign_phr_lst - section for function assign_phr_lst not yet defined that it should be assign in /formula/formula.php
@@ -796,6 +798,10 @@
         \-- formula - the user-specific list of a phrases assigned to a formula
     \-- load_phrases_related
         \-- formula - load the phrases this formula is assigned to into the in-memory phrases_related list so
+    \-- load_latex_terms
+        \-- formula - load the terms shown in the latex format into the in-memory latex_terms list so that
+    \-- load_by_id_with_related
+        \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
         \-- formula - extend the formula api message with the assigned phrases so the frontend "Formula title"
     \-- assign_phr_glst
@@ -5009,6 +5015,7 @@
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /formula/formula.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /formula/formula.php
     \-- user_expression - section for function user_expression not yet defined that it should be overwrites in /formula/formula.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formula.php
     \-- expression_latex - section for function expression_latex not yet defined that it should be overwrites in /formula/formula.php
     \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be overwrites in /formula/formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php

@@ -256,6 +256,18 @@ class formula extends sandbox_code_id
         } else {
             $this->phr_lst = null;
         }
+        if (array_key_exists(json_fields::LATEX_TERMS, $json_array)) {
+            $value = $json_array[json_fields::LATEX_TERMS];
+            if (is_array($value)) {
+                $lst = new term_list();
+                $lst->api_mapper($value);
+                $this->trm_lst = $lst;
+            } else {
+                $this->trm_lst = null;
+            }
+        } else {
+            $this->trm_lst = null;
+        }
         return $msg->is_ok();
     }
 
@@ -450,6 +462,19 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * load the formula incl. its related view-models by adding the ?incl_related=1 url flag so
+     * the api handler sets api_types::INCL_RELATED and the backend formula::api_json_array() emits
+     * the assigned phrases (for the "Formula title" subtitle) and the latex terms (for the
+     * "expression_latex_link" component); the frontend api_mapper picks them up into phr_lst/trm_lst
+     * @param int|string $id the formula id to load
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id): bool
+    {
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+    }
+
+    /**
      * the formula expression in the latex format rendered as html without term links,
      * e.g. for the increase formula "percent" = ( "this" - "prior" ) / "prior"
      * @return string the html code of the latex expression on one line
@@ -461,19 +486,23 @@ class formula extends sandbox_code_id
 
     /**
      * the formula expression in the latex format with each term shown as a link to the term
-     * that displays the term description as a tooltip; each quoted term name in the latex
-     * (e.g. "joule") is replaced by the term link, so the latex must use the same quoted term
-     * names as the user expression; the terms are taken from the preloaded term list because
-     * the frontend has no direct database access
-     * @return string the latex expression with the quoted term names replaced by the term links
+     * that displays the term description as a tooltip; each "\text{<term>}" token in the latex
+     * is replaced by the term link, so the latex must wrap each term in "\text{}"; the terms are
+     * taken from the preloaded term list because the frontend has no direct database access
+     * @return string the latex expression with the term tokens replaced by the term links
      */
     function expression_latex_link(): string
     {
         $latex = $this->get_latex();
-        // replace each quoted term name with its link incl. the description as tooltip
+        // link each "\text{<term>}" token to its term, keeping the latex layout; the link incl.
+        // the description as tooltip stays inside the \text{} wrapper that latex_to_html unwraps
         if ($this->trm_lst != null) {
             foreach ($this->trm_lst->lst() as $trm) {
-                $latex = str_replace('"' . $trm->name() . '"', $trm->name_link(), $latex);
+                $latex = str_replace(
+                    '\text{' . $trm->name() . '}',
+                    '\text{' . $trm->name_link() . '}',
+                    $latex
+                );
             }
         }
         return $this->latex_html($latex);
