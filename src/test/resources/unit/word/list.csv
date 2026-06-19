@@ -10,7 +10,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 9,1,natural,,Nature is an inherent character or constitution, particularly of the universe as a whole,1,,,,,,,,3
 10,1,universe,,The universe is all of space and time and their contents. It comprises all of existence, any fundamental interaction, physical process and physical constant, and therefore all forms of matter and energy, and the structures they form, from sub-atomic particles to entire galactic filaments.,1,,,,,,,,3
 11,1,earth,,Earth is the third planet from the Sun and the only astronomical object known to harbor life. This is enabled by Earth being an ocean world, the only one in the Solar System sustaining liquid surface water.,1,,,,,,,,3
-12,1,life,,Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.,1,,,,,,,,3
+12,1,life,,a quality that distinguishes living organisms from inorganic matter, marked by growth, reproduction and response to stimuli.,1,,,,,,,,3
 13,1,death,,Death is the end of life; the irreversible cessation of all biological functions that sustain a living organism.,1,,,,,,,,3
 14,1,human,,Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.,1,,,,,,,,3
 15,1,circumference,,In geometry, the circumference meaning is the perimeter of a circle or ellipse,1,,,,,,,,3
@@ -21,7 +21,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 20,1,base,,E.g. in a currency pair, the base currency is the first currency quoted and represents the unit being priced. For example, in the EUR/USD pair, EUR is the base currency.,1,,,,,,,,3
 21,1,unit,,A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.,1,,,,,,,,3
 22,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,system,,,3
-23,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
+23,1,international,,applying across countries,1,,,,,,,,3
 24,1,second,,Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...),1,,,,,,,,
 25,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
 26,1,millisecond,milliseconds,The 1/1000th part of a second.,3,,,,,millisecond,,,3
@@ -106,7 +106,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 105,1,day,days,A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.,2,,,,,,,,3
 106,1,week,weeks,A week is a unit of time equal to 7 days.,2,,,,,,,,3
 107,1,month,months,A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.,2,,,,,,,,3
-108,1,year,years,A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.,2,,,,,year,,,3
+108,1,year,years,the time taken by the Earth to complete one orbit around the Sun, about 365 days.,2,,,,,year,,,3
 109,1,Planck,,Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.,1,,,,,,,,3
 110,1,Boltzmann,,Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.,1,,,,,,,,3
 111,1,Avogadro,,,1,,,,,,,,3
@@ -159,7 +159,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 158,1,thousand,,to specify numbers in thousand,7,,,,,,,,3
 159,1,million,,The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.,7,,,,,,,,3
 160,1,billion,,to specify numbers in billions,7,,,,,,,,3
-161,1,percent,,A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.,3,,,,,percent,,,3
+161,1,percent,,a number or ratio expressed as a fraction of 100.,3,,,,,percent,,,3
 162,1,tsd.,,,7,,,,,,,,
 163,1,b,,,1,,,,,,,,
 164,1,scale thousand to one,,,10,,,,,,,,
@@ -183,7 +183,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 182,1,next,,,10,,,,,,,,
 183,1,prior,,,10,,,,,,,,
 184,1,increase,,,10,,,,,,,,
-185,1,child,,,1,,,,,,,,
+185,1,child,,a human being between birth and puberty, or between infancy and adulthood.,1,,,,,,,,
 186,1,Bern,,,1,,,,,,,,
 187,1,canton,,a member state of the Swiss Confederation,1,,,,,,,,
 188,1,configuration,,,1,,,,,configuration,,,3
@@ -192,7 +192,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 191,1,eye,,,1,,,,,,,,
 192,1,fact,,,1,,,,,,,,
 193,1,Geneva,,,1,,,,,,,,
-194,1,government,,,1,,,,,,,,
+194,1,government,,the system or group of people governing an organized community, generally a state.,1,,,,,,,,
 195,1,global,,,1,,,,,,,,
 196,1,group,,,1,,,,,,,,
 197,1,hand,,,1,,,,,,,,
@@ -200,15 +200,15 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 199,1,launch,,,1,,,,,,,,
 200,1,man,,,1,,,,,,,,
 201,1,part,,,1,,,,,,,,
-202,1,person,,,3,,,,,,,,
+202,1,person,,an individual human being; here the unit for counting people.,3,,,,,,,,
 203,1,place,,,1,,,,,,,,
 204,1,pod,,,1,,,,,pod,,,3
 205,1,point,,,1,,,,,,,,
 206,1,problem,,,1,,,,,,,,
-207,1,Switzerland,,,1,,,,,,,,
+207,1,Switzerland,,a landlocked country at the confluence of Western, Central and Southern Europe.,1,,,,,,,,
 208,1,url,,,1,,,,,url,,,3
 209,1,way,,,1,,,,,,,,
-210,1,woman,,,1,,,,,,,,
+210,1,woman,,an adult female human being.,1,,,,,,,,
 211,1,work,,,1,,,,,,,,
 212,1,world,,,1,,,,,,,,
 213,1,zukunft.com,,,1,,,,,zukunft.com,,,3
@@ -225,7 +225,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 224,1,reduce,,,1,,,,,,,,
 225,1,gas,,,1,,,,,,,,
 226,1,emissions,,,1,,,,,,,,
-227,1,populism,,,1,,,,,,,,
+227,1,populism,,a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.,1,,,,,,,,
 228,1,right,,,1,,,,,,,,
 229,1,left,,,1,,,,,,,,
 230,1,wing,,,1,,,,,,,,
@@ -241,25 +241,25 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 240,1,decisions,,,1,,,,,,,,
 241,1,artificial,,,1,,,,,,,,
 242,1,intelligence,,,1,,,,,,,,
-243,1,health,,,1,,,,,,,,
+243,1,health,,a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.,1,,,,,,,,
 244,1,research,,,1,,,,,,,,
-245,1,poverty,,,1,,,,,,,,
+245,1,poverty,,the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.,1,,,,,,,,
 246,1,taxes,,,1,,,,,,,,
 247,1,education,,,1,,,,,,,,
-248,1,spending,,,1,,,,,,,,
+248,1,spending,,an outlay of money for goods or services,1,,,,,,,,
 249,1,pension,,,1,,,,,,,,
 250,1,happy,,,1,,,,,,,,
 251,1,unhappy,,,1,,,,,,,,
 252,1,points,,,1,,,,,,,,
-253,1,DALY,,,1,,,,,,,,
-254,1,population,,,1,,,,,,,,
+253,1,DALY,,a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.,3,,,,,,,,
+254,1,population,,the number of humans or other organisms living in a given region or area.,1,,,,,,,,
 255,1,htp,,,1,,,,,,,,
 256,1,trillion,,,7,,,,,,,,3
 257,1,mio,,,1,,,,,,,,
 258,1,CHF,,ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.,3,,,,,,,,
-259,1,USD,,ISO 4217 alphabetic code for the United States dollar.,3,,,,,,,,
+259,1,USD,,the official currency of the United States and several other countries and territories.,3,,,,,,,,
 260,1,annual,,,1,,,,,,,,
-261,1,GDP,,,3,,,,,,,,
+261,1,GDP,,a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.,3,,,,,,,,
 262,1,decline,,,1,,,,,,,,
 263,1,2024,,,2,,,,,,,,
 264,1,scale trillion to one,,,10,,,,,,,,
@@ -290,8 +290,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 289,1,tax,,,1,,,,,,,,
 290,1,PE Ratio,,,10,,,,,,,,
 291,1,scale pence to Pound,,,10,,,,,,,,
-292,1,country,,,1,,,,,,,,
-293,1,Germany,,,1,,,,,,,,
+292,1,country,,a distinct part of the world, such as a state, nation, or other political entity.,1,,,,,,,,
+293,1,Germany,,a country in Central Europe, between the Baltic and North seas and the Alps.,1,,,,,,,,
 294,1,2013,,,2,,,,,,,,
 295,1,2014,,,2,,,,,,,,
 296,1,2015,,,2,,,,,,,,
@@ -554,7 +554,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 553,1,block,,,,,,,,block,,,3
 554,1,calculation,,A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results,,,,,,calculation,,,3
 555,1,columns,,,,,,,,columns,,,3
-556,1,create,,,,,,,,create,,,3
+556,1,create,,Bloom level: produce new or original work,1,,,,,create,,,3
 557,1,database,,An organized collection of data stored and accessed electronically.,,,,,,database,,,3
 558,1,default,,The setting used if nothing else is specified.,,,,,,default,,,3
 559,1,delay,,,,,,,,delay,,,3
@@ -567,7 +567,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 566,1,frontend,,,,,,,,frontend,,,3
 567,1,future,,,,,,,,future,,,3
 568,1,initial,,,,,,,,initial,,,3
-569,1,import,,,,,,,,import,,,3
+569,1,import,,a good or service brought into one country from another.,1,,,,,import,,,3
 570,1,insert,,,,,,,,insert,,,3
 571,1,ip,,,,,,,,ip,,,3
 572,1,job,,,,,,,,job,,,3
@@ -585,7 +585,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 584,1,table,,,,,,,,table,,,3
 585,1,triple,,,,,,,,triple,,,3
 586,1,update,,,,,,,,update,,,3
-587,1,user,,,,,,,,user,,,3
+587,1,user,,a person who uses a computer, network, or online service.,1,,,,,user,,,3
 588,1,value,,a stored number; reference the provenance qualifier triple, not this bare word,1,,,,,value,,,3
 589,1,version,,,,,,,,version,,,3
 590,1,view,,,,,,,,view,,,3
@@ -635,7 +635,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 634,1,peers,,,,,,,,,,,
 635,1,prediction,,,,,,,,,,,
 636,1,factors,,,,,,,,,,,
-637,1,usage,,,,,,,,,,,
+637,1,usage,,how frequently a word, term, or service is used,1,,,,,,,,
 638,1,factor,,,,,,,,,,,
 639,1,contribution,,,,,,,,,,,
 640,1,weights,,,,,,,,,,,
@@ -671,14 +671,14 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 670,1,suggested,,,,,,,,,,,
 671,1,more,,,,,,,,,,,
 672,1,same,,,,,,,,,,,
-673,1,threshold,,,,,,,,,,,
+673,1,threshold,,a level at which something begins or changes,1,,,,,,,,
 674,1,component,,,,,,,,,,,
-675,1,top,,,,,,,,,,,
-676,1,bottom,,,,,,,,,,,
+675,1,top,,the highest part or group,1,,,,,,,,
+676,1,bottom,,the lowest part or group,1,,,,,,,,
 677,1,test,,,,,,,,,,,
 678,1,output,,,,,,,,,,,
 679,1,level,,,,,,,,,,,
-680,1,distribution,,,,,,,,,,,
+680,1,distribution,,the way something is shared across a population,1,,,,,,,,
 681,1,pods,,,,,,,,,,,
 682,1,api,,,,,,,,,,,
 683,1,message,,,,,,,,,,,
@@ -704,7 +704,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 703,1,network,,,,,,,,,,,
 704,1,memory,,,,,,,,,,,
 705,1,density,,,1,,,,,,,,
-706,1,GDP per capita,,,1,,,,,,,,
+706,1,GDP per capita,,a country's gross domestic product divided by its population, used as a measure of average economic output per person.,1,,,,,,,,
 707,1,foreign nationals,,,1,,,,,,,,
 708,1,birth,,,1,,,,,,,,
 709,1,natural balance,,,1,,,,,,,,
@@ -725,3 +725,119 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 724,1,GDP per capita (formula),,,10,,,,,,,,
 725,1,foreign count (formula),,,10,,,,,,,,
 726,1,welfare (formula),,,10,,,,,,,,
+727,1,United States,,a country primarily located in North America, comprising 50 states.,1,,,,,,,,
+728,1,consumption,,the use of goods and services by households to satisfy current needs and wants.,1,,,,,,,,
+729,1,investment,,the commitment of money or resources now in order to gain a future return or benefit.,1,,,,,,,,
+730,1,export,,a good or service produced in one country and sold into another country.,1,,,,,,,,
+731,1,growth,,the increase in the inflation-adjusted value of the goods and services produced by an economy over time.,1,,,,,,,,
+732,1,nominal,,qualifier: measured at current prices, not adjusted for inflation,1,,,,,,,,
+733,1,real,,qualifier: adjusted for inflation to constant prices,1,,,,,,,,
+734,1,net exports (formula),,,10,,,,,,,,
+735,1,GDP (expenditure),,,10,,,,,,,,
+736,1,global warming,,the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.,1,,,,,,,,
+737,1,climate change,,the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.,1,,,,,,,,
+738,1,CO2,,a colourless greenhouse gas with the formula CO2, the main driver of present-day global warming.,1,,,,,,,,
+739,1,greenhouse gas,,a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.,1,,,,,,,,
+740,1,emission,,the release of greenhouse gases into the atmosphere, chiefly from burning fossil fuels and land-use change.,1,,,,,,,,
+741,1,radiative forcing,,the change in the balance between incoming and outgoing energy in the atmosphere caused by a climate driver such as a greenhouse gas.,1,,,,,,,,
+742,1,pre-industrial,,the period before the Industrial Revolution (about 1850-1900), used as the baseline for measuring global warming,1,,,,,,,,
+743,1,excess,,the amount by which a quantity exceeds a reference or baseline level,1,,,,,,,,
+744,1,Earth,,,1,,,,,,,,
+745,1,degree Celsius,,,1,,,,,,,,
+746,1,parts per million,,,1,,,,,,,,
+747,1,excess CO2 (formula),,,10,,,,,,,,
+748,1,excess CO2 share (formula),,,10,,,,,,,,
+749,1,disinformation,,false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.,1,,,,,,,,
+750,1,misinformation,,false or inaccurate information that is spread regardless of an intent to deceive.,1,,,,,,,,
+751,1,false news,,false or misleading information presented as news, often to damage a reputation or for political or financial gain.,1,,,,,,,,
+752,1,agnotology,,the study of culturally induced ignorance or doubt, particularly through the publication of inaccurate or misleading data.,1,,,,,,,,
+753,1,brain rot,,the supposed deterioration of a person's mental state from the overconsumption of trivial or unchallenging online material.,1,,,,,,,,
+754,1,social media,,interactive technologies that let people create and share content and form networks through virtual communities.,1,,,,,,,,
+755,1,internet,,the global system of interconnected computer networks that links devices and people worldwide.,1,,,,,,,,
+756,1,polarization,,the division of public opinion into two sharply contrasting and opposing groups.,1,,,,,,,,
+757,1,ignorance,,a lack of knowledge, understanding, or information about something.,1,,,,,,,,
+758,1,virality,,the tendency of a piece of information to be circulated rapidly and widely from one user to another.,1,,,,,,,,
+759,1,internet share (formula),,,10,,,,,,,,
+760,1,social media share (formula),,,10,,,,,,,,
+761,1,disease burden,,the impact of a health problem in a population, often quantified in DALYs by mortality and morbidity.,1,,,,,,,,
+762,1,YLL,,the years of potential life lost due to premature death, the mortality component of the disease burden.,1,,,,,,,,
+763,1,YLD,,the years lived with disability, the morbidity component of the disease burden; healthy life lost to living in less than full health.,1,,,,,,,,
+764,1,replacement,,the fertility level, about 2.1 children per woman, at which a population exactly replaces itself from one generation to the next,1,,,,,,,,
+765,1,surplus,,the amount by which a quantity exceeds a reference level,1,,,,,,,,
+766,1,disease burden (formula),,,10,,,,,,,,
+767,1,fertility above replacement (formula),,,10,,,,,,,,
+768,1,disease,,a particular abnormal condition that negatively affects the structure or function of all or part of an organism.,1,,,,,,,,
+769,1,illness,,a state of poor health; the subjective experience of being unwell,1,,,,,,,,
+770,1,wellbeing,,the state of being comfortable, healthy, or happy.,1,,,,,,,,
+771,1,mortality,,the number of deaths in a population, scaled to the size of that population per unit of time.,1,,,,,,,,
+772,1,morbidity,,the rate or condition of being diseased in a population; the prevalence or incidence of ill health,1,,,,,,,,
+773,1,life expectancy,,a statistical measure of the average time an organism is expected to live, based on the year of birth and other demographic factors.,1,,,,,,,,
+774,1,HALE,,the average number of years a person can expect to live in full health, adjusting for time lived in less than full health.,1,,,,,,,,
+775,1,prevalence,,the proportion of a population found to be affected by a medical condition at a specific time.,1,,,,,,,,
+776,1,incidence,,the rate of new cases of a condition in a population over a specified period of time.,1,,,,,,,,
+777,1,duration,,the average length of time a health condition lasts,1,,,,,,,,
+778,1,QALY,,a measure that combines the quality and the quantity of life lived, used to assess the value of medical interventions.,1,,,,,,,,
+779,1,HALY,,health-adjusted life year, an umbrella measure of disease burden combining the length and the quality of life, such as the QALY and the DALY,1,,,,,,,,
+780,1,utility,,the health-related quality-of-life weight of a state, from 0 (death) to 1 (full health),1,,,,,,,,
+781,1,treatment,,the attempted remediation of a health problem, usually following a medical diagnosis.,1,,,,,,,,
+782,1,chronic,,persisting for a long time or constantly recurring,1,,,,,,,,
+783,1,gap,,the difference between a quantity and a reference level,1,,,,,,,,
+784,1,health gap (formula),,,10,,,,,,,,
+785,1,prevalence (formula),,,10,,,,,,,,
+786,1,QALY (formula),,,10,,,,,,,,
+787,1,PPP,,purchasing power parity: a way of comparing currencies by the amount of goods and services each can buy, used to make cross-country income comparisons.,1,,,,,,,,
+788,1,inequality,,the unequal distribution of income, wealth or opportunity among individuals or groups within a society.,1,,,,,,,,
+789,1,wealth,,the total value of the assets owned by a person, community or country, minus liabilities.,1,,,,,,,,
+790,1,MPI,,the multidimensional poverty index, a measure that captures the deprivations people face in health, education and living standards.,1,,,,,,,,
+791,1,European Union,,a political and economic union of 27 member states located primarily in Europe.,1,,,,,,,,
+792,1,deprivation,,the lack of resources or conditions regarded as necessary for an adequate standard of living,1,,,,,,,,
+793,1,absolute,,measured against a fixed standard, not relative to others,1,,,,,,,,
+794,1,relative,,measured in relation to others in the same society,1,,,,,,,,
+795,1,extreme,,the most severe degree,1,,,,,,,,
+796,1,subjective,,based on personal perception or self-assessment,1,,,,,,,,
+797,1,multidimensional,,covering several dimensions such as health, education and living standards,1,,,,,,,,
+798,1,median,,the middle value that separates the higher half from the lower half,1,,,,,,,,
+799,1,line,,a fixed level used as a boundary,1,,,,,,,,
+800,1,trap,,a situation that is difficult to escape,1,,,,,,,,
+801,1,economic,,relating to the economy, income and wealth,1,,,,,,,,
+802,1,Gini,,,1,,,,,,,,
+803,1,ratio,,,1,,,,,,,,
+804,1,mobility,,,1,,,,,,,,
+805,1,poverty rate (formula),,,10,,,,,,,,
+806,1,relative poverty line (formula),,,10,,,,,,,,
+807,1,income ratio (formula),,,10,,,,,,,,
+808,1,knowledge,,an awareness of facts, a familiarity with individuals and situations, or a practical skill.,1,,,,,,,,
+809,1,student,,a person enrolled in a school or other educational institution who attends classes to acquire knowledge.,1,,,,,,,,
+810,1,working memory,,a cognitive system with limited capacity that temporarily holds information available for processing.,1,,,,,,,,
+811,1,metacognition,,awareness and understanding of one's own thought processes; thinking about thinking.,1,,,,,,,,
+812,1,cognitive development,,the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.,1,,,,,,,,
+813,1,constructivism,,a theory of learning holding that learners actively construct knowledge rather than passively receive it.,1,,,,,,,,
+814,1,ZPD,,the zone of proximal development: the gap between what a learner can do unaided and what they can do with guidance, in Vygotsky's theory.,1,,,,,,,,
+815,1,Bloom's taxonomy,,a set of hierarchical models used to classify educational learning objectives into levels of complexity.,1,,,,,,,,
+816,1,effect size,,a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.,1,,,,,,,,
+817,1,standard deviation,,a measure of the amount of variation or dispersion of a set of values.,1,,,,,,,,
+818,1,chunk,,a unit of information grouped together so it can be held more easily in working memory.,1,,,,,,,,
+819,1,outcome,,a result or effect of an action or process,1,,,,,,,,
+820,1,retention,,the continued possession or recall of learned information,1,,,,,,,,
+821,1,performance,,how well a task is carried out,1,,,,,,,,
+822,1,capacity,,the maximum amount that something can hold or process,1,,,,,,,,
+823,1,item,,a single piece of information to be learned,1,,,,,,,,
+824,1,tutored,,taught individually by a tutor,1,,,,,,,,
+825,1,classroom,,taught in a conventional class group,1,,,,,,,,
+826,1,trained,,relating to the task on which one was trained,1,,,,,,,,
+827,1,learned,,the number of items correctly learned,1,,,,,,,,
+828,1,recalled,,the number of items correctly recalled,1,,,,,,,,
+829,1,near,,close to the original learning context,1,,,,,,,,
+830,1,far,,distant from the original learning context,1,,,,,,,,
+831,1,remember,,Bloom level: recall facts and basic concepts,1,,,,,,,,
+832,1,understand,,Bloom level: explain ideas or concepts,1,,,,,,,,
+833,1,apply,,Bloom level: use information in new situations,1,,,,,,,,
+834,1,analyze,,Bloom level: draw connections among ideas,1,,,,,,,,
+835,1,evaluate,,Bloom level: justify a stand or decision,1,,,,,,,,
+836,1,learning,,,1,,,,,,,,
+837,1,score,,,1,,,,,,,,
+838,1,transfer,,,1,,,,,,,,
+839,1,efficiency,,,1,,,,,,,,
+840,1,knowledge retention (formula),,,10,,,,,,,,
+841,1,effect size (formula),,,10,,,,,,,,
+842,1,transfer efficiency (formula),,,10,,,,,,,,
