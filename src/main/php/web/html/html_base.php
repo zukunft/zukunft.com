@@ -553,6 +553,15 @@ class html_base
         return $result;
     }
 
+    /**
+     * @param string $text the superscript text e.g. the exponent "2"
+     * @return string the html code that shows the given text as a superscript e.g. <sup>2</sup>
+     */
+    function sup(string $text): string
+    {
+        return '<' . html_names::SUP . '>' . $text . '</' . html_names::SUP . '>';
+    }
+
     /*
      * wrapper for internal references used in the html code
      */

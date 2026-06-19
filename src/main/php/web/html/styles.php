@@ -61,5 +61,11 @@ class styles
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';
 
+    // css classes to render a latex fraction (\frac) as html: the numerator shown above the
+    // denominator with a dividing line, used by the expression_latex_link component
+    const string FRAC = 'frac';
+    const string FRAC_NUM = 'num';
+    const string FRAC_DEN = 'den';
+
 
 }

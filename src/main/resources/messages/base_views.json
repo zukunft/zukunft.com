@@ -39,6 +39,11 @@
       "type": "expression"
     },
     {
+      "name": "Expression with links",
+      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
+      "type": "expression_latex_link"
+    },
+    {
       "name": "Verb",
       "description": "simply show the verb name",
       "type": "verb_name"
@@ -520,7 +525,7 @@
       ]
     },
     {
-      "name": "Formula",
+      "name": "Formula (default)",
       "description": "Show a formula and the related results and words",
       "code_id": "formula_default",
       "type": "formula",
@@ -531,11 +536,38 @@
         },
         {
           "position": "2",
-          "name": "Expression"
+          "name": "Expression with links",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "related results"
+          "name": "system sub title description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ],
       "assigned": [

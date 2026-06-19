@@ -12,7 +12,7 @@ change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_obj, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_usr2, $cmp_usr2_reloaded, $dbo, $msk, $obj, $usr_ui
 element: $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_city, $grp_city_pct, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_newer, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src, $typ_obj, $type_obj
@@ -89,7 +89,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui
+data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui, $res_cfg
 db_cache: $cac, $db_cache
 db_cache_status: $dbc_sta
 db_cache_type: $dbc_typ, $typ

@@ -4748,6 +4748,24 @@ class test_base
             . $sfm->title_named($dbo);
     }
 
+    /**
+     * build the html section that exercises the formula page-title renderer
+     * (system_form::title_formula): the formula name as the title with the
+     * assigned phrases shown as the subtitle, so the object_pages snapshot
+     * covers the formula title component type
+     *
+     * @param db_object $dbo the formula whose name is the title and whose
+     *                       assigned phrases (phr_lst) are the subtitle
+     * @return string a h2 heading plus the rendered formula title html
+     */
+    function dsp_title_formula(db_object $dbo): string
+    {
+        $html = new html_base();
+        $sfm = new system_form();
+        return $html->text_h2('formula title with subtitle')
+            . $sfm->title_formula($dbo);
+    }
+
     function class_without_namespace(string $class_name_with_namespace): string
     {
         $lib = new library();

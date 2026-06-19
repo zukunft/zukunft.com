@@ -27,6 +27,7 @@
     {
       "name": "city",
       "description": "a large, permanent human settlement",
+      "plural": "cities",
       "refs": [
         {
           "name": "Zurich",

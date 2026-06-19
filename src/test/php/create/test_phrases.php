@@ -777,6 +777,19 @@ class test_phrases
     }
 
     /**
+     * the frontend list with the phrase the "increase" formula is assigned to,
+     * used to show the assigned-phrase subtitle on the formula page title
+     * @return phrase_list_ui with the "year" phrase
+     */
+    function list_increase_assigned_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_year()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list with the phrases to select the launch date of this pod in the config
      */
     function phrase_list_pod_launch(): phrase_list

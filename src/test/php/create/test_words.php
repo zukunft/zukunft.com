@@ -408,6 +408,22 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function joule(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::JOULE_ID, word_names::JOULE);
+        $wrd->description = word_names::JOULE_COM;
+        return $wrd;
+    }
+
+    function kg(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::KG_ID, word_names::KG);
+        $wrd->description = word_names::KG_COM;
+        return $wrd;
+    }
+
     function definition(): word
     {
         $wrd = new word($this->env->usr1);

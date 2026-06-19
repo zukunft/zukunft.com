@@ -417,11 +417,30 @@ class library
         $result = '';
         $void_tags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
             'link', 'meta', 'param', 'source', 'track', 'wbr'];
+        // css class that marks a span whose whole subtree is kept on a single line
+        $one_line = 'text-nowrap';
+        // span nesting depth and buffer while collecting a one-line subtree
+        $one_line_depth = 0;
+        $one_line_buf = '';
 
         $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
         foreach ($tokens as $token) {
+            if ($one_line_depth > 0) {
+                // keep the original spacing of the subtree by collecting the untrimmed tokens
+                $one_line_buf .= $token;
+                if (str_starts_with($token, '</span>')) {
+                    $one_line_depth--;
+                    if ($one_line_depth == 0) {
+                        $result .= str_repeat($tab, $indent) . trim($one_line_buf) . "\n";
+                        $one_line_buf = '';
+                    }
+                } elseif (str_starts_with($token, '<span')) {
+                    $one_line_depth++;
+                }
+                continue;
+            }
             $token = trim($token);
             if ($token === '') {
                 continue;
@@ -433,9 +452,15 @@ class library
             } elseif (preg_match('/^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)>$/', $token, $m)) {
                 $tag = strtolower($m[1]);
                 $attrs = $m[2];
-                $result .= str_repeat($tab, $indent) . $token . "\n";
-                if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
-                    $indent++;
+                if ($tag == 'span' and str_contains($attrs, $one_line)) {
+                    // start collecting the whole subtree (incl. this opening tag) on one line
+                    $one_line_depth = 1;
+                    $one_line_buf = $token;
+                } else {
+                    $result .= str_repeat($tab, $indent) . $token . "\n";
+                    if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
+                        $indent++;
+                    }
                 }
             } else {
                 // text content or doctype/comment

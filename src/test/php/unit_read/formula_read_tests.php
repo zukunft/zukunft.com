@@ -108,6 +108,32 @@ class formula_read_tests
         } else {
             log_err($ts . $test_name . ' failed');
         }
+
+        $t->subheader($ts . 'update latex');
+        // the increase formula "percent" = ( "this" - "prior" ) / "prior" creates a fraction
+        // with each term wrapped in \text and the result is stored in the latex object field
+        $test_name = 'the division creates a \frac';
+        $frm = $t_db->load_formula(formula_names::INCREASE);
+        $latex = $frm->update_latex();
+        $t->assert_text_contains($test_name, $latex, '\frac{');
+        $test_name = 'each term is wrapped in \text';
+        $t->assert_text_contains($test_name, $latex, '\text{');
+        $test_name = 'the created latex is stored in the latex field';
+        $t->assert($test_name, $frm->get_latex(), $latex);
+        // a formula without an expression cannot create a latex and returns an empty string
+        $test_name = 'no expression creates no latex';
+        $frm_empty = new formula($t->usr1);
+        $t->assert($test_name, $frm_empty->update_latex(), '');
+
+        $t->subheader($ts . 'latex terms');
+        // the \text{} tokens of the latex are resolved to terms so the frontend can link them
+        $test_name = 'the latex terms of the increase formula are loaded';
+        $frm->load_latex_terms();
+        $t->assert_greater_zero($test_name, $frm->latex_terms->count());
+        // a formula without a latex has no latex terms to link
+        $test_name = 'no latex has no latex terms';
+        $frm_empty->load_latex_terms();
+        $t->assert($test_name, $frm_empty->latex_terms->is_empty(), true);
     }
 
 }

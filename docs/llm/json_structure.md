@@ -251,6 +251,31 @@ value's group) disambiguates. Do not force the symbol unique or rename one
 side; only flag a genuine unintended collision (e.g. a formula name equal to a
 triple name).
 
+### `is symbol for` (formula replacer) vs `is alias of` (one merged phrase)
+
+Both verbs link a short string to a phrase, but they mean different things — pick
+the right one, because only `is symbol for` drives the formula display:
+
+- **`is symbol for`** — the linked string is a *typographic symbol* that **stands
+  in for** the phrase when a formula is rendered. The latex generator
+  (`formula::update_latex`) replaces each expression phrase with its symbol, so
+  `( "kg" * "metre" * "metre" ) / ( "second (time)" * "second (time)" )` is shown
+  as `\frac{\text{kg} \cdot \text{m}^2}{\text{s}^2}`. The symbol stays a **separate
+  phrase** with its own meaning; it is only substituted in formula output.
+- **`is alias of`** — the two names are **the same phrase under another spelling**;
+  the alias adds no new meaning and is *not* used as a formula replacer. Use it for
+  alternative spellings / long forms, e.g. `U.S. dollar` / `US-Dollar` is alias of
+  `US dollar`, `Nestle` is alias of `Nestlé`.
+
+Rule of thumb: a one- or two-character typographic symbol (`s`, `m`, `kg`, `J`,
+`π`, `$`, `€`) is `is symbol for`; a longer alternative spelling or full name is
+`is alias of`. Multi-character unit notations that are not pure symbols (`mol`,
+`m/s`) stay `is alias of`.
+
+**Direction** — `is symbol for` always points **from the symbol to the phrase**
+(`from` = the symbol, `to` = the full phrase), so the replacer can find the symbol
+by the verb. Flip a triple that has the symbol on the `to` side.
+
 ### Disambiguate an ambiguous *word* with qualifier triples
 
 When a single word can mean more than one thing, the word stays **defined
@@ -327,8 +352,8 @@ at the moment:
 | `issue` | `issue` | issuer relation (a company issues a report) |
 | `influences` | `influence` | a directed influence |
 | `is an acronym for` | `acronym` | acronym expansion |
-| `is alias of` | `alias` | alternative name for the same phrase |
-| `is symbol for` | `symbol` | a symbol for a phrase (USD for US dollar) |
+| `is alias of` | `alias` | alternative spelling of the same phrase, merged to one (no formula replacement) |
+| `is symbol for` | `symbol` | the symbol shown in place of the phrase in formulas (`from`=symbol, `to`=phrase, e.g. USD for US dollar) |
 | `name of` | `name_of` | a proper name of a category |
 | `can` | `can` | assign a behavior (GDP can decline) |
 | `can be` | `can_be` | a possible state |

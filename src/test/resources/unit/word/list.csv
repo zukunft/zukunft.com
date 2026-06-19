@@ -187,7 +187,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 186,1,Bern,,,1,,,,,,,,
 187,1,canton,,a member state of the Swiss Confederation,1,,,,,,,,
 188,1,configuration,,,1,,,,,configuration,,,3
-189,1,city,,a large, permanent human settlement,1,,,,,,,,
+189,1,city,cities,a large, permanent human settlement,1,,,,,,,,
 190,1,company,,,1,113,,,,,,,3
 191,1,eye,,,1,,,,,,,,
 192,1,fact,,,1,,,,,,,,
