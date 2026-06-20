@@ -41,6 +41,7 @@ include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
@@ -57,6 +58,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
@@ -77,7 +79,8 @@ class a_selected_test extends test_cleanup
     // the import json files to load for a fast single-file debugging cycle
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
-        files::EDUCATION_FILE,
+        test_files::IMPORT_PRO_CONTRA_NPP_CH,
+        //files::EDUCATION_FILE,
         //files::POVERTY_FILE,
         //files::HEALTH_FILE,
         //files::POPULATION_FILE,

@@ -181,6 +181,54 @@ class calc_internal
         return $pos;
     }
 
+    /**
+     * like pos_separator, but returns the position of the LAST top-level separator instead of the first
+     * needed so that left-associative operators (subtraction, division) are evaluated correctly:
+     * "a - b - c" must be read as "(a - b) - c", which means splitting at the last "-", not the first
+     * (splitting at the first "-" would wrongly compute "a - (b - c)")
+     * @returns int the position of the last separator at bracket level 0, or -1 if not found
+     */
+    private function pos_separator_last(string $formula, string $separator, int $start_pos): int
+    {
+        $pos = $start_pos;
+        $text_linked = False;  // do not look at text in high quotes
+        $open_brackets = 0;    // number of brackets open
+        $last = -1;            // position of the last separator found
+
+        while ($pos <= strlen($formula)) {
+            // don't look into text that is in high quotes
+            if ($open_brackets == 0) {
+                if (substr($formula, $pos, strlen(chars::TXT_FIELD)) == chars::TXT_FIELD) {
+                    if ($text_linked) {
+                        $text_linked = False;
+                    } else {
+                        $text_linked = True;
+                    }
+                }
+            }
+
+            // remember the separator only at the top bracket level and outside text
+            if (!$text_linked) {
+                if ($open_brackets == 0) {
+                    if (substr($formula, $pos, strlen($separator)) == $separator) {
+                        $last = $pos;
+                    }
+                }
+                if (substr($formula, $pos, strlen(chars::BRACKET_OPEN)) == chars::BRACKET_OPEN) {
+                    $open_brackets = $open_brackets + 1;
+                }
+                if (substr($formula, $pos, strlen(chars::BRACKET_CLOSE)) == chars::BRACKET_CLOSE && $open_brackets > 0) {
+                    $open_brackets = $open_brackets - 1;
+                }
+            }
+
+            $pos = $pos + 1;
+        }
+
+        log_debug($last);
+        return $last;
+    }
+
 
     /**
      * @returns int the position of the next predefined function
@@ -487,7 +535,15 @@ class calc_internal
         } else {
 
 
-            $pos = $this->pos_separator($result, $operator, strlen($operator));
+            // subtraction and division are left-associative ("a - b - c" = "(a - b) - c"),
+            // so split at the last operator and recurse on the left; addition and
+            // multiplication are associative, so the first operator is fine and kept as before
+            // TODO Prio 1 review
+            if ($operator == chars::SUB or $operator == chars::DIV) {
+                $pos = $this->pos_separator_last($result, $operator, strlen($operator));
+            } else {
+                $pos = $this->pos_separator($result, $operator, strlen($operator));
+            }
             // echo $formula.": ".$pos." of ".$operator."<br>";
             // echo substr($result, $pos - 1, 1)."<br>";
             // if ($pos > 1 && has_operator(substr($result, $pos - 1, 1)) == false) {

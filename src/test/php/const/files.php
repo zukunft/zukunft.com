@@ -163,6 +163,7 @@ class files
     CONST string IMPORT_FERMI_POLARISATION_US = test_paths::IMPORT . 'fermi_polarisation_us' . self::JSON;
     CONST string IMPORT_NESN_2019 = test_paths::IMPORT . 'NESN_2019' . self::JSON;
     CONST string IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON = test_paths::IMPORT . 'personal_climate_gas_emissions_timon' . self::JSON;
+    CONST string IMPORT_PRO_CONTRA_NPP_CH = test_paths::IMPORT . 'pro_contra_npp_ch' . self::JSON;
     CONST string IMPORT_REAL_ESTATE = test_paths::IMPORT . 'real_estate' . self::JSON;
     CONST string IMPORT_REFERENCES = test_paths::IMPORT . 'references' . self::JSON;
     CONST string IMPORT_THOMY_TEST = test_paths::IMPORT . 'THOMY_test' . self::JSON;
@@ -219,6 +220,7 @@ class files
         self::IMPORT_ULTIMATUM_GAME,
         self::IMPORT_COVID_19,
         self::IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON,
+        self::IMPORT_PRO_CONTRA_NPP_CH,
         self::IMPORT_THOMY_TEST,
         self::IMPORT_BASE_TEST_DATA,
         self::IMPORT_BUS_LINE_MEILEN_USTER,
