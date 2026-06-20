@@ -1754,6 +1754,31 @@ class html_base
     }
 
     /**
+     * the user-readable html id of a form field, derived from its translated label
+     * (e.g. id="mask"); a disambiguating url-var suffix is kept so the id stays unique
+     * when one label is reused across several forms on a page (e.g. an add form whose
+     * url var carries "_add" -> id="name_add" next to the edit form's id="name")
+     * @param string $url_id the url var of the field, optionally with a "_..." suffix
+     * @param string $label the translated field label, '' for an unlabelled field
+     * @return string the html id, matching the <label for> built in form_field
+     */
+    private function field_id(string $url_id, string $label): string
+    {
+        if ($label != '') {
+            $id = strtolower($label);
+            $sep = strpos($url_id, '_');
+            if ($sep !== false) {
+                $id .= substr($url_id, $sep);
+            }
+        } elseif ($url_id != '') {
+            $id = strtolower($url_id);
+        } else {
+            $id = '1';
+        }
+        return $id;
+    }
+
+    /**
      * create the HTML code for an input field
      * the submitted field name is the url var ($url_id) so the form posts keys the
      * url mapper understands (e.g. name="m"); the user-readable html id comes from the
@@ -1780,14 +1805,7 @@ class html_base
         if ($url_id != '') {
             $name = ' name="' . $url_id . '"';
         }
-        $label = $mtr->txt($msg_id);
-        if ($label != '') {
-            $id = strtolower($label);
-        } elseif ($url_id != '') {
-            $id = strtolower($url_id);
-        } else {
-            $id = '1';
-        }
+        $id = $this->field_id($url_id, $mtr->txt($msg_id));
         if ($value != '') {
             $value = ' value="' . $value . '"';
         }
@@ -1900,8 +1918,8 @@ class html_base
         global $mtr;
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
-            // empty $for lets label() derive for=strtolower($name), matching the input id
-            $text = $this->label($name);
+            // the label for must equal the input id (field_id) so the pair stays linked
+            $text = $this->label($name, $this->field_id($url_id, $name));
             $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
             return $this->div_form($text, $style);
         } else {

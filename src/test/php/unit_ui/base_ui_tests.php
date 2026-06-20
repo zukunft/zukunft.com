@@ -140,6 +140,47 @@ class base_ui_tests
         $url = $html->url_new(views::WORD_ADD_ID);
         $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
+        $t->subheader($ts . 'form field name and id');
+
+        // the field name is the url var (the submitted key), the id is the user-readable
+        // label; the label text must never become the submitted name (see field_id / url_mapper)
+        global $mtr;
+        $name_label = $mtr->txt(msg_id::FORM_FIELD_NAME);
+        $name_id = strtolower($name_label);
+
+        $test_name = 'text field submits the url var as name';
+        $field = $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, 'math', html_base::INPUT_TEXT);
+        $t->assert_text_contains($test_name, $field, 'name="' . url_var::NAME . '"');
+
+        $test_name = '... and uses the readable label as the id';
+        $t->assert_text_contains($test_name, $field, 'id="' . $name_id . '"');
+
+        $test_name = '... never the label as the name nor the url var as the id';
+        $t->assert_text_not_contains($test_name, $field, 'name="' . $name_label . '"');
+        $t->assert_text_not_contains($test_name, $field, 'id="' . url_var::NAME . '"');
+
+        // a second form on the same page suffixes the url var (e.g. '_add'); the id must
+        // carry the same suffix so it stays unique next to the un-suffixed edit form field
+        $test_name = 'suffixed url var keeps the id unique';
+        $field_add = $html->input(url_var::NAME . '_add', msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
+        $t->assert_text_contains($test_name, $field_add, 'name="' . url_var::NAME . '_add"');
+        $t->assert_text_contains($test_name, $field_add, 'id="' . $name_id . '_add"');
+
+        $test_name = 'add and edit field ids differ on the same page';
+        $t->assert_text_not_contains($test_name, $field_add, 'id="' . $name_id . '"');
+
+        // form_field pairs a <label for> with the input id; both must use the same field_id
+        $test_name = 'form_field links label for to the input id';
+        $labelled = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, 'math');
+        $t->assert_text_contains($test_name, $labelled, 'for="' . $name_id . '"');
+        $t->assert_text_contains($test_name, $labelled, 'id="' . $name_id . '"');
+
+        $test_name = '... and keeps the pair unique for a suffixed field';
+        $labelled_add = $html->form_field(url_var::NAME . '_add', msg_id::FORM_FIELD_NAME, '');
+        $t->assert_text_contains($test_name, $labelled_add, 'for="' . $name_id . '_add"');
+        $t->assert_text_contains($test_name, $labelled_add, 'id="' . $name_id . '_add"');
+
+
         $t->subheader($ts . 'unit html table tests');
 
         // create a test set of phrase groups

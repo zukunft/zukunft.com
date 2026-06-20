@@ -495,15 +495,19 @@ class component extends sandbox_code_id
      * @param string $phr_cols the html code to select the phrase for the second column
      * @param string $dsp_log the html code of the change log
      * @param string $back the html code to be opened in case of a back action
+     * @param int|string $test_form_unique_id counter that disambiguates the field names/ids
+     *                   when several forms are stacked on one test page; empty in production
+     *                   so the real url vars (name="k") are used, one form per page
      * @return string the html code to display the edit page
      */
     function form_edit(
-        string $dsp_type,
-        string $phr_row,
-        string $phr_col,
-        string $phr_cols,
-        string $dsp_log,
-        string $back = ''): string
+        string     $dsp_type,
+        string     $phr_row,
+        string     $phr_col,
+        string     $phr_cols,
+        string     $dsp_log,
+        string     $back = '',
+        int|string $test_form_unique_id = ''): string
     {
         $html = new html_base();
         $result = '';
@@ -511,14 +515,14 @@ class component extends sandbox_code_id
         $hidden_fields = '';
         if ($this->id() <= 0) {
             $script = views::COMPONENT_ADD;
-            $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
             $script = views::COMPONENT_EDIT;
-            $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
+        // only the multi-form test page passes a counter; production keeps name="k"
+        $fld_ext = $test_form_unique_id === '' ? '' : '_' . $test_form_unique_id;
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
         $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);

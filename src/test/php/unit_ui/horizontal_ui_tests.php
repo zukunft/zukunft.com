@@ -140,6 +140,9 @@ class horizontal_ui_tests
         $t->subheader($ts . 'component types');
         $html = new html_base();
         $test_page = $html->text_h1('Component display test');
+        // this catalog page stacks one form part per component type; count the parts up so
+        // each part's field names/ids stay unique (production passes no counter -> name="k")
+        $test_form_unique_id = 1;
         foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
@@ -152,7 +155,7 @@ class horizontal_ui_tests
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
                 $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto,
-                    null, '', '', true);
+                    null, '', '', true, [], $test_form_unique_id++);
             } else {
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }
