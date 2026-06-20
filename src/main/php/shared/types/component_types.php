@@ -80,6 +80,9 @@ class component_types
     const string TITLE_FORMULA_EDIT = "title_of_formula_with_edit_link";
     const int TITLE_FORMULA_EDIT_ID = 201;
     const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle, plus the edit link";
+    const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
+    const int TITLE_VALUE_EDIT_ID = 203;
+    const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";

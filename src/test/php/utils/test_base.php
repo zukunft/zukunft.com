@@ -1030,11 +1030,11 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string           $dsp_code_id,
-        user             $usr,
-        db_object_seq_id $dbo,
-        int              $id = 0,
-        ?data_object_ui  $cfg = null
+        string                        $dsp_code_id,
+        user                          $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        int                           $id = 0,
+        ?data_object_ui               $cfg = null
     ): bool
     {
         $lib = new library();
@@ -4764,6 +4764,23 @@ class test_base
         $sfm = new system_form();
         return $html->text_h2('formula title with subtitle')
             . $sfm->title_formula($dbo);
+    }
+
+    /**
+     * build the html section that exercises the value page-title renderer
+     * (system_form::title_value): the related phrases shown as links with tooltip and
+     * the value itself as the title, with the edit link and the type, share and
+     * protection subtitle, so the object_pages snapshot covers the value title
+     *
+     * @param db_object $dbo the value whose related phrases and number are the title
+     * @return string a h2 heading plus the rendered value title html
+     */
+    function dsp_title_value(db_object $dbo): string
+    {
+        $html = new html_base();
+        $sfm = new system_form();
+        return $html->text_h2('title named with edit link')
+            . $sfm->title_value($dbo);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string
