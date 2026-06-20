@@ -1808,7 +1808,9 @@ class html_base
         }
         $id = $this->field_id($url_id, $mtr->txt($msg_id));
         if ($value != '') {
-            $value = ' value="' . $value . '"';
+            // escape the value so a name/description with " < > & cannot break out of the
+            // attribute; the browser decodes it back so the resubmitted value is unchanged
+            $value = ' value="' . htmlspecialchars($value, ENT_QUOTES) . '"';
         }
         if ($type != '') {
             $type = ' type="' . $type . '"';
