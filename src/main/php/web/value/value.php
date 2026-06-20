@@ -258,6 +258,32 @@ class value extends sandbox_value
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the value by id AND ask the backend to include the group phrases with their names
+     * so the page-title renderer (value::name_link via the group phrase list) can show the
+     * related phrases as links followed by the value, e.g. for "Pi (math) 3.14"
+     *
+     * Overrides the base load_by_id by attaching the WITH_PHRASES URL flag to the REST GET
+     * call. The backend handler (api/value/index.php) translates that flag into
+     * api_types::INCL_PHRASES, which makes sandbox_value::api_json_array() load the phrase
+     * names (prime and main values carry only the phrase ids) and emit the phrases array,
+     * which the frontend api_mapper picks up into $this->grp
+     *
+     * @param int|string $id the value id to load
+     * @param array $data additional data that should be included in the get request
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id(int|string $id, array $data = []): bool
+    {
+        $data[url_var::WITH_PHRASES] = url_var::TRUE;
+        return parent::load_by_id($id, $data);
+    }
+
+
+    /*
      * select
      */
 
