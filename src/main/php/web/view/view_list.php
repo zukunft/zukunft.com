@@ -216,7 +216,7 @@ class view_list extends ListBase
             source::class => views::SOURCE_ID,
             ref::class => views::REF_ID,
             language::class => views::LANGUAGE_ID,
-            value::class => views::VALUE_ID,
+            value::class => views::VALUE_DEFAULT_ID,
             formula::class => views::FORMULA_ID,
             result::class => views::RESULT_ID,
             default => views::START_ID
