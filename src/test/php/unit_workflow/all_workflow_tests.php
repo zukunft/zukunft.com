@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
+include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;

@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -141,6 +141,8 @@ class files
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_POPULISM_FERMI_ESTIMATE = test_paths::IMPORT . 'fermi_estimates' . self::JSON;
+    CONST string IMPORT_TRUE_COST_BURGER = test_paths::IMPORT . 'true_costs_burger' . self::JSON;
+
     CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
     CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
     CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
@@ -199,6 +201,7 @@ class files
         self::IMPORT_PORTFOLIO_INSTRUMENTS,
         self::IMPORT_PORTFOLIO_REPORT,
         self::IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE,
+        self::IMPORT_TRUE_COST_BURGER,
     ];
 
     const array TEST_DATA_FILES_DIRECT = [

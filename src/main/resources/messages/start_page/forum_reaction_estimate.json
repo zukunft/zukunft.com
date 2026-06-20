@@ -5,11 +5,25 @@
   "selection": [
     "thread fit calibration"
   ],
-  "description": "Calibration log for the thread-selection judgement behind the forum-outreach Fermi model, using the real ZEIT-online forum reaction measures. For each building-block post (anchored by its forum URL as a ref of type forum_zeit.de) a forecast of each reaction count is recorded BEFORE posting (assumed value, committed in its own git commit so the timestamp proves it predates the result), and the observed counts are recorded AFTER (measured value). The measures are the five ZEIT reaction icons (star = positive/agreeing, smile = friendly/amused, astonished = surprised, frown = rejecting/displeased, eyebrow = skeptical) plus the count of substantive text replies. The calibration error (forecast minus observed) is calc-validated per measure per post, so over time the graph shows whether the pre-post thread-fit judgement is well calibrated or systematically too optimistic. Replace the example post with real ones; add the measured values and their calc-validation in a later commit once each thread's reaction has settled.",
+  "description": "Calibration log for the thread-selection judgement behind the forum-outreach Fermi model, using the real ZEIT-online forum reaction measures. For each building-block post (anchored by its forum URL as a ref of type general) a forecast of each reaction count is recorded BEFORE posting (assumed value, committed in its own git commit so the timestamp proves it predates the result), and the observed counts are recorded AFTER (measured value). The measures are the five ZEIT reaction icons (star = positive/agreeing, smile = friendly/amused, astonished = surprised, frown = rejecting/displeased, eyebrow = skeptical) plus the count of substantive text replies. The calibration error (forecast minus observed) is calc-validated per measure per post, so over time the graph shows whether the pre-post thread-fit judgement is well calibrated or systematically too optimistic. Replace the example post with real ones; add the measured values and their calc-validation in a later commit once each thread's reaction has settled.",
   "words": [
     {
       "name": "post",
       "description": "a single message submitted to an online forum or comment thread."
+    },
+    {
+      "name": "Die Zeit",
+      "description": "Die Zeit is a German national weekly newspaper published in Hamburg in Germany.[3][4] The newspaper is generally considered to be among the German newspapers of record and is known for its long and extensive articles.",
+      "refs": [
+        {
+          "name": "Die_Zeit",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "zukunftcom",
+      "description": "A sample online account name."
     },
     {
       "name": "thread",
@@ -104,8 +118,8 @@
       "description": "a value set by reasoned assumption before observation, not measured."
     },
     {
-      "name": "2026-06-19",
-      "description": "the date 19 June 2026.",
+      "name": "2026-06-20",
+      "description": "the date 20 June 2026.",
       "type": "measure"
     }
   ],
@@ -202,15 +216,35 @@
       "description": "how well a thread matches the goal of reaching a qualified reader; the pre-post forecast of the reaction counts is its operational form."
     },
     {
-      "name": "post 2026-06-19",
-      "from": "post",
+      "name": "zeit.de zukunftcom",
+      "from": "Die Zeit",
+      "verb": "has",
+      "to": "zukunftcom",
+      "description": "A sample online account name at zeit.de.",
+      "refs": [
+        {
+          "name": "https://profile.zeit.de/3593699",
+          "ref_type": "general"
+        }
+      ]
+    },
+    {
+      "name": "zeit.de zukunftcom post",
+      "from": "zeit.de zukunftcom",
+      "verb": "has",
+      "to": "post",
+      "description": "A post of a sample online account name at zeit.de."
+    },
+    {
+      "name": "zeit.de zukunftcom post 2026-06-20",
+      "from": "zeit.de zukunftcom post",
       "verb": "of",
       "to": "2026-06-19",
       "description": "the building-block post made on 19 June 2026 (example; replace ref URL and counts with the real post).",
       "refs": [
         {
           "name": "https://www.zeit.de/politik/ausland/2026-06/example-thread/comments?cid=example#cid-example",
-          "ref_type": "forum_zeit.de"
+          "ref_type": "general"
         }
       ]
     },
@@ -353,104 +387,38 @@
     {
       "words": [
         "star reaction count forecast",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value"
       ],
-      "number": "8"
+      "number": "2"
     },
     {
       "words": [
         "smile reaction count forecast",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value"
       ],
-      "number": "4"
-    },
-    {
-      "words": [
-        "astonished reaction count forecast",
-        "post 2026-06-19",
-        "thread fit",
-        "assumed value"
-      ],
-      "number": "2"
-    },
-    {
-      "words": [
-        "frown reaction count forecast",
-        "post 2026-06-19",
-        "thread fit",
-        "assumed value"
-      ],
-      "number": "3"
+      "number": "1"
     },
     {
       "words": [
         "eyebrow reaction count forecast",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value"
       ],
-      "number": "5"
+      "number": "1"
     },
     {
       "words": [
         "substantive reply count forecast",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value"
       ],
-      "number": "2"
-    },
-    {
-      "words": [
-        "star reaction count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "5"
-    },
-    {
-      "words": [
-        "smile reaction count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "2"
-    },
-    {
-      "words": [
-        "astonished reaction count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "1"
-    },
-    {
-      "words": [
-        "frown reaction count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "6"
-    },
-    {
-      "words": [
-        "eyebrow reaction count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "4"
-    },
-    {
-      "words": [
-        "substantive reply count",
-        "post 2026-06-19",
-        "measured value"
-      ],
-      "number": "1"
+      "number": "0.01"
     }
   ],
   "calc-validation": [
@@ -458,7 +426,7 @@
       "context": [
         "star reaction count forecast",
         "star reaction count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -466,7 +434,7 @@
       "formula": "star reaction calibration error (formula)",
       "words": [
         "star reaction calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "3.00",
       "note": "forecast 8 star - observed 5 = 3 (too optimistic on agreement)."
@@ -475,7 +443,7 @@
       "context": [
         "smile reaction count forecast",
         "smile reaction count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -483,7 +451,7 @@
       "formula": "smile reaction calibration error (formula)",
       "words": [
         "smile reaction calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "2.00",
       "note": "forecast 4 smile - observed 2 = 2."
@@ -492,7 +460,7 @@
       "context": [
         "astonished reaction count forecast",
         "astonished reaction count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -500,7 +468,7 @@
       "formula": "astonished reaction calibration error (formula)",
       "words": [
         "astonished reaction calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "1.00",
       "note": "forecast 2 astonished - observed 1 = 1."
@@ -509,7 +477,7 @@
       "context": [
         "frown reaction count forecast",
         "frown reaction count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -517,7 +485,7 @@
       "formula": "frown reaction calibration error (formula)",
       "words": [
         "frown reaction calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "-3.00",
       "note": "forecast 3 frown - observed 6 = -3 (more rejection than expected; the negative sign flags an under-forecast)."
@@ -526,7 +494,7 @@
       "context": [
         "eyebrow reaction count forecast",
         "eyebrow reaction count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -534,7 +502,7 @@
       "formula": "eyebrow reaction calibration error (formula)",
       "words": [
         "eyebrow reaction calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "1.00",
       "note": "forecast 5 eyebrow - observed 4 = 1."
@@ -543,7 +511,7 @@
       "context": [
         "substantive reply count forecast",
         "substantive reply count",
-        "post 2026-06-19",
+        "zeit.de zukunftcom post 2026-06-20",
         "thread fit",
         "assumed value",
         "measured value"
@@ -551,7 +519,7 @@
       "formula": "substantive reply calibration error (formula)",
       "words": [
         "substantive reply calibration error",
-        "post 2026-06-19"
+        "zeit.de zukunftcom post 2026-06-20"
       ],
       "number": "1.00",
       "note": "forecast 2 replies - observed 1 = 1."

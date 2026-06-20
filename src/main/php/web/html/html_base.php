@@ -1755,7 +1755,11 @@ class html_base
 
     /**
      * create the HTML code for an input field
-     * @param string $url_id the url id of the input field e.g. Name
+     * the submitted field name is the url var ($url_id) so the form posts keys the
+     * url mapper understands (e.g. name="m"); the user-readable html id comes from the
+     * translated $msg_id (e.g. id="mask") and matches the <label for> set in form_field.
+     * the label text must never be the submit name (that breaks url_to_standard, see url_mapper)
+     * @param string $url_id the url id of the input field e.g. url_var::NAME
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string|null $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
@@ -1772,11 +1776,14 @@ class html_base
         string      $placeholder = ''): string
     {
         global $mtr;
-        $name = $mtr->txt($msg_id);
-        if ($name != '') {
-            $name = ' name="' . $name . '"';
-        }
+        $name = '';
         if ($url_id != '') {
+            $name = ' name="' . $url_id . '"';
+        }
+        $label = $mtr->txt($msg_id);
+        if ($label != '') {
+            $id = strtolower($label);
+        } elseif ($url_id != '') {
             $id = strtolower($url_id);
         } else {
             $id = '1';
@@ -1893,7 +1900,8 @@ class html_base
         global $mtr;
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
-            $text = $this->label($name, $url_id);
+            // empty $for lets label() derive for=strtolower($name), matching the input id
+            $text = $this->label($name);
             $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
             return $this->div_form($text, $style);
         } else {

@@ -106,6 +106,41 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+## Form field `name` is the url var, `id` is the human label
+
+Every HTML input rendered by `html_base::input()` (and therefore by
+`form_field()`, `form_hidden()`, `form_back()`, `form_confirm()`, …) carries two
+distinct attributes with two distinct jobs — never mix them up:
+
+- **`name`** is the **submitted key**, so it must be the **url var** (`url_var::*`
+  passed as `$url_id`, e.g. `m`, `k`, `o`, `lp`, `9`, `z`). The browser posts
+  `name=value` pairs; those keys are what `url_mapper::url_to_standard()` reads.
+- **`id`** is **user-readable** and is derived from the translated label
+  (`$mtr->txt($msg_id)`, lowercased, e.g. `mask`, `name`, `description`). It only
+  identifies the element on the page and pairs with the `<label for>`.
+
+```html
+<!-- right -->
+<input class="form-control" type="hidden" name="m" id="mask" value="3">
+<!-- wrong: the label text became the submit key -> url mapper can't map "mask" -->
+<input class="form-control" type="hidden" name="mask" id="m" value="3">
+```
+
+Using the translated label as `name` is the classic break: a label like `Name`
+or `mask` is not a url var, so the submitted URL produces
+`url mapper for "Name" is missing` / `url key "mask_id" is missing` and the save
+action never reaches the right view. The label belongs in `id` (and the visible
+`<label>`), never in `name`.
+
+Keep the label/input pair consistent: `form_field()` calls `label($name)` with an
+empty `for`, so `label()` derives `for=strtolower($name)`, which equals the input
+`id` (`strtolower($mtr->txt($msg_id))`). If you build a label and input by hand,
+use the same lowercased label text for both `for` and `id`.
+
+The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
+view `d`) already emit the url var as `name` directly — follow that when adding a
+new form element.
+
 ## Always sort lists before rendering them
 
 Every list shown on a frontend page must be sorted by a **deterministic key**

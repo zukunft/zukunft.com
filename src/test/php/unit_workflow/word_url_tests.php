@@ -66,6 +66,12 @@ class word_url_tests
         global $sys;
         $ui = new frontend('view');
         $ui->load_cache();
+        // the html renderers read the type cache from the global $ui_sys (e.g. ref->type_name);
+        // point it at the just loaded frontend cache so the workflow render does not crash
+        global $ui_sys;
+        if ($ui_sys?->typ_lst_cache == null) {
+            $ui_sys = $ui->dto;
+        }
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
         $usr_sys_ui = new user_ui();
@@ -117,6 +123,62 @@ class word_url_tests
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate once url_to_html handles url_var::CRUD_DELETE like the create action
         //$t->assert_text_contains($test_name, $result, word_names::TEST_ADD);
+
+
+        $t->subheader($ts . 'change save url');
+
+        // the 'Change word' edit form must post the url vars the url mapper understands
+        // (e.g. name="k" for the name) and never the translated label (name="Name"),
+        // because a label key cannot be mapped and triggers "url mapper ... is missing"
+        $test_name = 'change word edit form posts url vars not labels';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+        $url_arr[url_var::ID] = word_names::MATH_ID;
+        $form = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"');
+        $t->assert_text_contains($test_name, $form, 'name="' . url_var::DESCRIPTION . '"');
+        $t->assert_text_contains($test_name, $form, 'name="' . url_var::PLURAL . '"');
+        $t->assert_text_contains($test_name, $form, 'name="' . url_var::MASK . '"');
+
+        $test_name = '... and not the translated form labels as field names';
+        $t->assert_text_not_contains($test_name, $form, 'name="Name"');
+        $t->assert_text_not_contains($test_name, $form, 'name="Description"');
+        $t->assert_text_not_contains($test_name, $form, 'name="Plural"');
+        $t->assert_text_not_contains($test_name, $form, 'name="mask"');
+        $t->assert_text_not_contains($test_name, $form, 'name="confirm"');
+
+        // simulate pressing the save button on the 'Change word' form:
+        // the corrected url vars must map cleanly without any "url ... is missing" error
+        // (the failing url was ?mask=3&id=259&back=259&confirm=1&Name=USD&py=3&...)
+        $test_name = 'change word save url maps without missing url mapper error';
+        $save_msg = new user_message();
+        $save_msg->usr = $usr_sys_ui;
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+        $url_arr[url_var::ID] = word_names::MATH_ID;
+        $url_arr[url_var::BACK] = word_names::MATH_ID;
+        $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
+        $url_arr[url_var::NAME] = word_names::MATH;
+        $url_arr[url_var::DESCRIPTION] = 'a test description';
+        $url_arr[url_var::PLURAL] = '';
+        $url_arr[url_var::VIEW] = '0';
+        $url_arr[url_var::SHARE] = '1';
+        $url_arr[url_var::PROTECTION] = '1';
+        $result = $ui->url_to_html($url_arr, $usr_ui, $save_msg, $ui->dto);
+        $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_KEY_MISSING));
+        $t->assert_text_contains($test_name, $result, word_names::MATH);
+
+        // negative: a pod url that is missing the mandatory mask_id key
+        // must still report the missing url key (the error path stays intact)
+        $test_name = 'pod url without mask_id still reports the missing url key';
+        $err_msg = new user_message();
+        $err_msg->usr = $usr_sys_ui;
+        $url_arr = [];
+        $url_arr[url_var::MASK_POD] = views::WORD_EDIT;
+        $url_arr[url_var::ID] = word_names::MATH_ID;
+        $ui->url_to_html($url_arr, $usr_ui, $err_msg, $ui->dto);
+        $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_KEY_MISSING));
 
 
         $t->subheader($ts . 'search');
