@@ -123,6 +123,7 @@ detail file. Order is by how often they fire, not importance.
 - `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
 - Every list rendered on a frontend page is sorted by a deterministic key (impact, name, id, …) before output, so the HTML order never depends on API/DB row order and snapshot tests stay stable. → `docs/llm/frontend.md`
 - An HTML input's `name` is the url var (the submitted key the url mapper reads); the human label goes in `id` / `<label for>`, never in `name`. → `docs/llm/frontend.md`
+- Any paired tag (`<form>…</form>`, `<div>…</div>`, …) is emitted by an `html_base` function that builds both tags from a tag const; never inline a raw open/close tag at the call site. → `docs/llm/frontend.md`
 
 ### Unit-testability
 - No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/state-and-messages.md`

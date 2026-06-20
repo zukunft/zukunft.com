@@ -15,6 +15,10 @@ Add a hidden json to the get request to detect the value changed or use 0 prefix
 
 add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values  
 
+add to /docs/llm/* that for all html tags that have open and closing tag e.g. <form...></form> a function in html_base should be used. The html_base function should use a const for the html tag.
+
+apply the use of the html_base  
+
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default word and triple views below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
 
 rename component "change log word" to "change log term" or add "change log triple"

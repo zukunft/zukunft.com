@@ -159,11 +159,14 @@ class horizontal_ui_tests
                 // TODO Prio 2 review and move the calls to the backend 'outside'
                 $part = $cmp->dsp_entries($ui_obj, $form_name, views::WORD_EDIT_ID, $ui->dto,
                     null, '', '', true, [], $test_form_unique_id);
-                // wrap field-only parts in their own form so the field 'form=' references
-                // resolve; parts that already open or close a <form> are left as is
-                if (!str_contains($part, '<form') and !str_contains($part, '</form')) {
+                // wrap a field part that references its form by id so the reference resolves
+                if (str_contains($part, ' form="') and !str_contains($part, '<form')) {
                     $part = $html->form_start($form_name) . $part . $html->form_end();
                 }
+                // some component types render only layout scaffolding (a lone <div>/<form> open
+                // or close that a sibling type balances on a real page); standalone here they
+                // would leave a tag unclosed, so balance them to keep the catalog valid html
+                $part = $this->balance_tags($part);
                 $test_page .= $part;
                 $test_form_unique_id++;
             } else {
@@ -171,6 +174,27 @@ class horizontal_ui_tests
             }
         }
         $t->html_page_test($test_page, 'all component types', 'all_component_types', $t);
+    }
+
+    /**
+     * balance the div and form tags of one catalog part so it is valid standalone html;
+     * a layout-scaffolding component type renders only a lone open or close tag that a
+     * sibling type balances on a real page, but in this catalog each part stands on its own
+     * @param string $html the rendered catalog part
+     * @return string the part with any unclosed div/form closed and any lone close opened
+     */
+    private function balance_tags(string $html): string
+    {
+        foreach (['div', 'form'] as $tag) {
+            $open = substr_count($html, '<' . $tag);
+            $close = substr_count($html, '</' . $tag . '>');
+            if ($open > $close) {
+                $html .= str_repeat('</' . $tag . '>', $open - $close);
+            } elseif ($close > $open) {
+                $html = str_repeat('<' . $tag . '>', $close - $open) . $html;
+            }
+        }
+        return $html;
     }
 
 }
