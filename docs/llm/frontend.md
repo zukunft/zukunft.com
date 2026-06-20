@@ -106,6 +106,76 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+## Paired HTML tags go through an `html_base` function that uses a tag const
+
+Any element that has an opening **and** closing tag (`<form>…</form>`,
+`<div>…</div>`, `<table>…</table>`, `<label>…</label>`, …) is emitted by a
+function on `html_base`, never by writing the literal tags inline at the call
+site. The function builds both tags from a **tag constant** (`self::FORM`,
+`self::DIV`, …), so the open and close can never drift apart and a renamed tag
+changes in one place.
+
+```php
+// right — the wrapper owns both tags and builds them from the const
+function fr(string $row_text): string
+{
+    return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . rest_ctrl::CLASS_FORM_ROW . '">'
+        . $row_text . '</' . self::DIV . '>';
+}
+// call site:
+$html->fr($detail_fields);
+
+// wrong — literal tags inline; the open/close can get separated and left unbalanced
+$result .= '<form action="/http/view.php">' . $fields;   // … and a '</form>' somewhere far away
+```
+
+Why: emitting a lone `<form>`/`<div>` and its matching close from different
+places (or different component arms) is exactly how a page ends up with an
+unclosed element — the `all_component_types` catalog hit this because layout
+components rendered a half tag each. A single wrapper that returns the complete
+element (or a matched `*_start()` / `*_end()` pair when the body must stream in
+between, like `form_start()` / `form_end()`) keeps every page balanced. Add the
+tag const first if one does not exist yet; never inline a raw `<tag>` string.
+
+This is the markup-level case of the always-on "no magic literals" /
+"icons come from constants" rules — the tag name is the literal, the wrapper is
+the single place it lives.
+
+## Form field `name` is the url var, `id` is the human label
+
+Every HTML input rendered by `html_base::input()` (and therefore by
+`form_field()`, `form_hidden()`, `form_back()`, `form_confirm()`, …) carries two
+distinct attributes with two distinct jobs — never mix them up:
+
+- **`name`** is the **submitted key**, so it must be the **url var** (`url_var::*`
+  passed as `$url_id`, e.g. `m`, `k`, `o`, `lp`, `9`, `z`). The browser posts
+  `name=value` pairs; those keys are what `url_mapper::url_to_standard()` reads.
+- **`id`** is **user-readable** and is derived from the translated label
+  (`$mtr->txt($msg_id)`, lowercased, e.g. `mask`, `name`, `description`). It only
+  identifies the element on the page and pairs with the `<label for>`.
+
+```html
+<!-- right -->
+<input class="form-control" type="hidden" name="m" id="mask" value="3">
+<!-- wrong: the label text became the submit key -> url mapper can't map "mask" -->
+<input class="form-control" type="hidden" name="mask" id="m" value="3">
+```
+
+Using the translated label as `name` is the classic break: a label like `Name`
+or `mask` is not a url var, so the submitted URL produces
+`url mapper for "Name" is missing` / `url key "mask_id" is missing` and the save
+action never reaches the right view. The label belongs in `id` (and the visible
+`<label>`), never in `name`.
+
+Keep the label/input pair consistent: `form_field()` calls `label($name)` with an
+empty `for`, so `label()` derives `for=strtolower($name)`, which equals the input
+`id` (`strtolower($mtr->txt($msg_id))`). If you build a label and input by hand,
+use the same lowercased label text for both `for` and `id`.
+
+The matching dropdowns/selectors (share `s`, protection `sp`, phrase type `py`,
+view `d`) already emit the url var as `name` directly — follow that when adding a
+new form element.
+
 ## Always sort lists before rendering them
 
 Every list shown on a frontend page must be sorted by a **deterministic key**

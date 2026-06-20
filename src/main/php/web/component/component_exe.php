@@ -115,7 +115,8 @@ class component_exe extends component
         string                                                $back = '',
         string                                                $pattern = '',
         bool                                                  $test_mode = false,
-        array                                                 $url_array = []
+        array                                                 $url_array = [],
+        int|string                                            $test_form_unique_id = ''
     ): string
     {
         global $mtr;
@@ -467,8 +468,29 @@ class component_exe extends component
             $this->log_err($result);
         }
 
+        // a test page may stack many form parts that never share a real page; suffix this
+        // part's field names/ids with the per-part counter so the stacked ids stay unique;
+        // empty in production so the real url vars (name="k") are kept, one form per page
+        if ($test_form_unique_id !== '') {
+            $result = $this->add_test_form_unique_id($result, $test_form_unique_id);
+        }
+
         // finally add the html style if requested
         return $result;
+    }
+
+    /**
+     * suffix the name / id / for / list attributes of one rendered form part so several
+     * parts stacked on one test page keep unique html ids (the for/list references move
+     * with their id); used only by the multi-form test pages, never in production
+     * @param string $html the rendered form part
+     * @param int|string $test_form_unique_id the per-part counter from the test page
+     * @return string the form part with disambiguated field identifiers
+     */
+    private function add_test_form_unique_id(string $html, int|string $test_form_unique_id): string
+    {
+        $suffix = '_' . $test_form_unique_id;
+        return preg_replace('/(\s(?:name|id|for|list)=")([^"]+)(")/', '${1}${2}' . $suffix . '${3}', $html);
     }
 
 }
