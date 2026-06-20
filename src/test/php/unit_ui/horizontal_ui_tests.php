@@ -152,10 +152,20 @@ class horizontal_ui_tests
                 $cmp = new component_exe();
                 $cmp->set_type_id($typ->id());
                 $cmp->code_id = $typ->code_id;
+                // a valid, unique form name per part (no spaces) so the field 'form=' and the
+                // form id stay valid and unique on this multi-part catalog page
+                $form_name = 'component_type_test_' . $test_form_unique_id;
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
-                $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto,
-                    null, '', '', true, [], $test_form_unique_id++);
+                $part = $cmp->dsp_entries($ui_obj, $form_name, views::WORD_EDIT_ID, $ui->dto,
+                    null, '', '', true, [], $test_form_unique_id);
+                // wrap field-only parts in their own form so the field 'form=' references
+                // resolve; parts that already open or close a <form> are left as is
+                if (!str_contains($part, '<form') and !str_contains($part, '</form')) {
+                    $part = $html->form_start($form_name) . $part . $html->form_end();
+                }
+                $test_page .= $part;
+                $test_form_unique_id++;
             } else {
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }

@@ -1765,7 +1765,8 @@ class html_base
     private function field_id(string $url_id, string $label): string
     {
         if ($label != '') {
-            $id = strtolower($label);
+            // a label may contain spaces ("Plural reverse"); an html id may not, so use '_'
+            $id = str_replace(' ', '_', strtolower($label));
             $sep = strpos($url_id, '_');
             if ($sep !== false) {
                 $id .= substr($url_id, $sep);
