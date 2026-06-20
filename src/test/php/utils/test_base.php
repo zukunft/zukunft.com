@@ -4766,6 +4766,23 @@ class test_base
             . $sfm->title_formula($dbo);
     }
 
+    /**
+     * build the html section that exercises the value page-title renderer
+     * (system_form::title_value): the related phrases shown as links with tooltip and
+     * the value itself as the title, with the edit link and the type, share and
+     * protection subtitle, so the object_pages snapshot covers the value title
+     *
+     * @param db_object $dbo the value whose related phrases and number are the title
+     * @return string a h2 heading plus the rendered value title html
+     */
+    function dsp_title_value(db_object $dbo): string
+    {
+        $html = new html_base();
+        $sfm = new system_form();
+        return $html->text_h2('title named with edit link')
+            . $sfm->title_value($dbo);
+    }
+
     function class_without_namespace(string $class_name_with_namespace): string
     {
         $lib = new library();

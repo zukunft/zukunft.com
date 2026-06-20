@@ -101,6 +101,19 @@ class test_values extends test_objects
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
+    /**
+     * the standard test value but with a non-default (admin) protection so that the
+     * frontend value title shows the protection in its subtitle, mirroring the word
+     * @return value the test value with admin protection set
+     */
+    function value_protected(): value
+    {
+        global $sys;
+        $val = $this->value();
+        $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $val;
+    }
+
     function value_incomplete(): value
     {
         $t_grp = new test_groups($this->env);

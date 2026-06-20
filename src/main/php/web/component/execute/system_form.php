@@ -64,6 +64,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
@@ -98,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
@@ -201,6 +203,29 @@ class system_form extends component
     }
 
     /**
+     * the page title for a value: unlike a named object, the heading is not a plain
+     * name but the related phrases shown as links (each with the phrase description as
+     * tooltip) followed by the value itself, the same way a word title shows its name;
+     * the edit link and the type, share and protection subtitle are added by title_box
+     *
+     * @param db_object $dbo the value whose related phrases and number are the title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the value page title
+     */
+    function title_value(
+        db_object $dbo,
+        int $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        // the heading shows the related phrases as links with tooltip plus the value
+        $heading_content = $dbo->name();
+        if ($dbo::class == value::class) {
+            $heading_content = $dbo->name_link();
+        }
+        return $this->title_box($dbo, $heading_content, $max);
+    }
+
+    /**
      * the shared page-title box with the edit link and the category, type, share and
      * protection subtitles; the big heading content is the object name, and a triple
      * additionally passes its from/verb/to links shown first in the same subtitle line
@@ -274,6 +299,10 @@ class system_form extends component
             if ($dbo->phr_lst != null) {
                 $result = $dbo->phr_lst->assigned_subtitle($max);
             }
+        } elseif ($dbo::class == value::class) {
+            // a value lists its related phrases already in the title heading, so the
+            // subtitle is left to the type, share and protection parts
+            $result = '';
         } else {
             $lib = new library();
             log_warning('category_subtitle not yet defined for ' . $lib->class_to_name($dbo::class));

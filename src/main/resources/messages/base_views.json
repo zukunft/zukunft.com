@@ -30,6 +30,12 @@
       "code_id": "title_of_formula_with_edit_link_formula"
     },
     {
+      "name": "Value title",
+      "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
+      "type": "title_of_value_with_edit_link",
+      "code_id": "title_of_value_with_edit_link_value"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -520,6 +526,10 @@
       "components": [
         {
           "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
           "name": "main value"
         }
       ]

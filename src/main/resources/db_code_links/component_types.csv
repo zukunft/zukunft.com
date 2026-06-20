@@ -201,3 +201,4 @@ component_type_id, type_name, description, code_id
 200, 'title of triple with edit link', 'show the from, verb and to of a triple with links as the page title plus the edit link and subtitle', 'title_of_triple_with_edit_link'
 201, 'title of formula with edit link', 'show the formula name as the page title and the assigned phrases with links in the subtitle plus the edit link', 'title_of_formula_with_edit_link'
 202, 'expression latex link', 'display the formula expression in the latex format with a tooltip and a link for each term', 'expression_latex_link'
+203, 'title of value with edit link', 'show the related phrases of a value with links as the page title and the value itself plus the edit link and the share and protection subtitle', 'title_of_value_with_edit_link'
