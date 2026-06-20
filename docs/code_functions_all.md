@@ -1611,6 +1611,7 @@
     \-- isset - section for function isset not yet defined that it should be info in /helper/db_object_multi.php
     \-- name - section for function name is expected to be debug in /helper/db_object_multi.php
     \-- load_by_id - section for function load_by_id is expected to be load in /helper/db_object_multi.php
+    \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /helper/db_object_multi.php
     \-- order error - order of section api has difference at api_json_array should be before api_json of api_json,api_json_array does not match 1,api_json_array,api_json,api_array,order of section api has difference at api_json_array should be before api_json of api_json,api_json_array does not match 1,api_json_array,api_json,api_array
 \-- db_object_multi_user
     \-- dsp_id_user - section for function dsp_id_user not yet defined that it should be debug in /helper/db_object_multi_user.php

@@ -1030,11 +1030,11 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string           $dsp_code_id,
-        user             $usr,
-        db_object_seq_id $dbo,
-        int              $id = 0,
-        ?data_object_ui  $cfg = null
+        string                        $dsp_code_id,
+        user                          $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        int                           $id = 0,
+        ?data_object_ui               $cfg = null
     ): bool
     {
         $lib = new library();

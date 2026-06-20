@@ -345,7 +345,7 @@ class value extends sandbox_value
     function value_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(rest_ctrl::VALUE_EDIT, $this->id(), '', $back);
+        $url = $html->url_new(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
         $txt = $this->value();
         return $html->ref($url, $txt);
     }
@@ -431,15 +431,19 @@ class value extends sandbox_value
     }
 
     /**
-     * create the HTML code to show the value name and the formatted value to the user
+     * create the HTML code to show the related phrases as links followed by the
+     * numeric value itself in grey without a link, used as the value page title
      *
      * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @param string $sep the separator string between the name and the value
+     * @param string $sep the separator string between the phrases and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
     function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
+        $html = new html_base();
+        $phr_links = $this->grp->name_link_list($phr_lst_exclude);
+        $val_grey = $html->span($this->value(), styles::STYLE_GREY);
+        return $phr_links . $sep . $val_grey;
     }
 
     /**
