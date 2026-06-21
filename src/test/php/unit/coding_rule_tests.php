@@ -85,19 +85,11 @@ class coding_rule_tests
 
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
-        $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
-        $obj_upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$obj_upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_OBJECTS, $md_txt);
-        }
+        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS);
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
-        $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
-        $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$fnc_upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
-        }
+        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS);
 
         $this->php_class_name_check($t);
 
@@ -214,11 +206,7 @@ class coding_rule_tests
     {
         $test_name = 'check that the object name exceptions doc is updated';
         $md_txt = $this->php_class_name_exceptions();
-        $doc_txt = file_get_contents(test_files::DOCS_NAME_EXCEPTIONS);
-        $upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_NAME_EXCEPTIONS, $md_txt);
-        }
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS);
     }
 
     /**

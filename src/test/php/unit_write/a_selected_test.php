@@ -77,7 +77,7 @@ class a_selected_test extends test_cleanup
     // the import json files to load for a fast single-file debugging cycle
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
-        files::EDUCATION_FILE,
+        //files::EDUCATION_FILE,
         //files::POVERTY_FILE,
         //files::HEALTH_FILE,
         //files::POPULATION_FILE,
@@ -313,7 +313,7 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            //new word_url_tests()->run($this);
+            new word_url_tests()->run($this);
 
         }
 

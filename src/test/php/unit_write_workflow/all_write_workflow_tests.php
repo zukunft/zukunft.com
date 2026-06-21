@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_workflow/all_workflow_tests.php - test the user workflows based on the url without change the database
-    ---------------------------------------------
+    test/php/unit_write_workflow/all_workflow_write_tests.php - test the user workflows based on the url including add and delete of test objects to the database
+    ---------------------------------------------------------
     
     the zukunft.com workflows simulates all suggested user workflows and checks if the next view is the expected view
 
@@ -32,7 +32,7 @@
 
 */
 
-namespace Zukunft\ZukunftCom\test\php\unit_workflow;
+namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
@@ -45,9 +45,10 @@ include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 
-class all_workflow_tests
+class all_write_workflow_tests
 {
 
     /**
@@ -57,23 +58,23 @@ class all_workflow_tests
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    static function run(test_base $t, user $usr, user_message $usr_msg): bool
+    function run(test_base $t, user $usr, user_message $usr_msg): bool
     {
 
         // start the test section (ts)
-        $ts = 'workflow start ';
+        $ts = 'workflow start db write ';
         $t->header($ts);
 
         if ($usr->id > 0) {
 
             // url tests
-            new word_url_tests()->run($t);
+            new word_write_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow
              * the easy workflow (without extra confirm of the change) should be change be to
              * to add a number
-             * to add a triple, language form or translation
+             * to add w word, triple, language form or translation
              * and if set in the config:
              * to change a number
              */
