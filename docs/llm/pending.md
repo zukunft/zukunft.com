@@ -10,6 +10,15 @@ add a '0' url prefix that is used to include the database values in the url for 
 
 Add a hidden json to the get request to detect the value changed or use 0 prefix for url vars
 
+add '0' prefixed value to the edit page calls to detect the real user change requests and prevent overwriting other user change during the edit view is shown
+-> test wordflow 
+1. user_a opens the edit view
+2. user_b open the edit view and changes the phrase type
+3. user_b press save and the changed phrased type is written to the database
+4. user_a changes the description and press save
+5. the changes of user_a are checked against the status when the edit mask has been opened and only the description is updated
+6. the phrase type is left as user_b has changed it
+
 
 ### word frontend
 

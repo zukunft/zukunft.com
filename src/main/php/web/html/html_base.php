@@ -489,7 +489,7 @@ class html_base
     {
         $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
         if ($title != '' && $title != $name) {
-            $result .= ' ' . self::TITLE_HTML . '="' . $title . '"';
+            $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
         }
         if ($css_class != '') {
             $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
@@ -1051,7 +1051,7 @@ class html_base
     {
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $name .
-            '" ' . self::VALUE . '="' . $value . '">';
+            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
     }
 
     /**
