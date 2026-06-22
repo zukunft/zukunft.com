@@ -99,6 +99,8 @@ class paths
 
     // resource paths
     const string HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
+    // for the snapshots of the url based user workflow tests
+    const string WORKFLOW = self::HTML . 'workflow' . DIRECTORY_SEPARATOR;
 
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;

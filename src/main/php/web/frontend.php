@@ -53,6 +53,7 @@ include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'url_mapper.php';
+include_once html_paths::HELPER . 'user_request.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
@@ -155,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
+use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
@@ -872,26 +874,18 @@ class frontend
      *
      * @param string $action the user reaction action const e.g. url_var::ACTION_SAVE
      * @param array $url_array the parsed url of the user action e.g. the submitted edit form
-     * @param user_backend $usr_backend the backend user, updated in place e.g. on login
-     * @param user_ui $usr the frontend user, updated in place e.g. on login
-     * @param user_message $usr_msg to enrich with potential errors
-     * @param data_object $dto the frontend cache used to reduce the backend loading
-     * @param bool $do_it false to skip the database execution e.g. for unit testing
+     * @param user_request $req the bundled request context (users, message, cache and the do_it flag)
      * @return string the html code of the next page shown to the user
      */
     function url_user_reaction(
         string       $action,
         array        $url_array,
-        user_backend &$usr_backend,
-        user_ui      &$usr,
-        user_message $usr_msg,
-        data_object  $dto = new data_object(),
-        bool         $do_it = true
+        user_request $req
     ): string
     {
         $url_array[url_var::STEP] = url_var::action_step($action);
-        $next_url = $this->url_to_action($url_array, $usr_backend, $usr, $usr_msg, $dto, $do_it);
-        return $this->url_to_html($next_url, $usr, $usr_msg, $dto);
+        $next_url = $this->url_to_action($url_array, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
+        return $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto);
     }
 
     function show_view(int $id): string

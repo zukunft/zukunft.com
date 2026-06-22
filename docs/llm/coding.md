@@ -92,6 +92,7 @@ detail file. Order is by how often they fire, not importance.
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
+- Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
 - Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`
@@ -171,7 +172,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
-- A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf1_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
+- A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf2_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
 - Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
 - Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
