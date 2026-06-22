@@ -286,6 +286,9 @@ class word_names
     const string US = 'US';
     const string GAAP = 'GAAP';
     const string TEST_ADD = 'System Test Word';
+    // the database id of the 'System Test Word' is assigned dynamically on insert; this fixed id
+    // replaces the volatile id in workflow snapshots so the test result does not change every run
+    const int TEST_ADD_ID = 999;
     const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
     const string TEST_ADD_TO = 'System Test Word To';

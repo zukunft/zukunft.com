@@ -316,7 +316,7 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            //new word_url_tests()->run($this);
+            new word_url_tests()->run($this);
 
         }
 

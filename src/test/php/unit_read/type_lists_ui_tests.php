@@ -39,21 +39,9 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::TYPES . 'component_type_list.php';
-include_once html_paths::TYPES . 'formula_link_type_list.php';
-include_once html_paths::TYPES . 'formula_type_list.php';
-include_once html_paths::TYPES . 'phrase_type_list.php';
-include_once html_paths::TYPES . 'protection.php';
-include_once html_paths::TYPES . 'ref_type_list.php';
-include_once html_paths::TYPES . 'share.php';
-include_once html_paths::TYPES . 'source_type_list.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'view_style_list.php';
-include_once html_paths::TYPES . 'view_type_list.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -61,21 +49,8 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\types\component_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\formula_link_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\formula_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\phrase_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\protection;
-use Zukunft\ZukunftCom\main\php\web\types\ref_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\share;
-use Zukunft\ZukunftCom\main\php\web\types\source_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\types\user_profile;
-use Zukunft\ZukunftCom\main\php\web\types\verbs;
-use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
-use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -105,46 +80,23 @@ class type_lists_ui_tests
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page = $msk->show($wrd, $cfg, '') . '<br><br>';
 
-        // test the type list selectors
+        // test the type list selectors; each selector renders its own <label for> tied to
+        // its control id, so no extra manual label is added (that produced a dangling
+        // "for" reference like <label for="up"> with no matching control id)
         $form = 'view';
         $test_page .= $html->form_start($form);
-
-        $test_page .= $html->label(user_profile::NAME, user_profile::NAME);
         $test_page .= $ui_cache->usr_pro->selector($form) . '<br>';
-
-        $test_page .= $html->label(verbs::NAME, verbs::NAME);
         $test_page .= $ui_cache->vrb->selector($form) . '<br>';
-
-        $test_page .= $html->label(phrase_type_list::NAME, url_var::PHRASE_TYPE);
         $test_page .= $ui_cache->phr_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(formula_type_list::NAME, formula_type_list::NAME);
         $test_page .= $ui_cache->frm_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(formula_link_type_list::NAME, formula_link_type_list::NAME);
         $test_page .= $ui_cache->frm_lnk_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(view_type_list::NAME, view_type_list::NAME);
         $test_page .= $ui_cache->msk_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(view_style_list::NAME, view_style_list::NAME);
         $test_page .= $ui_cache->msk_sty->selector($form) . '<br>';
-
-        $test_page .= $html->label(component_type_list::NAME, component_type_list::NAME);
         $test_page .= $ui_cache->cmp_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(ref_type_list::NAME, ref_type_list::NAME);
         $test_page .= $ui_cache->ref_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(source_type_list::NAME, source_type_list::NAME);
         $test_page .= $ui_cache->src_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(protection::NAME, protection::NAME);
         $test_page .= $ui_cache->ptc_typ->selector($form) . '<br>';
-
-        $test_page .= $html->label(share::NAME, share::NAME);
         $test_page .= $ui_cache->shr_typ->selector($form) . '<br>';
-
         $test_page .= $html->form_end_with_submit($form, '');
 
         $t->html_page_test($test_page, 'types', 'types', $t);

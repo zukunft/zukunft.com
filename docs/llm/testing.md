@@ -422,6 +422,55 @@ constant the renderer relies on), skip that test rather than forcing the call �
 and either add the missing piece to the object (preferred, so all object pages
 stay consistent) or document the skip in the helper's docblock.
 
+## Unit workflow tests snapshot every step
+
+A unit workflow test (`src/test/php/unit_workflow/`) simulates a sequence of user
+actions and **saves and checks the rendered HTML after every step** against a
+fixture under `src/test/resources/web/html/workflow/`. Every intermediate page is
+a snapshot (compared with `assert_html_page`, i.e. through `assert_file`), so a
+workflow whose HTML drifts is caught exactly like an `object_pages` snapshot.
+
+Naming is fixed so the fixture for any step is mechanical to locate:
+
+- Each workflow has a **unit name** (e.g. `change_word`) and a **unit id** (e.g.
+  `1`); its folder is `<name>_wf<id>`, so `change_word` id `1` →
+  `src/test/resources/web/html/workflow/change_word_wf1/`.
+- Inside that folder every page filename starts with `wf<id>` followed by the
+  **cumulative** user-action names joined by `_`. The first action `show`
+  (display the test word in its default word view) gives `wf1_show`; after the
+  further actions `edit`, `save`, `confirm` the page is
+  `wf1_show_edit_save_confirm`. Each step appends its action to the previous
+  step's filename — never a per-step standalone name.
+- A user action is passed as a **named const**, never a bare string, and that
+  const is the **first parameter** of the `url_user_reaction` call that performs
+  the step. The same action const names the segment appended to the snapshot
+  filename.
+
+- **Right**: the `save` step is driven by `url_user_reaction(<action const>, …)`
+  and its HTML is checked with `$t->assert_html_page($test_name, $html,
+  test_paths::HTML . 'workflow/change_word_wf1/wf1_show_edit_save')` (the path is
+  relative to the test resource root; `assert_html_page` adds the `.html`
+  extension).
+- **Wrong**: asserting only the final page (skipping the intermediate
+  `wf1_show`, `wf1_show_edit`, … snapshots), passing the action as a literal
+  string, or naming a step file by its action alone (`wf1_save`) instead of the
+  cumulative path.
+
+Never overwrite an existing `workflow/` fixture to make a step pass — leave it
+failing for the scripts / reviewer to regenerate (see the resource-file rule
+above).
+
+Write workflows use the parallel folder `workflow_write`. A read-only workflow
+test (`src/test/php/unit_workflow/`, run with `do_it = false`, no database
+change) snapshots into `src/test/resources/web/html/workflow/`; the matching
+**write** workflow test (`src/test/php/unit_write_workflow/`, run with
+`do_it = true` so the change is actually persisted) snapshots into
+`src/test/resources/web/html/workflow_write/` with the **same**
+`<name>_wf<id>/wf<id>_<cumulative-actions>` folder-and-file structure. The two
+folders mirror each other so the read-only and write runs of the same workflow
+are easy to compare; the write run additionally proves the database side
+effect of the confirmed step.
+
 ## Every machine-checkable coding rule has a coded test
 
 A coding rule in `docs/llm/` is only enforced when there is an automated test
