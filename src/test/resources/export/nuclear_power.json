@@ -1,0 +1,1433 @@
+{
+    "version": "0.0.3",
+    "pod": "",
+    "time": "2026-06-22 20:38:05",
+    "user": "zukunft.com system test",
+    "selection": [
+        "nuclear",
+        "power"
+    ],
+    "words": [
+        {
+            "name": "Beznau",
+            "description": "the oldest Swiss nuclear power station, in the canton of Aargau.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "plant",
+            "description": "an industrial facility for the generation of electric power.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "power",
+            "description": "the rate, per unit time, at which electrical energy is transferred.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "nuclear",
+            "description": "relating to the nucleus of an atom and the energy released in nuclear reactions.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "production",
+            "description": "the action of making or generating something.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "electricity",
+            "description": "the set of physical phenomena associated with electric charge.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "shutdown",
+            "description": "the permanent ceasing of operation of a plant.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "factor",
+            "description": "a ratio; here the ratio of actual to maximum possible output.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "capacity",
+            "description": "the maximum output an installation can produce.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "coal",
+            "description": "a combustible black sedimentary rock burned to generate electricity.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "argument",
+            "description": "a reason or set of reasons given in support of an idea or position.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "contra",
+            "description": "an argument or consideration against something.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "new",
+            "description": "recently built or established, as opposed to existing.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "Switzerland",
+            "description": "a landlocked country located in west-central Europe.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "Gösgen",
+            "description": "a Swiss nuclear power station in the canton of Solothurn.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "hydro",
+            "description": "relating to electricity generated from flowing water.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "Leibstadt",
+            "description": "the newest and most powerful Swiss nuclear power station, in the canton of Aargau.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "cost",
+            "description": "the amount paid or required for something.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "energy",
+            "description": "the capacity to do work, here primary or electrical energy.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "levelized",
+            "description": "averaged over the lifetime of an asset as a present value per unit of output.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "emission",
+            "description": "the production and discharge of something, especially a gas.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "CO2",
+            "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "lifecycle",
+            "description": "the whole series of stages over the life of a product or facility.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "gas",
+            "description": "a state of matter; here shorthand for a greenhouse gas emission.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "greenhouse",
+            "description": "relating to gases that trap heat in the atmosphere.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "share",
+            "description": "a part or portion of a larger amount.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "fusion",
+            "description": "the merging of light atomic nuclei, releasing energy, the process powering the sun.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "reactor",
+            "description": "a device in which a nuclear chain reaction is sustained to produce energy.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "waste",
+            "description": "unwanted or unusable material; here spent nuclear fuel or end-of-life panels.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "pro",
+            "description": "an argument or consideration in favour of something.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "social",
+            "description": "relating to society and external effects beyond the private actor.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "wind",
+            "description": "the use of air flow to generate electricity.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "2018",
+            "description": "the calendar year 2018.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "maintenance",
+            "description": "the operations and upkeep of a plant during its lifetime.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "fixed",
+            "description": "of a cost, independent of the amount produced.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "USD",
+            "description": "the United States dollar.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "MWh",
+            "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "price",
+            "description": "the amount of money expected or given for something.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "carbon",
+            "description": "shorthand for carbon dioxide in the context of a carbon price.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "EUR",
+            "description": "the euro.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "tonne",
+            "description": "a metric unit of mass equal to 1000 kilograms.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "lower bound estimate",
+            "description": "the low end of an estimated range.",
+            "type_code_id": "default"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "year",
+            "description": "a unit of duration equal to the orbital period of the Earth.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "variable",
+            "description": "of a cost, depending on the amount produced (here including fuel).",
+            "type_code_id": "default"
+        },
+        {
+            "name": "upper bound estimate",
+            "description": "the high end of an estimated range.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "2022",
+            "description": "the calendar year 2022.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "TWh",
+            "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "percent",
+            "description": "a proportion expressed as a fraction of 100.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "time",
+            "description": "the measured duration of an event.",
+            "type_code_id": "measure",
+            "type": "measure type",
+            "code_id": "time"
+        },
+        {
+            "name": "construction",
+            "description": "the building of an installation.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "bn",
+            "description": "billion, a scaling word for 1e9.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "France",
+            "description": "a country in western Europe with a large nuclear fleet.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "2017",
+            "description": "the calendar year 2017.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "primary",
+            "description": "of energy, in the raw form before conversion (e.g. fuel rather than electricity).",
+            "type_code_id": "default"
+        },
+        {
+            "name": "exposure",
+            "description": "the amount of ionising radiation received.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "radiation",
+            "description": "energy emitted as particles or waves, here ionising radiation.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "times",
+            "description": "a dimensionless multiplier or ratio.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "2024",
+            "description": "the calendar year 2024.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "2019",
+            "description": "the calendar year 2019.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "capital",
+            "description": "the up-front investment expenditure to build a plant.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "Celsius",
+            "description": "degree Celsius, a unit of temperature.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "temperature",
+            "description": "the degree of heat of an operating reactor.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "operation",
+            "description": "the running of a plant during its lifetime.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "grid",
+            "description": "the transmission network; here grid connection and system cost.",
+            "type_code_id": "default"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "start",
+            "description": "the beginning of an activity, here an experiment.",
+            "type_code_id": "default",
+            "code_id": "start"
+        },
+        {
+            "name": "experiment",
+            "description": "a scientific trial, here of nuclear fusion.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "2000",
+            "description": "the calendar year 2000.",
+            "type_code_id": "time",
+            "type": "time"
+        },
+        {
+            "name": "Eurocent",
+            "description": "one hundredth of a euro.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "kWh",
+            "description": "kilowatt-hour, a unit of energy.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "Finland",
+            "description": "a country in northern Europe building the Olkiluoto III reactor.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "GW",
+            "description": "gigawatt, a unit of power equal to one billion watts.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "installed",
+            "description": "built and connected, ready to produce.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "Denmark",
+            "description": "a country in northern Europe with a large wind fleet.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "CO2eq",
+            "description": "carbon-dioxide equivalent, a measure of greenhouse-gas emission expressed as the equivalent mass of CO2.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "protection": "admin_protection",
+            "name": "gram",
+            "description": "a metric unit of mass.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "growth",
+            "description": "an increase in amount or size.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "scenario",
+            "description": "a modelled possible future, here an IPCC climate scenario.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "ratio",
+            "description": "the quotient of two quantities.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "turbine",
+            "description": "a rotary machine that converts a flow into work, here a wind turbine.",
+            "type_code_id": "default"
+        },
+        {
+            "name": "count",
+            "description": "a dimensionless number of countable items.",
+            "type_code_id": "measure",
+            "type": "measure type"
+        },
+        {
+            "name": "Germany",
+            "description": "a country in central Europe.",
+            "type_code_id": "default"
+        }
+    ],
+    "triples": [
+        {
+            "name": "Beznau plant",
+            "from": "Beznau",
+            "verb": "is a",
+            "to": "nuclear power plant"
+        },
+        {
+            "name": "Beznau production loss at shutdown",
+            "from": "electricity production",
+            "verb": "of",
+            "to": "Beznau plant"
+        },
+        {
+            "name": "Beznau shutdown year",
+            "from": "shutdown",
+            "verb": "of",
+            "to": "Beznau plant"
+        },
+        {
+            "name": "capacity factor of nuclear power",
+            "from": "capacity factor",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "coal power",
+            "from": "power",
+            "verb": "kind of",
+            "to": "coal"
+        },
+        {
+            "name": "contra argument for new nuclear in Switzerland",
+            "from": "contra argument",
+            "verb": "of",
+            "to": "new nuclear power plant in Switzerland"
+        },
+        {
+            "name": "Gösgen plant",
+            "from": "Gösgen",
+            "verb": "is a",
+            "to": "nuclear power plant"
+        },
+        {
+            "name": "Gösgen production loss at shutdown",
+            "from": "electricity production",
+            "verb": "of",
+            "to": "Gösgen plant"
+        },
+        {
+            "name": "Gösgen shutdown year",
+            "from": "shutdown",
+            "verb": "of",
+            "to": "Gösgen plant"
+        },
+        {
+            "name": "hydropower",
+            "from": "power",
+            "verb": "kind of",
+            "to": "hydro"
+        },
+        {
+            "name": "Leibstadt plant",
+            "from": "Leibstadt",
+            "verb": "is a",
+            "to": "nuclear power plant"
+        },
+        {
+            "name": "Leibstadt production loss at shutdown",
+            "from": "electricity production",
+            "verb": "of",
+            "to": "Leibstadt plant"
+        },
+        {
+            "name": "Leibstadt shutdown year",
+            "from": "shutdown",
+            "verb": "of",
+            "to": "Leibstadt plant"
+        },
+        {
+            "name": "levelized cost of energy of nuclear power",
+            "from": "levelized cost of energy (levelized)",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "lifecycle CO2 emission of nuclear power",
+            "from": "lifecycle CO2 emission",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "lifecycle greenhouse gas emission of nuclear power",
+            "from": "lifecycle greenhouse gas emission",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "new nuclear power plant",
+            "description": "a newly built nuclear power plant, as opposed to an existing one.",
+            "from": "nuclear power plant",
+            "verb": "kind of",
+            "to": "new"
+        },
+        {
+            "name": "new nuclear power plant in Switzerland",
+            "description": "the proposal to build one or more new nuclear power plants in Switzerland after the 2025 lifting of the construction ban.",
+            "from": "new nuclear power plant",
+            "verb": "of",
+            "to": "Switzerland"
+        },
+        {
+            "name": "nuclear electricity production share",
+            "description": "the share of total electricity production supplied by nuclear power.",
+            "from": "share",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "nuclear fusion",
+            "from": "fusion",
+            "verb": "kind of",
+            "to": "nuclear"
+        },
+        {
+            "name": "nuclear power",
+            "from": "power",
+            "verb": "kind of",
+            "to": "nuclear"
+        },
+        {
+            "name": "nuclear power plant",
+            "description": "a thermal power station in which the heat source is a nuclear reactor.",
+            "from": "plant",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "nuclear reactor",
+            "from": "reactor",
+            "verb": "kind of",
+            "to": "nuclear"
+        },
+        {
+            "name": "nuclear waste",
+            "from": "waste",
+            "verb": "kind of",
+            "to": "nuclear"
+        },
+        {
+            "name": "pro argument for new nuclear in Switzerland",
+            "from": "pro argument",
+            "verb": "of",
+            "to": "new nuclear power plant in Switzerland"
+        },
+        {
+            "name": "social cost per kWh of new nuclear in Switzerland",
+            "description": "the weighted total cost per kWh of new Swiss nuclear power, summing every monetised pro and contra adder.",
+            "from": "social cost",
+            "verb": "of",
+            "to": "new nuclear power plant in Switzerland"
+        },
+        {
+            "name": "Swiss nuclear fleet production",
+            "description": "the combined annual electricity production of all Swiss nuclear power plants.",
+            "from": "electricity production",
+            "verb": "of",
+            "to": "nuclear power"
+        },
+        {
+            "name": "Swiss nuclear fleet shutdown loss",
+            "description": "the combined annual electricity production lost once all Swiss nuclear power plants are shut down on schedule; the result of the fleet production loss sum formula.",
+            "from": "Swiss nuclear fleet production",
+            "verb": "of",
+            "to": "shutdown"
+        },
+        {
+            "name": "wind power",
+            "from": "power",
+            "verb": "kind of",
+            "to": "wind"
+        },
+        {
+            "name": "fixed maintenance cost",
+            "description": "the fixed operations and maintenance cost, independent of output.",
+            "from": "maintenance cost",
+            "verb": "kind of",
+            "to": "fixed"
+        },
+        {
+            "name": "USD per MWh",
+            "description": "US dollars per megawatt-hour generated.",
+            "from": "USD",
+            "verb": "per",
+            "to": "MWh"
+        },
+        {
+            "name": "carbon price",
+            "from": "price",
+            "verb": "of",
+            "to": "carbon"
+        },
+        {
+            "name": "EUR per tonne CO2",
+            "description": "euros per tonne of CO2, a carbon price.",
+            "from": "EUR",
+            "verb": "per",
+            "to": "CO2 tonne"
+        },
+        {
+            "name": "variable maintenance cost",
+            "description": "the variable operations and maintenance cost including fuel.",
+            "from": "maintenance cost",
+            "verb": "kind of",
+            "to": "variable"
+        },
+        {
+            "name": "levelized cost of electricity",
+            "description": "the average net present cost of electricity generation over the lifetime of a generator, here the sum of capital, maintenance and grid cost per unit of energy; LCOE = sum((I_t + O&M_t + F_t) / (1 + i)^t) / sum(E_t / (1 + i)^t).",
+            "from": "levelized cost",
+            "verb": "of",
+            "to": "electricity"
+        },
+        {
+            "name": "capacity factor",
+            "from": "factor",
+            "verb": "of",
+            "to": "capacity"
+        },
+        {
+            "name": "construction time",
+            "from": "time",
+            "verb": "of",
+            "to": "construction"
+        },
+        {
+            "name": "construction cost",
+            "from": "cost",
+            "verb": "of",
+            "to": "construction"
+        },
+        {
+            "name": "EUR bn",
+            "description": "billions of euros.",
+            "from": "EUR",
+            "verb": "scaled by",
+            "to": "bn"
+        },
+        {
+            "name": "global primary energy share",
+            "description": "the share of worldwide primary energy supplied by a source.",
+            "from": "share",
+            "verb": "of",
+            "to": "primary energy"
+        },
+        {
+            "name": "radiation exposure",
+            "from": "exposure",
+            "verb": "of",
+            "to": "radiation"
+        },
+        {
+            "name": "capital cost",
+            "from": "cost",
+            "verb": "kind of",
+            "to": "capital"
+        },
+        {
+            "name": "operating temperature",
+            "from": "temperature",
+            "verb": "of",
+            "to": "operation"
+        },
+        {
+            "name": "grid cost",
+            "from": "cost",
+            "verb": "of",
+            "to": "grid"
+        },
+        {
+            "name": "experiment start",
+            "from": "start",
+            "verb": "of",
+            "to": "experiment"
+        },
+        {
+            "name": "Eurocent per kWh",
+            "description": "euro-cents per kilowatt-hour generated.",
+            "from": "Eurocent",
+            "verb": "per",
+            "to": "kWh"
+        },
+        {
+            "name": "installed capacity",
+            "from": "capacity",
+            "verb": "kind of",
+            "to": "installed"
+        },
+        {
+            "name": "electricity production",
+            "from": "production",
+            "verb": "of",
+            "to": "electricity"
+        },
+        {
+            "name": "CO2eq per kWh",
+            "description": "grams of CO2-equivalent emitted per kilowatt-hour generated.",
+            "from": "CO2eq",
+            "verb": "per",
+            "to": "kWh"
+        },
+        {
+            "name": "scenario growth factor",
+            "description": "the multiple by which a source grows in a climate scenario.",
+            "from": "factor",
+            "verb": "of",
+            "to": "scenario growth"
+        },
+        {
+            "name": "gram per kWh",
+            "description": "grams of CO2-equivalent emitted per kilowatt-hour generated.",
+            "from": "gram",
+            "verb": "per",
+            "to": "kWh"
+        },
+        {
+            "name": "production ratio",
+            "from": "ratio",
+            "verb": "of",
+            "to": "production"
+        },
+        {
+            "name": "wind turbine",
+            "from": "turbine",
+            "verb": "kind of",
+            "to": "wind"
+        }
+    ],
+    "sources": [
+        {
+            "name": "EIA AEO 2013",
+            "description": "US EIA Annual Energy Outlook 2013, levelized cost of new generation resources entering service 2018, in USD/MWh.",
+            "url": "https://www.eia.gov/outlooks/aeo/pdf/electricity_generation.pdf"
+        },
+        {
+            "name": "OECD NEA carbon pricing 2011",
+            "description": "OECD Nuclear Energy Agency: a carbon price of 30 to 50 euro per tonne would make nuclear competitive.",
+            "url": "https://www.oecd-nea.org/ndd/pubs/2011/6982-carbon-pricing.pdf"
+        },
+        {
+            "name": "Wikipedia Kernenergie in der Schweiz",
+            "description": "Decommissioning and waste-disposal cost study (swissnuclear/BFE), updated estimate of CHF 23.9 bn (Dec 2020); shutdown schedule Beznau 2032/33.",
+            "url": "https://de.wikipedia.org/wiki/Kernenergie_in_der_Schweiz"
+        },
+        {
+            "name": "Lazard LCOE+ 2025",
+            "description": "Lazard Levelized Cost of Energy+ 2025 (18th ed.), unsubsidised USD/MWh: nuclear 141-220, utility-scale solar 38-217, onshore wind 37-86.",
+            "url": "https://www.lazard.com/media/eijnqja3/lazards-lcoeplus-june-2025.pdf"
+        },
+        {
+            "name": "EIA AEO 2018",
+            "description": "US EIA Annual Energy Outlook 2018, levelized cost of new generation resources entering service 2022, in USD/MWh.",
+            "url": "https://www.eia.gov/outlooks/aeo/electricity_generation/pdf/LCOE_methodology.pdf"
+        },
+        {
+            "name": "FuW Energiezukunft Schweiz 2026",
+            "description": "Finanz und Wirtschaft op-ed: Swiss fleet ~23 TWh; Beznau -5.5 TWh (2032/33), Gösgen -8 TWh (~2040), Leibstadt -9.5 TWh (~2045).",
+            "url": "https://www.fuw.ch/das-akw-neubauverbot-ist-ein-stilles-standortverlagerungsgesetz-235012716460"
+        },
+        {
+            "name": "Republik Atomkraft 2019",
+            "description": "Arian Bastani, \"Atomkraft – eine alte neue Hoffnung\", Republik, 12.11.2019 (Serie Energie der Zukunft, Teil 4).",
+            "url": "https://www.republik.ch/2019/11/12/atomkraft-eine-alte-neue-hoffnung"
+        },
+        {
+            "name": "Reuters Olkiluoto",
+            "description": "Areva's Finnish Olkiluoto III reactor, about 10 billion euro and a 15-year build with repeated delays.",
+            "url": "https://www.reuters.com/article/us-finland-nuclear-olkiluoto/arevas-finland-reactor-to-start-in-2019-after-another-delay-idUSKBN1CE1ND"
+        },
+        {
+            "name": "BP Statistical Review 2019",
+            "description": "Global energy mix; nuclear share of primary energy peaked near 6% around 2000 and fell below 5%.",
+            "url": "https://www.bp.com/en/global/corporate/energy-economics/statistical-review-of-world-energy.html"
+        },
+        {
+            "name": "GRS Swiss nuclear overview 2024",
+            "description": "GRS gGmbH country overview: Switzerland generated over 82 TWh in 2024, 29.2% from nuclear; net exporter (40.35 TWh export vs 25.95 TWh import).",
+            "url": "https://www.grs.de/de/kernenergie-in-der-schweiz"
+        },
+        {
+            "name": "Fraunhofer ISE 2024",
+            "description": "Fraunhofer ISE study \"Stromgestehungskosten Erneuerbare Energien\" 2024; LCOE of new plants in Eurocent per kWh.",
+            "url": "https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2024_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf"
+        },
+        {
+            "name": "State of Green Denmark 2018",
+            "description": "2018 was a great year for Danish wind energy: over 6000 turbines, about 14 TWh.",
+            "url": "https://stateofgreen.com/en/partners/state-of-green/news/2018-was-a-great-year-for-danish-wind-energy/"
+        },
+        {
+            "name": "IPCC AR5 WG3 Annex III",
+            "description": "IPCC lifecycle GHG emission medians (g CO2eq/kWh): nuclear 12, solar PV utility 48.",
+            "url": "https://www.ipcc.ch/report/ar5/wg3/"
+        },
+        {
+            "name": "World Nuclear IPCC 1.5C",
+            "description": "World Nuclear Association on the IPCC 1.5C report: nuclear about two and a half times today in the scenario.",
+            "url": "https://www.world-nuclear.org/press/press-statements/the-ipcc-1-5c-special-report-nuclear-energy’s-impo.aspx"
+        },
+        {
+            "name": "IPCC AR5 Annex III",
+            "description": "IPCC AR5 WG3 Annex III lifecycle GHG emission medians (g CO2eq/kWh): nuclear 12, solar PV utility 48.",
+            "url": "https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf"
+        },
+        {
+            "name": "IAEA PRIS reactor age",
+            "description": "IAEA Power Reactor Information System: about 449 operational reactors, most 30-40 years old.",
+            "url": "https://pris.iaea.org/PRIS/WorldStatistics/OperationalByAge.aspx"
+        },
+        {
+            "name": "Statista Atomstrom DE",
+            "description": "Share of nuclear energy in German electricity generation (about one eighth).",
+            "url": "https://de.statista.com/statistik/daten/studie/29295/umfrage/anteil-der-atomenergie-an-der-stromerzeugung-in-deutschland/"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "2018",
+                "fixed maintenance cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 4.1
+        },
+        {
+            "words": [
+                "lower bound estimate",
+                "carbon price",
+                "EUR per tonne CO2",
+                "nuclear power"
+            ],
+            "source": "OECD NEA carbon pricing 2011",
+            "number": 30
+        },
+        {
+            "words": [
+                "year",
+                "Beznau shutdown year"
+            ],
+            "source": "Wikipedia Kernenergie in der Schweiz",
+            "number": 2032
+        },
+        {
+            "words": [
+                "2018",
+                "nuclear power",
+                "USD per MWh",
+                "variable maintenance cost"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 12.3
+        },
+        {
+            "words": [
+                "lower bound estimate",
+                "levelized cost of energy of nuclear power",
+                "USD per MWh"
+            ],
+            "source": "Lazard LCOE+ 2025",
+            "number": 141
+        },
+        {
+            "words": [
+                "2018",
+                "fixed maintenance cost",
+                "nuclear power",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 11.6
+        },
+        {
+            "words": [
+                "upper bound estimate",
+                "levelized cost of energy of nuclear power",
+                "USD per MWh"
+            ],
+            "source": "Lazard LCOE+ 2025",
+            "number": 220
+        },
+        {
+            "words": [
+                "2022",
+                "hydropower",
+                "levelized cost of electricity",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 61.7
+        },
+        {
+            "words": [
+                "year",
+                "Leibstadt shutdown year"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 2045
+        },
+        {
+            "words": [
+                "TWh",
+                "Gösgen production loss at shutdown"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 8
+        },
+        {
+            "words": [
+                "TWh",
+                "Beznau production loss at shutdown"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 5.5
+        },
+        {
+            "words": [
+                "2018",
+                "percent",
+                "capacity factor",
+                "nuclear power"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 90
+        },
+        {
+            "words": [
+                "upper bound estimate",
+                "year",
+                "construction time",
+                "nuclear power plant"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 10
+        },
+        {
+            "words": [
+                "France",
+                "construction cost",
+                "EUR bn",
+                "nuclear power plant"
+            ],
+            "source": "Reuters Olkiluoto",
+            "number": 10
+        },
+        {
+            "words": [
+                "2017",
+                "percent",
+                "global primary energy share",
+                "nuclear power"
+            ],
+            "source": "BP Statistical Review 2019",
+            "number": 5
+        },
+        {
+            "words": [
+                "times",
+                "coal power",
+                "radiation exposure"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 100
+        },
+        {
+            "words": [
+                "2024",
+                "TWh",
+                "Swiss nuclear fleet production"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 23
+        },
+        {
+            "words": [
+                "2019",
+                "tonne",
+                "nuclear waste"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 250000
+        },
+        {
+            "words": [
+                "2022",
+                "capital cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 48.2
+        },
+        {
+            "words": [
+                "Celsius",
+                "nuclear fusion",
+                "operating temperature"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 150000000
+        },
+        {
+            "words": [
+                "2022",
+                "grid cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 1.9
+        },
+        {
+            "words": [
+                "2018",
+                "levelized cost of electricity",
+                "nuclear power",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 108.4
+        },
+        {
+            "words": [
+                "France",
+                "year",
+                "experiment start",
+                "nuclear fusion"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 2025
+        },
+        {
+            "words": [
+                "2018",
+                "capital cost",
+                "nuclear power",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 83.4
+        },
+        {
+            "words": [
+                "2018",
+                "grid cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 2
+        },
+        {
+            "words": [
+                "2018",
+                "percent",
+                "capacity factor",
+                "hydropower"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 52
+        },
+        {
+            "words": [
+                "2024",
+                "percent",
+                "Switzerland",
+                "nuclear electricity production share"
+            ],
+            "source": "GRS Swiss nuclear overview 2024",
+            "number": 29.2
+        },
+        {
+            "words": [
+                "2000",
+                "percent",
+                "global primary energy share",
+                "nuclear power"
+            ],
+            "source": "BP Statistical Review 2019",
+            "number": 6
+        },
+        {
+            "words": [
+                "2024",
+                "upper bound estimate",
+                "Eurocent per kWh",
+                "levelized cost of electricity",
+                "nuclear power"
+            ],
+            "source": "Fraunhofer ISE 2024",
+            "number": 12
+        },
+        {
+            "words": [
+                "Finland",
+                "GW",
+                "installed capacity",
+                "wind power"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 2
+        },
+        {
+            "words": [
+                "2018",
+                "Denmark",
+                "TWh",
+                "electricity production",
+                "wind power"
+            ],
+            "source": "State of Green Denmark 2018",
+            "number": 14
+        },
+        {
+            "words": [
+                "2018",
+                "grid cost",
+                "nuclear power",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 1.1
+        },
+        {
+            "words": [
+                "2022",
+                "percent",
+                "capacity factor",
+                "hydropower"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 64
+        },
+        {
+            "words": [
+                "2022",
+                "hydropower",
+                "USD per MWh",
+                "variable maintenance cost"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 1.8
+        },
+        {
+            "words": [
+                "gram",
+                "CO2eq per kWh",
+                "lifecycle greenhouse gas emission of nuclear power"
+            ],
+            "source": "IPCC AR5 WG3 Annex III",
+            "number": 12
+        },
+        {
+            "words": [
+                "times",
+                "nuclear power",
+                "scenario growth factor"
+            ],
+            "source": "World Nuclear IPCC 1.5C",
+            "number": 2.5
+        },
+        {
+            "words": [
+                "2022",
+                "fixed maintenance cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2018",
+            "number": 9.8
+        },
+        {
+            "words": [
+                "year",
+                "Gösgen shutdown year"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 2040
+        },
+        {
+            "words": [
+                "2018",
+                "hydropower",
+                "USD per MWh",
+                "variable maintenance cost"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 6.1
+        },
+        {
+            "words": [
+                "2018",
+                "capital cost",
+                "hydropower",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 78.1
+        },
+        {
+            "words": [
+                "gram per kWh",
+                "lifecycle CO2 emission of nuclear power"
+            ],
+            "source": "IPCC AR5 Annex III",
+            "number": 12
+        },
+        {
+            "words": [
+                "times",
+                "nuclear reactor",
+                "production ratio",
+                "wind turbine"
+            ],
+            "source": "Republik Atomkraft 2019",
+            "number": 5143
+        },
+        {
+            "words": [
+                "upper bound estimate",
+                "carbon price",
+                "EUR per tonne CO2",
+                "nuclear power"
+            ],
+            "source": "OECD NEA carbon pricing 2011",
+            "number": 50
+        },
+        {
+            "words": [
+                "2018",
+                "hydropower",
+                "levelized cost of electricity",
+                "USD per MWh"
+            ],
+            "source": "EIA AEO 2013",
+            "number": 90.3
+        },
+        {
+            "words": [
+                "2019",
+                "count",
+                "nuclear reactor"
+            ],
+            "source": "IAEA PRIS reactor age",
+            "number": 449
+        },
+        {
+            "words": [
+                "TWh",
+                "Leibstadt production loss at shutdown"
+            ],
+            "source": "FuW Energiezukunft Schweiz 2026",
+            "number": 9.5
+        },
+        {
+            "words": [
+                "percent",
+                "capacity factor of nuclear power"
+            ],
+            "source": "Lazard LCOE+ 2025",
+            "number": 90
+        },
+        {
+            "words": [
+                "Germany",
+                "percent",
+                "nuclear electricity production share"
+            ],
+            "source": "Statista Atomstrom DE",
+            "number": 12.5
+        },
+        {
+            "words": [
+                "2024",
+                "lower bound estimate",
+                "Eurocent per kWh",
+                "levelized cost of electricity",
+                "nuclear power"
+            ],
+            "source": "Fraunhofer ISE 2024",
+            "number": 7
+        }
+    ],
+    "formulas": [
+        {
+            "name": "scale year to month",
+            "type_code_id": "default",
+            "expression": "\"month\" = \"year\" * 12",
+            "latex": "\\text{mo} = 12 \\cdot \\text{a}",
+            "assigned_word": "year",
+            "impact": null
+        },
+        {
+            "name": "scale year to second",
+            "type_code_id": "default",
+            "expression": "\"second (time)\" = \"year\" * 31557600",
+            "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
+            "assigned_word": "year",
+            "impact": null
+        },
+        {
+            "name": "scale gram to kg",
+            "type_code_id": "default",
+            "expression": "\"kg\" = \"gram\" / 1000",
+            "latex": "\\text{kg} = \\text{g} / 1000",
+            "assigned_word": "gram",
+            "impact": null
+        },
+        {
+            "name": "scale tonne to kg",
+            "type_code_id": "default",
+            "expression": "\"kg\" = \"tonne\" * 1000",
+            "latex": "\\text{kg} = 1000 \\cdot \\text{t}",
+            "assigned_word": "tonne",
+            "impact": null
+        },
+        {
+            "protection": "admin_protection",
+            "name": "this",
+            "description": "hardcoded formula to select now, today, this year, ...",
+            "type_code_id": "time_this",
+            "type": "time_this",
+            "expression": "=\"Now\"",
+            "assigned_word": "year",
+            "impact": null
+        },
+        {
+            "protection": "admin_protection",
+            "name": "next",
+            "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+            "type_code_id": "time_next",
+            "type": "time_next",
+            "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+            "assigned_word": "year",
+            "impact": null
+        },
+        {
+            "protection": "admin_protection",
+            "name": "prior",
+            "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+            "type_code_id": "time_prior",
+            "type": "time_prior",
+            "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+            "assigned_word": "year",
+            "impact": null
+        },
+        {
+            "protection": "admin_protection",
+            "name": "increase",
+            "description": "calculate the increase in percent e.g. yearly",
+            "type_code_id": "default",
+            "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+            "latex": "\\text{percent} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
+            "assigned": [
+                "CO2",
+                "GDP",
+                "inhabitants",
+                "population",
+                "year"
+            ],
+            "impact": null
+        },
+        {
+            "name": "population in the city of Zurich in percent of Switzerland",
+            "type_code_id": "default",
+            "expression": "\"percent\" = \"inhabitants\" \"Zurich (city)\" / \"inhabitants\" \"Switzerland\"",
+            "assigned_word": "Switzerland",
+            "impact": null
+        }
+    ],
+    "views": [],
+    "results": []
+}

@@ -1,0 +1,1608 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-22 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "nuclear power"
+  ],
+  "description": "Zahlen und Argumente rund um die Kernenergie aus dem Republik-Artikel \"Atomkraft – eine alte neue Hoffnung\" (Arian Bastani, 12.11.2019, Serie Energie der Zukunft, Teil 4). Die im Text genannten und verlinkten Werte sind als Werte mit Quellen modelliert; zwei einfache Rechnungen (CO2-Intensitätsverhältnis Deutschland/Grossbritannien und das hohe Photovoltaik-Abfall-Szenario) sind als calc-validation hinterlegt. Quelle des Artikels: https://www.republik.ch/2019/11/12/atomkraft-eine-alte-neue-hoffnung",
+  "words": [
+    {
+      "name": "nuclear",
+      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
+    },
+    {
+      "name": "power",
+      "description": "the rate, per unit time, at which electrical energy is transferred.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "plant",
+      "description": "an industrial facility for the generation of electric power.",
+      "refs": [
+        {
+          "name": "Power_station",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with the presence and motion of electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "production",
+      "description": "the action of making or generating something."
+    },
+    {
+      "name": "reactor",
+      "description": "a device in which a nuclear chain reaction is sustained to produce energy.",
+      "refs": [
+        {
+          "name": "Nuclear_reactor",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fast",
+      "description": "of a nuclear reactor, sustaining the chain reaction with fast (unmoderated) neutrons."
+    },
+    {
+      "name": "fission",
+      "description": "the splitting of a heavy atomic nucleus, releasing energy, used in current reactors.",
+      "refs": [
+        {
+          "name": "Nuclear_fission",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fusion",
+      "description": "the merging of light atomic nuclei, releasing energy, the process powering the sun.",
+      "refs": [
+        {
+          "name": "Nuclear_fusion",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "intensity",
+      "description": "the amount of a quantity per unit of another, here emissions per unit of energy."
+    },
+    {
+      "name": "emission",
+      "description": "the production and discharge of something, especially a gas."
+    },
+    {
+      "name": "lifecycle",
+      "description": "the whole series of stages over the life of a product or facility.",
+      "refs": [
+        {
+          "name": "Life-cycle_assessment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "share",
+      "description": "a part or portion of a larger amount."
+    },
+    {
+      "name": "energy",
+      "description": "the capacity to do work, here primary or electrical energy.",
+      "refs": [
+        {
+          "name": "Energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "primary",
+      "description": "of energy, in the raw form before conversion (e.g. fuel rather than electricity)."
+    },
+    {
+      "name": "wind",
+      "description": "the use of air flow to generate electricity.",
+      "refs": [
+        {
+          "name": "Wind_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "solar",
+      "description": "relating to energy from the sun.",
+      "refs": [
+        {
+          "name": "Solar_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "photovoltaic",
+      "description": "converting light directly into electricity.",
+      "refs": [
+        {
+          "name": "Photovoltaics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "coal",
+      "description": "a combustible black sedimentary rock burned to generate electricity."
+    },
+    {
+      "name": "turbine",
+      "description": "a rotary machine that converts a flow into work, here a wind turbine."
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installation can produce."
+    },
+    {
+      "name": "installed",
+      "description": "built and connected, ready to produce."
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "construction",
+      "description": "the building of an installation.",
+      "refs": [
+        {
+          "name": "Construction",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "description": "the measured duration of an event."
+    },
+    {
+      "name": "delay",
+      "description": "a period by which something is late or postponed."
+    },
+    {
+      "name": "rate",
+      "description": "a quantity measured against another, here change per unit time."
+    },
+    {
+      "name": "ramp",
+      "description": "the adjustment of a power plant's output to follow demand."
+    },
+    {
+      "name": "death",
+      "description": "the end of life, here counted as fatalities of an energy source."
+    },
+    {
+      "name": "toll",
+      "description": "the total number of deaths caused by an event or technology."
+    },
+    {
+      "name": "waste",
+      "description": "unwanted or unusable material; here spent nuclear fuel or end-of-life panels."
+    },
+    {
+      "name": "radioactive",
+      "description": "emitting ionising radiation through nuclear decay."
+    },
+    {
+      "name": "decommissioning",
+      "description": "the process of shutting down and dismantling a facility.",
+      "refs": [
+        {
+          "name": "Nuclear_decommissioning",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "multiplier",
+      "description": "a factor by which a quantity is multiplied."
+    },
+    {
+      "name": "uranium",
+      "description": "a chemical element used as nuclear fuel.",
+      "refs": [
+        {
+          "name": "Uranium",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "uranium 235",
+      "description": "the fissile isotope of uranium used in current reactors.",
+      "refs": [
+        {
+          "name": "Uranium-235",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "natural",
+      "description": "occurring in nature, here unenriched uranium."
+    },
+    {
+      "name": "fuel",
+      "description": "material consumed to produce energy."
+    },
+    {
+      "name": "enriched",
+      "description": "of uranium, processed to raise the share of the fissile isotope."
+    },
+    {
+      "name": "weapon",
+      "description": "relating to a nuclear weapon, requiring highly enriched uranium."
+    },
+    {
+      "name": "reserve",
+      "description": "the known stock of a resource available for use."
+    },
+    {
+      "name": "duration",
+      "description": "the length of time something continues or lasts."
+    },
+    {
+      "name": "operation",
+      "description": "the running of a plant, here measured in reactor-years."
+    },
+    {
+      "name": "cumulative",
+      "description": "accumulated over all units and years."
+    },
+    {
+      "name": "salt",
+      "description": "an ionic compound; here the coolant of a molten salt reactor."
+    },
+    {
+      "name": "molten",
+      "description": "liquefied by heat."
+    },
+    {
+      "name": "temperature",
+      "description": "the degree of heat of an operating reactor."
+    },
+    {
+      "name": "start",
+      "description": "the beginning of an activity, here an experiment."
+    },
+    {
+      "name": "experiment",
+      "description": "a scientific trial, here of nuclear fusion."
+    },
+    {
+      "name": "exposure",
+      "description": "the amount of ionising radiation received."
+    },
+    {
+      "name": "radiation",
+      "description": "energy emitted as particles or waves, here ionising radiation."
+    },
+    {
+      "name": "warming",
+      "description": "the rise of global average temperature."
+    },
+    {
+      "name": "global",
+      "description": "worldwide in scope."
+    },
+    {
+      "name": "growth",
+      "description": "an increase in amount or size."
+    },
+    {
+      "name": "scenario",
+      "description": "a modelled possible future, here an IPCC climate scenario."
+    },
+    {
+      "name": "factor",
+      "description": "a ratio; here the multiple by which a quantity changes."
+    },
+    {
+      "name": "ratio",
+      "description": "the quotient of two quantities."
+    },
+    {
+      "name": "price",
+      "description": "the amount of money expected or given for something."
+    },
+    {
+      "name": "carbon",
+      "description": "shorthand for carbon dioxide in the context of a carbon price."
+    },
+    {
+      "name": "lower bound estimate",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound estimate",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "Germany",
+      "description": "a country in central Europe.",
+      "refs": [
+        {
+          "name": "Germany",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "United Kingdom",
+      "description": "a country in north-western Europe.",
+      "refs": [
+        {
+          "name": "United_Kingdom",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "France",
+      "description": "a country in western Europe with a large nuclear fleet.",
+      "refs": [
+        {
+          "name": "France",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Finland",
+      "description": "a country in northern Europe building the Olkiluoto III reactor.",
+      "refs": [
+        {
+          "name": "Finland",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Denmark",
+      "description": "a country in northern Europe with a large wind fleet.",
+      "refs": [
+        {
+          "name": "Denmark",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Chooz B2",
+      "description": "a French nuclear reactor.",
+      "refs": [
+        {
+          "name": "Chooz_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Hinkley Point",
+      "description": "a British nuclear power station under construction.",
+      "refs": [
+        {
+          "name": "Hinkley_Point_C_nuclear_power_station",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Olkiluoto III",
+      "description": "a long-delayed Finnish EPR reactor.",
+      "refs": [
+        {
+          "name": "Olkiluoto_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gösgen",
+      "description": "a Swiss nuclear power station in the canton of Solothurn.",
+      "refs": [
+        {
+          "name": "Gösgen_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "EBR-II",
+      "description": "the US Experimental Breeder Reactor II, a fast reactor.",
+      "refs": [
+        {
+          "name": "Experimental_Breeder_Reactor_II",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Chernobyl",
+      "description": "the site of the 1986 nuclear accident in Ukraine.",
+      "refs": [
+        {
+          "name": "Chernobyl_disaster",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Banqiao dam",
+      "description": "a Chinese dam whose 1975 failure caused a major death toll.",
+      "refs": [
+        {
+          "name": "Banqiao_Dam",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gram",
+      "description": "a metric unit of mass.",
+      "type": "measure"
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt-hour, a unit of energy.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "TWh",
+      "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GW",
+      "description": "gigawatt, a unit of power equal to one billion watts.",
+      "type": "measure"
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "description": "a unit of duration equal to the orbital period of the Earth.",
+      "type": "measure"
+    },
+    {
+      "name": "tonne",
+      "description": "a metric unit of mass equal to 1000 kilograms.",
+      "type": "measure"
+    },
+    {
+      "name": "EUR",
+      "description": "the euro.",
+      "type": "measure"
+    },
+    {
+      "name": "GBP",
+      "description": "the pound sterling.",
+      "type": "measure"
+    },
+    {
+      "name": "CO2",
+      "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Carbon_dioxide",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "minute",
+      "description": "a unit of time equal to sixty seconds.",
+      "type": "measure"
+    },
+    {
+      "name": "person",
+      "description": "a single human being, the unit of a death toll.",
+      "type": "measure"
+    },
+    {
+      "name": "times",
+      "description": "a dimensionless multiplier or factor.",
+      "type": "measure"
+    },
+    {
+      "name": "count",
+      "description": "a dimensionless number of countable items.",
+      "type": "measure"
+    },
+    {
+      "name": "Celsius",
+      "description": "degree Celsius, a unit of temperature.",
+      "type": "measure"
+    },
+    {
+      "name": "million",
+      "description": "a scaling word for 1e6.",
+      "type": "measure"
+    },
+    {
+      "name": "bn",
+      "description": "billion, a scaling word for 1e9.",
+      "type": "measure"
+    },
+    {
+      "name": "2000",
+      "description": "the calendar year 2000.",
+      "type": "time"
+    },
+    {
+      "name": "2017",
+      "description": "the calendar year 2017.",
+      "type": "time"
+    },
+    {
+      "name": "2018",
+      "description": "the calendar year 2018.",
+      "type": "time"
+    },
+    {
+      "name": "2019",
+      "description": "the calendar year 2019.",
+      "type": "time"
+    },
+    {
+      "name": "1975",
+      "description": "the calendar year 1975.",
+      "type": "time"
+    },
+    {
+      "name": "2050",
+      "description": "the calendar year 2050.",
+      "type": "time"
+    },
+    {
+      "name": "2100",
+      "description": "the calendar year 2100.",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "description": "the calendar year 2025.",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "power",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear power",
+      "refs": [
+        {
+          "name": "Nuclear_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nuclear power plant",
+      "from": "plant",
+      "verb": "of",
+      "to": "nuclear power",
+      "description": "a thermal power station in which the heat source is a nuclear reactor.",
+      "refs": [
+        {
+          "name": "Nuclear_power_plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "reactor",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear reactor"
+    },
+    {
+      "from": "reactor",
+      "verb": "kind of",
+      "to": "fast",
+      "name": "fast reactor"
+    },
+    {
+      "from": "production",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity production",
+      "refs": [
+        {
+          "name": "Electricity_generation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "intensity",
+      "verb": "of",
+      "to": "CO2",
+      "name": "CO2 intensity"
+    },
+    {
+      "name": "electricity CO2 intensity",
+      "from": "CO2 intensity",
+      "verb": "of",
+      "to": "electricity",
+      "description": "the carbon-dioxide emitted per unit of electricity generated."
+    },
+    {
+      "name": "Germany electricity CO2 intensity",
+      "from": "electricity CO2 intensity",
+      "verb": "of",
+      "to": "Germany"
+    },
+    {
+      "name": "United Kingdom electricity CO2 intensity",
+      "from": "electricity CO2 intensity",
+      "verb": "of",
+      "to": "United Kingdom"
+    },
+    {
+      "name": "Germany to UK CO2 intensity ratio",
+      "from": "Germany electricity CO2 intensity",
+      "verb": "per",
+      "to": "United Kingdom electricity CO2 intensity",
+      "description": "how many times more carbon-intensive German electricity is than British electricity; the result of the Germany to UK CO2 intensity ratio formula."
+    },
+    {
+      "name": "nuclear electricity production share",
+      "from": "share",
+      "verb": "of",
+      "to": "nuclear power",
+      "description": "the share of total electricity production supplied by nuclear power."
+    },
+    {
+      "from": "energy",
+      "verb": "kind of",
+      "to": "primary",
+      "name": "primary energy"
+    },
+    {
+      "name": "global primary energy share",
+      "from": "share",
+      "verb": "of",
+      "to": "primary energy",
+      "description": "the share of worldwide primary energy supplied by a source."
+    },
+    {
+      "from": "power",
+      "verb": "kind of",
+      "to": "wind",
+      "name": "wind power"
+    },
+    {
+      "from": "turbine",
+      "verb": "kind of",
+      "to": "wind",
+      "name": "wind turbine"
+    },
+    {
+      "from": "capacity",
+      "verb": "kind of",
+      "to": "installed",
+      "name": "installed capacity"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "construction",
+      "name": "construction cost"
+    },
+    {
+      "from": "time",
+      "verb": "of",
+      "to": "construction",
+      "name": "construction time"
+    },
+    {
+      "from": "delay",
+      "verb": "of",
+      "to": "construction",
+      "name": "construction delay"
+    },
+    {
+      "from": "rate",
+      "verb": "of",
+      "to": "ramp",
+      "name": "ramp rate"
+    },
+    {
+      "from": "toll",
+      "verb": "of",
+      "to": "death",
+      "name": "death toll"
+    },
+    {
+      "from": "waste",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear waste"
+    },
+    {
+      "from": "waste",
+      "verb": "of",
+      "to": "decommissioning",
+      "name": "decommissioning waste"
+    },
+    {
+      "from": "share",
+      "verb": "of",
+      "to": "radioactive",
+      "name": "radioactive share"
+    },
+    {
+      "from": "waste",
+      "verb": "of",
+      "to": "photovoltaic",
+      "name": "photovoltaic waste"
+    },
+    {
+      "from": "multiplier",
+      "verb": "of",
+      "to": "solar",
+      "name": "solar dominance multiplier"
+    },
+    {
+      "name": "photovoltaic waste high scenario",
+      "from": "photovoltaic waste",
+      "verb": "of",
+      "to": "solar dominance multiplier",
+      "description": "the projected photovoltaic waste if two thirds of global energy came from solar panels; the result of the photovoltaic waste high scenario formula."
+    },
+    {
+      "from": "uranium",
+      "verb": "kind of",
+      "to": "natural",
+      "name": "natural uranium"
+    },
+    {
+      "from": "fuel",
+      "verb": "kind of",
+      "to": "enriched",
+      "name": "enriched fuel"
+    },
+    {
+      "from": "uranium",
+      "verb": "kind of",
+      "to": "weapon",
+      "name": "weapon uranium"
+    },
+    {
+      "name": "natural uranium share",
+      "from": "share",
+      "verb": "of",
+      "to": "natural uranium",
+      "description": "the share of the fissile isotope uranium 235 in natural uranium."
+    },
+    {
+      "name": "enriched fuel share",
+      "from": "share",
+      "verb": "of",
+      "to": "enriched fuel",
+      "description": "the share of the fissile isotope uranium 235 in enriched reactor fuel."
+    },
+    {
+      "name": "weapon uranium share",
+      "from": "share",
+      "verb": "of",
+      "to": "weapon uranium",
+      "description": "the share of the fissile isotope uranium 235 in weapons-grade uranium."
+    },
+    {
+      "from": "share",
+      "verb": "of",
+      "to": "fission",
+      "name": "fission share"
+    },
+    {
+      "from": "duration",
+      "verb": "of",
+      "to": "reserve",
+      "name": "reserve duration"
+    },
+    {
+      "from": "operation",
+      "verb": "kind of",
+      "to": "cumulative",
+      "name": "cumulative operation"
+    },
+    {
+      "from": "salt",
+      "verb": "kind of",
+      "to": "molten",
+      "name": "molten salt"
+    },
+    {
+      "name": "molten salt reactor",
+      "from": "reactor",
+      "verb": "of",
+      "to": "molten salt",
+      "description": "a reactor cooled by liquid salt at high temperature and near atmospheric pressure."
+    },
+    {
+      "from": "temperature",
+      "verb": "of",
+      "to": "operation",
+      "name": "operating temperature"
+    },
+    {
+      "from": "fusion",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear fusion"
+    },
+    {
+      "from": "start",
+      "verb": "of",
+      "to": "experiment",
+      "name": "experiment start"
+    },
+    {
+      "from": "power",
+      "verb": "kind of",
+      "to": "coal",
+      "name": "coal power"
+    },
+    {
+      "from": "exposure",
+      "verb": "of",
+      "to": "radiation",
+      "name": "radiation exposure"
+    },
+    {
+      "from": "warming",
+      "verb": "kind of",
+      "to": "global",
+      "name": "global warming"
+    },
+    {
+      "from": "growth",
+      "verb": "of",
+      "to": "scenario",
+      "name": "scenario growth"
+    },
+    {
+      "name": "scenario growth factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "scenario growth",
+      "description": "the multiple by which a source grows in a climate scenario."
+    },
+    {
+      "from": "price",
+      "verb": "of",
+      "to": "carbon",
+      "name": "carbon price"
+    },
+    {
+      "from": "ratio",
+      "verb": "of",
+      "to": "production",
+      "name": "production ratio"
+    },
+    {
+      "from": "emission",
+      "verb": "of",
+      "to": "CO2",
+      "name": "CO2 emission"
+    },
+    {
+      "name": "lifecycle CO2 emission",
+      "from": "CO2 emission",
+      "verb": "of",
+      "to": "lifecycle",
+      "description": "carbon-dioxide emissions over the full lifecycle of a generation technology, per unit of energy."
+    },
+    {
+      "name": "lifecycle CO2 emission of nuclear power",
+      "from": "lifecycle CO2 emission",
+      "verb": "of",
+      "to": "nuclear power"
+    },
+    {
+      "name": "lifecycle CO2 emission of photovoltaic",
+      "from": "lifecycle CO2 emission",
+      "verb": "of",
+      "to": "photovoltaic"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh",
+      "description": "grams of CO2-equivalent emitted per kilowatt-hour generated."
+    },
+    {
+      "from": "percent",
+      "verb": "per",
+      "to": "minute",
+      "description": "percent of nominal power per minute, a power-plant ramp rate."
+    },
+    {
+      "from": "tonne",
+      "verb": "of",
+      "to": "CO2",
+      "name": "CO2 tonne"
+    },
+    {
+      "name": "EUR per tonne CO2",
+      "from": "EUR",
+      "verb": "per",
+      "to": "CO2 tonne",
+      "description": "euros per tonne of CO2, a carbon price."
+    },
+    {
+      "name": "GBP bn",
+      "from": "GBP",
+      "verb": "scaled by",
+      "to": "bn",
+      "description": "billions of pounds sterling."
+    },
+    {
+      "name": "EUR bn",
+      "from": "EUR",
+      "verb": "scaled by",
+      "to": "bn",
+      "description": "billions of euros."
+    },
+    {
+      "name": "million tonne",
+      "from": "tonne",
+      "verb": "scaled by",
+      "to": "million",
+      "description": "millions of tonnes."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Republik Atomkraft 2019",
+      "description": "Arian Bastani, \"Atomkraft – eine alte neue Hoffnung\", Republik, 12.11.2019 (Serie Energie der Zukunft, Teil 4).",
+      "url": "https://www.republik.ch/2019/11/12/atomkraft-eine-alte-neue-hoffnung"
+    },
+    {
+      "name": "Electric Insights UK 2018",
+      "description": "The state of Britain's power system in 2018: average grid CO2 intensity around 217 g/kWh.",
+      "url": "https://electricinsights.co.uk/#/reports/report-2018-q4/detail/the-state-of-britains-power-system-in-2018"
+    },
+    {
+      "name": "Umweltbundesamt CO2 Strom",
+      "description": "German federal environment agency: CO2 emissions per kilowatt-hour of electricity, about 474 g/kWh.",
+      "url": "https://www.umweltbundesamt.de/themen/co2-emissionen-pro-kilowattstunde-strom-sinken"
+    },
+    {
+      "name": "Statista Atomstrom DE",
+      "description": "Share of nuclear energy in German electricity generation (about one eighth).",
+      "url": "https://de.statista.com/statistik/daten/studie/29295/umfrage/anteil-der-atomenergie-an-der-stromerzeugung-in-deutschland/"
+    },
+    {
+      "name": "World Nuclear Chooz B-2",
+      "description": "Reactor data for the French Chooz B2 unit, about 12 TWh produced in 2018.",
+      "url": "https://www.world-nuclear.org/reactor/default.aspx/CHOOZ%20B-2"
+    },
+    {
+      "name": "State of Green Denmark 2018",
+      "description": "2018 was a great year for Danish wind energy: over 6000 turbines, about 14 TWh.",
+      "url": "https://stateofgreen.com/en/partners/state-of-green/news/2018-was-a-great-year-for-danish-wind-energy/"
+    },
+    {
+      "name": "BP Statistical Review 2019",
+      "description": "Global energy mix; nuclear share of primary energy peaked near 6% around 2000 and fell below 5%.",
+      "url": "https://www.bp.com/en/global/corporate/energy-economics/statistical-review-of-world-energy.html"
+    },
+    {
+      "name": "IAEA PRIS reactor age",
+      "description": "IAEA Power Reactor Information System: about 449 operational reactors, most 30-40 years old.",
+      "url": "https://pris.iaea.org/PRIS/WorldStatistics/OperationalByAge.aspx"
+    },
+    {
+      "name": "Guardian Hinkley Point cost",
+      "description": "Hinkley Point C expected to cost over 20 billion pounds.",
+      "url": "https://www.theguardian.com/news/2017/dec/21/hinkley-point-c-dreadful-deal-behind-worlds-most-expensive-power-plant"
+    },
+    {
+      "name": "Reuters Olkiluoto",
+      "description": "Areva's Finnish Olkiluoto III reactor, about 10 billion euro and a 15-year build with repeated delays.",
+      "url": "https://www.reuters.com/article/us-finland-nuclear-olkiluoto/arevas-finland-reactor-to-start-in-2019-after-another-delay-idUSKBN1CE1ND"
+    },
+    {
+      "name": "Guardian Hinkley delay",
+      "description": "Hinkley Point C rising costs and long delays, at least seven years late.",
+      "url": "https://www.theguardian.com/uk-news/2019/aug/13/hinkley-point-c-rising-costs-long-delays-power-station"
+    },
+    {
+      "name": "OECD NEA carbon pricing 2011",
+      "description": "OECD Nuclear Energy Agency: a carbon price of 30 to 50 euro per tonne would make nuclear competitive.",
+      "url": "https://www.oecd-nea.org/ndd/pubs/2011/6982-carbon-pricing.pdf"
+    },
+    {
+      "name": "Framatome Gösgen flexibility",
+      "description": "A 2017 system at the Gösgen plant adjusts output to demand, ramping up to 10% of nominal power per minute.",
+      "url": "https://www.framatome.com/FR/businessnews-935/kernkraftwerk-goesgen-erhoeht-flexibilitaet-zur-stabilisierung-des-stromnetzes.html"
+    },
+    {
+      "name": "IEA WEO 2018 electricity",
+      "description": "IEA World Energy Outlook 2018: photovoltaic waste estimated at almost 80 million tonnes by 2050.",
+      "url": "https://www.iea.org/weo2018/electricity/"
+    },
+    {
+      "name": "IPCC SR15 Chapter 2",
+      "description": "IPCC Special Report on 1.5C, Chapter 2: pathways and the current-policy path towards about 3C warming.",
+      "url": "https://www.ipcc.ch/site/assets/uploads/sites/2/2019/05/SR15_Chapter2_Low_Res.pdf"
+    },
+    {
+      "name": "World Nuclear IPCC 1.5C",
+      "description": "World Nuclear Association on the IPCC 1.5C report: nuclear about two and a half times today in the scenario.",
+      "url": "https://www.world-nuclear.org/press/press-statements/the-ipcc-1-5c-special-report-nuclear-energy’s-impo.aspx"
+    },
+    {
+      "name": "IPCC AR5 Annex III",
+      "description": "IPCC AR5 WG3 Annex III lifecycle GHG emission medians (g CO2eq/kWh): nuclear 12, solar PV utility 48.",
+      "url": "https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "United Kingdom electricity CO2 intensity",
+        "2018",
+        "gram per kWh",
+        "measured value"
+      ],
+      "number": "217",
+      "source": "Electric Insights UK 2018"
+    },
+    {
+      "words": [
+        "Germany electricity CO2 intensity",
+        "2018",
+        "gram per kWh",
+        "measured value"
+      ],
+      "number": "474",
+      "source": "Umweltbundesamt CO2 Strom",
+      "note": "German electricity is well over double as carbon-intensive as British electricity."
+    },
+    {
+      "words": [
+        "Germany",
+        "nuclear electricity production share",
+        "percent",
+        "measured value"
+      ],
+      "number": "12.5",
+      "source": "Statista Atomstrom DE",
+      "note": "about one eighth of German electricity comes from nuclear power."
+    },
+    {
+      "words": [
+        "lifecycle CO2 emission of nuclear power",
+        "gram per kWh",
+        "measured value"
+      ],
+      "number": "12",
+      "source": "IPCC AR5 Annex III"
+    },
+    {
+      "words": [
+        "lifecycle CO2 emission of photovoltaic",
+        "gram per kWh",
+        "measured value"
+      ],
+      "number": "48",
+      "source": "IPCC AR5 Annex III"
+    },
+    {
+      "words": [
+        "Chooz B2",
+        "electricity production",
+        "2018",
+        "TWh",
+        "measured value"
+      ],
+      "number": "12",
+      "source": "World Nuclear Chooz B-2"
+    },
+    {
+      "words": [
+        "Denmark",
+        "wind power",
+        "electricity production",
+        "2018",
+        "TWh",
+        "measured value"
+      ],
+      "number": "14",
+      "source": "State of Green Denmark 2018"
+    },
+    {
+      "words": [
+        "Denmark",
+        "wind turbine",
+        "2018",
+        "count",
+        "measured value"
+      ],
+      "number": "6000",
+      "source": "State of Green Denmark 2018",
+      "note": "over 6000 turbines; the French Chooz B2 generated over 5000 times more than one Danish turbine."
+    },
+    {
+      "words": [
+        "nuclear reactor",
+        "wind turbine",
+        "production ratio",
+        "times",
+        "measured value"
+      ],
+      "number": "5143",
+      "source": "Republik Atomkraft 2019",
+      "note": "12 TWh / (14 TWh / 6000 turbines) = 5143; the article rounds this to over 5000 times."
+    },
+    {
+      "words": [
+        "nuclear power",
+        "global primary energy share",
+        "2000",
+        "percent",
+        "measured value"
+      ],
+      "number": "6",
+      "source": "BP Statistical Review 2019",
+      "note": "the peak share of nuclear power in the global primary energy mix, around the turn of the millennium."
+    },
+    {
+      "words": [
+        "nuclear power",
+        "global primary energy share",
+        "2017",
+        "percent",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "BP Statistical Review 2019",
+      "note": "two years before the 2019 article the share had fallen below 5 percent."
+    },
+    {
+      "words": [
+        "nuclear reactor",
+        "2019",
+        "count",
+        "measured value"
+      ],
+      "number": "449",
+      "source": "IAEA PRIS reactor age",
+      "note": "about 449 operational reactors worldwide, half of them in the US and Europe, most 30-40 years old."
+    },
+    {
+      "words": [
+        "Hinkley Point",
+        "construction cost",
+        "GBP bn",
+        "measured value"
+      ],
+      "number": "20",
+      "source": "Guardian Hinkley Point cost",
+      "note": "over 20 billion pounds, more than double the 2012 London Olympics."
+    },
+    {
+      "words": [
+        "Olkiluoto III",
+        "construction cost",
+        "EUR bn",
+        "assumed value"
+      ],
+      "number": "10",
+      "source": "Reuters Olkiluoto",
+      "note": "projects in Finland and France each cost around 10 billion euro."
+    },
+    {
+      "words": [
+        "France",
+        "nuclear power plant",
+        "construction cost",
+        "EUR bn",
+        "assumed value"
+      ],
+      "number": "10",
+      "source": "Reuters Olkiluoto"
+    },
+    {
+      "words": [
+        "nuclear power plant",
+        "construction time",
+        "year",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "10",
+      "source": "Republik Atomkraft 2019",
+      "note": "build times are mostly under 10 years, but the trend is rising."
+    },
+    {
+      "words": [
+        "Hinkley Point",
+        "construction delay",
+        "year",
+        "measured value"
+      ],
+      "number": "7",
+      "source": "Guardian Hinkley delay",
+      "note": "Hinkley Point will feed in power at least seven years late."
+    },
+    {
+      "words": [
+        "Olkiluoto III",
+        "construction time",
+        "year",
+        "measured value"
+      ],
+      "number": "15",
+      "source": "Reuters Olkiluoto"
+    },
+    {
+      "words": [
+        "Finland",
+        "wind power",
+        "installed capacity",
+        "GW",
+        "measured value"
+      ],
+      "number": "2",
+      "source": "Republik Atomkraft 2019",
+      "note": "during the 15-year Olkiluoto III build, nearly 2 GW of wind was installed in Finland, more than the reactor will deliver."
+    },
+    {
+      "words": [
+        "nuclear power",
+        "carbon price",
+        "lower bound estimate",
+        "EUR per tonne CO2",
+        "assumed value"
+      ],
+      "number": "30",
+      "source": "OECD NEA carbon pricing 2011",
+      "note": "a CO2 price of 30 to 50 euro per tonne would let nuclear compete on the market."
+    },
+    {
+      "words": [
+        "nuclear power",
+        "carbon price",
+        "upper bound estimate",
+        "EUR per tonne CO2",
+        "assumed value"
+      ],
+      "number": "50",
+      "source": "OECD NEA carbon pricing 2011"
+    },
+    {
+      "words": [
+        "Gösgen",
+        "ramp rate",
+        "percent per minute",
+        "measured value"
+      ],
+      "number": "10",
+      "source": "Framatome Gösgen flexibility",
+      "note": "at high load the output can be changed by up to 10 percent of nominal power per minute."
+    },
+    {
+      "words": [
+        "Chernobyl",
+        "death toll",
+        "person",
+        "measured value"
+      ],
+      "number": "4000",
+      "source": "Republik Atomkraft 2019",
+      "note": "Chernobyl claimed about 4000 deaths according to the World Health Organization."
+    },
+    {
+      "words": [
+        "Banqiao dam",
+        "death toll",
+        "1975",
+        "person",
+        "measured value"
+      ],
+      "number": "230000",
+      "source": "Republik Atomkraft 2019",
+      "note": "the 1975 Banqiao dam failures in China killed about 230,000 people."
+    },
+    {
+      "words": [
+        "coal power",
+        "radiation exposure",
+        "times",
+        "measured value"
+      ],
+      "number": "100",
+      "source": "Republik Atomkraft 2019",
+      "note": "radiation exposure from coal power is about 100 times greater than from nuclear power."
+    },
+    {
+      "words": [
+        "nuclear waste",
+        "2019",
+        "tonne",
+        "measured value"
+      ],
+      "number": "250000",
+      "source": "Republik Atomkraft 2019",
+      "note": "highly radioactive waste accumulated worldwide over 70 years, about 250,000 tonnes."
+    },
+    {
+      "words": [
+        "decommissioning waste",
+        "radioactive share",
+        "percent",
+        "measured value"
+      ],
+      "number": "90",
+      "source": "Republik Atomkraft 2019",
+      "note": "of the decommissioning material, 90 percent is only weakly radioactive."
+    },
+    {
+      "words": [
+        "photovoltaic waste",
+        "2050",
+        "million tonne",
+        "assumed value"
+      ],
+      "number": "80",
+      "source": "IEA WEO 2018 electricity",
+      "note": "the IEA estimates photovoltaic waste at almost 80 million tonnes by 2050."
+    },
+    {
+      "words": [
+        "solar dominance multiplier",
+        "times",
+        "assumed value"
+      ],
+      "number": "15",
+      "source": "Republik Atomkraft 2019",
+      "note": "if two thirds of global energy came from solar panels the waste could be fifteen times higher."
+    },
+    {
+      "words": [
+        "uranium",
+        "fission share",
+        "percent",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "Republik Atomkraft 2019",
+      "note": "current reactors fission only about 4 percent of the uranium in the fuel rods."
+    },
+    {
+      "words": [
+        "uranium 235",
+        "natural uranium share",
+        "percent",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "Republik Atomkraft 2019",
+      "note": "uranium 235 makes up less than 1 percent of natural uranium."
+    },
+    {
+      "words": [
+        "uranium 235",
+        "enriched fuel share",
+        "percent",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "Republik Atomkraft 2019",
+      "note": "enriched reactor fuel is about 5 percent uranium 235."
+    },
+    {
+      "words": [
+        "uranium 235",
+        "weapon uranium share",
+        "percent",
+        "measured value"
+      ],
+      "number": "90",
+      "source": "Republik Atomkraft 2019",
+      "note": "weapons need over 90 percent uranium 235."
+    },
+    {
+      "words": [
+        "uranium",
+        "reserve duration",
+        "year",
+        "assumed value"
+      ],
+      "number": "130",
+      "source": "Republik Atomkraft 2019",
+      "note": "known uranium reserves last over 130 years at a constant consumption rate (OECD)."
+    },
+    {
+      "words": [
+        "fast reactor",
+        "cumulative operation",
+        "year",
+        "measured value"
+      ],
+      "number": "400",
+      "source": "Republik Atomkraft 2019",
+      "note": "over 400 reactor-years of fast-reactor operation have been collected in 20 reactors."
+    },
+    {
+      "words": [
+        "EBR-II",
+        "cumulative operation",
+        "year",
+        "measured value"
+      ],
+      "number": "30",
+      "source": "Republik Atomkraft 2019",
+      "note": "30 of those years were at the US EBR-II reactor."
+    },
+    {
+      "words": [
+        "molten salt reactor",
+        "operating temperature",
+        "Celsius",
+        "assumed value"
+      ],
+      "number": "300",
+      "source": "Republik Atomkraft 2019",
+      "note": "no extra pressure is needed to keep the salt liquid at over 300 degrees Celsius."
+    },
+    {
+      "words": [
+        "nuclear fusion",
+        "operating temperature",
+        "Celsius",
+        "assumed value"
+      ],
+      "number": "150000000",
+      "source": "Republik Atomkraft 2019",
+      "note": "fusion requires temperatures around 150 million degrees Celsius."
+    },
+    {
+      "words": [
+        "France",
+        "nuclear fusion",
+        "experiment start",
+        "year",
+        "assumed value"
+      ],
+      "number": "2025",
+      "source": "Republik Atomkraft 2019",
+      "note": "fusion experiments are to begin in France in 2025, with an uncertain outcome."
+    },
+    {
+      "words": [
+        "nuclear power",
+        "scenario growth factor",
+        "times",
+        "assumed value"
+      ],
+      "number": "2.5",
+      "source": "World Nuclear IPCC 1.5C",
+      "note": "the IPCC 1.5C scenario sketches two and a half times as much nuclear energy as today."
+    },
+    {
+      "words": [
+        "global warming",
+        "2100",
+        "Celsius",
+        "assumed value"
+      ],
+      "number": "3",
+      "source": "IPCC SR15 Chapter 2",
+      "note": "the current path leads to a roughly 3 degrees Celsius hotter world by the end of the 21st century."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "Germany to UK CO2 intensity ratio formula",
+      "expression": "\"Germany to UK CO2 intensity ratio\" = \"Germany electricity CO2 intensity\" / \"United Kingdom electricity CO2 intensity\"",
+      "latex": "r_{\\text{DE/UK}} = \\frac{c_{\\text{DE}}}{c_{\\text{UK}}}",
+      "assigned": [
+        "Germany electricity CO2 intensity",
+        "United Kingdom electricity CO2 intensity"
+      ]
+    },
+    {
+      "name": "photovoltaic waste high scenario formula",
+      "expression": "\"photovoltaic waste high scenario\" = \"photovoltaic waste\" * \"solar dominance multiplier\"",
+      "latex": "w_{\\text{PV,high}} = w_{\\text{PV}} \\cdot m_{\\text{solar}}",
+      "assigned": [
+        "photovoltaic waste",
+        "solar dominance multiplier"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "Germany electricity CO2 intensity",
+        "United Kingdom electricity CO2 intensity",
+        "2018",
+        "gram per kWh",
+        "measured value"
+      ],
+      "formula": "Germany to UK CO2 intensity ratio formula",
+      "words": [
+        "Germany to UK CO2 intensity ratio",
+        "times"
+      ],
+      "number": "2.18",
+      "note": "German electricity (474 g/kWh) divided by British electricity (217 g/kWh) = 2.18, matching the article's well over double."
+    },
+    {
+      "context": [
+        "photovoltaic waste",
+        "solar dominance multiplier",
+        "2050",
+        "million tonne",
+        "times",
+        "assumed value"
+      ],
+      "formula": "photovoltaic waste high scenario formula",
+      "words": [
+        "photovoltaic waste high scenario",
+        "million tonne"
+      ],
+      "number": "1200",
+      "note": "80 million tonnes of projected photovoltaic waste times the fifteen-fold solar-dominance factor = 1200 million tonnes."
+    }
+  ]
+}

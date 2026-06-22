@@ -89,6 +89,18 @@ class math_tests
         $result = $calc->parse($math_text);
         $t->assert($ts . 'test plus minus sign rule with "' . $math_text . '"', $result, $target);
 
+        // test left-associative chained subtraction: "10 - 3 - 2" = (10 - 3) - 2 = 5, not 10 - (3 - 2) = 9
+        $t->assert($ts . 'calc chained minus "10 - 3 - 2"', $calc->parse("10 - 3 - 2"), 5);
+
+        // test left-associative chained division: "100 / 5 / 2" = (100 / 5) / 2 = 10, not 100 / (5 / 2) = 40
+        $t->assert($ts . 'calc chained div "100 / 5 / 2"', $calc->parse("100 / 5 / 2"), 10);
+
+        // test a sum with two negative terms (e.g. several cost/benefit adders) that becomes a
+        // chained subtraction after the sign combiner: 0.1625 + 0.0208 - 0.003 - 0.02 + 0.005 + 0.015 = 0.1803
+        $math_text = "0.1625 + 0.0208 + -0.003 + -0.02 + 0.005 + 0.015";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc sum with two negative terms "' . $math_text . '"', round((float)$result, 4), 0.1803);
+
     }
 
 }

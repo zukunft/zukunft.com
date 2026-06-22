@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\service\export;
 use Zukunft\ZukunftCom\main\php\cfg\export\export;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 
 class json_io
 {
@@ -57,7 +58,7 @@ class json_io
         }
     }
 
-    // export zukunft.com data as json
+    // export zukunft.com data as a pretty formatted json string
     function export(): string
     {
         log_debug('json_io->export');
@@ -68,9 +69,29 @@ class json_io
         $export_obj = $export_instance->get($this->usr, $this->phr_lst);
 
         log_debug('json_io->export create json string');
-        $result .= json_encode($export_obj);
+        $result .= json_encode($export_obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         return $result;
+    }
+
+    /**
+     * export all data related to the given phrase names to a pretty json file
+     * the file name is built from the phrase names, e.g. "nuclear" and "power" create "nuclear_power.json"
+     * @param user $usr the user who wants to export the data
+     * @param array $phr_names the phrase names that select the data to export
+     * @param string $path the directory the json file is written to
+     * @return string the full path of the written json file
+     */
+    function export_to_file(user $usr, array $phr_names, string $path): string
+    {
+        $this->usr = $usr;
+        $this->phr_lst = new phrase_list($usr);
+        foreach ($phr_names as $phr_name) {
+            $this->phr_lst->add_name($phr_name);
+        }
+        $file_name = $path . implode('_', $phr_names) . files::JSON;
+        file_put_contents($file_name, $this->export());
+        return $file_name;
     }
 
     // import zukunft.com data from json

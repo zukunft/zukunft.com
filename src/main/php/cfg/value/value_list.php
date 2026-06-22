@@ -1251,16 +1251,12 @@ class value_list extends sandbox_value_list
                     log_debug('test id ' . $val->source->id());
                     if (!in_array($val->source->id(), $src_ids)) {
                         log_debug('add id ' . $val->source->id());
-                        if (!isset($val->source)) {
+                        // load the source by its id if only the id is known so that the export
+                        // gets the source name, description and references, not just the id
+                        if ($val->source->name() == '') {
                             log_debug('load id ' . $val->source->id());
                             $val->load_source();
                             log_debug('loaded ' . $val->source->name());
-                        } else {
-                            if ($val->source->id() <> $val->source->id()) {
-                                log_debug('load id ' . $val->source->id());
-                                $val->load_source();
-                                log_debug('loaded ' . $val->source->name());
-                            }
                         }
                         $result[] = $val->source;
                         $src_ids[] = $val->source->id();
