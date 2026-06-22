@@ -4,15 +4,37 @@
 
 ### workflow
 
-create unit tests for the workflows 
+for the creation of src/test/resources/web/html/workflow/change_word_wf1/wf1_show_edit_save.html replace the session id and the id of the word with a fixed test id to make the test result less volatile
+
+in src/test/php/unit_workflow/word_url_tests.php (and elsewhere) change the edit word workflow id from 1 to 2 so rename the files from 'wf1-*' to 'wf2-*'
+
+in src/test/php/unit_workflow/word_url_tests.php move the edit word workflow calls to a separate function
+
+create a class to combine the parameters '$url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);' in src/test/php/unit_workflow/word_url_tests.php to one so that the url_user_reaction call is shorter 
+
+add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
+
+in the 'System Test Word - Confirm update - zukunft.com' page show a translateable 'before' and 'after' as a lable to the old and new word name
+
+update the confirm change view to shows the user changes (based on the '8' prefixed values) and call the page when in the word edit view save is pressed
+
+complete the 'to_url_array' function for all word fields e.g. the sandbox fields and add a TODO that this should be moved the test object because it will probably only be used for testing. But this can only be decided after the workflows are complete 
+
+add a snap timestamp to the change log. The snap timestamp is the time when the user has called the edit view that he used to apply the changes so the db snap that has been the base for the change. Even if live update of the edit view would be possible, this is not recommended not tp break the user workflow. The max would be to show a refresh icon so that the user could refresh the edit view, but this is prio 4.
 
 in the view 'Change word' adjust the url on the save button so that it fix the error messages 'url key "mask_id" is missing, url mapper for "mask" is missing, url mapper for "id" is missing, url mapper for "back" is missing, url mapper for "confirm" is missing, url mapper for "Name" is missing, url mapper for "py" is missing, url mapper for "Description" is missing, url mapper for "Plural" is missing, url mapper for "d" is missing, url mapper for "s" is missing, url mapper for "sp" is missing' caused by calling the url 'http://localhost/http/view.php?mask=3&id=259&back=259&confirm=1&Name=USD&py=3&Description=ISO+4217+alphabetic+code+for+the+United+States+dollar.&Plural=&d=0&s=1&sp=1' ; the expected result is that it should show the "Confirm update" view with the changes that the user has done and after pressing confirm that database row should be updated and the user should see th original page again, but with the updates , create first unit tests for the workflow using src/test/php/unit_workflow/all_workflow_tests.php
 
-add a '0' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
+
+fill in all placeholder
+
+add all missing
+
+
+add a '8' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
 
 Add a hidden json to the get request to detect the value changed or use 0 prefix for url vars
 
-add '0' prefixed value to the edit page calls to detect the real user change requests and prevent overwriting other user change during the edit view is shown
+use the '8' prefixed values (urlVar::PRE) to create a complex parallel change workflow. To detect the real user change requests and prevent overwriting other user change during the edit view is shown
 -> test wordflow 
 1. user_a opens the edit view
 2. user_b open the edit view and changes the phrase type
@@ -51,6 +73,10 @@ add the formulas assigned to the parent phrase to the word_default view using al
 add the values as a table where the word ist used to the word_default view using 2/3 of the screen width where often used phrases are column heads and the phrases are shown using a tree view
 
 mainly copy the word default view to the triple default view
+
+### data load
+
+
 
 ### backend
 

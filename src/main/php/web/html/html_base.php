@@ -650,9 +650,35 @@ class html_base
      */
     function back_url_part(array $url_array): string
     {
+        return $this->prefixed_url_part($url_array, url_var::BACK);
+    }
+
+    /**
+     * Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
+     * carrying the database value the field had when the edit view is opened, so that on save
+     * only the fields the user actually changed are written and a concurrent change by another
+     * user is not overwritten. See docs/llm/state-and-messages.md.
+     *
+     * @param array $field_values the editable fields keyed by their url var, e.g. [url_var::NAME => 'USD']
+     * @return string the additional URL parameters e.g. '8k=USD&8o=the%20dollar'
+     */
+    function pre_url_part(array $field_values): string
+    {
+        return $this->prefixed_url_part($field_values, url_var::PRE);
+    }
+
+    /**
+     * Build the additional URL parameters for an array, each key prefixed with the given prefix char.
+     *
+     * @param array $url_array the params keyed by their url var
+     * @param string $prefix the prefix char e.g. url_var::BACK ('9') or url_var::PRE ('8')
+     * @return string the prefixed URL parameter string e.g. '9m=3&9id=123'
+     */
+    private function prefixed_url_part(array $url_array, string $prefix): string
+    {
         $par = [];
         foreach ($url_array as $key => $val) {
-            $par[] = url_var::BACK . $key . '=' . rawurlencode($val);
+            $par[] = $prefix . $key . '=' . rawurlencode((string)$val);
         }
         return empty($par) ? '' : implode('&', $par);
     }

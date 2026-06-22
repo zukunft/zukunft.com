@@ -173,6 +173,18 @@ class db_object extends TextIdObject
         return $is_add;
     }
 
+    /**
+     * the inverse of url_mapper: the url parameters that represent this object's database values,
+     * e.g. to build the url array of an edit form submission in a test without hard-coding the keys;
+     * each child extends the array with its own fields via parent::to_url_array()
+     *
+     * @return array the url var keyed array of this object's values
+     */
+    function to_url_array(): array
+    {
+        return [url_var::ID => $this->id()];
+    }
+
 
     /*
      * set and get

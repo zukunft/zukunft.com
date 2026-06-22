@@ -115,6 +115,7 @@ detail file. Order is by how often they fire, not importance.
 - `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/state-and-messages.md`
 - User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
+- Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
@@ -170,6 +171,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
+- A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf1_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
 - Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
 - Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`

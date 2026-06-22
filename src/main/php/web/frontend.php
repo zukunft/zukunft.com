@@ -617,6 +617,16 @@ class frontend
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
+        // an unconfirmed change to a sandbox object is first shown in the confirm change view
+        // so the user can check the impact before it is written to the database; the change
+        // fields stay in the url so the confirm view can show the pending change
+        $confirm_view = $this->confirm_view_id($view, $step);
+        if ($confirm_view != 0) {
+            $url[url_var::MASK] = $confirm_view;
+            $url[url_var::STEP] = url_var::STEP_CONFIRMED;
+            return $url;
+        }
+
         match (true) {
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
@@ -624,11 +634,11 @@ class frontend
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
-            in_array($view, views::ADD_MASKS_IDS) => $url = $this->action_crud(
+            in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
-            in_array($view, views::EDIT_MASKS_IDS) => $url = $this->action_crud(
+            in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
-            in_array($view, views::DEL_MASKS_IDS) => $url = $this->action_crud(
+            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
             default => null
         };
@@ -851,6 +861,37 @@ class frontend
         }
 
         return $result;
+    }
+
+    /**
+     * react to a user action such as pressing the save button on an edit form:
+     * the action const sets the user process step, then the request is run through
+     * url_to_action (which for a still unconfirmed change returns the confirm change view url)
+     * and the resulting url is rendered via url_to_html.
+     * This is the two step dispatch of http/view.php wrapped in one call for the workflow tests.
+     *
+     * @param string $action the user reaction action const e.g. url_var::ACTION_SAVE
+     * @param array $url_array the parsed url of the user action e.g. the submitted edit form
+     * @param user_backend $usr_backend the backend user, updated in place e.g. on login
+     * @param user_ui $usr the frontend user, updated in place e.g. on login
+     * @param user_message $usr_msg to enrich with potential errors
+     * @param data_object $dto the frontend cache used to reduce the backend loading
+     * @param bool $do_it false to skip the database execution e.g. for unit testing
+     * @return string the html code of the next page shown to the user
+     */
+    function url_user_reaction(
+        string       $action,
+        array        $url_array,
+        user_backend &$usr_backend,
+        user_ui      &$usr,
+        user_message $usr_msg,
+        data_object  $dto = new data_object(),
+        bool         $do_it = true
+    ): string
+    {
+        $url_array[url_var::STEP] = url_var::action_step($action);
+        $next_url = $this->url_to_action($url_array, $usr_backend, $usr, $usr_msg, $dto, $do_it);
+        return $this->url_to_html($next_url, $usr, $usr_msg, $dto);
     }
 
     function show_view(int $id): string
@@ -1287,6 +1328,28 @@ class frontend
      * @param bool $do_it false for unit tests that should not touch the database
      * @return array URL array for the next page
      */
+    /**
+     * the confirm view that matches a crud mask for a change that still needs user confirmation
+     *
+     * @param int|string $view the requested edit / add / delete mask
+     * @param string $step the user process step; only STEP_CONFIRM needs a confirm view
+     * @return int the confirm view id or 0 if the change does not need a confirm step
+     */
+    private function confirm_view_id(int|string $view, string $step): int
+    {
+        $confirm_view = 0;
+        if ($step == url_var::STEP_CONFIRM) {
+            if (in_array($view, views::ADD_MASKS_IDS)) {
+                $confirm_view = views::CONFIRM_ADD_ID;
+            } elseif (in_array($view, views::EDIT_MASKS_IDS)) {
+                $confirm_view = views::CONFIRM_EDIT_ID;
+            } elseif (in_array($view, views::DEL_MASKS_IDS)) {
+                $confirm_view = views::CONFIRM_DEL_ID;
+            }
+        }
+        return $confirm_view;
+    }
+
     private function action_crud(
         array        $url_array,
         int          $view,

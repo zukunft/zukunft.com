@@ -209,6 +209,17 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return array parent url array extended with the plural and view of this word
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::PLURAL] = $this->plural;
+        $url_array[url_var::VIEW] = $this->view_id;
+        return $url_array;
+    }
+
+    /**
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -815,12 +826,36 @@ class word extends sandbox_code_id
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+            $url = $this->url_edit();
             $title .= $html->ref($url, $html->span($this->name(), styles::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
 
         return $result;
+    }
+
+    /**
+     * the url to open the edit (change) word view, including the '8'-prefixed baseline
+     * of the current database field values so that on save only the fields the user
+     * actually changed are written and a concurrent change by another user is not
+     * overwritten. See docs/llm/state-and-messages.md.
+     *
+     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&...&8k=USD&8o=...
+     */
+    private function url_edit(): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+        $pre = $html->pre_url_part([
+            url_var::NAME => $this->name(),
+            url_var::PLURAL => $this->plural,
+            url_var::DESCRIPTION => $this->get_description(),
+            url_var::PHRASE_TYPE => $this->type_id(),
+        ]);
+        if ($pre != '') {
+            $url .= '&' . $pre;
+        }
+        return $url;
     }
 
     /*

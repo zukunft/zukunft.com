@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -66,12 +67,15 @@ class word_write_url_tests
         global $sys;
         $ui = new frontend('view');
         $ui->load_cache();
-        // the html renderers read the type cache from the global $ui_sys (e.g. ref->type_name);
-        // point it at the just loaded frontend cache so the workflow render does not crash
+        // the html renderers read the type cache from the global $ui_sys (e.g. ref->type_name and
+        // user::navbar_role); always point it at the just loaded frontend cache so the render does
+        // not depend on a stale or incomplete cache left in the global by another test (which would
+        // make the navbar user role e.g. 'system test' appear only sometimes)
         global $ui_sys;
-        if ($ui_sys?->typ_lst_cache == null) {
-            $ui_sys = $ui->dto;
-        }
+        $ui_sys = $ui->dto;
+        // the change log renderer reads the date format from $ui_sys->cfg (set in http/view.php);
+        // an empty config_ui returns the shared default format so a word with history renders
+        $ui_sys->cfg = new config_ui();
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
         $usr_sys_ui = new user_ui();
