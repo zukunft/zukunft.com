@@ -1107,6 +1107,22 @@ class data_object
         // import the sources
         $this->save_sources($usr_msg, $imp);
 
+        // add the id of the sources just added to the values so that the value source is
+        // persisted; without this the value still points to the source object with id 0
+        if ($usr_msg->is_ok()) {
+            foreach ($this->value_list()->lst() as $val) {
+                $src = $val->get_source();
+                if ($src != null) {
+                    if ($src->id() == 0 and $src->name() != '') {
+                        $src_saved = $this->source_list()->get_by_name($src->name());
+                        if ($src_saved != null) {
+                            $val->set_source($src_saved);
+                        }
+                    }
+                }
+            }
+        }
+
         // add the id of the phrases just added to the references
         if ($usr_msg->is_ok()) {
             $phr_lst = $this->phrase_list();

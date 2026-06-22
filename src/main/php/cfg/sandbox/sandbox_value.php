@@ -1537,29 +1537,18 @@ class sandbox_value extends sandbox_multi
             $this->load_phrases();
         }
 
-        // add the words
-        $wrd_lst = array();
+        // add all phrases (words and triples) under "words" so that the export matches the
+        // import format, where a value lists its whole phrase group in a single "words" array
+        $phr_names = array();
         if (!$this->phrase_list()->is_empty()) {
-            if (!$this->wrd_lst()->is_empty()) {
-                foreach ($this->wrd_lst()->lst() as $wrd) {
-                    $wrd_lst[] = $wrd->name();
-                }
-                if (count($wrd_lst) > 0) {
-                    $vars[json_fields::WORDS] = $wrd_lst;
-                }
+            foreach ($this->wrd_lst()->lst() as $wrd) {
+                $phr_names[] = $wrd->name();
             }
-        }
-
-        // add the triples
-        $triples_lst = array();
-        if (!$this->phrase_list()->is_empty()) {
-            if (!$this->trp_lst()->is_empty()) {
-                foreach ($this->trp_lst()->lst() as $trp) {
-                    $triples_lst[] = $trp->name();
-                }
-                if (count($triples_lst) > 0) {
-                    $vars[json_fields::TRIPLES] = $triples_lst;
-                }
+            foreach ($this->trp_lst()->lst() as $trp) {
+                $phr_names[] = $trp->name();
+            }
+            if (count($phr_names) > 0) {
+                $vars[json_fields::WORDS] = $phr_names;
             }
         }
 

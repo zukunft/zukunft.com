@@ -1,0 +1,520 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-22 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "levelized cost of electricity"
+  ],
+  "description": "Terms, values and formulas about the levelized cost of electricity (LCOE) from the English Wikipedia article \"Levelized cost of electricity\". The article is definitional, so mainly the formula relationships are modelled: the LCOE as the discounted lifetime cost per discounted electricity generation, the sum of the cost components and the ratio of LACE to LCOE. The discount rates named in the text are stored as values; a clearly marked illustrative worked example makes the three formulas verifiable via calc-validation. Source of the article: https://en.wikipedia.org/wiki/Levelized_cost_of_electricity",
+  "words": [
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with the presence and motion of electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "generation",
+      "description": "the production of electrical energy from another source."
+    },
+    {
+      "name": "investment",
+      "description": "the capital expenditure to build a generating plant."
+    },
+    {
+      "name": "operation",
+      "description": "the running of a plant during its lifetime."
+    },
+    {
+      "name": "maintenance",
+      "description": "the upkeep of a plant during its lifetime."
+    },
+    {
+      "name": "fuel",
+      "description": "material consumed by a generator to produce energy."
+    },
+    {
+      "name": "lifetime",
+      "description": "the expected operating life of a system or power station."
+    },
+    {
+      "name": "discount",
+      "description": "the reduction applied to future cash flows to express them as present value."
+    },
+    {
+      "name": "rate",
+      "description": "a quantity measured against another, here a proportion per period."
+    },
+    {
+      "name": "discounted",
+      "description": "expressed as a net present value using the discount rate."
+    },
+    {
+      "name": "levelized",
+      "description": "averaged over the lifetime of an asset as a net present value per unit of output."
+    },
+    {
+      "name": "avoided",
+      "description": "of cost, the expense a generator saves the system by being available."
+    },
+    {
+      "name": "value",
+      "description": "the economic worth a generator provides to the grid."
+    },
+    {
+      "name": "ratio",
+      "description": "the quotient of two quantities."
+    },
+    {
+      "name": "threshold",
+      "description": "a boundary value at which a decision changes; here a ratio of one."
+    },
+    {
+      "name": "public",
+      "description": "of funding, financed by the state with a low social discount rate."
+    },
+    {
+      "name": "private",
+      "description": "of funding, commercial for-profit financing with a higher discount rate."
+    },
+    {
+      "name": "lower bound estimate",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound estimate",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "USD",
+      "description": "the United States dollar.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "MWh",
+      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "times",
+      "description": "a dimensionless multiplier or ratio.",
+      "type": "measure"
+    }
+  ],
+  "triples": [
+    {
+      "from": "cost",
+      "verb": "kind of",
+      "to": "levelized",
+      "name": "levelized cost"
+    },
+    {
+      "name": "levelized cost of electricity",
+      "from": "levelized cost",
+      "verb": "of",
+      "to": "electricity",
+      "description": "the average net present cost of electricity generation over the lifetime of a generator: the discounted lifetime cost divided by the discounted lifetime electricity generation, i.e. LCOE = sum((I_t + M_t + F_t) / (1 + r)^t) / sum(E_t / (1 + r)^t).",
+      "refs": [
+        {
+          "name": "Levelized_cost_of_electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "investment",
+      "name": "investment cost"
+    },
+    {
+      "from": "operation",
+      "verb": "and",
+      "to": "maintenance"
+    },
+    {
+      "name": "operation and maintenance cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "operation and maintenance",
+      "description": "the operations and maintenance expenditures over the lifetime of the generator (M_t in the LCOE formula)."
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "fuel",
+      "name": "fuel cost"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "lifetime",
+      "name": "lifetime cost"
+    },
+    {
+      "from": "rate",
+      "verb": "of",
+      "to": "discount",
+      "name": "discount rate"
+    },
+    {
+      "name": "public discount rate",
+      "from": "discount rate",
+      "verb": "kind of",
+      "to": "public",
+      "description": "the low discount rate (around 3 percent) used for public funding and social cost of capital comparisons."
+    },
+    {
+      "name": "private discount rate",
+      "from": "discount rate",
+      "verb": "kind of",
+      "to": "private",
+      "description": "the higher discount rate (about 7 to 15 percent) assumed for commercial for-profit funding."
+    },
+    {
+      "from": "generation",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity generation"
+    },
+    {
+      "name": "discounted investment cost",
+      "from": "investment cost",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the discounted lifetime sum of the investment expenditures (sum of I_t / (1 + r)^t)."
+    },
+    {
+      "name": "discounted operation and maintenance cost",
+      "from": "operation and maintenance cost",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the discounted lifetime sum of the operations and maintenance expenditures (sum of M_t / (1 + r)^t)."
+    },
+    {
+      "name": "discounted fuel cost",
+      "from": "fuel cost",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the discounted lifetime sum of the fuel expenditures (sum of F_t / (1 + r)^t)."
+    },
+    {
+      "name": "discounted lifetime cost",
+      "from": "lifetime cost",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the discounted lifetime total expenditure, the numerator of the LCOE; the result of the discounted lifetime cost formula."
+    },
+    {
+      "name": "discounted electricity generation",
+      "from": "electricity generation",
+      "verb": "kind of",
+      "to": "discounted",
+      "description": "the discounted lifetime electricity generated, the denominator of the LCOE (sum of E_t / (1 + r)^t)."
+    },
+    {
+      "from": "cost",
+      "verb": "kind of",
+      "to": "avoided",
+      "name": "avoided cost"
+    },
+    {
+      "name": "levelized avoided cost",
+      "from": "avoided cost",
+      "verb": "kind of",
+      "to": "levelized"
+    },
+    {
+      "name": "levelized avoided cost of electricity",
+      "from": "levelized avoided cost",
+      "verb": "of",
+      "to": "electricity",
+      "description": "LACE: the total discounted avoided costs divided by the total discounted lifetime output; compared with the LCOE to judge economic feasibility."
+    },
+    {
+      "name": "value cost ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "value",
+      "description": "the levelized avoided cost (value) divided by the levelized cost (cost); a project is considered economically feasible when this ratio is greater than one."
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "MWh",
+      "description": "US dollars of cost or value per megawatt-hour generated."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Wikipedia LCOE",
+      "description": "Wikipedia, \"Levelized cost of electricity\": definition, applicability, limitations and input-value selection including discount rates.",
+      "url": "https://en.wikipedia.org/wiki/Levelized_cost_of_electricity"
+    },
+    {
+      "name": "NREL LCOE calculator",
+      "description": "NREL Simple Levelized Cost of Energy (LCOE) Calculator documentation, used here for the illustrative worked example.",
+      "url": "https://www.nrel.gov/analysis/tech-lcoe-documentation"
+    },
+    {
+      "name": "Lazard LCOE v14",
+      "description": "Lazard's Levelized Cost of Energy Version 14.0, the comparison source cited by the article.",
+      "url": "https://www.lazard.com/media/451419/lazards-levelized-cost-of-energy-version-140.pdf"
+    },
+    {
+      "name": "EIA AEO 2022 LCOE",
+      "description": "US EIA, Levelized Costs of New Generation Resources in the Annual Energy Outlook 2022.",
+      "url": "https://www.eia.gov/outlooks/aeo/pdf/electricity_generation.pdf"
+    },
+    {
+      "name": "EIA LCOE LACE methodology",
+      "description": "US EIA methodology supplement on Levelized Cost of Electricity and Levelized Avoided Cost of Electricity (LACE).",
+      "url": "https://www.eia.gov/renewable/workshop/gencosts/pdf/methodology_supplement.pdf"
+    },
+    {
+      "name": "EIA AEO 2014 LACE",
+      "description": "US EIA, Levelized Cost and Levelized Avoided Cost of New Generation Resources in the Annual Energy Outlook 2014.",
+      "url": "https://www.eia.gov/outlooks/archive/aeo14/pdf/electricity_generation_2014.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "public discount rate",
+        "percent",
+        "assumed value"
+      ],
+      "number": "3",
+      "source": "Wikipedia LCOE",
+      "note": "comparisons assuming public funding, subsidies and social cost of capital tend to choose a low discount rate of about 3 percent, favouring high-capital nuclear and renewable projects."
+    },
+    {
+      "words": [
+        "private discount rate",
+        "lower bound estimate",
+        "percent",
+        "assumed value"
+      ],
+      "number": "7",
+      "source": "Wikipedia LCOE",
+      "note": "private investment banks tend to assume higher discount rates of 7 to 15 percent for commercial for-profit funding."
+    },
+    {
+      "words": [
+        "private discount rate",
+        "upper bound estimate",
+        "percent",
+        "assumed value"
+      ],
+      "number": "15",
+      "source": "Wikipedia LCOE"
+    },
+    {
+      "words": [
+        "value cost ratio",
+        "threshold",
+        "times",
+        "assumed value"
+      ],
+      "number": "1",
+      "source": "EIA LCOE LACE methodology",
+      "note": "when LACE (value) exceeds LCOE (cost) the value-cost ratio is greater than 1 and the project is considered economically feasible."
+    },
+    {
+      "words": [
+        "discounted investment cost",
+        "USD",
+        "assumed value"
+      ],
+      "number": "60000",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example (not from the article): discounted lifetime investment expenditure."
+    },
+    {
+      "words": [
+        "discounted operation and maintenance cost",
+        "USD",
+        "assumed value"
+      ],
+      "number": "30000",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example: discounted lifetime operations and maintenance expenditure."
+    },
+    {
+      "words": [
+        "discounted fuel cost",
+        "USD",
+        "assumed value"
+      ],
+      "number": "10000",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example: discounted lifetime fuel expenditure."
+    },
+    {
+      "words": [
+        "discounted lifetime cost",
+        "USD",
+        "assumed value"
+      ],
+      "number": "100000",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example: the discounted lifetime total expenditure, 60000 + 30000 + 10000."
+    },
+    {
+      "words": [
+        "discounted electricity generation",
+        "MWh",
+        "assumed value"
+      ],
+      "number": "2000",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example: discounted lifetime electricity generated."
+    },
+    {
+      "words": [
+        "levelized cost of electricity",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "50",
+      "source": "NREL LCOE calculator",
+      "note": "illustrative worked example: 100000 USD / 2000 MWh = 50 USD per MWh."
+    },
+    {
+      "words": [
+        "levelized avoided cost of electricity",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "60",
+      "source": "EIA AEO 2014 LACE",
+      "note": "illustrative worked example: the value the generator provides to the grid, here above its LCOE so the project is feasible."
+    },
+    {
+      "words": [
+        "value cost ratio",
+        "times",
+        "assumed value"
+      ],
+      "number": "1.2",
+      "source": "EIA LCOE LACE methodology",
+      "note": "illustrative worked example: LACE 60 / LCOE 50 = 1.2, greater than 1, so feasible."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "discounted lifetime cost formula",
+      "expression": "\"discounted lifetime cost\" = \"discounted investment cost\" + \"discounted operation and maintenance cost\" + \"discounted fuel cost\"",
+      "latex": "C = \\sum_t \\frac{I_t + M_t + F_t}{(1 + r)^t}",
+      "assigned": [
+        "discounted investment cost",
+        "discounted operation and maintenance cost",
+        "discounted fuel cost"
+      ]
+    },
+    {
+      "name": "levelized cost of electricity formula",
+      "expression": "\"levelized cost of electricity\" = \"discounted lifetime cost\" / \"discounted electricity generation\"",
+      "latex": "\\text{LCOE} = \\frac{\\sum_t (I_t + M_t + F_t) / (1 + r)^t}{\\sum_t E_t / (1 + r)^t}",
+      "assigned": [
+        "discounted lifetime cost",
+        "discounted electricity generation"
+      ]
+    },
+    {
+      "name": "value cost ratio formula",
+      "expression": "\"value cost ratio\" = \"levelized avoided cost of electricity\" / \"levelized cost of electricity\"",
+      "latex": "\\frac{\\text{LACE}}{\\text{LCOE}}",
+      "assigned": [
+        "levelized avoided cost of electricity",
+        "levelized cost of electricity"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "discounted investment cost",
+        "discounted operation and maintenance cost",
+        "discounted fuel cost",
+        "USD",
+        "assumed value"
+      ],
+      "formula": "discounted lifetime cost formula",
+      "words": [
+        "discounted lifetime cost",
+        "USD"
+      ],
+      "number": "100000",
+      "note": "illustrative: 60000 + 30000 + 10000 = 100000 USD discounted lifetime cost."
+    },
+    {
+      "context": [
+        "discounted lifetime cost",
+        "discounted electricity generation",
+        "USD",
+        "MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity formula",
+      "words": [
+        "levelized cost of electricity",
+        "USD per MWh"
+      ],
+      "number": "50",
+      "note": "illustrative: 100000 USD / 2000 MWh = 50 USD per MWh."
+    },
+    {
+      "context": [
+        "levelized avoided cost of electricity",
+        "levelized cost of electricity",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "value cost ratio formula",
+      "words": [
+        "value cost ratio",
+        "times"
+      ],
+      "number": "1.2",
+      "note": "illustrative: LACE 60 / LCOE 50 = 1.2, greater than 1, so the project is feasible."
+    }
+  ]
+}

@@ -1,0 +1,1634 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-20 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "new nuclear power plant in Switzerland"
+  ],
+  "description": "Argumente und Zahlen pro und kontra Neubau von Kernkraftwerken in der Schweiz (Stand der Debatte 2025/2026, nach Aufhebung des Neubauverbots durch das Parlament). Pro- und Kontra-Argumente sind als Triples modelliert, belegt durch Werte mit Quellen; einige Rechnungen sind als calc-validation hinterlegt.",
+  "words": [
+    {
+      "name": "Switzerland",
+      "description": "a landlocked country located in west-central Europe.",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "nuclear",
+      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
+    },
+    {
+      "name": "power",
+      "description": "the rate, per unit time, at which electrical energy is transferred.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "plant",
+      "description": "an industrial facility for the generation of electric power.",
+      "refs": [
+        {
+          "name": "Power_station",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "new",
+      "description": "recently built or established, as opposed to existing."
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with the presence and motion of electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "production",
+      "description": "the action of making or generating something."
+    },
+    {
+      "name": "consumption",
+      "description": "the using up of a resource."
+    },
+    {
+      "name": "share",
+      "description": "a part or portion of a larger amount."
+    },
+    {
+      "name": "import",
+      "description": "a good or commodity brought into a country from abroad.",
+      "refs": [
+        {
+          "name": "Import",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "export",
+      "description": "a good or commodity sent out of a country.",
+      "refs": [
+        {
+          "name": "Export",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "argument",
+      "description": "a reason or set of reasons given in support of an idea or position.",
+      "refs": [
+        {
+          "name": "Argument",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "pro",
+      "description": "an argument or consideration in favour of something."
+    },
+    {
+      "name": "contra",
+      "description": "an argument or consideration against something."
+    },
+    {
+      "name": "supply",
+      "description": "the amount of a resource available for use.",
+      "refs": [
+        {
+          "name": "Supply_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "security",
+      "description": "the state of being free from danger or threat."
+    },
+    {
+      "name": "winter",
+      "description": "the coldest season of the year, in Switzerland the period of highest electricity demand and lowest solar yield.",
+      "refs": [
+        {
+          "name": "Winter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gap",
+      "description": "an unfilled space or interval; here a shortfall between supply and demand."
+    },
+    {
+      "name": "greenhouse",
+      "description": "relating to gases that trap heat in the atmosphere."
+    },
+    {
+      "name": "gas",
+      "description": "a state of matter; here shorthand for a greenhouse gas emission.",
+      "refs": [
+        {
+          "name": "Gas",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "emission",
+      "description": "the production and discharge of something, especially gas."
+    },
+    {
+      "name": "lifecycle",
+      "description": "the whole series of stages over the life of a product or facility.",
+      "refs": [
+        {
+          "name": "Life-cycle_assessment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installation can produce."
+    },
+    {
+      "name": "factor",
+      "description": "a ratio; here the ratio of actual to maximum possible output."
+    },
+    {
+      "name": "baseload",
+      "description": "the minimum level of demand on an electrical grid over a span of time, met by continuous generation.",
+      "refs": [
+        {
+          "name": "Base_load",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "levelized",
+      "description": "averaged over the lifetime of an asset."
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "energy",
+      "description": "the capacity to do work, here electrical energy.",
+      "refs": [
+        {
+          "name": "Energy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11379",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "construction",
+      "description": "the building of an installation.",
+      "refs": [
+        {
+          "name": "Construction",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "description": "the measured duration of an event.",
+      "refs": [
+        {
+          "name": "Time",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11471",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "decommissioning",
+      "description": "the process of shutting down and dismantling a nuclear facility.",
+      "refs": [
+        {
+          "name": "Nuclear_decommissioning",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "disposal",
+      "description": "the action of getting rid of waste, here radioactive waste."
+    },
+    {
+      "name": "waste",
+      "description": "unwanted or unusable material; here spent nuclear fuel and contaminated material.",
+      "refs": [
+        {
+          "name": "Waste",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "uranium",
+      "description": "a chemical element used as nuclear fuel.",
+      "refs": [
+        {
+          "name": "Uranium",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1098",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "fuel",
+      "description": "material burned or consumed to produce energy.",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "dependency",
+      "description": "the state of relying on something external."
+    },
+    {
+      "name": "solar",
+      "description": "relating to energy from the sun.",
+      "refs": [
+        {
+          "name": "Solar_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "photovoltaic",
+      "description": "converting light directly into electricity.",
+      "refs": [
+        {
+          "name": "Photovoltaics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wind",
+      "description": "the use of air flow to generate electricity.",
+      "refs": [
+        {
+          "name": "Wind_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "onshore",
+      "description": "located on land, as opposed to offshore."
+    },
+    {
+      "name": "renewable",
+      "description": "an energy source that is naturally replenished.",
+      "refs": [
+        {
+          "name": "Renewable_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Beznau",
+      "description": "the oldest Swiss nuclear power station, in the canton of Aargau.",
+      "refs": [
+        {
+          "name": "Beznau_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gösgen",
+      "description": "a Swiss nuclear power station in the canton of Solothurn.",
+      "refs": [
+        {
+          "name": "Gösgen_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Leibstadt",
+      "description": "the newest and most powerful Swiss nuclear power station, in the canton of Aargau.",
+      "refs": [
+        {
+          "name": "Leibstadt_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "shutdown",
+      "description": "the permanent ceasing of operation of a plant."
+    },
+    {
+      "name": "year",
+      "description": "the orbital period of the Earth around the Sun; the standard period word.",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "TWh",
+      "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "USD",
+      "description": "the United States dollar.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "MWh",
+      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "CHF",
+      "description": "the Swiss franc.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "bn",
+      "description": "billion, a scaling word for 1e9.",
+      "type": "measure"
+    },
+    {
+      "name": "CO2eq",
+      "description": "carbon-dioxide equivalent, a measure of greenhouse-gas emission expressed as the equivalent mass of CO2.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Global_warming_potential",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt-hour, a unit of energy.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gram",
+      "description": "a metric unit of mass.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Gram",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "2024",
+      "description": "the calendar year 2024.",
+      "type": "time"
+    },
+    {
+      "name": "2032",
+      "description": "the calendar year 2032.",
+      "type": "time"
+    },
+    {
+      "name": "2040",
+      "description": "the calendar year 2040.",
+      "type": "time"
+    },
+    {
+      "name": "2045",
+      "description": "the calendar year 2045.",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "description": "the calendar year 2025.",
+      "type": "time"
+    },
+    {
+      "name": "lower bound estimate",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound estimate",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "social",
+      "description": "relating to society and external effects beyond the private actor."
+    },
+    {
+      "name": "adder",
+      "description": "an additive contribution to a total, here a per-kWh cost component; positive raises the cost, negative lowers it."
+    },
+    {
+      "name": "mean",
+      "description": "the expected (average) value of an estimate.",
+      "refs": [
+        {
+          "name": "Expected_value",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "shadow",
+      "description": "an imputed price for a non-market effect, used to monetise it."
+    },
+    {
+      "name": "price",
+      "description": "the amount of money expected or given for something.",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "CO2",
+      "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Carbon_dioxide",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "tonne",
+      "description": "a metric unit of mass equal to 1000 kilograms.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Tonne",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Rappen",
+      "description": "one hundredth of a Swiss franc.",
+      "type": "measure"
+    },
+    {
+      "name": "duration",
+      "description": "the length of time something continues."
+    },
+    {
+      "name": "delay",
+      "description": "a period by which something is late or postponed."
+    }
+  ],
+  "triples": [
+    {
+      "from": "power",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear power",
+      "refs": [
+        {
+          "name": "Nuclear_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nuclear power plant",
+      "from": "plant",
+      "verb": "of",
+      "to": "nuclear power",
+      "description": "a thermal power station in which the heat source is a nuclear reactor.",
+      "refs": [
+        {
+          "name": "Nuclear_power_plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "new nuclear power plant",
+      "from": "nuclear power plant",
+      "verb": "kind of",
+      "to": "new",
+      "description": "a newly built nuclear power plant, as opposed to an existing one."
+    },
+    {
+      "name": "new nuclear power plant in Switzerland",
+      "from": "new nuclear power plant",
+      "verb": "of",
+      "to": "Switzerland",
+      "description": "the proposal to build one or more new nuclear power plants in Switzerland after the 2025 lifting of the construction ban."
+    },
+    {
+      "from": "production",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity production",
+      "refs": [
+        {
+          "name": "Electricity_generation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "consumption",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity consumption"
+    },
+    {
+      "from": "import",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity import"
+    },
+    {
+      "from": "export",
+      "verb": "of",
+      "to": "electricity",
+      "name": "electricity export"
+    },
+    {
+      "name": "nuclear electricity production share",
+      "from": "share",
+      "verb": "of",
+      "to": "nuclear power",
+      "description": "the share of total electricity production supplied by nuclear power."
+    },
+    {
+      "from": "argument",
+      "verb": "kind of",
+      "to": "pro",
+      "name": "pro argument"
+    },
+    {
+      "from": "argument",
+      "verb": "kind of",
+      "to": "contra",
+      "name": "contra argument"
+    },
+    {
+      "name": "pro argument for new nuclear in Switzerland",
+      "from": "pro argument",
+      "verb": "of",
+      "to": "new nuclear power plant in Switzerland"
+    },
+    {
+      "name": "contra argument for new nuclear in Switzerland",
+      "from": "contra argument",
+      "verb": "of",
+      "to": "new nuclear power plant in Switzerland"
+    },
+    {
+      "from": "security",
+      "verb": "of",
+      "to": "supply",
+      "name": "supply security"
+    },
+    {
+      "from": "supply security",
+      "verb": "of",
+      "to": "winter",
+      "name": "winter supply security"
+    },
+    {
+      "name": "winter supply gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "winter supply security",
+      "description": "the shortfall between electricity demand and domestic supply during winter months."
+    },
+    {
+      "from": "gas",
+      "verb": "kind of",
+      "to": "greenhouse",
+      "name": "greenhouse gas",
+      "refs": [
+        {
+          "name": "Greenhouse_gas",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "emission",
+      "verb": "of",
+      "to": "greenhouse gas",
+      "name": "greenhouse gas emission",
+      "refs": [
+        {
+          "name": "Greenhouse_gas_emissions",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lifecycle greenhouse gas emission",
+      "from": "greenhouse gas emission",
+      "verb": "of",
+      "to": "lifecycle",
+      "description": "greenhouse-gas emissions over the full lifecycle of a generation technology, per unit of energy."
+    },
+    {
+      "from": "factor",
+      "verb": "of",
+      "to": "capacity",
+      "name": "capacity factor",
+      "refs": [
+        {
+          "name": "Capacity_factor",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "levelized cost of energy",
+      "from": "cost",
+      "verb": "of",
+      "to": "energy",
+      "description": "the average net present cost of electricity generation over the lifetime of a generator, per unit of energy.",
+      "refs": [
+        {
+          "name": "Levelized_cost_of_electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "levelized cost of energy",
+      "verb": "kind of",
+      "to": "levelized",
+      "name": "levelized cost of energy (levelized)"
+    },
+    {
+      "from": "time",
+      "verb": "of",
+      "to": "construction",
+      "name": "construction time"
+    },
+    {
+      "name": "decommissioning and disposal cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "decommissioning",
+      "description": "the combined cost of decommissioning nuclear plants and disposing of radioactive waste."
+    },
+    {
+      "from": "disposal",
+      "verb": "of",
+      "to": "waste",
+      "name": "waste disposal"
+    },
+    {
+      "from": "waste",
+      "verb": "kind of",
+      "to": "nuclear",
+      "name": "nuclear waste",
+      "refs": [
+        {
+          "name": "Radioactive_waste",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "fuel",
+      "verb": "kind of",
+      "to": "uranium",
+      "name": "uranium fuel"
+    },
+    {
+      "name": "uranium import dependency",
+      "from": "dependency",
+      "verb": "of",
+      "to": "uranium fuel",
+      "description": "Switzerland imports the entirety of its nuclear fuel, having no domestic uranium."
+    },
+    {
+      "from": "photovoltaic",
+      "verb": "kind of",
+      "to": "solar",
+      "name": "solar photovoltaic"
+    },
+    {
+      "from": "wind",
+      "verb": "kind of",
+      "to": "onshore",
+      "name": "onshore wind"
+    },
+    {
+      "name": "Beznau plant",
+      "from": "Beznau",
+      "verb": "is a",
+      "to": "nuclear power plant"
+    },
+    {
+      "name": "Gösgen plant",
+      "from": "Gösgen",
+      "verb": "is a",
+      "to": "nuclear power plant"
+    },
+    {
+      "name": "Leibstadt plant",
+      "from": "Leibstadt",
+      "verb": "is a",
+      "to": "nuclear power plant"
+    },
+    {
+      "name": "Beznau shutdown year",
+      "from": "shutdown",
+      "verb": "of",
+      "to": "Beznau plant"
+    },
+    {
+      "name": "Gösgen shutdown year",
+      "from": "shutdown",
+      "verb": "of",
+      "to": "Gösgen plant"
+    },
+    {
+      "name": "Leibstadt shutdown year",
+      "from": "shutdown",
+      "verb": "of",
+      "to": "Leibstadt plant"
+    },
+    {
+      "name": "Beznau production loss at shutdown",
+      "from": "electricity production",
+      "verb": "of",
+      "to": "Beznau plant"
+    },
+    {
+      "name": "Gösgen production loss at shutdown",
+      "from": "electricity production",
+      "verb": "of",
+      "to": "Gösgen plant"
+    },
+    {
+      "name": "Leibstadt production loss at shutdown",
+      "from": "electricity production",
+      "verb": "of",
+      "to": "Leibstadt plant"
+    },
+    {
+      "name": "Swiss nuclear fleet production",
+      "from": "electricity production",
+      "verb": "of",
+      "to": "nuclear power",
+      "description": "the combined annual electricity production of all Swiss nuclear power plants."
+    },
+    {
+      "name": "Swiss nuclear fleet shutdown loss",
+      "from": "Swiss nuclear fleet production",
+      "verb": "of",
+      "to": "shutdown",
+      "description": "the combined annual electricity production lost once all Swiss nuclear power plants are shut down on schedule; the result of the fleet production loss sum formula."
+    },
+    {
+      "name": "lifecycle greenhouse gas emission of nuclear power",
+      "from": "lifecycle greenhouse gas emission",
+      "verb": "of",
+      "to": "nuclear power"
+    },
+    {
+      "name": "lifecycle greenhouse gas emission of solar photovoltaic",
+      "from": "lifecycle greenhouse gas emission",
+      "verb": "of",
+      "to": "solar photovoltaic"
+    },
+    {
+      "name": "capacity factor of nuclear power",
+      "from": "capacity factor",
+      "verb": "of",
+      "to": "nuclear power"
+    },
+    {
+      "name": "capacity factor of solar photovoltaic",
+      "from": "capacity factor",
+      "verb": "of",
+      "to": "solar photovoltaic"
+    },
+    {
+      "name": "levelized cost of energy of nuclear power",
+      "from": "levelized cost of energy (levelized)",
+      "verb": "of",
+      "to": "nuclear power"
+    },
+    {
+      "name": "levelized cost of energy of solar photovoltaic",
+      "from": "levelized cost of energy (levelized)",
+      "verb": "of",
+      "to": "solar photovoltaic"
+    },
+    {
+      "name": "levelized cost of energy of onshore wind",
+      "from": "levelized cost of energy (levelized)",
+      "verb": "of",
+      "to": "onshore wind"
+    },
+    {
+      "name": "CO2eq per kWh",
+      "from": "CO2eq",
+      "verb": "per",
+      "to": "kWh",
+      "description": "grams of CO2-equivalent emitted per kilowatt-hour generated."
+    },
+    {
+      "name": "USD per MWh",
+      "from": "USD",
+      "verb": "per",
+      "to": "MWh",
+      "description": "US dollars of cost per megawatt-hour generated."
+    },
+    {
+      "name": "CHF bn",
+      "from": "CHF",
+      "verb": "scaled by",
+      "to": "bn",
+      "description": "billions of Swiss francs."
+    },
+    {
+      "name": "CHF per kWh",
+      "from": "CHF",
+      "verb": "per",
+      "to": "kWh",
+      "description": "Swiss francs of cost per kilowatt-hour generated; the common unit of every cost adder."
+    },
+    {
+      "from": "tonne",
+      "verb": "of",
+      "to": "CO2",
+      "name": "CO2 tonne"
+    },
+    {
+      "name": "CHF per tonne CO2",
+      "from": "CHF",
+      "verb": "per",
+      "to": "CO2 tonne",
+      "description": "the shadow price of carbon, Swiss francs per tonne of CO2."
+    },
+    {
+      "from": "price",
+      "verb": "kind of",
+      "to": "shadow",
+      "name": "shadow price",
+      "refs": [
+        {
+          "name": "Shadow_price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social",
+      "name": "social cost"
+    },
+    {
+      "name": "social cost adder",
+      "from": "adder",
+      "verb": "of",
+      "to": "social cost",
+      "description": "one monetised per-kWh cost component (private or external) entering the total social cost of new Swiss nuclear power."
+    },
+    {
+      "name": "social cost per kWh of new nuclear in Switzerland",
+      "from": "social cost",
+      "verb": "of",
+      "to": "new nuclear power plant in Switzerland",
+      "description": "the weighted total cost per kWh of new Swiss nuclear power, summing every monetised pro and contra adder."
+    },
+    {
+      "name": "levelized cost adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "levelized cost of energy (levelized)",
+      "description": "contra/base: the direct generation cost (Lazard LCOE midpoint), the dominant positive adder."
+    },
+    {
+      "name": "decommissioning cost adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "decommissioning",
+      "description": "contra: decommissioning + waste-disposal cost amortised over lifetime generation."
+    },
+    {
+      "name": "carbon benefit adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "greenhouse gas emission",
+      "description": "pro: avoided-emission benefit vs the marginal alternative, monetised at the carbon shadow price; enters as a negative adder."
+    },
+    {
+      "name": "supply security adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "winter supply security",
+      "description": "pro: monetised value of firm winter baseload (avoided scarcity / import-price-spike cost); enters as a negative adder."
+    },
+    {
+      "name": "uranium dependency adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "uranium import dependency",
+      "description": "contra: monetised geopolitical/supply risk of 100% imported uranium fuel; positive adder."
+    },
+    {
+      "name": "construction delay adder",
+      "from": "social cost adder",
+      "verb": "of",
+      "to": "construction time",
+      "description": "contra: monetised cost of the long build/delay risk (capital tied up, gap bridged by other means); positive adder."
+    }
+  ],
+  "sources": [
+    {
+      "name": "GRS Swiss nuclear overview 2024",
+      "description": "GRS gGmbH country overview: Switzerland generated over 82 TWh in 2024, 29.2% from nuclear; net exporter (40.35 TWh export vs 25.95 TWh import).",
+      "url": "https://www.grs.de/de/kernenergie-in-der-schweiz"
+    },
+    {
+      "name": "Wikipedia Kernenergie in der Schweiz",
+      "description": "Decommissioning and waste-disposal cost study (swissnuclear/BFE), updated estimate of CHF 23.9 bn (Dec 2020); shutdown schedule Beznau 2032/33.",
+      "url": "https://de.wikipedia.org/wiki/Kernenergie_in_der_Schweiz"
+    },
+    {
+      "name": "FuW Energiezukunft Schweiz 2026",
+      "description": "Finanz und Wirtschaft op-ed: Swiss fleet ~23 TWh; Beznau -5.5 TWh (2032/33), Gösgen -8 TWh (~2040), Leibstadt -9.5 TWh (~2045).",
+      "url": "https://www.fuw.ch/das-akw-neubauverbot-ist-ein-stilles-standortverlagerungsgesetz-235012716460"
+    },
+    {
+      "name": "Lazard LCOE+ 2025",
+      "description": "Lazard Levelized Cost of Energy+ 2025 (18th ed.), unsubsidised USD/MWh: nuclear 141-220, utility-scale solar 38-217, onshore wind 37-86.",
+      "url": "https://www.lazard.com/media/eijnqja3/lazards-lcoeplus-june-2025.pdf"
+    },
+    {
+      "name": "IPCC AR5 WG3 Annex III",
+      "description": "IPCC lifecycle GHG emission medians (g CO2eq/kWh): nuclear 12, solar PV utility 48.",
+      "url": "https://www.ipcc.ch/report/ar5/wg3/"
+    },
+    {
+      "name": "bluewin Swiss reactor build 2026",
+      "description": "Parliament lifted the construction ban; a new Swiss plant is unlikely to be on the grid before 2045.",
+      "url": "https://www.bluewin.ch/de/news/schweiz/die-schweiz-kann-wieder-akw-bauen-doch-niemand-will-3275809.html"
+    },
+    {
+      "name": "BAFU CO2 levy 2025",
+      "description": "Swiss CO2 levy on fossil fuels 2025: CHF 120 per tonne CO2, capped under the revised CO2 act; study scenarios (INFRAS) model 210-760 CHF/t.",
+      "url": "https://www.bafu.admin.ch/de/co2-abgabe"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Switzerland",
+        "electricity production",
+        "2024",
+        "TWh",
+        "measured value"
+      ],
+      "number": "82",
+      "source": "GRS Swiss nuclear overview 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "nuclear electricity production share",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "29.2",
+      "source": "GRS Swiss nuclear overview 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity export",
+        "2024",
+        "TWh",
+        "measured value"
+      ],
+      "number": "40.35",
+      "source": "GRS Swiss nuclear overview 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity import",
+        "2024",
+        "TWh",
+        "measured value"
+      ],
+      "number": "25.95",
+      "source": "GRS Swiss nuclear overview 2024"
+    },
+    {
+      "words": [
+        "Swiss nuclear fleet production",
+        "2024",
+        "TWh",
+        "measured value"
+      ],
+      "number": "23",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "Beznau shutdown year",
+        "year",
+        "assumed value"
+      ],
+      "number": "2032",
+      "source": "Wikipedia Kernenergie in der Schweiz"
+    },
+    {
+      "words": [
+        "Gösgen shutdown year",
+        "year",
+        "assumed value"
+      ],
+      "number": "2040",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "Leibstadt shutdown year",
+        "year",
+        "assumed value"
+      ],
+      "number": "2045",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "Beznau production loss at shutdown",
+        "TWh",
+        "assumed value"
+      ],
+      "number": "5.5",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "Gösgen production loss at shutdown",
+        "TWh",
+        "assumed value"
+      ],
+      "number": "8",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "Leibstadt production loss at shutdown",
+        "TWh",
+        "assumed value"
+      ],
+      "number": "9.5",
+      "source": "FuW Energiezukunft Schweiz 2026"
+    },
+    {
+      "words": [
+        "lifecycle greenhouse gas emission of nuclear power",
+        "CO2eq per kWh",
+        "gram",
+        "measured value"
+      ],
+      "number": "12",
+      "source": "IPCC AR5 WG3 Annex III"
+    },
+    {
+      "words": [
+        "lifecycle greenhouse gas emission of solar photovoltaic",
+        "CO2eq per kWh",
+        "gram",
+        "measured value"
+      ],
+      "number": "48",
+      "source": "IPCC AR5 WG3 Annex III"
+    },
+    {
+      "words": [
+        "capacity factor of nuclear power",
+        "percent",
+        "assumed value"
+      ],
+      "number": "90",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "capacity factor of solar photovoltaic",
+        "Switzerland",
+        "percent",
+        "assumed value"
+      ],
+      "number": "11",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of nuclear power",
+        "USD per MWh",
+        "lower bound estimate",
+        "measured value"
+      ],
+      "number": "141",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of nuclear power",
+        "USD per MWh",
+        "upper bound estimate",
+        "measured value"
+      ],
+      "number": "220",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of solar photovoltaic",
+        "USD per MWh",
+        "lower bound estimate",
+        "measured value"
+      ],
+      "number": "38",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of solar photovoltaic",
+        "USD per MWh",
+        "upper bound estimate",
+        "measured value"
+      ],
+      "number": "217",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of onshore wind",
+        "USD per MWh",
+        "lower bound estimate",
+        "measured value"
+      ],
+      "number": "37",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "levelized cost of energy of onshore wind",
+        "USD per MWh",
+        "upper bound estimate",
+        "measured value"
+      ],
+      "number": "86",
+      "source": "Lazard LCOE+ 2025"
+    },
+    {
+      "words": [
+        "decommissioning and disposal cost",
+        "Switzerland",
+        "CHF bn",
+        "assumed value"
+      ],
+      "number": "23.9",
+      "source": "Wikipedia Kernenergie in der Schweiz"
+    },
+    {
+      "words": [
+        "shadow price",
+        "CO2 tonne",
+        "Switzerland",
+        "CHF per tonne CO2",
+        "2025",
+        "measured value"
+      ],
+      "number": "120",
+      "source": "BAFU CO2 levy 2025",
+      "note": "Swiss CO2 levy 2025, capped at CHF 120/t; used as the low anchor of the carbon shadow price. Study scenarios reach 210-760 CHF/t, hence the wide lower/upper band on the carbon benefit adder."
+    },
+    {
+      "words": [
+        "levelized cost adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.1625",
+      "source": "Lazard LCOE+ 2025",
+      "note": "Lazard nuclear LCOE midpoint (141+220)/2 = 180.5 USD/MWh, converted at ~0.90 USD/CHF -> 0.1625 CHF/kWh. Positive (cost)."
+    },
+    {
+      "words": [
+        "levelized cost adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.1225",
+      "source": "Lazard LCOE+ 2025",
+      "note": "mean minus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
+    },
+    {
+      "words": [
+        "levelized cost adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.2025",
+      "source": "Lazard LCOE+ 2025",
+      "note": "mean plus one sigma (0.04, the 141-220 USD/MWh band plus FX uncertainty)."
+    },
+    {
+      "words": [
+        "decommissioning cost adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0208",
+      "source": "Wikipedia Kernenergie in der Schweiz",
+      "note": "CHF 23.9 bn over ~1150 TWh lifetime fleet generation (23 TWh/a x 50 a). Positive (cost)."
+    },
+    {
+      "words": [
+        "decommissioning cost adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0128",
+      "source": "Wikipedia Kernenergie in der Schweiz",
+      "note": "mean minus one sigma (0.008, cost-overrun and lifetime-output uncertainty)."
+    },
+    {
+      "words": [
+        "decommissioning cost adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0288",
+      "source": "Wikipedia Kernenergie in der Schweiz",
+      "note": "mean plus one sigma (0.008; disposal estimates have historically risen)."
+    },
+    {
+      "words": [
+        "carbon benefit adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "-0.003",
+      "source": "BAFU CO2 levy 2025",
+      "note": "Avoided emissions vs a partly-fossil marginal alternative (~25 g CO2eq/kWh net benefit) at ~120 CHF/t -> ~0.003 CHF/kWh saved. Negative (benefit). Small because Swiss grid is already low-carbon."
+    },
+    {
+      "words": [
+        "carbon benefit adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "-0.007",
+      "source": "BAFU CO2 levy 2025",
+      "note": "mean minus one sigma (0.004); larger avoided-emission benefit at the upper carbon price (up to 760 CHF/t)."
+    },
+    {
+      "words": [
+        "carbon benefit adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.001",
+      "source": "BAFU CO2 levy 2025",
+      "note": "mean plus one sigma (0.004); sign flips to a small cost if PV/wind is the true counterfactual."
+    },
+    {
+      "words": [
+        "supply security adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "-0.02",
+      "source": "FuW Energiezukunft Schweiz 2026",
+      "note": "Imputed value of firm winter baseload (avoided import-price spikes / scarcity). Negative (benefit). Highly uncertain shadow value, not a market price."
+    },
+    {
+      "words": [
+        "supply security adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "-0.04",
+      "source": "FuW Energiezukunft Schweiz 2026",
+      "note": "mean minus one sigma (0.02); high imputed value of firm winter baseload."
+    },
+    {
+      "words": [
+        "supply security adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "FuW Energiezukunft Schweiz 2026",
+      "note": "mean plus one sigma (0.02); least market-grounded estimate, the band reaches near-zero benefit."
+    },
+    {
+      "words": [
+        "uranium dependency adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.005",
+      "source": "GRS Swiss nuclear overview 2024",
+      "note": "Monetised geopolitical risk premium of 100% imported fuel. Positive (cost). Fuel is a small share of nuclear LCOE, so the premium is modest."
+    },
+    {
+      "words": [
+        "uranium dependency adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "GRS Swiss nuclear overview 2024",
+      "note": "mean minus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
+    },
+    {
+      "words": [
+        "uranium dependency adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.01",
+      "source": "GRS Swiss nuclear overview 2024",
+      "note": "mean plus one sigma (0.005); geopolitical premia are hard to price, band kept as wide as the mean."
+    },
+    {
+      "words": [
+        "construction delay adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.015",
+      "source": "bluewin Swiss reactor build 2026",
+      "note": "Monetised cost of long build + delay risk (Flamanville/OL3-type overruns, capital tied up, gap bridged meanwhile). Positive (cost), partly overlapping LCOE."
+    },
+    {
+      "words": [
+        "construction delay adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "bluewin Swiss reactor build 2026",
+      "note": "mean minus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
+    },
+    {
+      "words": [
+        "construction delay adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "number": "0.03",
+      "source": "bluewin Swiss reactor build 2026",
+      "note": "mean plus one sigma (0.015); overrun distribution is heavily right-skewed, sigma set equal to mean as a rough proxy."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "fleet production loss sum",
+      "expression": "\"Swiss nuclear fleet shutdown loss\" = \"Beznau production loss at shutdown\" + \"Gösgen production loss at shutdown\" + \"Leibstadt production loss at shutdown\"",
+      "assigned": [
+        "Beznau production loss at shutdown",
+        "Gösgen production loss at shutdown",
+        "Leibstadt production loss at shutdown"
+      ]
+    },
+    {
+      "name": "social cost per kWh lower formula",
+      "expression": "\"social cost per kWh of new nuclear in Switzerland\" = \"levelized cost adder\" + \"decommissioning cost adder\" + \"carbon benefit adder\" + \"supply security adder\" + \"uranium dependency adder\" + \"construction delay adder\"",
+      "latex": "c_{\\text{soc}}^{-} = c_{\\text{LCOE}} + c_{\\text{decom}} + c_{\\text{CO}_2} + c_{\\text{sec}} + c_{\\text{U}} + c_{\\text{build}}",
+      "assigned": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder"
+      ]
+    },
+    {
+      "name": "social cost per kWh formula",
+      "expression": "\"social cost per kWh of new nuclear in Switzerland\" = \"levelized cost adder\" + \"decommissioning cost adder\" + \"carbon benefit adder\" + \"supply security adder\" + \"uranium dependency adder\" + \"construction delay adder\"",
+      "latex": "c_{\\text{soc}} = c_{\\text{LCOE}} + c_{\\text{decom}} + c_{\\text{CO}_2} + c_{\\text{sec}} + c_{\\text{U}} + c_{\\text{build}}",
+      "assigned": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder"
+      ]
+    },
+    {
+      "name": "social cost per kWh upper formula",
+      "expression": "\"social cost per kWh of new nuclear in Switzerland\" = \"levelized cost adder\" + \"decommissioning cost adder\" + \"carbon benefit adder\" + \"supply security adder\" + \"uranium dependency adder\" + \"construction delay adder\"",
+      "latex": "c_{\\text{soc}}^{+} = c_{\\text{LCOE}} + c_{\\text{decom}} + c_{\\text{CO}_2} + c_{\\text{sec}} + c_{\\text{U}} + c_{\\text{build}}",
+      "assigned": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "Beznau production loss at shutdown",
+        "Gösgen production loss at shutdown",
+        "Leibstadt production loss at shutdown",
+        "TWh",
+        "assumed value"
+      ],
+      "formula": "fleet production loss sum",
+      "words": [
+        "Swiss nuclear fleet shutdown loss",
+        "TWh"
+      ],
+      "number": "23",
+      "note": "Combined production lost when all three plants are shut down on schedule: 5.5 + 8 + 9.5 = 23 TWh, matching the ~23 TWh fleet output cited as the supply gap to be replaced."
+    },
+    {
+      "context": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder",
+        "lower bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "formula": "social cost per kWh lower formula",
+      "words": [
+        "social cost per kWh of new nuclear in Switzerland",
+        "lower bound estimate",
+        "CHF per kWh"
+      ],
+      "number": "0.0883",
+      "note": "Lower-bound scenario, every adder at mean minus one sigma: 0.1225 + 0.0128 - 0.007 - 0.04 + 0.0 + 0.0 = 0.0883 CHF/kWh."
+    },
+    {
+      "context": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder",
+        "mean",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "formula": "social cost per kWh formula",
+      "words": [
+        "social cost per kWh of new nuclear in Switzerland",
+        "mean",
+        "CHF per kWh"
+      ],
+      "number": "0.1803",
+      "note": "Expected weighted cost, every adder at its mean: 0.1625 + 0.0208 - 0.003 - 0.02 + 0.005 + 0.015 = 0.1803 CHF/kWh. The LCOE adder dominates; the supply-security and construction-delay adders carry the largest relative uncertainty."
+    },
+    {
+      "context": [
+        "levelized cost adder",
+        "decommissioning cost adder",
+        "carbon benefit adder",
+        "supply security adder",
+        "uranium dependency adder",
+        "construction delay adder",
+        "upper bound estimate",
+        "CHF per kWh",
+        "assumed value"
+      ],
+      "formula": "social cost per kWh upper formula",
+      "words": [
+        "social cost per kWh of new nuclear in Switzerland",
+        "upper bound estimate",
+        "CHF per kWh"
+      ],
+      "number": "0.2723",
+      "note": "Upper-bound scenario, every adder at mean plus one sigma: 0.2025 + 0.0288 + 0.001 + 0.0 + 0.01 + 0.03 = 0.2723 CHF/kWh."
+    }
+  ]
+}

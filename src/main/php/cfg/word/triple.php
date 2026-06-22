@@ -1763,16 +1763,19 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * get the code_id of the word type
-     * @return string the code_id of the word type
+     * get the code_id of the triple type or null if no type is set
+     * every triple must have a type (the "standard" phrase type if nothing more specific
+     * applies), so a missing type is a reported error; instead of a critical log entry the
+     * translatable message is added to the given user_message so the caller can react
+     * @param user_message $msg to collect the translatable message if the triple type is missing
+     * @return string|null the code_id of the triple type
      */
-    function type_code_id(): string
+    function type_code_id(user_message $msg = new user_message()): string|null
     {
         global $sys;
         if ($this->type_id == null) {
-            $msg = 'type for triple ' . $this->dsp_id() . ' is missing';
-            log_err($msg);
-            return $msg;
+            $msg->add(msg_id::TRIPLE_TYPE_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return null;
         } else {
             return $sys->typ_lst->phr_typ->code_id($this->type_id);
         }
@@ -2329,6 +2332,12 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->wrd_lst ' . $this->dsp_id());
         $wrd_lst = new word_list($this->get_user());
+
+        // if the triple is known by id only (e.g. loaded as a group phrase without the link
+        // columns), load its from/verb/to first so the word collection does not hit an unset side
+        if ($this->id() != 0 and $this->from_id() == 0 and $this->to_id() == 0) {
+            $this->load_by_id($this->id());
+        }
 
         // add the "from" side
         if ($this->get_from() != null) {
