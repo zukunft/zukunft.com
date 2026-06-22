@@ -201,6 +201,17 @@ class sandbox_named extends sandbox
         return $usr_msg;
     }
 
+    /**
+     * @return array parent url array extended with the name and description of this named object
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::NAME] = $this->name();
+        $url_array[url_var::DESCRIPTION] = $this->get_description();
+        return $url_array;
+    }
+
 
     /*
      * load

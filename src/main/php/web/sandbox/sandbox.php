@@ -152,6 +152,17 @@ class sandbox extends db_object
         return $usr_msg;
     }
 
+    /**
+     * @return array parent url array extended with the share and protection of this sandbox object
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::SHARE] = $this->share_id;
+        $url_array[url_var::PROTECTION] = $this->protection_id;
+        return $url_array;
+    }
+
     function view_id(): ?int
     {
         return $this->view_id;

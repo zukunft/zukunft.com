@@ -160,3 +160,37 @@ Back navigation (where to redirect after an action) is encoded as
 `url_var::BACK = '9'` is a **prefix character**, not a parameter name. Legacy
 code reading `$url_array[url_var::BACK]` directly must migrate to the
 prefixed-key pattern.
+
+## Edit-view baseline parameter convention (concurrent-edit protection)
+
+An edit view must carry, alongside each editable field, the **database value
+that field had when the view was opened**, encoded as a **`'8'`-prefixed URL
+parameter** (`url_var::PRE`). This baseline is what lets a save detect the
+*real* user change requests instead of blindly writing back the whole form.
+
+- **Right**: an edit view for word `259` emits both the live field and its
+  opening value, e.g. `?id=259&Name=USD&8Name=USD&Description=new&8Description=old`
+  — each `'8'`-prefixed key (`url_var::PRE`) is the value shown when the mask
+  was rendered
+- **Wrong**: saving every submitted field unconditionally — this overwrites
+  fields the user never touched, clobbering a concurrent change another user
+  made while the edit view was open
+
+On save, compare each submitted field against its `'8'`-prefixed baseline and
+**write only the fields that actually differ from the baseline**. A field the
+user did not change is left as it currently stands in the database, even if a
+second user changed it in the meantime. This is optimistic-concurrency / lost-
+update protection at field granularity.
+
+`url_var::PRE = '8'` is a **prefix character**, not a parameter name — the same
+prefix mechanism as `url_var::BACK = '9'`.
+
+Worked example — two users editing the same phrase:
+
+1. `user_a` opens the edit view (baseline captured as `'8'`-prefixed params)
+2. `user_b` opens the edit view and changes the phrase type
+3. `user_b` presses save; the changed phrase type is written to the database
+4. `user_a` changes the description and presses save
+5. `user_a`'s submitted values are diffed against the `'8'`-baseline from step 1;
+   only the description differs, so only the description is updated
+6. the phrase type is left as `user_b` set it — `user_a`'s save does not revert it

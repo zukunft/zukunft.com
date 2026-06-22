@@ -1301,15 +1301,88 @@ class test_base
      */
     function assert_html_page(string $test_name, string $html, string $file_path): bool
     {
-        $lib = new library();
+        return $this->assert_file(
+            $test_name, $html, test_paths::RESOURCE . $file_path . test_files::HTML, test_files::HTML);
+    }
 
-        $resource_file = $file_path . test_files::HTML;
-        $expected = $this->file($resource_file);
-        $result = $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
+    /**
+     * check if a string matches the string saved in the given test resource file
+     * this is the single place that compares a text with a file and that may
+     * overwrite the expected file if test_files::AUTO_UPDATE_TEST_FILES is true
+     *
+     * @param string $test_name the description of the test
+     * @param string $actual the actual string that should match the file content
+     * @param string $file_path the full path of the expected file including the test resource path
+     * @param string $file_type the file extension const (e.g. test_files::HTML) that selects the compare normalization; '' for an exact match
+     * @param string $session_token if set, replace the volatile session token on both sides with this fixed value before comparing (HTML snapshots); '' to compare unchanged
+     * @return bool true if the string matches the file content
+     */
+    function assert_file(
+        string $test_name,
+        string $actual,
+        string $file_path,
+        string $file_type = '',
+        string $session_token = ''
+    ): bool
+    {
+        $expected = $this->path_file($file_path);
+        if ($session_token != '') {
+            $lib = new library();
+            $actual = $lib->fix_volatile_in_html($actual, $session_token);
+            $expected = $lib->fix_volatile_in_html($expected, $session_token);
+        }
+        $result = $this->assert_typed($test_name, $actual, $expected, $file_type);
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
-            $this->update_file($resource_file, $lib->format_html($html));
+            $this->update_path_file($file_path, $this->file_content($actual, $file_type));
         }
         return $result;
+    }
+
+    /**
+     * compare the actual text with the expected text using the normalization that fits the file type
+     *
+     * @param string $test_name the description of the test
+     * @param string $actual the actual string that should match the expected text
+     * @param string $expected the expected text read from the test resource file
+     * @param string $file_type the file extension const (e.g. test_files::HTML) that selects the normalization; '' for an exact match
+     * @return bool true if the texts match once normalized
+     */
+    private function assert_typed(
+        string $test_name,
+        string $actual,
+        string $expected,
+        string $file_type
+    ): bool
+    {
+        $lib = new library();
+        if ($file_type == test_files::HTML) {
+            $actual = $lib->trim_html($actual);
+            $expected = $lib->trim_html($expected);
+        } elseif ($file_type == test_files::SQL) {
+            $actual = $lib->trim_sql($actual);
+            $expected = $lib->trim_sql($expected);
+        } elseif ($file_type == test_files::JSON) {
+            $actual = $lib->trim_json($actual);
+            $expected = $lib->trim_json($expected);
+        }
+        return $this->assert($test_name, $actual, $expected);
+    }
+
+    /**
+     * the text to write to the expected file when the actual result is accepted as the new target
+     *
+     * @param string $actual the actual result that should become the new expected target
+     * @param string $file_type the file extension const (e.g. test_files::HTML) that selects the formatting; '' to write the actual text unchanged
+     * @return string the text to store in the test resource file
+     */
+    private function file_content(string $actual, string $file_type): string
+    {
+        $content = $actual;
+        if ($file_type == test_files::HTML) {
+            $lib = new library();
+            $content = $lib->format_html($actual);
+        }
+        return $content;
     }
 
 
@@ -2455,16 +2528,9 @@ class test_base
     {
         $lib = new library();
         $created_sql = $lib->sql_format($qp->sql . $qp->call_sql . ' ' . $qp->call);
-        $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
-        $result = $this->assert_sql(
-            $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
-            $created_sql,
-            $expected_sql
-        );
-        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
-            // accept the created sql as the new expected statement
-            $this->update_file($this->assert_sql_file_path($qp->name . $file_name_ext, $dialect), $created_sql);
-        }
+        $file_path = test_paths::RESOURCE . $this->assert_sql_file_path($qp->name . $file_name_ext, $dialect);
+        $sql_test_name = $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name;
+        $result = $this->assert_file($sql_test_name, $created_sql, $file_path, test_files::SQL);
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
@@ -4847,15 +4913,24 @@ class test_base
      */
     function file(string $test_resource_path): string
     {
+        return $this->path_file(test_paths::RESOURCE . $test_resource_path);
+    }
+
+    /**
+     * the full path counterpart of file() for resources outside the test resource path (e.g. docs)
+     * @param string $file_path the full path of the file including the test resource path
+     * @return string the content of the file or '' if it does not exist
+     */
+    function path_file(string $file_path): string
+    {
         $result = '';
-        $filepath = test_paths::RESOURCE . $test_resource_path;
-        if ($this->has_file($test_resource_path)) {
-            $result = file_get_contents($filepath);
+        if (file_exists($file_path)) {
+            $result = file_get_contents($file_path);
             if ($result === false) {
-                log_err('Cannot get file from ' . $filepath);
+                log_err('Cannot get file from ' . $file_path);
             }
         } else {
-            log_err('file ' . $filepath . ' does not exist');
+            log_err('file ' . $file_path . ' does not exist');
         }
         return $result;
     }
