@@ -1125,6 +1125,9 @@ enum messages: string
     case TRIPLE_VERB_NOT_FOUND = 'verb "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
+    case TRIPLE_TYPE_MISSING = 'type for triple '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing';
     case FOR_TRIPLE = 'for triple "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';

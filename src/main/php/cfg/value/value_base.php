@@ -1547,7 +1547,11 @@ class value_base extends sandbox_value
     {
         $vars = parent::export_json($exp_typ, $do_load);
 
-        // add the source
+        // add the source name; load_by_grp above sets only the source id, so load the
+        // source object first to get its name for the export (matching the import format)
+        if ($do_load) {
+            $this->load_source();
+        }
         if ($this->source != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source->name();
         }
@@ -2297,27 +2301,25 @@ class value_base extends sandbox_value
         $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
-        // but only if any other field has been updated, update the last_update field also
-        if (!$lst->is_empty_except_internal_fields()) {
-            if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
-                if ($sc_par_lst->incl_log()) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                        $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
-                        change::FLD_FIELD_ID_SQL_TYP
-                    );
-                }
+        // so a source change (including a source-only change of an existing value) must be written too
+        if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    source_db::FLD_ID,
-                    $this->source?->name(),
-                    sql_field_type::TEXT,
-                    $sbx->source?->name(),
-                    source_db::FLD_NAME,
-                    $this->source_id(),
-                    $sbx->source?->id(),
-                    sql_field_type::INT
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
+            $lst->add_field(
+                source_db::FLD_ID,
+                $this->source?->name(),
+                sql_field_type::TEXT,
+                $sbx->source?->name(),
+                source_db::FLD_NAME,
+                $this->source_id(),
+                $sbx->source?->id(),
+                sql_field_type::INT
+            );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }

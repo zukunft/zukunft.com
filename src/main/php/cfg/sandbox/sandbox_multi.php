@@ -109,6 +109,7 @@ include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
@@ -178,6 +179,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -3372,6 +3374,18 @@ class sandbox_multi extends db_object_multi_user
         }
         if ($val_fld != null) {
             $fvt_lst_write->add($val_fld);
+        }
+
+        // add the source field if it has changed, e.g. a source-only update of an existing value,
+        // so that the update SET clause is not empty (the source is part of the changed field list,
+        // but it is not one of the value/share/protect/last_update fields added above);
+        // skip it for the user table where the source id is part of the unique key and therefore
+        // used in the WHERE clause instead of the SET clause
+        if (!in_array(source_db::FLD_ID, $fvt_lst_id->names())) {
+            $src_fld = $fvt_lst_all->get(source_db::FLD_ID, $usr_msg, true);
+            if ($src_fld != null) {
+                $fvt_lst_write->add($src_fld);
+            }
         }
 
         // sandbox fields

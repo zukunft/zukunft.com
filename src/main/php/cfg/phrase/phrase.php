@@ -1098,6 +1098,12 @@ class phrase extends combine_named
     {
         $wrd_lst = new word_list($this->get_user());
         if ($this->is_triple()) {
+            // load the triple if only its id is known, e.g. when it is the from/to of
+            // another triple, where the row mapper sets the linked phrase by id only;
+            // without this the recursive word collection would miss the from/to and type
+            if ($this->obj()->name() == '') {
+                $this->load_obj();
+            }
             $trp = $this->obj();
             $sub_wrd_lst = $trp->wrd_lst();
             foreach ($sub_wrd_lst->lst() as $wrd) {

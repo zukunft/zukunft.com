@@ -40,6 +40,7 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SERVICE . 'export' . DIRECTORY_SEPARATOR . 'json_io.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
@@ -58,6 +59,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -80,6 +82,9 @@ class a_selected_test extends test_cleanup
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
         test_files::IMPORT_PRO_CONTRA_NPP_CH,
+        test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
+        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
+        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_DE,
         //files::EDUCATION_FILE,
         //files::POVERTY_FILE,
         //files::HEALTH_FILE,
@@ -220,6 +225,15 @@ class a_selected_test extends test_cleanup
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
                 $imf->json_file($import_file, $usr, false);
             }
+
+
+            /*
+             * export
+             */
+
+            // export the data related to "nuclear" and "power" (e.g. the triple "nuclear power"
+            // and its values) to a pretty json file named after the phrases, e.g. nuclear_power.json
+            new json_io()->export_to_file($usr, ['nuclear', 'power'], test_paths::EXPORT);
 
 
             /*

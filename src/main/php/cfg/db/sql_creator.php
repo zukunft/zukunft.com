@@ -1278,9 +1278,11 @@ class sql_creator
             $par_val = $fvt->value;
             $par_typ = $fvt->type;
             // for field not yet split use the id by default
+            $use_id = false;
             if ($fvt->id != null and $fvt->type_id != null) {
                 $par_val = $fvt->id;
                 $par_typ = $fvt->type_id;
+                $use_id = true;
             }
             $par = $fvt->par_name;
             if ($fvt->value != sql::NOW) {
@@ -1339,7 +1341,10 @@ class sql_creator
                                 }
                             }
                         } else {
-                            if ($par != '' and !$usr_tbl) {
+                            // a field emitted by its id (a link field like the value source) must
+                            // bind the id parameter (_source_id), not its par_name (source_name) which
+                            // only names the value in the change log
+                            if ($par != '' and !$usr_tbl and !$use_id) {
                                 $par_name = $par;
                             } else {
                                 if (($par_name == change::FLD_OLD_ID or $par_name == change::FLD_NEW_ID) and $par_name != '') {
