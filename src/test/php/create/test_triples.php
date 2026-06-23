@@ -52,6 +52,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -235,6 +237,26 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set_name(triple_names::MATH_CONST);
         return $trp;
+    }
+
+    /**
+     * the url parameters posted by the 'Change triple' edit form on save, used by the change_triple
+     * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
+     * the share and protection ids are the defaults of a sandbox triple
+     *
+     * @param int $id the database id of the changed triple, used as the back target
+     * @return array the edit form url parameters of the pending change
+     */
+    function change_url_array(int $id): array
+    {
+        return [
+            url_var::BACK => $id,
+            url_var::NAME => triple_names::MATH_CONST,
+            url_var::DESCRIPTION => 'a confirm change test description',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
     function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple

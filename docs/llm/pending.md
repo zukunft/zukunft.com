@@ -2,6 +2,10 @@
 
 ## list of planned llm prompts
 
+## high prio
+
+check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
+
 ### workflow
 
 add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
