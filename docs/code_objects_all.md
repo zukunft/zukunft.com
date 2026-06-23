@@ -391,6 +391,7 @@ the object structure is:
 ├── frontendUi - $ui - the main html frontend application
 ├── data_objectUi - frontend cache object
 ├── url_mapperUi - create human-readable or pod exchangeable urls
+├── user_requestUi - bundle the context of a frontend user request
 ├── hist_logUi - display the past changes of an object
 ├── buttonUi - $btn - create the html code to display a button to the user
 ├── html_baseUi
