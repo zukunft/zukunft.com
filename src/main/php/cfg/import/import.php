@@ -859,7 +859,12 @@ class import
                 $usr_msg->merge($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
-            // TODO Prio 0 add json_fields::PHRASE_VALUES
+            if (key_exists(json_fields::PHRASE_VALUES, $json_array)) {
+                $phr_val_array = $json_array[json_fields::PHRASE_VALUES];
+                $this->step_start(msg_id::COUNT, value::class, count($phr_val_array), $step_time);
+                $usr_msg->merge($this->dto_get_phrase_values($phr_val_array, $dto, $usr_msg, $val_per_sec));
+                $this->step_end($dto->value_list()->count(), $val_per_sec);
+            }
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
@@ -1311,6 +1316,40 @@ class import
                 }
                 $this->display_progress($i, $per_sec, $val->dsp_id());
             }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the values of a compact phrase-values map to the data object
+     * a phrase-values map assigns a number directly to a single phrase, e.g.
+     * { "Zurich inhabitants": 421878, "Geneva inhabitants": 203856 }
+     * each entry is expanded to the per-value json that value::import_mapper expects
+     * @param array $json_array the phrase-values part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param float $per_sec the expected number of values that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_phrase_values(
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $phr_name => $number) {
+            $val_json = [
+                json_fields::WORDS => [$phr_name],
+                json_fields::NUMBER => $number
+            ];
+            $val = new value($this->usr);
+            if ($val->import_mapper($val_json, $usr_msg, $dto)) {
+                $dto->add_value($val);
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $val->dsp_id());
         }
         return $usr_msg;
     }

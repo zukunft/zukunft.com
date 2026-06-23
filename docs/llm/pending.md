@@ -76,6 +76,8 @@ mainly copy the word default view to the triple default view
 
 ### data load
 
+are there any database or object fields that are not yet filled or set by one of the json import tests
+
 
 
 ### backend
