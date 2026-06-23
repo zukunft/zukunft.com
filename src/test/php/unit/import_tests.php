@@ -112,6 +112,25 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->value_list()->count(), 4);
 
+        // the compact "value-list" field shares a context and source for many values that
+        // differ only by one phrase and the number; each of the 1653 "values" entries (across
+        // 10 lists) is expanded to one value and added to the 7 plain values of the same file
+        $test_name = 'JSON import value-list count';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_TRAVEL_SCORING_VALUE_LIST);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $t->assert($test_name, $dto->value_list()->count(), 1660);
+
+        // the compact "phrase-values" map assigns a number directly to a single phrase
+        // (here three "<city> inhabitants" triples), expanded to one value per entry
+        $test_name = 'JSON import phrase-values count';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_PHRASE_VALUES . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
+        $t->assert($test_name, $dto->value_list()->count(), 3);
+
         $test_name = 'JSON import formula count';
         $json_str = file_get_contents(test_files::IMPORT_FORMULAS . test_files::JSON);
         $json_array = json_decode($json_str, true);

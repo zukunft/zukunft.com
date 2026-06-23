@@ -115,6 +115,7 @@ class files
     CONST string IMPORT_TRIPLES = test_paths::IMPORT_UNIT . 'triples';
     CONST string IMPORT_SOURCES = test_paths::IMPORT_UNIT . 'sources';
     CONST string IMPORT_VALUES = test_paths::IMPORT_UNIT . 'values';
+    CONST string IMPORT_PHRASE_VALUES = test_paths::IMPORT_UNIT . 'phrase_values';
     CONST string IMPORT_FORMULAS = test_paths::IMPORT_UNIT . 'formulas';
     CONST string IMPORT_VIEWS = test_paths::IMPORT_UNIT . 'views';
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
