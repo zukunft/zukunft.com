@@ -9,10 +9,6 @@
 
     if the user is an admin the import can force to set the standard
 
-    TODO
-    check that the formula results matches with the import
-    check that the view returns a similar result
-
 
     This file is part of zukunft.com - calc with words
 

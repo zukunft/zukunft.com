@@ -957,6 +957,107 @@ class library
     }
 
     /**
+     * convert an HTML fragment (e.g. the result of a view *_ui display function) to markdown
+     * so an imported view can be validated against a human-readable ".md" screenshot
+     *
+     * unlike html_to_text this keeps the structure a plain text loses: a heading becomes the
+     * matching number of '#', a table becomes a markdown table and a list item becomes a '- '
+     * bullet; an icon is kept as an inline-code `css class` placeholder (valid markdown, unlike
+     * the angle-bracket form of html_to_text) and every other tag is removed while its text is kept
+     *
+     * @param string $html_string the HTML fragment to convert
+     * @return string the markdown representation of the given HTML
+     */
+    function html_to_markdown(string $html_string): string
+    {
+        // collapse the whitespace between tags so the source layout (e.g. the line breaks
+        // and indentation between table rows) cannot add blank lines that break a markdown table
+        $result = preg_replace('/>\s+</', '><', $html_string);
+        // keep an icon as an inline-code placeholder of its css class so the next tag
+        // removal does not drop it and the result stays valid markdown (an angle-bracket
+        // placeholder would be hidden as an unknown html tag) e.g.
+        // '<i class="fas fa-edit">' -> `fas fa-edit`
+        $result = preg_replace(
+            '/<i\b[^>]*\bclass="([^"]*)"[^>]*>\s*<\/i>/i',
+            '`$1`',
+            $result
+        );
+        // a heading becomes the matching number of markdown '#' on its own line
+        $result = preg_replace_callback(
+            '/<h([1-6])\b[^>]*>(.*?)<\/h\1>/is',
+            function (array $m): string {
+                return "\n" . str_repeat('#', (int)$m[1]) . ' ' . trim(strip_tags($m[2])) . "\n";
+            },
+            $result
+        );
+        // bold and emphasis become the matching markdown markers
+        $result = preg_replace('/<(?:strong|b)\b[^>]*>(.*?)<\/(?:strong|b)>/is', '**$1**', $result);
+        $result = preg_replace('/<em\b[^>]*>(.*?)<\/em>/is', '*$1*', $result);
+        // each table row becomes a markdown table row, a header row adds the '---' separator
+        $result = preg_replace_callback(
+            '/<tr\b[^>]*>(.*?)<\/tr>/is',
+            function (array $m): string {
+                return $this->html_row_to_markdown($m[1]);
+            },
+            $result
+        );
+        // a list item becomes a '- ' bullet on its own line
+        $result = preg_replace('/<li\b[^>]*>(.*?)<\/li>/is', "\n- $1", $result);
+        // a line break or block boundary becomes a newline
+        $block_tags = 'br|hr|p|div|ul|ol|section|header|footer';
+        $result = preg_replace('/<\/?(?:' . $block_tags . ')\b[^>]*>/i', "\n", $result);
+        // drop the remaining tags (the table wrapper and e.g. the link around a phrase)
+        // without a newline so the converted table rows stay contiguous, but keep the text
+        $result = strip_tags($result);
+        // turn entities (incl. the encoded icon placeholder) into their characters
+        $result = html_entity_decode($result, ENT_QUOTES | ENT_HTML5);
+        // normalise the whitespace while keeping the markdown line structure
+        return $this->trim_markdown($result);
+    }
+
+    /**
+     * convert the inner HTML of one table row (between <tr> and </tr>) to a markdown table row;
+     * a row that uses header cells (<th>) is followed by the markdown '---' separator row
+     *
+     * @param string $row_html the inner HTML of a single table row
+     * @return string the markdown table row, with a separator line after a header row
+     */
+    private function html_row_to_markdown(string $row_html): string
+    {
+        $cells = [];
+        $is_header = false;
+        preg_match_all('/<(th|td)\b[^>]*>(.*?)<\/\1>/is', $row_html, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if (strtolower($match[1]) == 'th') {
+                $is_header = true;
+            }
+            $cells[] = trim(strip_tags($match[2]));
+        }
+        $row = "\n| " . implode(' | ', $cells) . ' |';
+        if ($is_header) {
+            $row .= "\n| " . implode(' | ', array_fill(0, count($cells), '---')) . ' |';
+        }
+        return $row;
+    }
+
+    /**
+     * normalise the whitespace of a markdown text without losing the line structure:
+     * trim each line and collapse its inner spaces, then reduce a run of blank lines to one
+     *
+     * @param string $markdown the raw markdown that may contain volatile extra whitespace
+     * @return string the markdown with a stable, minimal whitespace
+     */
+    private function trim_markdown(string $markdown): string
+    {
+        $clean = [];
+        foreach (explode("\n", $markdown) as $line) {
+            $clean[] = trim(preg_replace('!\h+!', ' ', $line));
+        }
+        $result = preg_replace('/\n{3,}/', "\n\n", implode("\n", $clean));
+        return trim($result);
+    }
+
+    /**
      * replace volatile attribute values in HTML with fixed placeholders so snapshot tests stay stable
      * volatile values are attributes whose value changes on every request e.g. CSRF session tokens
      *
