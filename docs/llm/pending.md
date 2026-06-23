@@ -2,15 +2,11 @@
 
 ## list of planned llm prompts
 
+## high prio
+
+check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
+
 ### workflow
-
-for the creation of src/test/resources/web/html/workflow/change_word_wf1/wf1_show_edit_save.html replace the session id and the id of the word with a fixed test id to make the test result less volatile
-
-in src/test/php/unit_workflow/word_url_tests.php (and elsewhere) change the edit word workflow id from 1 to 2 so rename the files from 'wf1-*' to 'wf2-*'
-
-in src/test/php/unit_workflow/word_url_tests.php move the edit word workflow calls to a separate function
-
-create a class to combine the parameters '$url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);' in src/test/php/unit_workflow/word_url_tests.php to one so that the url_user_reaction call is shorter 
 
 add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
 
@@ -77,6 +73,12 @@ mainly copy the word default view to the triple default view
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
+
+add a table licences and add the field licence to the json message header with the possibility to overwrite the licence for each object
+
+add the licence to the subtitle if not the standard cc0 
+
+in the footer add dynamically other licences if used
 
 
 

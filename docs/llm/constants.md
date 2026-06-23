@@ -28,6 +28,25 @@ greppable by its constant name.
 When a needed icon is not yet declared, add a constant first (one per full css
 class string, e.g. `const string EDIT = 'fas fa-edit';`) then use it.
 
+## All filesystem paths live in a `paths.php` const file
+
+Every directory or path fragment the code uses is a constant in one of the three
+`paths.php` files, never an inline string literal:
+
+- `src/main/php/cfg/const/paths.php` — backend php script paths
+- `src/main/php/web/const/paths.php` — frontend php script paths
+- `src/test/php/const/paths.php` — test script and test resource paths
+
+Build a longer path by composing the existing consts (`self::HTML . 'workflow' .
+DIRECTORY_SEPARATOR`) so a moved folder is one edit and every path is greppable.
+
+- **Wrong**: `test_paths::HTML . 'workflow/' . $name`
+- **Right**: add `const string WORKFLOW = self::HTML . 'workflow' . DIRECTORY_SEPARATOR;`
+  then `test_paths::WORKFLOW . $name`
+
+Only a leaf file name or a folder segment built from a runtime value (e.g. a
+folder named after a test object) may stay inline at the call site.
+
 ## Link code to DB rows by `code_id` only — `*_NAME` / `*_ID` are test-only
 
 Every record in `src/main/php/shared/types/verbs.php` and

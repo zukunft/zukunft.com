@@ -433,13 +433,13 @@ workflow whose HTML drifts is caught exactly like an `object_pages` snapshot.
 Naming is fixed so the fixture for any step is mechanical to locate:
 
 - Each workflow has a **unit name** (e.g. `change_word`) and a **unit id** (e.g.
-  `1`); its folder is `<name>_wf<id>`, so `change_word` id `1` →
-  `src/test/resources/web/html/workflow/change_word_wf1/`.
+  `2`); its folder is `<name>_wf<id>`, so `change_word` id `2` →
+  `src/test/resources/web/html/workflow/change_word_wf2/`.
 - Inside that folder every page filename starts with `wf<id>` followed by the
   **cumulative** user-action names joined by `_`. The first action `show`
-  (display the test word in its default word view) gives `wf1_show`; after the
+  (display the test word in its default word view) gives `wf2_show`; after the
   further actions `edit`, `save`, `confirm` the page is
-  `wf1_show_edit_save_confirm`. Each step appends its action to the previous
+  `wf2_show_edit_save_confirm`. Each step appends its action to the previous
   step's filename — never a per-step standalone name.
 - A user action is passed as a **named const**, never a bare string, and that
   const is the **first parameter** of the `url_user_reaction` call that performs
@@ -448,12 +448,12 @@ Naming is fixed so the fixture for any step is mechanical to locate:
 
 - **Right**: the `save` step is driven by `url_user_reaction(<action const>, …)`
   and its HTML is checked with `$t->assert_html_page($test_name, $html,
-  test_paths::HTML . 'workflow/change_word_wf1/wf1_show_edit_save')` (the path is
+  test_paths::HTML . 'workflow/change_word_wf2/wf2_show_edit_save')` (the path is
   relative to the test resource root; `assert_html_page` adds the `.html`
   extension).
 - **Wrong**: asserting only the final page (skipping the intermediate
-  `wf1_show`, `wf1_show_edit`, … snapshots), passing the action as a literal
-  string, or naming a step file by its action alone (`wf1_save`) instead of the
+  `wf2_show`, `wf2_show_edit`, … snapshots), passing the action as a literal
+  string, or naming a step file by its action alone (`wf2_save`) instead of the
   cumulative path.
 
 Never overwrite an existing `workflow/` fixture to make a step pass — leave it

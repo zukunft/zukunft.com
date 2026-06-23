@@ -42,6 +42,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -68,6 +69,7 @@ class all_workflow_tests
 
             // url tests
             new word_url_tests()->run($t);
+            new triple_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow

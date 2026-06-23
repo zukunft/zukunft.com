@@ -45,6 +45,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -189,6 +191,27 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set_name(word_names::TEST_ADD);
         return $wrd;
+    }
+
+    /**
+     * the url parameters posted by the 'Change word' edit form on save, used by the change_word
+     * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
+     * the share and protection ids are the defaults of a newly added word
+     *
+     * @param int $id the database id of the changed word, used as the back target
+     * @return array the edit form url parameters of the pending change
+     */
+    function change_url_array(int $id): array
+    {
+        return [
+            url_var::BACK => $id,
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => 'a confirm change test description',
+            url_var::PLURAL => '',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
     /**

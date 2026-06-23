@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::DB . 'sql_db.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CONST . 'workflows.php';
+include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -48,49 +50,27 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_words;
-use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class word_url_tests
+class word_url_tests extends url_test_base
 {
 
-    // fixed text that replaces the volatile change log entry (add time + add user) in the snapshots
-    const string WF_CHANGE_LOG = 'system test change log entry';
-
-    function run(test_base $t): void
+    function run(test_cleanup $t): void
     {
 
-        // init
-        global $mtr;
-        $usr_msg = new user_message();
-        global $sys;
-        $ui = new frontend('view');
-        $ui->load_cache();
-        // the html renderers read the type cache from the global $ui_sys (e.g. ref->type_name and
-        // user::navbar_role); always point it at the just loaded frontend cache so the render does
-        // not depend on a stale or incomplete cache left in the global by another test (which would
-        // make the navbar user role e.g. 'system test' appear only sometimes)
-        global $ui_sys;
-        $ui_sys = $ui->dto;
-        // the change log renderer reads the date format from $ui_sys->cfg (set in http/view.php);
-        // an empty config_ui returns the shared default format so a word with history renders
-        $ui_sys->cfg = new config_ui();
-        $usr_ui = new user_ui();
-        $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
-        $usr_sys_ui = new user_ui();
-        $usr_sys_ui->set_from_json($t->usr_system->api_json(), $usr_msg);
-        $usr_msg->usr = $usr_sys_ui;
-        $t->name = 'word url->';
-
-        // start the test section (ts)
-        $ts = 'url word ';
-        $t->header($ts);
+        // load the shared frontend run state and print the section header
+        $this->init($t, 'word url->', 'url word ');
+        $ui = $this->ui;
+        $usr_ui = $this->usr;
+        $usr_sys_ui = $this->usr_sys;
+        $usr_msg = $this->usr_msg;
+        $ts = $this->ts;
 
 
         $t->subheader($ts . 'workflow');
@@ -209,8 +189,9 @@ class word_url_tests
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
+        $req = new user_request($usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
-        $result = $ui->url_user_reaction(url_var::ACTION_SAVE, $url_arr, $usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false);
+        $result = $ui->url_user_reaction(url_var::ACTION_SAVE, $url_arr, $req);
         $t->assert_text_contains($test_name, $result, $wrd_ui->name());
         // the pending change is carried into the confirm view as a url-encoded form/back parameter
         // (the human-readable change preview component is not yet implemented)
@@ -223,64 +204,8 @@ class word_url_tests
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
 
 
-        $t->subheader($ts . 'change_word workflow wf1');
-
-        // the change_word workflow (unit id 1) snapshots the html after every user action into
-        // src/test/resources/web/html/workflow/change_word_wf1/, the file name built from the
-        // cumulative actions (see docs/llm/testing.md). do_it is false so no database row is written.
-        $wf = test_paths::HTML . 'workflow/change_word_wf1/wf1';
-        $new_description = 'a confirm change test description';
-
-        // the change_word workflow runs on the 'System Test Word' added above, not on real data;
-        // resolve its current database id by name so the steps can show and edit it
-        $wrd = new word($t->usr1);
-        $wf_id = $wrd->load_by_name(word_names::TEST_ADD);
-
-        // show: display the test word in its default word view
-        $test_name = 'show';
-        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => $wf_id];
-        $result = $ui->url_user_reaction(url_var::ACTION_SHOW, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show', $wf_id, $usr_ui);
-
-        // edit: open the word edit view
-        $test_name = 'show edit';
-        $url_arr = [url_var::MASK => views::WORD_EDIT_ID, url_var::ID => $wf_id];
-        $result = $ui->url_user_reaction(url_var::ACTION_EDIT, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show_edit', $wf_id, $usr_ui);
-
-        // back: leave the edit view without a change and return to the word view
-        $test_name = 'show edit back';
-        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => $wf_id];
-        $result = $ui->url_user_reaction(url_var::ACTION_BACK, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show_edit_back', $wf_id, $usr_ui);
-
-        // save: press save on the edit form which shows the confirm change view
-        $test_name = 'show edit save';
-        $url_arr = [
-            url_var::MASK => views::WORD_EDIT_ID,
-            url_var::ID => $wf_id,
-            url_var::BACK => $wf_id,
-            url_var::NAME => word_names::TEST_ADD,
-            url_var::DESCRIPTION => $new_description,
-            url_var::PLURAL => '',
-            url_var::VIEW => '0',
-            url_var::SHARE => '1',
-            url_var::PROTECTION => '1'
-        ];
-        $result = $ui->url_user_reaction(url_var::ACTION_SAVE, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show_edit_save', $wf_id, $usr_ui);
-
-        // confirm: confirm the change in the confirm change view (do_it false so nothing is written)
-        $test_name = 'show edit save confirm';
-        $url_arr[url_var::MASK] = views::CONFIRM_EDIT_ID;
-        $result = $ui->url_user_reaction(url_var::ACTION_CONFIRM, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show_edit_save_confirm', $wf_id, $usr_ui);
-
-        // cancel: cancel the change and return to the word view
-        $test_name = 'show edit save cancel';
-        $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => $wf_id];
-        $result = $ui->url_user_reaction(url_var::ACTION_CANCEL, $url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
-        $this->assert_wf_html($t, $test_name, $result, $wf . '_show_edit_save_cancel', $wf_id, $usr_ui);
+        // the snapshot unit test only renders the steps; the workflow write test passes do_it true
+        $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, false);
 
 
         $t->subheader($ts . 'search');
@@ -305,43 +230,64 @@ class word_url_tests
     }
 
     /**
-     * snapshot a workflow step after replacing the values that are volatile between test runs
-     * (the dynamically assigned test word id, the change log add time / add user and the navbar
-     * user role) with fixed text, so the result does not change every run
+     * run the change_word edit workflow and snapshot the html after every user action
      *
-     * @param test_base $t the test environment
-     * @param string $test_name the description of the step
-     * @param string $html the rendered html of the step
-     * @param string $file_path the snapshot file path starting from the test resource path
-     * @param int $wf_id the dynamic database id of the test word to replace with the fixed id
-     * @param user_ui $usr the rendering user whose name is used to force the navbar role
+     * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
+     * write test ($do_it true): the back and cancel excursions abort the change without writing, then
+     * the change is redone and only the final confirm writes it to the database. snapshots go into
+     * src/test/resources/web/html/workflow/change_word_wf<nbr>/, the file name built from the
+     * cumulative actions (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
+     * @param bool $do_it false to only render the steps, true to also write the confirmed change
      */
-    private function assert_wf_html(
-        test_base $t, string $test_name, string $html, string $file_path, int $wf_id, user_ui $usr): void
+    private function change_word_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        // replace the volatile word / back id (assigned dynamically on insert) with a fixed test id
-        $html = str_replace(
-            ['=' . $wf_id, '"' . $wf_id . '"'],
-            ['=' . word_names::TEST_ADD_ID, '"' . word_names::TEST_ADD_ID . '"'],
-            $html);
-        // the change history of the test word shows the real change time and change user, both of
-        // which vary per run; replace each change log line (date time + user + action) with a fixed
-        // text - this covers the default view (in a container div) and the edit view (a bare line)
-        $html = preg_replace(
-            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
-            self::WF_CHANGE_LOG,
-            $html);
-        // user::navbar_role() resolves the elevated role label only when the user profile cache is
-        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
-        // so always show the system role in the navbar user menu to keep the snapshot deterministic
-        $name = $usr->name();
-        if ($name != null and $name != '') {
-            // 'system test' is the display name of the system user profile (no const exists for it)
-            $role_name = 'system test ' . $name;
-            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
-            $html = str_replace($name, $role_name, $html); // then always show the role
-        }
-        $t->assert_html_page($test_name, $html, $file_path);
+        // the change_word workflow runs on the 'System Test Word' added above, not on real data;
+        // resolve its current database id by name and set the fixed snapshot id of the test word
+        $wrd = new word($this->t->usr1);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD, $do_it);
+
+        // the pending change posted by the edit form on save and shown again in the confirm view
+        $t_wrd = new test_words($this->t);
+        $change = $t_wrd->change_url_array($this->wf_id);
+
+        // show: display the test word in its default word view
+        $this->assert_workflow_step(url_var::ACTION_SHOW, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SHOW;
+
+        // edit: open the word edit view
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // back: leave the edit view without a change and return to the word view (no write)
+        $this->assert_workflow_step(url_var::ACTION_BACK, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_BACK;
+
+        // edit: re-open the edit view to make the change
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press save on the edit form which shows the confirm change view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_EDIT_ID, $change);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // cancel: discard the pending change in the confirm view and return to the word view (no write)
+        $this->assert_workflow_step(url_var::ACTION_CANCEL, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_CANCEL;
+
+        // edit: re-open the edit view to redo the change
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press save again which shows the confirm change view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_EDIT_ID, $change);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // confirm: confirm the pending change; with $do_it true the change is written to the database
+        $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_EDIT_ID, $change);
     }
 
 }
