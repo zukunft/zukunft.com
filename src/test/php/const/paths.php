@@ -55,6 +55,7 @@ class paths
     const string UNIT_UI = TEST_PHP_PATH . 'unit_ui' . DIRECTORY_SEPARATOR;        // for the unit tests that create JSON messages for the frontend
     const string UNIT_WRITE = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;  // for the unit tests that save to database (and cleanup the test data after completion)
     const string UNIT_WORKFLOW = TEST_PHP_PATH . 'unit_workflow' . DIRECTORY_SEPARATOR;  // to check the url based user workflow
+    const string UNIT_WRITE_WORKFLOW = TEST_PHP_PATH . 'unit_write_workflow' . DIRECTORY_SEPARATOR;  // to check the url based user workflow incl. db write
     const string UNIT_INT = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
     const string DEV = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency
@@ -101,6 +102,8 @@ class paths
     const string HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
     // for the snapshots of the url based user workflow tests
     const string WORKFLOW = self::HTML . 'workflow' . DIRECTORY_SEPARATOR;
+    // for the snapshots of the url based user workflow write tests (do_it true, change persisted)
+    const string WORKFLOW_WRITE = self::HTML . 'workflow_write' . DIRECTORY_SEPARATOR;
 
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;

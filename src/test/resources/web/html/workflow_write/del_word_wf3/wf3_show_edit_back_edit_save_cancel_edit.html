@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Confirm adding - zukunft.com
+            System Test Word - Delete word - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=54&9m=54&9k=System%20Test%20Word&9o=test%20description%20added%20to%20the%20word%20via%20import&9lp=&9d=0&9s=1&9sp=1&9z=2&9mo=2">
+                                    <a href="/http/view.php?m=31&id=4&9m=4&9id=999&9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9m=54&9k=System%20Test%20Word&9o=test%20description%20added%20to%20the%20word%20via%20import&9lp=&9d=0&9s=1&9sp=1&9z=2&9mo=2">
+                                    <a href="/http/view.php?m=30&9m=4&9id=999&9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -63,37 +63,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=en">
+                                    <a href="/http/view.php?m=4&q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=en_us">
+                                    <a href="/http/view.php?m=4&q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=de" title="German">
+                                    <a href="/http/view.php?m=4&q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=fr" title="French">
+                                    <a href="/http/view.php?m=4&q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=es" title="Spanish">
+                                    <a href="/http/view.php?m=4&q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=4&q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=54&q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=4&q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -114,12 +114,12 @@
                                     system test zukunft.com system test
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=64&9m=54&9k=System%20Test%20Word&9o=test%20description%20added%20to%20the%20word%20via%20import&9lp=&9d=0&9s=1&9sp=1&9z=2&9mo=2">
+                                    <a href="/http/view.php?m=64&9m=4&9id=999&9z=0">
                                         logout
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=54&9k=System%20Test%20Word&9o=test%20description%20added%20to%20the%20word%20via%20import&9lp=&9d=0&9s=1&9sp=1&9z=2&9mo=2">
+                                    <a href="/settings?9m=4&9id=999&9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -131,79 +131,55 @@
         </nav>
         <main class="main-container">
             <h4>
-                Confirm adding
+                Delete word
             </h4>
-            <form action="/http/view.php" id="confirm_add">
-                <input class="form-control" type="hidden" name="m" id="mask" value="54">
-                <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="9" id="back" value="0">
+            <form action="/http/view.php" id="word_del">
+                <input class="form-control" type="hidden" name="m" id="mask" value="4">
+                <input class="form-control" type="hidden" name="id" id="id" value="999">
+                <input class="form-control" type="hidden" name="9" id="back" value="999">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
-                <div class="row col-md-8">
-                    word
+                <div class="row col-md-12">
+                    System Test Word
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-8">
-                        <label for="name">
-                            Name
-                        </label>
-                        <input class="form-control" type="text" name="k" id="name">
-                    </div>
-                    <div class="change-preview">
-                        <table class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Field
-                                    </th>
-                                    <th>
-                                        From
-                                    </th>
-                                    <th>
-                                        To
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td>
-                                    Name
-                                </td>
-                                <td>
-                                    <span class="grey">
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="changed">
-                                        System Test Word
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Description
-                                </td>
-                                <td>
-                                    <span class="grey">
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="changed">
-                                        test description added to the word via import
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    a confirm change test description
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
-                    <a href="/http/view.php?m=90" class="btn btn-space col-1 btn-outline-secondary">
+                    <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
-                        save
+                    <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
+                        delete
                     </button>
                 </div>
             </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Used 0 times
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Values
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        References
+                    </h5>
+                    System Test Word is ranked by time of discovery
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Changes
+                    </h5>
+                    system test change log entry
+                </div>
+            </div>
         </main>
         <footer class="site-footer">
             <p>

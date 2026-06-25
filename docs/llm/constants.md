@@ -15,6 +15,31 @@ When a constant from another class cannot yet be referenced (missing `use` or
 include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME`
 comment so the gap is tracked.
 
+## Pass a class name as `::class`, never as a string literal
+
+When a value identifies a class — a parameter, a `match`/`switch` key, a lookup
+key into a class→x map — use the `::class` constant of the class, never the bare
+name string. The `::class` form is checked by the IDE and updated automatically
+on a rename, so renaming a class is one edit instead of a hunt for every `'word'`
+string. Derive the short name from it with `library::class_to_name($dbo::class)`
+rather than writing the noun out.
+
+- **Wrong** — bare class noun, silently breaks if the class is renamed:
+```php
+$name = 'word';
+$base = $views->object_to_base('triple');
+```
+- **Right** — the class constant, follows the rename:
+```php
+$name = library::class_to_name($dbo::class);   // 'word'
+$base = $views->object_to_base(library::class_to_name($dbo::class));
+```
+
+A `match`/`switch` that maps a class to something keys on `$obj::class` (the FQN)
+where it can; the few places that must compare against the short noun (e.g. a map
+keyed by `class_to_name` output) are the documented exception and should carry a
+`// TODO` to key on `::class` instead.
+
 ## Use a named icon constant — no inline icon literals
 
 Every frontend icon css class string (Font Awesome `fas`/`far`/`fab` or any

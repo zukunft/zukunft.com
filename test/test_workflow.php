@@ -46,6 +46,7 @@ include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UTILS . 'all_tests.php';
 
 include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'all_write_workflow_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -84,8 +85,8 @@ if ($db_con->is_open()) {
             all_workflow_tests::run($t, $t->usr1, $usr_msg);
 
             // run the workflow db write tests
-            //$t_workflow = new all_write_workflow_tests();
-            //$t_workflow->run($t, $t->usr1, $usr_msg);
+            $t_workflow = new all_write_workflow_tests();
+            $t_workflow->run($t, $t->usr1, $usr_msg);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

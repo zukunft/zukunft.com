@@ -184,7 +184,7 @@ class word_url_tests extends url_test_base
         // the test word is admin protected, so render it as the system (admin) user
         $t_wrd = new test_words($t);
         $wrd_ui = $t_wrd->word_dsp();
-        $wrd_ui->set_description('a confirm change test description');
+        $wrd_ui->set_description(word_names::TEST_CHANGE_COM);
         $url_arr = $wrd_ui->to_url_array();
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
@@ -243,7 +243,7 @@ class word_url_tests extends url_test_base
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
      * @param bool $do_it false to only render the steps, true to also write the confirmed change
      */
-    private function change_word_workflow(int $wf_nbr, bool $do_it = false): void
+    protected function change_word_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the change_word workflow runs on the 'System Test Word' added above, not on real data;
         // resolve its current database id by name and set the fixed snapshot id of the test word
@@ -261,8 +261,10 @@ class word_url_tests extends url_test_base
         $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SHOW;
 
         // edit: open the word edit view
-        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $html = $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
         $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+        // the next back step presses this edit view's cancel button, so it must point to the word view
+        $this->assert_button_url($html, views::WORD_ID, $this->step_path);
 
         // back: leave the edit view without a change and return to the word view (no write)
         $this->assert_workflow_step(url_var::ACTION_BACK, views::WORD_ID);
@@ -273,8 +275,10 @@ class word_url_tests extends url_test_base
         $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
 
         // save: press save on the edit form which shows the confirm change view
-        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_EDIT_ID, $change);
+        $html = $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_EDIT_ID, $change);
         $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+        // the next cancel step presses this confirm view's cancel button, so it must point to the word view
+        $this->assert_button_url($html, views::WORD_ID, $this->step_path);
 
         // cancel: discard the pending change in the confirm view and return to the word view (no write)
         $this->assert_workflow_step(url_var::ACTION_CANCEL, views::WORD_ID);
@@ -290,6 +294,11 @@ class word_url_tests extends url_test_base
 
         // confirm: confirm the pending change; with $do_it true the change is written to the database
         $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_EDIT_ID, $change);
+
+        // a write run must actually persist the change, so check the new description in the database
+        if ($do_it) {
+            $this->assert_word_in_db('change_word workflow has changed the word', word_names::TEST_CHANGE_COM);
+        }
     }
 
     /**
@@ -303,7 +312,7 @@ class word_url_tests extends url_test_base
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 1 for wf1
      * @param bool $do_it false to only render the steps, true to also write the new word
      */
-    private function add_word_workflow(int $wf_nbr, bool $do_it = false): void
+    protected function add_word_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_word workflow creates a new word, so there is no object id to load yet
         $this->wf_id = 0;
@@ -344,6 +353,11 @@ class word_url_tests extends url_test_base
 
         // confirm: confirm the new word; with $do_it true the word is written to the database
         $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_ADD_ID, $add);
+
+        // a write run must actually create the word, so check it is now in the database
+        if ($do_it) {
+            $this->assert_word_in_db('add_word workflow has written the word', word_names::TEST_ADD_COM);
+        }
     }
 
     /**
@@ -357,7 +371,7 @@ class word_url_tests extends url_test_base
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 3 for wf3
      * @param bool $do_it false to only render the steps, true to also delete the word
      */
-    private function del_word_workflow(int $wf_nbr, bool $do_it = false): void
+    protected function del_word_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the del_word workflow runs on the 'System Test Word' added above;
         // resolve its current database id by name and set the fixed snapshot id of the test word
@@ -400,6 +414,39 @@ class word_url_tests extends url_test_base
 
         // confirm: confirm the deletion; with $do_it true the word is removed from the database
         $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_DEL_ID);
+
+        // a write run must actually delete the word, so check it is no longer in the database
+        if ($do_it) {
+            $this->assert_word_not_in_db('del_word workflow has removed the word');
+        }
+    }
+
+    /**
+     * check that the workflow test word exists in the database with the expected description, used by
+     * the add and change write workflows to verify the confirmed step was actually persisted
+     *
+     * @param string $test_name the description of the assertion
+     * @param string $description the expected description of the test word in the database
+     */
+    private function assert_word_in_db(string $test_name, string $description): void
+    {
+        $wrd = new word($this->t->usr1);
+        $wrd->load_by_name(word_names::TEST_ADD);
+        $this->t->assert($test_name, $wrd->name(), word_names::TEST_ADD);
+        $this->t->assert($test_name, $wrd->description, $description);
+    }
+
+    /**
+     * check that the workflow test word no longer exists in the database, used by the delete write
+     * workflow to verify the confirmed deletion was actually persisted
+     *
+     * @param string $test_name the description of the assertion
+     */
+    private function assert_word_not_in_db(string $test_name): void
+    {
+        $wrd = new word($this->t->usr1);
+        $wrd->load_by_name(word_names::TEST_ADD);
+        $this->t->assert_false($test_name, $wrd->id() > 0);
     }
 
 }

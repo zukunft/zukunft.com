@@ -10,60 +10,19 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The most relevant rule of all
+## The two rules above all others
 
-> Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter,
-> mais quand il n'y a plus rien à retrancher.
-> — Antoine de Saint-Exupéry
-
-Perfection is reached not when there is nothing left to add, but when there is
-nothing left to remove. Prefer the smallest change that does the job: fewer
-lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
-it out — every rule below is subordinate to this one.
-
-## The second most relevant rule
-
-Write code a human reads at a glance. A line carries **one logical element —
-three at most**: one assignment, one call, one condition. When a line packs more,
-split it into named steps. Fewer lines is still better (don't pad a simple
-expression across many lines), so the goal is the *fewest* lines on which *each*
-line still reads at a glance — minimise lines subject to that limit, never by
-cramming.
-
-Wrong — five logical elements on one line (ternary, two getters, two calls, a
-concat); the reader has to unpack it:
-
-```php
-$title = $trp->get_from() != null ? $trp->get_from()->name_link() . ' ' . $trp->get_verb()->name_link() : '';
-```
-
-Right — each line does one thing, named for what it is:
-
-```php
-$from = $trp->get_from();
-$title = '';
-if ($from != null) {
-    $title = $from->name_link() . ' ' . $trp->get_verb()->name_link();
-}
-```
-
-Better still — a small function is not a sin. Pushing a two-step chain like
-`get_verb()->name_link()` behind a name on the owning class turns the call site
-into one self-describing element and lets the next reader (and every other call
-site) skip the detail:
-
-```php
-$title = $from->name_link() . ' ' . $trp->verb_name_link();
-// or, if the verb has no other kind of link, just $trp->verb_link()
-```
-
-So the cure for a crowded line is often a well-named helper, not only a local
-variable — naming the *operation* beats inlining it. (This is the same DRY move
-as the always-on "a 3+ step call chain belongs behind a function on the owning
-class" rule below; it costs a method but each call site reads at a glance.)
-
-The companion limit — function bodies fit on one screen page (~50 lines) — is in
-the always-on rules below and detailed in `docs/llm/structure.md`.
+1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
+   lines, functions, assertions, parameters. When in doubt, leave it out — every
+   rule below is subordinate to this one. (Saint-Exupéry: perfection is reached
+   not when there is nothing left to add, but when there is nothing left to
+   remove.)
+2. **One logical element per line — three at most** (one assignment, one call,
+   one condition). When a line packs more, split it into named steps or push a
+   chain behind a well-named helper; but don't pad a simple expression across
+   many lines either — minimise lines subject to each line still reading at a
+   glance. Worked examples and the companion ~50-line function-body limit:
+   `docs/llm/structure.md`.
 
 ## Build / test / commit
 
@@ -90,6 +49,7 @@ detail file. Order is by how often they fire, not importance.
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`

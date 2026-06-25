@@ -76,6 +76,7 @@ class url_var
     // sees no MASK and falls back to the start page (see frontend.php:666 + the empty-view
     // guard at frontend.php:686).
     const string MASK = 'm'; // the internal database id of the view used to format the object
+    const string ORIGIN_MASK = 'mo'; // the edit/add/del mask a confirm view was opened from, so the confirm view knows the real object type (the confirm mask itself does not encode it)
     const string MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
     const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
 

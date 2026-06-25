@@ -53,6 +53,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -90,6 +91,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
@@ -1767,15 +1769,34 @@ class system_form extends component
     }
 
     /**
+     * the cancel button of an edit / add / del / confirm view that returns to the object's own view
+     *
+     * @param int $msk_id the database id of the view that shows the cancel button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the shown object (the same
+     *                         union as dsp_entries passes), used for the object id of the return url
+     * @param array $url_array the url of the shown view; its origin mask (the edit/add/del mask a
+     *                         confirm view was opened from) is used to find the base view because the
+     *                         confirm mask itself does not encode the object type
      * @return string the html code for a form cancel button
      */
-    function button_cancel(int $msk_id, int|string|null $id): string
+    function button_cancel(
+        int                                                   $msk_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        array                                                 $url_array = []
+    ): string
     {
         $html = new html_base();
         $views = new views();
-        $msk_ci = $views->id_to_code_id($msk_id);
-        $base_ci = $views->system_to_base($msk_ci);
+        $base_ci = $views->system_to_base($views->id_to_code_id($msk_id));
+        // a generic confirm view does not encode the object type in its own mask, so derive the base
+        // view from the originating edit mask (a word edit returns to the word view, a triple to the
+        // triple view) reusing the same edit/add/del -> base mapping as the edit view cancel
+        $origin_msk_id = (int)($url_array[url_var::ORIGIN_MASK] ?? 0);
+        if ($base_ci == '' and $origin_msk_id != 0) {
+            $base_ci = $views->system_to_base($views->id_to_code_id($origin_msk_id));
+        }
         $base_id = $views->code_id_to_id($base_ci);
+        $id = $dbo?->id() ?? 0;
         $result = '';
         $url = api::HOST_SAME . api::MAIN_SCRIPT_EXT
             . url_var::PAR . url_var::MASK . url_var::EQ . $base_id;

@@ -206,7 +206,7 @@ class test_words extends test_objects
         return [
             url_var::BACK => $id,
             url_var::NAME => word_names::TEST_ADD,
-            url_var::DESCRIPTION => 'a confirm change test description',
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
             url_var::PLURAL => '',
             url_var::VIEW => '0',
             url_var::SHARE => share_types::PUBLIC_ID,

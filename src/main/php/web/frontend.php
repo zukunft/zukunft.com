@@ -625,6 +625,10 @@ class frontend
         $confirm_view = $this->confirm_view_id($view, $step);
         if ($confirm_view != 0) {
             $url[url_var::MASK] = $confirm_view;
+            // the confirm mask does not encode the object type, so remember the originating edit mask
+            // (e.g. the triple edit view) so the confirm view shows the real object and its cancel
+            // button returns to the object's own default view instead of the generic word view
+            $url[url_var::ORIGIN_MASK] = $view;
             $url[url_var::STEP] = url_var::STEP_CONFIRMED;
             return $url;
         }
@@ -725,6 +729,13 @@ class frontend
 
         // select the main object to display
         $dbo = $this->view_id_to_dbo_ui($view_id);
+        // a confirm view does not encode the object type in its own mask, so build the object from the
+        // originating edit mask (preserved as the origin mask) to make the confirm view and its cancel
+        // button object-type-aware (a word returns to the word view, a triple to the triple view)
+        if (in_array($view_id, views::CONFIRM_MASKS_IDS)
+            and array_key_exists(url_var::ORIGIN_MASK, $url_array)) {
+            $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::ORIGIN_MASK]);
+        }
 
         // save form action
         // if the save bottom has been pressed

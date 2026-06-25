@@ -41,6 +41,7 @@ include_once test_paths::CONST . 'workflows.php';
 
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -108,7 +109,10 @@ class url_test_base
         $wf = workflows::WF_PREFIX . $wf_nbr;
         $this->t->subheader($this->ts . $name . ' workflow ' . $wf);
         $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it);
-        $this->step_path = test_paths::WORKFLOW
+        // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
+        // folder so the read-only and write snapshots of the same workflow stay separate
+        $base_path = $do_it ? test_paths::WORKFLOW_WRITE : test_paths::WORKFLOW;
+        $this->step_path = $base_path
             . $name . workflows::NAME_SEP . $wf . DIRECTORY_SEPARATOR . $wf;
     }
 
@@ -123,8 +127,9 @@ class url_test_base
      * @param string $step the user reaction action const e.g. url_var::ACTION_SHOW
      * @param int $msk_id the view shown by this step e.g. views::WORD_EDIT_ID
      * @param array $url_par the extra url parameters of this step e.g. the fields of a pending change
+     * @return string the rendered html so the caller can check the button urls against the next step
      */
-    protected function assert_workflow_step(string $step, int $msk_id, array $url_par = []): void
+    protected function assert_workflow_step(string $step, int $msk_id, array $url_par = []): string
     {
         // an add workflow has no object id yet (wf_id 0), so the id is only added for existing objects
         $url_arr = [url_var::MASK => $msk_id];
@@ -135,6 +140,27 @@ class url_test_base
         $test_name = $this->step_path . workflows::NAME_SEP . $step;
         $result = $this->ui->url_user_reaction($step, $url_arr, $this->req);
         $this->assert_wf_html($test_name, $result);
+        return $result;
+    }
+
+    /**
+     * check that the cancel button shown in the rendered html points to the view and object id that
+     * the workflow navigates to next, so the simulated back/cancel step really follows the url that
+     * the rendered button would call instead of a hand-built url that may drift from it
+     *
+     * @param string $html the rendered html that shows the cancel button
+     * @param int $msk_id the view the cancel button is expected to return to e.g. views::WORD_ID
+     * @param string $test_name the description of the step
+     */
+    protected function assert_button_url(string $html, int $msk_id, string $test_name): void
+    {
+        $hit = [];
+        $pattern = '/href="[^"]*[?&]' . url_var::MASK . '=(\d+)&' . url_var::ID
+            . '=(\d+)"[^>]*' . html_base::BS_BTN_CANCEL . '/';
+        preg_match($pattern, $html, $hit);
+        $btn_target = ($hit[1] ?? '') . workflows::NAME_SEP . ($hit[2] ?? '');
+        $exp_target = $msk_id . workflows::NAME_SEP . $this->wf_id;
+        $this->t->assert($test_name, $btn_target, $exp_target);
     }
 
     /**

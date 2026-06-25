@@ -6794,7 +6794,7 @@
     \-- form_formula_all_fields
         \-- system_form - create the html code for the form flag to set that the formula needs all fields to be set
     \-- button_cancel
-        \-- system_form - @return string the html code for a form cancel button
+        \-- system_form - the cancel button of an edit / add / del / confirm view that returns to the object's own view
     \-- button_save
         \-- system_form - @return string the html code for a form save button
     \-- button_confirm

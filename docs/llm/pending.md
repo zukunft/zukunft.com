@@ -8,10 +8,6 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
-
-in the 'System Test Word - Confirm update - zukunft.com' page show a translatable 'before' and 'after' as a lable to the old and new word name
-
 update the confirm change view to shows the user changes (based on the '8' prefixed values) and call the page when in the word edit view save is pressed
 
 complete the 'to_url_array' function for all word fields e.g. the sandbox fields and add a TODO that this should be moved the test object because it will probably only be used for testing. But this can only be decided after the workflows are complete 

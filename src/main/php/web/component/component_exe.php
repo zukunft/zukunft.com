@@ -308,7 +308,7 @@ class component_exe extends component
             component_types::EXPRESSION_LATEX_LINK => $base->expression_latex_link($dbo),
 
             // buttons
-            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
+            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_array),
             component_types::FORM_BUTTON_SAVE => $form->button_save(),
             component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
