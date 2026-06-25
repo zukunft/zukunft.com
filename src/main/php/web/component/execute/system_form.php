@@ -1798,6 +1798,16 @@ class system_form extends component
     }
 
     /**
+     * @return string the html code for a form confirm button (used by the confirm change views)
+     */
+    function button_confirm(): string
+    {
+        $html = new html_base();
+        global $mtr;
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_CONFIRM));
+    }
+
+    /**
      * @return string the html code for a form save button
      */
     function button_del(): string
@@ -1860,6 +1870,15 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->row_right();
+    }
+
+    /**
+     * @return string to start a new row and center the following components (e.g. the confirm buttons)
+     */
+    function row_center(): string
+    {
+        $html = new html_base();
+        return $html->row_center();
     }
 
     /**

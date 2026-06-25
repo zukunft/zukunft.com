@@ -37,6 +37,12 @@ class styles
 
     // styles used
     const string STYLE_GREY = 'grey';
+    // light blue between the grey old value and the link blue to highlight a changed value
+    const string STYLE_CHANGED = 'changed';
+    // centered change preview table whose width follows the config 'side width' screen breakpoints
+    const string CHANGE_PREVIEW = 'change-preview';
+    // the change impact line centered below the change preview table
+    const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';
     const string STYLE_USER = 'user_specific';
     const string STYLE_RIGHT = 'right_ref';

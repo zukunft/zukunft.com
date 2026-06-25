@@ -205,7 +205,9 @@ class word_url_tests extends url_test_base
 
 
         // the snapshot unit test only renders the steps; the workflow write test passes do_it true
+        $this->add_word_workflow(workflows::WF_ADD_WORD_NBR, false);
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, false);
+        $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, false);
 
 
         $t->subheader($ts . 'search');
@@ -288,6 +290,116 @@ class word_url_tests extends url_test_base
 
         // confirm: confirm the pending change; with $do_it true the change is written to the database
         $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_EDIT_ID, $change);
+    }
+
+    /**
+     * run the add_word workflow and snapshot the html after every user action
+     *
+     * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
+     * write test ($do_it true): the back and cancel excursions abort the add without writing, then the
+     * add is redone and only the final confirm writes the new word. snapshots go into
+     * src/test/resources/web/html/workflow/add_word_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 1 for wf1
+     * @param bool $do_it false to only render the steps, true to also write the new word
+     */
+    private function add_word_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the add_word workflow creates a new word, so there is no object id to load yet
+        $this->wf_id = 0;
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+        $this->wf_start($wf_nbr, workflows::WF_ADD_WORD, $do_it);
+
+        // the new word fields posted by the add form on save and shown again in the confirm add view
+        $t_wrd = new test_words($this->t);
+        $add = $t_wrd->add_url_array();
+
+        // edit: open the empty add word form
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_ADD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // back: leave the add form without adding and return to the start view (no write)
+        $this->assert_workflow_step(url_var::ACTION_BACK, views::START_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_BACK;
+
+        // edit: re-open the add form to enter the new word
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_ADD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press save on the add form which shows the confirm add view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_ADD_ID, $add);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // cancel: discard the new word in the confirm view and return to the start view (no write)
+        $this->assert_workflow_step(url_var::ACTION_CANCEL, views::START_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_CANCEL;
+
+        // edit: re-open the add form to redo the new word
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_ADD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press save again which shows the confirm add view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_ADD_ID, $add);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // confirm: confirm the new word; with $do_it true the word is written to the database
+        $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_ADD_ID, $add);
+    }
+
+    /**
+     * run the del_word workflow and snapshot the html after every user action
+     *
+     * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
+     * write test ($do_it true): the back and cancel excursions abort the deletion without writing,
+     * then the deletion is redone and only the final confirm removes the word. snapshots go into
+     * src/test/resources/web/html/workflow/del_word_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 3 for wf3
+     * @param bool $do_it false to only render the steps, true to also delete the word
+     */
+    private function del_word_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the del_word workflow runs on the 'System Test Word' added above;
+        // resolve its current database id by name and set the fixed snapshot id of the test word
+        $wrd = new word($this->t->usr1);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD, $do_it);
+
+        // show: display the test word in its default word view
+        $this->assert_workflow_step(url_var::ACTION_SHOW, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SHOW;
+
+        // edit: open the delete confirmation form
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_DEL_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // back: leave the delete form without deleting and return to the word view (no write)
+        $this->assert_workflow_step(url_var::ACTION_BACK, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_BACK;
+
+        // edit: re-open the delete form
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_DEL_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press delete on the form which shows the confirm delete view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_DEL_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // cancel: discard the deletion in the confirm view and return to the word view (no write)
+        $this->assert_workflow_step(url_var::ACTION_CANCEL, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_CANCEL;
+
+        // edit: re-open the delete form
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_DEL_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press delete again which shows the confirm delete view
+        $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_DEL_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // confirm: confirm the deletion; with $do_it true the word is removed from the database
+        $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_DEL_ID);
     }
 
 }

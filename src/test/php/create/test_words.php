@@ -210,6 +210,31 @@ class test_words extends test_objects
             url_var::PLURAL => '',
             url_var::VIEW => '0',
             url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID,
+            // the '8'-prefixed opening db values so the confirm change view can show the old value;
+            // only the description differs from the new value, so the diff shows one changed row
+            url_var::PRE . url_var::NAME => word_names::TEST_ADD,
+            url_var::PRE . url_var::DESCRIPTION => word_names::TEST_ADD_COM,
+            url_var::PRE . url_var::PLURAL => ''
+        ];
+    }
+
+    /**
+     * the url parameters posted by the 'Add word' form on save, used by the add_word workflow test to
+     * show the new word in the confirm add view (docs/llm/testing.md); the new word has no id yet, so
+     * unlike change_url_array there is no back target
+     * TODO Prio 2 create the array based on a object
+     *
+     * @return array the add form url parameters of the new word
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => word_names::TEST_ADD_COM,
+            url_var::PLURAL => '',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
             url_var::PROTECTION => protection_types::NO_PROTECT_ID
         ];
     }

@@ -310,6 +310,7 @@ class component_exe extends component
             // buttons
             component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
             component_types::FORM_BUTTON_SAVE => $form->button_save(),
+            component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
             component_types::FORM_BUTTON_IMPORT => $form->button_import(),
             component_types::FORM_BUTTON_EXPORT => $form->button_export(),
@@ -323,10 +324,10 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title(),
-            component_types::FORM_CLASS => $preview->popup_class(),
-            component_types::FORM_CHANGES => $preview->popup_changes(),
-            component_types::FORM_IMPACT => $preview->popup_impact(),
+            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($this->ui_msg_code_id, $dbo),
+            component_types::FORM_CLASS => $preview->popup_class($dbo),
+            component_types::FORM_CHANGES => $preview->popup_changes($url_array),
+            component_types::FORM_IMPACT => $preview->popup_impact($url_array),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
@@ -355,6 +356,7 @@ class component_exe extends component
             // internal and hidden components used for formatting
             component_types::ROW_START => $form->row_start(),
             component_types::ROW_RIGHT => $form->row_right(),
+            component_types::ROW_CENTER => $form->row_center(),
             component_types::ROW_END => $form->row_end(),
 
             // components for user views

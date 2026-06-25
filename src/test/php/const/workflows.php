@@ -43,12 +43,23 @@ class workflows
     // fixed text that replaces the volatile change log entry (add time + add user) in the snapshots
     const string WF_CHANGE_LOG = 'system test change log entry';
 
-    // the change_word workflow name used for the snapshot folder and the test subheader
-    const string WF_CHANGE_WORD = 'change_word';
     // the snapshot file name prefix that is followed by the workflow id e.g. 'wf2'
     const string WF_PREFIX = 'wf';
+
+    // the add_word workflow name used for the snapshot folder and the test subheader
+    const string WF_ADD_WORD = 'add_word';
+    // the id of the current add_word workflow; increase it to add the next workflow snapshot set
+    const int WF_ADD_WORD_NBR = 1;
+
+    // the change_word workflow name used for the snapshot folder and the test subheader
+    const string WF_CHANGE_WORD = 'change_word';
     // the id of the current change_word workflow; increase it to add the next workflow snapshot set
     const int WF_CHANGE_WORD_NBR = 2;
+
+    // the del_word workflow name used for the snapshot folder and the test subheader
+    const string WF_DEL_WORD = 'del_word';
+    // the id of the current del_word workflow; increase it to add the next workflow snapshot set
+    const int WF_DEL_WORD_NBR = 3;
 
     // the change_triple workflow name used for the snapshot folder and the test subheader
     const string WF_CHANGE_TRIPLE = 'change_triple';

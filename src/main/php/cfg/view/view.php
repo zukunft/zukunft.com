@@ -418,7 +418,8 @@ class view extends sandbox_code_id
             foreach ($this->cmp_lnk_lst->lst() as $lnk) {
                 $type_code_id = $lnk->get_component()->type_code_id();
                 if ($type_code_id == component_types::ROW_START
-                    or $type_code_id == component_types::ROW_RIGHT) {
+                    or $type_code_id == component_types::ROW_RIGHT
+                    or $type_code_id == component_types::ROW_CENTER) {
                     $open++;
                 } elseif ($type_code_id == component_types::ROW_END) {
                     $open--;

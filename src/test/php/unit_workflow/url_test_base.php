@@ -126,7 +126,12 @@ class url_test_base
      */
     protected function assert_workflow_step(string $step, int $msk_id, array $url_par = []): void
     {
-        $url_arr = [url_var::MASK => $msk_id, url_var::ID => $this->wf_id] + $url_par;
+        // an add workflow has no object id yet (wf_id 0), so the id is only added for existing objects
+        $url_arr = [url_var::MASK => $msk_id];
+        if ($this->wf_id > 0) {
+            $url_arr[url_var::ID] = $this->wf_id;
+        }
+        $url_arr = $url_arr + $url_par;
         $test_name = $this->step_path . workflows::NAME_SEP . $step;
         $result = $this->ui->url_user_reaction($step, $url_arr, $this->req);
         $this->assert_wf_html($test_name, $result);
@@ -142,11 +147,14 @@ class url_test_base
      */
     protected function assert_wf_html(string $test_name, string $html): void
     {
-        // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id
-        $html = str_replace(
-            ['=' . $this->wf_id, '"' . $this->wf_id . '"'],
-            ['=' . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-            $html);
+        // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id;
+        // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
+        if ($this->wf_id > 0) {
+            $html = str_replace(
+                ['=' . $this->wf_id, '"' . $this->wf_id . '"'],
+                ['=' . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
+                $html);
+        }
         // the change history of the test object shows the real change time and change user, both of
         // which vary per run; replace each change log line (date time + user + action) with a fixed
         // text - this covers the default view (in a container div) and the edit view (a bare line)

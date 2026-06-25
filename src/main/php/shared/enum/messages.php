@@ -741,7 +741,7 @@ enum messages: string
         . '" created';
     case VIEW_ROWS_NOT_CLOSED = 'the rows of the view "'
         . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
-        . '" are not balanced: a row opened with row_start or row_right is not closed with a matching row_end';
+        . '" are not balanced: a row opened with row_start, row_right or row_center is not closed with a matching row_end';
     case VIEW_COMPONENT_POS_DOUBLE = 'the component position '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' is used more than once in the view "'
@@ -1515,6 +1515,11 @@ enum messages: string
     case LOG_DEL = 'deleted';
     case LOG_LINK = 'linked';
     case LOG_TO = 'to';
+    // the change preview table column headers and the impact label
+    case CHANGE_TBL_FIELD = 'change_tbl_field';
+    case CHANGE_TBL_FROM = 'change_tbl_from';
+    case CHANGE_TBL_TO = 'change_tbl_to';
+    case POPUP_IMPACT = 'popup_impact';
 
     // import
     case IMPORT_JSON = 'import';
@@ -1935,6 +1940,7 @@ enum messages: string
 
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
+    case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
     case BUTTON_VIEW_OPEN = 'button_view_open';
     case BUTTON_VIEW_SWITCH = 'button_view_switch';

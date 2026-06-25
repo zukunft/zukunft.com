@@ -1,0 +1,775 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-24 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "incentive",
+    "trust",
+    "long-term orientation",
+    "resource curse"
+  ],
+  "description": "Knowledge captured from a dialogue on whether incentives can be scaled back without eroding cooperation. Measured/sourced findings are tagged 'measured value'; the conversation's own conjectures are tagged 'assumed value' so the most load-bearing assumptions can later be surfaced for scrutiny.",
+  "words": [
+    {
+      "name": "incentive",
+      "description": "something that motivates or encourages an agent to act in a particular way.",
+      "refs": [
+        {
+          "name": "Incentive",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "trust",
+      "description": "the willingness of one party to become vulnerable to another party on the presumption that the other will act in a beneficial manner.",
+      "refs": [
+        {
+          "name": "Trust_(social_science)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cooperation",
+      "description": "the process of groups of organisms working or acting together for common, mutual, or some underlying benefit.",
+      "refs": [
+        {
+          "name": "Cooperation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "motivation",
+      "description": "the reason or reasons one has for acting or behaving in a particular way.",
+      "refs": [
+        {
+          "name": "Motivation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "intrinsic",
+      "description": "behaviour driven by internal rewards, arising from within the individual.",
+      "refs": [
+        {
+          "name": "Motivation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "crowding",
+      "description": "in motivation theory, the effect by which an external intervention undermines (crowds out) or strengthens (crowds in) intrinsic motivation.",
+      "refs": [
+        {
+          "name": "Motivation_crowding_theory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "fine",
+      "description": "a monetary penalty imposed as punishment for an offence.",
+      "refs": [
+        {
+          "name": "Fine_(penalty)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "the quantity of payment given by one party to another in return for goods or services.",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "blood",
+      "refs": [
+        {
+          "name": "Blood_donation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "donation",
+      "refs": [
+        {
+          "name": "Blood_donation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "commons",
+      "description": "the cultural and natural resources accessible to all members of a society, including natural materials such as air, water, and a habitable earth.",
+      "refs": [
+        {
+          "name": "Commons",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "common-pool",
+      "description": "a resource whose size or characteristics make it costly to exclude potential beneficiaries from obtaining benefits from its use.",
+      "refs": [
+        {
+          "name": "Common-pool_resource",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "resource",
+      "description": "a source or supply from which a benefit is produced."
+    },
+    {
+      "name": "governance",
+      "refs": [
+        {
+          "name": "Governance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reciprocity",
+      "description": "in social psychology, a social norm of responding to a positive action with another positive action.",
+      "refs": [
+        {
+          "name": "Reciprocity_(social_and_political_philosophy)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "curse"
+    },
+    {
+      "name": "institution",
+      "description": "a humanly devised structure of rules and norms that shape and constrain social behaviour.",
+      "refs": [
+        {
+          "name": "Institution",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "sovereign",
+      "refs": [
+        {
+          "name": "Sovereign_wealth_fund",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wealth",
+      "refs": [
+        {
+          "name": "Sovereign_wealth_fund",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fund"
+    },
+    {
+      "name": "time",
+      "refs": [
+        {
+          "name": "Time_preference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "preference",
+      "refs": [
+        {
+          "name": "Time_preference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "long-term"
+    },
+    {
+      "name": "orientation"
+    },
+    {
+      "name": "agriculture",
+      "refs": [
+        {
+          "name": "Agriculture",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "seasonality",
+      "description": "the presence of variations that occur at specific regular intervals less than a year, such as seasonal weather.",
+      "refs": [
+        {
+          "name": "Seasonality",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "latitude",
+      "description": "a geographic coordinate that specifies the north-south position of a point on the surface of a body.",
+      "refs": [
+        {
+          "name": "Latitude",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "confounder",
+      "description": "a variable that influences both the dependent variable and independent variable, causing a spurious association.",
+      "refs": [
+        {
+          "name": "Confounding",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "enlightenment",
+      "description": "an intellectual and philosophical movement that dominated Europe in the 17th and 18th centuries, with global influences.",
+      "refs": [
+        {
+          "name": "Age_of_Enlightenment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "autonomy",
+      "description": "the capacity of an agent to act in accordance with self-given principles; in Kant, the ground of moral obligation.",
+      "refs": [
+        {
+          "name": "Autonomy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "deontology",
+      "refs": [
+        {
+          "name": "Deontology",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "consequentialism",
+      "refs": [
+        {
+          "name": "Consequentialism",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hysteresis",
+      "description": "the dependence of the state of a system on its history; a path-dependent persistence of an effect after its cause is removed.",
+      "refs": [
+        {
+          "name": "Hysteresis",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "equilibrium"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "trap"
+    },
+    {
+      "name": "Cuba",
+      "description": "a country comprising the island of Cuba in the Caribbean.",
+      "refs": [
+        {
+          "name": "Cuba",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q241",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "casa-particular",
+      "description": "private family lodging offered to travellers in Cuba, legalised as a form of private enterprise.",
+      "refs": [
+        {
+          "name": "Casa_particular",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Norway",
+      "description": "a Nordic country in Northern Europe.",
+      "refs": [
+        {
+          "name": "Norway",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q20",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Nauru",
+      "description": "an island country in Micronesia, in the southwestern Pacific Ocean.",
+      "refs": [
+        {
+          "name": "Nauru",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q697",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Russia",
+      "description": "a country spanning Eastern Europe and North Asia.",
+      "refs": [
+        {
+          "name": "Russia",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "phosphate",
+      "refs": [
+        {
+          "name": "Phosphate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "transition",
+      "description": "the process of change from a centrally planned to a market economy.",
+      "refs": [
+        {
+          "name": "Post-Soviet_states",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "open-source",
+      "description": "software released under a licence in which the copyright holder grants the rights to use, study, change, and distribute the software and its source code.",
+      "refs": [
+        {
+          "name": "Open-source_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "scaling"
+    },
+    {
+      "name": "measured value",
+      "description": "qualifier marking a value as empirically measured / sourced from a study rather than assumed."
+    },
+    {
+      "name": "assumed value",
+      "description": "qualifier marking a value as an assumption or conjecture to be verified later, not an established measurement."
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "qualitative"
+    },
+    {
+      "name": "supported"
+    },
+    {
+      "name": "contested"
+    }
+  ],
+  "triples": [
+    {
+      "name": "intrinsic motivation",
+      "from": "motivation",
+      "verb": "kind of",
+      "to": "intrinsic",
+      "description": "motivation arising from within the individual rather than from external reward."
+    },
+    {
+      "name": "crowding effect",
+      "from": "effect",
+      "verb": "of",
+      "to": "crowding",
+      "description": "the effect by which an external incentive displaces intrinsic motivation."
+    },
+    {
+      "name": "incentive can crowd out intrinsic motivation",
+      "from": "incentive",
+      "verb": "can cause",
+      "to": "crowding effect",
+      "description": "the claim that introducing an external incentive can reduce (crowd out) pre-existing intrinsic motivation."
+    },
+    {
+      "name": "fine is a price",
+      "from": "fine",
+      "verb": "kind of",
+      "to": "price",
+      "description": "the interpretation that a monetary penalty reframes a moral obligation as a purchasable service, so it may increase rather than deter the penalised behaviour."
+    },
+    {
+      "name": "blood donation",
+      "from": "donation",
+      "verb": "of",
+      "to": "blood"
+    },
+    {
+      "name": "common-pool resource",
+      "from": "resource",
+      "verb": "kind of",
+      "to": "common-pool"
+    },
+    {
+      "name": "commons governance",
+      "from": "governance",
+      "verb": "of",
+      "to": "commons",
+      "description": "self-organised management of a common-pool resource by its users."
+    },
+    {
+      "name": "commons governance without market or state",
+      "from": "commons governance",
+      "verb": "can use",
+      "to": "reciprocity",
+      "description": "the finding that user communities can sustainably govern common-pool resources through reciprocity and graduated sanctions, without privatisation or central control."
+    },
+    {
+      "name": "resource curse",
+      "from": "curse",
+      "verb": "of",
+      "to": "resource",
+      "description": "the phenomenon that countries with an abundance of non-renewable natural resources tend to have less economic growth and worse development outcomes than countries with fewer resources.",
+      "refs": [
+        {
+          "name": "Resource_curse",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "sovereign wealth",
+      "from": "wealth",
+      "verb": "of",
+      "to": "sovereign"
+    },
+    {
+      "name": "sovereign wealth fund",
+      "from": "fund",
+      "verb": "of",
+      "to": "sovereign wealth",
+      "description": "a state-owned investment fund that invests in real and financial assets, often funded by commodity revenue.",
+      "refs": [
+        {
+          "name": "Sovereign_wealth_fund",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "resource curse conditional on weak institutions",
+      "from": "resource curse",
+      "verb": "can cause",
+      "to": "institution",
+      "description": "the thesis that resource wealth harms growth only where institutions are weak (grabber-friendly), and helps where institutions are strong (producer-friendly)."
+    },
+    {
+      "name": "time preference",
+      "from": "preference",
+      "verb": "of",
+      "to": "time",
+      "description": "the current relative valuation placed on receiving a good at an earlier date compared with receiving it at a later date.",
+      "refs": [
+        {
+          "name": "Time_preference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "long-term orientation",
+      "from": "orientation",
+      "verb": "kind of",
+      "to": "long-term"
+    },
+    {
+      "name": "agricultural origin of time preference",
+      "from": "time preference",
+      "verb": "can cause",
+      "to": "agriculture",
+      "description": "the thesis that pre-industrial agro-climatic conditions favouring higher return to agricultural investment generated a persistent long-term orientation."
+    },
+    {
+      "name": "seasonality causes long-term orientation",
+      "from": "long-term orientation",
+      "verb": "can cause",
+      "to": "seasonality",
+      "description": "CONJECTURE: that the need to plan half a year ahead under marked seasons teaches longer-term planning. Held in the dialogue as weakly supported."
+    },
+    {
+      "name": "latitude as confounder",
+      "from": "confounder",
+      "verb": "of",
+      "to": "latitude",
+      "description": "the methodological caveat that latitude correlates with seasonality, disease burden, soils and early state formation alike, so a seasonality-geduld correlation may be spurious."
+    },
+    {
+      "name": "low trust",
+      "from": "trust",
+      "verb": "kind of",
+      "to": "low"
+    },
+    {
+      "name": "low-trust equilibrium",
+      "from": "equilibrium",
+      "verb": "of",
+      "to": "low trust",
+      "description": "a self-sustaining social state in which low generalised trust makes cooperation costly, which keeps trust low."
+    },
+    {
+      "name": "trust erosion hysteresis",
+      "from": "low-trust equilibrium",
+      "verb": "can cause",
+      "to": "hysteresis",
+      "description": "CONJECTURE: that once trust erodes, restoring the prior incentive does not restore cooperation, because the return path differs from the outbound path."
+    },
+    {
+      "name": "incentive reduction can raise trust",
+      "from": "incentive",
+      "verb": "can cause",
+      "to": "trust",
+      "description": "the claim (supported by crowding-out evidence) that reducing external incentives can increase intrinsic motivation and trust rather than reduce cooperation."
+    },
+    {
+      "name": "transition speed",
+      "from": "speed",
+      "verb": "of",
+      "to": "transition"
+    },
+    {
+      "name": "fast transition can destroy intermediary structures",
+      "from": "transition speed",
+      "verb": "can cause",
+      "to": "trust",
+      "description": "the diagnosis that the failure of post-Soviet liberalisation was driven by the speed and sequence of reform destroying intermediary trust networks, not by liberalisation as such."
+    },
+    {
+      "name": "Cuba casa particular",
+      "from": "casa-particular",
+      "verb": "is part of",
+      "to": "Cuba",
+      "description": "the rapid emergence of a private lodging sector after legalisation, cited as recovery from SUPPRESSED (not eroded) cooperation, since family trust networks stayed intact."
+    },
+    {
+      "name": "Nauru phosphate",
+      "from": "phosphate",
+      "verb": "is part of",
+      "to": "Nauru",
+      "description": "phosphate mining that funded a rent-based economy; when the resource was exhausted, a revivable cooperation/work structure was lacking."
+    },
+    {
+      "name": "Norway sovereign wealth fund",
+      "from": "sovereign wealth fund",
+      "verb": "is part of",
+      "to": "Norway",
+      "description": "the systematically built fund cited as the exception requiring explanation: oil met an already-consolidated rule-of-law state."
+    },
+    {
+      "name": "open-source cooperation",
+      "from": "cooperation",
+      "verb": "uses",
+      "to": "open-source",
+      "description": "large-scale valuable work sustained without a price incentive, carried by meaning, reputation and reciprocity."
+    },
+    {
+      "name": "scaling problem of commons governance",
+      "from": "commons governance without market or state",
+      "verb": "can cause",
+      "to": "scaling",
+      "description": "OPEN QUESTION: whether group-sanction-based cooperation that works in small units scales to anonymous mass societies; transparency proposed as a substitute for mutual acquaintance."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Gneezy Rustichini 2000",
+      "description": "Gneezy U, Rustichini A (2000). A Fine Is a Price. Journal of Legal Studies 29(1):1-17. Field experiment: a fine for late daycare pickup increased lateness and the effect persisted after removal.",
+      "url": "https://doi.org/10.1086/468061"
+    },
+    {
+      "name": "Titmuss 1970",
+      "description": "Titmuss RM (1970). The Gift Relationship: From Human Blood to Social Policy. London: Allen & Unwin. Argues paying for blood donation can reduce voluntary supply and quality.",
+      "url": "https://www.worldcat.org/oclc/94598"
+    },
+    {
+      "name": "Ostrom 1990",
+      "description": "Ostrom E (1990). Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge University Press. Documents long-lived user-governed common-pool resource regimes, e.g. Toerbel (Wallis) Alpine commons.",
+      "url": "https://doi.org/10.1017/CBO9780511807763"
+    },
+    {
+      "name": "Galor Oezak 2016",
+      "description": "Galor O, Oezak O (2016). The Agricultural Origins of Time Preference. American Economic Review 106(10):3064-3103. Pre-industrial agro-climatic return to investment predicts contemporary long-term orientation.",
+      "url": "https://doi.org/10.1257/aer.20150020"
+    },
+    {
+      "name": "Mehlum Moene Torvik 2006",
+      "description": "Mehlum H, Moene K, Torvik R (2006). Institutions and the Resource Curse. The Economic Journal 116(508):1-20. The resource curse operates through the quality of institutions.",
+      "url": "https://doi.org/10.1111/j.1468-0297.2006.01045.x"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "fine is a price",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "Gneezy Rustichini 2000",
+      "note": "Boolean: empirically observed that the fine increased the penalised behaviour (crowding out). 1 = effect observed."
+    },
+    {
+      "words": [
+        "incentive can crowd out intrinsic motivation",
+        "measured value",
+        "supported"
+      ],
+      "number": "1",
+      "source": "Titmuss 1970",
+      "note": "Crowding-out of intrinsic motivation by monetary incentive; supported by Titmuss (blood) and Gneezy/Rustichini (fines)."
+    },
+    {
+      "words": [
+        "commons governance without market or state",
+        "measured value",
+        "supported"
+      ],
+      "number": "1",
+      "source": "Ostrom 1990",
+      "note": "User-governed commons sustained for centuries (Toerbel/Wallis from the 13th c.) without market or state."
+    },
+    {
+      "words": [
+        "agricultural origin of time preference",
+        "measured value",
+        "supported"
+      ],
+      "number": "1",
+      "source": "Galor Oezak 2016",
+      "note": "Pre-industrial agro-climatic return to investment predicts present long-term orientation; selection/adaptation/learning over long horizons."
+    },
+    {
+      "words": [
+        "resource curse conditional on weak institutions",
+        "measured value",
+        "supported"
+      ],
+      "number": "1",
+      "source": "Mehlum Moene Torvik 2006",
+      "note": "Resource curse mediated by institutional quality (grabber- vs producer-friendly)."
+    },
+    {
+      "words": [
+        "seasonality causes long-term orientation",
+        "assumed value",
+        "qualitative"
+      ],
+      "number": "0.4",
+      "note": "CONJECTURE of the dialogue. ~0.4 = weak-to-moderate subjective confidence. Partially backed by Galor/Oezak but confounded by latitude and contradicted by the Russia counter-case (harsh seasons, no fund-mentality). Candidate for closer testing."
+    },
+    {
+      "words": [
+        "latitude as confounder",
+        "assumed value",
+        "qualitative"
+      ],
+      "number": "0.7",
+      "note": "Methodological caveat: latitude co-varies with almost everything, so a seasonality-patience correlation is likely partly spurious. ~0.7 subjective confidence that confounding is material."
+    },
+    {
+      "words": [
+        "trust erosion hysteresis",
+        "assumed value",
+        "qualitative"
+      ],
+      "number": "0.5",
+      "note": "CONJECTURE: eroded (not merely suppressed) trust does not recover by restoring the prior incentive. Cuba (suppressed -> fast recovery) does NOT confirm it; Russia/1990s and Nauru are the candidate confirming cases. Distinguishing measure to watch: state of intermediary trust networks, not 'apathy yes/no'. High-leverage assumption to verify."
+    },
+    {
+      "words": [
+        "incentive reduction can raise trust",
+        "assumed value",
+        "supported"
+      ],
+      "number": "0.6",
+      "note": "Stronger than a bare conjecture because crowding-out evidence (Titmuss, Gneezy/Rustichini) backs the mechanism; but its scaling to society-wide incentive reduction is untested. ~0.6 subjective confidence."
+    },
+    {
+      "words": [
+        "fast transition can destroy intermediary structures",
+        "assumed value",
+        "supported"
+      ],
+      "number": "0.65",
+      "note": "Diagnosis that speed/sequence, not liberalisation per se, drove the post-Soviet failure; firsthand and 'Red Notice' as qualitative testimony. Supports gradualism. ~0.65 subjective confidence."
+    },
+    {
+      "words": [
+        "scaling problem of commons governance",
+        "assumed value",
+        "contested"
+      ],
+      "number": "0.5",
+      "note": "OPEN: whether small-unit reciprocity scales to anonymous mass societies. Transparency-as-substitute-for-acquaintance is the proposed but unproven bridge — the locus where the zukunft.com infrastructure would act."
+    }
+  ]
+}

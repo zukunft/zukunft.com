@@ -10,7 +10,7 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
 
-in the 'System Test Word - Confirm update - zukunft.com' page show a translateable 'before' and 'after' as a lable to the old and new word name
+in the 'System Test Word - Confirm update - zukunft.com' page show a translatable 'before' and 'after' as a lable to the old and new word name
 
 update the confirm change view to shows the user changes (based on the '8' prefixed values) and call the page when in the word edit view save is pressed
 

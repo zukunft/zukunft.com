@@ -1988,6 +1988,18 @@ class html_base
     }
 
     /**
+     * @return string html code to combine the next elements to one row and center them
+     */
+    function row_center(): string
+    {
+        $result = $this->lf();
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= ' justify-content-center">';
+        return $result;
+    }
+
+    /**
      * @return string html code to end a row div
      */
     function row_end(): string
