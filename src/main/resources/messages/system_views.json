@@ -5920,15 +5920,15 @@
       "components": [
         {
           "position": "1",
-          "name": "system form hidden back stack"
+          "name": "system form title confirm update"
         },
         {
           "position": "2",
-          "name": "system form hidden confirm status"
+          "name": "system form hidden back stack"
         },
         {
           "position": "3",
-          "name": "system form title confirm update"
+          "name": "system form hidden confirm status"
         },
         {
           "position": "4",
@@ -5969,15 +5969,15 @@
       "components": [
         {
           "position": "1",
-          "name": "system form hidden back stack"
+          "name": "system form title confirm delete"
         },
         {
           "position": "2",
-          "name": "system form hidden confirm status"
+          "name": "system form hidden back stack"
         },
         {
           "position": "3",
-          "name": "system form title confirm delete"
+          "name": "system form hidden confirm status"
         },
         {
           "position": "4",

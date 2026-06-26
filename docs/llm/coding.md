@@ -48,6 +48,7 @@ detail file. Order is by how often they fire, not importance.
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
+- Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
@@ -117,7 +118,7 @@ noun definitions: `docs/llm/architecture.md`.
 
 Detail and worked examples: `docs/llm/testing.md`.
 
-- Write the test first. Every function has ≥1 positive and ≥1 negative test; a happy-path-only function counts as untested.
+- Write the tests first — before the function body — for *every* function (including new ones). Cover *every* feature (each behaviour / branch / meaningful input), each with a positive *and* a negative test; one happy-path test, or testing only some features, counts as untested. → `docs/llm/testing.md`
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
@@ -133,7 +134,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
 - A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf2_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
-- Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
+- Never modify an existing file under `src/test/resources/` (e.g. the `workflow/*.html` snapshots and `_url.txt` siblings); only *add* new resource files. The committed baseline is the developer's audit trail — they diff it against the new test output to see exactly what your code change altered; rewriting it to match your output erases that signal. A failing snapshot stays failing for the existing scripts or a human reviewer to regenerate. → `docs/llm/testing.md`
 - Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 

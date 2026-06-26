@@ -1,0 +1,24 @@
+GET
+http://localhost/http/view.php?m=55&id=999&k=System+Test+Word&o=a+confirm+change+test+description&lp=&d=0&s=1&sp=1&8k=System+Test+Word&8o=test+description+added+to+the+word+via+import&8lp=&9m=90&9id=999&z=2
+/http/view.php?m=55&id=999&k=System+Test+Word&o=a+confirm+change+test+description&lp=&d=0&s=1&sp=1&8k=System+Test+Word&8o=test+description+added+to+the+word+via+import&8lp=&9m=90&9id=999&z=2
+/http/view.php?mask_id=confirm_update&id=999&name=System+Test+Word&description=a+confirm+change+test+description&view_id=0&share=1&protection=1&step=confirmed&
+{
+    "mask_id": "confirm_update",
+    "id": "999",
+    "name": "System Test Word",
+    "description": "a confirm change test description",
+    "plural": "",
+    "view_id": "0",
+    "share": "1",
+    "protection": "1",
+    "step": "confirmed",
+    "url_part_original_data": {
+        "name": "System Test Word",
+        "description": "test description added to the word via import",
+        "plural": ""
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
+}

@@ -59,6 +59,11 @@ class word_write_url_tests extends word_url_tests
         // load the shared frontend run state and print the section header
         $this->init($t, 'word url write->', 'url write word ');
 
+        // remove any test word left over from a previous run (including the user sandbox rows) so the
+        // add workflow starts from a clean state; an add to an already existing word keeps its old
+        // description, which would fail the 'has written the word' check
+        $this->cleanup_test_words($t);
+
         // run the same three workflows as word_url_tests but with do_it true so each confirmed step is
         // persisted: add creates the test word, change modifies it, del removes it again - the add must
         // run first because the change and delete workflows load the word it created by name
@@ -70,11 +75,27 @@ class word_write_url_tests extends word_url_tests
         $t->subheader($this->ts . 'cleanup');
 
         // cleanup - fallback delete in case a workflow did not persist as expected
+        $this->cleanup_test_words($t);
+
+    }
+
+    /**
+     * TODO Prio 2 review
+     * delete the workflow test words (and their user sandbox rows) from the database so a run is not
+     * affected by leftovers of a previous run
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function cleanup_test_words(test_cleanup $t): void
+    {
         $wrd = new word($t->usr1);
         foreach (word_names::TEST_WORDS as $wrd_name) {
+            // write_named_cleanup removes the usr1 / usr2 sandbox rows; the reserved test word is owned
+            // by the system user (it is added with the system message user), so remove that row too -
+            // otherwise it survives between runs and a later add keeps its old (changed) description
             $t->write_named_cleanup($wrd, $wrd_name);
+            $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);
         }
-
     }
 
 }

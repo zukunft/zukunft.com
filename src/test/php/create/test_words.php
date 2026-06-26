@@ -196,15 +196,14 @@ class test_words extends test_objects
     /**
      * the url parameters posted by the 'Change word' edit form on save, used by the change_word
      * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
-     * the share and protection ids are the defaults of a newly added word
+     * the share and protection ids are the defaults of a newly added word; the object id and the back
+     * target are added by the workflow step, not here
      *
-     * @param int $id the database id of the changed word, used as the back target
      * @return array the edit form url parameters of the pending change
      */
-    function change_url_array(int $id): array
+    function change_url_array(): array
     {
         return [
-            url_var::BACK => $id,
             url_var::NAME => word_names::TEST_ADD,
             url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
             url_var::PLURAL => '',

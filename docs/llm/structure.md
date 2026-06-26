@@ -100,6 +100,41 @@ foreach ($frm_lst as $frm) {
 that makes the rest of the body meaningless. Everything else flows to the single
 return; loops have no equivalent exception.
 
+## Validate inside the function, not before the call
+
+A function validates its own input — as a top-of-function guard clause (see the
+exception above) — instead of the caller checking the arguments first. The call
+site stays one short line, and the check lives in exactly one place that every
+caller (now and future) goes through, so a precondition can never be forgotten at
+a new call site.
+
+```php
+// Wrong — the caller validates, so the check is duplicated at every call site and
+// the call is no longer a single short statement
+if ($id > 0 and $name != '') {
+    $wrd = $this->load_and_link($id, $name);
+}
+
+// Right — load_and_link guards its own preconditions; the call stays short
+$wrd = $this->load_and_link($id, $name);
+
+function load_and_link(int $id, string $name): ?word
+{
+    $result = null;
+    if ($id > 0 and $name != '') {
+        // ... the real work ...
+    }
+    return $result;
+}
+```
+
+This is the same move as "push a 3+ step chain behind a function" in
+`docs/llm/dry.md`: the validation is part of the operation, so it belongs with the
+operation, not scattered across the callers. If a check is genuinely the caller's
+business (it changes which function the caller calls, not merely whether the call
+is safe), it stays with the caller — but a precondition of *this* function lives
+*in* this function.
+
 ## Log the unexpected branch instead of returning silently
 
 When the single return collapses several early `return ''` / `return null`

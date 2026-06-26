@@ -289,8 +289,8 @@ class component_exe extends component
             component_types::FORM_PREVIEW => $page->preview(),
 
             // hidden - only used for formatting without functional behaviour
-            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
-            component_types::FORM_HIDDEN_STEP => $form->form_confirm(),
+            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $url_array),
+            component_types::FORM_HIDDEN_STEP => $form->form_confirm($msk_id),
 
             // admin - components that only admin user can use
             component_types::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
@@ -324,7 +324,7 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($this->ui_msg_code_id, $dbo),
+            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
             component_types::FORM_CHANGES => $preview->popup_changes($url_array),
             component_types::FORM_IMPACT => $preview->popup_impact($url_array),

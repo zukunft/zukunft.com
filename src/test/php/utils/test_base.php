@@ -3680,7 +3680,6 @@ class test_base
      *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
-    private
     function write_named_cleanup_one(
         sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
         user                                                               $usr,

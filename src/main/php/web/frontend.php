@@ -625,10 +625,17 @@ class frontend
         $confirm_view = $this->confirm_view_id($view, $step);
         if ($confirm_view != 0) {
             $url[url_var::MASK] = $confirm_view;
-            // the confirm mask does not encode the object type, so remember the originating edit mask
-            // (e.g. the triple edit view) so the confirm view shows the real object and its cancel
-            // button returns to the object's own default view instead of the generic word view
-            $url[url_var::ORIGIN_MASK] = $view;
+            // the confirm mask does not encode the object type and the confirm view has no back target
+            // of its own, so set the back target to the object's own default view + id (derived from the
+            // originating edit mask); the confirm view uses it to show the real object, and cancel and
+            // the post-write redirect return to it via the standard '9'-prefixed back mechanism
+            // TODO Prio 2 review
+            $views = new views();
+            $url[url_var::BACK . url_var::MASK] =
+                $views->code_id_to_id($views->system_to_base($views->id_to_code_id($view)));
+            if ($id != 0) {
+                $url[url_var::BACK . url_var::ID] = $id;
+            }
             $url[url_var::STEP] = url_var::STEP_CONFIRMED;
             return $url;
         }
@@ -723,19 +730,18 @@ class frontend
             $view_code_id = $msk?->code_id ?? '';
         } else {
             $msk = $this->dto->typ_lst_cache->get_view($view);
-            $view_id = $msk->id();
-            $view_code_id = $view;
+            if ($msk == null) {
+                log_err('view ' . $view . ' not found');
+                $view_id = views::START_ID;
+                $view_code_id = views::START_CODE;
+            } else {
+                $view_id = $msk->id();
+                $view_code_id = $view;
+            }
         }
 
-        // select the main object to display
-        $dbo = $this->view_id_to_dbo_ui($view_id);
-        // a confirm view does not encode the object type in its own mask, so build the object from the
-        // originating edit mask (preserved as the origin mask) to make the confirm view and its cancel
-        // button object-type-aware (a word returns to the word view, a triple to the triple view)
-        if (in_array($view_id, views::CONFIRM_MASKS_IDS)
-            and array_key_exists(url_var::ORIGIN_MASK, $url_array)) {
-            $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::ORIGIN_MASK]);
-        }
+        // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
+        $dbo = $this->dbo_for_url($view_id, $url_array);
 
         // save form action
         // if the save bottom has been pressed
@@ -1365,8 +1371,7 @@ class frontend
         bool         $do_it
     ): array
     {
-        $next_url = html_base::url_from_back($url_array);
-        $dbo = $this->view_id_to_dbo_ui($view);
+        $dbo = $this->dbo_for_url($view, $url_array);
         $dbo->url_mapper($url_array, $usr_msg, $dto);
 
         if ($do_it) {
@@ -1383,12 +1388,47 @@ class frontend
             }
         }
 
-        // on success: go back to the calling page or to the start view
-        if ($next_url !== '') {
-            parse_str(parse_url($next_url, PHP_URL_QUERY) ?? '', $next_array);
-            return $next_array;
+        // on success go back to the calling page: the confirm view set the object's own default view +
+        // id as the '9'-prefixed back target, so the user returns to the changed object
+        return $this->url_to_back_url($url_array);
+    }
+
+    /**
+     * the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
+     * the next page (e.g. the object's own view after a confirmed change); falls back to the start view
+     * if the url carries no back target
+     *
+     * @param array $url_array the url with the '9'-prefixed back targets (e.g. 9m for the view, 9id for the id)
+     * @return array the previous page as a standard url array e.g. [m => 90, id => 159]
+     */
+    function url_to_back_url(array $url_array): array
+    {
+        $back_url = html_base::url_par_from_back_part($url_array);
+        if (empty($back_url)) {
+            $back_url = [url_var::MASK => views::START_ID];
         }
-        return [url_var::MASK => views::START_ID];
+        return $back_url;
+    }
+
+    /**
+     * // TODO Prio 2 review
+     * the main frontend object to display or change for a view: normally the object of the requested
+     * view, but for a confirm view (whose mask does not encode the object type) the object of the
+     * '9'-prefixed back target view (the object's own default view), so the confirm view and its write
+     * are object-type-aware (a word change writes a word, a triple change a triple)
+     *
+     * @param int $view_id the requested view id
+     * @param array $url_array the url that may carry the '9'-prefixed back target
+     * @return sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui the matching frontend object
+     */
+    private function dbo_for_url(int $view_id, array $url_array): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
+    {
+        $dbo = $this->view_id_to_dbo_ui($view_id);
+        if (in_array($view_id, views::CONFIRM_MASKS_IDS)
+            and array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
+            $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
+        }
+        return $dbo;
     }
 
     private function exe_process_step(

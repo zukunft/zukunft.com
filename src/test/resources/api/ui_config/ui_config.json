@@ -4,7 +4,7 @@
     "user_id": 1,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-24T23:36:30+00:00",
+    "timestamp": "2026-06-26T14:09:05+00:00",
     "body": {
         "user_profiles": [
             {
@@ -18551,31 +18551,31 @@
                 "components": [
                     {
                         "link_id": 834,
-                        "id": 122,
-                        "name": "system form hidden back stack",
-                        "description": "field that contains the stack for the undo actions",
-                        "type_id": 18,
-                        "code_id": "form_back_stack",
-                        "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 835,
-                        "id": 123,
-                        "name": "system form hidden confirm status",
-                        "description": "switch on that the form saving needs an extra confirm by the user",
-                        "type_id": 19,
-                        "code_id": "form_confirm_status",
-                        "position": 2,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 836,
                         "id": 215,
                         "name": "system form title confirm update",
                         "description": "for the universal confirmation popup show title of the action e.g. update",
                         "type_id": 158,
                         "ui_msg_code_id": "system_popup_title_update",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 835,
+                        "id": 122,
+                        "name": "system form hidden back stack",
+                        "description": "field that contains the stack for the undo actions",
+                        "type_id": 18,
+                        "code_id": "form_back_stack",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 836,
+                        "id": 123,
+                        "name": "system form hidden confirm status",
+                        "description": "switch on that the form saving needs an extra confirm by the user",
+                        "type_id": 19,
+                        "code_id": "form_confirm_status",
                         "position": 3,
                         "position_type": 1
                     },
@@ -18660,31 +18660,31 @@
                 "components": [
                     {
                         "link_id": 844,
-                        "id": 122,
-                        "name": "system form hidden back stack",
-                        "description": "field that contains the stack for the undo actions",
-                        "type_id": 18,
-                        "code_id": "form_back_stack",
-                        "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 845,
-                        "id": 123,
-                        "name": "system form hidden confirm status",
-                        "description": "switch on that the form saving needs an extra confirm by the user",
-                        "type_id": 19,
-                        "code_id": "form_confirm_status",
-                        "position": 2,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 846,
                         "id": 216,
                         "name": "system form title confirm delete",
                         "description": "for the universal confirmation popup show title of the action e.g. delete",
                         "type_id": 158,
                         "ui_msg_code_id": "system_popup_title_delete",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 845,
+                        "id": 122,
+                        "name": "system form hidden back stack",
+                        "description": "field that contains the stack for the undo actions",
+                        "type_id": 18,
+                        "code_id": "form_back_stack",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 846,
+                        "id": 123,
+                        "name": "system form hidden confirm status",
+                        "description": "switch on that the form saving needs an extra confirm by the user",
+                        "type_id": 19,
+                        "code_id": "form_confirm_status",
                         "position": 3,
                         "position_type": 1
                     },

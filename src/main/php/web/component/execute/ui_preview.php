@@ -121,16 +121,20 @@ class ui_preview extends ui_base
      * via its ui_msg_code_id (e.g. system_popup_title_update) and the class is derived from the object,
      * so this single component replaces the former split into popup_title and popup_class
      *
+     * this is the confirm-view analog of form_tile: it shows the heading and then opens the form, so
+     * the component must be the first one of the confirm view (ahead of the hidden fields)
+     *
+     * @param string $form_name the name of the confirm view used as the html form name
      * @param msg_id|null $ui_msg_code_id the message code id of the component using this component type
      * @param db_object|null $dbo the object that is being changed, used for the object class name
-     * @return string the html heading line, or an empty string if the component has no message code id
+     * @return string the html heading line followed by the opening form tag
      */
-    function popup_title(?msg_id $ui_msg_code_id = null, ?db_object $dbo = null): string
+    function popup_title(string $form_name = '', ?msg_id $ui_msg_code_id = null, ?db_object $dbo = null): string
     {
         global $mtr;
+        $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $html = new html_base();
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
                 $title .= ' ' . library::class_to_name($dbo::class);
@@ -139,6 +143,9 @@ class ui_preview extends ui_base
                 . $title . '</' . html_base::H4 . '>';
             $result = $html->div($heading, styles::HEADING_LINE);
         }
+        // open the confirm form after the heading (like form_tile) so the following hidden step field
+        // and the confirm button submit together as one post
+        $result .= $html->form_start($form_name);
         return $result;
     }
 
@@ -167,6 +174,21 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
+        // carry the pending change forward as hidden inputs so the confirm submit re-posts every edited
+        // field; without this url_mapper would reset the fields not posted (e.g. the plural or the
+        // share) to their default. the keys owned by the back / confirm components (the view mask, the
+        // object id and the process step) are emitted there, and the 8-prefixed old values and
+        // 9-prefixed back targets are shown only in the diff, so skip those. the origin mask is kept so
+        // the confirm submit tells action_crud which object view to return to after the write
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP];
+        $hidden = '';
+        foreach ($url_array as $key => $val) {
+            if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::PRE)
+                and !str_starts_with($key, url_var::BACK)) {
+                $hidden .= $html->form_hidden($key, (string)$val);
+            }
+        }
         $rows = '';
         foreach (self::CHANGE_FIELDS as $key => $label_msg) {
             $new = $url_array[$key] ?? '';
@@ -178,13 +200,13 @@ class ui_preview extends ui_base
                 $rows .= $html->tr($field . $from . $to);
             }
         }
-        $result = '';
+        $result = $hidden;
         if ($rows != '') {
             $head = $html->thead($html->tr(
                 $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
-            $result = $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
+            $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
         return $result;
     }

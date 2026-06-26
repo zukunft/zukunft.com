@@ -136,7 +136,6 @@
             <form action="/http/view.php" id="word_edit">
                 <input class="form-control" type="hidden" name="m" id="mask" value="3">
                 <input class="form-control" type="hidden" name="id" id="id" value="999">
-                <input class="form-control" type="hidden" name="9" id="back" value="999">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -145,6 +144,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name" value="System Test Word">
                     </div>
+                    <input type="hidden" name="8k" value="System Test Word">
                     <div class="form-group col-md-4">
                         <label for="py_form_select_phrase_type">
                             Type of word or triple
@@ -247,6 +247,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description">
                     </div>
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -255,6 +256,7 @@
                         </label>
                         <input class="form-control" type="text" name="lp" id="plural">
                     </div>
+                    <input type="hidden" name="8lp" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -320,7 +322,7 @@
                     <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>
@@ -352,6 +354,9 @@
                 </div>
             </div>
         </main>
+        <div class="alert alert-warning notification-bar">
+            url mapper for &quot;9m&quot; is missing
+        </div>
         <footer class="site-footer">
             <p>
                 <a href="/http/about.php">

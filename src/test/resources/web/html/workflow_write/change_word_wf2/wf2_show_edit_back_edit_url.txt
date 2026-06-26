@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?m=3&id=999&z=0
+/http/view.php?m=3&id=999&z=0
+/http/view.php?mask_id=word_edit&id=999&step=no&
+{
+    "mask_id": "word_edit",
+    "id": "999",
+    "step": "no"
+}

@@ -138,7 +138,6 @@
             <form action="/http/view.php" id="ref_add">
                 <input class="form-control" type="hidden" name="m" id="mask" value="15">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="9" id="back" value="0">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-4">
                     <div class="form-group col-md-4">
@@ -386,6 +385,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description" value="pi - ratio of the circumference of a circle to its diameter">
                     </div>
+                    <input type="hidden" name="8o" value="pi - ratio of the circumference of a circle to its diameter">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -441,7 +441,7 @@
                     <a href="/http/view.php?m=94" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

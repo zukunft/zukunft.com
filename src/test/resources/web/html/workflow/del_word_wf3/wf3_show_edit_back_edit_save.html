@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=56&9m=56&9id=999&9z=2&9mo=4">
+                                    <a href="/http/view.php?m=31&id=56&9m=56&9id=999&9z=2&99m=90&99id=999">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9m=56&9id=999&9z=2&9mo=4">
+                                    <a href="/http/view.php?m=30&9m=56&9id=999&9z=2&99m=90&99id=999">
                                         add view
                                     </a>
                                 </li>
@@ -114,12 +114,12 @@
                                     system test zukunft.com system test
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=64&9m=56&9id=999&9z=2&9mo=4">
+                                    <a href="/http/view.php?m=64&9m=56&9id=999&9z=2&99m=90&99id=999">
                                         logout
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=56&9id=999&9z=2&9mo=4">
+                                    <a href="/settings?9m=56&9id=999&9z=2&99m=90&99id=999">
                                         Settings
                                     </a>
                                 </li>
@@ -130,53 +130,58 @@
             </div>
         </nav>
         <main class="main-container">
-            <input class="form-control" type="hidden" name="m" id="mask" value="56">
-            <input class="form-control" type="hidden" name="id" id="id" value="999">
-            <input class="form-control" type="hidden" name="9" id="back" value="999">
-            <input class="form-control" type="hidden" name="z" id="confirm" value="1">
             <div class="row col-md-12">
                 <div class="heading-line">
                     <h4 class="heading-inline">
                         delete word
                     </h4>
                 </div>
-            </div>
-            <br>
-            <div class="row col-md-12 justify-content-center">
-                <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
-                    cancel
+                <form action="/http/view.php" id="confirm_delete">
+                </div>
+                <input class="form-control" type="hidden" name="m" id="mask" value="56">
+                <input class="form-control" type="hidden" name="id" id="id" value="999">
+                <input type="hidden" name="9m" value="90">
+                <input type="hidden" name="9id" value="999">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="2">
+                <br>
+                <div class="row col-md-12 justify-content-center">
+                    <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        confirm
+                    </button>
+                </div>
+            </form>
+        </main>
+        <div class="alert alert-warning notification-bar">
+            url mapper for &quot;9m&quot; is missing, url mapper for &quot;8k&quot; is missing, url mapper for &quot;8o&quot; is missing, url mapper for &quot;8lp&quot; is missing, url mapper for &quot;9id&quot; is missing
+        </div>
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
                 </a>
-                <button class="btn btn-space col-1 btn-outline-success" type="submit">
-                    confirm
-                </button>
-            </div>
-        </form>
-    </main>
-    <footer class="site-footer">
-        <p>
-            <a href="/http/about.php">
-                About
-            </a>
-            &middot;
-            <a href="/http/privacy_policy.html">
-                Privacy Policy
-            </a>
-            &middot; 
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
 All structured data is available under the
-            <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
-                Creative Commons CC0
-            </a>
-            Licence unless otherwise stated and the
-            <a href="https://github.com/zukunft/zukunft.com">
-                program code
-            </a>
-            of this version 0.0.3
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
 under the
-            <a href="https://www.gnu.org/licenses/agpl.html">
-                AGPL3
-            </a>
-            Licence.
-        </p>
-    </footer>
-</body>
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
 </html>

@@ -138,7 +138,6 @@
             <form action="/http/view.php" id="component_edit">
                 <input class="form-control" type="hidden" name="m" id="mask" value="34">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="9" id="back" value="1">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -147,6 +146,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name" value="Word">
                     </div>
+                    <input type="hidden" name="8k" value="Word">
                     <div class="form-group col-md-4">
                         <label for="ct_form_select_component_type">
                             Component type
@@ -777,6 +777,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description" value="simply show the word or triple name">
                     </div>
+                    <input type="hidden" name="8o" value="simply show the word or triple name">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -1720,7 +1721,7 @@
                     <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>
