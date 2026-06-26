@@ -467,11 +467,12 @@ class formula extends sandbox_code_id
      * the assigned phrases (for the "Formula title" subtitle) and the latex terms (for the
      * "expression_latex_link" component); the frontend api_mapper picks them up into phr_lst/trm_lst
      * @param int|string $id the formula id to load
+     * @param int $usr_id the id of the session user to load the formula for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
     /**

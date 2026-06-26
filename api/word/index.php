@@ -93,7 +93,21 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        $wrd = new word($usr);
+        // the session user may differ from the data user
+        // e.g. an admin whats to see the data of a user
+        // the data user is included in the request in url_var::USER
+        // TODO Prio 0 move to a function and include this in at least all sandbox api responders
+        $load_usr = $usr;
+        $req_usr_id = $_GET[url_var::USER] ?? 0;
+        if ($req_usr_id > 0) {
+            $req_usr = new user();
+            $req_usr->load_by_id($req_usr_id);
+            if ($req_usr->id > 0) {
+                $load_usr = $req_usr;
+            }
+        }
+
+        $wrd = new word($load_usr);
 
         if ($method === rest_ctrl::GET) {
             // get the parameters
@@ -106,10 +120,10 @@ if ($db_con->is_open()) {
 
             if ($wrd_id > 0) {
                 $wrd->load_by_id($wrd_id);
-                $result = $wrd->api_json($typ_lst, $usr);
+                $result = $wrd->api_json($typ_lst, $load_usr);
             } elseif ($wrd_name != '') {
                 $wrd->load_by_name($wrd_name);
-                $result = $wrd->api_json($typ_lst, $usr);
+                $result = $wrd->api_json($typ_lst, $load_usr);
             } else {
                 $msg = 'word id or name is missing';
             }

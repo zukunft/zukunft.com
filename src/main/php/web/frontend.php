@@ -774,10 +774,13 @@ class frontend
             // if only the id is included in the url load the data via api
             // TODO Prio 1 why? better always reload from db
             if (count($url_array) <= 3) {
+                // pass the session user id so the backend loads the user-related object (the user's
+                // sandbox overlay), not the default derived from the api caller
+                $usr_id = $usr?->id() ?? 0;
                 if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
-                    $dbo->load_by_id($id);
+                    $dbo->load_by_id($id, [], $usr_id);
                 } else {
-                    $dbo->load_by_id_with_related($id);
+                    $dbo->load_by_id_with_related($id, $usr_id);
                 }
             } else {
                 $dbo->url_mapper($url_array, $usr_msg, $dto);

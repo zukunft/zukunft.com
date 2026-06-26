@@ -274,12 +274,13 @@ class value extends sandbox_value
      *
      * @param int|string $id the value id to load
      * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the value for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id(int|string $id, array $data = []): bool
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
     {
         $data[url_var::WITH_PHRASES] = url_var::TRUE;
-        return parent::load_by_id($id, $data);
+        return parent::load_by_id($id, $data, $usr_id);
     }
 
 

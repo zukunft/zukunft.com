@@ -6608,6 +6608,8 @@
         \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
     \-- load_by_name
         \-- combine_named - load the phrase by name via api
+    \-- load_by_id
+        \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
     \-- load_by_user
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_by_phr_lst

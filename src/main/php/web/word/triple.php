@@ -216,11 +216,12 @@ class triple extends sandbox_code_id
      * and to phrases with their names so the page title can link each part (like the word,
      * the INCL_RELATED flag triggers the backend to add the phrase names)
      * @param int|string $id the database id of the triple to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true if the triple has been loaded
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
     /**

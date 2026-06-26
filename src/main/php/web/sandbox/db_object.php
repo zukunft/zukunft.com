@@ -248,9 +248,10 @@ class db_object extends TextIdObject
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
      * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = []): bool
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
     {
         $result = false;
         $usr_msg = new user_message();
@@ -285,11 +286,12 @@ class db_object extends TextIdObject
      * URL flag so the api handler builds an api_type_list with api_types::INCL_RELATED set
      *
      * @param int|string $id the database id of the object to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id);
+        return $this->load_by_id($id, [], $usr_id);
     }
 
 
