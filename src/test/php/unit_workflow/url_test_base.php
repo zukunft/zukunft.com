@@ -171,9 +171,7 @@ class url_test_base
         return in_array($step, [
             url_var::ACTION_SAVE,
             url_var::ACTION_CONFIRM,
-            url_var::ACTION_ADD_CONFIRMED,
-            url_var::ACTION_UPDATE_CONFIRMED,
-            url_var::ACTION_DEL_CONFIRMED
+            url_var::ACTION_CONFIRMED
         ], true);
     }
 

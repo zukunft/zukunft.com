@@ -262,11 +262,9 @@ class url_var
     const string ACTION_BACK = 'back'; // leave the edit view without a change and return to the previous page
     const string ACTION_SAVE = 'save'; // press save on the edit form which leads to the confirm change view
     const string ACTION_CONFIRM = 'confirm'; // confirm the pending change so that it is written to the database
-    // the confirmed actions actually add / update / delete the object in the database (the confirm view
-    // mask selects which crud is run); named per operation so the workflow step says what it persists
-    const string ACTION_ADD_CONFIRMED = 'add_confirmed';
-    const string ACTION_UPDATE_CONFIRMED = 'update_confirmed';
-    const string ACTION_DEL_CONFIRMED = 'del_confirmed';
+    // the confirmed action actually adds / updates / deletes the object in the database; the confirm
+    // view mask selects which crud is run, so one action covers all three operations
+    const string ACTION_CONFIRMED = 'confirmed';
     const string ACTION_CANCEL = 'cancel'; // cancel the pending change
 
 
@@ -746,9 +744,7 @@ class url_var
         return match ($action) {
             self::ACTION_SAVE => self::STEP_CONFIRM,
             self::ACTION_CONFIRM,
-            self::ACTION_ADD_CONFIRMED,
-            self::ACTION_UPDATE_CONFIRMED,
-            self::ACTION_DEL_CONFIRMED => self::STEP_CONFIRMED,
+            self::ACTION_CONFIRMED => self::STEP_CONFIRMED,
             self::ACTION_CANCEL => self::STEP_CANCEL,
             default => self::STEP_BASE // show, edit and back just navigate, they do not change the process step
         };

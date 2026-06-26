@@ -101,7 +101,7 @@ class triple_url_tests extends url_test_base
 
         // update_confirmed: confirm the pending change so it is written to the database (do_it false
         // here, so nothing is actually written)
-        $this->assert_workflow_step(url_var::ACTION_UPDATE_CONFIRMED, views::CONFIRM_EDIT_ID, $change);
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_EDIT_ID, $change);
 
         // cancel: cancel the change and return to the triple view
         $this->assert_workflow_step(url_var::ACTION_CANCEL, views::TRIPLE_ID);

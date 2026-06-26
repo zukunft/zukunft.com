@@ -1,9 +1,0 @@
-GET
-http://localhost/http/view.php?m=56&id=999&z=2&submit=
-/http/view.php?m=56&id=999&z=2&submit=
-/http/view.php?mask_id=confirm_delete&id=999&step=confirmed&
-{
-    "mask_id": "confirm_delete",
-    "id": "999",
-    "step": "confirmed"
-}

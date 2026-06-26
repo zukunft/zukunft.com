@@ -8,11 +8,9 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-instead of url_var::ACTION_UPDATE_CONFIRMED, ... use url_var::ACTION_CONFIRMED 
+make sure that the default word view loads the word related to the user. Check that the session user id is included in the word load function call 
 
 add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
-
-add to  /docs/llm/*
 
 after adding a word the word as it has been saved in the database should be shown. Because the db id is not yet known, that word name should be used to load the word. this implies that the url for /src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save_add_confirmed_url.txt should contain '"url_part_back": {"mask_id": "word_default", "name": "System Test Word"}' using the short url var for the name 'k'  
 
@@ -109,6 +107,8 @@ add the src/main/resources/messages/start_page/theses_complex_simple.json to the
 add a job to create a wikipedia article
 
 if type_list_check fails update the json and reload the config and try again
+
+create a phrase_value_key table that contains the phrase_id and the value_table_id and the value key for a fast (db index based) selection of all values related to a phrase
 
 
 

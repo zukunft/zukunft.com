@@ -298,7 +298,7 @@ class word_url_tests extends url_test_base
         // '9'-prefixed back target = the word view + id, as set by url_to_action when the confirm view
         // was opened)
         // TODO Prio 2 review
-        $this->assert_workflow_step(url_var::ACTION_UPDATE_CONFIRMED, views::CONFIRM_EDIT_ID,
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_EDIT_ID,
             $change + [
                 url_var::BACK . url_var::MASK => views::WORD_ID,
                 url_var::BACK . url_var::ID => $this->wf_id
@@ -364,7 +364,7 @@ class word_url_tests extends url_test_base
         // add_confirmed: confirm the new word so it is actually added to the database (with $do_it true)
         // and the user is returned to the word view (the confirm form carries the '9'-prefixed back
         // target = the word view, as set by url_to_action when the confirm view was opened; no id yet)
-        $this->assert_workflow_step(url_var::ACTION_ADD_CONFIRMED, views::CONFIRM_ADD_ID,
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_ADD_ID,
             $add + [url_var::BACK . url_var::MASK => views::WORD_ID]);
 
         // a write run must actually create the word, so check it is now in the database; the reserved
@@ -429,7 +429,7 @@ class word_url_tests extends url_test_base
 
         // del_confirmed: confirm the deletion so the word is actually removed from the database (with
         // $do_it true)
-        $this->assert_workflow_step(url_var::ACTION_DEL_CONFIRMED, views::CONFIRM_DEL_ID);
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_DEL_ID);
 
         // a write run must actually delete the word; a non-owner delete is a soft delete, so check the
         // word is flagged as excluded in the user sandbox rather than physically removed

@@ -504,7 +504,7 @@ class base_ui_tests
         // url_var::action_step maps a confirmed action to the confirmed process step (which triggers the
         // db write), and a plain navigation action to the base step
         $test_name = 'action_step maps update_confirmed to the confirmed step';
-        $t->assert($test_name, url_var::action_step(url_var::ACTION_UPDATE_CONFIRMED), url_var::STEP_CONFIRMED);
+        $t->assert($test_name, url_var::action_step(url_var::ACTION_CONFIRMED), url_var::STEP_CONFIRMED);
         // negative: a navigation action does not advance the process step
         $test_name = 'action_step maps a navigation action to the base step';
         $t->assert($test_name, url_var::action_step(url_var::ACTION_SHOW), url_var::STEP_BASE);
