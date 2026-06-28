@@ -90,36 +90,6 @@ class text_log
      */
 
     /**
-     * write a header text to the standard io
-     * and to the database log table if requested by the db log level
-     * @param string $header_text the english header for the system admin
-     */
-    function header(string $header_text): void
-    {
-        if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><br><h2>' . $this->time_stamp() . $header_text . '</h2><br>' . "\n";
-        }
-        log_info($header_text);
-    }
-
-    /**
-     * write a subheader text to the standard io
-     * and to the database log table if requested by the db log level
-     * @param string $header_text the english subheader for the system admin
-     */
-    function subheader(string $header_text): void
-    {
-        if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><h3>' . $this->time_stamp() . $header_text . '</h3><br>' . "\n";
-        }
-        log_info($header_text);
-    }
-
-    /**
      * write a test result text or a log entry text to the standard io
      * and to the database log table if requested by the db log level
      * @param string $text the English text for the system admin
@@ -149,7 +119,7 @@ class text_log
         log_info($text);
     }
 
-    private function time_stamp(): string
+    protected function time_stamp(): string
     {
         return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
     }

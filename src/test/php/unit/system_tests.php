@@ -272,9 +272,9 @@ class system_tests
         $t->assert('a system table class maps to its db table const', def::class_to_table(sys_log::class), change_tables::SYS_LOG);
         $t->assert('a status table class maps to its db table const', def::class_to_table(user_status::class), change_tables::USER_STATUS);
         $t->assert('an unmapped class returns an empty db table', def::class_to_table(language_codes::class), '');
-        $t->assert('a class name is translated via its db table', $lib->class_to_name_translated(word::class, language_codes::EN), 'Words');
-        $t->assert('a class name is translated into German via its db table', $lib->class_to_name_translated(word::class, language_codes::DE), 'Wörter');
-        $t->assert('an unmapped class falls back to the plain class name', $lib->class_to_name_translated(language_codes::class), 'language_codes');
+        $t->assert('a class name is translated via its db table', library::class_to_name_translated(word::class, language_codes::EN), 'Words');
+        $t->assert('a class name is translated into German via its db table', library::class_to_name_translated(word::class, language_codes::DE), 'Wörter');
+        $t->assert('an unmapped class falls back to the plain class name', library::class_to_name_translated(language_codes::class), 'language_codes');
 
 
         $t->subheader($ts . 'IP filter');

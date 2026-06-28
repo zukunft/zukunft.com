@@ -16,8 +16,6 @@ create function like src/main/php/shared/helper/Translator.php::text_db_field fo
 
 
 
-check why 'please select ...' is missing in ' <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="formula_link_add" id="p_form_select_phrase" > <datalist id="p_form_select_phrase_list">'
-
 see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeatet.
 
 add a fill step to the word workflow test. After the step that changes of the description the test word 'add_filled' should be used to create a url with all fields filled and this should be used to test the confirm view for all fields filled. the name of the step is fill. 

@@ -4647,20 +4647,19 @@ class test_base
      */
     function dsp_result_html(): void
     {
-        echo '<br>';
-        echo '<h2>';
-        echo $this->total_tests . ' test cases<br>';
-        echo $this->timeout_counter . ' timeouts<br>';
+        $html = new html_base();
         if ($this->error_counter == 1) {
-            echo $this->error_counter . ' error<br>';
+            $errors = $this->error_counter . ' error<br>';
         } else {
-            echo $this->error_counter . ' errors<br>';
+            $errors = $this->error_counter . ' errors<br>';
         }
-        echo "<br>";
         $since_start = microtime(true) - $this->start_time();
-        echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
-        echo '<br>';
-        echo '<br>';
+        $txt = $this->total_tests . ' test cases<br>';
+        $txt .= $this->timeout_counter . ' timeouts<br>';
+        $txt .= $errors;
+        $txt .= '<br>';
+        $txt .= round($since_start, 4) . ' seconds for testing zukunft.com';
+        echo '<br>' . $html->h2($txt) . '<br><br>';
     }
 
     /**

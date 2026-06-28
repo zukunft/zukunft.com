@@ -3892,12 +3892,12 @@ class library
      * @param string $lan the code id of the target language or '' for the user language
      * @return string the translated class name or the plain class name if the class has no table mapping
      */
-    function class_to_name_translated(string $class, string $lan = ''): string
+    static function class_to_name_translated(string $class, string $lan = ''): string
     {
         global $mtr;
         $table = def::class_to_table($class);
         if ($table == '') {
-            $result = $this->class_to_name($class);
+            $result = self::class_to_name($class);
         } else {
             $result = $mtr->text_db_table($table, $lan);
         }

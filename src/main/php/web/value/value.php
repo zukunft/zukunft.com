@@ -819,9 +819,10 @@ class value extends sandbox_value
     // simple modal box to add a value
     function dsp_add_fast($back): string
     {
+        $html = new html_base();
         $result = '';
 
-        $result .= '  <h2>Modal Example</h2>';
+        $result .= '  ' . $html->h2('Modal Example');
         $result .= '  <!-- Button to Open the Modal -->';
         //$result .= '  <a href="/http/value_add.php?back=2" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
         $result .= '';

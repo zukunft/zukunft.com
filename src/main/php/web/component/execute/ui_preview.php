@@ -133,15 +133,13 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $lib = new library();
         $result = '';
         if ($ui_msg_code_id != null) {
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
-                $title .= ' ' . $lib->class_to_name_translated($dbo::class);
+                $title .= ' ' . library::class_to_name_translated($dbo::class);
             }
-            $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
-                . $title . '</' . html_base::H4 . '>';
+            $heading = $html->h4($title, styles::HEADING_INLINE);
             $result = $html->div($heading, styles::HEADING_LINE);
         }
         // open the confirm form after the heading (like form_tile) so the following hidden step field
@@ -158,7 +156,7 @@ class ui_preview extends ui_base
      */
     function popup_class(sandbox $sbx): string
     {
-        return library::class_to_name($sbx::class);
+        return library::class_to_name_translated($sbx::class);
     }
 
     /**
