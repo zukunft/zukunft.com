@@ -137,7 +137,7 @@
             </h4>
             <form action="/http/view.php" id="formula_link_add">
                 <input class="form-control" type="hidden" name="m" id="mask" value="45">
-                <input class="form-control" type="hidden" name="id" id="id" value="1">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="form-group col-md-4">
                     <label for="f_form_select_formula">
@@ -165,8 +165,11 @@
                     <label for="p_form_select_phrase">
                         word or triple
                     </label>
-                    <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="formula_link_add" id="p_form_select_phrase"  value="mathematics">
+                    <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="formula_link_add" id="p_form_select_phrase" >
                     <datalist id="p_form_select_phrase_list">
+                        <option data-value="0" selected>
+                            please select ...
+                        </option>
                         <option data-value="139"  >
                             2019
                         </option>
@@ -281,7 +284,7 @@
                         <option data-value="-1"  >
                             mathematical constant
                         </option>
-                        <option data-value="1"  selected >
+                        <option data-value="1"  >
                             mathematics
                         </option>
                         <option data-value="103"  >
@@ -434,7 +437,7 @@
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
-                    <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
+                    <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
                     <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
