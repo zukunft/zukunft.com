@@ -115,7 +115,7 @@ Das System baut auf offenen Standards und Open-Source-Komponenten auf: Zahlen au
 
 **Vorschlag — langfristige Vermögensobergrenze:** Langfristig sollte niemand mehr besitzen, als die Gesellschaft bereit ist auszugeben, um ein Leben zu retten. Diese Formulierung ist als ethisches Leitplanken-Prinzip zu verstehen: Sie setzt eine gesellschaftliche Debatte über die Obergrenze von Vermögen voraus, die demokratisch und verfassungsrechtlich abzusichern ist.
 
-**Vorschlag — Pilotierung über ein „Proto-BGE":** Um die Wirkungen eines Grundeinkommens verlässlich zu erfassen und zugleich Ängste vor Finanzierbarkeit und gesellschaftlichen Veränderungen aufzugreifen, wird ein schrittweiser, evidenzbasierter Ansatz vorgeschlagen:
+**Vorschlag — Pilotierung über ein „Ur-BGE":** Um die Wirkungen eines Grundeinkommens verlässlich zu erfassen und zugleich Ängste vor Finanzierbarkeit und gesellschaftlichen Veränderungen aufzugreifen, wird ein schrittweiser, evidenzbasierter Ansatz vorgeschlagen:
 
 1. **Form als negative Einkommensteuer:** Die Umsetzung als negative Einkommensteuer (Wikipedia 2024) hat den Vorteil, dass nur Personen ohne oder mit sehr geringem sonstigen Einkommen den Transfer erhalten. Der Gesamtbetrag ist dadurch deutlich geringer, als wenn alle ein Grundeinkommen erhielten. Mathematisch entspricht dies einem System, in dem die Steuerschuld nach folgender Formel berechnet wird:
 
@@ -123,7 +123,7 @@ Das System baut auf offenen Standards und Open-Source-Komponenten auf: Zahlen au
 
    Unterhalb der Transferschwelle (Grundeinkommen / Steuersatz) erhalten Bürgerinnen und Bürger einen Nettotransfer.
 
-2. **Niedriger Ausgangspunkt mit kontrollierten Erhöhungen:** Das „Proto-BGE" (Ur-BGE-Vorschlag 2026) wird zunächst so niedrig angesetzt, dass die überwältigende Mehrheit keine wesentliche Wirkung spürt. Der Betrag wird dann schrittweise angepasst und erhöht, solange der Nettoeffekt positiv bleibt. Dies ermöglicht eine kontrollierte, evidenzbasierte Einführung.
+2. **Niedriger Ausgangspunkt mit kontrollierten Erhöhungen:** Das „Ur-BGE" (Ur-BGE-Vorschlag 2026) wird zunächst so niedrig angesetzt, dass die überwältigende Mehrheit keine wesentliche Wirkung spürt. Der Betrag wird dann schrittweise angepasst und erhöht, solange der Nettoeffekt positiv bleibt. Dies ermöglicht eine kontrollierte, evidenzbasierte Einführung.
 
 3. **Messung der Wirkungen:** Die Wirkungen sind entlang mehrerer Dimensionen zu messen: Veränderungen der Gesundheitskosten; und Veränderungen des Nutzens im Verhältnis zur Arbeitsleistung (zukunft.com 2020). Letzteres Konzept (Gross Domestic Usage, GDU) versucht, den tatsächlichen gesellschaftlichen Nutzen zu erfassen — etwa wenn eine App die Effizienz von Dienstleistungen steigert oder freies Wissen (Wikipedia) kostenlos verfügbar wird, während das Bruttoinlandsprodukt dies oft nur unzureichend abbildet.
 

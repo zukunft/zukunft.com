@@ -297,6 +297,20 @@ class system_view_ui_tests
         $t->assert_html_page($test_name, $html, $file_path);
         */
 
+        // regression test for the dbo_for_url path: an add view creates a new object, so a url
+        // id must not be stamped onto it - otherwise every sub-object selector (phrase, ref,
+        // from/to, ...) reads the object id as a pre-selected entry and drops the
+        // "please select ..." default (see frontend::dbo_for_url)
+        $t->subheader($ts . 'add view keeps new object id zero');
+        $add_url = $t_map->class_to_filled_url(formula_link::class, views::FORMULA_LINK_ADD_ID, change_actions::ADD);
+        $add_part = parse_url($add_url);
+        parse_str($add_part['query'], $add_array);
+        $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto);
+        $test_name = 'add view keeps the hidden id field at 0';
+        $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"');
+        $test_name = 'add view does not stamp the url id onto the new object';
+        $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
+
         // loop over the system views
         $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
 

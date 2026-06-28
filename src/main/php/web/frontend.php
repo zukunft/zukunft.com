@@ -1431,10 +1431,16 @@ class frontend
             and array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
             $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
         }
+        // TODO Prio 2 review
         // stamp the prime object id from the url onto the dbo so it already knows which row it
         // represents (lists and type objects have no single id, so only db objects get it; the
-        // value is left uncast so a string group key survives)
-        if ($dbo instanceof db_object_ui and array_key_exists(url_var::ID, $url_array)) {
+        // value is left uncast so a string group key survives).
+        // an add view creates a new object, so it must keep id 0: stamping the url id there would
+        // make every sub-object selector (phrase, ref, from/to, ...) read the object id as a
+        // pre-selected entry and drop the "please select ..." default option
+        if ($dbo instanceof db_object_ui
+            and array_key_exists(url_var::ID, $url_array)
+            and !in_array($view_id, views::ADD_MASKS_IDS)) {
             $dbo->set_id($url_array[url_var::ID]);
         }
         return $dbo;
