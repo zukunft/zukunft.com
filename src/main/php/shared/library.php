@@ -52,6 +52,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -1202,7 +1204,7 @@ class library
      * @param string|null $maker e.g. "start<"
      * @return string the selected text e.g. "select"
      */
-    function str_right_of_or_all(?string $text, ?string $maker): string
+    static function str_right_of_or_all(?string $text, ?string $maker): string
     {
         if ($text == null) {
             $text = "";
@@ -3618,9 +3620,9 @@ class library
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
-    function class_to_name(string $class): string
+    static function class_to_name(string $class): string
     {
-        $result = $this->str_right_of_or_all($class, '\\');
+        $result = self::str_right_of_or_all($class, '\\');
         // TODO Prio 3 try to avoid these exceptions
         // for some lists and exceptions
         switch ($class) {

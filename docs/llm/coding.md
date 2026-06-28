@@ -10,60 +10,19 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The most relevant rule of all
+## The two rules above all others
 
-> Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter,
-> mais quand il n'y a plus rien à retrancher.
-> — Antoine de Saint-Exupéry
-
-Perfection is reached not when there is nothing left to add, but when there is
-nothing left to remove. Prefer the smallest change that does the job: fewer
-lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
-it out — every rule below is subordinate to this one.
-
-## The second most relevant rule
-
-Write code a human reads at a glance. A line carries **one logical element —
-three at most**: one assignment, one call, one condition. When a line packs more,
-split it into named steps. Fewer lines is still better (don't pad a simple
-expression across many lines), so the goal is the *fewest* lines on which *each*
-line still reads at a glance — minimise lines subject to that limit, never by
-cramming.
-
-Wrong — five logical elements on one line (ternary, two getters, two calls, a
-concat); the reader has to unpack it:
-
-```php
-$title = $trp->get_from() != null ? $trp->get_from()->name_link() . ' ' . $trp->get_verb()->name_link() : '';
-```
-
-Right — each line does one thing, named for what it is:
-
-```php
-$from = $trp->get_from();
-$title = '';
-if ($from != null) {
-    $title = $from->name_link() . ' ' . $trp->get_verb()->name_link();
-}
-```
-
-Better still — a small function is not a sin. Pushing a two-step chain like
-`get_verb()->name_link()` behind a name on the owning class turns the call site
-into one self-describing element and lets the next reader (and every other call
-site) skip the detail:
-
-```php
-$title = $from->name_link() . ' ' . $trp->verb_name_link();
-// or, if the verb has no other kind of link, just $trp->verb_link()
-```
-
-So the cure for a crowded line is often a well-named helper, not only a local
-variable — naming the *operation* beats inlining it. (This is the same DRY move
-as the always-on "a 3+ step call chain belongs behind a function on the owning
-class" rule below; it costs a method but each call site reads at a glance.)
-
-The companion limit — function bodies fit on one screen page (~50 lines) — is in
-the always-on rules below and detailed in `docs/llm/structure.md`.
+1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
+   lines, functions, assertions, parameters. When in doubt, leave it out — every
+   rule below is subordinate to this one. (Saint-Exupéry: perfection is reached
+   not when there is nothing left to add, but when there is nothing left to
+   remove.)
+2. **One logical element per line — three at most** (one assignment, one call,
+   one condition). When a line packs more, split it into named steps or push a
+   chain behind a well-named helper; but don't pad a simple expression across
+   many lines either — minimise lines subject to each line still reading at a
+   glance. Worked examples and the companion ~50-line function-body limit:
+   `docs/llm/structure.md`.
 
 ## Build / test / commit
 
@@ -89,7 +48,9 @@ detail file. Order is by how often they fire, not importance.
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
+- Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
@@ -157,7 +118,7 @@ noun definitions: `docs/llm/architecture.md`.
 
 Detail and worked examples: `docs/llm/testing.md`.
 
-- Write the test first. Every function has ≥1 positive and ≥1 negative test; a happy-path-only function counts as untested.
+- Write the tests first — before the function body — for *every* function (including new ones). Cover *every* feature (each behaviour / branch / meaningful input), each with a positive *and* a negative test; one happy-path test, or testing only some features, counts as untested. → `docs/llm/testing.md`
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
@@ -173,7 +134,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
 - A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf2_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
-- Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
+- Never modify an existing file under `src/test/resources/` (e.g. the `workflow/*.html` snapshots and `_url.txt` siblings); only *add* new resource files. The committed baseline is the developer's audit trail — they diff it against the new test output to see exactly what your code change altered; rewriting it to match your output erases that signal. A failing snapshot stays failing for the existing scripts or a human reviewer to regenerate. → `docs/llm/testing.md`
 - Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 

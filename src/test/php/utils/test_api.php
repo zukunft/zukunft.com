@@ -432,18 +432,18 @@ class test_api extends test_base
      * for testing the local deployments need to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param int $id the database id of the db row that should be used for testing
+     * @param int|string $id the database id of the db row that should be used for testing (a string for the group key)
      * @param int $levels the number of children levels that should be included
      * @param ?array $expected if not null, the expected result
      * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
      */
     function assert_api_get(
-        string $class,
-        int    $id = 1,
-        int    $levels = 0,
-        ?array $expected = null,
-        bool   $ignore_id = false
+        string     $class,
+        int|string $id = 1,
+        int        $levels = 0,
+        ?array     $expected = null,
+        bool       $ignore_id = false
     ): bool
     {
         // naming exception (to be removed?)

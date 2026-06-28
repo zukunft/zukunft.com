@@ -291,6 +291,8 @@ class word_names
     const int TEST_ADD_ID = 999;
     const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
+    // the new description posted by the confirm change workflow to change the test word description
+    const string TEST_CHANGE_COM = 'a confirm change test description';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';

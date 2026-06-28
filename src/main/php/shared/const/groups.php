@@ -64,6 +64,10 @@ class groups
     const string TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_names::MIO;
     const string TN_CH_2019 = word_names::INHABITANTS . ' of ' . words::CH . ' in Mio (' . word_names::YEAR_2019 . ')';
 
+    // phrase group ids (the group key built from the phrase ids, '......' marks an empty slot)
+    // used to load a fixed group e.g. for the api test
+    const string CH_2019_MIO = '....09+....0T+....14+....1D+....2Y+......+......+......+......+......+......+......+......+......+......+......+'; // the group of 'inhabitants of Switzerland in Mio (2019)'
+
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
     const string TN_TEXT_VALUE = 'zukunft.com pod URL';

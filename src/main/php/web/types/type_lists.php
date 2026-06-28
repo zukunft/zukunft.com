@@ -523,9 +523,9 @@ class type_lists
         return $this->msk_sys->get($id);
     }
 
-    function get_view(string $code_id): view
+    function get_view(string $code_id): ?view
     {
-        return $this->msk_sys->get($code_id);
+        return $this->msk_sys->get_by_code_id($code_id);
     }
 
     function get_html(string $code_id): string

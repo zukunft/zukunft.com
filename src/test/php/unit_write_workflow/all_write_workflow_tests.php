@@ -41,11 +41,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
-include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 
 class all_write_workflow_tests

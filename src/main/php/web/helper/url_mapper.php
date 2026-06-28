@@ -38,11 +38,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class url_mapper
@@ -65,7 +67,17 @@ class url_mapper
         } else {
             $std_array = $url_array;
         }
-        return $this->add_url_default($std_array, $usr_msg);
+        $std_array = $this->add_url_default($std_array, $usr_msg);
+        // TODO Prio 2 review
+        // the standard url always carries the numeric view id; an input that used the view code id
+        // (e.g. a human url with mask_id=word_add) is converted to the numeric id so the rendered
+        // standard urls and the '9'-prefixed back targets built from it use the numeric id, while
+        // standard_url_to_human maps it back to the code id for display. a numeric mask is returned
+        // unchanged and keeps its type so the action routing's strict comparisons still match
+        if (array_key_exists(url_var::MASK, $std_array)) {
+            $std_array[url_var::MASK] = $this->map_mask_to_std($std_array[url_var::MASK]);
+        }
+        return $std_array;
     }
 
     private function human_url_to_standard(array $url_array, user_message $usr_msg): array
@@ -108,6 +120,58 @@ class url_mapper
         ));
     }
 
+    /**
+     * // TODO Prio 2 review
+     * the human-readable url as a pretty json object: the normal url vars become human-keyed
+     * top-level fields, the '8'-prefixed pre values are grouped under 'original_data' and the
+     * '9'-prefixed back targets under 'back' (each prefix stripped and the rest human-keyed)
+     *
+     * @param array $url_array the standard url (flat [key => value]) including the 8- and 9-prefixed vars
+     * @param user_message $usr_msg enriched with a message for each url key that has no human mapping
+     * @return string the pretty-printed json of the human-readable url
+     */
+    function human_url_to_json(array $url_array, user_message $usr_msg): string
+    {
+        $main = [];
+        $original = [];
+        $back = [];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::PRE)) {
+                $original[substr($key, strlen(url_var::PRE))] = $val;
+            } elseif (str_starts_with($key, url_var::BACK)) {
+                $back[substr($key, strlen(url_var::BACK))] = $val;
+            } else {
+                $main[$key] = $val;
+            }
+        }
+        $json = $this->to_human_assoc($main, $usr_msg);
+        if (!empty($original)) {
+            $json[json_fields::URL_ORIGINAL_DATA] = $this->to_human_assoc($original, $usr_msg);
+        }
+        if (!empty($back)) {
+            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back, $usr_msg);
+        }
+        return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * convert a flat standard url array to a human-keyed associative array (the view id becomes the
+     * code id and the step / action values their human text), reusing the standard -> human mapping
+     *
+     * @param array $flat the standard url part as a flat [key => value] map
+     * @param user_message $usr_msg enriched with a message for each key that has no human mapping
+     * @return array the human-keyed [human_key => value] map
+     */
+    private function to_human_assoc(array $flat, user_message $usr_msg): array
+    {
+        $assoc = [];
+        $rows = $this->map_standard_to($flat, $usr_msg, url_var::HUMAN_TO_STD, 'url_var::HUMAN_TO_STD');
+        foreach ($rows as $row) {
+            $assoc[$row[0]] = $row[1];
+        }
+        return $assoc;
+    }
+
     private function map_standard_to(
         array        $std_array,
         user_message $msg,
@@ -115,6 +179,9 @@ class url_mapper
         string       $map_name
     ): array
     {
+        // accept a flat [key => value] url array (as produced by url_to_standard) as well as the
+        // [key, value] row format used internally, so the caller does not need to convert first
+        $std_array = $this->to_row_format($std_array);
         $url_array = [];
         $map_keys = [];
         foreach ($map_lst as $map) {
@@ -138,6 +205,9 @@ class url_mapper
                     if ($std_key == url_var::STEP) {
                         $value = $this->map_std_step_to($value, $msg);
                     }
+                    if ($std_key == url_var::MASK) {
+                        $value = $this->map_std_mask_to($value);
+                    }
                     if (array_key_exists(2, $std)) {
                         if (array_key_exists(3, $std)) {
                             $url_array[] = [$target_key, $value, $std[2], $std[3]];
@@ -157,6 +227,72 @@ class url_mapper
             }
         }
         return $url_array;
+    }
+
+    /**
+     * normalize a url array to the internal [key, value] row format:
+     * a flat [key => value] url array (as produced by url_to_standard) is converted, an array that is
+     * already in the row format (its first entry is a [key, value] array) is returned unchanged
+     *
+     * @param array $url_array the url either as a flat [key => value] map or as [key, value] rows
+     * @return array the url as [key, value] rows
+     */
+    private function to_row_format(array $url_array): array
+    {
+        $rows = $url_array;
+        if (!array_key_exists(0, $url_array) or !is_array($url_array[0])) {
+            $rows = [];
+            foreach ($url_array as $key => $val) {
+                $rows[] = [$key, (string)$val];
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * convert a standard numeric view id to the view code id for the human / pod url, using the loaded
+     * view cache (global $ui_sys); a view id that is not in the cache is left as the numeric id so the
+     * url still works
+     *
+     * @param string $std_value the numeric view id of the standard url
+     * @return string the view code id e.g. 'word_add', or the unchanged numeric id if not in the cache
+     */
+    private function map_std_mask_to(string $std_value): string
+    {
+        $result = $std_value;
+        global $ui_sys;
+        if (is_numeric($std_value) and $ui_sys?->typ_lst_cache != null) {
+            $msk = $ui_sys->typ_lst_cache->get_view_by_id((int)$std_value);
+            if ($msk != null and $msk->code_id != '') {
+                $result = $msk->code_id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * convert a view code id back to the standard numeric view id, using the loaded view cache
+     * (global $ui_sys); this is the inverse of map_std_mask_to so a url that came in with the code id
+     * (e.g. mask_id=word_add) is stored with the numeric id in the standard url. a value that is
+     * already numeric or not a known code id is left unchanged so the url still works
+     *
+     * @param int|string $value the view mask value of the standard url, a code id or a numeric id
+     * @return int|string the numeric view id e.g. 2, or the unchanged value if already numeric or not a
+     *                    known code id; a numeric value keeps its original type so strict comparisons match
+     */
+    private function map_mask_to_std(int|string $value): int|string
+    {
+        if (is_numeric($value)) {
+            return $value;
+        }
+        global $ui_sys;
+        if ($ui_sys?->typ_lst_cache != null) {
+            $msk = $ui_sys->typ_lst_cache->get_view($value);
+            if ($msk != null and $msk->id() != 0) {
+                return $msk->id();
+            }
+        }
+        return $value;
     }
 
     private function map_human_action_to_std(

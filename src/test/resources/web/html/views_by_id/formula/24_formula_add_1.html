@@ -137,8 +137,7 @@
             </h4>
             <form action="/http/view.php" id="formula_add">
                 <input class="form-control" type="hidden" name="m" id="mask" value="24">
-                <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="9" id="back" value="0">
+                <input class="form-control" type="hidden" name="id" id="id" value="1">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -147,6 +146,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name" value="scale minute to sec">
                     </div>
+                    <input type="hidden" name="8k" value="scale minute to sec">
                     <div class="form-group col-md-4">
                         <label for="fy_form_select_formula_type">
                             Formula type
@@ -186,6 +186,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description" value="to convert times in minutes to seconds and the other way round">
                     </div>
+                    <input type="hidden" name="8o" value="to convert times in minutes to seconds and the other way round">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
@@ -267,10 +268,10 @@
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
-                    <a href="/http/view.php?m=97" class="btn btn-space col-1 btn-outline-secondary">
+                    <a href="/http/view.php?m=97&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

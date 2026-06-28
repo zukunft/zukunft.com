@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?m=90&id=999&z=-1
+/http/view.php?m=90&id=999&z=-1
+/http/view.php?mask_id=word_default&id=999&step=cancel&
+{
+    "mask_id": "word_default",
+    "id": "999",
+    "step": "cancel"
+}

@@ -138,7 +138,6 @@
             <form action="/http/view.php" id="source_edit">
                 <input class="form-control" type="hidden" name="m" id="mask" value="13">
                 <input class="form-control" type="hidden" name="id" id="id" value="7">
-                <input class="form-control" type="hidden" name="9" id="back" value="7">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -147,6 +146,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name" value="Federal Statistical Office">
                     </div>
+                    <input type="hidden" name="8k" value="Federal Statistical Office">
                     <div class="form-group col-md-4">
                         <label for="st_form_select_source_type">
                             Source type
@@ -188,6 +188,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
                     </div>
+                    <input type="hidden" name="8o" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -256,7 +257,7 @@
                     <a href="/http/view.php?m=93&id=7" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

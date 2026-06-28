@@ -372,11 +372,12 @@ class word extends sandbox_code_id
      * connecting verb_id), and the frontend api_mapper picks it up into $this->phrases_related
      *
      * @param int|string $id the word id to load
+     * @param int $usr_id the id of the session user to load the word for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
 

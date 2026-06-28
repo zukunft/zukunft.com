@@ -136,7 +136,6 @@
             <form action="/http/view.php" id="word_edit">
                 <input class="form-control" type="hidden" name="m" id="mask" value="3">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="9" id="back" value="1">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -145,6 +144,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name" value="mathematics">
                     </div>
+                    <input type="hidden" name="8k" value="mathematics">
                     <div class="form-group col-md-4">
                         <label for="py_form_select_phrase_type">
                             Type of word or triple
@@ -247,6 +247,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                     </div>
+                    <input type="hidden" name="8o" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -255,6 +256,7 @@
                         </label>
                         <input class="form-control" type="text" name="lp" id="plural" value="mathematics">
                     </div>
+                    <input type="hidden" name="8lp" value="mathematics">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -371,7 +373,7 @@
                     <a href="/http/view.php?m=90&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

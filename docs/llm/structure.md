@@ -2,6 +2,48 @@
 
 Detail for the structure rules in `CLAUDE.md` → "Structure & style".
 
+## One logical element per line — three at most
+
+Write code a human reads at a glance. A line carries **one logical element —
+three at most**: one assignment, one call, one condition. When a line packs more,
+split it into named steps. Fewer lines is still better (don't pad a simple
+expression across many lines), so the goal is the *fewest* lines on which *each*
+line still reads at a glance — minimise lines subject to that limit, never by
+cramming.
+
+Wrong — five logical elements on one line (ternary, two getters, two calls, a
+concat); the reader has to unpack it:
+
+```php
+$title = $trp->get_from() != null ? $trp->get_from()->name_link() . ' ' . $trp->get_verb()->name_link() : '';
+```
+
+Right — each line does one thing, named for what it is:
+
+```php
+$from = $trp->get_from();
+$title = '';
+if ($from != null) {
+    $title = $from->name_link() . ' ' . $trp->get_verb()->name_link();
+}
+```
+
+Better still — a small function is not a sin. Pushing a two-step chain like
+`get_verb()->name_link()` behind a name on the owning class turns the call site
+into one self-describing element and lets the next reader (and every other call
+site) skip the detail:
+
+```php
+$title = $from->name_link() . ' ' . $trp->verb_name_link();
+// or, if the verb has no other kind of link, just $trp->verb_link()
+```
+
+So the cure for a crowded line is often a well-named helper, not only a local
+variable — naming the *operation* beats inlining it. (This is the same DRY move
+as the always-on "a 3+ step call chain belongs behind a function on the owning
+class" rule in `docs/llm/dry.md`; it costs a method but each call site reads at a
+glance.)
+
 ## One exit per function and loop — no `break` or `continue`
 
 Every function has exactly one `return`, at the end. Assign the result to a
@@ -57,6 +99,41 @@ foreach ($frm_lst as $frm) {
 `if ($x === null) { return ''; }`) are allowed when they protect a precondition
 that makes the rest of the body meaningless. Everything else flows to the single
 return; loops have no equivalent exception.
+
+## Validate inside the function, not before the call
+
+A function validates its own input — as a top-of-function guard clause (see the
+exception above) — instead of the caller checking the arguments first. The call
+site stays one short line, and the check lives in exactly one place that every
+caller (now and future) goes through, so a precondition can never be forgotten at
+a new call site.
+
+```php
+// Wrong — the caller validates, so the check is duplicated at every call site and
+// the call is no longer a single short statement
+if ($id > 0 and $name != '') {
+    $wrd = $this->load_and_link($id, $name);
+}
+
+// Right — load_and_link guards its own preconditions; the call stays short
+$wrd = $this->load_and_link($id, $name);
+
+function load_and_link(int $id, string $name): ?word
+{
+    $result = null;
+    if ($id > 0 and $name != '') {
+        // ... the real work ...
+    }
+    return $result;
+}
+```
+
+This is the same move as "push a 3+ step chain behind a function" in
+`docs/llm/dry.md`: the validation is part of the operation, so it belongs with the
+operation, not scattered across the callers. If a check is genuinely the caller's
+business (it changes which function the caller calls, not merely whether the call
+is safe), it stays with the caller — but a precondition of *this* function lives
+*in* this function.
 
 ## Log the unexpected branch instead of returning silently
 

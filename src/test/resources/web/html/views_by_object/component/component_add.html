@@ -138,7 +138,6 @@
             <form action="/http/view.php" id="component_add">
                 <input class="form-control" type="hidden" name="m" id="mask" value="33">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="9" id="back" value="0">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -147,6 +146,7 @@
                         </label>
                         <input class="form-control" type="text" name="k" id="name">
                     </div>
+                    <input type="hidden" name="8k" value="">
                     <div class="form-group col-md-4">
                         <label for="ct_form_select_component_type">
                             Component type
@@ -178,6 +178,9 @@
                             </option>
                             <option value="28"  >
                                 button cancel
+                            </option>
+                            <option value="204"  >
+                                button confirm
                             </option>
                             <option value="30"  >
                                 button delete
@@ -217,6 +220,9 @@
                             </option>
                             <option value="4"  >
                                 fixed word
+                            </option>
+                            <option value="205"  >
+                                formatter row center
                             </option>
                             <option value="31"  >
                                 form end
@@ -771,6 +777,7 @@
                         </label>
                         <input class="form-control" type="text" name="o" id="description">
                     </div>
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -1738,7 +1745,7 @@
                     <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

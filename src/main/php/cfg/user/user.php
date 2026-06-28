@@ -1048,6 +1048,30 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * select the user whose data an api request should load: the session user ($this) by
+     * default, or the user given by id in the request when an (admin) caller wants to see
+     * another user's data (the frontend sandbox load sends the data user as url_var::USER)
+     * TODO check that the session user is permitted to see the requested user's data
+     * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @return user the session user, or the loaded requested user when a valid id is given
+     */
+    function data_user(int $req_usr_id): user
+    {
+        $result = $this;
+        // only switch to the requested data user if it differs from the session user; the session
+        // user is already fully loaded (via get()), so reloading it by id here would drop that setup
+        // and the object would load less than the session user can actually see
+        if ($req_usr_id > 0 and $req_usr_id != $this->id) {
+            $req_usr = new user();
+            $req_usr->load_by_id($req_usr_id);
+            if ($req_usr->id > 0) {
+                $result = $req_usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * load one user by name
      * @param string $name the username of the user
      * @return int the id of the found user and zero if nothing is found

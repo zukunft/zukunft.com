@@ -282,6 +282,50 @@ a:hover {
     opacity: 0.8; /* Slightly fades the link color on hover for a subtle effect */
 }
 
+.grey {
+    color: #9ea09e; /* the zukunft.com grey used for the old value of a change */
+}
+
+.changed {
+    color: #6b86c2; /* a light blue between the grey old value and the #385eb7 link blue to mark a changed value */
+}
+
+/* TODO review and combine with the other width
+   the change preview table is centered and its width follows the config 'side width' breakpoints
+   (layout > side width: min 1000, max 2800 px): full width on normal/small screens,
+   10/12 on wide screens and 8/12 on very wide screens */
+.change-preview {
+    width: 100%; /* 12/12 on normal and small screens */
+    margin-left: auto;
+    margin-right: auto; /* centered in the middle of the screen */
+    margin-top: 2.5rem; /* extra space between the popup title and the change table */
+}
+
+/* the impact line centered below the change table with some space above it */
+.change-impact {
+    text-align: center;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* wider gap between the centered confirm buttons (the confirm view uses justify-content-center);
+   uses .btn + .btn so only the gap between adjacent buttons grows, not the lead before the first one,
+   and is not scoped to a form ancestor because the confirm view currently renders the buttons outside
+   the form (see the TODO about the missing confirm form_start) */
+.main-container .justify-content-center .btn + .btn {
+    margin-left: 2rem;
+}
+@media (min-width: 1000px) {
+    .change-preview {
+        width: 83.3333%; /* 10/12 on wide screens (config layout side width min) */
+    }
+}
+@media (min-width: 2800px) {
+    .change-preview {
+        width: 66.6667%; /* 8/12 on very wide screens (config layout side width max) */
+    }
+}
+
 .site-footer {
     flex-shrink: 0; /* Prevents the footer from shrinking when content is tight */
     margin-top: auto; /* Pushes the footer to the bottom when content is short */

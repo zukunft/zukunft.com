@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -443,12 +445,69 @@ class base_ui_tests
         $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
+        // the human url uses the view code id (the name) for the mask, not the numeric view id, for
+        // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $usr_msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
-        $t->assert($test_name, $view, views::WORD_ADD_ID);
+        $t->assert($test_name, $view, views::WORD_ADD);
+
+        // TODO Prio 1 review
+        // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
+        // accepted directly now, not only the [key, value] row format produced by url_array_with
+        $test_name = 'convert a flat standard url to human-readable url';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $usr_msg));
+        $url_array = $lib->url_array($url_human);
+        $view = $url_array[url_var::MASK_HUMAN];
+        $t->assert($test_name, $view, views::WORD_ADD);
+        // negative: a url key without a human mapping (an '8'-prefixed pre value) is reported as missing
+        $test_name = 'human url conversion reports a url key without a human mapping';
+        $err_msg = new user_message();
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
+        $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
+        $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+
+        // frontend::url_to_back_url returns the previous page from the '9'-prefixed back targets
+        $test_name = 'url_to_back_url returns the back target view and id';
+        $ui = new frontend();
+        $back_url = $ui->url_to_back_url([
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => 1
+        ]);
+        $t->assert($test_name, $back_url[url_var::MASK], views::WORD_ID);
+        // negative: a url without a back target falls back to the start view
+        $test_name = 'url_to_back_url without a back target returns the start view';
+        $back_url = $ui->url_to_back_url([url_var::MASK => views::WORD_ID]);
+        $t->assert($test_name, $back_url[url_var::MASK], views::START_ID);
+
+        // url_mapper::human_url_to_json groups the 8-prefixed vars into 'original_data' and the
+        // 9-prefixed vars into 'back', and converts the view id to the code id
+        $test_name = 'human_url_to_json groups the pre values and back targets into subarrays';
+        $json = $url_map->human_url_to_json([
+            url_var::MASK => views::WORD_EDIT_ID,
+            url_var::NAME => 'x',
+            url_var::PRE . url_var::NAME => 'old',
+            url_var::BACK . url_var::MASK => views::WORD_ID
+        ], $usr_msg);
+        $t->assert_text_contains($test_name, $json, json_fields::URL_ORIGINAL_DATA);
+        $t->assert_text_contains($test_name, $json, json_fields::URL_PART_BACK);
+        $t->assert_text_contains($test_name, $json, views::WORD_EDIT);
+        // negative: a top-level url key without a human mapping is reported as missing
+        $test_name = 'human_url_to_json reports a url key without a human mapping';
+        $err_msg = new user_message();
+        $url_map->human_url_to_json([url_var::MASK => views::WORD_EDIT_ID, 'zzz' => '1'], $err_msg);
+        $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+
+        // url_var::action_step maps a confirmed action to the confirmed process step (which triggers the
+        // db write), and a plain navigation action to the base step
+        $test_name = 'action_step maps update_confirmed to the confirmed step';
+        $t->assert($test_name, url_var::action_step(url_var::ACTION_CONFIRMED), url_var::STEP_CONFIRMED);
+        // negative: a navigation action does not advance the process step
+        $test_name = 'action_step maps a navigation action to the base step';
+        $t->assert($test_name, url_var::action_step(url_var::ACTION_SHOW), url_var::STEP_BASE);
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));

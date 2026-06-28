@@ -300,6 +300,8 @@ class component_types
     const int FORM_BUTTON_CANCEL_ID = 29;
     const string FORM_BUTTON_SAVE = "system_button_save";
     const int FORM_BUTTON_SAVE_ID = 30;
+    const string FORM_BUTTON_CONFIRM = "system_button_confirm";
+    const int FORM_BUTTON_CONFIRM_ID = 204;
     const string FORM_BUTTON_DEL = "system_button_del";
     const int FORM_BUTTON_DEL_ID = 31;
     const string FORM_BUTTON_IMPORT = "system_button_import";
@@ -394,6 +396,8 @@ class component_types
     const int ROW_START_ID = 33;
     const string ROW_RIGHT = "row_right";
     const int ROW_RIGHT_ID = 34;
+    const string ROW_CENTER = "row_center";
+    const int ROW_CENTER_ID = 205;
     const string ROW_END = "row_end";
     const int ROW_END_ID = 35;
 
@@ -639,12 +643,14 @@ class component_types
         self::FORM_TABLE_LINKED_VIEWS,
         self::FORM_BUTTON_CANCEL,
         self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_CONFIRM,
         self::FORM_BUTTON_DEL,
         self::FORM_BUTTON_IMPORT,
         self::FORM_BUTTON_EXPORT,
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
@@ -687,6 +693,7 @@ class component_types
     const array BUTTON_TYPES = array(
         self::FORM_BUTTON_CANCEL,
         self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_CONFIRM,
         self::FORM_BUTTON_DEL,
         self::FORM_BUTTON_IMPORT,
         self::FORM_BUTTON_EXPORT,
@@ -702,6 +709,7 @@ class component_types
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END
     );
 
@@ -726,6 +734,7 @@ class component_types
         self::FORM_FIELD_VALUE,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END,
     );
 
@@ -812,6 +821,7 @@ class component_types
         [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
         [self::FORM_BUTTON_CANCEL, self::FORM_BUTTON_CANCEL_ID],
         [self::FORM_BUTTON_SAVE, self::FORM_BUTTON_SAVE_ID],
+        [self::FORM_BUTTON_CONFIRM, self::FORM_BUTTON_CONFIRM_ID],
         [self::FORM_BUTTON_DEL, self::FORM_BUTTON_DEL_ID],
         [self::FORM_BUTTON_IMPORT, self::FORM_BUTTON_IMPORT_ID],
         [self::FORM_BUTTON_EXPORT, self::FORM_BUTTON_EXPORT_ID],
@@ -832,6 +842,7 @@ class component_types
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
+        [self::ROW_CENTER, self::ROW_CENTER_ID],
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],

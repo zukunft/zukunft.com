@@ -76,6 +76,19 @@ class user_read_tests
         $usr_by_id->load_by_id($usr->id, user::class);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
+        // data_user returns the requested data user when an api caller (e.g. an admin) asks to
+        // see another user's data via url_var::USER, and the session user when no id is requested
+        $session = new user();
+        $session->load_by_name(users::SYSTEM_TEST_NAME);
+        $test_name = 'data_user loads the requested data user';
+        $t->assert($test_name, $session->data_user(users::SYSTEM_ID)->id(), users::SYSTEM_ID);
+        // negative: without a requested id the session user itself is used
+        $test_name = 'data_user falls back to the session user';
+        $t->assert($test_name, $session->data_user(0)->id(), $session->id());
+        // negative: requesting the session user's own id keeps the fully loaded session user (no reload)
+        $test_name = 'data_user keeps the session user when its own id is requested';
+        $t->assert_true($test_name, $session->data_user($session->id()) === $session);
+
         // TODO test type and view
 
 

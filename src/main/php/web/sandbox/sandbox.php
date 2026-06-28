@@ -219,6 +219,27 @@ class sandbox extends db_object
 
 
     /*
+     * load
+     */
+
+    /**
+     * add the user to the load of the user sandbox object e.g. word by id via api
+     * TODO Prio 1 add user_message as parameter
+     * @param int|string $id the database id of the object that should be loaded
+     * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool
+     */
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    {
+        if ($usr_id > 0) {
+            $data[url_var::USER] = $usr_id;
+        }
+        return parent::load_by_id($id, $data, $usr_id);
+    }
+
+
+    /*
      * selectors
      */
 

@@ -125,7 +125,7 @@ class triple extends sandbox_code_id
     // the triple components
     // they can be null to allow front end error messages to the user
     private ?phrase $from = null;
-    private ?verb $verb = null;
+    public ?verb $verb = null;
     private ?phrase $to = null;
     public ?float $weight = null;
     public ?string $plural = null {
@@ -216,11 +216,12 @@ class triple extends sandbox_code_id
      * and to phrases with their names so the page title can link each part (like the word,
      * the INCL_RELATED flag triggers the backend to add the phrase names)
      * @param int|string $id the database id of the triple to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true if the triple has been loaded
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
     /**
@@ -477,7 +478,14 @@ class triple extends sandbox_code_id
 
     function get_verb(): verb
     {
-        return $this->verb;
+        $vrb = $this->verb;
+        // a triple without a verb is a data error; log it (with the triple id) and fall back to an
+        // empty verb so the from/verb/to renderers and the api array do not crash on a null verb
+        if ($vrb == null) {
+            $vrb = new verb();
+            log_err('verb missing for triple ' . $this->dsp_id(), 'triple->get_verb');
+        }
+        return $vrb;
     }
 
     function get_to(): ?phrase

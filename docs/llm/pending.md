@@ -8,9 +8,15 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-add the translatable title 'Confirm word changes' to the 'System Test Word - Confirm update - zukunft.com' page 
+check why 'please select ...' is missing in ' <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="formula_link_add" id="p_form_select_phrase" > <datalist id="p_form_select_phrase_list">'
 
-in the 'System Test Word - Confirm update - zukunft.com' page show a translateable 'before' and 'after' as a lable to the old and new word name
+see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeatet.
+
+add a fill step to the word workflow test. After the step that changes of the description the test word 'add_filled' should be used to create a url with all fields filled and this should be used to test the confirm view for all fields filled. the name of the step is fill. 
+
+add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
+
+after adding a word the word as it has been saved in the database should be shown. Because the db id is not yet known, that word name should be used to load the word. this implies that the url for /src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save_add_confirmed_url.txt should contain '"url_part_back": {"mask_id": "word_default", "name": "System Test Word"}' using the short url var for the name 'k'  
 
 update the confirm change view to shows the user changes (based on the '8' prefixed values) and call the page when in the word edit view save is pressed
 
@@ -20,6 +26,7 @@ add a snap timestamp to the change log. The snap timestamp is the time when the 
 
 in the view 'Change word' adjust the url on the save button so that it fix the error messages 'url key "mask_id" is missing, url mapper for "mask" is missing, url mapper for "id" is missing, url mapper for "back" is missing, url mapper for "confirm" is missing, url mapper for "Name" is missing, url mapper for "py" is missing, url mapper for "Description" is missing, url mapper for "Plural" is missing, url mapper for "d" is missing, url mapper for "s" is missing, url mapper for "sp" is missing' caused by calling the url 'http://localhost/http/view.php?mask=3&id=259&back=259&confirm=1&Name=USD&py=3&Description=ISO+4217+alphabetic+code+for+the+United+States+dollar.&Plural=&d=0&s=1&sp=1' ; the expected result is that it should show the "Confirm update" view with the changes that the user has done and after pressing confirm that database row should be updated and the user should see th original page again, but with the updates , create first unit tests for the workflow using src/test/php/unit_workflow/all_workflow_tests.php
 
+test.php gates this call under the WORKFLOW_TEST const, while the other DB-write tests run under a separate WRITE_TEST const. By folding the write workflow into all_workflow_tests::run, the write workflow now runs whenever WORKFLOW_TEST is on — independent of WRITE_TEST. That matches your "never differ" goal (it's how test_workflow.php already behaves — no WRITE_TEST gate there), but it does mean a WORKFLOW_TEST=true, WRITE_TEST=false run will now touch the DB.
 
 fill in all placeholder
 
@@ -38,6 +45,10 @@ use the '8' prefixed values (urlVar::PRE) to create a complex parallel change wo
 4. user_a changes the description and press save
 5. the changes of user_a are checked against the status when the edit mask has been opened and only the description is updated
 6. the phrase type is left as user_b has changed it
+
+check that all api interfaces can load user specific data independent of the session user 
+
+check the open api definition and the openapi check script and suggest updates in the definition and the script
 
 
 ### word frontend
@@ -107,6 +118,8 @@ add the src/main/resources/messages/start_page/theses_complex_simple.json to the
 add a job to create a wikipedia article
 
 if type_list_check fails update the json and reload the config and try again
+
+create a phrase_value_key table that contains the phrase_id and the value_table_id and the value key for a fast (db index based) selection of all values related to a phrase
 
 
 

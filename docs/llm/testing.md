@@ -2,12 +2,15 @@
 
 Detail for the "Testing rules" in `CLAUDE.md`.
 
-## At least one positive and one negative test per function
+## Write the tests first — a positive and a negative test for every feature
 
-Every function — at minimum every **new** function — has at least one
-**positive** unit test (expected input → expected result) and one **negative**
-test (invalid/missing/boundary input rejected or handled gracefully). A
-happy-path-only function counts as untested for review.
+**Every** function — including every new one — is covered by tests that are
+written **first**, before the function body exists, so the function is shaped by
+its expected behaviour. Cover **every feature** of the function: each behaviour,
+branch and meaningful kind of input gets its own **positive** test (expected
+input → expected result) **and** its own **negative** test (invalid / missing /
+boundary input rejected or handled gracefully). One happy-path test, or testing
+only some of the features, counts as untested for review.
 
 - **Positive**: the documented good case returns the documented result, e.g.
   `body_search()` with a populated word list returns the matching links.
@@ -337,11 +340,20 @@ const, and (3) use the same const for cleanup and for any regeneration script.
 ## Never edit an existing test resource — only add
 
 Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,
-fixture CSVs, import files) is **read-only to a code change**. When your change
-makes one of these fixtures stale, **do not** overwrite it — not by hand and not
-by flipping `AUTO_UPDATE_TEST_FILES` to `true`. Leave the test failing and the
-fixture untouched; the failing snapshot diff is exactly the evidence the next
-step needs.
+fixture CSVs, import files) is **read-only to a code change**. This includes every
+previously created snapshot — e.g. the workflow files like
+`src/test/resources/web/html/workflow/change_word_wf2/wf2_show_edit_back_edit.html`
+and their `_url.txt` siblings. When your change makes one of these fixtures stale,
+**do not** overwrite it — not by hand and not by flipping
+`AUTO_UPDATE_TEST_FILES` to `true`. Leave the test failing and the fixture
+untouched; the failing snapshot diff is exactly the evidence the next step needs.
+
+**Why an LLM must never touch them**: the developer diffs the *committed* baseline
+against the new test output to see precisely what the LLM's code change altered —
+the snapshot is the human's audit trail of the change. If the LLM rewrites the
+baseline to match its own new output, that diff goes silent and the developer can
+no longer tell what changed (or whether it was intended). Regenerating a baseline
+is the developer's deliberate act of accepting the new output, never the LLM's.
 
 The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must always
 stay `false` and must never be changed by an LLM** — not even temporarily and

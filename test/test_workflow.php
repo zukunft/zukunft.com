@@ -51,7 +51,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\unit_workflow\all_workflow_tests;
-use Zukunft\ZukunftCom\test\php\unit_write_workflow\all_write_workflow_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\test_app;
 
@@ -80,12 +79,9 @@ if ($db_con->is_open()) {
             $t->set_users();
             $usr_msg = new user_message();
 
-            // the workflow unit tests without db changes
+            // run all workflow tests (read snapshot + db write) via the single shared entry point
+            // that test.php also calls, so the two never diverge
             all_workflow_tests::run($t, $t->usr1, $usr_msg);
-
-            // run the workflow db write tests
-            //$t_workflow = new all_write_workflow_tests();
-            //$t_workflow->run($t, $t->usr1, $usr_msg);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

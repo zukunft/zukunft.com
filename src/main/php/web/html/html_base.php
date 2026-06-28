@@ -1901,7 +1901,9 @@ class html_base
      */
     function form_start(string $form_name): string
     {
-        // switch on post forms for private values
+        // use a GET form for now so the submitted field values stay visible in the url for debugging;
+        // the named submit button (POST_SUBMIT) still routes the submit through url_to_action, so this
+        // can be switched back to method="post" once the confirm / write workflow is stable
         $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
         $id = ' ' . self::ID . '="' . $form_name . '"';
 
@@ -1984,6 +1986,18 @@ class html_base
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
+        return $result;
+    }
+
+    /**
+     * @return string html code to combine the next elements to one row and center them
+     */
+    function row_center(): string
+    {
+        $result = $this->lf();
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= ' justify-content-center">';
         return $result;
     }
 
@@ -2242,7 +2256,7 @@ class html_base
         return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
     }
 
-    function button_bs(string $text, string $style = '', string $type = ''): string
+    function button_bs(string $text, string $style = '', string $type = '', string $name = ''): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
@@ -2252,7 +2266,10 @@ class html_base
             $type = self::INPUT_SUBMIT;
         }
         $type = ' ' . self::TYPE . '="' . $type . '"';
-        return '<' . self::BUTTON . $class . $type . '>' . $text . '</' . self::BUTTON . '>';
+        // a named submit button posts its name as a url key (e.g. POST_SUBMIT) so the entry point can
+        // tell a data-changing submit apart from a plain navigation and run url_to_action
+        $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
+        return '<' . self::BUTTON . $class . $type . $name . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**

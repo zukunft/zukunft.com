@@ -73,6 +73,7 @@ class triple_url_tests extends url_test_base
      */
     private function change_triple_workflow(int $wf_nbr): void
     {
+        // TODO Prio 1 review
         // resolve the database id of the 'mathematical constant' triple by name and set the fixed
         // snapshot id so the snapshot does not depend on the id assigned by the initial data load
         $trp = new triple($this->t->usr1);
@@ -99,8 +100,9 @@ class triple_url_tests extends url_test_base
         $this->assert_workflow_step(url_var::ACTION_SAVE, views::TRIPLE_EDIT_ID, $change);
         $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
 
-        // confirm: confirm the pending change in the confirm change view (do_it false so nothing is written)
-        $this->assert_workflow_step(url_var::ACTION_CONFIRM, views::CONFIRM_EDIT_ID, $change);
+        // update_confirmed: confirm the pending change so it is written to the database (do_it false
+        // here, so nothing is actually written)
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_EDIT_ID, $change);
 
         // cancel: cancel the change and return to the triple view
         $this->assert_workflow_step(url_var::ACTION_CANCEL, views::TRIPLE_ID);

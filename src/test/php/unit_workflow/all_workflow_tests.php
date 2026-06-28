@@ -43,22 +43,28 @@ include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'all_write_workflow_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\all_write_workflow_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use const Zukunft\ZukunftCom\test\php\utils\WRITE_TEST;
 
 class all_workflow_tests
 {
 
     /**
-     * check if the url requests by the given user still produces the expected html pages
+     * run all workflow tests so the full suite (test.php) and the dedicated workflow runner
+     * (test_workflow.php) call exactly the same function and can never diverge:
+     * first the read-only url snapshot tests, then the db write workflow tests
      *
-     * @param test_base $t the test environment including the error counter and execution times
+     * @param test_base|test_cleanup $t the test environment including the error counter and execution times
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    static function run(test_base $t, user $usr, user_message $usr_msg): bool
+    static function run(test_base|test_cleanup $t, user $usr, user_message $usr_msg): bool
     {
 
         // start the test section (ts)
@@ -67,9 +73,15 @@ class all_workflow_tests
 
         if ($usr->id > 0) {
 
-            // url tests
+            // url snapshot tests (read only, do_it false)
             new word_url_tests()->run($t);
             new triple_url_tests()->run($t);
+
+            // the same workflows run again as db write tests (do_it true), gated like the other
+            // db write tests so a read-only run (WRITE_TEST false) does not touch the database
+            if (WRITE_TEST) {
+                new all_write_workflow_tests()->run($t, $usr, $usr_msg);
+            }
 
             /*
              * TODO Prio 1 easy workflow

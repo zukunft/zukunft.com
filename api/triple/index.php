@@ -62,18 +62,22 @@ if ($db_con->is_open()) {
         // get the parameters
         $trp_id = $_GET[url_var::ID] ?? 0;
         $trp_name = $_GET[url_var::NAME] ?? '';
-
-        // INCL_RELATED is opt-in via the ?incl_related=1 url param so that the triple page
-        // gets the from, verb and to names for the title while a plain fetch stays cheap
+        $usr_id = $_GET[url_var::USER] ?? 0;
+        // e.g. ir=1 to include related objects like from, verb and to names
         $typ_lst = api_type_list::from_url_array($_GET);
 
-        $trp = new triple($usr);
+        // the session user may differ from the data user e.g. an admin wants to see the data
+        // of a user; the data user is included in the request in url_var::USER
+        $load_usr = $usr->data_user($usr_id);
+
+
+        $trp = new triple($load_usr);
         if ($trp_id > 0) {
             $trp->load_by_id($trp_id);
-            $result = $trp->api_json($typ_lst, $usr);
+            $result = $trp->api_json($typ_lst, $load_usr);
         } elseif ($trp_name > 0) {
             $trp->load_by_name($trp_name);
-            $result = $trp->api_json($typ_lst, $usr);
+            $result = $trp->api_json($typ_lst, $load_usr);
         } else {
             $msg = 'triple id or name is missing';
         }
