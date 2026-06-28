@@ -133,11 +133,12 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
+        $lib = new library();
         $result = '';
         if ($ui_msg_code_id != null) {
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
-                $title .= ' ' . library::class_to_name($dbo::class);
+                $title .= ' ' . $lib->class_to_name_translated($dbo::class);
             }
             $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
                 . $title . '</' . html_base::H4 . '>';

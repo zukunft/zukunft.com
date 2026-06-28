@@ -8,6 +8,14 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
+use function like src/main/php/shared/helper/Translator.php::text_json_field always if a json field name is shown to the user. Call the function as late as possible.
+
+use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes. 
+
+create function like src/main/php/shared/helper/Translator.php::text_db_field for alle types that are part of src/main/resources/db_code_links
+
+
+
 check why 'please select ...' is missing in ' <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="formula_link_add" id="p_form_select_phrase" > <datalist id="p_form_select_phrase_list">'
 
 see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeatet.

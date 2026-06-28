@@ -107,6 +107,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_VALUE . 'value_text.php';
 //include_once paths::MODEL_VALUE . 'value_time.php';
 //include_once paths::MODEL_VALUE . 'value_time_series.php';
+//include_once paths::MODEL_VALUE . 'value_ts_data.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
@@ -119,6 +120,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
+//include_once paths::SERVICE . 'config.php';
+//include_once paths::SHARED_ENUM . 'change_tables.php';
 //include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 //include_once paths::SHARED_ENUM . 'user_statuum.php';
 //include_once paths::SHARED_TYPES . 'system_time_type.php';
@@ -201,6 +204,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -213,6 +217,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
@@ -859,5 +865,46 @@ class def
         [user::class, user_db::FLD_LAST_LOGOUT],
     ];
 
+    // map the complete (namespaced) class name of a main object to its database table const
+    // the table consts are defined in shared/enum/change_tables.php
+    // unlike library::class_to_table this avoids the string munging and the magic-literal exceptions
+    const array CLASS_TO_TABLE = [
+        user::class => change_tables::USER,
+        word::class => change_tables::WORD,
+        verb::class => change_tables::VERB,
+        triple::class => change_tables::TRIPLE,
+        value::class => change_tables::VALUE,
+        formula::class => change_tables::FORMULA,
+        formula_link::class => change_tables::FORMULA_LINK,
+        view::class => change_tables::VIEW,
+        component::class => change_tables::VIEW_COMPONENT,
+        component_link::class => change_tables::VIEW_LINK,
+        ref::class => change_tables::REF,
+        source::class => change_tables::SOURCE,
+        result::class => change_tables::RESULT,
+        view_relation::class => change_tables::VIEW_RELATION,
+        value_time::class => change_tables::VALUE_TIME,
+        value_text::class => change_tables::VALUE_TEXT,
+        value_geo::class => change_tables::VALUE_GEO,
+        value_time_series::class => change_tables::VALUE_TIME_SERIES,
+        value_ts_data::class => change_tables::VALUE_TS_DATA,
+        config::class => change_tables::CONFIG,
+        sys_log::class => change_tables::SYS_LOG,
+        user_status::class => change_tables::USER_STATUS,
+        job_status::class => change_tables::JOB_STATUS,
+        db_cache_status::class => change_tables::DB_CACHE_STATUS,
+        sys_log_status::class => change_tables::SYS_LOG_STATUS,
+    ];
+
+    /**
+     * map a complete (namespaced) class name to its database table const (change_tables.php)
+     *
+     * @param string $class the complete class name including the namespace, e.g. word::class
+     * @return string the database table const for the class or '' if the class has no table mapping
+     */
+    static function class_to_table(string $class): string
+    {
+        return self::CLASS_TO_TABLE[$class] ?? '';
+    }
 
 }

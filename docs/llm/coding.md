@@ -77,6 +77,7 @@ detail file. Order is by how often they fire, not importance.
 - Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_sys $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/state-and-messages.md`
 - `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/state-and-messages.md`
 - User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/state-and-messages.md`
+- A db field / table / action name shown to the user is translated via `$mtr->text_db_field`/`_table`/`_action` (the `code_id` → message id lookup), called as late as possible (at display, not when storing/passing the raw `code_id`). → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 

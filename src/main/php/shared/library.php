@@ -3883,6 +3883,28 @@ class library
     }
 
     /**
+     * the user-readable class name translated into the user language
+     * maps the class to its database table const via def::class_to_table and translates that
+     * table name with the translator, e.g. word::class -> 'words' -> "Words" / "Wörter";
+     * if the class has no table mapping the plain (untranslated) class name is returned
+     *
+     * @param string $class the complete class name including the namespace, e.g. word::class
+     * @param string $lan the code id of the target language or '' for the user language
+     * @return string the translated class name or the plain class name if the class has no table mapping
+     */
+    function class_to_name_translated(string $class, string $lan = ''): string
+    {
+        global $mtr;
+        $table = def::class_to_table($class);
+        if ($table == '') {
+            $result = $this->class_to_name($class);
+        } else {
+            $result = $mtr->text_db_table($table, $lan);
+        }
+        return $result;
+    }
+
+    /**
      * get a list of table ids that are relevant for the given frontend class name
      * including table ids of used in previous versions of this program
      * @return array with the table ids that are relevant for a ui class name

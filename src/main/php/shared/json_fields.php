@@ -450,4 +450,28 @@ class json_fields
         self::USAGE,
     ];
 
+    // map a json field name to the matching database field code id (change_fields.csv)
+    // so the json field translation can reuse the database field translation
+    // most json field names are identical to the database field code id and need no entry here;
+    // only json fields that use a different name for the same database field are listed
+    const array JSON_TO_DB_FIELD = [
+        self::EX_VERB => self::VERB,
+        self::USR => self::USER_ID,
+        self::USER_NAME => self::USER_ID,
+        self::TYPE_NAME => self::TYPE,
+    ];
+
+    /**
+     * map a json field name to the database field code id used for the translation
+     * defaults to the json field name itself because most json fields share the db field code id;
+     * only the renamed fields in JSON_TO_DB_FIELD return a different code id
+     *
+     * @param string $json_field the json field name as defined by the consts of this class
+     * @return string the database field code id (change_fields.csv) to translate the json field
+     */
+    static function json_field_to_db_field(string $json_field): string
+    {
+        return self::JSON_TO_DB_FIELD[$json_field] ?? $json_field;
+    }
+
 }
