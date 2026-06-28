@@ -56,6 +56,7 @@ detail file. Order is by how often they fire, not importance.
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
+- Loading and saving are separated: every function reached from `save()` (e.g. `db_fields_changed`, `add_user`) works only on in-memory objects + the initial `$db_rec`/`get_similar` reload and never calls a `load_*`; fix an incomplete object at its load, not in the save path. → `docs/llm/architecture.md`
 - Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
 - Function names are spelled out in full (`load_by_phrase_list`, not `load_by_phr_lst`); the abbreviations are for variables only. → `docs/llm/architecture.md`
