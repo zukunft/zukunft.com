@@ -93,19 +93,9 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        // the session user may differ from the data user
-        // e.g. an admin whats to see the data of a user
-        // the data user is included in the request in url_var::USER
-        // TODO Prio 0 move to a function and include this in at least all sandbox api responders
-        $load_usr = $usr;
-        $req_usr_id = $_GET[url_var::USER] ?? 0;
-        if ($req_usr_id > 0) {
-            $req_usr = new user();
-            $req_usr->load_by_id($req_usr_id);
-            if ($req_usr->id > 0) {
-                $load_usr = $req_usr;
-            }
-        }
+        // the session user may differ from the data user e.g. an admin wants to see the data
+        // of a user; the data user is included in the request in url_var::USER
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
 
         $wrd = new word($load_usr);
 

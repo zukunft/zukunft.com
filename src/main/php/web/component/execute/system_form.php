@@ -156,7 +156,7 @@ class system_form extends component
      */
     function title_named(
         db_object $dbo,
-        int $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
         // for a named object the page title is simply its name shown big
@@ -168,21 +168,26 @@ class system_form extends component
      * and the from, verb and to with a link to each word/triple and the verb in the
      * subtitle, with the same edit link and category subtitle as the named title
      *
-     * @param db_object $dbo the triple whose name is the title and whose from, verb and to are the subtitle
+     * @param triple|db_object $dbo the triple whose name is the title and whose from, verb and to are the subtitle
      * @param int $max to limit the number of related phrases shown before a "..." link
      * @return string the html code for the triple page title
      */
     function title_triple(
-        db_object $dbo,
-        int $max = def::LIMIT_RELATED_PER_VERB
+        triple|db_object $dbo,
+        int              $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
         // the from/verb/to links move to the subtitle; the title shows the plain triple name
         $from_verb_to = '';
         if ($dbo::class == triple::class) {
-            $from_verb_to = $dbo->get_from()?->name_link() . ' '
-                . $dbo->get_verb()->name_link() . ' '
-                . $dbo->get_to()?->name_link();
+            if ($dbo->verb != null) {
+                $from_verb_to = $dbo->get_from()?->name_link() . ' '
+                    . $dbo->get_verb()->name_link() . ' '
+                    . $dbo->get_to()?->name_link();
+            } elseif ($dbo->get_from() != null or $dbo->get_to() != null) {
+                $from_verb_to = $dbo->get_from()->name_link() . ' '
+                    . $dbo->get_to()->name_link();
+            }
         }
         return $this->title_box($dbo, $dbo->name(), $max, $from_verb_to);
     }
@@ -198,7 +203,7 @@ class system_form extends component
      */
     function title_formula(
         db_object $dbo,
-        int $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
         return $this->title_named($dbo, $max);
@@ -216,7 +221,7 @@ class system_form extends component
      */
     function title_value(
         db_object $dbo,
-        int $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value

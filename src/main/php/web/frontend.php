@@ -1431,6 +1431,12 @@ class frontend
             and array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
             $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
         }
+        // stamp the prime object id from the url onto the dbo so it already knows which row it
+        // represents (lists and type objects have no single id, so only db objects get it; the
+        // value is left uncast so a string group key survives)
+        if ($dbo instanceof db_object_ui and array_key_exists(url_var::ID, $url_array)) {
+            $dbo->set_id($url_array[url_var::ID]);
+        }
         return $dbo;
     }
 

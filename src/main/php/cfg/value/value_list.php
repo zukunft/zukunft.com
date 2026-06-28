@@ -486,10 +486,13 @@ class value_list extends sandbox_value_list
                 $qp->merge($qp_tbl);
             }
         }
-        // sort the parameters if the parameters are part of the union
+        // for the union take the parameters from the creator, which keeps one entry
+        // per placeholder ($1 phrase, $2 group, $3 user) reused across the branches;
+        // value-merging the per-branch lists would drop a parameter when the phrase id
+        // and the user id are equal
         if ($sc->db_type() != sql_db::MYSQL) {
             $lib = new library();
-            $qp->par = $lib->key_num_sort($qp->par);
+            $qp->par = $lib->key_num_sort($sc->get_par());
         }
 
         foreach ($qp->par as $par) {

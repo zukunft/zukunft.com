@@ -246,6 +246,7 @@
     \-- key_field - section for function key_field not yet defined that it should be set and get in /user/user.php
     \-- is_excluded - section for function is_excluded is expected to be info in /user/user.php
     \-- load_by_id - section for function load_by_id is expected to be load in /user/user.php
+    \-- data_user - section for function data_user not yet defined that it should be loading / database access object (DAO) functions in /user/user.php
     \-- load_by_name - section for function load_by_name is expected to be load in /user/user.php
     \-- load_by_code_id - section for function load_by_code_id is expected to be load in /user/user.php
     \-- load_by_email - section for function load_by_email is expected to be load in /user/user.php

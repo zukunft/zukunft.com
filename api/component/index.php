@@ -61,7 +61,11 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        $cmp = new component($usr);
+        // the session user may differ from the data user e.g. an admin wants to see the data
+        // of a user; the data user is included in the request in url_var::USER
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+
+        $cmp = new component($load_usr);
         if ($cmp_id > 0) {
             $cmp->load_by_id($cmp_id);
             $result = $cmp->api_json();

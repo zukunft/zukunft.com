@@ -125,7 +125,7 @@ class triple extends sandbox_code_id
     // the triple components
     // they can be null to allow front end error messages to the user
     private ?phrase $from = null;
-    private ?verb $verb = null;
+    public ?verb $verb = null;
     private ?phrase $to = null;
     public ?float $weight = null;
     public ?string $plural = null {
@@ -478,7 +478,14 @@ class triple extends sandbox_code_id
 
     function get_verb(): verb
     {
-        return $this->verb;
+        $vrb = $this->verb;
+        // a triple without a verb is a data error; log it (with the triple id) and fall back to an
+        // empty verb so the from/verb/to renderers and the api array do not crash on a null verb
+        if ($vrb == null) {
+            $vrb = new verb();
+            log_err('verb missing for triple ' . $this->dsp_id(), 'triple->get_verb');
+        }
+        return $vrb;
     }
 
     function get_to(): ?phrase

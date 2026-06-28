@@ -1,0 +1,113 @@
+{
+  "words": [
+    {
+      "id": "w_annoyance_test",
+      "name": "Annoyance Test Republik",
+      "description": "Tactic: deliberately irritate the publishers to trigger an open-source implementation of one-click-hide"
+    },
+    {
+      "id": "w_one_click_hide",
+      "name": "One-Click-Hide",
+      "description": "Feature that hides a contribution via a single reversible click"
+    },
+    {
+      "id": "w_plato_goal",
+      "name": "Plato Goal",
+      "description": "Transmission of the idea to the next generation as the actual addressee, not majority persuasion"
+    },
+    {
+      "id": "w_p_publishers_build",
+      "name": "P(publishers implement | annoyed)",
+      "description": "Probability that publishers enable the feature in response to irritation"
+    },
+    {
+      "id": "w_p_throttle",
+      "name": "P(publishers throttle | annoyed)",
+      "description": "Probability of the competing cheaper reaction: ignore or limit the user"
+    },
+    {
+      "id": "w_implementation_cost",
+      "name": "Implementation Cost",
+      "description": "Effort for publishers, given an open-source PR is supplied by Timon"
+    },
+    {
+      "id": "w_ensemble_failure_rate",
+      "name": "Single-Attempt Failure Rate",
+      "description": "Share of individual tactics in a portfolio that fail on their own"
+    },
+    {
+      "id": "w_bus_factor",
+      "name": "Bus Factor zukunft.com",
+      "description": "Number of people whose loss would halt the project"
+    }
+  ],
+  "values": [
+    {
+      "word": "w_implementation_cost",
+      "value": 1,
+      "unit": "click (merge of a finished PR)",
+      "type": "assumed value",
+      "confidence": 0.6,
+      "note_ref": "Assumption: PR is mergeable and reversible; real cost includes review, UX, abuse vetting"
+    },
+    {
+      "word": "w_p_publishers_build",
+      "value": 0.08,
+      "unit": "probability",
+      "type": "assumed value",
+      "confidence": 0.3,
+      "note_ref": "Claude's estimate; revisable upward given the open-source PR, since building is no longer the most expensive option"
+    },
+    {
+      "word": "w_p_throttle",
+      "value": 0.55,
+      "unit": "probability",
+      "type": "assumed value",
+      "confidence": 0.3,
+      "note_ref": "Competing cheaper reaction; Moos supplies the justification for it free of charge"
+    },
+    {
+      "word": "w_ensemble_failure_rate",
+      "value": 0.9,
+      "unit": "share",
+      "type": "assumed value",
+      "confidence": 0.4,
+      "note_ref": "Timon's own estimate: very high failure probability per single attempt, hence a portfolio is required"
+    },
+    {
+      "word": "w_bus_factor",
+      "value": 1,
+      "unit": "persons",
+      "type": "assumed value",
+      "confidence": 0.7,
+      "note_ref": "Father-son transmission nominally raises this to 2 but remains structurally a single point of failure until an external collaborator joins"
+    }
+  ],
+  "triples": [
+    {
+      "from": "w_annoyance_test",
+      "verb": "is single attempt in",
+      "to": "w_ensemble_failure_rate"
+    },
+    {
+      "from": "w_annoyance_test",
+      "verb": "aims to trigger",
+      "to": "w_one_click_hide"
+    },
+    {
+      "from": "w_implementation_cost",
+      "verb": "lowers barrier for",
+      "to": "w_p_publishers_build"
+    },
+    {
+      "from": "w_p_throttle",
+      "verb": "competes with",
+      "to": "w_p_publishers_build"
+    },
+    {
+      "from": "w_plato_goal",
+      "verb": "is limited by",
+      "to": "w_bus_factor"
+    }
+  ]
+}

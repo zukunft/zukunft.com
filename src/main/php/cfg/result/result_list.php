@@ -303,9 +303,12 @@ class result_list extends sandbox_value_list
         $par_types = array();
         foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
-
             $qp->merge($qp_tbl, true);
         }
+        // take the parameters from the creator, which keeps one entry per placeholder
+        // ($1 user, $2 formula) reused across the union branches; merging the per-branch
+        // value lists instead would drop a parameter when the user and formula id are equal
+        $qp->par = $sc->get_par();
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
         return $qp;
     }

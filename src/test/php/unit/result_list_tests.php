@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -77,6 +78,9 @@ class result_list_tests
         $test_name = 'load a list of results that are a related a formula '
             . 'e.g. to update the results if the formula has been updated';
         $this->assert_sql_by_frm($test_name, $t_frm->formula(), $t);
+        $test_name = 'load a list of results by a formula whose id matches the user id '
+            . 'still binds both query parameters';
+        $this->assert_sql_by_frm_same_id($test_name, $t);
         $test_name = 'load a list of results that are a based on all phrases of a list '
             . 'e.g. to update the results if the value has been updated';
         $this->assert_sql_by_src($test_name, $t_phr->canton_zh_phrase_list(), $t);
@@ -157,6 +161,45 @@ class result_list_tests
             $sc->set_db_type(sql_db::MYSQL);
             $qp = $res_lst->load_sql_by_frm($sc, $frm);
             $t->assert_qp($qp, $sc->db_type, $test_name);
+        }
+    }
+
+    /**
+     * result list by a formula whose id is the same as the loading user id
+     * SQL statement creation edge case test
+     *
+     * the prepared statement has two placeholders ($1 for the user, $2 for the
+     * formula), so both must keep a bound parameter even when the user id and the
+     * formula id happen to be identical and the merge deduplicates the values
+     *
+     * @param string $test_name the description of the test
+     * @param test_cleanup $t the forwarded testing object
+     */
+    private function assert_sql_by_frm_same_id(
+        string $test_name,
+        test_cleanup $t): void
+    {
+        // create a formula and a loading user that share the same id
+        $usr = new user();
+        $usr->id = formula_names::SCALE_TO_SEC_ID;
+        $frm = new formula($usr);
+        $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
+        $res_lst = new result_list($usr);
+
+        // check the Postgres query syntax and that both query parameters survive
+        $sc = new sql_creator();
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $res_lst->load_sql_by_frm($sc, $frm);
+        $expected = [formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC_ID];
+        $t->assert($test_name, array_values($qp->par), $expected);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name, '_same_id');
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc = new sql_creator();
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $res_lst->load_sql_by_frm($sc, $frm);
+            $t->assert_qp($qp, $sc->db_type, $test_name, '_same_id');
         }
     }
 
