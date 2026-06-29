@@ -58,6 +58,7 @@ class paths
     const string HIST = self::WEB . 'hist' . DIRECTORY_SEPARATOR;
     const string HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
     const string LOG = self::WEB . 'log' . DIRECTORY_SEPARATOR;
+    const string LOG_TEXT = self::WEB . 'log_text' . DIRECTORY_SEPARATOR;
     const string PHRASE = self::WEB . 'phrase' . DIRECTORY_SEPARATOR;
     const string REF = self::WEB . 'ref' . DIRECTORY_SEPARATOR;
     const string RESULT = self::WEB . 'result' . DIRECTORY_SEPARATOR;

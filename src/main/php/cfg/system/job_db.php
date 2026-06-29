@@ -46,10 +46,10 @@ include_once paths::MODEL_REF . 'ref_db.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::SHARED_TYPES . 'job_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -59,10 +59,10 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 
 class job_db
 {
@@ -106,8 +106,8 @@ class job_db
         self::FLD_PARAMETER,
         self::FLD_CHANGE_FIELD,
         self::FLD_ROW,
-        source_db::FLD_ID,
-        ref_db::FLD_ID,
+        source_fields::FLD_ID,
+        ref_fields::FLD_ID,
         self::FLD_PRIO
     );
 
@@ -122,8 +122,8 @@ class job_db
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
         [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
-        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
+        [source_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [ref_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
         [self::FLD_PRIO, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_PRIO_COM],
     );
 

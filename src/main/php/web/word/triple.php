@@ -74,7 +74,13 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -98,6 +104,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class triple extends sandbox_code_id
 {
@@ -209,6 +217,26 @@ class triple extends sandbox_code_id
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return array the ordered db field names of a triple used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return triple_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array the user-editable triple db field names mapped to their url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            triple_fields::FLD_NAME_GIVEN => url_var::NAME,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            triple_fields::FLD_WIGHT => url_var::WEIGHT,
+        ];
     }
 
     /**

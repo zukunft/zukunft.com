@@ -80,6 +80,17 @@ the object structure is:
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system
 ├── defShared - general system definitions used in frontend and backend
+├── component_fieldsShared - the component fields used database, back and frontend
+├── fieldsShared - general field names used for the database, back- and frontend
+├── formula_fieldsShared - the formula fields used database, back and frontend
+├── group_fieldsShared - the group fields used database, back and frontend
+├── ref_fieldsShared - the reference fields used database, back and frontend
+├── result_fieldsShared - the result fields used database, back and frontend
+├── source_fieldsShared - the source fields used database, back and frontend
+├── triple_fieldsShared - the triple fields used database, back and frontend
+├── value_fieldsShared - the value fields used database, back and frontend
+├── view_fieldsShared - the view fields used database, back and frontend
+├── word_fieldsShared - the word fields used database, back and frontend
 ├── filesShared - resource file names used in backend and frontend
 ├── formulasShared - predefined formulas used in the backend and frontend as code id
 ├── groupsShared - phrase group or value names used by the system for testing

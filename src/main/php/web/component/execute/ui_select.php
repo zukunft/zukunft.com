@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -46,6 +47,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -77,17 +79,28 @@ class ui_select
      */
     function view_select(db_object $dbo, string $form, ?data_object $cfg = null): string
     {
+        return $dbo->view_selector($form, $this->view_list_for($dbo, $cfg));
+    }
+
+    /**
+     * the views to offer in a view selector: the request cache list if it is already filled, otherwise
+     * the object's own views loaded via the api (view_list::load_by_pattern), so an edit form whose
+     * context has no preloaded view list still shows the views that can be assigned (docs/llm/frontend.md)
+     *
+     * @param db_object $dbo the object whose assignable views are loaded when the cache has none
+     * @param data_object|null $cfg the request context that may already hold the loaded view list
+     * @return view_list the views to show in the selector (the caller filters them per object type)
+     */
+    function view_list_for(db_object $dbo, ?data_object $cfg = null): view_list
+    {
         $msk_lst = null;
-        // over
-        if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
-            }
+        if ($cfg != null and $cfg->has_view_list()) {
+            $msk_lst = $cfg->view_list();
         }
         if ($msk_lst == null) {
             $msk_lst = $dbo->view_list();
         }
-        return $dbo->view_selector($form, $msk_lst);
+        return $msk_lst;
     }
 
     /**

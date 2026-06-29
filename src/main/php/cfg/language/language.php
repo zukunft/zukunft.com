@@ -54,6 +54,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class language extends type_object
 {
@@ -98,11 +100,11 @@ class language extends type_object
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const array FLD_LST_ALL = array(
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_WIKI_CODE_COM],
         [self::FLD_LOCAL_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_LOCAL_NAME_COM],
-        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [fields::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
     );
 
 
@@ -149,8 +151,8 @@ class language extends type_object
             if (array_key_exists(self::FLD_LOCAL_NAME, $db_row)) {
                 $this->local_name = ($db_row[self::FLD_LOCAL_NAME]);
             }
-            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                $this->usage = ($db_row[sql_db::FLD_USAGE]);
+            if (array_key_exists(fields::FLD_USAGE, $db_row)) {
+                $this->usage = ($db_row[fields::FLD_USAGE]);
             }
         }
         return $result;
@@ -326,7 +328,7 @@ class language extends type_object
             [
                 self::FLD_WIKI_CODE,
                 self::FLD_LOCAL_NAME,
-                sql_db::FLD_USAGE,
+                fields::FLD_USAGE,
             ]
         );
     }
@@ -385,13 +387,13 @@ class language extends type_object
         if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_USAGE,
+                fields::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
                 $obj->usage

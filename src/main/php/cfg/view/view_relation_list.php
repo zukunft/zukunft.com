@@ -57,6 +57,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class view_relation_list extends sandbox_link_list
 {
@@ -128,7 +130,7 @@ class view_relation_list extends sandbox_link_list
      */
     function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
-        $qp = $this->load_sql($sc, view_db::FLD_ID);
+        $qp = $this->load_sql($sc, view_fields::FLD_ID);
         if ($msk->id() > 0) {
             $sc->add_where(view_relation::FLD_FROM, $msk->id(), sql_par_type::INT_OR);
             $sc->add_where(view_relation::FLD_TO, $msk->id(), sql_par_type::INT_OR);

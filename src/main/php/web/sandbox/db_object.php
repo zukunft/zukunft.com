@@ -185,6 +185,29 @@ class db_object extends TextIdObject
         return [url_var::ID => $this->id()];
     }
 
+    /**
+     * the ordered database field names of this object, e.g. word_fields::ALL_NAMES
+     * used to show the pending field changes in the confirm preview in the database order
+     * expected to be overwritten by each sandbox child that has user-editable fields
+     *
+     * @return array the ordered db field names, or an empty array if the object has no field order
+     */
+    function sandbox_fld_order(): array
+    {
+        return [];
+    }
+
+    /**
+     * map each user-editable database field name to the url var short key that carries it in the edit url
+     * expected to be overwritten by each sandbox child that has user-editable fields
+     *
+     * @return array db field name => url var key, or an empty array if the object has no editable url fields
+     */
+    function db_fld_to_url(): array
+    {
+        return [];
+    }
+
 
     /*
      * set and get
@@ -559,10 +582,13 @@ class db_object extends TextIdObject
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        // without an explicit pattern use the load_by_pattern default ('%'), the sql like wildcard the
+        // backend expects; a literal '*' matches nothing and would return an empty view list
         if ($pattern == null) {
-            $pattern = '*';
+            $msk_lst->load_by_pattern();
+        } else {
+            $msk_lst->load_by_pattern($pattern);
         }
-        $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
 

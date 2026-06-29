@@ -1,0 +1,262 @@
+{
+  "zukunft.com": {
+    "version": "0.0.3",
+    "description": "Evidence base on whether experiencing heatwaves and other extreme weather events shifts climate-change opinion, concern, pro-environmental behaviour, and support for climate policy. Central pattern: extreme weather tends to raise risk perception but rarely changes concern, behaviour, or policy support; effects are small, event-specific, and short-lived. What actually predicts policy support is perceived fairness and effectiveness, not experienced threat. All content in English per project convention. Person-neutral.",
+    "pod": "zukunft.com",
+
+    "words": [
+      {
+        "name": "extreme weather experience",
+        "description": "Direct personal exposure to an extreme weather event (heatwave, flood, fire, hurricane, severe storm) within a defined recent window before measurement.",
+        "type": "word"
+      },
+      {
+        "name": "heatwave",
+        "description": "Period of unusually hot weather persisting at least two consecutive days, defined relative to local climatological conditions (WMO). One empirical definition used: at least three consecutive days above 29 degrees Celsius daytime maximum.",
+        "type": "word"
+      },
+      {
+        "name": "risk perception",
+        "description": "A person's assessed likelihood and severity of climate-change impacts. Distinct from concern and from behaviour; can rise without either changing.",
+        "type": "word"
+      },
+      {
+        "name": "climate concern",
+        "description": "Degree of worry or felt seriousness about climate change. An attitudinal measure distinct from risk perception and from behaviour.",
+        "type": "word"
+      },
+      {
+        "name": "pro-environmental behaviour",
+        "description": "Self-reported or observed individual actions intended to reduce environmental or climate impact.",
+        "type": "word"
+      },
+      {
+        "name": "climate policy support",
+        "description": "Stated support for climate taxes, laws, or the need for collective action. The outcome most relevant to a petition.",
+        "type": "word"
+      },
+      {
+        "name": "perceived fairness",
+        "description": "Belief that a climate policy distributes costs and benefits justly. Identified as a top determinant of policy support.",
+        "type": "word"
+      },
+      {
+        "name": "perceived effectiveness",
+        "description": "Belief that a climate policy will actually achieve its intended outcome. Identified as a top determinant of policy support.",
+        "type": "word"
+      },
+      {
+        "name": "attenuation over time",
+        "description": "Tendency of any opinion effect from an extreme weather event to fade quickly after the event, rather than persist.",
+        "type": "word"
+      },
+      {
+        "name": "optimism bias for self",
+        "description": "Pattern where people acknowledge rising heat risk for others while not seeing themselves as personally at risk, weakening personal motivation to act.",
+        "type": "word"
+      },
+      {
+        "name": "local warming effect",
+        "description": "Short-term tendency to believe more in global warming on days that feel unusually warm; a transient, weather-dependent belief shift rather than a durable one.",
+        "type": "word"
+      },
+      {
+        "name": "compound exposure",
+        "description": "Having experienced more than one type of extreme event (e.g. both flood and heatwave), which in one study did raise concern and behaviour, unlike single-event exposure.",
+        "type": "word"
+      },
+      {
+        "name": "climate disinformation reframing",
+        "description": "Coordinated narratives that reinterpret heatwaves as natural or exaggerated, neutralising their potential persuasive value; commonly conflates short-term weather with long-term climate.",
+        "type": "word"
+      }
+    ],
+
+    "sources": [
+      {
+        "name": "Lohmann & Kontoleon 2023",
+        "description": "Lohmann, P. M., & Kontoleon, A. (2023). Do Flood and Heatwave Experiences Shape Climate Opinion? Causal Evidence from Flooding and Heatwaves in England and Wales. Environmental and Resource Economics, 86(1), 263-304. Difference-in-differences matching on geo-referenced panel data.",
+        "type": "source",
+        "url": "https://doi.org/10.1007/s10640-023-00796-0"
+      },
+      {
+        "name": "Visconti et al. 2024",
+        "description": "Visconti, G., Young, K., & Weis Kintziger, K. (2024). The effect of different extreme weather events on attitudes toward climate change. PLOS ONE, 19(5), e0300967. Three-wave US panel, dynamic difference-in-differences. Tested fires, floods, hurricanes, severe storms (heatwaves not separately tested).",
+        "type": "source",
+        "url": "https://doi.org/10.1371/journal.pone.0300967"
+      },
+      {
+        "name": "Bergquist et al. 2022",
+        "description": "Bergquist, M., Nilsson, A., Harring, N., & Jagers, S. C. (2022). Meta-analyses of fifteen determinants of public opinion about climate change taxes and laws. Nature Climate Change, 12(3), 235-240. 89 datasets, 51 articles, 33 countries, N=119,465.",
+        "type": "source",
+        "url": "https://doi.org/10.1038/s41558-022-01297-6"
+      },
+      {
+        "name": "Zaval et al. 2014",
+        "description": "Zaval, L., Keenan, E. A., Johnson, E. J., & Weber, E. U. (2014). How warm days increase belief in global warming. Nature Climate Change, 4(2), 143-147. Demonstrates transient, weather-dependent belief shifts (local-warming effect).",
+        "type": "source",
+        "url": "https://doi.org/10.1038/nclimate2093"
+      },
+      {
+        "name": "Howarth et al. 2025",
+        "description": "Nationally representative UK survey (N=1750, summer 2023) on public perceptions of extreme heat, identifying gaps between acknowledged risk to others and perceived personal risk. Published in Climate Risk Management / related outlet.",
+        "type": "source",
+        "url": "https://www.sciencedirect.com/science/article/pii/S1462901125001170"
+      },
+      {
+        "name": "EDMO 2025",
+        "description": "European Digital Media Observatory (2025). The same old story - a heat wave of climate disinformation. Documents recurring narratives that reframe heatwaves as natural or exaggerated.",
+        "type": "source",
+        "url": "https://edmo.eu/publications/the-same-old-story-a-heat-wave-of-climate-disinformation/"
+      }
+    ],
+
+    "values": [
+      {
+        "name": "heatwave experience raises risk perception",
+        "words": ["heatwave", "extreme weather experience", "risk perception"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Lohmann & Kontoleon 2023",
+        "predicate": "is increased by",
+        "triple": ["risk perception of climate impacts", "is increased by", "heatwave experience"]
+      },
+      {
+        "name": "heatwave experience does not raise climate concern on average",
+        "words": ["heatwave", "climate concern"],
+        "value_type": "measured value",
+        "value": false,
+        "source": "Lohmann & Kontoleon 2023",
+        "predicate": "is not changed by",
+        "triple": ["climate concern", "is not changed by", "heatwave experience"],
+        "notes_replaced_by_words": "No average effect on concern. The exception is compound exposure: experiencing both flood and heatwave did raise concern and behaviour. See word 'compound exposure'."
+      },
+      {
+        "name": "heatwave experience does not raise pro-environmental behaviour on average",
+        "words": ["heatwave", "pro-environmental behaviour"],
+        "value_type": "measured value",
+        "value": false,
+        "source": "Lohmann & Kontoleon 2023",
+        "predicate": "is not changed by",
+        "triple": ["pro-environmental behaviour", "is not changed by", "heatwave experience"]
+      },
+      {
+        "name": "compound flood-and-heatwave exposure does raise concern and behaviour",
+        "words": ["compound exposure", "climate concern", "pro-environmental behaviour"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Lohmann & Kontoleon 2023",
+        "predicate": "is increased by",
+        "triple": ["climate concern and behaviour", "is increased by", "compound exposure"]
+      },
+      {
+        "name": "heatwave risk-perception effect is driven by recent salient events",
+        "words": ["heatwave", "risk perception", "attenuation over time"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Lohmann & Kontoleon 2023",
+        "predicate": "is driven by",
+        "triple": ["heatwave risk-perception effect", "is driven by", "recent salient heatwaves"],
+        "notes_replaced_by_words": "Effect attributed to the salient 2018 and 2019 summer heatwaves, indicating recency-dependence rather than a stable shift. See word 'attenuation over time'."
+      },
+      {
+        "name": "only fire exposure shifts climate belief and policy support",
+        "words": ["extreme weather experience", "climate policy support"],
+        "value_type": "measured value",
+        "value": true,
+        "confidence": 0.9,
+        "source": "Visconti et al. 2024",
+        "predicate": "is increased by",
+        "triple": ["climate belief and need for action", "is weakly increased by", "fire exposure only"],
+        "notes_replaced_by_words": "Of fires, floods, hurricanes and severe storms, only fire produced a small significant effect; the others produced none. Heatwaves were not separately tested in this study, so this is adjacent rather than direct evidence on heat."
+      },
+      {
+        "name": "the fire effect vanishes quickly",
+        "words": ["climate policy support", "attenuation over time"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Visconti et al. 2024",
+        "predicate": "is attenuated by",
+        "triple": ["fire exposure effect", "is attenuated by", "time"]
+      },
+      {
+        "name": "flood, hurricane and severe storm exposure have no effect on opinion",
+        "words": ["extreme weather experience", "climate policy support"],
+        "value_type": "measured value",
+        "value": false,
+        "source": "Visconti et al. 2024",
+        "predicate": "is not changed by",
+        "triple": ["climate opinion", "is not changed by", "flood hurricane or severe storm exposure"]
+      },
+      {
+        "name": "perceived fairness is a top determinant of policy support",
+        "words": ["perceived fairness", "climate policy support"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Bergquist et al. 2022",
+        "predicate": "is strongly predicted by",
+        "triple": ["climate policy support", "is strongly predicted by", "perceived fairness"]
+      },
+      {
+        "name": "perceived effectiveness is a top determinant of policy support",
+        "words": ["perceived effectiveness", "climate policy support"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Bergquist et al. 2022",
+        "predicate": "is strongly predicted by",
+        "triple": ["climate policy support", "is strongly predicted by", "perceived effectiveness"]
+      },
+      {
+        "name": "knowledge and demographics weakly predict policy support",
+        "words": ["climate policy support"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Bergquist et al. 2022",
+        "predicate": "is weakly predicted by",
+        "triple": ["climate policy support", "is weakly predicted by", "knowledge and demographics"],
+        "notes_replaced_by_words": "Self-enhancement values and climate knowledge showed weak relationships; demographic variables weak or near zero. Implication: informing or alarming people is a weaker lever than fairness and effectiveness."
+      },
+      {
+        "name": "warm days transiently increase belief in global warming",
+        "words": ["local warming effect", "climate concern", "attenuation over time"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Zaval et al. 2014",
+        "predicate": "is transiently increased by",
+        "triple": ["belief in global warming", "is transiently increased by", "locally warm days"],
+        "notes_replaced_by_words": "Belief tracks recent local temperature, indicating the shift is transient and weather-dependent rather than durable. Mechanistically explains why a heatwave's persuasive value fades once it ends."
+      },
+      {
+        "name": "people see heat risk for others but not themselves",
+        "words": ["optimism bias for self", "risk perception"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "Howarth et al. 2025",
+        "predicate": "is characterised by",
+        "triple": ["public heat perception", "is characterised by", "optimism bias for self"]
+      },
+      {
+        "name": "heatwaves are actively reframed by disinformation",
+        "words": ["climate disinformation reframing", "heatwave"],
+        "value_type": "measured value",
+        "value": true,
+        "source": "EDMO 2025",
+        "predicate": "is targeted by",
+        "triple": ["heatwaves", "are targeted by", "climate disinformation reframing"],
+        "notes_replaced_by_words": "Recurring narratives: scientists exaggerate, heatwaves always existed, no CO2 link. A common tactic conflates short-term weather with long-term climate. This actively neutralises the event's persuasive potential."
+      },
+
+      {
+        "name": "experienced heat is a weak lever for climate policy compared to perceived fairness and effectiveness",
+        "words": ["heatwave", "climate policy support", "perceived fairness", "perceived effectiveness"],
+        "value_type": "assumed value",
+        "value": true,
+        "confidence": 0.7,
+        "source": null,
+        "predicate": "is weaker than",
+        "triple": ["experienced heat as a persuasion lever", "is weaker than", "perceived fairness and effectiveness"],
+        "notes_replaced_by_words": "Synthesis across the measured findings: heat raises risk perception but not concern, behaviour or policy support; the strongest measured predictors of support are fairness and effectiveness. Held as an assumed value because it combines several studies into a strategic conclusion rather than resting on a single direct measurement."
+      }
+    ]
+  }
+}

@@ -68,6 +68,7 @@ include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_list extends list_db_write
 {
@@ -148,8 +150,8 @@ class sandbox_list extends list_db_write
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $excluded = null;
-                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
+                if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[fields::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = $db_obj->clone_reset(true);

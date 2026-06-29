@@ -84,6 +84,9 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -115,6 +118,9 @@ use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class word_list extends sandbox_list_named
 {
@@ -267,8 +273,8 @@ class word_list extends sandbox_list_named
         $sc->set_fields(word_db::FLD_NAMES);
         $sc->set_usr_fields(word_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(sql_db::FLD_USAGE) . ' DESC, '
-            . word_db::FLD_NAME);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(fields::FLD_USAGE) . ' DESC, '
+            . word_fields::FLD_NAME);
         return $qp;
     }
 
@@ -291,7 +297,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
-            $sc->add_where(word_db::FLD_ID, $wrd_ids);
+            $sc->add_where(word_fields::FLD_ID, $wrd_ids);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -310,7 +316,7 @@ class word_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array       $names,
-        string      $fld = word_db::FLD_NAME
+        string      $fld = word_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -345,7 +351,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'name_like');
         if ($pattern != '') {
-            $sc->add_where(word_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+            $sc->add_where(word_fields::FLD_NAME, $pattern, sql_par_type::LIKE_R);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -373,19 +379,19 @@ class word_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple_db::FLD_TO;
+                $sc->add_where(triple_fields::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_fields::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple_db::FLD_FROM;
+                $sc->add_where(triple_fields::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_fields::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }
             $sc->set_join_fields(
                 array(verb_db::FLD_ID),
                 triple::class,
-                word_db::FLD_ID,
+                word_fields::FLD_ID,
                 $join_field);
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
@@ -412,7 +418,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($db_con->sql_creator(), 'user_changes');
         if ($usr->id() > 0) {
-            $qp->sql = $db_con->select_by_field(word_db::FLD_ID);
+            $qp->sql = $db_con->select_by_field(word_fields::FLD_ID);
         } else {
             $qp->name = '';
         }
@@ -472,8 +478,8 @@ class word_list extends sandbox_list_named
             if ($db_wrd_lst) {
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd[sql_db::FLD_EXCLUDED]) or $db_wrd[sql_db::FLD_EXCLUDED] == 0) {
-                        if ($db_wrd[word_db::FLD_ID] > 0 and !in_array($db_wrd[word_db::FLD_ID], $this->ids())) {
+                    if (is_null($db_wrd[fields::FLD_EXCLUDED]) or $db_wrd[fields::FLD_EXCLUDED] == 0) {
+                        if ($db_wrd[word_fields::FLD_ID] > 0 and !in_array($db_wrd[word_fields::FLD_ID], $this->ids())) {
                             $new_word = new word($this->get_user());
                             $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);

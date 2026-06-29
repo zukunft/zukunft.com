@@ -2134,6 +2134,65 @@ class html_base
     }
 
     /**
+     * wrap the h1 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h1(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H1, $txt, $style);
+    }
+
+    /**
+     * wrap the h2 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h2(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H2, $txt, $style);
+    }
+
+    /**
+     * wrap the h3 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h3(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H3, $txt, $style);
+    }
+
+    /**
+     * wrap the h4 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h4(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H4, $txt, $style);
+    }
+
+    /**
+     * wrap the given heading tag around html code; the shared helper for h1 to h4
+     * @param string $tag the heading tag const e.g. self::H1
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    private function hx(string $tag, string $txt, string $style = ''): string
+    {
+        if ($style != '') {
+            $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . $tag . $style . '>' . $txt . '</' . $tag . '>';
+    }
+
+    /**
      * concatenate two text snippets with the given separator if both are set
      *
      * @param string $left the first text snippet e.g. the category or the share

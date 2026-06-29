@@ -1,7 +1,7 @@
 GET
 http://localhost/http/view.php?m=3&id=999&k=System+Test+Word&o=a+confirm+change+test+description&lp=&d=0&s=1&sp=1&8k=System+Test+Word&8o=test+description+added+to+the+word+via+import&8lp=&z=1&submit=
 /http/view.php?m=3&id=999&k=System+Test+Word&o=a+confirm+change+test+description&lp=&d=0&s=1&sp=1&8k=System+Test+Word&8o=test+description+added+to+the+word+via+import&8lp=&z=1&submit=
-/http/view.php?mask_id=word_edit&id=999&name=System+Test+Word&description=a+confirm+change+test+description&view_id=0&share=1&protection=1&step=confirm&
+/http/view.php?mask_id=word_edit&id=999&name=System+Test+Word&description=a+confirm+change+test+description&view_id=0&share=1&protection=1&8name=System+Test+Word&8description=test+description+added+to+the+word+via+import&step=confirm&
 {
     "mask_id": "word_edit",
     "id": "999",

@@ -146,6 +146,33 @@ Every new user-visible string needs:
 2. An English entry in `src/main/resources/translations/en.yaml`
 3. A German entry in `src/main/resources/translations/de.yaml` (and any other active locale)
 
+### Translate db field / table / action / json field names at display time
+
+A database field, table or change-action name, or a json field name, shown to
+the user is never displayed as its raw `code_id` / field key; it is translated
+through the matching `Translator` helper, which prefixes the `code_id` and looks
+up the message id:
+
+- `$mtr->text_db_field($code_id)` — field name (`change_fields.csv` → `system_db_field_*`)
+- `$mtr->text_db_table($code_id)` — table name (`change_tables.csv` → `system_db_table_*`)
+- `$mtr->text_db_action($code_id)` — change action (`change_actions.csv` → `system_db_action_*`)
+- `$mtr->text_json_field($json_field)` — json field name (`json_fields.php`); maps the json field to its db field via `json_fields::json_field_to_db_field` and reuses the db field translation
+
+**Call the helper as late as possible — at the point of display, not earlier.**
+Pass and store the raw `code_id` / json field key through the model, api and url
+layers; only the final HTML/text renderer turns it into a localized string.
+Translating early freezes one language into data that is cached, serialised and
+re-shown to users in other languages.
+
+- **Right**: `$html .= $mtr->text_db_field($fld_code_id);` in the renderer
+- **Wrong**: storing `$mtr->text_db_field($fld_code_id)` on the object, then
+  rendering that pre-translated string later
+
+Each name still needs its `messages.php` case plus en/de translations (see
+above); the helper only resolves the `code_id` to that message id. A json field
+without its own message id falls back to its db field translation (identity map),
+so most json fields need no extra entry.
+
 ## Back-navigation parameter convention
 
 Back navigation (where to redirect after an action) is encoded as

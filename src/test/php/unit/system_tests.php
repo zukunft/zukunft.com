@@ -67,20 +67,28 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -230,6 +238,19 @@ class system_tests
         $test_name = 'translate a message';
         $t->assert($test_name, $mtr->txt(msg_id::DONE, language_codes::DE), "erledigt");
 
+        $test_name = 'json field without a rename maps to the same db field code id';
+        $t->assert($test_name, json_fields::json_field_to_db_field(json_fields::DESCRIPTION), json_fields::DESCRIPTION);
+        $test_name = 'a renamed json field maps to its db field code id';
+        $t->assert($test_name, json_fields::json_field_to_db_field(json_fields::EX_VERB), json_fields::VERB);
+        $test_name = 'translate a db field name';
+        $t->assert($test_name, $mtr->text_db_field(json_fields::DESCRIPTION, language_codes::EN), 'Description');
+        $test_name = 'translate a db field name into German';
+        $t->assert($test_name, $mtr->text_db_field(json_fields::DESCRIPTION, language_codes::DE), 'Beschreibung');
+        $test_name = 'translate a json field that shares the db field code id';
+        $t->assert($test_name, $mtr->text_json_field(json_fields::DESCRIPTION, language_codes::EN), 'Description');
+        $test_name = 'translate a renamed json field via the db field translation';
+        $t->assert($test_name, $mtr->text_json_field(json_fields::EX_VERB, language_codes::EN), 'Verb id');
+
         $t->subheader($ts . 'system function');
         $t->assert('default log message', log_debug(), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run');
 
@@ -244,6 +265,16 @@ class system_tests
         $t->subheader($ts . 'def');
         $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));
         $t->assert_false('user is not a sandbox class', $lib->class_is_sandbox(user::class));
+        $t->assert('a class maps to its db table const', def::class_to_table(word::class), change_tables::WORD);
+        $t->assert('a result class maps to its db table const', def::class_to_table(result::class), change_tables::RESULT);
+        $t->assert('a view relation class maps to its db table const', def::class_to_table(view_relation::class), change_tables::VIEW_RELATION);
+        $t->assert('a value sub-table class maps to its db table const', def::class_to_table(value_geo::class), change_tables::VALUE_GEO);
+        $t->assert('a system table class maps to its db table const', def::class_to_table(sys_log::class), change_tables::SYS_LOG);
+        $t->assert('a status table class maps to its db table const', def::class_to_table(user_status::class), change_tables::USER_STATUS);
+        $t->assert('an unmapped class returns an empty db table', def::class_to_table(language_codes::class), '');
+        $t->assert('a class name is translated via its db table', library::class_to_name_translated(word::class, language_codes::EN), 'Words');
+        $t->assert('a class name is translated into German via its db table', library::class_to_name_translated(word::class, language_codes::DE), 'Wörter');
+        $t->assert('an unmapped class falls back to the plain class name', library::class_to_name_translated(language_codes::class), 'language_codes');
 
 
         $t->subheader($ts . 'IP filter');

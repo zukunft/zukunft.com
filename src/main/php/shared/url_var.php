@@ -261,6 +261,7 @@ class url_var
     const string ACTION_EDIT = 'edit'; // open the edit view of the object
     const string ACTION_BACK = 'back'; // leave the edit view without a change and return to the previous page
     const string ACTION_SAVE = 'save'; // press save on the edit form which leads to the confirm change view
+    const string ACTION_FILL = 'fill'; // press save on an edit form with every field filled, like save it leads to the confirm change view
     const string ACTION_CONFIRM = 'confirm'; // confirm the pending change so that it is written to the database
     // the confirmed action actually adds / updates / deletes the object in the database; the confirm
     // view mask selects which crud is run, so one action covers all three operations
@@ -742,12 +743,31 @@ class url_var
     static function action_step(string $action): string
     {
         return match ($action) {
-            self::ACTION_SAVE => self::STEP_CONFIRM,
+            self::ACTION_SAVE,
+            self::ACTION_FILL => self::STEP_CONFIRM,
             self::ACTION_CONFIRM,
             self::ACTION_CONFIRMED => self::STEP_CONFIRMED,
             self::ACTION_CANCEL => self::STEP_CANCEL,
             default => self::STEP_BASE // show, edit and back just navigate, they do not change the process step
         };
+    }
+
+    /**
+     * the human-readable (long) url key for a standard (short) url key
+     * the human key matches the json field name, so it can be translated like a json field
+     *
+     * @param string $std the standard short url key e.g. self::NAME ('k')
+     * @return string the matching human url key e.g. self::NAME_HUMAN ('name'), or '' if none matches
+     */
+    static function std_to_human(string $std): string
+    {
+        $result = '';
+        foreach (self::HUMAN_TO_STD as $entry) {
+            if ($entry[1] == $std) {
+                $result = $entry[0];
+            }
+        }
+        return $result;
     }
 
 }

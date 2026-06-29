@@ -53,6 +53,7 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class user_log_display
 {
@@ -219,7 +221,7 @@ class user_log_display
 
                 // pick the useful field name
                 $txt_fld = '';
-                if ($db_row[sql_db::FLD_CODE_ID] == "value") {
+                if ($db_row[fields::FLD_CODE_ID] == "value") {
                     $txt_fld .= $db_row['type'] . ' value';
                     /* because changing the words creates a new value there is no need to display the words here
                     if ($db_row['row_id'] > 0) {

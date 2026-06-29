@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
@@ -56,6 +57,7 @@ include_once paths::SHARED_HELPER . 'Message.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
@@ -152,7 +154,7 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $sc->add_where(formula_db::FLD_ID, $frm_id);
+            $sc->add_where(formula_fields::FLD_ID, $frm_id);
             $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
@@ -173,7 +175,7 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
-            $sc->add_where(formula_db::FLD_ID, $frm_id);
+            $sc->add_where(formula_fields::FLD_ID, $frm_id);
             $sc->add_where(element_db::FLD_TYPE, $elm_type_id);
             $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();

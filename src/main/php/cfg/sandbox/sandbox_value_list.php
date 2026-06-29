@@ -65,6 +65,8 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -94,6 +96,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class sandbox_value_list extends sandbox_list
 {
@@ -306,7 +310,7 @@ class sandbox_value_list extends sandbox_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -380,7 +384,7 @@ class sandbox_value_list extends sandbox_list
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_pos != 0) {
                     $sc->add_where_no_par(
-                        '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                        '', formula_fields::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
                 }
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
@@ -394,7 +398,7 @@ class sandbox_value_list extends sandbox_list
             }
             if ($frm_pos != 0) {
                 $sc->add_where_no_par(
-                    '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                    '', formula_fields::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
@@ -403,7 +407,7 @@ class sandbox_value_list extends sandbox_list
                 if ($or) {
                     $spt = sql_par_type::LIKE_OR;
                 }
-                $sc->add_where_no_par('', group_db::FLD_ID, $spt, $grp_pos);
+                $sc->add_where_no_par('', group_fields::FLD_ID, $spt, $grp_pos);
             }
         }
         $qp->sql = $sc->sql(0, true, false);

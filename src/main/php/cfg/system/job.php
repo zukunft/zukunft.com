@@ -108,6 +108,9 @@ include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -135,6 +138,9 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use DateTime;
 use DateTimeInterface;
 
@@ -249,11 +255,11 @@ class job extends db_object_seq_id_user
             $this->parameter = $db_row[job_db::FLD_PARAMETER];
             $this->change_field = $db_row[job_db::FLD_CHANGE_FIELD];
             $this->row_id = $db_row[job_db::FLD_ROW];
-            if (array_key_exists(source_db::FLD_ID, $db_row)) {
-                $this->set_source_id($db_row[source_db::FLD_ID]);
+            if (array_key_exists(source_fields::FLD_ID, $db_row)) {
+                $this->set_source_id($db_row[source_fields::FLD_ID]);
             }
-            if (array_key_exists(ref_db::FLD_ID, $db_row)) {
-                $this->set_ref_id($db_row[ref_db::FLD_ID]);
+            if (array_key_exists(ref_fields::FLD_ID, $db_row)) {
+                $this->set_ref_id($db_row[ref_fields::FLD_ID]);
             }
             $this->priority = $db_row[job_db::FLD_PRIO];
             log_debug('Batch job ' . $this->id() . ' loaded');
@@ -287,7 +293,7 @@ class job extends db_object_seq_id_user
                 $msg->add(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                 ]);
             }
@@ -316,7 +322,7 @@ class job extends db_object_seq_id_user
                 $msg->add(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                 ]);
             }
@@ -599,8 +605,8 @@ class job extends db_object_seq_id_user
                 job_db::FLD_PARAMETER,
                 job_db::FLD_CHANGE_FIELD,
                 job_db::FLD_ROW,
-                source_db::FLD_ID,
-                ref_db::FLD_ID,
+                source_fields::FLD_ID,
+                ref_fields::FLD_ID,
                 job_db::FLD_PRIO,
             ]
         );
@@ -765,14 +771,14 @@ class job extends db_object_seq_id_user
         if ($obj->get_source_id() !== $this->get_source_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_fields::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                source_db::FLD_ID,
-                source_db::FLD_NAME,
+                source_fields::FLD_ID,
+                source_fields::FLD_NAME,
                 $this->src,
                 $obj->src
             );
@@ -780,14 +786,14 @@ class job extends db_object_seq_id_user
         if ($obj->get_ref_id() !== $this->get_ref_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . ref_fields::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                ref_db::FLD_ID,
-                ref_db::FLD_EX_KEY,
+                ref_fields::FLD_ID,
+                ref_fields::FLD_EX_KEY,
                 $this->ref,
                 $obj->ref
             );

@@ -79,6 +79,8 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -111,6 +113,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula_link extends sandbox_link
 {
@@ -129,35 +133,35 @@ class formula_link extends sandbox_link
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
-        formula_db::FLD_ID,
+        formula_fields::FLD_ID,
         phrase::FLD_ID,
         user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of the link database field names
     const array FLD_NAMES_LINK = array(
-        formula_db::FLD_ID,
+        formula_fields::FLD_ID,
         phrase::FLD_ID
     );
     // all numeric database field names that the user can change
     const array FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of fields that CAN be changed by the user
     const array FLD_LST_USER_CAN_CHANGE = array(
@@ -166,12 +170,12 @@ class formula_link extends sandbox_link
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
-        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
+        [formula_fields::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
 
     // overwrite the parent link const
-    const string FLD_FROM = formula_db::FLD_ID;
+    const string FLD_FROM = formula_fields::FLD_ID;
     const string FLD_PREDICATE = formula_link_type::FLD_ID;
     const string FLD_TO = phrase::FLD_ID;
 
@@ -246,8 +250,8 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            if (key_exists(formula_db::FLD_ID, $db_row)) {
-                $this->formula()->id = $db_row[formula_db::FLD_ID];
+            if (key_exists(formula_fields::FLD_ID, $db_row)) {
+                $this->formula()->id = $db_row[formula_fields::FLD_ID];
                 // set_obj_from_id (not set_id) so a negative phrase id is mapped to a triple
                 // and a positive id to a word; otherwise the to object stays a word with the
                 // triple id and is_same() wrongly reports the link as different on re-import
@@ -755,7 +759,7 @@ class formula_link extends sandbox_link
     ): bool
     {
         return parent::load_standard_by_link_parent(
-            formula_db::FLD_ID, $from_id,
+            formula_fields::FLD_ID, $from_id,
             phrase::FLD_ID, $to_id, $msg
         );
     }
@@ -797,7 +801,7 @@ class formula_link extends sandbox_link
 
     function from_field(): string
     {
-        return formula_db::FLD_ID;
+        return formula_fields::FLD_ID;
     }
 
     function to_field(): string

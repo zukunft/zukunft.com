@@ -97,6 +97,8 @@ include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -129,6 +131,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class group extends sandbox_multi
 {
@@ -197,17 +201,17 @@ class group extends sandbox_multi
         $result = false;
         if ($db_row != null) {
             $this->set_id(0);
-            if (array_key_exists(group_db::FLD_ID, $db_row)) {
-                $this->set_id($db_row[group_db::FLD_ID]);
+            if (array_key_exists(group_fields::FLD_ID, $db_row)) {
+                $this->set_id($db_row[group_fields::FLD_ID]);
                 $grp_id = new group_id();
-                $phr_ids = new phr_ids($grp_id->get_array($db_row[group_db::FLD_ID]));
+                $phr_ids = new phr_ids($grp_id->get_array($db_row[group_fields::FLD_ID]));
                 $this->load_lst($phr_ids);
                 $result = true;
             }
         }
         if ($result) {
-            $this->name = $db_row[group_db::FLD_NAME];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->name = $db_row[group_fields::FLD_NAME];
+            $this->description = $db_row[fields::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
         return $result;
@@ -447,9 +451,9 @@ class group extends sandbox_multi
             }
         } else {
             if ($this->is_big()) {
-                $fvt_lst->add_field(group_db::FLD_ID, $this->id(), sql_field_type::TEXT);
+                $fvt_lst->add_field(group_fields::FLD_ID, $this->id(), sql_field_type::TEXT);
             } else {
-                $fvt_lst->add_field(group_db::FLD_ID, $this->id(), sql_field_type::KEY_512);
+                $fvt_lst->add_field(group_fields::FLD_ID, $this->id(), sql_field_type::KEY_512);
             }
         }
         return $fvt_lst;
@@ -547,7 +551,7 @@ class group extends sandbox_multi
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return group_db::FLD_NAME;
+        return group_fields::FLD_NAME;
     }
 
     /**
@@ -911,7 +915,7 @@ class group extends sandbox_multi
     {
         $sc_par_lst = new sql_type_list($sc_par_arr);
         $qp = $this->load_sql_multi($sc, sql_db::FLD_NAME, $this::class, $sc_par_lst);
-        $sc->add_where(group_db::FLD_NAME, $name);
+        $sc->add_where(group_fields::FLD_NAME, $name);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -1062,12 +1066,12 @@ class group extends sandbox_multi
     private function load_sql_select_qp(sql_creator $sc, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
-            $sc->add_where(group_db::FLD_ID, $this->id());
+            $sc->add_where(group_fields::FLD_ID, $this->id());
         } elseif (!$this->phrase_list()->is_empty()) {
             $this->set_id_from_phrase_list($this->phrase_list());
-            $sc->add_where(group_db::FLD_ID, $this->id());
+            $sc->add_where(group_fields::FLD_ID, $this->id());
         } elseif ($this->name != '') {
-            $sc->add_where(group_db::FLD_NAME, $this->name, sql_par_type::TEXT);
+            $sc->add_where(group_fields::FLD_NAME, $this->name, sql_par_type::TEXT);
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1337,7 +1341,7 @@ class group extends sandbox_multi
                 $db_con->usr_id = $this->get_user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
-                    $this->id = $db_grp[group_db::FLD_ID];
+                    $this->id = $db_grp[group_fields::FLD_ID];
                     if ($this->id() > 0) {
                         log_debug('group->get_by_wrd_lst got id ' . $this->id());
                         $result = $this->load();
@@ -1726,7 +1730,7 @@ class group extends sandbox_multi
                 $db_con->set_class(group::class);
                 // TODO Prio 2 activate
                 /*
-                if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id(), fields::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);
@@ -1932,7 +1936,7 @@ class group extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([group_db::FLD_NAME, user_db::FLD_ID, sql_db::FLD_DESCRIPTION]);
+        return array_merge([group_fields::FLD_NAME, user_db::FLD_ID, fields::FLD_DESCRIPTION]);
     }
 
     /**
@@ -1959,13 +1963,13 @@ class group extends sandbox_multi
         if ($sbx->name() <> $this->name()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . group_db::FLD_NAME,
-                    $sys->typ_lst->cng_fld->id($table_id . group_db::FLD_NAME),
+                    sql::FLD_LOG_FIELD_PREFIX . group_fields::FLD_NAME,
+                    $sys->typ_lst->cng_fld->id($table_id . group_fields::FLD_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                group_db::FLD_NAME,
+                group_fields::FLD_NAME,
                 $this->name(),
                 group_db::FLD_NAME_SQL_TYP
             );
@@ -1978,13 +1982,13 @@ class group extends sandbox_multi
         if ($sbx->description <> $this->description) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP
             );
@@ -2061,7 +2065,7 @@ class group extends sandbox_multi
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(phrase::FLD_ID));
         $db_con->add_par(sql_par_type::INT, $this->id());
-        $qp->sql = $db_con->select_by_field(group_db::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group_fields::FLD_ID);
         $qp->par = $db_con->get_par();
         $lnk_id_lst = $db_con->get($qp);
         foreach ($lnk_id_lst as $db_row) {

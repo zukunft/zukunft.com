@@ -1,0 +1,264 @@
+{
+  "$schema_version": "0.0.4",
+  "context": {
+    "title": "Attention gap: divisive vs. connecting forum posts",
+    "description": "Coding of the 16 opening posts (page 1 of 4) of the heise-online thread 'Aktuelle Hitzewelle die schlimmste in Westeuropa seit Beginn der Aufzeichnungen' (current heatwave the worst in Western Europe since records began). Research question: how large is the engagement gap between posts that reinforce societal division and those that aim to overcome it and propose solutions? Two axes (social valence, constructive orientation) plus reply count as engagement proxy, for display in an XY scatter plot.",
+    "source": {
+      "platform": "heise online forum",
+      "url": "https://www.heise.de/forum/heise-online/Kommentare/Aktuelle-Hitzewelle-die-schlimmste-in-Westeuropa-seit-Beginn-der-Aufzeichnungen/",
+      "captured": "2026-06-28T12:39:27",
+      "page": "1 of 4 (16 of presumably more threads)"
+    },
+    "coder": "LLM estimate (Claude), not inter-rater validated",
+    "license": "CC BY-SA 4.0"
+  },
+
+  "words": [
+    {"name": "heise heatwave thread 2026-06", "type": "context", "note_disambig_via_words_only": "forum_thread"},
+    {"name": "social valence", "type": "measure", "scale": "-1 divisive to +1 connecting"},
+    {"name": "constructive orientation", "type": "measure", "scale": "-1 (emphasize problem + assign blame) to +1 (propose solution + call to action)"},
+    {"name": "reply count", "type": "measure", "unit": "replies"},
+    {"name": "divisive", "type": "pole", "parent": "social valence"},
+    {"name": "connecting", "type": "pole", "parent": "social valence"},
+    {"name": "problem-emphasizing blame-assigning", "type": "pole", "parent": "constructive orientation"},
+    {"name": "solution-proposing action-calling", "type": "pole", "parent": "constructive orientation"},
+    {"name": "solution proposal", "type": "marker", "indicates": "solution-proposing action-calling"},
+    {"name": "call to action", "type": "marker", "indicates": "solution-proposing action-calling"},
+    {"name": "problem emphasis", "type": "marker", "indicates": "problem-emphasizing blame-assigning"},
+    {"name": "blame assignment", "type": "marker", "indicates": "problem-emphasizing blame-assigning", "note": "has side effect on social valence (divisive) -> watch for X/Y coupling"},
+    {"name": "perspective taking", "type": "marker", "indicates": "connecting"},
+    {"name": "contempt", "type": "marker", "indicates": "divisive"}
+  ],
+
+  "axes_definition": {
+    "x": {
+      "word": "social valence",
+      "poles": "divisive (-1) <-> connecting (+1)",
+      "rationale": "Effect on social cohesion. Negative: camp-building, contempt, us-vs-them. Positive: common ground, understanding, bridge-building."
+    },
+    "y": {
+      "word": "constructive orientation",
+      "poles": "emphasize problem + assign blame (-1) <-> propose solution + call to action (+1)",
+      "rationale": "Negative pole unites two markers: (a) staying with the problem/affect and (b) assigning blame to others. Positive pole unites: (a) a concrete solution proposal and (b) a call to action.",
+      "coupling_note": "The blame-assignment marker is by definition also divisive (X-). This produces a slight expected X/Y correlation: blame-assigning posts tend to fall in the lower-left quadrant. When analyzing, compute Pearson r between X and Y; if coupling is high, consider moving blame assignment onto X."
+    },
+    "z_target": {
+      "word": "reply count",
+      "role": "engagement proxy (color/size of points)"
+    }
+  },
+
+  "data_points": [
+    {
+      "id": "thread_zukunftcom",
+      "author": "zukunftcom",
+      "title": "Die Lösung?",
+      "title_en": "The solution?",
+      "datetime": "2026-06-26T11:57",
+      "values": [
+        {"word": "reply count", "value": 0, "type": "measured value", "note": "only thread on the page with no reply counter"},
+        {"word": "social valence", "value": 0.7, "type": "assumed value", "confidence": 0.5, "note": "connecting, solution-oriented hook; full text not visible"},
+        {"word": "constructive orientation", "value": 0.9, "type": "assumed value", "confidence": 0.5}
+      ]
+    },
+    {
+      "id": "thread_udolein",
+      "author": "udolein",
+      "title": "Ich kann dieses deutsche Gejammer nicht mehr hören ....",
+      "title_en": "I can't stand this German whining anymore ....",
+      "datetime": "2026-06-27T15:31",
+      "values": [
+        {"word": "reply count", "value": 22, "type": "measured value"},
+        {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt/whining frame, camp-building"},
+        {"word": "constructive orientation", "value": -0.6, "type": "assumed value", "confidence": 0.6}
+      ]
+    },
+    {
+      "id": "thread_z3m3",
+      "author": "Z3_M3",
+      "title": "Die Leute stellen sich hier so an bei grad mal etwas ueber 40 Grad",
+      "title_en": "People are making such a fuss over barely above 40 degrees",
+      "datetime": "2026-06-27T09:02",
+      "values": [
+        {"word": "reply count", "value": 28, "type": "measured value"},
+        {"word": "social valence", "value": -0.7, "type": "assumed value", "confidence": 0.7, "note": "contempt, trivialization"},
+        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.6}
+      ]
+    },
+    {
+      "id": "thread_whynodd",
+      "author": "Whynodd",
+      "title": "Zum Thema, wie Klimawandel persönlich ins Portemonnaie greift:",
+      "title_en": "On how climate change personally hits your wallet:",
+      "datetime": "2026-06-26T16:52",
+      "values": [
+        {"word": "reply count", "value": 30, "type": "measured value", "note": "highest reply count on the page"},
+        {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual, slightly concern-oriented"},
+        {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_benzinabscheider",
+      "author": "Benzinabscheider",
+      "title": "ab Montag wird es deutlich kühler",
+      "title_en": "starting Monday it'll be much cooler",
+      "datetime": "2026-06-26T18:46",
+      "values": [
+        {"word": "reply count", "value": 23, "type": "measured value"},
+        {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic downplaying/trollbait"},
+        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.45}
+      ]
+    },
+    {
+      "id": "thread_foobar99",
+      "author": "foobar99",
+      "title": "In zwei Monaten ist das Thema wieder vom Tisch",
+      "title_en": "In two months the topic will be off the table again",
+      "datetime": "2026-06-26T14:25",
+      "values": [
+        {"word": "reply count", "value": 22, "type": "measured value"},
+        {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.5, "note": "resignation/cynicism"},
+        {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.6}
+      ]
+    },
+    {
+      "id": "thread_racer4711",
+      "author": "Racer4711",
+      "title": "Passt euch halt an",
+      "title_en": "Just adapt",
+      "datetime": "2026-06-27T22:08",
+      "values": [
+        {"word": "reply count", "value": 21, "type": "measured value"},
+        {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.55, "note": "dismissive, but implicit action reference"},
+        {"word": "constructive orientation", "value": 0.0, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_solaire",
+      "author": "solaire",
+      "title": "Da kann mit Fakten kommen, aber",
+      "title_en": "You can come with facts, but",
+      "datetime": "2026-06-26T13:27",
+      "values": [
+        {"word": "reply count", "value": 16, "type": "measured value"},
+        {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.4},
+        {"word": "constructive orientation", "value": -0.2, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_remindmelater",
+      "author": "RemindMeLater",
+      "title": "37°...",
+      "title_en": "37°...",
+      "datetime": "2026-06-26T23:57",
+      "values": [
+        {"word": "reply count", "value": 13, "type": "measured value"},
+        {"word": "social valence", "value": 0.0, "type": "assumed value", "confidence": 0.3, "note": "minimal hook, hard to code"},
+        {"word": "constructive orientation", "value": -0.3, "type": "assumed value", "confidence": 0.3}
+      ]
+    },
+    {
+      "id": "thread_noname8080",
+      "author": "noname8080",
+      "title": "Realität oder Idealismus",
+      "title_en": "Reality or idealism",
+      "datetime": "2026-06-27T16:15",
+      "values": [
+        {"word": "reply count", "value": 10, "type": "measured value"},
+        {"word": "social valence", "value": 0.2, "type": "assumed value", "confidence": 0.35},
+        {"word": "constructive orientation", "value": 0.3, "type": "assumed value", "confidence": 0.35}
+      ]
+    },
+    {
+      "id": "thread_mmdga",
+      "author": "MmDGA",
+      "title": "Wir brauchen einfach mehr Technologieoffenheit, Verbrenner und Gaskraftwerke",
+      "title_en": "We just need more technology openness, combustion engines and gas power plants",
+      "datetime": "2026-06-26T15:46",
+      "values": [
+        {"word": "reply count", "value": 9, "type": "measured value"},
+        {"word": "social valence", "value": -0.4, "type": "assumed value", "confidence": 0.45, "note": "presumably ironic/polemic, camp slogan"},
+        {"word": "constructive orientation", "value": 0.2, "type": "assumed value", "confidence": 0.35, "note": "apparent solution proposal"}
+      ]
+    },
+    {
+      "id": "thread_notting",
+      "author": "notting",
+      "title": "\"Forscher: Maßnahmen zur Luftverbesserung beschleunigen den Klimawandel\"",
+      "title_en": "\"Researchers: air-quality measures accelerate climate change\"",
+      "datetime": "2026-06-26T11:44",
+      "values": [
+        {"word": "reply count", "value": 6, "type": "measured value"},
+        {"word": "social valence", "value": 0.1, "type": "assumed value", "confidence": 0.4, "note": "factual"},
+        {"word": "constructive orientation", "value": -0.1, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_jochenmagnus",
+      "author": "Jochen Magnus",
+      "title": "Frau Reiche ist in guten Gesprächen",
+      "title_en": "Ms. Reiche is in good talks",
+      "datetime": "2026-06-26T14:05",
+      "values": [
+        {"word": "reply count", "value": 3, "type": "measured value"},
+        {"word": "social valence", "value": -0.3, "type": "assumed value", "confidence": 0.4, "note": "sarcastic allusion"},
+        {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_tutnix",
+      "author": "Tut nix zur Sache",
+      "title": "Damit wäre die Frage \"Wann wird's mal wieder richtig Sommer?\" beantwortet.",
+      "title_en": "That answers the question 'When will it finally be proper summer again?'",
+      "datetime": "2026-06-26T12:56",
+      "values": [
+        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "social valence", "value": -0.1, "type": "assumed value", "confidence": 0.35, "note": "gallows humor"},
+        {"word": "constructive orientation", "value": -0.5, "type": "assumed value", "confidence": 0.4}
+      ]
+    },
+    {
+      "id": "thread_sensonu",
+      "author": "sensonu",
+      "title": "und die CxU hilft kräftig mit :-)",
+      "title_en": "and the CxU is helping out enthusiastically :-)",
+      "datetime": "2026-06-26T13:43",
+      "values": [
+        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "social valence", "value": -0.5, "type": "assumed value", "confidence": 0.5, "note": "party-political blame assignment -> divisive"},
+        {"word": "constructive orientation", "value": -0.7, "type": "assumed value", "confidence": 0.5, "note": "pure blame assignment, no solution/action reference; example of X/Y coupling (lower-left quadrant)"}
+      ]
+    },
+    {
+      "id": "thread_michaelffm",
+      "author": "MichaelFfm",
+      "title": "Alles kein Problem",
+      "title_en": "No problem at all",
+      "datetime": "2026-06-26T12:01",
+      "values": [
+        {"word": "reply count", "value": 1, "type": "measured value"},
+        {"word": "social valence", "value": -0.2, "type": "assumed value", "confidence": 0.35, "note": "presumably ironic downplaying"},
+        {"word": "constructive orientation", "value": -0.4, "type": "assumed value", "confidence": 0.35}
+      ]
+    }
+  ],
+
+  "analysis_notes": {
+    "hypothesis_precommit": "Divisive + problem-emphasizing/blame-assigning (lower-left quadrant) correlates positively with reply count; connecting + solution/action-calling (upper-right quadrant) correlates negatively. zukunftcom 'The solution?' sits upper-right with 0 replies and supports the hypothesis as a single case.",
+    "axis_coupling_precommit": "Expected Pearson correlation r(X,Y) > 0 (positive), because the blame-assignment marker pulls both axes toward negative. If r > 0.7: axes carry redundant information, move blame assignment onto X and reduce Y purely to solution/complaint.",
+    "confounders": [
+      "Reply count measures friction/disagreement, NOT agreement or read reach. Connecting posts can have high silent approval with few replies.",
+      "Posting time: earlier-posted threads have had more time to accumulate replies (time-on-page confounder). Consider normalizing to replies per hour.",
+      "Visibility/order in the forum affects reply count independent of content (position bias).",
+      "n=16, only page 1 of 4. No statistical significance, only hypothesis generation.",
+      "Coding by a single LLM coder, no inter-rater reliability (Cohen's kappa missing). Title-only coding without full text increases uncertainty."
+    ],
+    "next_steps": [
+      "Capture full text of all posts instead of titles only.",
+      "Add a second independent coder (human or other LLM) for inter-rater reliability.",
+      "Include all 4 pages + threads from other topics as control.",
+      "Normalize reply count to replies-per-hour-since-posting.",
+      "If available: use reach/views as a second engagement proxy alongside replies."
+    ]
+  }
+}

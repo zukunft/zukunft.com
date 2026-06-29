@@ -70,5 +70,24 @@ enum change_tables: string
     const string REF_USR = 'user_refs';
     const string SOURCE = 'sources';
     const string SOURCE_USR = 'user_sources';
+    const string RESULT = 'results';
+    const string VIEW_RELATION = 'view_relations';
+    const string VIEW_RELATION_USR = 'user_view_relations';
+
+    // value sub-tables that hold the typed values (also user-changeable, registered in change_tables.csv)
+    const string VALUE_TIME = 'values_time';
+    const string VALUE_TEXT = 'values_text';
+    const string VALUE_GEO = 'values_geo';
+    const string VALUE_TIME_SERIES = 'values_time_series';
+    const string VALUE_TS_DATA = 'value_ts_data';
+
+    // system tables that are registered in change_tables.csv to complete the class to table mapping
+    // TODO Prio 2 use the *_db class const
+    const string CONFIG = 'config';
+    const string SYS_LOG = 'sys_log';
+    const string USER_STATUS = 'user_statuum';
+    const string JOB_STATUS = 'job_statuum';
+    const string DB_CACHE_STATUS = 'db_cache_statuum';
+    const string SYS_LOG_STATUS = 'sys_log_statuum';
 
 }

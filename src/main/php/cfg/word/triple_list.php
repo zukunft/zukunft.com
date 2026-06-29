@@ -83,6 +83,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -108,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class triple_list extends sandbox_list_named
 {
@@ -243,10 +245,10 @@ class triple_list extends sandbox_list_named
                         $db_trp->set_verb_id($db_row[verb_db::FLD_ID]);
                         // fill from
                         $db_trp->set_fob(new phrase($this->get_user()));
-                        $db_trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
+                        $db_trp->fob()->row_mapper_sandbox($db_row, triple_fields::FLD_FROM, '1');
                         // fill to
                         $db_trp->set_tob(new phrase($this->get_user()));
-                        $db_trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
+                        $db_trp->tob()->row_mapper_sandbox($db_row, triple_fields::FLD_TO, '2');
                         $trp = $this->get($db_trp->id());
                         if ($trp == null) {
                             $this->add_obj($db_trp);
@@ -307,7 +309,7 @@ class triple_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array       $names,
-        string      $fld = triple_db::FLD_NAME
+        string      $fld = triple_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -328,7 +330,7 @@ class triple_list extends sandbox_list_named
         if (count($trp_ids) > 0) {
             $qp->name .= 'ids';
             $sc->set_name($qp->name);
-            $sc->add_where(triple_db::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
+            $sc->add_where(triple_fields::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -356,12 +358,12 @@ class triple_list extends sandbox_list_named
         if ($phr->id() <> 0) {
             $qp->name .= 'phr';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple_db::FLD_FROM, $phr->id());
+                $sc->add_where(triple_fields::FLD_FROM, $phr->id());
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple_db::FLD_TO, $phr->id());
+                $sc->add_where(triple_fields::FLD_TO, $phr->id());
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple_db::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
-                $sc->add_where(triple_db::FLD_TO, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_fields::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_fields::FLD_TO, $phr->id(), sql_par_type::INT_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -427,14 +429,14 @@ class triple_list extends sandbox_list_named
         if (!$phr_lst->empty()) {
             $qp->name .= 'phr_lst';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids());
+                $sc->add_where(triple_fields::FLD_FROM, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids());
+                $sc->add_where(triple_fields::FLD_TO, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
-                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_fields::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_fields::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -474,42 +476,42 @@ class triple_list extends sandbox_list_named
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple_db::FLD_FROM,
+            triple_fields::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple_db::FLD_FROM,
+            triple_fields::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple_db::FLD_FROM,
+            triple_fields::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple_db::FLD_TO,
+            triple_fields::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple_db::FLD_TO,
+            triple_fields::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple_db::FLD_TO,
+            triple_fields::FLD_TO,
             phrase::FLD_ID,
             true
         );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb_db::FLD_ID) . ', ' . triple_db::FLD_NAME_GIVEN);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb_db::FLD_ID) . ', ' . triple_fields::FLD_NAME_GIVEN);
         return $qp;
     }
 

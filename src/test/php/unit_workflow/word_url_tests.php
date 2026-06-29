@@ -240,9 +240,11 @@ class word_url_tests extends url_test_base
      *
      * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
      * write test ($do_it true): the back and cancel excursions abort the change without writing, then
-     * the change is redone and only the final confirm writes it to the database. snapshots go into
-     * src/test/resources/web/html/workflow/change_word_wf<nbr>/, the file name built from the
-     * cumulative actions (see docs/llm/testing.md)
+     * the change is redone and the first confirm writes the changed description to the database. a second
+     * round then re-opens the edit view, fills every still-missing field from the filled test word and
+     * confirms again so the filled fields are also written. snapshots go into
+     * src/test/resources/web/html/workflow/change_word_wf<nbr>/, the file name built from the cumulative
+     * actions (see docs/llm/testing.md)
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
      * @param bool $do_it false to only render the steps, true to also write the confirmed change
@@ -311,6 +313,32 @@ class word_url_tests extends url_test_base
         // the change is a usr1 user sandbox overlay on top of the system base, so read it as usr1
         if ($do_it) {
             $this->assert_word_in_db('change_word workflow has changed the word', $this->t->usr1, word_names::TEST_CHANGE_COM);
+        }
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_CONFIRMED;
+
+        // the second round fills every still-missing field of the now-saved word from the filled test word
+        $fill = $t_wrd->fill_url_array();
+
+        // edit: re-open the edit view to fill the remaining fields
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // fill: press save on the edit form with every field filled which shows the confirm change view;
+        // unlike the single-field save above the confirm view now shows every changed field
+        $this->assert_workflow_step(url_var::ACTION_FILL, views::WORD_EDIT_ID, $fill);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_FILL;
+
+        // confirmed: confirm the filled change so it is also written to the database (with $do_it true)
+        $this->assert_workflow_step(url_var::ACTION_CONFIRMED, views::CONFIRM_EDIT_ID,
+            $fill + [
+                url_var::BACK . url_var::MASK => views::WORD_ID,
+                url_var::BACK . url_var::ID => $this->wf_id
+            ]);
+
+        // a write run must persist the filled fields, so check a previously empty field (the plural) is
+        // now set in the database; the change is a usr1 user sandbox overlay, so read it as usr1
+        if ($do_it) {
+            $this->assert_word_filled_in_db('change_word workflow has filled the word');
         }
     }
 
@@ -460,6 +488,21 @@ class word_url_tests extends url_test_base
         $wrd->load_by_name(word_names::TEST_ADD);
         $this->t->assert($test_name, $wrd->name(), word_names::TEST_ADD);
         $this->t->assert($test_name, $wrd->description, $description);
+    }
+
+    /**
+     * check that the second change_word round actually filled the previously empty fields of the test
+     * word, used by the change write workflow to verify the filled confirm step was persisted. the fill
+     * is a usr1 user sandbox overlay on top of the system base, so the plural is read as usr1.
+     *
+     * @param string $test_name the description of the assertion
+     */
+    private function assert_word_filled_in_db(string $test_name): void
+    {
+        $wrd = new word($this->t->usr1);
+        $wrd->load_by_name(word_names::TEST_ADD);
+        $this->t->assert($test_name, $wrd->name(), word_names::TEST_ADD);
+        $this->t->assert($test_name, $wrd->plural, word_names::MATH_PLURAL);
     }
 
     /**

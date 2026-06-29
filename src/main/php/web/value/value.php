@@ -64,6 +64,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -85,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
 class value extends sandbox_value
 {
@@ -747,7 +749,7 @@ class value extends sandbox_value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.group_id,
-                    " . $db_con->get_usr_field(value_db::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value_fields::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM groups g,
@@ -819,9 +821,10 @@ class value extends sandbox_value
     // simple modal box to add a value
     function dsp_add_fast($back): string
     {
+        $html = new html_base();
         $result = '';
 
-        $result .= '  <h2>Modal Example</h2>';
+        $result .= '  ' . $html->h2('Modal Example');
         $result .= '  <!-- Button to Open the Modal -->';
         //$result .= '  <a href="/http/value_add.php?back=2" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
         $result .= '';

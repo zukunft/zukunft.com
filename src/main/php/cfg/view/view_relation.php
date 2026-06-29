@@ -69,6 +69,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class view_relation extends sandbox_link
 {
@@ -179,7 +181,7 @@ class view_relation extends sandbox_link
             $this->set_child($cld);
             $this->set_predicate_id($db_row[view_relation_type::FLD_ID]);
             $this->start_pos = $db_row[view_relation_db::FLD_START_POS];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->description = $db_row[fields::FLD_DESCRIPTION];
         }
         return $result;
     }
@@ -711,7 +713,7 @@ class view_relation extends sandbox_link
             [
                 view_relation_type::FLD_ID,
                 view_relation_db::FLD_START_POS,
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -781,13 +783,13 @@ class view_relation extends sandbox_link
         if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description

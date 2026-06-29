@@ -174,6 +174,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -300,6 +301,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -359,23 +361,12 @@ class sql_db
     const string SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
     // db field names that are used in many classes
-    const string FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const sql_field_type FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
-    const string FLD_DESCRIPTION = 'description';
-    const string FLD_DESCRIPTION_COM = 'the user-specific description for mouse over helps';
     const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const string FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
     const sql_field_type FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
-    const string FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const string FLD_TYPE_NAME = 'type_name'; // field name for the user-specific name of a type; types are used to assign code to a db row
     const string FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
-    const string FLD_USAGE = 'usage';
-    const string FLD_USAGE_COM = 'the number of linked objects (values, triples and formulas) to the object (e.g. word), which gives an indication of the importance and is used as fallback value for sorting';
     const sql_field_type FLD_USAGE_SQL_TYP = sql_field_type::INT;
-    const string FLD_IMPACT = 'impact';
-    const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
     // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
 
@@ -2599,73 +2590,73 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'system_time_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_types_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'component_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_level_name') {
             $result = sys_log_level::FLD_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
             $result = sys_log_status::FLD_NAME;
         }
         if ($result == 'job_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'db_cache_status_name') {
             $result = db_cache_status::FLD_NAME;
         }
         if ($result == 'db_cache_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -3811,13 +3802,13 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $this->add_par(sql_par_type::TEXT, $code_id);
-            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
+            $result .= fields::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                $result .= fields::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             $result .= $this->set_where_name($name, $this->name_field);
@@ -3926,13 +3917,13 @@ class sql_db
                         }
 
                         if ($par_type == sql_par_type::TEXT or $par_type == sql_par_type::KEY_512) {
-                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
+                            if ($id_fields[$used_fields] == fields::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $this->where .= sql_db::STD_TBL . '.';
                                     }
-                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                    $this->where .= fields::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -4331,7 +4322,7 @@ class sql_db
      */
     function select_by_code_id(bool $has_id = true): string
     {
-        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
+        return $this->select_by(array(fields::FLD_CODE_ID), $has_id);
     }
 
     /**

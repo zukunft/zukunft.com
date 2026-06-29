@@ -704,6 +704,9 @@ class component_types
     const array HIDDEN_TYPES = array(
         self::ROW_START,
         self::FORM_TITLE,
+        // the confirm-view title opens the confirm form like FORM_TITLE, so it must not be auto-wrapped
+        // in a row div either - otherwise the row div closes around the still-open form (form straddle)
+        self::SYSTEM_POPUP_TITLE,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::FORM_END,

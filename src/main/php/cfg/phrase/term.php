@@ -82,6 +82,10 @@ include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -115,6 +119,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class term extends combine_named
 {
@@ -128,8 +136,6 @@ class term extends combine_named
     const string FLD_ID = 'term_id';
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_NAME = 'term_name';
-    const string FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
-    const string FLD_IMPACT = 'impact';
     const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
     // the common term database field names excluding the id and excluding the user-specific fields
@@ -141,18 +147,18 @@ class term extends combine_named
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const array FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION,
-        formula_db::FLD_FORMULA_TEXT,
-        formula_db::FLD_FORMULA_USER_TEXT,
-        formula_db::FLD_LATEX
+        fields::FLD_DESCRIPTION,
+        formula_fields::FLD_FORMULA_TEXT,
+        formula_fields::FLD_FORMULA_USER_TEXT,
+        formula_fields::FLD_LATEX
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
-        sql_db::FLD_USAGE,
-        sql_db::FLD_IMPACT,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_USAGE,
+        fields::FLD_IMPACT,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of term types used for the database views
     // using one array of sql table types per view
@@ -180,64 +186,64 @@ class term extends combine_named
     // the where field can be a single field or an array
     const array TBL_FLD_LST_VIEW = [
         [word::class, [
-            [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
+            [word_fields::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
             [user_db::FLD_ID],
-            [word_db::FLD_NAME, term::FLD_NAME],
-            [sql_db::FLD_DESCRIPTION],
-            [sql_db::FLD_USAGE],
-            [sql_db::FLD_IMPACT],
+            [word_fields::FLD_NAME, term::FLD_NAME],
+            [fields::FLD_DESCRIPTION],
+            [fields::FLD_USAGE],
+            [fields::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sql_db::FLD_EXCLUDED],
-            [sandbox::FLD_SHARE],
-            [sandbox::FLD_PROTECT],
-            ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT],
-            ['', formula_db::FLD_LATEX]
-        ], [phrase::FLD_TYPE, word_db::FLD_ID]],
+            [fields::FLD_EXCLUDED],
+            [fields::FLD_SHARE],
+            [fields::FLD_PROTECT],
+            ['', formula_fields::FLD_FORMULA_TEXT],
+            ['', formula_fields::FLD_FORMULA_USER_TEXT],
+            ['', formula_fields::FLD_LATEX]
+        ], [phrase::FLD_TYPE, word_fields::FLD_ID]],
         [triple::class, [
-            [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
+            [triple_fields::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
             [user_db::FLD_ID],
-            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
-            [sql_db::FLD_DESCRIPTION],
-            [sql_db::FLD_USAGE],
-            [sql_db::FLD_IMPACT],
+            [[triple_fields::FLD_NAME, triple_fields::FLD_NAME_GIVEN, triple_fields::FLD_NAME_AUTO], term::FLD_NAME],
+            [fields::FLD_DESCRIPTION],
+            [fields::FLD_USAGE],
+            [fields::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sql_db::FLD_EXCLUDED],
-            [sandbox::FLD_SHARE],
-            [sandbox::FLD_PROTECT],
-            ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT],
-            ['', formula_db::FLD_LATEX]
-        ], ['', triple_db::FLD_ID]],
+            [fields::FLD_EXCLUDED],
+            [fields::FLD_SHARE],
+            [fields::FLD_PROTECT],
+            ['', formula_fields::FLD_FORMULA_TEXT],
+            ['', formula_fields::FLD_FORMULA_USER_TEXT],
+            ['', formula_fields::FLD_LATEX]
+        ], ['', triple_fields::FLD_ID]],
         [formula::class, [
-            [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
+            [formula_fields::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
             [user_db::FLD_ID],
-            [formula_db::FLD_NAME, term::FLD_NAME],
-            [sql_db::FLD_DESCRIPTION],
-            [sql_db::FLD_USAGE],
-            [sql_db::FLD_IMPACT],
-            [formula_db::FLD_TYPE, self::FLD_TYPE],
-            [sql_db::FLD_EXCLUDED],
-            [sandbox::FLD_SHARE],
-            [sandbox::FLD_PROTECT],
-            [formula_db::FLD_FORMULA_TEXT],
-            [formula_db::FLD_FORMULA_USER_TEXT],
-            [formula_db::FLD_LATEX]
-        ], ['', formula_db::FLD_ID]],
+            [formula_fields::FLD_NAME, term::FLD_NAME],
+            [fields::FLD_DESCRIPTION],
+            [fields::FLD_USAGE],
+            [fields::FLD_IMPACT],
+            [formula_fields::FLD_TYPE, self::FLD_TYPE],
+            [fields::FLD_EXCLUDED],
+            [fields::FLD_SHARE],
+            [fields::FLD_PROTECT],
+            [formula_fields::FLD_FORMULA_TEXT],
+            [formula_fields::FLD_FORMULA_USER_TEXT],
+            [formula_fields::FLD_LATEX]
+        ], ['', formula_fields::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
             [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
-            [sql_db::FLD_DESCRIPTION],
-            [sql_db::FLD_USAGE],
-            [sql_db::FLD_IMPACT],
+            [fields::FLD_DESCRIPTION],
+            [fields::FLD_USAGE],
+            [fields::FLD_IMPACT],
             [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
-            [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
-            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
-            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
-            ['', formula_db::FLD_FORMULA_TEXT],
-            ['', formula_db::FLD_FORMULA_USER_TEXT],
-            ['', formula_db::FLD_LATEX]
+            [sql::NULL_VALUE, fields::FLD_EXCLUDED, sql_db::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, fields::FLD_SHARE, sql_db::FLD_CONST],
+            [protect_type_shared::ADMIN_ID, fields::FLD_PROTECT, sql_db::FLD_CONST],
+            ['', formula_fields::FLD_FORMULA_TEXT],
+            ['', formula_fields::FLD_FORMULA_USER_TEXT],
+            ['', formula_fields::FLD_LATEX]
         ], ['', verb_db::FLD_ID]]
     ];
 
@@ -283,8 +289,8 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
-                if (key_exists(sql_db::FLD_USAGE, $db_row)) {
-                    $this->set_usage($db_row[sql_db::FLD_USAGE]);
+                if (key_exists(fields::FLD_USAGE, $db_row)) {
+                    $this->set_usage($db_row[fields::FLD_USAGE]);
                 }
                 $result = true;
             }

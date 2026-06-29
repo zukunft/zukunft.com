@@ -147,6 +147,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Exception;
 use Zukunft\ZukunftCom\test\php\unit\component_link_list_tests;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -362,6 +363,7 @@ include_once test_paths::DEV . 'test_legacy.php';
 
 // TODO to be dismissed
 include_once html_paths::USER . 'user_display_old.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 
 /*
@@ -4078,7 +4080,7 @@ class test_base
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
         if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, sql_db::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
+            return $this->write_named_log($sbx, fields::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
         }
@@ -4098,7 +4100,7 @@ class test_base
         $sbx->description = $new_description;
         if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
-                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
@@ -4185,7 +4187,7 @@ class test_base
         $lnk->description = $new_description;
         if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
@@ -4647,20 +4649,19 @@ class test_base
      */
     function dsp_result_html(): void
     {
-        echo '<br>';
-        echo '<h2>';
-        echo $this->total_tests . ' test cases<br>';
-        echo $this->timeout_counter . ' timeouts<br>';
+        $html = new html_base();
         if ($this->error_counter == 1) {
-            echo $this->error_counter . ' error<br>';
+            $errors = $this->error_counter . ' error<br>';
         } else {
-            echo $this->error_counter . ' errors<br>';
+            $errors = $this->error_counter . ' errors<br>';
         }
-        echo "<br>";
         $since_start = microtime(true) - $this->start_time();
-        echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
-        echo '<br>';
-        echo '<br>';
+        $txt = $this->total_tests . ' test cases<br>';
+        $txt .= $this->timeout_counter . ' timeouts<br>';
+        $txt .= $errors;
+        $txt .= '<br>';
+        $txt .= round($since_start, 4) . ' seconds for testing zukunft.com';
+        echo '<br>' . $html->h2($txt) . '<br><br>';
     }
 
     /**

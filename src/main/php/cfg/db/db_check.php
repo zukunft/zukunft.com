@@ -58,6 +58,9 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -81,6 +84,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class db_check
 {
@@ -277,24 +283,24 @@ class db_check
         $result .= $db_con->change_column_name('user', 'isactive', 'is_active');
         $result .= $db_con->change_column_name('user', 'email_alternativ', 'email_alternative');
         $result .= $db_con->change_column_name('element_type', 'formula_element_type_name', 'type_name');
-        $result .= $db_con->change_column_name('view', 'comment', sql_db::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'view', 'comment', sql_db::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('component', 'comment', sql_db::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'component', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('view', 'comment', fields::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'view', 'comment', fields::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('component', 'comment', fields::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'component', 'comment', fields::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('component_type', 'component_type_name', 'type_name');
         $result .= $db_con->change_column_name('formula_type', 'name', 'type_name');
         $result .= $db_con->change_column_name('ref_type', 'ref_type_name', 'type_name');
         $result .= $db_con->change_column_name('ref_type', 'source_type_name', 'type_name');
-        $result .= $db_con->change_column_name('source', 'comment', sql_db::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'source', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('source', 'comment', fields::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'source', 'comment', fields::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('share_type', 'share_type_name', 'type_name');
         $result .= $db_con->change_column_name('protection_type', 'protection_type_name', 'type_name');
         $result .= $db_con->change_column_name('user_profile', 'user_profile_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'commen', sql_db::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('sys_log_status', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_profile', 'commen', fields::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('sys_log_status', 'comment', fields::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('sys_log_status', 'sys_log_status_name', 'type_name');
         $result .= $db_con->change_column_name('job_type', 'calc_and_cleanup_task_type_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_profile', 'comment', fields::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('formula', 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
@@ -334,9 +340,9 @@ class db_check
         $result .= $db_con->column_allow_null('phrase_type', 'word_symbol');
         $result .= $db_con->column_allow_null('change_table', 'description');
         $result .= $db_con->column_allow_null('change_field', 'code_id');
-        $result .= $db_con->column_allow_null('view', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->column_allow_null('view', fields::FLD_DESCRIPTION);
         $result .= $db_con->column_allow_null('component_type', 'description');
-        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sql_db::FLD_EXCLUDED);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), fields::FLD_EXCLUDED);
         $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id');
         $result .= $db_con->column_allow_null('formula_link', 'link_type_id');
         $result .= $db_con->column_allow_null('user_' . $lib->class_to_name(value::class), 'protect_id');
@@ -348,8 +354,8 @@ class db_check
         $result .= $db_con->column_allow_null('job', 'end_time');
         $result .= $db_con->column_allow_null('job', 'row_id');
         $result .= $db_con->column_force_not_null('user_' . 'source', user_db::FLD_ID);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', 'phrase_type');
         $result .= $db_con->change_column_name('phrase_type', 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name('word', 'word_type_id', phrase::FLD_TYPE);
@@ -360,7 +366,7 @@ class db_check
 
         $result .= $db_con->change_table_name('results', result_two::class);
         $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_db::FLD_ID);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_fields::FLD_ID);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {

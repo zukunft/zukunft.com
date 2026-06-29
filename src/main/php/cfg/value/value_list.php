@@ -79,6 +79,10 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
@@ -112,6 +116,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_sh
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class value_list extends sandbox_value_list
 {
@@ -134,19 +142,19 @@ class value_list extends sandbox_value_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 // TODO remove temp
-                if (array_key_exists(group_db::FLD_ID, $db_row)) {
-                    if ($db_row[group_db::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                if (array_key_exists(group_fields::FLD_ID, $db_row)) {
+                    if ($db_row[group_fields::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
                         log_info('got value');
                     }
                 } else {
                     log_info('group id missing');
                 }
                 $excluded = null;
-                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
+                if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[fields::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
+                    if (array_key_exists(value_fields::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value($this->get_user());
                     } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value_text($this->get_user());
@@ -464,7 +472,7 @@ class value_list extends sandbox_value_list
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
         $grp_id = new group_id();
-        $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
+        $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
 
         // add the user parameter
         $pos_usr = $par_pos;
@@ -534,7 +542,7 @@ class value_list extends sandbox_value_list
         $sc->set_fields(value_db::FLD_NAMES);
         //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
         //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
-        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_db::FLD_NAME);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_fields::FLD_NAME);
         return $qp;
     }
 
@@ -779,7 +787,7 @@ class value_list extends sandbox_value_list
             // user-join must use group_id; otherwise the JOIN references
             // s.phrase_id_1 on a values/values_big table that has no such
             // column. Override before generating the SQL.
-            $sc->set_id_field(value_db::FLD_ID);
+            $sc->set_id_field(value_fields::FLD_ID);
             $txt_fld_lst = $sc_par_lst->txt_user_fields();
             $num_fld_lst = $sc_par_lst->num_user_fields();
             $geo_fld_lst = $sc_par_lst->geo_user_fields();
@@ -793,7 +801,7 @@ class value_list extends sandbox_value_list
                 $sc->set_usr_geo_fields($geo_fld_lst, false);
             }
             $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
-            $sc->add_where(value_db::FLD_ID, $type_ids, sql_par_type::TEXT_LIST, null, '', $par_offset);
+            $sc->add_where(value_fields::FLD_ID, $type_ids, sql_par_type::TEXT_LIST, null, '', $par_offset);
 
             $qp_tbl->sql = $sc->sql($par_offset, true, false);
             $qp_tbl->par = $sc->get_par();
@@ -907,7 +915,7 @@ class value_list extends sandbox_value_list
                     phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
-            $sc->add_where_no_par('', group_db::FLD_ID, sql_par_type::LIKE, $grp_pos);
+            $sc->add_where_no_par('', group_fields::FLD_ID, sql_par_type::LIKE, $grp_pos);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
@@ -1535,7 +1543,7 @@ class value_list extends sandbox_value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->get_user());
-            $val->load_by_id($db_val[value_db::FLD_ID]);
+            $val->load_by_id($db_val[value_fields::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
             }

@@ -196,16 +196,29 @@ class url_mapper
             if (array_key_exists(0, $std) and array_key_exists(1, $std)) {
                 $std_key = $std[0];
                 $value = $std[1];
-                if (array_key_exists($std_key, $map_pos)) {
-                    $pos = $map_pos[$std_key];
-                    $target_key = $map_lst[$pos][0];
-                    if ($std_key == url_var::ACTION) {
+                // an '8'-prefixed original value or a '9'-prefixed back target carries a normal url key
+                // after the prefix char; split off the prefix so the base key is mapped (and the action /
+                // step / mask value converted) and re-apply the prefix to the human key, so the human url
+                // shows e.g. 8name / 9mask_id instead of reporting the prefixed key as missing
+                $prefix = '';
+                $base_key = $std_key;
+                if (str_starts_with($std_key, url_var::PRE)) {
+                    $prefix = url_var::PRE;
+                    $base_key = substr($std_key, strlen(url_var::PRE));
+                } elseif (str_starts_with($std_key, url_var::BACK)) {
+                    $prefix = url_var::BACK;
+                    $base_key = substr($std_key, strlen(url_var::BACK));
+                }
+                if (array_key_exists($base_key, $map_pos)) {
+                    $pos = $map_pos[$base_key];
+                    $target_key = $prefix . $map_lst[$pos][0];
+                    if ($base_key == url_var::ACTION) {
                         $value = $this->map_std_action_to($value, $msg);
                     }
-                    if ($std_key == url_var::STEP) {
+                    if ($base_key == url_var::STEP) {
                         $value = $this->map_std_step_to($value, $msg);
                     }
-                    if ($std_key == url_var::MASK) {
+                    if ($base_key == url_var::MASK) {
                         $value = $this->map_std_mask_to($value);
                     }
                     if (array_key_exists(2, $std)) {
