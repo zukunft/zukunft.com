@@ -468,7 +468,12 @@ class word extends sandbox_code_id
                     $this->set_view_id($wrd_view->id());
                 }
             } else {
-                $wrd_view->set_name($msk_name);
+                $cac_msk = $dto->get_view_by_name($msk_name);
+                if ($cac_msk != null) {
+                    $wrd_view = $cac_msk;
+                } else {
+                    $wrd_view->set_name($msk_name);
+                }
             }
             $this->view = $wrd_view;
         }
@@ -504,6 +509,11 @@ class word extends sandbox_code_id
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
+                // send the assigned default view id so the edit form can preselect it and the
+                // confirm view can show it as the previous view (json_fields::VIEW is the id here)
+                if ($this->get_view_id() > 0) {
+                    $vars[json_fields::VIEW] = $this->get_view_id();
+                }
                 // related data is keyed by the word's phrase id, so a fresh
                 // word (id 0, e.g. the add form) has none to load
                 if ($typ_lst->incl_related() and $this->id() != 0) {

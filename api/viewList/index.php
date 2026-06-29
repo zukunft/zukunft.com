@@ -67,7 +67,9 @@ if ($db_con->is_open()) {
             $result = $lst->api_json();
         } elseif ($pattern != null) {
             $lst = new view_list($usr);
-            $lst->load_names(($pattern));
+            // load with the full field set (incl. the view type) so the frontend can
+            // filter the views that can be assigned to a word (ex_system / ex_non_phrase)
+            $lst->load_by_pattern($pattern);
             $result = $lst->api_json();
         } else {
             $msg = 'view id and pattern missing';

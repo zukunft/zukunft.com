@@ -230,6 +230,31 @@ class view_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of views by a name pattern
+     * unlike load_sql_names this uses the full field set so the loaded views carry
+     * their type, which the frontend needs to filter the views assignable to a word
+     * @param sql_creator $sc with the target db_type set
+     * @param string $pattern the pattern to filter the views by the name
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_pattern(sql_creator $sc, string $pattern = ''): sql_par
+    {
+        $qp = $this->load_sql($sc, 'pattern');
+        if ($pattern != '') {
+            $qp->name .= '_like';
+        }
+        $sc->set_name($qp->name);
+        if ($pattern != '') {
+            $sc->add_where(view_fields::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        }
+        $sc->set_order(view_fields::FLD_NAME);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the views that have a component linked from the database selected by id
      * @param int $id the id of the component
      * @return bool true if at least one component has been loaded
@@ -240,6 +265,19 @@ class view_list extends sandbox_list_named
 
         log_debug($id);
         $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $id);
+        return parent::load($qp);
+    }
+
+    /**
+     * load a list of views by a name pattern including the view type
+     * @param string $pattern the pattern to filter the views by the name
+     * @return bool true if at least one view has been loaded
+     */
+    function load_by_pattern(string $pattern = ''): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_pattern($db_con->sql_creator(), $pattern);
         return parent::load($qp);
     }
 

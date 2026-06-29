@@ -294,6 +294,9 @@ class word extends sandbox_code_id
         } else {
             $this->parent = null;
         }
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $this->view_id = $json_array[json_fields::VIEW];
+        }
         if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
             $value = $json_array[json_fields::PHRASES_RELATED];
             if (is_array($value)) {
@@ -390,6 +393,8 @@ class word extends sandbox_code_id
         }
         // usage is not included here because this system value is never updated by the frontend
         $vars[json_fields::IMPACT] = $this->impact;
+        // send the selected default view id so a view change is persisted (backend reads it as the id)
+        $vars[json_fields::VIEW] = $this->view_id;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }
@@ -1146,7 +1151,12 @@ class word extends sandbox_code_id
         }
         $msk_lst = $msk_lst->ex_system();
         $msk_lst = $msk_lst->ex_non_phrase();
-        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+        // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
+        // existing view and detect whether the user actually changed it (see url_var::PRE)
+        $html = new html_base();
+        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, (string)$view_id);
+        return $result;
     }
 
 

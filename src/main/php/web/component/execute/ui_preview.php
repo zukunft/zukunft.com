@@ -40,6 +40,8 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::VIEW . 'view.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -49,6 +51,8 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -296,6 +300,28 @@ class ui_preview extends ui_base
             } else {
                 $result = $type_list->name((int)$value);
             }
+        } elseif ($db_fld == fields::FLD_VIEW) {
+            // the view is a sandbox object, not a type, so resolve its id to the view name via the api
+            $result = $this->view_name($value);
+        }
+        return $result;
+    }
+
+    /**
+     * the display name of a view id used in the change preview: the view's name loaded via the api,
+     * or 'not set' when no view is selected (an empty or zero id)
+     *
+     * @param string $value the raw url value of the view field (a view id)
+     * @return string the view name to show to the user
+     */
+    private function view_name(string $value): string
+    {
+        global $mtr;
+        $result = $mtr->txt(msg_id::NOT_SET);
+        if ($value != '' and $value != '0') {
+            $msk = new view();
+            $msk->load_by_id((int)$value);
+            $result = $msk->name();
         }
         return $result;
     }

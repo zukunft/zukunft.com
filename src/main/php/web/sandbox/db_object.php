@@ -582,10 +582,13 @@ class db_object extends TextIdObject
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        // without an explicit pattern use the load_by_pattern default ('%'), the sql like wildcard the
+        // backend expects; a literal '*' matches nothing and would return an empty view list
         if ($pattern == null) {
-            $pattern = '*';
+            $msk_lst->load_by_pattern();
+        } else {
+            $msk_lst->load_by_pattern($pattern);
         }
-        $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
 

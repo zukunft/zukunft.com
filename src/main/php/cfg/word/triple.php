@@ -588,7 +588,12 @@ class triple extends sandbox_link_named
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
-                $trp_view->set_name($value);
+                $cac_msk = $dto->get_view_by_name($value);
+                if ($cac_msk != null) {
+                    $trp_view = $cac_msk;
+                } else {
+                    $trp_view->set_name($value);
+                }
             }
             $this->view = $trp_view;
         }

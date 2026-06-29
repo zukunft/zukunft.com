@@ -210,10 +210,10 @@ class component_exe extends component
             component_types::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->result_list()),
             component_types::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->result_list()),
-            component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
             component_types::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
             component_types::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
 
@@ -244,7 +244,7 @@ class component_exe extends component
             component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
 
             // other select fields
-            component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
             component_types::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
             component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
 
@@ -396,7 +396,7 @@ class component_exe extends component
             component_types::MAIN_VALUE => $base->main_value($dbo),
 
             // other
-            component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
 
 
             // view only -

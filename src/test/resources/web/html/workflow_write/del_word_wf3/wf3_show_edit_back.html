@@ -179,13 +179,34 @@
                 <div class="col" style="min-width: 700px">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" id="changes-tab" data-toggle="tab" href="#changes" role="tab" aria-controls="changes" aria-selected="true">
+                            <a class="nav-link active" id="views-tab" data-toggle="tab" href="#views" role="tab" aria-controls="views" aria-selected="true">
+                                Views
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="changes-tab" data-toggle="tab" href="#changes" role="tab" aria-controls="changes" aria-selected="false">
                                 Changes
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content border-right border-bottom border-left rounded-bottom">
-                        <div class="tab-pane fade active show" id="changes" role="tabpanel" aria-labelledby="changes-tab">
+                        <div class="tab-pane fade active show" id="views" role="tabpanel" aria-labelledby="views-tab">
+                            <div class="container">
+                                <div>
+                                    <div class="col-md-12">
+                                        view preview
+                                    </div>
+                                    Mathematical constance
+                                    <a href="/http/view.php?m=107&id=999">
+                                        view
+                                    </a>
+                                    <a href="/http/word_edit.php?id=999&d=107&confirm=1">
+                                        switch
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="changes" role="tabpanel" aria-labelledby="changes-tab">
                             <div class="container">
                                 system test change log entry
                             </div>
