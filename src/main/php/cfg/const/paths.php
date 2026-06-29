@@ -82,6 +82,7 @@ class paths
     const string SHARED_SECTION = 'Shared';
     const string SHARED_CALC = self::SHARED . 'calc' . DIRECTORY_SEPARATOR;
     const string SHARED_CONST = self::SHARED . 'const' . DIRECTORY_SEPARATOR;
+    const string SHARED_CONST_FIELDS = self::SHARED_CONST . 'fields' . DIRECTORY_SEPARATOR;
     const string SHARED_ENUM = self::SHARED . 'enum' . DIRECTORY_SEPARATOR;
     const string SHARED_HELPER = self::SHARED . 'helper' . DIRECTORY_SEPARATOR;
     const string SHARED_TYPES = self::SHARED . 'types' . DIRECTORY_SEPARATOR;

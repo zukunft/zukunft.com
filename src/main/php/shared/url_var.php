@@ -750,4 +750,22 @@ class url_var
         };
     }
 
+    /**
+     * the human-readable (long) url key for a standard (short) url key
+     * the human key matches the json field name, so it can be translated like a json field
+     *
+     * @param string $std the standard short url key e.g. self::NAME ('k')
+     * @return string the matching human url key e.g. self::NAME_HUMAN ('name'), or '' if none matches
+     */
+    static function std_to_human(string $std): string
+    {
+        $result = '';
+        foreach (self::HUMAN_TO_STD as $entry) {
+            if ($entry[1] == $std) {
+                $result = $entry[0];
+            }
+        }
+        return $result;
+    }
+
 }

@@ -85,6 +85,8 @@ include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -131,6 +133,8 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use DateTime;
 
 
@@ -579,11 +583,11 @@ class test_log
             change::class,
             changes_norm::class,
             changes_big::class
-            => word_db::FLD_NAME,
+            => word_fields::FLD_NAME,
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class
-            => value_db::FLD_VALUE,
+            => value_fields::FLD_VALUE,
             change_values_time_prime::class,
             change_values_time_big::class,
             change_values_time_norm::class

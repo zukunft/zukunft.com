@@ -61,6 +61,11 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VIEW . 'view.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;
@@ -83,6 +88,11 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class user_display_old extends user
 {
@@ -204,9 +214,9 @@ class user_display_old extends user
                 if ($id != 0) {
                     $trp_usr->load_by_id($id);
                 } else {
-                    $from_id = $sbx_row[triple_db::FLD_FROM];
+                    $from_id = $sbx_row[triple_fields::FLD_FROM];
                     $vrb_id = $sbx_row[verb_db::FLD_ID];
-                    $to_id = $sbx_row[triple_db::FLD_TO];
+                    $to_id = $sbx_row[triple_fields::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
                 }
                 $trp_usr->set_name($sbx_row['usr_name']);
@@ -268,7 +278,7 @@ class user_display_old extends user
                         $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_by_id($trp_usr->id());
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[sql_db::FLD_EXCLUDED]);
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -346,12 +356,12 @@ class user_display_old extends user
                 $result .= '<th>common formula</th>';
                 $result .= '</tr><tr>';
             }
-            $result .= '<td>' . $frm_row[formula_db::FLD_NAME] . '</td>';
+            $result .= '<td>' . $frm_row[formula_fields::FLD_NAME] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
-            $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
+            $result .= '<td>' . $frm_row[formula_fields::FLD_FORMULA_TEXT] . '</td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_fields::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
+            $url = rest_ctrl::PATH_FIXED .'user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_fields::FLD_ID] . '&back=' . $back . '';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_fields::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -415,7 +425,7 @@ class user_display_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
+                $frm_usr->formula()->set_id($sbx_row[formula_fields::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->excluded = $sbx_row['usr_excluded'];
@@ -481,7 +491,7 @@ class user_display_old extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->excluded = $frm_lnk_other_row[sql_db::FLD_EXCLUDED];
+                        $frm_lnk_other->excluded = $frm_lnk_other_row[fields::FLD_EXCLUDED];
                         $frm_lnk_other->reload_objects($msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -587,7 +597,7 @@ class user_display_old extends user
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->set_excluded($val_row['usr_excluded']);
-                $val_usr->grp->set_id($val_row[group_db::FLD_ID]);
+                $val_usr->grp->set_id($val_row[group_fields::FLD_ID]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user
@@ -653,7 +663,7 @@ class user_display_old extends user
                         $val_other->set_user($usr_other);
                         $val_other->set_number($val_other_row['user_value']);
                         $val_other->set_source_id($val_other_row['source_id']);
-                        $val_other->set_excluded($val_other_row[sql_db::FLD_EXCLUDED]);
+                        $val_other->set_excluded($val_other_row[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -818,10 +828,10 @@ class user_display_old extends user
                         // to review: load all user views with one query
                         $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
-                        $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
-                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
-                        $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
-                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
+                        $dsp_other->set_name($dsp_other_row[view_fields::FLD_NAME]);
+                        $dsp_other->description = $dsp_other_row[fields::FLD_DESCRIPTION];
+                        $dsp_other->set_type_id($dsp_other_row[view_fields::FLD_TYPE]);
+                        $dsp_other->set_excluded($dsp_other_row[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -985,9 +995,9 @@ class user_display_old extends user
                         $cmp_other = clone $usr_ui;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
-                        $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
+                        $cmp_other->description = $cmp_other_row[fields::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['component_type_id'];
-                        $cmp_other->set_excluded($cmp_other_row[sql_db::FLD_EXCLUDED]);
+                        $cmp_other->set_excluded($cmp_other_row[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1091,7 +1101,7 @@ class user_display_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $usr_ui = new component_link($this);
                 $usr_ui->set_id($sbx_row['id']);
-                $usr_ui->view()->set_id($sbx_row[view_db::FLD_ID]);
+                $usr_ui->view()->set_id($sbx_row[view_fields::FLD_ID]);
                 $usr_ui->get_component()->set_id($sbx_row[component::FLD_ID]);
                 $usr_ui->order_nbr = $sbx_row['usr_order'];
                 $usr_ui->position_type = $sbx_row['usr_type'];
@@ -1156,7 +1166,7 @@ class user_display_old extends user
                         $lnk_other_ui->set_user($usr_other);
                         $lnk_other_ui->order_nbr = $lnk_other_row_ui['order_nbr'];
                         $lnk_other_ui->position_type = $lnk_other_row_ui['position_type'];
-                        $lnk_other_ui->set_excluded($lnk_other_row_ui[sql_db::FLD_EXCLUDED]);
+                        $lnk_other_ui->set_excluded($lnk_other_row_ui[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1336,10 +1346,10 @@ class user_display_old extends user
                         $dsp_other = clone $usr_ui;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
-                        $dsp_other->url = $dsp_other_row[source_db::FLD_URL];
-                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
+                        $dsp_other->url = $dsp_other_row[fields::FLD_URL];
+                        $dsp_other->description = $dsp_other_row[fields::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->excluded = $dsp_other_row[sql_db::FLD_EXCLUDED];
+                        $dsp_other->excluded = $dsp_other_row[fields::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

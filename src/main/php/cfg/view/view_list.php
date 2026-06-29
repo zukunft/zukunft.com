@@ -51,6 +51,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class view_list extends sandbox_list_named
@@ -146,7 +148,7 @@ class view_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            view_db::FLD_TYPE,
+            view_fields::FLD_TYPE,
             implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -167,7 +169,7 @@ class view_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array       $names,
-        string      $fld = view_db::FLD_NAME
+        string      $fld = view_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -205,8 +207,8 @@ class view_list extends sandbox_list_named
         $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
-            view_db::FLD_ID,
-            view_db::FLD_ID);
+            view_fields::FLD_ID,
+            view_fields::FLD_ID);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();

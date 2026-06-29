@@ -46,6 +46,7 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class group_list extends sandbox_list
 {
@@ -176,7 +178,7 @@ class group_list extends sandbox_list
     {
         $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
-        $sc->add_where(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
+        $sc->add_where(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -248,8 +250,8 @@ class group_list extends sandbox_list
         $qp->name = $class . '_by_ids_fast';
         $sc->set_name($qp->name);
 
-        $sc->add_where(group_db::FLD_ID, $grp_ids);
-        $sc->set_order(group_db::FLD_ID);
+        $sc->add_where(group_fields::FLD_ID, $grp_ids);
+        $sc->set_order(group_fields::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -299,8 +301,8 @@ class group_list extends sandbox_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(group_db::FLD_ID, $grp_ids);
-        $sc->set_order(group_db::FLD_ID);
+        $sc->add_where(group_fields::FLD_ID, $grp_ids);
+        $sc->set_order(group_fields::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -534,11 +536,11 @@ class group_list extends sandbox_list
             foreach ($val_rows as $val_row) {
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
-                log_debug('add id ' . $val_row[group_db::FLD_ID]);
+                log_debug('add id ' . $val_row[group_fields::FLD_ID]);
                 // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->get_user());
-                $val_grp->load_by_id($val_row[group_db::FLD_ID]);
+                $val_grp->load_by_id($val_row[group_fields::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name

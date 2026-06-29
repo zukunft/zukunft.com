@@ -43,6 +43,8 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -52,6 +54,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula_db
 {
@@ -60,63 +64,46 @@ class formula_db
      * db const
      */
 
-    // object specific database and JSON object field names
-    // means: database fields only used for words
-    // *_COM: the description of the field
+    // object specific database and JSON object fields
+    // means: database fields only used for formulas
+    // the field names and their descriptions are defined in formula_fields
     // *_SQL_TYP is the sql data type used for the field
     // TODO Prio 2 add a status with simulate for formulas that are not yet saved and active, but where the results should be simulated
-    const string FLD_ID = 'formula_id';
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
-    const string FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
-    const string FLD_NAME = 'formula_name';
-    const string FLD_TYPE_COM = 'the id of the formula type';
-    const string FLD_TYPE = 'formula_type_id';
     const sql_field_type FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
-    const string FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
-    const string FLD_FORMULA_TEXT = 'formula_text';
     const sql_field_type FLD_FORMULA_TEXT_SQL_TYP = sql_field_type::TEXT;
-    const string FLD_FORMULA_USER_TEXT_COM = 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
-    const string FLD_FORMULA_USER_TEXT = 'resolved_text';
     const sql_field_type FLD_FORMULA_USER_TEXT_SQL_TYP = sql_field_type::TEXT;
-    const string FLD_LATEX_COM = 'the formula in latex format';
-    const string FLD_LATEX = 'latex';
     const sql_field_type FLD_LATEX_SQL_TYP = sql_field_type::TEXT;
-    //const string FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
-    const string FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
-    const string FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
-    const string FLD_ALL_NEEDED = 'all_values_needed';
     const sql_field_type FLD_ALL_NEEDED_SQL_TYP = sql_field_type::INT_SMALL;
-    const string FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
-    const string FLD_LAST_UPDATE = 'last_update';
     const sql_field_type FLD_LAST_UPDATE_SQL_TYP = sql_field_type::TIME;
-    const string FLD_VIEW_COM = 'the default mask for this formula';
-    const string FLD_VIEW = 'view_id';
     const sql_field_type FLD_VIEW_SQL_TYP = sql_field_type::INT;
     const string FLD_USAGE_COM = 'number of results linked to this formula';
+    const string FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
+    const string FLD_VIEW_COM = 'the default mask for this formula';
 
     // list of fields that MUST be set by one user
     // TODO add foreign key for share and protection type?
     const array FLD_LST_MUST_BE_IN_STD = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+        [formula_fields::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', formula_fields::FLD_NAME_COM],
+        [formula_fields::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_FORMULA_TEXT_COM],
+        [formula_fields::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_FORMULA_USER_TEXT_COM],
     );
     // list of must fields that CAN be changed by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sandbox_named::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+        [formula_fields::FLD_NAME, sandbox_named::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', formula_fields::FLD_NAME_COM],
+        [formula_fields::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_FORMULA_TEXT_COM],
+        [formula_fields::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_FORMULA_USER_TEXT_COM],
     );
     // list of fields that CAN be changed by the user
     const array FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_LATEX, self::FLD_LATEX_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LATEX_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, self::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
-        [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
-        [self::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
-        [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
-        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
+        [formula_fields::FLD_LATEX, self::FLD_LATEX_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_LATEX_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_DESCRIPTION_COM],
+        [formula_fields::FLD_TYPE, self::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_type::class, formula_fields::FLD_TYPE_COM],
+        [formula_fields::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_ALL_NEEDED_COM],
+        [fields::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
+        [fields::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [fields::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [fields::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_IMPACT_COM],
     );
 
     // all database field names excluding the id
@@ -125,33 +112,20 @@ class formula_db
     const array FLD_NAMES = array();
     // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
-        self::FLD_FORMULA_TEXT,
-        self::FLD_FORMULA_USER_TEXT,
-        self::FLD_LATEX,
-        sql_db::FLD_DESCRIPTION
+        formula_fields::FLD_FORMULA_TEXT,
+        formula_fields::FLD_FORMULA_USER_TEXT,
+        formula_fields::FLD_LATEX,
+        fields::FLD_DESCRIPTION
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
-        self::FLD_TYPE,
-        self::FLD_ALL_NEEDED,
-        self::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        formula_fields::FLD_TYPE,
+        formula_fields::FLD_ALL_NEEDED,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user-specific changes
-    const array ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_NAME,
-        self::FLD_FORMULA_TEXT,
-        self::FLD_FORMULA_USER_TEXT,
-        self::FLD_LATEX,
-        sql_db::FLD_DESCRIPTION,
-        self::FLD_TYPE,
-        self::FLD_ALL_NEEDED,
-        self::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
+    // the ordered field names used to detect user-specific changes are defined in formula_fields::ALL_NAMES
 
 }

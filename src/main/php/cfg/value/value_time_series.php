@@ -57,6 +57,9 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -76,6 +79,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class value_time_series extends sandbox_value
 {
@@ -88,26 +94,24 @@ class value_time_series extends sandbox_value
     const string TBL_COMMENT = 'for the common parameters for a list of numbers that differ only by the timestamp';
     const string FLD_ID_COM = 'a 64 bit integer value because the number of time series is not expected to be too high';
     const string FLD_ID = 'value_time_series_id';
-    const string FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
-    const string FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         user_db::FLD_ID,
-        group_db::FLD_ID
+        group_fields::FLD_ID
     );
 
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
-        source_db::FLD_ID,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
 
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const array FLD_NAMES_USR_ONLY = array(
-        sandbox::FLD_SHARE
+        fields::FLD_SHARE
     );
 
     // list of fixed tables for the time series header
@@ -172,12 +176,12 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
-            $this->grp()->set_id($db_row[group_db::FLD_ID]);
-            if ($db_row[source_db::FLD_ID] > 0) {
+            $this->grp()->set_id($db_row[group_fields::FLD_ID]);
+            if ($db_row[source_fields::FLD_ID] > 0) {
                 $this->source = new source($this->get_user());
-                $this->source->id = $db_row[source_db::FLD_ID];
+                $this->source->id = $db_row[source_fields::FLD_ID];
             }
-            $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
+            $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE], $this->dsp_id()));
         }
         return $result;
     }
@@ -266,8 +270,8 @@ class value_time_series extends sandbox_value
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, group_db::FLD_ID);
-        $sc->add_where(group_db::FLD_ID, $grp->id());
+        $qp = $this->load_sql($sc, group_fields::FLD_ID);
+        $sc->add_where(group_fields::FLD_ID, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

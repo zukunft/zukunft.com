@@ -40,6 +40,9 @@ include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -56,6 +59,9 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class term_read_tests
 {
@@ -79,7 +85,7 @@ class term_read_tests
         $trm->set_obj_from_class(word::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, word_db::FLD_ID, word_db::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, word_fields::FLD_ID, word_fields::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_names::MATH);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
@@ -93,7 +99,7 @@ class term_read_tests
         $trm->set_obj_from_class(triple::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, triple_db::FLD_ID, triple_db::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, triple_fields::FLD_ID, triple_fields::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triple_names::MATH_CONST);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
@@ -107,7 +113,7 @@ class term_read_tests
         $trm->set_obj_from_class(formula::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, formula_db::FLD_ID, formula_db::FLD_NAME, formula_db::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, formula_fields::FLD_ID, formula_fields::FLD_NAME, formula_fields::FLD_TYPE);
         $t->assert($t->name . ' formula row mapper', $trm->name(), formula_names::SCALE_TO_SEC);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);

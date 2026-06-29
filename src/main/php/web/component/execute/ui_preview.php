@@ -41,6 +41,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -49,18 +50,12 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_preview extends ui_base
 {
-
-    // the editable text fields shown in the change preview, mapping the url var key to its label
-    const array CHANGE_FIELDS = [
-        url_var::NAME => msg_id::FORM_FIELD_NAME,
-        url_var::DESCRIPTION => msg_id::FORM_FIELD_DESCRIPTION,
-        url_var::PLURAL => msg_id::FORM_FIELD_PLURAL,
-    ];
 
     /**
      * show a preview of a view if the changes are confirmed
@@ -169,7 +164,7 @@ class ui_preview extends ui_base
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
-    function popup_changes(array $url_array = []): string
+    function popup_changes(array $url_array = [], ?db_object $dbo = null): string
     {
         global $mtr;
         $html = new html_base();
@@ -188,17 +183,7 @@ class ui_preview extends ui_base
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
         }
-        $rows = '';
-        foreach (self::CHANGE_FIELDS as $key => $label_msg) {
-            $new = $url_array[$key] ?? '';
-            $old = $url_array[url_var::PRE . $key] ?? '';
-            if ($new != $old) {
-                $field = $html->td($mtr->txt($label_msg));
-                $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($old) . '</span>');
-                $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($new) . '</span>');
-                $rows .= $html->tr($field . $from . $to);
-            }
-        }
+        $rows = $this->change_rows($url_array, $dbo);
         $result = $hidden;
         if ($rows != '') {
             $head = $html->thead($html->tr(
@@ -206,6 +191,85 @@ class ui_preview extends ui_base
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
+        }
+        return $result;
+    }
+
+    /**
+     * build the change-preview rows for the pending field changes ordered by the object's db field
+     * order (sandbox_fld_order) and labelled with the translated db field name (text_db_field);
+     * if the object has no field order yet the legacy fixed field set is used as a fallback
+     *
+     * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
+     * @param db_object|null $dbo the object being changed, used for the db field order and the field labels
+     * @return string the html table rows, one per changed field
+     */
+    private function change_rows(array $url_array, ?db_object $dbo): string
+    {
+        global $mtr;
+        $rows = '';
+        $order = $dbo?->sandbox_fld_order() ?? [];
+        $url_keys = $dbo?->db_fld_to_url() ?? [];
+        if ($order != [] and $url_keys != []) {
+            foreach ($order as $db_fld) {
+                if (array_key_exists($db_fld, $url_keys)) {
+                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld));
+                }
+            }
+        } else {
+            // without an object field order derive the label from the url key itself: the human url key
+            // is the json field name, which maps to a db field, which the translator turns into the label
+            foreach ($this->changed_fields($url_array) as $url_key) {
+                $db_fld = json_fields::json_field_to_db_field(url_var::std_to_human($url_key));
+                $rows .= $this->change_row($url_array, $url_key, $mtr->text_db_field($db_fld));
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * list the standard url keys whose new value differs from the '8'-prefixed old value, i.e. the
+     * fields the user actually changed; the keys owned by the back / confirm / crud machinery (the
+     * view mask, the object id, the process step and the crud action) and the prefixed old / back
+     * values are not object field changes and are therefore not counted
+     *
+     * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
+     * @return array the standard url keys of the changed fields
+     */
+    private function changed_fields(array $url_array): array
+    {
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ACTION];
+        $changed = [];
+        foreach ($url_array as $key => $val) {
+            if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::PRE)
+                and !str_starts_with($key, url_var::BACK)
+                and (string)$val != (string)($url_array[url_var::PRE . $key] ?? '')) {
+                $changed[] = $key;
+            }
+        }
+        return $changed;
+    }
+
+    /**
+     * build one change-preview table row if the field's new url value differs from its '8'-prefixed old value
+     *
+     * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
+     * @param string $url_key the url var short key that carries the field value
+     * @param string $label the translated field name shown in the first column
+     * @return string the html table row, or an empty string if the field did not change
+     */
+    private function change_row(array $url_array, string $url_key, string $label): string
+    {
+        $html = new html_base();
+        $result = '';
+        $new = $url_array[$url_key] ?? '';
+        $old = $url_array[url_var::PRE . $url_key] ?? '';
+        if ($new != $old) {
+            $field = $html->td($label);
+            $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($old) . '</span>');
+            $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($new) . '</span>');
+            $result = $html->tr($field . $from . $to);
         }
         return $result;
     }
@@ -222,12 +286,7 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $factor = 0;
-        foreach (self::CHANGE_FIELDS as $key => $label_msg) {
-            if (($url_array[$key] ?? '') != ($url_array[url_var::PRE . $key] ?? '')) {
-                $factor++;
-            }
-        }
+        $factor = count($this->changed_fields($url_array));
         $result = '';
         if ($factor > 0) {
             $result = $html->div($mtr->txt(msg_id::POPUP_IMPACT) . ' × ' . $factor, styles::CHANGE_IMPACT);

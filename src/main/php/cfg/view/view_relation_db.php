@@ -41,6 +41,8 @@ include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 
@@ -50,6 +52,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class view_relation_db
 {
@@ -77,28 +81,28 @@ class view_relation_db
     );
     // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION,
+        fields::FLD_DESCRIPTION,
     );
     // list of the numeric user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_START_POS,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_START_POS,
-        sql_db::FLD_DESCRIPTION,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_DESCRIPTION,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
     const array FLD_LST_LINK = array(
-        [self::FLD_PARENT, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, self::FLD_PARENT_COM, view_db::FLD_ID],
-        [self::FLD_CHILD, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, self::FLD_CHILD_COM, view_db::FLD_ID],
+        [self::FLD_PARENT, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, self::FLD_PARENT_COM, view_fields::FLD_ID],
+        [self::FLD_CHILD, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, self::FLD_CHILD_COM, view_fields::FLD_ID],
     );
     // list of MANDATORY fields that CANNOT be CHANGED by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
@@ -107,7 +111,7 @@ class view_relation_db
     // fields that CAN be changed by the user with the parameters for the table creation
     const array FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_START_POS, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
 }

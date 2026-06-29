@@ -71,6 +71,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_code_id extends sandbox_typed
 {
@@ -144,8 +146,8 @@ class sandbox_code_id extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
         }
         return $result;
@@ -264,7 +266,7 @@ class sandbox_code_id extends sandbox_typed
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -321,8 +323,8 @@ class sandbox_code_id extends sandbox_typed
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_CODE_ID);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp = $this->load_sql($sc, fields::FLD_CODE_ID);
+        $sc->add_where(fields::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -476,7 +478,7 @@ class sandbox_code_id extends sandbox_typed
         return array_merge(
             parent::db_fields_all(),
             [
-                sql_db::FLD_CODE_ID,
+                fields::FLD_CODE_ID,
             ]
         );
     }
@@ -505,13 +507,13 @@ class sandbox_code_id extends sandbox_typed
         if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_CODE_ID,
+                fields::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
                 $obj->code_id

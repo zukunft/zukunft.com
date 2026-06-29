@@ -42,6 +42,11 @@ use RecursiveIteratorIterator;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
+//include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 //include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_REF . 'source_db.php';
@@ -160,6 +165,11 @@ use Zukunft\ZukunftCom\test\php\utils\test_api;
 use DateTime;
 use Exception;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class library
 {
@@ -2493,6 +2503,7 @@ class library
             'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
             'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
             'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
+            'Zukunft\ZukunftCom\main\php\shared\const\fields' => 'paths::SHARED_CONST_FIELDS',
             'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
             'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
             'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
@@ -3678,7 +3689,7 @@ class library
                 break;
             case result::class:
             case value::class;
-                $id_fld = group_db::FLD_ID;
+                $id_fld = group_fields::FLD_ID;
                 break;
         }
         return $id_fld;
@@ -4133,14 +4144,14 @@ class library
         $result = [];
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
-                word_db::FLD_NAME => 'wrd',
-                sql_db::FLD_DESCRIPTION => 'des',
+                word_fields::FLD_NAME => 'wrd',
+                fields::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value_db::FLD_ID => 'grp',
+                value_fields::FLD_ID => 'grp',
                 user_db::FLD_ID => 'usr',
-                source_db::FLD_ID => 'src',
+                source_fields::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
-                sandbox_multi::FLD_LAST_UPDATE => 'upd',
+                fields::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1',
                     phrase::FLD_ID . '_2',
                     phrase::FLD_ID . '_3',

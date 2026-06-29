@@ -58,6 +58,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -191,9 +193,9 @@ class element extends db_object_seq_id_user
             }
         }
         if ($result) {
-            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
+            if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
                 $frm = new formula($this->get_user());
-                $frm->load_by_id($db_row[formula_db::FLD_ID]);
+                $frm->load_by_id($db_row[formula_fields::FLD_ID]);
                 $this->frm = $frm;
             }
         }
@@ -802,7 +804,7 @@ class element extends db_object_seq_id_user
         return array_merge(
             parent::db_fields_all(),
             [
-                formula_db::FLD_ID,
+                formula_fields::FLD_ID,
                 element_type::FLD_ID,
                 user_db::FLD_ID,
                 element_db::FLD_REF_ID,
@@ -825,7 +827,7 @@ class element extends db_object_seq_id_user
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->frm->id() !== $this->frm->id()) {
             $lst->add_field(
-                formula_db::FLD_ID,
+                formula_fields::FLD_ID,
                 $this->frm->id(),
                 sql_field_type::INT,
                 $obj->frm->id()

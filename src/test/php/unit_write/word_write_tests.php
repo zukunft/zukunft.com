@@ -49,6 +49,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class word_write_tests
 {
@@ -472,7 +474,7 @@ class word_write_tests
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . word_names::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
-        $result = $t->log_last_by_field($wrd_reloaded, sql_db::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
+        $result = $t->log_last_by_field($wrd_reloaded, fields::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "' . word_names::TEST_ADD_COM . '" to "' . word_names::TEST_RENAMED . ' description"';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . word_names::TEST_RENAMED . '" logged', $result, $target);

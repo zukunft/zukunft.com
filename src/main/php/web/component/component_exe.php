@@ -326,7 +326,7 @@ class component_exe extends component
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
             component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
-            component_types::FORM_CHANGES => $preview->popup_changes($url_array),
+            component_types::FORM_CHANGES => $preview->popup_changes($url_array, $dbo),
             component_types::FORM_IMPACT => $preview->popup_impact($url_array),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 

@@ -121,6 +121,9 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
 //include_once paths::SERVICE . 'config.php';
+//include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 //include_once paths::SHARED_ENUM . 'change_tables.php';
 //include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 //include_once paths::SHARED_ENUM . 'user_statuum.php';
@@ -225,6 +228,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 
 class def
 {
@@ -571,7 +577,7 @@ class def
     // database fields that are an id where the linked name should be included in the change log
     // e.g. if the source_id of an value is changed the related source name should be included in the log
     const array NAMED_ID_FIELDS = [
-        source_db::FLD_ID,
+        source_fields::FLD_ID,
     ];
 
     // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
@@ -851,15 +857,15 @@ class def
 
     // id field names that can be either int or text e.g. the group_id
     const array MIXED_ID_FIELDS = [
-        result_db::FLD_SOURCE_GRP,
+        result_fields::FLD_SOURCE_GRP,
     ];
 
 
     // list of database fields that are also in test volatile
     // and that should be ignored in unit tests
     const array VOLATILE_DB_FIELDS = [
-        [value::class, sandbox_multi::FLD_LAST_UPDATE],
-        [formula::class, formula_db::FLD_LAST_UPDATE],
+        [value::class, fields::FLD_LAST_UPDATE],
+        [formula::class, fields::FLD_LAST_UPDATE],
         [user::class, user_db::FLD_CREATED],
         [user::class, user_db::FLD_LAST_LOGIN],
         [user::class, user_db::FLD_LAST_LOGOUT],

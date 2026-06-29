@@ -73,6 +73,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class type_object extends db_object_seq_id
 {
@@ -126,8 +128,8 @@ class type_object extends db_object_seq_id
 
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
-        sql_db::FLD_DESCRIPTION
+        fields::FLD_CODE_ID,
+        fields::FLD_DESCRIPTION
     );
 
     // field lists for the table creation
@@ -135,8 +137,8 @@ class type_object extends db_object_seq_id
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const array FLD_LST_ALL = array(
-        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [fields::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -189,14 +191,14 @@ class type_object extends db_object_seq_id
             if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
                 $this->id = ($db_row[language::FLD_ID]);
             }
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
             }
             if (array_key_exists($this->name_field(), $db_row)) {
                 $this->name = strval($db_row[$this->name_field()]);
             }
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
             }
             if (($this->code_id == null or $this->name == '')
                 and ($this->name == null or $this->name == '')) {
@@ -295,7 +297,7 @@ class type_object extends db_object_seq_id
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -440,8 +442,8 @@ class type_object extends db_object_seq_id
             $class = $this::class;
         }
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $class, 'by_' . sql_db::FLD_CODE_ID);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp = $typ_lst->load_sql($sc, $class, 'by_' . fields::FLD_CODE_ID);
+        $sc->add_where(fields::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1097,8 +1099,8 @@ class type_object extends db_object_seq_id
             parent::db_fields_all(),
             [
                 $this->name_field(),
-                sql_db::FLD_CODE_ID,
-                sql_db::FLD_DESCRIPTION
+                fields::FLD_CODE_ID,
+                fields::FLD_DESCRIPTION
             ]
         );
     }
@@ -1146,13 +1148,13 @@ class type_object extends db_object_seq_id
         if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_CODE_ID,
+                fields::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
                 $obj->code_id
@@ -1161,13 +1163,13 @@ class type_object extends db_object_seq_id
         if ($obj->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description

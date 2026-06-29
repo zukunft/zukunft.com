@@ -41,6 +41,8 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -48,6 +50,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class group_link extends db_object_seq_id
 {
@@ -56,8 +60,8 @@ class group_link extends db_object_seq_id
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
-        group_db::FLD_ID,
-        triple_db::FLD_ID
+        group_fields::FLD_ID,
+        triple_fields::FLD_ID
     );
 
     // database fields
@@ -82,8 +86,8 @@ class group_link extends db_object_seq_id
     {
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->grp_id = $db_row[group_db::FLD_ID];
-            $this->trp_id = $db_row[triple_db::FLD_ID];
+            $this->grp_id = $db_row[group_fields::FLD_ID];
+            $this->trp_id = $db_row[triple_fields::FLD_ID];
         }
         return $result;
     }
@@ -134,7 +138,7 @@ class group_link extends db_object_seq_id
         }
         $db_con->set_name($qp->name);
         $db_con->set_fields(self::FLD_NAMES);
-        $qp->sql = $db_con->select_by_field(group_db::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group_fields::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;

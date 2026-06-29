@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class type_tests
 {
@@ -99,8 +101,8 @@ class type_tests
         $csv_row = [
             sys_log_status::FLD_ID => sys_log_statuum::OPEN_ID,
             sys_log_status::FLD_NAME => sys_log_statuum::OPEN_NAME,
-            sql_db::FLD_CODE_ID => sys_log_statuum::OPEN,
-            sql_db::FLD_DESCRIPTION => sys_log_statuum::OPEN_COM
+            fields::FLD_CODE_ID => sys_log_statuum::OPEN,
+            fields::FLD_DESCRIPTION => sys_log_statuum::OPEN_COM
         ];
         $t->assert_true($test_name, $log_sta->row_mapper_typ_obj($csv_row, sys_log_statuum::class));
         $test_name = 'the code id of the sys log status is filled from the csv row';
@@ -112,7 +114,7 @@ class type_tests
         $log_sta = new sys_log_status('');
         $csv_row = [
             sys_log_status::FLD_NAME => sys_log_statuum::OPEN_NAME,
-            sql_db::FLD_CODE_ID => sys_log_statuum::OPEN
+            fields::FLD_CODE_ID => sys_log_statuum::OPEN
         ];
         $t->assert_false($test_name, $log_sta->row_mapper_typ_obj($csv_row, sys_log_statuum::class));
 

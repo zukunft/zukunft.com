@@ -42,6 +42,9 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 //include_once paths::MODEL_REF . 'source_db.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -59,6 +62,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
 class value_db
 {
@@ -67,31 +73,22 @@ class value_db
      * db const
      */
 
-    // object specific database and JSON object field names
-    // means: database fields only used for words
-    // *_COM: the description of the field
+    // object specific database and JSON object fields
+    // means: database fields only used for values
+    // the field names and their descriptions are defined in value_fields
     // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID = 'group_id';
-    const string FLD_VALUE = 'numeric_value';
-    // TODO move the sandbox value object
-    const string FLD_VALUE_TEXT = 'text_value';
-    const string FLD_VALUE_TIME = 'time_value';
-    const string FLD_VALUE_GEO = 'geo_value';
-    const string FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
-    const string FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
-    const string FLD_VALUE_TS_ID = 'value_time_series_id';
     const array FLD_ALL_TIME_SERIES = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
+        [value_fields::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', value_fields::FLD_TS_ID_COM],
     );
     const array FLD_ALL_TIME_SERIES_USER = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
+        [value_fields::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', value_fields::FLD_TS_ID_COM_USER],
     );
 
     // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array();
     const array FLD_NAMES_STD = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
+        value_fields::FLD_VALUE,
+        source_fields::FLD_ID,
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
     const array FLD_NAMES_STD_DUMMY = array(
@@ -99,66 +96,59 @@ class value_db
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR_EX_STD = array(
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
     // list of the user-specific datetime database field names
     const array FLD_NAMES_DATE_USR_EX_STD = array(
-        sandbox_multi::FLD_LAST_UPDATE
+        fields::FLD_LAST_UPDATE
     );
     // list of the user-specific database text field names for numeric tables and queries
     const array FLD_NAMES_USR = array();
     // list of the user-specific database text field names for text tables and queries
     const array FLD_NAMES_USR_TEXT = array(
-        self::FLD_VALUE_TEXT,
+        value_fields::FLD_VALUE_TEXT,
     );
     // list of the user-specific database text field names for geo point tables and queries
     const array FLD_NAMES_USR_GEO = array(
-        self::FLD_VALUE_GEO,
+        value_fields::FLD_VALUE_GEO,
     );
     // list of the user-specific numeric database field names for numeric tables and queries
     const array FLD_NAMES_NUM_USR = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        value_fields::FLD_VALUE,
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
     // list of the user-specific numeric database field names for text tables and queries
     const array FLD_NAMES_NUM_USR_TEXT = array(
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
     // list of the user-specific numeric database field names for timetables and queries
     const array FLD_NAMES_NUM_USR_TIME = array(
-        self::FLD_VALUE_TIME,
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        value_fields::FLD_VALUE_TIME,
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
     // list of the user-specific numeric database field names for geo point tables and queries
     const array FLD_NAMES_NUM_USR_GEO = array(
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user-specific changes
-    const array ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
+    // the ordered field names used to detect user-specific changes are defined in value_fields::ALL_NAMES
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const array FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_CHANGE_USER,
-        sandbox::FLD_SHARE
+        fields::FLD_SHARE
     );
     // list of fixed tables where a value might be stored
     const array TBL_LIST = array(

@@ -105,6 +105,8 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -167,6 +169,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use DateTime;
 
 class sql_creator
@@ -1327,7 +1331,7 @@ class sql_creator
                                 if ($par != '') {
                                     $par_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
-                                    if ($chg_row_fld == sql::NAME_SEP . group_db::FLD_ID) {
+                                    if ($chg_row_fld == sql::NAME_SEP . group_fields::FLD_ID) {
                                         $par_name = $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
@@ -1765,7 +1769,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
         if ($this->is_value_class($class)) {
             // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
-            $id_fld = group_db::FLD_ID;
+            $id_fld = group_fields::FLD_ID;
             $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
@@ -2245,7 +2249,7 @@ class sql_creator
         $log->set_class($sbx::class);
         $log->set_field($num_fld);
 
-        $log->group_id = $fvt_lst->get_value(group_db::FLD_ID);
+        $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
         if ($sc_par_lst->is_update()) {
             $val_old = $fvt_lst->get_old($num_fld);
@@ -2298,12 +2302,12 @@ class sql_creator
         }
         if (is_numeric($log->group_id)) {
             $par_lst_out->add_field(
-                group_db::FLD_ID,
+                group_fields::FLD_ID,
                 intval($log->group_id),
                 sql_par_type::INT);
         } else {
             $par_lst_out->add_field(
-                group_db::FLD_ID,
+                group_fields::FLD_ID,
                 $log->group_id,
                 sql_par_type::TEXT);
         }
@@ -2481,7 +2485,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($sc_par_lst->exclude_sql()) {
-                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . fields::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2490,7 +2494,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . fields::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -2521,7 +2525,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
             $sql .= $this->sql_where_fvt($fvt_lst_id);
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . fields::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
             $sql .= sql::SEP;
         }
@@ -2578,7 +2582,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($excluded) {
-                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . fields::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2587,7 +2591,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($excluded) {
-                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . fields::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -3815,13 +3819,13 @@ class sql_creator
 
             // include rows where code_id is null
             if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                if ($fld == sql_db::FLD_CODE_ID) {
+                if ($fld == fields::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
                         $sql_where .= ' ' . sql::AND . ' ';
                         if ($this->usr_query or $this->join <> '') {
                             $sql_where .= sql_db::STD_TBL . '.';
                         }
-                        $sql_where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                        $sql_where .= fields::FLD_CODE_ID . ' IS NOT NULL';
                     }
                 }
             }
@@ -3993,13 +3997,13 @@ class sql_creator
 
                         // include rows where code_id is null
                         if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                            if ($this->par_lst->name($i) == sql_db::FLD_CODE_ID) {
+                            if ($this->par_lst->name($i) == fields::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' ' . sql::AND . ' ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $result .= sql_db::STD_TBL . '.';
                                     }
-                                    $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                    $result .= fields::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -5278,49 +5282,49 @@ class sql_creator
         $result = $type . '_name';
         // TODO remove these exceptions for a unique name in the "with_log" undate queries
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'view_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'view_relation_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'component_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
             $result = user_profile::FLD_NAME;
@@ -5338,13 +5342,13 @@ class sql_creator
             $result = job_status::FLD_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         if ($result == 'db_cache_status_name') {
             $result = db_cache_status::FLD_NAME;
         }
         if ($result == 'db_cache_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = fields::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {

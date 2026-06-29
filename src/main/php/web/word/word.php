@@ -74,6 +74,12 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+// phrase.php is loaded elsewhere (kept as a commented placeholder like cfg word_db) to avoid
+// pulling the whole phrase class graph into the frontend just for the phrase_type_id field name
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -88,9 +94,15 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase as phrase_cfg;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox as sandbox_cfg;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -123,6 +135,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 
 class word extends sandbox_code_id
 {
@@ -217,6 +231,34 @@ class word extends sandbox_code_id
         $url_array[url_var::PLURAL] = $this->plural;
         $url_array[url_var::VIEW] = $this->view_id;
         return $url_array;
+    }
+
+    /**
+     * @return array the ordered db field names of a word used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return word_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array all sandbox word db field names mapped to their url var key so that the change
+     *              preview can show any changed field; the keys match word_fields::ALL_NAMES
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            word_fields::FLD_NAME => url_var::NAME,
+            word_fields::FLD_PLURAL => url_var::PLURAL,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            phrase_cfg::FLD_TYPE => url_var::TYPE,
+            fields::FLD_VIEW => url_var::VIEW,
+            fields::FLD_USAGE => url_var::USAGE,
+            fields::FLD_IMPACT => url_var::IMPACT,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
     /**

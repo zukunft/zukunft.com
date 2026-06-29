@@ -54,6 +54,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -263,7 +265,7 @@ class db_object extends IdObject
             and $sc_par_lst->is_prime()
             and $query_name == 'name'
             and !$sc->is_MySQL()) {
-            $sc->set_id_field(group_db::FLD_ID . '::text');
+            $sc->set_id_field(group_fields::FLD_ID . '::text');
         }
 
         return $qp;

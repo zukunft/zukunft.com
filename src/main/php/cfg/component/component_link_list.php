@@ -56,7 +56,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -68,7 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 
 class component_link_list extends sandbox_link_list
@@ -179,9 +179,9 @@ class component_link_list extends sandbox_link_list
      */
     function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
-        $qp = $this->load_sql($sc, view_db::FLD_ID);
+        $qp = $this->load_sql($sc, view_fields::FLD_ID);
         if ($msk->id() > 0) {
-            $sc->add_where(view_db::FLD_ID, $msk->id());
+            $sc->add_where(view_fields::FLD_ID, $msk->id());
             $sc->set_order(component_link::FLD_ORDER_NBR);
             $sc = (new component($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();

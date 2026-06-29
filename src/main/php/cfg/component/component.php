@@ -95,6 +95,9 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -130,6 +133,9 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class component extends sandbox_code_id
 {
@@ -142,8 +148,8 @@ class component extends sandbox_code_id
     const string TBL_COMMENT = 'for the single components of a view';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = component_db::FLD_ID;
-    const string FLD_NAME = component_db::FLD_NAME;
+    const string FLD_ID = component_fields::FLD_ID;
+    const string FLD_NAME = component_fields::FLD_NAME;
     const array FLD_LST_MUST_BE_IN_STD = component_db::FLD_LST_MUST_BE_IN_STD;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = component_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = component_db::FLD_LST_USER_CAN_CHANGE;
@@ -151,7 +157,6 @@ class component extends sandbox_code_id
     const array FLD_NAMES = component_db::FLD_NAMES;
     const array FLD_NAMES_USR = component_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = component_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = component_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -270,64 +275,64 @@ class component extends sandbox_code_id
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = component_db::FLD_ID,
-        string $name_fld = component_db::FLD_NAME,
-        string $type_fld = component_db::FLD_TYPE
+        string $id_fld = component_fields::FLD_ID,
+        string $name_fld = component_fields::FLD_NAME,
+        string $type_fld = component_fields::FLD_TYPE
     ): bool
     {
         global $mtr;
 
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(component_db::FLD_UI_MSG_ID, $db_row)) {
-                $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID];
+            if (array_key_exists(component_fields::FLD_UI_MSG_ID, $db_row)) {
+                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_ID];
                 if ($msg_id_txt == null) {
                     $this->ui_msg_code_id = null;
                 } else {
-                    $this->ui_msg_code_id = $mtr->get($db_row[component_db::FLD_UI_MSG_ID]);
+                    $this->ui_msg_code_id = $mtr->get($db_row[component_fields::FLD_UI_MSG_ID]);
                 }
             }
-            if (array_key_exists(component_db::FLD_UI_MSG_ID_VARS, $db_row)) {
-                $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID_VARS];
+            if (array_key_exists(component_fields::FLD_UI_MSG_ID_VARS, $db_row)) {
+                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_ID_VARS];
                 if ($msg_id_txt == null) {
                     $this->ui_msg_code_id_vars = null;
                 } else {
-                    $this->ui_msg_code_id_vars = $mtr->get($db_row[component_db::FLD_UI_MSG_ID_VARS]);
+                    $this->ui_msg_code_id_vars = $mtr->get($db_row[component_fields::FLD_UI_MSG_ID_VARS]);
                 }
             }
-            if (array_key_exists(component_db::FLD_UI_MSG_ID_EXCEPTION, $db_row)) {
-                $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID_EXCEPTION];
+            if (array_key_exists(component_fields::FLD_UI_MSG_ID_EXCEPTION, $db_row)) {
+                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_ID_EXCEPTION];
                 if ($msg_id_txt == null) {
                     $this->ui_msg_code_id_exception = null;
                 } else {
-                    $this->ui_msg_code_id_exception = $mtr->get($db_row[component_db::FLD_UI_MSG_ID_EXCEPTION]);
+                    $this->ui_msg_code_id_exception = $mtr->get($db_row[component_fields::FLD_UI_MSG_ID_EXCEPTION]);
                 }
             }
-            if (array_key_exists(component_db::FLD_UI_MSG_VAL_EXCEPTION, $db_row)) {
-                $msg_id_txt = $db_row[component_db::FLD_UI_MSG_VAL_EXCEPTION];
+            if (array_key_exists(component_fields::FLD_UI_MSG_VAL_EXCEPTION, $db_row)) {
+                $msg_id_txt = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
                 if ($msg_id_txt == null) {
                     $this->ui_msg_value_exception = null;
                 } else {
-                    $this->ui_msg_value_exception = $db_row[component_db::FLD_UI_MSG_VAL_EXCEPTION];
+                    $this->ui_msg_value_exception = $db_row[component_fields::FLD_UI_MSG_VAL_EXCEPTION];
                 }
             }
-            if (array_key_exists(component_db::FLD_STYLE, $db_row)) {
-                $this->set_style_by_id($db_row[component_db::FLD_STYLE]);
+            if (array_key_exists(fields::FLD_STYLE, $db_row)) {
+                $this->set_style_by_id($db_row[fields::FLD_STYLE]);
             }
-            if (array_key_exists(component_db::FLD_ROW_PHRASE, $db_row)) {
-                $this->reload_row_phrase($db_row[component_db::FLD_ROW_PHRASE]);
+            if (array_key_exists(component_fields::FLD_ROW_PHRASE, $db_row)) {
+                $this->reload_row_phrase($db_row[component_fields::FLD_ROW_PHRASE]);
             }
-            if (array_key_exists(component_db::FLD_LINK_TYPE, $db_row)) {
-                $this->link_type_id = $db_row[component_db::FLD_LINK_TYPE];
+            if (array_key_exists(component_fields::FLD_LINK_TYPE, $db_row)) {
+                $this->link_type_id = $db_row[component_fields::FLD_LINK_TYPE];
             }
-            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
-                $this->set_formula_by_id($db_row[formula_db::FLD_ID]);
+            if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
+                $this->set_formula_by_id($db_row[formula_fields::FLD_ID]);
             }
-            if (array_key_exists(component_db::FLD_COL_PHRASE, $db_row)) {
-                $this->reload_col_phrase($db_row[component_db::FLD_COL_PHRASE]);
+            if (array_key_exists(component_fields::FLD_COL_PHRASE, $db_row)) {
+                $this->reload_col_phrase($db_row[component_fields::FLD_COL_PHRASE]);
             }
-            if (array_key_exists(component_db::FLD_COL2_PHRASE, $db_row)) {
-                $this->word_id_col2 = $db_row[component_db::FLD_COL2_PHRASE];
+            if (array_key_exists(component_fields::FLD_COL2_PHRASE, $db_row)) {
+                $this->word_id_col2 = $db_row[component_fields::FLD_COL2_PHRASE];
             }
         }
         return $result;
@@ -719,7 +724,7 @@ class component extends sandbox_code_id
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => component_db::FLD_UI_MSG_ID,
+                msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -752,7 +757,7 @@ class component extends sandbox_code_id
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => component_db::FLD_UI_MSG_ID_VARS,
+                msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_VARS,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -785,7 +790,7 @@ class component extends sandbox_code_id
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => component_db::FLD_UI_MSG_ID_EXCEPTION,
+                msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -818,7 +823,7 @@ class component extends sandbox_code_id
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => component_db::FLD_UI_MSG_VAL_EXCEPTION,
+                msg_id::VAR_NAME => component_fields::FLD_UI_MSG_VAL_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -1035,7 +1040,7 @@ class component extends sandbox_code_id
 
     function name_field(): string
     {
-        return component_db::FLD_NAME;
+        return component_fields::FLD_NAME;
     }
 
     /**
@@ -1052,7 +1057,7 @@ class component extends sandbox_code_id
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return component_fields::ALL_NAMES;
     }
 
 
@@ -1478,19 +1483,19 @@ class component extends sandbox_code_id
         return array_merge(
             parent::db_fields_all(),
             [
-                component_db::FLD_TYPE,
-                component_db::FLD_STYLE,
-                component_db::FLD_UI_MSG_ID,
-                component_db::FLD_UI_MSG_ID_VARS,
-                component_db::FLD_UI_MSG_ID_EXCEPTION,
-                component_db::FLD_UI_MSG_VAL_EXCEPTION,
-                component_db::FLD_ROW_PHRASE,
-                component_db::FLD_COL_PHRASE,
-                component_db::FLD_COL2_PHRASE,
-                formula_db::FLD_ID,
-                //component_db::FLD_LINK_COMP,
-                //component_db::FLD_LINK_COMP_TYPE,
-                component_db::FLD_LINK_TYPE,
+                component_fields::FLD_TYPE,
+                fields::FLD_STYLE,
+                component_fields::FLD_UI_MSG_ID,
+                component_fields::FLD_UI_MSG_ID_VARS,
+                component_fields::FLD_UI_MSG_ID_EXCEPTION,
+                component_fields::FLD_UI_MSG_VAL_EXCEPTION,
+                component_fields::FLD_ROW_PHRASE,
+                component_fields::FLD_COL_PHRASE,
+                component_fields::FLD_COL2_PHRASE,
+                formula_fields::FLD_ID,
+                //component_fields::FLD_LINK_COMP,
+                //component_fields::FLD_LINK_COMP_TYPE,
+                component_fields::FLD_LINK_TYPE,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1520,8 +1525,8 @@ class component extends sandbox_code_id
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1532,7 +1537,7 @@ class component extends sandbox_code_id
                 ]);
             }
             $lst->add_type_field(
-                component_db::FLD_TYPE,
+                component_fields::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $obj->type_id(),
@@ -1542,8 +1547,8 @@ class component extends sandbox_code_id
         if ($obj->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_STYLE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_STYLE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_STYLE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1555,7 +1560,7 @@ class component extends sandbox_code_id
                 ]);
             }
             $lst->add_type_field(
-                component_db::FLD_STYLE,
+                fields::FLD_STYLE,
                 view_style::FLD_NAME,
                 $this->get_style_id(),
                 $obj->get_style_id(),
@@ -1565,13 +1570,13 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_code_id !== $this->ui_msg_code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_UI_MSG_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_UI_MSG_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                component_db::FLD_UI_MSG_ID,
+                component_fields::FLD_UI_MSG_ID,
                 $this->ui_msg_code_id?->value,
                 component_db::FLD_UI_MSG_ID_SQL_TYP,
                 $obj->ui_msg_code_id?->value
@@ -1580,13 +1585,13 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_code_id_vars !== $this->ui_msg_code_id_vars) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID_VARS,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID_VARS),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_UI_MSG_ID_VARS,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_UI_MSG_ID_VARS),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                component_db::FLD_UI_MSG_ID_VARS,
+                component_fields::FLD_UI_MSG_ID_VARS,
                 $this->ui_msg_code_id_vars?->value,
                 component_db::FLD_UI_MSG_ID_SQL_TYP,
                 $obj->ui_msg_code_id_vars?->value
@@ -1595,13 +1600,13 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_code_id_exception !== $this->ui_msg_code_id_exception) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID_EXCEPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID_EXCEPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_UI_MSG_ID_EXCEPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_UI_MSG_ID_EXCEPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                component_db::FLD_UI_MSG_ID_EXCEPTION,
+                component_fields::FLD_UI_MSG_ID_EXCEPTION,
                 $this->ui_msg_code_id_exception?->value,
                 component_db::FLD_UI_MSG_ID_SQL_TYP,
                 $obj->ui_msg_code_id_exception?->value
@@ -1610,13 +1615,13 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_value_exception !== $this->ui_msg_value_exception) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_VAL_EXCEPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_VAL_EXCEPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_UI_MSG_VAL_EXCEPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_UI_MSG_VAL_EXCEPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                component_db::FLD_UI_MSG_VAL_EXCEPTION,
+                component_fields::FLD_UI_MSG_VAL_EXCEPTION,
                 $this->ui_msg_value_exception,
                 sql_field_type::NUMERIC_FLOAT,
                 $obj->ui_msg_value_exception
@@ -1625,8 +1630,8 @@ class component extends sandbox_code_id
         if ($obj->get_row_phrase_id() !== $this->get_row_phrase_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_ROW_PHRASE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_ROW_PHRASE),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_ROW_PHRASE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_ROW_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1635,7 +1640,7 @@ class component extends sandbox_code_id
                 $old_val = null;
             }
             $lst->add_field(
-                component_db::FLD_ROW_PHRASE,
+                component_fields::FLD_ROW_PHRASE,
                 $this->get_row_phrase_id(),
                 phrase::FLD_ID_SQL_TYP,
                 $old_val
@@ -1644,8 +1649,8 @@ class component extends sandbox_code_id
         if ($obj->get_col_phrase_id() !== $this->get_col_phrase_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_COL_PHRASE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_COL_PHRASE),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_COL_PHRASE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_COL_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1654,7 +1659,7 @@ class component extends sandbox_code_id
                 $old_val = null;
             }
             $lst->add_field(
-                component_db::FLD_COL_PHRASE,
+                component_fields::FLD_COL_PHRASE,
                 $this->get_col_phrase_id(),
                 phrase::FLD_ID_SQL_TYP,
                 $old_val
@@ -1663,8 +1668,8 @@ class component extends sandbox_code_id
         if ($obj->get_col_sub_phrase_id() !== $this->get_col_sub_phrase_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_COL2_PHRASE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_COL2_PHRASE),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_COL2_PHRASE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_COL2_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1673,7 +1678,7 @@ class component extends sandbox_code_id
                 $old_val = null;
             }
             $lst->add_field(
-                component_db::FLD_COL2_PHRASE,
+                component_fields::FLD_COL2_PHRASE,
                 $this->get_col_sub_phrase_id(),
                 phrase::FLD_ID_SQL_TYP,
                 $old_val
@@ -1682,8 +1687,8 @@ class component extends sandbox_code_id
         if ($obj->get_formula_id() !== $this->get_formula_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1692,7 +1697,7 @@ class component extends sandbox_code_id
                 $old_val = null;
             }
             $lst->add_field(
-                formula_db::FLD_ID,
+                formula_fields::FLD_ID,
                 $this->get_formula_id(),
                 formula_db::FLD_ID_SQL_TYP,
                 $old_val
@@ -1702,13 +1707,13 @@ class component extends sandbox_code_id
         if ($obj->link_type_id !== $this->link_type_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_LINK_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_LINK_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . component_fields::FLD_LINK_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . component_fields::FLD_LINK_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                component_db::FLD_LINK_TYPE,
+                component_fields::FLD_LINK_TYPE,
                 $this->link_type_id,
                 component_db::FLD_LINK_TYPE_SQL_TYP,
                 $obj->link_type_id
@@ -1731,7 +1736,7 @@ class component extends sandbox_code_id
           $db_con = new mysql;
           $db_con->usr_id = $this->get_user()->id;
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
+          $this->type_name = $db_type[fields::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */

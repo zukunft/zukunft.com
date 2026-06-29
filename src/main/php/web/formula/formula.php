@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -86,8 +87,11 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -112,6 +116,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula extends sandbox_code_id
 {
@@ -198,6 +204,26 @@ class formula extends sandbox_code_id
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return array the ordered db field names of a formula used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return formula_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array the user-editable formula db field names mapped to their url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            formula_fields::FLD_NAME => url_var::NAME,
+            formula_fields::FLD_FORMULA_TEXT => url_var::USER_EXPRESSION,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+        ];
     }
 
     /**

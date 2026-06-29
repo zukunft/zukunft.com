@@ -35,13 +35,12 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::DB . 'sql_db.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -51,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class component_write_tests
 {
@@ -177,7 +177,7 @@ class component_write_tests
         // check if the component parameter adding have been logged
         // TODO for testing always use the latest table name
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
-        $result = $t->log_last_by_field($cmp_reloaded, sql_db::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
+        $result = $t->log_last_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
         // TODO Prio 1 fix it
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {

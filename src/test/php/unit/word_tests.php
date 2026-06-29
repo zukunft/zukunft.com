@@ -46,6 +46,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class word_tests
 {
@@ -186,10 +188,10 @@ class word_tests
         $wrd_imp = $t_wrd->word();
         $wrd_imp->description = word_names::TEST_RENAMED;
         $wrd_imp->set_protection_id(null);
-        $t->assert_false($test_name, in_array(sandbox::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $t->assert_false($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
         $test_name = 'an explicit lower protection is part of the update fields';
         $wrd_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $t->assert_true($test_name, in_array(sandbox::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
+        $t->assert_true($test_name, in_array(fields::FLD_PROTECT, $wrd_imp->db_fields_changed($wrd_db, $usr_msg)->names()));
         $test_name = 'a normal user cannot reduce the protection level';
         $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
         $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
@@ -450,14 +452,14 @@ class word_tests
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $usr_sys);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [sql_db::FLD_DESCRIPTION]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_code_id('test code id', $usr_sys);
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $usr);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [sql_db::FLD_CODE_ID]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t_wrd->word_name_only();

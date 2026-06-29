@@ -46,6 +46,9 @@ include_once paths::MODEL_LOG . 'change_log_link_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -80,6 +83,9 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class change_log_tests
 {
@@ -211,7 +217,7 @@ class change_log_tests
         $log_lst = new change_log_list();
         // TODO Prio 2 activate
         //$t->assert_sql_by_user($sc, $log_lst);
-        //$this->assert_sql_list_last(word::class, word_db::FLD_NAME, $log_lst, $db_con, $t);
+        //$this->assert_sql_list_last(word::class, word_fields::FLD_NAME, $log_lst, $db_con, $t);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
@@ -219,11 +225,11 @@ class change_log_tests
         $test_name = 'get the latest changes related to a word';
         $this->assert_sql_list_by_field(word::class, '', 1, $log_lst, $db_con, $t, $test_name);
         $test_name = 'get the name changes of a word';
-        $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
-        $this->assert_sql_list_by_field(triple::class, triple_db::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group_db::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(word::class, word_fields::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
+        $this->assert_sql_list_by_field(triple::class, triple_fields::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);

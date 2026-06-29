@@ -69,6 +69,11 @@ include_once paths::MODEL_WORD . 'word_db.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -103,6 +108,11 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use Exception;
 
 class result_list extends sandbox_value_list
@@ -333,12 +343,12 @@ class result_list extends sandbox_value_list
             // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
             $res = new result($this->get_user());
             $db_con->set_id_field($res->id_field());
-            $qp->name .= formula_db::FLD_ID;
+            $qp->name .= formula_fields::FLD_ID;
             $db_con->set_name($qp->name);
             $db_con->set_fields(result_db::FLD_NAMES);
             $db_con->set_usr($this->get_user()->id);
             $db_con->add_par(sql_par_type::INT, $frm->id());
-            $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(formula_fields::FLD_ID));
             $qp->par = $db_con->get_par();
         }
         return $qp;
@@ -359,9 +369,9 @@ class result_list extends sandbox_value_list
         $fld = '';
         if ($obj !== null and $obj->id() > 0) {
             if (get_class($obj) == word::class) {
-                $fld = word_db::FLD_ID;
+                $fld = word_fields::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
-                $fld = triple_db::FLD_ID;
+                $fld = triple_fields::FLD_ID;
             }
         }
         if ($fld == '') {
@@ -449,7 +459,7 @@ class result_list extends sandbox_value_list
                 $spt = sql_par_type::LIKE_OR;
             }
             $grp_id = new group_id();
-            $sc->add_where_par(group_db::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+            $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
         }
 
         // add the user parameter
@@ -506,7 +516,7 @@ class result_list extends sandbox_value_list
             new sql_field_list(),
             new sql_type_list()
         );
-        $sc->add_where(formula_db::FLD_ID, $frm->id());
+        $sc->add_where(formula_fields::FLD_ID, $frm->id());
         // detect if the group id is numeric and if yes force the conversion to text
         $num_id = false;
         $sc_par_lst = new sql_type_list($sc_par_arr);
@@ -537,7 +547,7 @@ class result_list extends sandbox_value_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(result_db::FLD_ID, $ids);
+        $sc->add_where(result_fields::FLD_ID, $ids);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -593,9 +603,9 @@ class result_list extends sandbox_value_list
                 $pos++;
             }
         } elseif ($grp->is_big()) {
-            $sc->add_where(group_db::FLD_ID, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(group_fields::FLD_ID, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(group_db::FLD_ID, $grp->id());
+            $sc->add_where(group_fields::FLD_ID, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -613,11 +623,11 @@ class result_list extends sandbox_value_list
     {
         $qp = $this->load_sql($sc, 'src_grp');
         if ($grp->is_prime()) {
-            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_fields::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } elseif ($grp->is_big()) {
-            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_fields::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id());
+            $sc->add_where(result_fields::FLD_SOURCE_GRP, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -669,17 +679,17 @@ class result_list extends sandbox_value_list
         $sql_by = '';
         if ($obj->id() > 0) {
             if (get_class($obj) == formula::class) {
-                $sql_by .= formula_db::FLD_ID;
+                $sql_by .= formula_fields::FLD_ID;
             } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
-                    $sql_by .= result_db::FLD_SOURCE_GRP;
+                    $sql_by .= result_fields::FLD_SOURCE_GRP;
                 } else {
-                    $sql_by .= group_db::FLD_ID;
+                    $sql_by .= group_fields::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class) {
-                $sql_by .= word_db::FLD_ID;
+                $sql_by .= word_fields::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
-                $sql_by .= triple_db::FLD_ID;
+                $sql_by .= triple_fields::FLD_ID;
             }
         }
         if ($sql_by == '') {
@@ -698,26 +708,26 @@ class result_list extends sandbox_value_list
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
-                    $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(formula_fields::FLD_ID));
                 } elseif (get_class($obj) == group::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
-                        $link_fields[] = result_db::FLD_SOURCE_GRP;
+                        $link_fields[] = result_fields::FLD_SOURCE_GRP;
                     } else {
-                        $link_fields[] = group_db::FLD_ID;
+                        $link_fields[] = group_fields::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    // $db_con->set_join_fields(                        array(result_db::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_db::FLD_GRP,                        result_db::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(word_db::FLD_ID));
+                    // $db_con->set_join_fields(                        array(result_fields::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_fields::FLD_GRP,                        result_fields::FLD_GRP);
+                    $qp->sql = $db_con->select_by_field_list(array(word_fields::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    //$db_con->set_join_fields( array(result_db::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_db::FLD_GRP,         result_db::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(triple_db::FLD_ID));
+                    //$db_con->set_join_fields( array(result_fields::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_fields::FLD_GRP,         result_fields::FLD_GRP);
+                    $qp->sql = $db_con->select_by_field_list(array(triple_fields::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -960,9 +970,9 @@ class result_list extends sandbox_value_list
             // build the single calculation request
             $calc_row = array();
             $calc_row[url_var::SESSION_USER_ID] = $this->get_user()->id();
-            $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
-            $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
-            $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];
+            $calc_row['frm_id'] = $frm_row[formula_fields::FLD_ID];
+            $calc_row['frm_name'] = $frm_row[formula_fields::FLD_NAME];
+            $calc_row['frm_text'] = $frm_row[formula_fields::FLD_FORMULA_TEXT];
             $calc_row['trm_ids'] = $phr_ids;
             $result[] = $calc_row;
         }

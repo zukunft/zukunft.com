@@ -46,6 +46,8 @@ include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -58,6 +60,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 
 class word_db
 {
@@ -66,82 +70,61 @@ class word_db
      * db const
      */
 
-    // object specific database and JSON object field names
+    // object specific database and JSON object fields
     // means: database fields only used for words
-    // *_COM: the description of the field
+    // the field names and their descriptions are defined in word_fields
     // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
-    const string FLD_NAME_COM = 'the text used for searching';
-    const string FLD_NAME = 'word_name';
-    const string FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
-    const string FLD_TYPE_COM = 'to link coded functionality to words e.g. to exclude measure words from a percent result';
-    const string FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
-    const string FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
-    const string FLD_PLURAL = 'plural'; // TODO move to language types
     const sql_field_type FLD_PLURAL_SQL_TYP = sql_field_type::NAME;
-    const string FLD_VIEW_COM = 'the default mask for this word';
-    const string FLD_VIEW = 'view_id';
     const sql_field_type FLD_VIEW_SQL_TYP = sql_field_type::INT;
-    const string FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
-    const string FLD_INACTIVE = 'inactive';
     const sql_field_type FLD_INACTIVE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
+    const string FLD_VIEW_COM = 'the default mask for this word';
+    const string FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+
 
     // list of fields that MUST be set by one user
     const array FLD_LST_MUST_BE_IN_STD = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [word_fields::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', word_fields::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [language::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
-        [self::FLD_NAME, sandbox_named::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [language::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ONE, sql::INDEX, language::class, word_fields::FLD_NAME_COM],
+        [word_fields::FLD_NAME, sandbox_named::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', word_fields::FLD_NAME_COM],
     );
     // list of fields that CAN be changed by the user
     const array FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_PLURAL, self::FLD_PLURAL_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
-        [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
-        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
+        [word_fields::FLD_PLURAL, self::FLD_PLURAL_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', word_fields::FLD_PLURAL_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', word_fields::FLD_DESCRIPTION_COM],
+        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word_fields::FLD_TYPE_COM],
+        [fields::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [fields::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_USAGE_COM],
+        [fields::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_IMPACT_COM],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
-        [self::FLD_INACTIVE, self::FLD_INACTIVE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
-        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [fields::FLD_INACTIVE, self::FLD_INACTIVE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+        [fields::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
 
     // all database field names excluding the id, standard name and user-specific fields
     const array FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
-        sql_db::FLD_USAGE
+        fields::FLD_CODE_ID,
+        fields::FLD_USAGE
     );
     // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
-        self::FLD_PLURAL,
-        sql_db::FLD_DESCRIPTION
+        word_fields::FLD_PLURAL,
+        fields::FLD_DESCRIPTION
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         phrase::FLD_TYPE,
-        self::FLD_VIEW,
-        sql_db::FLD_IMPACT,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user-specific changes
-    const array ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_NAME,
-        self::FLD_PLURAL,
-        sql_db::FLD_DESCRIPTION,
-        phrase::FLD_TYPE,
-        self::FLD_VIEW,
-        sql_db::FLD_USAGE,
-        sql_db::FLD_IMPACT,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_VIEW,
+        fields::FLD_IMPACT,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
 
 }

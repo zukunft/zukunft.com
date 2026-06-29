@@ -42,6 +42,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class pod extends type_object
 {
@@ -70,7 +72,7 @@ class pod extends type_object
         [pod_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_type::class, ''],
         [self::FLD_URL, sql_field_type::NAME, sql_field_default::NOT_NULL, '', '', ''],
         [pod_status::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_status::class, ''],
-        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple_db::FLD_ID],
+        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple_fields::FLD_ID],
     );
 
 }

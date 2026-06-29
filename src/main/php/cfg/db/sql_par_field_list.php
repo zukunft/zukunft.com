@@ -44,8 +44,6 @@ include_once paths::DB . 'sql_par_field.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-//include_once paths::MODEL_FORMULA . 'formula_db.php';
-//include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
@@ -61,10 +59,10 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -82,6 +80,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use DateTime;
 use DateTimeInterface;
 
@@ -424,13 +424,13 @@ class sql_par_field_list
         if ($sbx_db->description <> $sbx_upd->description) {
             if ($do_log) {
                 $this->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $sbx_upd->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
@@ -492,8 +492,8 @@ class sql_par_field_list
             sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
             user_db::FLD_ID,
             verb_db::FLD_ID,
-            sandbox_multi::FLD_LAST_UPDATE,
-            formula_db::FLD_LAST_UPDATE
+            fields::FLD_LAST_UPDATE,
+            fields::FLD_LAST_UPDATE
         ]);
         if (count($names) == 0) {
             return true;
@@ -515,7 +515,7 @@ class sql_par_field_list
             user_db::FLD_ID,
             user_db::FLD_CREATED,
             user_db::FLD_NAME,
-            group_db::FLD_NAME,
+            group_fields::FLD_NAME,
             verb_db::FLD_ID,
             view_relation_db::FLD_PARENT,
             view_relation_db::FLD_CHILD,
@@ -523,8 +523,8 @@ class sql_par_field_list
             term_view::FLD_TO,
             component_link::FLD_FROM,
             component_link::FLD_TO,
-            sandbox_multi::FLD_LAST_UPDATE,
-            formula_db::FLD_LAST_UPDATE
+            fields::FLD_LAST_UPDATE,
+            fields::FLD_LAST_UPDATE
         ]);
         if (count($names) == 0) {
             return true;
