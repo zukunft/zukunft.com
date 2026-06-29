@@ -1563,6 +1563,8 @@ enum messages: string
     case CANCEL_AND_GO = 'cancel_and_go';
     case BACK_LINK = 'back';
     case THREE_POINTS = '...';
+    // shown in the confirm-change preview when a type field (share, protection, ...) has no value yet
+    case NOT_SET = 'not_set';
 
     // text to be shown in buttons
     case ADD = 'add';

@@ -213,7 +213,7 @@ class ui_preview extends ui_base
         if ($order != [] and $url_keys != []) {
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
-                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld));
+                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
                 }
             }
         } else {
@@ -221,7 +221,7 @@ class ui_preview extends ui_base
             // is the json field name, which maps to a db field, which the translator turns into the label
             foreach ($this->changed_fields($url_array) as $url_key) {
                 $db_fld = json_fields::json_field_to_db_field(url_var::std_to_human($url_key));
-                $rows .= $this->change_row($url_array, $url_key, $mtr->text_db_field($db_fld));
+                $rows .= $this->change_row($url_array, $url_key, $mtr->text_db_field($db_fld), $db_fld);
             }
         }
         return $rows;
@@ -257,19 +257,45 @@ class ui_preview extends ui_base
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @param string $url_key the url var short key that carries the field value
      * @param string $label the translated field name shown in the first column
+     * @param string $db_fld the db field name, used to show the type name instead of the id for a type field
      * @return string the html table row, or an empty string if the field did not change
      */
-    private function change_row(array $url_array, string $url_key, string $label): string
+    private function change_row(array $url_array, string $url_key, string $label, string $db_fld = ''): string
     {
         $html = new html_base();
         $result = '';
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
+            $from_text = $this->field_value($db_fld, (string)$old);
+            $to_text = $this->field_value($db_fld, (string)$new);
             $field = $html->td($label);
-            $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($old) . '</span>');
-            $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($new) . '</span>');
+            $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
+            $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
             $result = $html->tr($field . $from . $to);
+        }
+        return $result;
+    }
+
+    /**
+     * the display text of a single field value: for a type-id field (share, protection, phrase type, ...)
+     * the type name from the request cache (or 'not set' when unset), otherwise the raw value unchanged
+     *
+     * @param string $db_fld the db field name whose value is shown
+     * @param string $value the raw url value of the field (a type id for a type field)
+     * @return string the value to show to the user
+     */
+    private function field_value(string $db_fld, string $value): string
+    {
+        global $ui_sys, $mtr;
+        $result = $value;
+        $type_list = $ui_sys?->typ_lst_cache?->field_to_type_list($db_fld);
+        if ($type_list != null) {
+            if ($value == '' or $value == '0') {
+                $result = $mtr->txt(msg_id::NOT_SET);
+            } else {
+                $result = $type_list->name((int)$value);
+            }
         }
         return $result;
     }
