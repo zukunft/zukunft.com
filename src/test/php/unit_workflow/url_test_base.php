@@ -159,7 +159,7 @@ class url_test_base
 
     /**
      * // TODO Prio 2 review
-     * true if the workflow action submits a form (save and the confirmed actions), false for the plain
+     * true if the workflow action submits a form (save, fill and the confirmed actions), false for the plain
      * get navigation actions (show, edit, back, cancel). a form submit carries the named submit button
      * marker (url_var::POST_SUBMIT) that view.php needs to route the request through url_to_action
      *
@@ -170,6 +170,7 @@ class url_test_base
     {
         return in_array($step, [
             url_var::ACTION_SAVE,
+            url_var::ACTION_FILL,
             url_var::ACTION_CONFIRM,
             url_var::ACTION_CONFIRMED
         ], true);

@@ -1,7 +1,7 @@
 GET
 http://localhost/http/view.php?m=55&id=1&9=1&k=mathematical+constant&o=a+confirm+change+test+description&d=0&s=1&sp=1&z=2&submit=
 /http/view.php?m=55&id=1&9=1&k=mathematical+constant&o=a+confirm+change+test+description&d=0&s=1&sp=1&z=2&submit=
-/http/view.php?mask_id=confirm_update&id=1&back=1&name=mathematical+constant&description=a+confirm+change+test+description&view_id=0&share=1&protection=1&step=confirmed&
+/http/view.php?mask_id=confirm_update&id=1&name=mathematical+constant&description=a+confirm+change+test+description&view_id=0&share=1&protection=1&step=confirmed&
 {
     "mask_id": "confirm_update",
     "id": "1",

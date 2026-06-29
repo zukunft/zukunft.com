@@ -261,6 +261,7 @@ class url_var
     const string ACTION_EDIT = 'edit'; // open the edit view of the object
     const string ACTION_BACK = 'back'; // leave the edit view without a change and return to the previous page
     const string ACTION_SAVE = 'save'; // press save on the edit form which leads to the confirm change view
+    const string ACTION_FILL = 'fill'; // press save on an edit form with every field filled, like save it leads to the confirm change view
     const string ACTION_CONFIRM = 'confirm'; // confirm the pending change so that it is written to the database
     // the confirmed action actually adds / updates / deletes the object in the database; the confirm
     // view mask selects which crud is run, so one action covers all three operations
@@ -742,7 +743,8 @@ class url_var
     static function action_step(string $action): string
     {
         return match ($action) {
-            self::ACTION_SAVE => self::STEP_CONFIRM,
+            self::ACTION_SAVE,
+            self::ACTION_FILL => self::STEP_CONFIRM,
             self::ACTION_CONFIRM,
             self::ACTION_CONFIRMED => self::STEP_CONFIRMED,
             self::ACTION_CANCEL => self::STEP_CANCEL,

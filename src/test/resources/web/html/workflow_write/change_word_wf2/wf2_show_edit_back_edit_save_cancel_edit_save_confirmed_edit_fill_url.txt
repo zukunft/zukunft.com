@@ -1,0 +1,22 @@
+GET
+http://localhost/http/view.php?m=3&id=999&s=3&sp=2&k=System+Test+Word&o=Mathematics+is+an+area+of+knowledge+that+includes+the+topics+of+numbers+and+formulas&lp=mathematics&8k=System+Test+Word&8o=a+confirm+change+test+description&8lp=&8s=1&8sp=1&z=1&submit=
+/http/view.php?m=3&id=999&s=3&sp=2&k=System+Test+Word&o=Mathematics+is+an+area+of+knowledge+that+includes+the+topics+of+numbers+and+formulas&lp=mathematics&8k=System+Test+Word&8o=a+confirm+change+test+description&8lp=&8s=1&8sp=1&z=1&submit=
+/http/view.php?mask_id=word_edit&id=999&share=3&protection=2&name=System+Test+Word&description=Mathematics+is+an+area+of+knowledge+that+includes+the+topics+of+numbers+and+formulas&plural=mathematics&8name=System+Test+Word&8description=a+confirm+change+test+description&8share=1&8protection=1&step=confirm&
+{
+    "mask_id": "word_edit",
+    "id": "999",
+    "share": "3",
+    "protection": "2",
+    "name": "System Test Word",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "plural": "mathematics",
+    "view_id": "",
+    "step": "confirm",
+    "url_part_original_data": {
+        "name": "System Test Word",
+        "description": "a confirm change test description",
+        "plural": "",
+        "share": "1",
+        "protection": "1"
+    }
+}

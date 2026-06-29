@@ -678,9 +678,10 @@ class system_form extends component
      * '8'-prefixed pre value, so the confirm view can show the value before the change and detect which
      * fields the user actually changed (see url_var::PRE)
      *
-     * TODO Prio 1 send the '8'-prefixed pre value for all editable fields, not only the text fields
-     *   (name, description, plural): also the selects (phrase type, share, protection, view, and the
-     *   triple from / verb / to) so the confirm diff is complete for every object type and field
+     * TODO Prio 1 send the '8'-prefixed pre value for the remaining select fields: the share and
+     *   protection selects already send it (see sandbox::share_type_selector / protection_type_selector);
+     *   still missing are the phrase type, the view and the triple from / verb / to so the confirm diff
+     *   is complete for every object type and field
      *
      * @param string $url_id the url var name of the field e.g. url_var::NAME
      * @param msg_id $label the field label message id

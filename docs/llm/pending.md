@@ -8,7 +8,9 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-use function like src/main/php/shared/helper/Translator.php::text_json_field always if a json field name is shown to the user. Call the function as late as possible.
+make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
+
+fill the view selector of the word edit mask with the potential views that can be assigned to a word
 
 use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes. 
 
@@ -18,7 +20,6 @@ create function like src/main/php/shared/helper/Translator.php::text_db_field fo
 
 see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeated.
 
-add a fill step to the word workflow test. After the step that changes of the description the test word 'add_filled' should be used to create a url with all fields filled and this should be used to test the confirm view for all fields filled. the name of the step is fill. 
 
 add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
 

@@ -219,6 +219,39 @@ class test_words extends test_objects
     }
 
     /**
+     * the url parameters posted by the 'Change word' edit form when every field is filled, used by the
+     * change_word workflow 'fill' step to show every editable field in the confirm change view; the new
+     * values come from the all-fields-filled test word, the '8'-prefixed opening values are the state the
+     * word has after the first change_word round (e.g. the public share), so the confirm view shows the
+     * existing value of each changed field in the 'from' column (docs/llm/state-and-messages.md); the
+     * object id and the back target are added by the workflow step
+     *
+     * @return array the edit form url parameters with every field filled
+     */
+    function fill_url_array(): array
+    {
+        // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
+        // value of every editable url field without renaming the word the change_word workflow runs on
+        $wrd = new word_ui($this->word_filled_add()->api_json());
+        $url_arr = $wrd->to_url_array();
+        // the workflow step adds the current db id of the test word, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        // the '8'-prefixed opening values: the test word state after the first change_word round (only the
+        // description was changed there), so the confirm view shows the existing value e.g. the public
+        // share in the 'from' column next to the new group share
+        // the edit form sends the '8'-prefixed pre value for the name, description and plural text fields
+        // and for the share and protection selects, but not yet for the view, so the same set is built
+        // here; the values are the word state after the first change_word round (only the description was
+        // changed there) so the confirm view shows e.g. the public share in the 'from' column
+        $url_arr[url_var::PRE . url_var::NAME] = word_names::TEST_ADD;
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
+        $url_arr[url_var::PRE . url_var::PLURAL] = '';
+        $url_arr[url_var::PRE . url_var::SHARE] = share_types::PUBLIC_ID;
+        $url_arr[url_var::PRE . url_var::PROTECTION] = protection_types::NO_PROTECT_ID;
+        return $url_arr;
+    }
+
+    /**
      * the url parameters posted by the 'Add word' form on save, used by the add_word workflow test to
      * show the new word in the confirm add view (docs/llm/testing.md); the new word has no id yet, so
      * unlike change_url_array there is no back target

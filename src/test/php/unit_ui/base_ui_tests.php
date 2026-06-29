@@ -463,10 +463,18 @@ class base_ui_tests
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
-        // negative: a url key without a human mapping (an '8'-prefixed pre value) is reported as missing
+        // an '8'-prefixed pre value (and '9'-prefixed back target) is mapped to its human key with the
+        // prefix kept (e.g. 8name), so it is not reported as missing
+        $test_name = 'human url conversion maps an 8-prefixed pre value';
+        $ok_msg = new user_message();
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $ok_msg));
+        $t->assert_false($test_name, $ok_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $t->assert_text_contains($test_name, $url_human, url_var::PRE . url_var::NAME_HUMAN);
+        // negative: a url key without any human mapping is still reported as missing
         $test_name = 'human url conversion reports a url key without a human mapping';
         $err_msg = new user_message();
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&zzz=x';
         $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
