@@ -154,9 +154,9 @@ class word_names
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
-    const string CANTON = 'Canton';
+    const string CANTON = 'canton';
     const int CANTON_ID = 187;
-    const string CITY = 'City';
+    const string CITY = 'city';
     const int CITY_ID = 189;
     const string ZH = 'Zurich';
     const int ZH_ID = 214;
@@ -196,6 +196,7 @@ class word_names
 
     // base words that are fixed part of the base setup
     const string CURRENCY = 'currency';
+    const string CURRENCIES = 'currencies';
     // the differentiator word used to qualify a value by business segment e.g. in the XBRL import
     const string SECTOR = 'sector';
     // base income statement words defined in accounting.json and re-declared on import
@@ -243,6 +244,12 @@ class word_names
     const int SPEED_ID = 87;
     const string METRE = 'metre';
     const int METRE_ID = 27;
+    const string JOULE = 'joule';
+    const int JOULE_ID = 51;
+    const string JOULE_COM = 'One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.';
+    const string KG = 'kg';
+    const int KG_ID = 30;
+    const string KG_COM = 'The kilogram is the SI base unit of mass.';
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 130;
     const string TRANSITION = 'transition';
@@ -273,12 +280,19 @@ class word_names
     const int U_S_DOLLAR_ID = 2427;
     const string DOLLAR = '$';
     const int DOLLAR_ID = 274;
+    const string EURO_SIGN = '€';
+    const int EURO_SIGN_ID = 275;
     const int CURRENCY_ID = 2397;
     const string US = 'US';
     const string GAAP = 'GAAP';
     const string TEST_ADD = 'System Test Word';
+    // the database id of the 'System Test Word' is assigned dynamically on insert; this fixed id
+    // replaces the volatile id in workflow snapshots so the test result does not change every run
+    const int TEST_ADD_ID = 999;
     const string TEST_ADD_CODE_ID = 'System Test Word code id';
     const string TEST_ADD_COM = 'test description added to the word via import';
+    // the new description posted by the confirm change workflow to change the test word description
+    const string TEST_CHANGE_COM = 'a confirm change test description';
     const string TEST_ADD_TO = 'System Test Word To';
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
@@ -493,6 +507,8 @@ class word_names
         self::LIGHT_ID => self::LIGHT,
         self::SPEED_ID => self::SPEED,
         self::METRE_ID => self::METRE,
+        self::JOULE_ID => self::JOULE,
+        self::KG_ID => self::KG,
         self::HYPERFINE_ID => self::HYPERFINE,
         self::TRANSITION_ID => self::TRANSITION,
         self::FREQUENCY_ID => self::FREQUENCY,

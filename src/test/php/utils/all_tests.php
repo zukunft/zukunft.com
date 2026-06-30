@@ -224,7 +224,7 @@ class all_tests extends all_unit_write_tests
 
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
                 $t_wf = new all_workflow_tests();
-                $t_wf->run_workflow_tests($this, $this->usr1, $usr_msg_ui);
+                $t_wf->run($this, $this->usr1, $usr_msg_ui);
             }
 
             if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {

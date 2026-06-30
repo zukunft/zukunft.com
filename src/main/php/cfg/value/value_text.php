@@ -63,6 +63,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -82,6 +84,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use DateTime;
 
 class value_text extends value_base
@@ -106,7 +110,7 @@ class value_text extends value_base
 
     const array FLD_NAMES_STD = array(
         self::FLD_VALUE,
-        source_db::FLD_ID,
+        source_fields::FLD_ID,
     );
     // list of the user-specific database field names for text values
     const array FLD_NAMES_USR = array(
@@ -114,18 +118,18 @@ class value_text extends value_base
     );
     // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
-        source_db::FLD_ID,
-        sandbox_multi::FLD_LAST_UPDATE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_LAST_UPDATE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_PROTECT
     );
 
 

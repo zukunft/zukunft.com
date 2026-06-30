@@ -47,6 +47,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -221,6 +222,8 @@ class horizontal_tests
                 $dto->add_term($filled_obj->trm);
                 $dto->add_view($filled_obj->msk);
                 $dto->add_source($filled_obj->src);
+            } elseif ($class == word::class) {
+                $dto->add_view($filled_obj->get_view());
             } elseif ($class == triple::class) {
                 $dto->add_phrase($filled_obj->get_from());
                 $dto->add_phrase($filled_obj->get_to());

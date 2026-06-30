@@ -61,16 +61,20 @@ class component_ui_tests
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */
+        // this test page stacks several forms that never share a real page; pass an
+        // incrementing counter so each form's field names/ids stay unique on the snapshot
+        // (production renders one form per page and passes no counter -> name="k")
+        $test_form_unique_id = 1;
         $cmp = new component_exe();
         $cmp->set_id(0);
         $test_page .= 'add mask<br>';
-        $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
+        $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
         $cmp = new component_exe();
         $cmp->set_id(1);
         $cmp->set_name(components::WORD_NAME);
         $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
-        $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
+        $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
         $test_page .= $t->dsp_title_named_edit($cmp);
         $t->html_page_test($test_page, 'component', 'component', $t);
     }

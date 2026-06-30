@@ -316,11 +316,12 @@ zukunft.com:
               related:
                 per verb:
                   sys-conf-value: 2
-                  tooltip-comment: "maximal number of related phrases shown inline per verb in a page title (e.g. for Zurich with limit 2 the title 'Zurich (City, Canton, ...)' shows the first two and a '...' link to the full list); also bounds the load on the backend so the response stays compact"
+                  tooltip-comment: "maximal number of related phrases shown inline per verb in a page title (e.g. for Zurich with limit 2 the title 'Zurich (city, canton, ...)' shows the first two and a '...' link to the full list); also bounds the load on the backend so the response stays compact"
             separator:
               tooltip-comment: "the default separator for horizontal lists e.g. entry one, entry two / next topic"
               entry: ", "
               category: " / "
+              title: " - "
           layout:
             tooltip-comment: "the settings to position the components on the screen"
             side width:
@@ -332,7 +333,9 @@ zukunft.com:
                 tooltip-comment: "the screen width in pixel from which the full set of 'side or below' columns (up to four) is shown side by side; on smaller screens the columns wrap onto fewer rows and finally stack"
           row limit:
             tooltip-comment: "number of rows to be shown"
-            word changes: 20
+            word changes:
+              sys-conf-value: 20
+              tooltip-comment: "number of change rows to show in the changes tab"
           behaviour:
             tooltip-comment: "reaction settings e.g. the expected response time"
             response time:

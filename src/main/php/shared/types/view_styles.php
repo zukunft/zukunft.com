@@ -55,6 +55,11 @@ class view_styles
     const string COL_SM_1 = 'col-md-1';
     const string COL_SM_3 = 'col-md-3';
     const string BS_SM_2 = 'mr-sm-2';
+    // align a column or component to the left instead of the inherited centre
+    const string TEXT_LEFT_COM = 'align the column content to the left instead of the inherited centre';
+    const string TEXT_LEFT = 'text-left';
+    const string TEXT_LEFT_NAME = 'left aligned';
+    const int TEXT_LEFT_ID = 5;
 
 
     // list of the styles used for unit testing

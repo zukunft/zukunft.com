@@ -589,24 +589,15 @@ class test_cleanup extends test_api
      */
     private function html_test(string $body, string $title, string $file_path): bool
     {
-        $lib = new library();
-
         if ($title == '') {
             $title = 'test';
         } else {
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $resource_file = test_paths::HTML . $file_path . test_files::HTML;
-        $expected_html = $this->file($resource_file);
-        $token = test_const::DUMMY_SESSION_TOKEN;
-        $created_stable = $lib->fix_volatile_in_html($created_html, $token);
-        $expected_stable = $lib->fix_volatile_in_html($expected_html, $token);
-        $result = $this->assert($file_path, $lib->trim_html($created_stable), $lib->trim_html($expected_stable));
-        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
-            $this->update_file($resource_file, $lib->format_html($created_stable));
-        }
-        return $result;
+        $resource_file = test_paths::RESOURCE . test_paths::HTML . $file_path . test_files::HTML;
+        return $this->assert_file(
+            $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN);
     }
 
     private function html_page(string $body, string $title): string

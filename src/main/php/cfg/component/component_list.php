@@ -69,6 +69,8 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -89,9 +91,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class component_list extends sandbox_list_named
 {
@@ -191,7 +194,7 @@ class component_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            component_db::FLD_TYPE,
+            component_fields::FLD_TYPE,
             implode(',', $typ_lst->component_id_list(comp_type_shared::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -212,7 +215,7 @@ class component_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array $names,
-        string $fld = component_db::FLD_NAME
+        string $fld = component_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -259,7 +262,7 @@ class component_list extends sandbox_list_named
             component_link::class,
             component::FLD_ID,
             component::FLD_ID);
-        $sc->add_where(view_db::FLD_ID, $id, null, sql_db::LNK_TBL);
+        $sc->add_where(view_fields::FLD_ID, $id, null, sql_db::LNK_TBL);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

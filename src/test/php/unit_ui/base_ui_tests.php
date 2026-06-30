@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -104,6 +106,19 @@ class base_ui_tests
         $ts = 'unit ui html base ';
         $t->header($ts);
 
+        $t->subheader($ts . 'tab box');
+
+        // the tab box switches via the url fragment with pure css (:target) and no javascript: the
+        // 'Changes' label gives the pane id 'changes' and the nav link href '#changes'
+        $test_name = 'tab_box switches tabs via the url fragment';
+        $two_tabs = $html->tab_box(['View' => 'view content', 'Changes' => 'changes content']);
+        $t->assert_text_contains($test_name, $two_tabs, html_base::HREF . '="#changes"');
+        $t->assert_text_contains($test_name, $two_tabs, html_base::ID . '="changes"');
+
+        // the target is a pure html frontend, so the tab box must not contain javascript
+        $test_name = 'tab_box contains no javascript';
+        $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+
         $t->subheader($ts . 'login');
 
         $created_html = $html->about_page();
@@ -139,6 +154,47 @@ class base_ui_tests
         // button add
         $url = $html->url_new(views::WORD_ADD_ID);
         $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
+
+        $t->subheader($ts . 'form field name and id');
+
+        // the field name is the url var (the submitted key), the id is the user-readable
+        // label; the label text must never become the submitted name (see field_id / url_mapper)
+        global $mtr;
+        $name_label = $mtr->txt(msg_id::FORM_FIELD_NAME);
+        $name_id = strtolower($name_label);
+
+        $test_name = 'text field submits the url var as name';
+        $field = $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, 'math', html_base::INPUT_TEXT);
+        $t->assert_text_contains($test_name, $field, 'name="' . url_var::NAME . '"');
+
+        $test_name = '... and uses the readable label as the id';
+        $t->assert_text_contains($test_name, $field, 'id="' . $name_id . '"');
+
+        $test_name = '... never the label as the name nor the url var as the id';
+        $t->assert_text_not_contains($test_name, $field, 'name="' . $name_label . '"');
+        $t->assert_text_not_contains($test_name, $field, 'id="' . url_var::NAME . '"');
+
+        // a second form on the same page suffixes the url var (e.g. '_add'); the id must
+        // carry the same suffix so it stays unique next to the un-suffixed edit form field
+        $test_name = 'suffixed url var keeps the id unique';
+        $field_add = $html->input(url_var::NAME . '_add', msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
+        $t->assert_text_contains($test_name, $field_add, 'name="' . url_var::NAME . '_add"');
+        $t->assert_text_contains($test_name, $field_add, 'id="' . $name_id . '_add"');
+
+        $test_name = 'add and edit field ids differ on the same page';
+        $t->assert_text_not_contains($test_name, $field_add, 'id="' . $name_id . '"');
+
+        // form_field pairs a <label for> with the input id; both must use the same field_id
+        $test_name = 'form_field links label for to the input id';
+        $labelled = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, 'math');
+        $t->assert_text_contains($test_name, $labelled, 'for="' . $name_id . '"');
+        $t->assert_text_contains($test_name, $labelled, 'id="' . $name_id . '"');
+
+        $test_name = '... and keeps the pair unique for a suffixed field';
+        $labelled_add = $html->form_field(url_var::NAME . '_add', msg_id::FORM_FIELD_NAME, '');
+        $t->assert_text_contains($test_name, $labelled_add, 'for="' . $name_id . '_add"');
+        $t->assert_text_contains($test_name, $labelled_add, 'id="' . $name_id . '_add"');
+
 
         $t->subheader($ts . 'unit html table tests');
 
@@ -402,12 +458,77 @@ class base_ui_tests
         $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
+        // the human url uses the view code id (the name) for the mask, not the numeric view id, for
+        // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $usr_msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
-        $t->assert($test_name, $view, views::WORD_ADD_ID);
+        $t->assert($test_name, $view, views::WORD_ADD);
+
+        // TODO Prio 1 review
+        // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
+        // accepted directly now, not only the [key, value] row format produced by url_array_with
+        $test_name = 'convert a flat standard url to human-readable url';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $usr_msg));
+        $url_array = $lib->url_array($url_human);
+        $view = $url_array[url_var::MASK_HUMAN];
+        $t->assert($test_name, $view, views::WORD_ADD);
+        // an '8'-prefixed pre value (and '9'-prefixed back target) is mapped to its human key with the
+        // prefix kept (e.g. 8name), so it is not reported as missing
+        $test_name = 'human url conversion maps an 8-prefixed pre value';
+        $ok_msg = new user_message();
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $ok_msg));
+        $t->assert_false($test_name, $ok_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $t->assert_text_contains($test_name, $url_human, url_var::PRE . url_var::NAME_HUMAN);
+        // negative: a url key without any human mapping is still reported as missing
+        $test_name = 'human url conversion reports a url key without a human mapping';
+        $err_msg = new user_message();
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&zzz=x';
+        $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
+        $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+
+        // frontend::url_to_back_url returns the previous page from the '9'-prefixed back targets
+        $test_name = 'url_to_back_url returns the back target view and id';
+        $ui = new frontend();
+        $back_url = $ui->url_to_back_url([
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => 1
+        ]);
+        $t->assert($test_name, $back_url[url_var::MASK], views::WORD_ID);
+        // negative: a url without a back target falls back to the start view
+        $test_name = 'url_to_back_url without a back target returns the start view';
+        $back_url = $ui->url_to_back_url([url_var::MASK => views::WORD_ID]);
+        $t->assert($test_name, $back_url[url_var::MASK], views::START_ID);
+
+        // url_mapper::human_url_to_json groups the 8-prefixed vars into 'original_data' and the
+        // 9-prefixed vars into 'back', and converts the view id to the code id
+        $test_name = 'human_url_to_json groups the pre values and back targets into subarrays';
+        $json = $url_map->human_url_to_json([
+            url_var::MASK => views::WORD_EDIT_ID,
+            url_var::NAME => 'x',
+            url_var::PRE . url_var::NAME => 'old',
+            url_var::BACK . url_var::MASK => views::WORD_ID
+        ], $usr_msg);
+        $t->assert_text_contains($test_name, $json, json_fields::URL_ORIGINAL_DATA);
+        $t->assert_text_contains($test_name, $json, json_fields::URL_PART_BACK);
+        $t->assert_text_contains($test_name, $json, views::WORD_EDIT);
+        // negative: a top-level url key without a human mapping is reported as missing
+        $test_name = 'human_url_to_json reports a url key without a human mapping';
+        $err_msg = new user_message();
+        $url_map->human_url_to_json([url_var::MASK => views::WORD_EDIT_ID, 'zzz' => '1'], $err_msg);
+        $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+
+        // url_var::action_step maps a confirmed action to the confirmed process step (which triggers the
+        // db write), and a plain navigation action to the base step
+        $test_name = 'action_step maps update_confirmed to the confirmed step';
+        $t->assert($test_name, url_var::action_step(url_var::ACTION_CONFIRMED), url_var::STEP_CONFIRMED);
+        // negative: a navigation action does not advance the process step
+        $test_name = 'action_step maps a navigation action to the base step';
+        $t->assert($test_name, url_var::action_step(url_var::ACTION_SHOW), url_var::STEP_BASE);
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));

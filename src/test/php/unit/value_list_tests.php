@@ -40,12 +40,16 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -78,7 +82,7 @@ class value_list_tests
         $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
         $val_ids = $t_val->value_list()->grp_ids()->dsp_id();
-        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
+        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich city inhabitants (2019)');
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
@@ -92,12 +96,15 @@ class value_list_tests
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
-        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
-        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich but only text values';
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich but only text values';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr, value_types::TEXT);
+        $test_name = $test_names . 'a related to a phrase whose id matches the user id '
+            . 'still binds all three query parameters';
+        $this->assert_sql_by_phr_same_id($test_name, $t, $db_con);
         $test_name = $test_names . 'a list of ids';
         $val_ids = $t_val->value_list()->id_lst();
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);
@@ -111,7 +118,7 @@ class value_list_tests
         $grp_lst = $t_phr->phrase_list_small();
         $this->assert_sql_by_grp_lst($test_name, $t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
-            . 'e.g. the inhabitants of Canton Zurich over time';
+            . 'e.g. the inhabitants of canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->canton_zh_phrase_list());
         $test_name = 'load values related to all phrases of a two phrase list '
             . 'e.g. the inhabitants of Switzerland over time';
@@ -199,6 +206,53 @@ class value_list_tests
             $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
             $t->assert_qp($qp, $sc->db_type, $test_name);
+        }
+    }
+
+    /**
+     * test the SQL statement creation for a value list of a phrase whose id is
+     * the same as the loading user id
+     * SQL statement creation edge case test
+     *
+     * the prepared statement has three placeholders ($1 phrase, $2 group, $3 user),
+     * so all three must keep a bound parameter even when the phrase id and the user
+     * id are identical and the union merge deduplicates the parameter values
+     *
+     * @param string $test_name the description of the test
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @return void
+     */
+    private function assert_sql_by_phr_same_id(
+        string       $test_name,
+        test_cleanup $t,
+        sql_db       $db_con
+    ): void
+    {
+        // create a phrase and a loading user that share the same id
+        $usr = new user();
+        $usr->id = users::SYSTEM_ID;
+        $phr = new phrase($usr, word_names::MATH_ID);
+        $val_lst = new value_list($usr);
+
+        // check the Postgres query syntax and that all three query parameters survive
+        $sc = $db_con->sql_creator();
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $val_lst->load_sql_by_phr($sc, $phr);
+        $grp_id = new group_id();
+        $expected = [
+            word_names::MATH_ID,
+            '%' . $grp_id->int2alpha_num(word_names::MATH_ID) . '%',
+            users::SYSTEM_ID
+        ];
+        $t->assert($test_name, array_values($qp->par), $expected);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name, '_same_id');
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $val_lst->load_sql_by_phr($sc, $phr);
+            $t->assert_qp($qp, $sc->db_type, $test_name, '_same_id');
         }
     }
 

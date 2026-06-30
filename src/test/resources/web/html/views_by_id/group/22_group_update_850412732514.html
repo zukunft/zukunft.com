@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Change group City of Zurich,inhabitants,2020 (zukunft.com)
+            city of Zurich,inhabitants,2020 - Change group - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=22&9m=22&9a=r&9id=850412732514&9k=City%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
+                                    <a href="/http/view.php?m=31&id=22&9m=22&9a=r&9id=850412732514&9k=city%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9m=22&9a=r&9id=850412732514&9k=City%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
+                                    <a href="/http/view.php?m=30&9m=22&9a=r&9id=850412732514&9k=city%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -111,17 +111,17 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=61&9m=22&9a=r&9id=850412732514&9k=City%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
+                                    <a href="/http/view.php?m=61&9m=22&9a=r&9id=850412732514&9k=city%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
                                         Log in
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=60&9m=22&9a=r&9id=850412732514&9k=City%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
+                                    <a href="/http/view.php?m=60&9m=22&9a=r&9id=850412732514&9k=city%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
                                         Signup
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=22&9a=r&9id=850412732514&9k=City%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
+                                    <a href="/settings?9m=22&9a=r&9id=850412732514&9k=city%20of%20Zurich%2Cinhabitants%2C2020&9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -136,30 +136,31 @@
                 Change group name
             </h4>
             <form action="/http/view.php" id="group_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="22">
+                <input class="form-control" type="hidden" name="m" id="mask" value="22">
                 <input class="form-control" type="hidden" name="id" id="id" value="850412732514">
-                <input class="form-control" type="hidden" name="back" id="9" value="850412732514">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="City of Zurich,inhabitants,2020">
+                        <input class="form-control" type="text" name="k" id="name" value="city of Zurich,inhabitants,2020">
                     </div>
+                    <input type="hidden" name="8k" value="city of Zurich,inhabitants,2020">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o">
+                        <input class="form-control" type="text" name="o" id="description">
                     </div>
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <a href="/http/view.php?m=0&id=850412732514" class="btn btn-space col-1 btn-outline-secondary">
                     cancel
                 </a>
-                <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                     save
                 </button>
             </form>

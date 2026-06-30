@@ -78,7 +78,7 @@ class value_list_ui_tests
         // create the value list and the table to display the results
         // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
         // TODO format numbers
-        // TODO use one phrase for City of Zurich
+        // TODO use one phrase for city of Zurich
         // TODO optional "(in mio)" formatting for scale words
         // TODO move time words to column headline
         // TODO use language based plural for inhabitant
@@ -124,10 +124,10 @@ class value_list_ui_tests
         //      the "(year)" is not shown to the user, because the user will assume i
 
         // TODO add s test that if a view contains the word "city"
-        //      or many cities and never a "Canton"
+        //      or many cities and never a "canton"
         //      and the phrase "Zurich (city)" is shown
         //      only "Zurich" without "(city)" is used
-        //      because the user will assume "City of Zurich"
+        //      because the user will assume "city of Zurich"
         //      on mouseover show the complete phrase name with the description
 
 

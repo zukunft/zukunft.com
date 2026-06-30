@@ -78,6 +78,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
@@ -86,6 +87,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
@@ -93,11 +95,13 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
@@ -108,12 +112,16 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -131,6 +139,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -141,11 +150,14 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -156,9 +168,13 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 
 class triple extends sandbox_link_named
@@ -172,7 +188,7 @@ class triple extends sandbox_link_named
     const string TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = triple_db::FLD_ID;
+    const string FLD_ID = triple_fields::FLD_ID;
     const array FLD_LST_LINK = triple_db::FLD_LST_LINK;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = triple_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = triple_db::FLD_LST_USER_CAN_CHANGE;
@@ -181,7 +197,6 @@ class triple extends sandbox_link_named
     const array FLD_NAMES = triple_db::FLD_NAMES;
     const array FLD_NAMES_USR = triple_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = triple_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = triple_db::ALL_SANDBOX_FLD_NAMES;
 
     /*
      * object vars
@@ -254,6 +269,23 @@ class triple extends sandbox_link_named
     }
     private ?array $ref_lst = [];
 
+    // values where this triple is used; populated lazily by load_values_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the default
+    // triple view can show e.g. for "Zurich (canton)" the population, area and GDP values
+    public ?value_list $values_related = null;
+    // formulas related to this triple; populated lazily by load_formulas_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?formula_list $formulas_related = null;
+    // external references of this triple; populated lazily by load_references_related() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?ref_list $references_related = null;
+    // the most recent change log entries of this triple; populated lazily by load_changes_related()
+    // and only emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?change_log_list $changes_related = null;
+    // the views suggested for this triple (currently its own default view); populated lazily by
+    // load_views_related() and only emitted via api_json_array() when the INCL_RELATED flag is set
+    public ?view_list $views_related = null;
+
 
     /*
      * construct and map
@@ -325,21 +357,21 @@ class triple extends sandbox_link_named
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = triple_db::FLD_ID,
-        string $name_fld = triple_db::FLD_NAME,
+        string $id_fld = triple_fields::FLD_ID,
+        string $name_fld = triple_fields::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(triple_db::FLD_FROM, $db_row)) {
-                $phr_id = $db_row[triple_db::FLD_FROM];
+            if (array_key_exists(triple_fields::FLD_FROM, $db_row)) {
+                $phr_id = $db_row[triple_fields::FLD_FROM];
                 if ($phr_id != null) {
                     $this->get_from()->set_obj_from_id($phr_id);
                 }
             }
-            if (array_key_exists(triple_db::FLD_TO, $db_row)) {
-                $phr_id = $db_row[triple_db::FLD_TO];
+            if (array_key_exists(triple_fields::FLD_TO, $db_row)) {
+                $phr_id = $db_row[triple_fields::FLD_TO];
                 if ($phr_id != null) {
                     $this->get_to()->set_obj_from_id($phr_id);
                 }
@@ -350,23 +382,23 @@ class triple extends sandbox_link_named
                 }
             }
             // TODO use json_fields object
-            if (array_key_exists(triple_db::FLD_NAME_GIVEN, $db_row)) {
-                $this->name_given = $db_row[triple_db::FLD_NAME_GIVEN];
+            if (array_key_exists(triple_fields::FLD_NAME_GIVEN, $db_row)) {
+                $this->name_given = $db_row[triple_fields::FLD_NAME_GIVEN];
             }
-            if (array_key_exists(triple_db::FLD_NAME_AUTO, $db_row)) {
-                $this->set_name_generated($db_row[triple_db::FLD_NAME_AUTO]);
+            if (array_key_exists(triple_fields::FLD_NAME_AUTO, $db_row)) {
+                $this->set_name_generated($db_row[triple_fields::FLD_NAME_AUTO]);
             }
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id($db_row[sql_db::FLD_CODE_ID], $this->get_user());
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                $this->set_code_id($db_row[fields::FLD_CODE_ID], $this->get_user());
             }
-            if (array_key_exists(triple_db::FLD_WIGHT, $db_row)) {
-                $this->weight = $db_row[triple_db::FLD_WIGHT];
+            if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
+                $this->weight = $db_row[triple_fields::FLD_WIGHT];
             }
-            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                $this->usage = $db_row[sql_db::FLD_USAGE];
+            if (array_key_exists(fields::FLD_USAGE, $db_row)) {
+                $this->usage = $db_row[fields::FLD_USAGE];
             }
-            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
-                $this->impact = $db_row[sql_db::FLD_IMPACT];
+            if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[fields::FLD_IMPACT];
             }
         }
         return $result;
@@ -398,8 +430,8 @@ class triple extends sandbox_link_named
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
-        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
-            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[fields::FLD_IMPACT];
         }
 
         // TODO move plural to language forms
@@ -556,7 +588,12 @@ class triple extends sandbox_link_named
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
-                $trp_view->set_name($value);
+                $cac_msk = $dto->get_view_by_name($value);
+                if ($cac_msk != null) {
+                    $trp_view = $cac_msk;
+                } else {
+                    $trp_view->set_name($value);
+                }
             }
             $this->view = $trp_view;
         }
@@ -565,6 +602,24 @@ class triple extends sandbox_link_named
         if ($this->name() == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
+        }
+
+        // map the external references and register them with the data object so that the import
+        // persists them linked to this triple's phrase (mirrors word::import_mapper); the phrase
+        // id (negative for a triple) is resolved from the saved phrase list in data_object::save
+        if (key_exists(json_fields::REFS, $in_ex_json)) {
+            if ($in_ex_json[json_fields::REFS] <> '') {
+                $ref_json = $in_ex_json[json_fields::REFS];
+                foreach ($ref_json as $ref_data) {
+                    $ref_obj = new ref($this->get_user());
+                    $ref_obj->set_phrase($this->phrase());
+                    $ref_obj->import_mapper($ref_data, $msg, $dto);
+                    $dto?->add_reference($ref_obj);
+                    if ($msg->is_ok()) {
+                        $this->ref_lst[] = $ref_obj;
+                    }
+                }
+            }
         }
 
         return $msg->is_ok();
@@ -582,6 +637,71 @@ class triple extends sandbox_link_named
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
+    /**
+     * load the values where this triple is used into the in-memory values_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_values_related(): void
+    {
+        $val_lst = new value_list($this->get_user());
+        $val_lst->load_by_phr($this->phrase());
+        // load the phrase names of each value group so that the related value list
+        // shows the phrase names (and not only the links) in the api and frontend
+        $val_lst->load_phrases();
+        $this->values_related = $val_lst;
+    }
+
+    /**
+     * load the formulas related to this triple into the in-memory formulas_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_formulas_related(): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        $frm_lst->load_by_phr($this->phrase());
+        $this->formulas_related = $frm_lst;
+    }
+
+    /**
+     * load the external references of this triple into the in-memory references_related list
+     * so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_references_related(): void
+    {
+        $ref_lst = new ref_list($this->get_user());
+        $ref_lst->load_by_phr_id($this->phrase()->id());
+        $this->references_related = $ref_lst;
+    }
+
+    /**
+     * load the most recent change log entries of this triple into the in-memory
+     * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     */
+    function load_changes_related(): void
+    {
+        $chg_lst = new change_log_list();
+        $chg_lst->load_obj_last($this, $this->get_user());
+        $this->changes_related = $chg_lst;
+    }
+
+    /**
+     * load the views related to this triple into the in-memory views_related list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; currently the triple's own
+     * default view, loaded by id so that it carries the name the api and frontend name_link need
+     * TODO add the default views of the parent phrases once the triple exposes a parents() list,
+     *      mirroring word::load_views_related()
+     */
+    function load_views_related(): void
+    {
+        $msk_lst = new view_list($this->get_user());
+        if ($this->view != null and $this->get_view_id() > 0) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($this->get_view_id());
+            $msk_lst->add($msk);
+        }
+        $this->views_related = $msk_lst;
+    }
+
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
@@ -591,26 +711,33 @@ class triple extends sandbox_link_named
                 $vars[json_fields::NAME] = $this->name();
             } else {
                 $vars = parent::api_json_array($typ_lst, $usr);
+                // the from, verb and to names are included for a page request (incl_related)
+                // or when the phrases are explicitly requested, so the frontend can show e.g.
+                // the triple page title "<from> <verb> <to>" with a link to each part
+                $with_names = ($typ_lst->include_phrases() or $typ_lst->incl_related());
                 $from = $this->get_from()->obj();
                 if ($from != null) {
                     if ($from->id() <> 0 or $from->name() != '') {
-                        //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
                         $vars[json_fields::FROM] = $this->from_id();
-                        if ($typ_lst->include_phrases()) {
+                        if ($with_names) {
                             // create the json based on the phrase not the object to include the class type
                             $vars[json_fields::FROM_PHRASE] = $this->get_from()->api_json_array($typ_lst);
                         }
                     }
                 }
                 if ($this->get_verb() != null) {
-                    $vars[json_fields::VERB] = $this->get_verb()->id();
+                    if ($with_names) {
+                        // include the verb name so the frontend can link the verb
+                        $vars[json_fields::VERB] = $this->get_verb()->api_json_array($typ_lst);
+                    } else {
+                        $vars[json_fields::VERB] = $this->get_verb()->id();
+                    }
                 }
                 $to = $this->get_to()->obj();
                 if ($to != null) {
                     if ($to->id() <> 0 or $to->name() != '') {
-                        //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
                         $vars[json_fields::TO] = $this->to_id();
-                        if ($typ_lst->include_phrases()) {
+                        if ($with_names) {
                             // create the json based on the phrase not the object to include the class type
                             $vars[json_fields::TO_PHRASE] = $this->get_to()->api_json_array($typ_lst);
                         }
@@ -624,6 +751,50 @@ class triple extends sandbox_link_named
                 }
                 $vars[json_fields::USAGE] = $this->usage;
                 $vars[json_fields::IMPACT] = $this->impact;
+                // related data is keyed by the triple's phrase id, so a fresh
+                // triple (id 0, e.g. the add form) has none to load
+                if ($typ_lst->incl_related() and $this->id() != 0) {
+                    if ($this->values_related == null and !$typ_lst->test_mode()) {
+                        $this->load_values_related();
+                    }
+                    if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // INCL_PHRASES so each value carries its group phrases, which the
+                        // frontend needs for the value name and to sort the list by impact
+                        $vars[json_fields::VALUES] = $this->values_related->api_json_array(
+                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    }
+                    if ($this->formulas_related == null and !$typ_lst->test_mode()) {
+                        $this->load_formulas_related();
+                    }
+                    if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
+                        // their own name, id and impact, which the frontend needs to render
+                        // and sort the list by impact, without recursing back into relations
+                        $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->references_related == null and !$typ_lst->test_mode()) {
+                        $this->load_references_related();
+                    }
+                    if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->changes_related == null and !$typ_lst->test_mode()) {
+                        $this->load_changes_related();
+                    }
+                    if ($this->changes_related != null and !$this->changes_related->is_empty()) {
+                        $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                    if ($this->views_related == null and !$typ_lst->test_mode()) {
+                        $this->load_views_related();
+                    }
+                    if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
+                            new api_type_list(), $usr);
+                    }
+                }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -738,21 +909,9 @@ class triple extends sandbox_link_named
     {
         global $db_con;
 
-        $this->import_mapper($in_ex_json, $msg, $dto);
+        // the references are mapped and registered by import_mapper (like word)
 
-        // add related parameters to the triple object
-        if ($msg->is_ok()) {
-            if (key_exists(json_fields::REFS, $in_ex_json)) {
-                $ref_json = $in_ex_json[json_fields::REFS];
-                foreach ($ref_json as $ref_data) {
-                    $ref_obj = new ref($this->get_user());
-                    $ref_obj->set_phrase($this->phrase());
-                    if ($ref_obj->import_obj($ref_data, $msg, $dto)) {
-                        $this->ref_lst[] = $ref_obj;
-                    }
-                }
-            }
-        }
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         // save the triple in the database
         if ($db_con->is_open()) {
@@ -1205,7 +1364,7 @@ class triple extends sandbox_link_named
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -1614,16 +1773,19 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * get the code_id of the word type
-     * @return string the code_id of the word type
+     * get the code_id of the triple type or null if no type is set
+     * every triple must have a type (the "standard" phrase type if nothing more specific
+     * applies), so a missing type is a reported error; instead of a critical log entry the
+     * translatable message is added to the given user_message so the caller can react
+     * @param user_message $msg to collect the translatable message if the triple type is missing
+     * @return string|null the code_id of the triple type
      */
-    function type_code_id(): string
+    function type_code_id(user_message $msg = new user_message()): string|null
     {
         global $sys;
         if ($this->type_id == null) {
-            $msg = 'type for triple ' . $this->dsp_id() . ' is missing';
-            log_err($msg);
-            return $msg;
+            $msg->add(msg_id::TRIPLE_TYPE_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return null;
         } else {
             return $sys->typ_lst->phr_typ->code_id($this->type_id);
         }
@@ -1638,7 +1800,7 @@ class triple extends sandbox_link_named
 
     function from_field(): string
     {
-        return triple_db::FLD_FROM;
+        return triple_fields::FLD_FROM;
     }
 
     function type_field(): string
@@ -1653,7 +1815,7 @@ class triple extends sandbox_link_named
 
     function to_field(): string
     {
-        return triple_db::FLD_TO;
+        return triple_fields::FLD_TO;
     }
 
 
@@ -1790,7 +1952,7 @@ class triple extends sandbox_link_named
     function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_generated', $class);
-        $sc->add_where(triple_db::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
+        $sc->add_where(triple_fields::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1810,8 +1972,8 @@ class triple extends sandbox_link_named
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids', $class);
-        $sc->add_where(triple_db::FLD_FROM, $from);
-        $sc->add_where(triple_db::FLD_TO, $to);
+        $sc->add_where(triple_fields::FLD_FROM, $from);
+        $sc->add_where(triple_fields::FLD_TO, $to);
         $sc->add_where(verb_db::FLD_ID, $predicate_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1860,8 +2022,8 @@ class triple extends sandbox_link_named
     ): bool
     {
         return parent::load_standard_by_link_parent(
-            triple_db::FLD_FROM, $from_id,
-            triple_db::FLD_TO, $to_id, $msg
+            triple_fields::FLD_FROM, $from_id,
+            triple_fields::FLD_TO, $to_id, $msg
         );
     }
 
@@ -1883,9 +2045,9 @@ class triple extends sandbox_link_named
     ): bool
     {
         return parent::load_standard_by_type_link_parent(
-            triple_db::FLD_FROM, $from_id,
+            triple_fields::FLD_FROM, $from_id,
             triple_db::FLD_PREDICATE, $typ_id,
-            triple_db::FLD_TO, $to_id, $msg
+            triple_fields::FLD_TO, $to_id, $msg
         );
     }
 
@@ -1924,13 +2086,13 @@ class triple extends sandbox_link_named
         } elseif ($this->name != '') {
             $sc->add_where($this->name_field(), $this->name());
         } elseif ($this->has_objects()) {
-            $sc->add_where(triple_db::FLD_FROM, $this->from_id());
-            $sc->add_where(triple_db::FLD_TO, $this->to_id());
+            $sc->add_where(triple_fields::FLD_FROM, $this->from_id());
+            $sc->add_where(triple_fields::FLD_TO, $this->to_id());
             $sc->add_where(verb_db::FLD_ID, $this->get_verb_id());
         } elseif ($this->name_generated() != '') {
-            $sc->add_where(triple_db::FLD_NAME_AUTO, $this->name_generated());
+            $sc->add_where(triple_fields::FLD_NAME_AUTO, $this->name_generated());
         } elseif ($this->name_given() != '') {
-            $sc->add_where(triple_db::FLD_NAME_GIVEN, $this->name_given());
+            $sc->add_where(triple_fields::FLD_NAME_GIVEN, $this->name_given());
         } else {
             log_err('Cannot load default triple because no unique field is set');
         }
@@ -1989,7 +2151,7 @@ class triple extends sandbox_link_named
 
     function name_field(): string
     {
-        return triple_db::FLD_NAME;
+        return triple_fields::FLD_NAME;
     }
 
     /**
@@ -2007,7 +2169,7 @@ class triple extends sandbox_link_named
 
     function all_sandbox_fields(): array
     {
-        return triple_db::ALL_SANDBOX_FLD_NAMES;
+        return triple_fields::ALL_NAMES;
     }
 
 
@@ -2180,6 +2342,12 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->wrd_lst ' . $this->dsp_id());
         $wrd_lst = new word_list($this->get_user());
+
+        // if the triple is known by id only (e.g. loaded as a group phrase without the link
+        // columns), load its from/verb/to first so the word collection does not hit an unset side
+        if ($this->id() != 0 and $this->from_id() == 0 and $this->to_id() == 0) {
+            $this->load_by_id($this->id());
+        }
 
         // add the "from" side
         if ($this->get_from() != null) {
@@ -2737,12 +2905,12 @@ class triple extends sandbox_link_named
             [
                 phrase::FLD_TYPE,
                 verb_db::FLD_ID,
-                triple_db::FLD_NAME_GIVEN,
-                triple_db::FLD_NAME_AUTO,
-                triple_db::FLD_WIGHT,
-                sql_db::FLD_USAGE,
-                sql_db::FLD_IMPACT,
-                triple_db::FLD_VIEW
+                triple_fields::FLD_NAME_GIVEN,
+                triple_fields::FLD_NAME_AUTO,
+                triple_fields::FLD_WIGHT,
+                fields::FLD_USAGE,
+                fields::FLD_IMPACT,
+                fields::FLD_VIEW
             ],
             parent::db_fields_all_sandbox()
         );
@@ -2868,13 +3036,13 @@ class triple extends sandbox_link_named
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                            $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
+                            sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
+                            $sys->typ_lst->cng_fld->id($table_id . fields::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_field(
-                        sql_db::FLD_EXCLUDED,
+                        fields::FLD_EXCLUDED,
                         1,
                         sql_db::FLD_EXCLUDED_SQL_TYP
                     );
@@ -2907,13 +3075,13 @@ class triple extends sandbox_link_named
         if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_EXCLUDED,
+                fields::FLD_EXCLUDED,
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
                 $obj->excluded,
@@ -2922,13 +3090,13 @@ class triple extends sandbox_link_named
         if ($obj->name_given() !== $this->name_given()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_GIVEN,
-                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_NAME_GIVEN),
+                    sql::FLD_LOG_FIELD_PREFIX . triple_fields::FLD_NAME_GIVEN,
+                    $sys->typ_lst->cng_fld->id($table_id . triple_fields::FLD_NAME_GIVEN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                triple_db::FLD_NAME_GIVEN,
+                triple_fields::FLD_NAME_GIVEN,
                 $this->name_given(),
                 triple_db::FLD_NAME_GIVEN_SQL_TYP,
                 $obj->name_given()
@@ -2940,13 +3108,13 @@ class triple extends sandbox_link_named
             if ($obj->name_generated() !== $this->name_generated()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_AUTO,
-                        $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_NAME_AUTO),
+                        sql::FLD_LOG_FIELD_PREFIX . triple_fields::FLD_NAME_AUTO,
+                        $sys->typ_lst->cng_fld->id($table_id . triple_fields::FLD_NAME_AUTO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_field(
-                    triple_db::FLD_NAME_AUTO,
+                    triple_fields::FLD_NAME_AUTO,
                     $this->name_generated(),
                     triple_db::FLD_NAME_AUTO_SQL_TYP,
                     $obj->name_generated()
@@ -2956,13 +3124,13 @@ class triple extends sandbox_link_named
         if ($obj->weight !== $this->weight) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_WIGHT,
-                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_WIGHT),
+                    sql::FLD_LOG_FIELD_PREFIX . triple_fields::FLD_WIGHT,
+                    $sys->typ_lst->cng_fld->id($table_id . triple_fields::FLD_WIGHT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                triple_db::FLD_WIGHT,
+                triple_fields::FLD_WIGHT,
                 $this->weight,
                 triple_db::FLD_WEIGHT_SQL_TYP,
                 $obj->weight
@@ -2971,13 +3139,13 @@ class triple extends sandbox_link_named
         if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_USAGE,
+                fields::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
                 $obj->usage
@@ -2986,13 +3154,13 @@ class triple extends sandbox_link_named
         if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_IMPACT,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_IMPACT,
+                fields::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
                 $obj->impact
@@ -3001,14 +3169,14 @@ class triple extends sandbox_link_named
         if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,
-                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                triple_db::FLD_VIEW,
-                view_db::FLD_NAME,
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
                 $this->view,
                 $obj->view
             );
@@ -3060,7 +3228,7 @@ class triple extends sandbox_link_named
             $result .= 'id ' . $this->predicate_id . '" "'; // e.g. is a
             $result .= $to?->name . '"';       // e.g. country
         } elseif ($this->name_given() != '') {
-            $result .= $this->name_given(); // e.g. Canton Zurich
+            $result .= $this->name_given(); // e.g. canton Zurich
         } elseif ($this->name() != '') {
             $result .= $this->name();
         }
@@ -3075,7 +3243,7 @@ class triple extends sandbox_link_named
     /**
      * either the user edited description
      * or the generic name e.g. Australia is a country
-     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     * or for the verb is 'is' the category in brackets e.g. Zurich (canton) or Zurich (city)
      */
     function name(bool $ignore_excluded = false): string|null
     {
@@ -3101,7 +3269,7 @@ class triple extends sandbox_link_named
     /**
      * either the user edited description
      * or the generic name e.g. Australia is a country
-     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     * or for the verb is 'is' the category in brackets e.g. Zurich (canton) or Zurich (city)
      */
     function name_ex_generated(bool $ignore_excluded = false): string
     {

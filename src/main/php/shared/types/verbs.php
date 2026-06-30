@@ -58,7 +58,7 @@ class verbs
     const string IS = "is";
     const string IS_NAME = "is a";
     const int IS_ID = 2;
-    const string IS_COM = "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...";
+    const string IS_COM = "the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich, Bern, ...";
     const string IS_PLURAL = "are";
     const string IS_REVERSE = "are";
     const string IS_REV_PLURAL = "are";
@@ -275,7 +275,7 @@ class verbs
         [self::SYMBOL,         foaf_direction::DOWN], // "CHF is symbol for Swiss Franc"          — specific naming/representation
         [self::MEASURE,        foaf_direction::DOWN], // "meter is measure type for length"       — specific measure category
         [self::NAME_OF,        foaf_direction::DOWN], // "Newton is name of law"                  — specific naming of a category
-        [self::IS,             foaf_direction::DOWN], // "Zurich is a Canton"                     — main child-to-parent relation
+        [self::IS,             foaf_direction::DOWN], // "Zurich is a canton"                     — main child-to-parent relation
         [self::KIND_OF,        foaf_direction::DOWN], // "quadratic formula is a kind of formula" — sub-kind of a parent category
         [self::MUST_BE_ONE_OF, foaf_direction::DOWN], // "second must be one of time unit"        — disambiguation as category pin
         [self::PART,           foaf_direction::DOWN], // "Zurich is part of Switzerland"          — structural membership

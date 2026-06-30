@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -66,6 +68,7 @@ use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use DateTime;
 
 class value_tests
@@ -327,7 +330,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=value_edit&id=32770">3.14</a>');
+        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&id=32770">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 
@@ -436,7 +439,7 @@ class value_tests
     {
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
-        $fields = array(sandbox_multi::FLD_LAST_UPDATE);
+        $fields = array(fields::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

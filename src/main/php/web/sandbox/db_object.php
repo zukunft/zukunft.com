@@ -119,6 +119,11 @@ class db_object extends TextIdObject
     // fields for the backend link
     public int|string $id = 0; // the database id of the object, which is the same as the related database object in the backend
 
+    // the '8'-prefixed opening db values from the url keyed by the unprefixed url var, captured on
+    // url_mapper so that a re-render of the edit view (e.g. after a save error) keeps the original db
+    // snapshot for the change compare instead of regenerating it from the just changed value
+    public array $pre_values = [];
+
 
     /*
      * construct and map
@@ -150,6 +155,13 @@ class db_object extends TextIdObject
     function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
         $usr_msg = new user_message();
+        // keep the '8'-prefixed opening db values so the edit view, when re-rendered after a save
+        // error, re-emits the original db snapshot instead of the just changed value (see url_var::PRE)
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::PRE)) {
+                $this->pre_values[substr($key, strlen(url_var::PRE))] = $val;
+            }
+        }
         if (!$this->url_is_add_action($url_array)) {
             // if the request is to add an object ignore the id
             if (array_key_exists(url_var::ID, $url_array)) {
@@ -162,6 +174,35 @@ class db_object extends TextIdObject
         return $usr_msg;
     }
 
+    /**
+     * the '8'-prefixed opening db value of a field captured from the url on url_mapper, used by the
+     * selectors to re-emit the original db snapshot when the edit view is re-rendered after a save error
+     *
+     * @param string $url_key the unprefixed url var of the field e.g. url_var::PHRASE_TYPE
+     * @return string|null the opening db value or null if the url carried no '8'-prefixed value for it
+     */
+    function pre_value(string $url_key): ?string
+    {
+        return $this->pre_values[$url_key] ?? null;
+    }
+
+    /**
+     * check the entered data of a pending change before the confirm view is shown so the user
+     * gets an orange warning on the edit view (e.g. for an empty name) instead of confirming an
+     * invalid change; the base object has no required input, so it reports the input as valid
+     *
+     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param string $action the crud action of the change (e.g. url_var::CRUD_DELETE) used to
+     *                       skip checks that do not apply, e.g. an empty name when deleting
+     * @param array $url_array the pending change url (new values and their '8'-prefixed old values)
+     *                         so a check can tell whether a permission-gated field actually changed
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    {
+        return true;
+    }
+
     function url_is_add_action(array $url_array): bool
     {
         $is_add = false;
@@ -171,6 +212,41 @@ class db_object extends TextIdObject
             }
         }
         return $is_add;
+    }
+
+    /**
+     * the inverse of url_mapper: the url parameters that represent this object's database values,
+     * e.g. to build the url array of an edit form submission in a test without hard-coding the keys;
+     * each child extends the array with its own fields via parent::to_url_array()
+     *
+     * @return array the url var keyed array of this object's values
+     */
+    function to_url_array(): array
+    {
+        return [url_var::ID => $this->id()];
+    }
+
+    /**
+     * the ordered database field names of this object, e.g. word_fields::ALL_NAMES
+     * used to show the pending field changes in the confirm preview in the database order
+     * expected to be overwritten by each sandbox child that has user-editable fields
+     *
+     * @return array the ordered db field names, or an empty array if the object has no field order
+     */
+    function sandbox_fld_order(): array
+    {
+        return [];
+    }
+
+    /**
+     * map each user-editable database field name to the url var short key that carries it in the edit url
+     * expected to be overwritten by each sandbox child that has user-editable fields
+     *
+     * @return array db field name => url var key, or an empty array if the object has no editable url fields
+     */
+    function db_fld_to_url(): array
+    {
+        return [];
     }
 
 
@@ -236,9 +312,10 @@ class db_object extends TextIdObject
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
      * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = []): bool
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
     {
         $result = false;
         $usr_msg = new user_message();
@@ -273,11 +350,12 @@ class db_object extends TextIdObject
      * URL flag so the api handler builds an api_type_list with api_types::INCL_RELATED set
      *
      * @param int|string $id the database id of the object to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id);
+        return $this->load_by_id($id, [], $usr_id);
     }
 
 
@@ -545,10 +623,13 @@ class db_object extends TextIdObject
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        // without an explicit pattern use the load_by_pattern default ('%'), the sql like wildcard the
+        // backend expects; a literal '*' matches nothing and would return an empty view list
         if ($pattern == null) {
-            $pattern = '*';
+            $msk_lst->load_by_pattern();
+        } else {
+            $msk_lst->load_by_pattern($pattern);
         }
-        $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
 

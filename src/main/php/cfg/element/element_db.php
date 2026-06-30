@@ -41,7 +41,7 @@ include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
-include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -50,7 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -74,7 +74,7 @@ class element_db
 
     // all database field names excluding the id, standard name and user-specific fields
     const array FLD_NAMES = array(
-        formula_db::FLD_ID,
+        formula_fields::FLD_ID,
         user_db::FLD_ID,
         self::FLD_TYPE,
         self::FLD_REF_ID
@@ -82,7 +82,7 @@ class element_db
 
     // field lists for the table creation
     const array FLD_LST_ALL = array(
-        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [formula_fields::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],

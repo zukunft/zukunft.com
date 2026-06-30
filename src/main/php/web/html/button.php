@@ -293,7 +293,7 @@ class button
         $html = new html_base();
 
         // group the modal box with the button
-        $result .= '<div class="container">';
+        $result .= '<div class="' . html_base::CLASS_CONTAINER . '">';
 
         // build the phrase list for the modal box header
         $phr_time = $phr_lst->time_lst();

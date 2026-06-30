@@ -127,6 +127,11 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -177,6 +182,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class word extends sandbox_code_id
 {
@@ -189,7 +199,7 @@ class word extends sandbox_code_id
     const string TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = word_db::FLD_ID;
+    const string FLD_ID = word_fields::FLD_ID;
     const array FLD_LST_MUST_BE_IN_STD = word_db::FLD_LST_MUST_BE_IN_STD;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = word_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = word_db::FLD_LST_USER_CAN_CHANGE;
@@ -197,7 +207,7 @@ class word extends sandbox_code_id
     const array FLD_NAMES = word_db::FLD_NAMES;
     const array FLD_NAMES_USR = word_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = word_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = word_db::ALL_SANDBOX_FLD_NAMES;
+    const array ALL_SANDBOX_FLD_NAMES = word_fields::ALL_NAMES;
 
     /*
      * object vars
@@ -239,7 +249,7 @@ class word extends sandbox_code_id
     // set on the caller's api_type_list; each entry is a phrase wrapping the connecting
     // triple, so the frontend renderer can display the triple's "other end" word as the
     // link label and the triple itself as the link target — e.g. for the word "Zurich"
-    // the entries are the triples "City of Zurich", "Canton of Zurich", "Zurich Insurance";
+    // the entries are the triples "city of Zurich", "canton of Zurich", "Zurich Insurance";
     // the per-verb count is bounded by the related-per-verb config so the list stays compact
     public ?phrase_list $phrases_related = null;
 
@@ -335,22 +345,22 @@ class word extends sandbox_code_id
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = word_db::FLD_ID,
-        string $name_fld = word_db::FLD_NAME,
+        string $id_fld = word_fields::FLD_ID,
+        string $name_fld = word_fields::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
-                $this->plural = $db_row[word_db::FLD_PLURAL];
+            if (array_key_exists(word_fields::FLD_PLURAL, $db_row)) {
+                $this->plural = $db_row[word_fields::FLD_PLURAL];
             }
-            if (array_key_exists(word_db::FLD_VIEW, $db_row)) {
-                if ($db_row[word_db::FLD_VIEW] != null) {
-                    $this->set_view_id($db_row[word_db::FLD_VIEW]);
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[fields::FLD_VIEW]);
                 }
             }
-            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
-                $this->impact = $db_row[sql_db::FLD_IMPACT];
+            if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[fields::FLD_IMPACT];
             }
         }
         return $result;
@@ -378,8 +388,8 @@ class word extends sandbox_code_id
             }
         }
 
-        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
-            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[fields::FLD_IMPACT];
         }
 
         if (array_key_exists(json_fields::VIEW, $api_json)) {
@@ -458,7 +468,12 @@ class word extends sandbox_code_id
                     $this->set_view_id($wrd_view->id());
                 }
             } else {
-                $wrd_view->set_name($msk_name);
+                $cac_msk = $dto->get_view_by_name($msk_name);
+                if ($cac_msk != null) {
+                    $wrd_view = $cac_msk;
+                } else {
+                    $wrd_view->set_name($msk_name);
+                }
             }
             $this->view = $wrd_view;
         }
@@ -494,7 +509,14 @@ class word extends sandbox_code_id
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
-                if ($typ_lst->incl_related()) {
+                // send the assigned default view id so the edit form can preselect it and the
+                // confirm view can show it as the previous view (json_fields::VIEW is the id here)
+                if ($this->get_view_id() > 0) {
+                    $vars[json_fields::VIEW] = $this->get_view_id();
+                }
+                // related data is keyed by the word's phrase id, so a fresh
+                // word (id 0, e.g. the add form) has none to load
+                if ($typ_lst->incl_related() and $this->id() != 0) {
                     if ($this->phrases_related == null and !$typ_lst->test_mode()) {
                         $this->load_phrases_related();
                     }
@@ -676,7 +698,7 @@ class word extends sandbox_code_id
 
     /**
      * load a word by id and, in the same call, populate the related phrases and the related
-     * values that the default word view expects (the page-title renderer's City, Canton, ...
+     * values that the default word view expects (the page-title renderer's city, canton, ...
      * inline list, the "is symbol for <X>" symbol line and the related values list). Used by the default-word-view path —
      * test snapshot generation via test_base::assert_view and any other caller that wants
      * the rendered HTML to reflect a word's connecting triples without going through the
@@ -922,7 +944,7 @@ class word extends sandbox_code_id
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
         global $sys;
-        $qp = parent::load_sql_usr_num($sc, $this, formula_db::FLD_NAME);
+        $qp = parent::load_sql_usr_num($sc, $this, formula_fields::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
@@ -956,7 +978,7 @@ class word extends sandbox_code_id
 
     function name_field(): string
     {
-        return word_db::FLD_NAME;
+        return word_fields::FLD_NAME;
     }
 
     /**
@@ -973,7 +995,7 @@ class word extends sandbox_code_id
 
     function all_sandbox_fields(): array
     {
-        return word_db::ALL_SANDBOX_FLD_NAMES;
+        return word_fields::ALL_NAMES;
     }
 
 
@@ -1013,15 +1035,15 @@ class word extends sandbox_code_id
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_fields::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->get_user());
         if ($db_row !== false) {
-            if ($db_row[formula_db::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula_db::FLD_ID]);
+            if ($db_row[formula_fields::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_fields::FLD_ID]);
             }
         }
 
@@ -1288,7 +1310,7 @@ class word extends sandbox_code_id
 
     /**
      * returns a list of words (actually phrases) that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "company", but not "Zurich" itself
+     * e.g. for "Zurich" it will return "canton", "city" and "company", but not "Zurich" itself
      */
     function parents(): phrase_list
     {
@@ -1303,7 +1325,7 @@ class word extends sandbox_code_id
     /**
      * TODO maybe collect the single words or this is a third case
      * returns a list of words that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "company" and "Zurich" itself
+     * e.g. for "Zurich" it will return "canton", "city" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
      */
     function is_phrases(): phrase_list
@@ -1330,7 +1352,7 @@ class word extends sandbox_code_id
 
     /**
      * add a child word to this word
-     * e.g. Zurich (child) is a Canton (Parent)
+     * e.g. Zurich (child) is a canton (Parent)
      * @param word $child the word that should be added as a child
      * @param user_message $usr_msg
      * @return bool
@@ -1352,7 +1374,7 @@ class word extends sandbox_code_id
 
     /**
      * get all phrases that are linked to this word with the "is a" verb
-     * e.g. for "Canton" it will return "Zurich (Canton)" and others, but not "Canton" itself
+     * e.g. for "canton" it will return "Zurich (canton)" and others, but not "canton" itself
      *
      * @return phrase_list a list of words that are related to this word
      */
@@ -1367,7 +1389,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a City
+     * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a city
      */
     private
     function verb_list_up(): verb_list
@@ -1400,8 +1422,8 @@ class word extends sandbox_code_id
 
     /**
      * get all phrases that are linked to this word with the "is a" verb including the parent word
-     * e.g. for "Canton" it will return "Zurich (Canton)" and "Canton", but not "Zurich (City)"
-     * used to collect e.g. all formulas used for Canton
+     * e.g. for "canton" it will return "Zurich (canton)" and "canton", but not "Zurich (city)"
+     * used to collect e.g. all formulas used for canton
      *
      * @return phrase_list a list of words that are related to the given word
      */
@@ -1414,7 +1436,7 @@ class word extends sandbox_code_id
 
     /**
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
-     * e.g. for "Switzerland" it will return "Zurich (Canton)" and "Zurich (City)" which is part of the Canton
+     * e.g. for "Switzerland" it will return "Zurich (canton)" and "Zurich (city)" which is part of the canton
      */
     function parts(): phrase_list
     {
@@ -1425,7 +1447,7 @@ class word extends sandbox_code_id
 
     /**
      * returns the more general word as defined by "is part of"
-     * e.g. for "Meilen (District)" it will return "Zürich (Canton)"
+     * e.g. for "Meilen (District)" it will return "Zürich (canton)"
      * for the value selection this should be tested level by level
      * to use by default the most specific value
      */
@@ -1442,7 +1464,7 @@ class word extends sandbox_code_id
 
     /**
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
-     * e.g. for "Switzerland" it will return "Zurich (Canton)" but not "Zurich (City)"
+     * e.g. for "Switzerland" it will return "Zurich (canton)" but not "Zurich (city)"
      */
     function direct_parts(): phrase_list
     {
@@ -1500,7 +1522,7 @@ class word extends sandbox_code_id
         $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         $db_con->usr_id = $this->get_user()->id;
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_fields::FLD_FROM, triple_fields::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1526,7 +1548,7 @@ class word extends sandbox_code_id
         $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         $db_con->usr_id = $this->get_user()->id;
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_fields::FLD_TO, triple_fields::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1555,8 +1577,8 @@ class word extends sandbox_code_id
         $qp = $this->view_sql($db_con);
         $db_row = $db_con->get1($qp);
         if (isset($db_row)) {
-            if ($db_row[word_db::FLD_VIEW] != null) {
-                $view_id = $db_row[word_db::FLD_VIEW];
+            if ($db_row[fields::FLD_VIEW] != null) {
+                $view_id = $db_row[fields::FLD_VIEW];
             }
         }
 
@@ -1575,7 +1597,7 @@ class word extends sandbox_code_id
     {
         $db_con->set_class(word::class);
         $db_con->set_usr($this->get_user()->id);
-        $db_con->set_fields(array(word_db::FLD_VIEW));
+        $db_con->set_fields(array(fields::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(user_db::FLD_ID), word::class);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
@@ -1751,7 +1773,7 @@ class word extends sandbox_code_id
         $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
         $log->set_class(word::class);
-        $log->set_field(word_db::FLD_VIEW);
+        $log->set_field(fields::FLD_VIEW);
         if ($this->get_view_id() > 0) {
             $msk_old = new view($this->get_user());
             $msk_old->load_by_id($this->get_view_id());
@@ -1894,9 +1916,9 @@ class word extends sandbox_code_id
             parent::db_fields_all(),
             [
                 phrase::FLD_TYPE,
-                word_db::FLD_VIEW,
-                word_db::FLD_PLURAL,
-                sql_db::FLD_IMPACT
+                fields::FLD_VIEW,
+                word_fields::FLD_PLURAL,
+                fields::FLD_IMPACT
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1962,14 +1984,14 @@ class word extends sandbox_code_id
         if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VIEW,
-                    $sys->typ_lst->cng_fld->id($table_id . word_db::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                word_db::FLD_VIEW,
-                view_db::FLD_NAME,
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
                 $this->view,
                 $obj->view
             );
@@ -1978,13 +2000,13 @@ class word extends sandbox_code_id
         if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
-                    $sys->typ_lst->cng_fld->id($table_id . word_db::FLD_PLURAL),
+                    sql::FLD_LOG_FIELD_PREFIX . word_fields::FLD_PLURAL,
+                    $sys->typ_lst->cng_fld->id($table_id . word_fields::FLD_PLURAL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                word_db::FLD_PLURAL,
+                word_fields::FLD_PLURAL,
                 $this->plural,
                 word_db::FLD_PLURAL_SQL_TYP,
                 $obj->plural
@@ -1993,13 +2015,13 @@ class word extends sandbox_code_id
         if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_IMPACT,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_IMPACT,
+                fields::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
                 $obj->impact

@@ -52,6 +52,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -235,6 +237,26 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set_name(triple_names::MATH_CONST);
         return $trp;
+    }
+
+    /**
+     * the url parameters posted by the 'Change triple' edit form on save, used by the change_triple
+     * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
+     * the share and protection ids are the defaults of a sandbox triple
+     *
+     * @param int $id the database id of the changed triple, used as the back target
+     * @return array the edit form url parameters of the pending change
+     */
+    function change_url_array(int $id): array
+    {
+        return [
+            url_var::BACK => $id,
+            url_var::NAME => triple_names::MATH_CONST,
+            url_var::DESCRIPTION => 'a confirm change test description',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
     function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
@@ -548,7 +570,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (City)" used for unit testing
+     * @return triple "Zurich (city)" used for unit testing
      */
     function zh_city(): triple
     {
@@ -565,7 +587,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (City)" with a low impact to test sort by impact
+     * @return triple "Zurich (city)" with a low impact to test sort by impact
      */
     function zh_city_low_impact(): triple
     {
@@ -575,7 +597,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (Canton)" used for unit testing
+     * @return triple "Zurich (canton)" used for unit testing
      */
     function zh_canton(): triple
     {
@@ -591,7 +613,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Zurich (Canton)" with a medium impact to test sort by impact
+     * @return triple "Zurich (canton)" with a medium impact to test sort by impact
      */
     function zh_canton_low_impact(): triple
     {
@@ -718,6 +740,54 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "EUR is symbol for Euro" - the euro equivalent of symbol_usd
+     */
+    function eur_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EUR_SYMBOL_ID, triple_names::EUR_SYMBOL);
+        $trp->set_from($t_wrd->word_eur()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::SYMBOL_EUR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "€ is alias of Euro" - the euro equivalent of alias_dollar
+     */
+    function euro_sign_alias(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EURO_SIGN_ALIAS_ID, triple_names::EURO_SIGN_ALIAS);
+        $trp->set_from($t_wrd->word_euro_sign()->phrase());
+        $trp->set_verb($t_vrb->verb_alias());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::ALIAS_EURO);
+        return $trp;
+    }
+
+    /**
+     * @return triple "in EUR" - the euro equivalent of in_usd
+     */
+    function in_eur(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::IN_EUR_ID, triple_names::IN_EUR);
+        $trp->set_from($t_wrd->word_eur()->phrase());
+        $trp->set_verb($t_vrb->verb_in());
+        $trp->set_to($t_wrd->euro()->phrase());
+        $trp->set_impact(impacts::IN_EUR);
+        return $trp;
+    }
+
+    /**
      * @return triple "$ is alias of US dollar" used for unit testing the alias display
      */
     function alias_dollar(): triple
@@ -798,7 +868,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Bern (City)" used for unit testing
+     * @return triple "Bern (city)" used for unit testing
      */
     function triple_bern(): triple
     {
@@ -813,7 +883,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "Geneva (City)" used for unit testing
+     * @return triple "Geneva (city)" used for unit testing
      */
     function triple_ge(): triple
     {

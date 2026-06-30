@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Add result number  (zukunft.com)
+            Add result number - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,33 +136,33 @@
                 Add a new result
             </h4>
             <form action="/http/view.php" id="result_add">
-                <input class="form-control" type="hidden" name="mask" id="m" value="27">
+                <input class="form-control" type="hidden" name="m" id="mask" value="27">
                 <input class="form-control" type="hidden" name="id" id="id" value="....0A+....0T+....0V+....0p+....0r+....14+....1D+......+......+......+......+......+......+......+......+......+">
-                <input class="form-control" type="hidden" name="back" id="9" value="....0A+....0T+....0V+....0p+....0r+....14+....1D+......+......+......+......+......+......+......+......+......+">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="gn">
+                        <label for="group">
                             group
                         </label>
-                        <input class="form-control" type="text" name="group" id="gn">
+                        <input class="form-control" type="text" name="gn" id="group">
                     </div>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group ">
-                        <label for="v">
+                        <label for="value">
                             Value
                         </label>
-                        <input class="form-control" type="text" name="Value" id="v" value="123456">
+                        <input class="form-control" type="text" name="v" id="value" value="123456">
                     </div>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o">
+                        <input class="form-control" type="text" name="o" id="description">
                     </div>
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -193,10 +193,10 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="gn">
+                        <label for="group">
                             group
                         </label>
-                        <input class="form-control" type="text" name="group" id="gn">
+                        <input class="form-control" type="text" name="gn" id="group">
                     </div>
                 </div>
                 <div class="row col-md-12">
@@ -248,7 +248,7 @@
                                 Education
                             </option>
                             <option value="97"  >
-                                Formula
+                                Formula (default)
                             </option>
                             <option value="105"  >
                                 Graph
@@ -331,6 +331,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="3">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -350,11 +351,12 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="2">
                 </div>
-                <a href="/http/view.php?m=0&id=....0A+....0T+....0V+....0p+....0r+....14+....1D+......+......+......+......+......+......+......+......+......+" class="btn btn-space col-1 btn-outline-secondary">
+                <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
                     cancel
                 </a>
-                <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                     save
                 </button>
             </form>

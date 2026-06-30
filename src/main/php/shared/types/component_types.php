@@ -74,6 +74,15 @@ class component_types
     // (will be done via the sandbox language field once it has been added to all sandbox objects)
     const string TITLE_NAMED_EDIT = "title_of_named_with_edit_link";
     const int TITLE_NAMED_EDIT_ID = 192;
+    const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
+    const int TITLE_TRIPLE_EDIT_ID = 200;
+    const string TITLE_TRIPLE_EDIT_COM = "show the triple name as the page title and the from, verb and to with links in the subtitle, plus the edit link";
+    const string TITLE_FORMULA_EDIT = "title_of_formula_with_edit_link";
+    const int TITLE_FORMULA_EDIT_ID = 201;
+    const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle, plus the edit link";
+    const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
+    const int TITLE_VALUE_EDIT_ID = 203;
+    const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
     const string FORM_FIELD_NAME = "system_form_field_name";
     const int FORM_FIELD_NAME_ID = 21;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
@@ -228,6 +237,9 @@ class component_types
     const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
     const string EXPRESSION = "expression";
     const int EXPRESSION_ID = 62;
+    const string EXPRESSION_LATEX_LINK = "expression_latex_link";
+    const int EXPRESSION_LATEX_LINK_ID = 202;
+    const string EXPRESSION_LATEX_LINK_COM = "display the formula expression in the latex format with a tooltip and a link for each term";
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
     const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
     const string FORM_LIST_FORMULAS = "formula_list_changeable";
@@ -288,6 +300,8 @@ class component_types
     const int FORM_BUTTON_CANCEL_ID = 29;
     const string FORM_BUTTON_SAVE = "system_button_save";
     const int FORM_BUTTON_SAVE_ID = 30;
+    const string FORM_BUTTON_CONFIRM = "system_button_confirm";
+    const int FORM_BUTTON_CONFIRM_ID = 204;
     const string FORM_BUTTON_DEL = "system_button_del";
     const int FORM_BUTTON_DEL_ID = 31;
     const string FORM_BUTTON_IMPORT = "system_button_import";
@@ -382,6 +396,8 @@ class component_types
     const int ROW_START_ID = 33;
     const string ROW_RIGHT = "row_right";
     const int ROW_RIGHT_ID = 34;
+    const string ROW_CENTER = "row_center";
+    const int ROW_CENTER_ID = 205;
     const string ROW_END = "row_end";
     const int ROW_END_ID = 35;
 
@@ -567,6 +583,7 @@ class component_types
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
         self::EXPRESSION,
+        self::EXPRESSION_LATEX_LINK,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
@@ -626,12 +643,14 @@ class component_types
         self::FORM_TABLE_LINKED_VIEWS,
         self::FORM_BUTTON_CANCEL,
         self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_CONFIRM,
         self::FORM_BUTTON_DEL,
         self::FORM_BUTTON_IMPORT,
         self::FORM_BUTTON_EXPORT,
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
@@ -674,6 +693,7 @@ class component_types
     const array BUTTON_TYPES = array(
         self::FORM_BUTTON_CANCEL,
         self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_CONFIRM,
         self::FORM_BUTTON_DEL,
         self::FORM_BUTTON_IMPORT,
         self::FORM_BUTTON_EXPORT,
@@ -684,11 +704,15 @@ class component_types
     const array HIDDEN_TYPES = array(
         self::ROW_START,
         self::FORM_TITLE,
+        // the confirm-view title opens the confirm form like FORM_TITLE, so it must not be auto-wrapped
+        // in a row div either - otherwise the row div closes around the still-open form (form straddle)
+        self::SYSTEM_POPUP_TITLE,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END
     );
 
@@ -713,6 +737,7 @@ class component_types
         self::FORM_FIELD_VALUE,
         self::ROW_START,
         self::ROW_RIGHT,
+        self::ROW_CENTER,
         self::ROW_END,
     );
 
@@ -724,6 +749,7 @@ class component_types
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::TITLE_NAMED_EDIT, self::TITLE_NAMED_EDIT_ID],
+        [self::TITLE_TRIPLE_EDIT, self::TITLE_TRIPLE_EDIT_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
@@ -739,6 +765,7 @@ class component_types
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::EXPRESSION, self::EXPRESSION_ID],
+        [self::EXPRESSION_LATEX_LINK, self::EXPRESSION_LATEX_LINK_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
         [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],
@@ -797,6 +824,7 @@ class component_types
         [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
         [self::FORM_BUTTON_CANCEL, self::FORM_BUTTON_CANCEL_ID],
         [self::FORM_BUTTON_SAVE, self::FORM_BUTTON_SAVE_ID],
+        [self::FORM_BUTTON_CONFIRM, self::FORM_BUTTON_CONFIRM_ID],
         [self::FORM_BUTTON_DEL, self::FORM_BUTTON_DEL_ID],
         [self::FORM_BUTTON_IMPORT, self::FORM_BUTTON_IMPORT_ID],
         [self::FORM_BUTTON_EXPORT, self::FORM_BUTTON_EXPORT_ID],
@@ -817,6 +845,7 @@ class component_types
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
+        [self::ROW_CENTER, self::ROW_CENTER_ID],
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],

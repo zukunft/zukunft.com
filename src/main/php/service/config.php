@@ -55,6 +55,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 //include_once paths::MODEL_USER . 'user.php';
 
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class config extends db_object_seq_id
 {
@@ -112,17 +114,17 @@ class config extends db_object_seq_id
     // TODO review and sync with FLD_LST_ALL
     const array FLD_NAMES = array(
         self::FLD_NAME,
-        sql_db::FLD_CODE_ID,
-        sql_db::FLD_VALUE,
-        sql_db::FLD_DESCRIPTION,
+        fields::FLD_CODE_ID,
+        fields::FLD_VALUE,
+        fields::FLD_DESCRIPTION,
     );
 
     // field lists for the table creation
     const array FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
-        [sql_db::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [fields::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [fields::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -166,9 +168,9 @@ class config extends db_object_seq_id
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-            $this->value = $db_row[sql_db::FLD_VALUE];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->code_id = $db_row[fields::FLD_CODE_ID];
+            $this->value = $db_row[fields::FLD_VALUE];
+            $this->description = $db_row[fields::FLD_DESCRIPTION];
         }
         return $result;
     }
@@ -220,7 +222,7 @@ class config extends db_object_seq_id
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
+        $db_con->set_fields(array(fields::FLD_CODE_ID, fields::FLD_VALUE, fields::FLD_DESCRIPTION));
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
@@ -266,8 +268,8 @@ class config extends db_object_seq_id
             // automatically create the config entry
             $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
         } else {
-            $db_code_id = $db_row[sql_db::FLD_CODE_ID];
-            $db_value = $db_row[sql_db::FLD_VALUE];
+            $db_code_id = $db_row[fields::FLD_CODE_ID];
+            $db_value = $db_row[fields::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
                 $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
@@ -312,7 +314,7 @@ class config extends db_object_seq_id
         } else {
             $cfg_db = new config();
             $cfg_db->row_mapper($db_row);
-            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
+            if ($value != $db_row[fields::FLD_VALUE] or $description != $db_row[fields::FLD_DESCRIPTION]) {
                 $result = $this->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }
@@ -413,7 +415,7 @@ class config extends db_object_seq_id
 
     function name_field(): string
     {
-        return sql_db::FLD_CODE_ID;
+        return fields::FLD_CODE_ID;
     }
 
 
@@ -476,13 +478,13 @@ class config extends db_object_seq_id
         if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_CODE_ID,
+                fields::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
                 $obj->code_id
@@ -493,13 +495,13 @@ class config extends db_object_seq_id
         if ($obj->value !== $this->value) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_VALUE,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_VALUE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VALUE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VALUE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_VALUE,
+                fields::FLD_VALUE,
                 $this->value,
                 sql_field_type::TEXT,
                 $obj->value
@@ -510,13 +512,13 @@ class config extends db_object_seq_id
         if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description

@@ -51,6 +51,7 @@ the object structure is:
 ├── import - $imp - import data - take a object from a json, yaml or XML message and trigger the object saves
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
+├── import_wikidata - retrieve and capture wikidata entity data
 ├── change_table_field - helper class to create the database view with the log table and field name
 ├── text_log - object to handle standard io logging
 ├── phr_ids - helper class for phrase id lists
@@ -79,6 +80,18 @@ the object structure is:
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system
 ├── defShared - general system definitions used in frontend and backend
+├── component_fieldsShared - the component fields used database, back and frontend
+├── fieldsShared - general field names used for the database, back- and frontend
+├── formula_fieldsShared - the formula fields used database, back and frontend
+├── group_fieldsShared - the group fields used database, back and frontend
+├── phrase_fieldsShared - the phrase fields used database, back and frontend
+├── ref_fieldsShared - the reference fields used database, back and frontend
+├── result_fieldsShared - the result fields used database, back and frontend
+├── source_fieldsShared - the source fields used database, back and frontend
+├── triple_fieldsShared - the triple fields used database, back and frontend
+├── value_fieldsShared - the value fields used database, back and frontend
+├── view_fieldsShared - the view fields used database, back and frontend
+├── word_fieldsShared - the word fields used database, back and frontend
 ├── filesShared - resource file names used in backend and frontend
 ├── formulasShared - predefined formulas used in the backend and frontend as code id
 ├── groupsShared - phrase group or value names used by the system for testing
@@ -390,6 +403,7 @@ the object structure is:
 ├── frontendUi - $ui - the main html frontend application
 ├── data_objectUi - frontend cache object
 ├── url_mapperUi - create human-readable or pod exchangeable urls
+├── user_requestUi - bundle the context of a frontend user request
 ├── hist_logUi - display the past changes of an object
 ├── buttonUi - $btn - create the html code to display a button to the user
 ├── html_baseUi

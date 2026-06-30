@@ -5,6 +5,8 @@ PREPARE ref_by_link_type_ids FROM
             s.user_id,
             s.phrase_id,
             s.ref_type_id,
+            s.impact,
+            s.last_update,
             IF(u.external_key  IS NULL, s.external_key,  u.external_key)  AS external_key,
             IF(u.`url`         IS NULL, s.`url`,         u.`url`)         AS `url`,
             IF(u.description   IS NULL, s.description,   u.description)   AS description,

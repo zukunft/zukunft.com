@@ -1,0 +1,623 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-20 12:00:00",
+  "user": "senftube",
+  "selection": [
+    "burger true cost externality"
+  ],
+  "description": "Collected published estimates of the hidden / external (mainly environmental, plus health and subsidy) costs of beef and a beef burger that are not reflected in the retail price. Each study's headline figure is a value, qualified by study, entity, period and cost scope. Figures come from peer-reviewed life-cycle / true-cost-accounting studies and from two widely-cited retail demonstrations (Penny supermarket 2020, US meat-subsidy analysis 2015). Currency and per-unit basis differ between studies and are kept as separate qualified values rather than merged - see each value's qualifier set and source.",
+  "words": [
+    {
+      "name": "burger",
+      "description": "ground-beef patty in a bun; the prototypical fast-food beef product",
+      "refs": [
+        {
+          "name": "Hamburger",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6663",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "beef",
+      "description": "meat of cattle; the food product with the highest external cost per kg in true-cost studies"
+    },
+    {
+      "name": "meat",
+      "description": "edible animal flesh; here mostly the conventional-production aggregate",
+      "refs": [
+        {
+          "name": "Meat",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10990",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "patty",
+      "description": "a single formed portion of ground meat"
+    },
+    {
+      "name": "cost",
+      "description": "monetary amount; qualified below as retail, external or true",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q240673",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "price",
+      "description": "amount actually paid by the consumer at retail",
+      "refs": [
+        {
+          "name": "Price",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q160151",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "retail",
+      "description": "the price tag a consumer pays, excluding externalities"
+    },
+    {
+      "name": "external",
+      "description": "cost borne by third parties / society, not by the buyer or seller (an externality)",
+      "refs": [
+        {
+          "name": "Externality",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q275372",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "true",
+      "description": "retail price plus internalised external cost; the full social cost"
+    },
+    {
+      "name": "hidden",
+      "description": "synonym used in popular reporting for the external, non-priced cost"
+    },
+    {
+      "name": "environmental",
+      "description": "external cost scope: greenhouse gases, fertiliser / nutrient pollution, energy, land, water"
+    },
+    {
+      "name": "health",
+      "description": "external cost scope: diet-related disease attributed to the product"
+    },
+    {
+      "name": "subsidy",
+      "description": "government transfer that lowers the price paid below the cost of production",
+      "refs": [
+        {
+          "name": "Subsidy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q193219",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "increase",
+      "description": "the amount or share by which a price would rise"
+    },
+    {
+      "name": "share",
+      "description": "a fraction, here usually expressed as a percentage"
+    },
+    {
+      "name": "EUR",
+      "type": "measure",
+      "description": "euro",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4916",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "USD",
+      "type": "measure",
+      "description": "US dollar",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "CHF",
+      "type": "measure",
+      "description": "Swiss franc",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25344",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "type": "measure",
+      "description": "share expressed per hundred",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "kg",
+      "type": "measure",
+      "description": "kilogram",
+      "refs": [
+        {
+          "name": "Kilogram",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11570",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "g",
+      "type": "measure",
+      "description": "gram",
+      "refs": [
+        {
+          "name": "Gram",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q41803",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "minced",
+      "description": "cut up or ground into very small pieces, typically in a machine"
+    },
+    {
+      "name": "lower",
+      "description": "the bottom digit or minimum value in a range estimate"
+    },
+    {
+      "name": "upper",
+      "description": "the top digit or maximum value in a range estimate"
+    },
+    {
+      "name": "Big Mac",
+      "description": "McDonald's beef burger used as the unit in the US true-cost / subsidy commentary",
+      "refs": [
+        {
+          "name": "Big_Mac",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q201425",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Beyond Burger",
+      "description": "plant-based patty used as the low-externality comparison in Reisinger et al. 2025"
+    },
+    {
+      "name": "Germany",
+      "refs": [
+        {
+          "name": "Germany",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Switzerland",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Italy",
+      "refs": [
+        {
+          "name": "Italy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q38",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "United States",
+      "refs": [
+        {
+          "name": "United_States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2025"
+    }
+  ],
+  "triples": [
+    {
+      "name": "external cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "external"
+    },
+    {
+      "name": "retail price",
+      "from": "price",
+      "verb": "kind of",
+      "to": "retail"
+    },
+    {
+      "name": "true cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "true"
+    },
+    {
+      "name": "price increase",
+      "from": "increase",
+      "verb": "of",
+      "to": "price"
+    },
+    {
+      "name": "external environmental cost",
+      "from": "external cost",
+      "verb": "kind of",
+      "to": "environmental"
+    },
+    {
+      "name": "external health cost",
+      "from": "external cost",
+      "verb": "kind of",
+      "to": "health"
+    },
+    {
+      "name": "beef burger",
+      "from": "burger",
+      "verb": "kind of",
+      "to": "beef"
+    },
+    {
+      "name": "beef patty",
+      "from": "patty",
+      "verb": "of",
+      "to": "beef"
+    },
+    {
+      "name": "minced meat",
+      "from": "meat",
+      "verb": "kind of",
+      "to": "minced"
+    },
+    {
+      "from": "external cost",
+      "verb": "of",
+      "to": "beef"
+    },
+    {
+      "from": "external cost",
+      "verb": "of",
+      "to": "meat"
+    },
+    {
+      "from": "external cost",
+      "verb": "of",
+      "to": "beef patty"
+    },
+    {
+      "from": "external cost",
+      "verb": "of",
+      "to": "Beyond Burger"
+    },
+    {
+      "name": "meat subsidy",
+      "from": "subsidy",
+      "verb": "of",
+      "to": "meat"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Springmann meat tax 2022",
+      "description": "Funke F, Mattauch L, ... Edenhofer O (2022). Toward Optimal Meat Pricing: Is It Time to Tax Meat Consumption? Review of Environmental Economics and Policy. External cost of beef from climate + nutrient pollution US$5.75-9.17/kg.",
+      "url": "https://doi.org/10.1086/721078"
+    },
+    {
+      "name": "Michalke TCA 2023",
+      "description": "Michalke A, Stein L, Fichtner R, Gaugler T, Stoll-Kleemann S (2023). True cost accounting of organic and conventional food production. J. Cleaner Production 408:137134. Conventional meat externality EUR 4.42/kg; beef highest of all products.",
+      "url": "https://doi.org/10.1016/j.jclepro.2023.137134"
+    },
+    {
+      "name": "Penny true cost 2020",
+      "description": "University of Augsburg (Gaugler T et al.) for Penny / Rewe Group, 2020 retail demonstration. Conventional minced meat true price EUR 7.62 vs retail EUR 2.79 (+173%); environmental scope (GHG, over-fertilisation, energy).",
+      "url": "https://www.thelocal.de/20200901/how-much-your-german-food-shop-should-really-cost"
+    },
+    {
+      "name": "Arrigoni Italy LCA 2023",
+      "description": "Arrigoni A, Marveggio D, ... (2023). Environmental and health-related external costs of meat consumption in Italy. Sci. Total Environ. External cost of beef EUR 1.3 per 100 g pre-ingestion.",
+      "url": "https://doi.org/10.1016/j.scitotenv.2023.161747"
+    },
+    {
+      "name": "Perotti Switzerland 2019",
+      "description": "Perotti (2019), 2018 analysis of ~100 externality types for Switzerland. Beef external costs amount to 125% of the price paid by the consumer.",
+      "url": "https://www.chaireunesco-adm.com/19-Hidden-costs-and-the-fair-price-of-our-food-between-the-market-the-State-and"
+    },
+    {
+      "name": "Reisinger PBMA 2025",
+      "description": "Reisinger A et al. (2025). Quantifying ... Plant-Based Meat Alternatives ... vs Beef. Foods 15(11):1949. Monetised total dietary risk: beef patty USD 1.63 vs Beyond Burger USD 0.16; Beyond Burger ~9% of beef patty external cost.",
+      "url": "https://doi.org/10.3390/foods15111949"
+    },
+    {
+      "name": "US meat subsidy commentary 2015",
+      "description": "Gillette D, citing 2015 analysis: US federal meat & dairy subsidies (~US$38bn/yr) hide cost; un-subsidised Big Mac ~US$13 vs ~US$5 retail; ground beef ~US$30 vs ~US$5 per pound. Subsidy-only scope, not full externality.",
+      "url": "https://thedailyeconomy.org/article/the-true-cost-of-a-hamburger/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "external cost of beef",
+        "United States",
+        "kg",
+        "USD",
+        "lower"
+      ],
+      "number": "5.75",
+      "source": "Springmann meat tax 2022",
+      "description": "lower bound of average external cost of beef from climate change and nutrient pollution; biodiversity and diet-health would add substantially"
+    },
+    {
+      "words": [
+        "external cost of beef",
+        "United States",
+        "kg",
+        "USD",
+        "upper"
+      ],
+      "number": "9.17",
+      "source": "Springmann meat tax 2022",
+      "description": "upper bound of the same range"
+    },
+    {
+      "words": [
+        "external cost of meat",
+        "Germany",
+        "kg",
+        "EUR"
+      ],
+      "number": "4.42",
+      "source": "Michalke TCA 2023",
+      "description": "average external cost of conventional meat across the studied German products; beef generates the highest of all 22 products"
+    },
+    {
+      "words": [
+        "minced meat",
+        "retail price",
+        "Germany",
+        "g"
+      ],
+      "number": "2.79",
+      "source": "Penny true cost 2020",
+      "description": "retail price of 500 g conventional mixed minced meat (the 500 g basis is the qualifier g, value is for the 500 g pack)"
+    },
+    {
+      "words": [
+        "minced meat",
+        "true cost",
+        "Germany",
+        "g"
+      ],
+      "number": "7.62",
+      "source": "Penny true cost 2020",
+      "description": "environmental true price of the same 500 g pack"
+    },
+    {
+      "words": [
+        "minced meat",
+        "price increase",
+        "Germany",
+        "percent"
+      ],
+      "number": "173",
+      "source": "Penny true cost 2020",
+      "description": "implied environmental mark-up on conventional minced meat"
+    },
+    {
+      "words": [
+        "external cost of beef",
+        "Italy",
+        "g",
+        "EUR"
+      ],
+      "number": "1.3",
+      "source": "Arrigoni Italy LCA 2023",
+      "description": "external (environmental + health) cost of 100 g of beef pre-ingestion; poultry/pork 0.5 EUR per 100 g for contrast"
+    },
+    {
+      "words": [
+        "external cost of beef",
+        "Switzerland",
+        "percent"
+      ],
+      "number": "125",
+      "source": "Perotti Switzerland 2019",
+      "description": "beef external costs as a share of the price the consumer pays (the highest of the animal products studied)"
+    },
+    {
+      "words": [
+        "external cost of beef patty",
+        "United States",
+        "USD"
+      ],
+      "number": "1.63",
+      "source": "Reisinger PBMA 2025",
+      "description": "monetised total dietary risk (health externality) of one 3-oz cooked beef patty"
+    },
+    {
+      "words": [
+        "external cost of Beyond Burger",
+        "United States",
+        "USD"
+      ],
+      "number": "0.16",
+      "source": "Reisinger PBMA 2025",
+      "description": "monetised total dietary risk of one Beyond Burger patty; ~9% of the beef patty's combined external cost"
+    },
+    {
+      "words": [
+        "Big Mac",
+        "retail price",
+        "United States",
+        "2015",
+        "USD"
+      ],
+      "number": "5",
+      "source": "US meat subsidy commentary 2015",
+      "description": "approximate subsidised retail price"
+    },
+    {
+      "words": [
+        "Big Mac",
+        "true cost",
+        "United States",
+        "2015",
+        "USD"
+      ],
+      "number": "13",
+      "source": "US meat subsidy commentary 2015",
+      "description": "approximate un-subsidised price (subsidy scope only, before wider environmental/health externalities)"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "external cost (formula)",
+      "expression": "\"external cost\" = \"true cost\" - \"retail price\"",
+      "description": "the external (non-priced) cost is the full social true cost minus the retail price the consumer actually pays",
+      "assigned": [
+        "meat",
+        "Big Mac"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "minced meat",
+        "retail price",
+        "true cost",
+        "Germany",
+        "g"
+      ],
+      "formula": "external cost (formula)",
+      "words": [
+        "minced meat",
+        "external cost",
+        "Germany",
+        "g"
+      ],
+      "number": "4.83",
+      "note": "7.62 true price - 2.79 retail (Penny 2020, 500 g pack)"
+    },
+    {
+      "context": [
+        "Big Mac",
+        "retail price",
+        "true cost",
+        "United States",
+        "2015",
+        "USD"
+      ],
+      "formula": "external cost (formula)",
+      "words": [
+        "Big Mac",
+        "external cost",
+        "United States",
+        "2015",
+        "USD"
+      ],
+      "number": "8",
+      "note": "13 un-subsidised - 5 retail (US meat subsidy commentary 2015, subsidy scope only)"
+    }
+  ]
+}

@@ -41,6 +41,9 @@ include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_REF . 'source_db.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -53,6 +56,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 
 class ref_db
 {
@@ -61,68 +67,58 @@ class ref_db
      * db const
      */
 
-    // object specific database and JSON object field names
-    // means: database fields only used for words
-    // *_COM: the description of the field
+    // object specific database and JSON object fields
+    // means: database fields only used for references
+    // the field names and their descriptions are defined in ref_fields
     // *_SQL_TYP is the sql data type used for the field
     // TODO Prio 2 add a status and use it to show an easy switch off button
     // TODO Prio 2 an update methode and frequency for push updates or daily weekly or idle update retries
-    const string FLD_ID = 'ref_id';
-    const string FLD_USER_COM = 'the user who has created or adjusted the reference';
-    const string FLD_EX_KEY_COM = 'the unique external key used in the other system';
-    const string FLD_EX_KEY = 'external_key';
     const sql_field_type FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
-    const string FLD_TYPE = 'ref_type_id';
-    const string FLD_URL_COM = 'the concrete url for the entry including the item id';
-    const string FLD_URL = 'url';
     const sql_field_type FLD_URL_SQL_TYP = sql_field_type::TEXT;
-    const string FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
-    const string FLD_SOURCE = 'source_id';
-    const string FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
+    const string FLD_URL_COM = 'the concrete url for the entry including the item id';
+    const string FLD_LAST_UPDATE_COM = 'timestamp of the last successful update of the reference used to trigger the next refresh job';
 
     // field names that cannot be user-specific
     const array FLD_NAMES = array(
         phrase::FLD_ID,
-        self::FLD_TYPE
+        ref_fields::FLD_TYPE,
+        fields::FLD_IMPACT,
+        fields::FLD_LAST_UPDATE
     );
     // list of user-specific text field names
     const array FLD_NAMES_USR = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sql_db::FLD_DESCRIPTION
+        ref_fields::FLD_EX_KEY,
+        fields::FLD_URL,
+        fields::FLD_DESCRIPTION
     );
     // list of user-specific numeric field names
     const array FLD_NAMES_NUM_USR = array(
-        source_db::FLD_ID,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        source_fields::FLD_ID,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user-specific changes
-    const array ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sql_db::FLD_DESCRIPTION,
-        sql_db::FLD_EXCLUDED
-    );
+    // the ordered field names used to detect user-specific changes are defined in ref_fields::ALL_NAMES
     // list of fields that must be set
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [ref_fields::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', ref_fields::FLD_EX_KEY_COM],
     );
     // list of fields that must be set, but CAN be changed by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [ref_fields::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', ref_fields::FLD_EX_KEY_COM],
     );
     // list of fields that CAN be changed by the user
     const array FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [source_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, ref_fields::FLD_SOURCE_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
-        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
+        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', ref_fields::FLD_PHRASE_COM],
         [ref_type::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
+        [fields::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_IMPACT_COM],
+        [fields::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
     );
 
 }

@@ -371,6 +371,22 @@ class db_object_multi extends db_object_key
         return $this->load($qp);
     }
 
+    /**
+     * load a row by id like load_by_id, but also populate the "most often used related
+     * objects" view-models that the page-title renderer expects (e.g. the related phrases
+     * of a value shown in its title); the base implementation is a no-op beyond load_by_id
+     * so a multi-id object without such a view-model can be loaded polymorphically next to
+     * the db_object_seq_id types (mirrors db_object_seq_id::load_by_id_with_related, used
+     * e.g. by test_base::assert_view)
+     *
+     * @param int|string $id the id of the row to load
+     * @return int|string the id of the object found and zero if nothing is found
+     */
+    function load_by_id_with_related(int|string $id): int|string
+    {
+        return $this->load_by_id($id);
+    }
+
 
     /*
      * debug

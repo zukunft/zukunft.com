@@ -90,7 +90,8 @@ if ($db_con->is_open()) {
     // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
     $web_txt .= $usr->get();
-    // TODO Prio 1 set the user of the $msg and make the the only place where the requesting user is stored
+    // TODO Prio 1 make this the only place where the requesting user is stored (the user is set on the
+    //   message once the frontend user is loaded below)
 
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -102,6 +103,9 @@ if ($db_con->is_open()) {
 
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($usr->api_json(), $msg);
+        // store the requesting user on the message so the write path (e.g. sandbox::check_preserved)
+        // knows who is changing the data when the confirm button posts the change (see the TODO above)
+        $msg->usr = $usr_ui;
 
         $ui = new frontend('view');
         $ui->load_cache();

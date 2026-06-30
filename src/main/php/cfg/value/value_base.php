@@ -153,6 +153,9 @@ include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -217,6 +220,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use DateTime;
 use Exception;
 
@@ -228,10 +234,10 @@ class value_base extends sandbox_value
      */
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = value_db::FLD_ID;
-    const string FLD_VALUE_TEXT = value_db::FLD_VALUE_TEXT;
-    const string FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
-    const string FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
+    const string FLD_ID = value_fields::FLD_ID;
+    const string FLD_VALUE_TEXT = value_fields::FLD_VALUE_TEXT;
+    const string FLD_VALUE_TIME = value_fields::FLD_VALUE_TIME;
+    const string FLD_VALUE_GEO = value_fields::FLD_VALUE_GEO;
 
     // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = value_db::FLD_NAMES;
@@ -240,7 +246,7 @@ class value_base extends sandbox_value
     const array FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
     const array FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
     const array FLD_ALL_TIME_SERIES_USER = value_db::FLD_ALL_TIME_SERIES_USER;
-    const array ALL_SANDBOX_FLD_NAMES = value_db::ALL_SANDBOX_FLD_NAMES;
+    const array ALL_SANDBOX_FLD_NAMES = value_fields::ALL_NAMES;
 
 
     /*
@@ -324,7 +330,7 @@ class value_base extends sandbox_value
         string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = value_db::FLD_ID,
+        string $id_fld = value_fields::FLD_ID,
         bool   $one_id_fld = true
     ): bool
     {
@@ -381,8 +387,8 @@ class value_base extends sandbox_value
                 log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
             }
             // TODO check if phrase_group_id and time_word_id are user-specific or time series specific
-            $this->set_source_id($db_row[source_db::FLD_ID]);
-            $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
+            $this->set_source_id($db_row[source_fields::FLD_ID]);
+            $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
         }
         return $result;
     }
@@ -1547,7 +1553,11 @@ class value_base extends sandbox_value
     {
         $vars = parent::export_json($exp_typ, $do_load);
 
-        // add the source
+        // add the source name; load_by_grp above sets only the source id, so load the
+        // source object first to get its name for the export (matching the import format)
+        if ($do_load) {
+            $this->load_source();
+        }
         if ($this->source != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source->name();
         }
@@ -2101,7 +2111,7 @@ class value_base extends sandbox_value
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(sandbox_multi::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
+        $fvt_lst->add_field(fields::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
         try {
             $db_con->exe_par($qp);
@@ -2269,7 +2279,7 @@ class value_base extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = source_db::FLD_ID;
+            $fields[] = source_fields::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
         return $fields;
@@ -2297,27 +2307,25 @@ class value_base extends sandbox_value
         $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
-        // but only if any other field has been updated, update the last_update field also
-        if (!$lst->is_empty_except_internal_fields()) {
-            if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
-                if ($sc_par_lst->incl_log()) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                        $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
-                        change::FLD_FIELD_ID_SQL_TYP
-                    );
-                }
+        // so a source change (including a source-only change of an existing value) must be written too
+        if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    source_db::FLD_ID,
-                    $this->source?->name(),
-                    sql_field_type::TEXT,
-                    $sbx->source?->name(),
-                    source_db::FLD_NAME,
-                    $this->source_id(),
-                    $sbx->source?->id(),
-                    sql_field_type::INT
+                    sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_fields::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
+            $lst->add_field(
+                source_fields::FLD_ID,
+                $this->source?->name(),
+                sql_field_type::TEXT,
+                $sbx->source?->name(),
+                source_fields::FLD_NAME,
+                $this->source_id(),
+                $sbx->source?->id(),
+                sql_field_type::INT
+            );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }

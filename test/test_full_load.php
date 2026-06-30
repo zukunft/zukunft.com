@@ -105,7 +105,7 @@ if ($db_con->is_open()) {
             // run the workflow tests
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
                 $usr_msg_ui = new MapObject()->convertMsgToUi(new user_message());
-                new all_workflow_tests()->run_workflow_tests($t, $t->usr1, $usr_msg_ui);
+                new all_workflow_tests()->run($t, $t->usr1, $usr_msg_ui);
             }
 
             // display the test results

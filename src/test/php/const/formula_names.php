@@ -76,6 +76,16 @@ class formula_names
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
     const string INCREASE_DB = '{w' . words::PCT_ID . '}=({f' . self::THIS_ID . '}-{f' . self::PRIOR_ID . '})/{f' . self::PRIOR_ID . '}';
+    // each term is wrapped in \text{} so the expression_latex_link component can link it; the
+    // increase object page sample renders it without a term list, so without the term links
+    const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
+    const string JOULE_DEF = 'definition of joule';
+    const int JOULE_DEF_ID = 27;
+    const string JOULE_DEF_EXP = '"' . word_names::JOULE . '" = ( "' . word_names::KG . '" * "' . word_names::METRE . '" * "' . word_names::METRE . '" ) / ( "' . words::SECOND . '" * "' . words::SECOND . '" )';
+    // each term is wrapped in \text{} so the expression_latex_link component can replace the
+    // token with a link to the term
+    const string JOULE_DEF_LATEX = '\text{' . word_names::JOULE . '} = \frac{ \text{' . word_names::KG . '} \cdot \text{' . word_names::METRE . '}^2 }{ \text{' . words::SECOND . '}^2 }';
+    const string JOULE_DEF_COM = 'the SI definition of the unit joule';
     const string LITRE_TO_M3 = 'scale litre to m3';
     const string BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH;
     const string SCALE_MIO = 'scale millions to one';
@@ -87,7 +97,7 @@ class formula_names
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
     const int CITY_POPULATION_ID = 26;
-    const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "City" )';
+    const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
@@ -100,7 +110,7 @@ class formula_names
     const string SYSTEM_TEST_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const string SYSTEM_TEST_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
     const string SYSTEM_TEST_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const string SYSTEM_TEST_SECTOR_EXP = '= "country" "differentiator" "Canton" / "System Test Word Total"';
+    const string SYSTEM_TEST_SECTOR_EXP = '= "country" "differentiator" "canton" / "System Test Word Total"';
     const string SYSTEM_TEST_SCALE_K = 'System Test Formula scale thousand to one';
     const string SYSTEM_TEST_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
     const string SYSTEM_TEST_SCALE_TO_K = 'System Test Formula scale one to thousand';

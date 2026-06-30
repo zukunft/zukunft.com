@@ -55,6 +55,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_named extends sandbox
 {
@@ -174,6 +176,29 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * besides the base checks a named object requires a non-empty name to be confirmed,
+r     * unless it is being deleted or excluded (soft-deleted) which does not need a name
+     *
+     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param string $action the crud action of the change; a delete needs no name
+     * @param array $url_array the pending change url (passed on to the parent checks)
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    {
+        $result = parent::input_valid($usr_msg, $action, $url_array);
+        if ($action != url_var::CRUD_DELETE and !$this->is_excluded()) {
+            if ($this->name == null or $this->name == '') {
+                $usr_msg->add_warning_with_vars(msg_id::NAME_EMPTY, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+                ]);
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
@@ -199,6 +224,17 @@ class sandbox_named extends sandbox
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return array parent url array extended with the name and description of this named object
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::NAME] = $this->name();
+        $url_array[url_var::DESCRIPTION] = $this->get_description();
+        return $url_array;
     }
 
 

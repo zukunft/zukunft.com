@@ -1,0 +1,671 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "GDP",
+    "country",
+    "economics",
+    "statistics"
+  ],
+  "description": "Most relevant base data around the gross domestic product (GDP): the expenditure identity GDP = consumption + investment + government spending + net exports reproduced for the United States 2023, nominal GDP and population for the United States, Germany and Switzerland 2023 with the derived GDP per capita, and the year-over-year GDP growth derived by the system 'increase' formula through the time dimension (therefore not calc-validated). All GDP figures are nominal (current US dollars). Each word carries a Wikipedia ref plus the cleaned first sentence of the Wikipedia lead as the description so tooltips have text and the ref drives the refresh; the US expenditure components are set so the identity sums exactly to the stored GDP.",
+  "words": [
+    {
+      "name": "GDP",
+      "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12796",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "GDP per capita",
+      "description": "a country's gross domestic product divided by its population, used as a measure of average economic output per person.",
+      "refs": [
+        {
+          "name": "GDP_per_capita",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17312912",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "population",
+      "description": "the number of humans or other organisms living in a given region or area.",
+      "refs": [
+        {
+          "name": "Population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q33829",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "country",
+      "description": "a distinct part of the world, such as a state, nation, or other political entity.",
+      "refs": [
+        {
+          "name": "Country",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6256",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "United States",
+      "description": "a country primarily located in North America, comprising 50 states.",
+      "refs": [
+        {
+          "name": "United_States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Germany",
+      "description": "a country in Central Europe, between the Baltic and North seas and the Alps.",
+      "refs": [
+        {
+          "name": "Germany",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q183",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Switzerland",
+      "description": "a landlocked country at the confluence of Western, Central and Southern Europe.",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "consumption",
+      "description": "the use of goods and services by households to satisfy current needs and wants.",
+      "refs": [
+        {
+          "name": "Consumption_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "investment",
+      "description": "the commitment of money or resources now in order to gain a future return or benefit.",
+      "refs": [
+        {
+          "name": "Investment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "spending",
+      "description": "an outlay of money for goods or services"
+    },
+    {
+      "name": "government",
+      "description": "the system or group of people governing an organized community, generally a state.",
+      "refs": [
+        {
+          "name": "Government",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "export",
+      "description": "a good or service produced in one country and sold into another country.",
+      "refs": [
+        {
+          "name": "Export",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "import",
+      "description": "a good or service brought into one country from another.",
+      "refs": [
+        {
+          "name": "Import",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "growth",
+      "description": "the increase in the inflation-adjusted value of the goods and services produced by an economy over time.",
+      "refs": [
+        {
+          "name": "Economic_growth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nominal",
+      "description": "qualifier: measured at current prices, not adjusted for inflation"
+    },
+    {
+      "name": "real",
+      "description": "qualifier: adjusted for inflation to constant prices"
+    },
+    {
+      "name": "Now"
+    },
+    {
+      "name": "year",
+      "description": "the time taken by the Earth to complete one orbit around the Sun, about 365 days.",
+      "type": "time",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "person",
+      "description": "an individual human being; here the unit for counting people.",
+      "refs": [
+        {
+          "name": "Person",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q215627",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "USD",
+      "description": "the official currency of the United States and several other countries and territories.",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "percent",
+      "description": "a number or ratio expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "2022",
+      "type": "time"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "United States",
+      "verb": "is a",
+      "to": "country"
+    },
+    {
+      "from": "Germany",
+      "verb": "is a",
+      "to": "country"
+    },
+    {
+      "from": "Switzerland",
+      "verb": "is a",
+      "to": "country"
+    },
+    {
+      "name": "government spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "government",
+      "description": "all spending by the government on consumption, investment, and transfer payments.",
+      "refs": [
+        {
+          "name": "Government_spending",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "net exports",
+      "from": "export",
+      "verb": "and",
+      "to": "import",
+      "description": "exports minus imports of goods and services, the trade-balance term of the GDP expenditure identity.",
+      "refs": [
+        {
+          "name": "Balance_of_trade",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nominal GDP",
+      "from": "GDP",
+      "verb": "kind of",
+      "to": "nominal",
+      "description": "gross domestic product measured at current market prices, not adjusted for inflation.",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "real GDP",
+      "from": "GDP",
+      "verb": "kind of",
+      "to": "real",
+      "description": "gross domestic product adjusted for inflation and expressed in constant base-year prices.",
+      "refs": [
+        {
+          "name": "Real_gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GDP growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "GDP",
+      "description": "the increase in a country's gross domestic product from one period to the next.",
+      "refs": [
+        {
+          "name": "Economic_growth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "2022",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2023",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2023",
+      "verb": "is follower of",
+      "to": "2022"
+    }
+  ],
+  "sources": [
+    {
+      "name": "BEA US GDP 2023",
+      "description": "US Bureau of Economic Analysis, gross domestic product and its expenditure components 2023 (current US dollars): consumption 18799.6, investment 4945.1, government 4562.6, exports 3051.1, imports 3996.4 (billions).",
+      "url": "https://www.bea.gov/"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024",
+      "description": "International Monetary Fund, nominal GDP at current prices 2023 (current US dollars): Germany ~4456 bn, Switzerland ~885 bn.",
+      "url": "https://www.imf.org/en/Publications/WEO"
+    },
+    {
+      "name": "UN World Population Prospects 2024",
+      "description": "United Nations, mid-2023 population estimates: United States ~334.9 mn, Germany ~84.5 mn, Switzerland ~8.85 mn.",
+      "url": "https://population.un.org/wpp/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "United States",
+        "GDP",
+        "2023",
+        "USD"
+      ],
+      "number": "27362000000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "GDP",
+        "2022",
+        "USD"
+      ],
+      "number": "25744100000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "population",
+        "2023",
+        "person"
+      ],
+      "number": "334914895",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "United States",
+        "consumption",
+        "2023",
+        "USD"
+      ],
+      "number": "18799600000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "investment",
+        "2023",
+        "USD"
+      ],
+      "number": "4945100000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "government spending",
+        "2023",
+        "USD"
+      ],
+      "number": "4562600000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "export",
+        "2023",
+        "USD"
+      ],
+      "number": "3051100000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "import",
+        "2023",
+        "USD"
+      ],
+      "number": "3996400000000",
+      "source": "BEA US GDP 2023"
+    },
+    {
+      "words": [
+        "United States",
+        "net exports",
+        "2023",
+        "USD"
+      ],
+      "number": "-945300000000"
+    },
+    {
+      "words": [
+        "Germany",
+        "GDP",
+        "2023",
+        "USD"
+      ],
+      "number": "4456081000000",
+      "source": "IMF World Economic Outlook 2024"
+    },
+    {
+      "words": [
+        "Germany",
+        "population",
+        "2023",
+        "person"
+      ],
+      "number": "84482267",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "GDP",
+        "2023",
+        "USD"
+      ],
+      "number": "884940000000",
+      "source": "IMF World Economic Outlook 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "population",
+        "2023",
+        "person"
+      ],
+      "number": "8849852",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "United States",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "81698.37"
+    },
+    {
+      "words": [
+        "Germany",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "52745.76"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "99994.89"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "GDP per capita (formula)",
+      "expression": "\"GDP per capita\" = \"GDP\" / \"population\"",
+      "assigned": [
+        "country"
+      ]
+    },
+    {
+      "name": "net exports (formula)",
+      "expression": "\"net exports\" = \"export\" - \"import\"",
+      "assigned": [
+        "country"
+      ]
+    },
+    {
+      "name": "GDP (expenditure)",
+      "expression": "\"GDP\" = \"consumption\" + \"investment\" + \"government spending\" + \"net exports\"",
+      "assigned": [
+        "country"
+      ]
+    },
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "GDP"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "United States",
+        "export",
+        "import",
+        "2023",
+        "USD"
+      ],
+      "formula": "net exports (formula)",
+      "words": [
+        "United States",
+        "net exports",
+        "2023",
+        "USD"
+      ],
+      "number": "-945300000000",
+      "note": "3051.1e9 - 3996.4e9"
+    },
+    {
+      "context": [
+        "United States",
+        "consumption",
+        "investment",
+        "government spending",
+        "net exports",
+        "2023",
+        "USD"
+      ],
+      "formula": "GDP (expenditure)",
+      "words": [
+        "United States",
+        "GDP",
+        "2023",
+        "USD"
+      ],
+      "number": "27362000000000",
+      "note": "18799.6e9 + 4945.1e9 + 4562.6e9 - 945.3e9"
+    },
+    {
+      "context": [
+        "United States",
+        "GDP",
+        "population",
+        "2023",
+        "USD",
+        "person"
+      ],
+      "formula": "GDP per capita (formula)",
+      "words": [
+        "United States",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "81698.37",
+      "note": "27362e9 / 334914895"
+    },
+    {
+      "context": [
+        "Germany",
+        "GDP",
+        "population",
+        "2023",
+        "USD",
+        "person"
+      ],
+      "formula": "GDP per capita (formula)",
+      "words": [
+        "Germany",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "52745.76",
+      "note": "4456081e6 / 84482267"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "GDP",
+        "population",
+        "2023",
+        "USD",
+        "person"
+      ],
+      "formula": "GDP per capita (formula)",
+      "words": [
+        "Switzerland",
+        "GDP per capita",
+        "USD"
+      ],
+      "number": "99994.89",
+      "note": "884940e6 / 8849852"
+    }
+  ]
+}

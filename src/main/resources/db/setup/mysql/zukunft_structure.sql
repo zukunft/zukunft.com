@@ -1727,17 +1727,19 @@ ALTER TABLE ref_types
 
 CREATE TABLE IF NOT EXISTS refs
 (
-    ref_id        bigint       NOT NULL COMMENT 'the internal unique primary index',
-    user_id       bigint   DEFAULT NULL COMMENT 'the owner / creator of the ref',
-    external_key  varchar(255) NOT NULL COMMENT 'the unique external key used in the other system',
-    `url`         text     DEFAULT NULL COMMENT 'the concrete url for the entry including the item id',
-    source_id     bigint   DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
-    description   text     DEFAULT NULL,
-    phrase_id     bigint   DEFAULT NULL COMMENT 'the phrase for which the external data should be synchronised',
-    ref_type_id   smallint     NOT NULL COMMENT 'to link code functionality to a list of references',
-    excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    ref_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
+    user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the ref',
+    external_key  varchar(255)  NOT NULL COMMENT 'the unique external key used in the other system',
+    `url`         text      DEFAULT NULL COMMENT 'the concrete url for the entry including the item id',
+    source_id     bigint    DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
+    description   text      DEFAULT NULL,
+    phrase_id     bigint    DEFAULT NULL COMMENT 'the phrase for which the external data should be synchronised',
+    ref_type_id   smallint      NOT NULL COMMENT 'to link code functionality to a list of references',
+    impact        double    DEFAULT NULL COMMENT 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover and is used as fallback value for sorting',
+    last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last successful update of the reference used to trigger the next refresh job',
+    excluded      smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
     PRIMARY KEY (ref_id)
 )
     ENGINE = InnoDB

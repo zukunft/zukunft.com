@@ -185,6 +185,15 @@ class ui_base
         return $result;
     }
 
+    function expression_latex_link(?db_object $dbo = null): string
+    {
+        $result = '';
+        if ($dbo != null and method_exists($dbo, 'expression_latex_link')) {
+            $result = $dbo->expression_latex_link();
+        }
+        return $result;
+    }
+
     function name(): string
     {
         return $this::class;

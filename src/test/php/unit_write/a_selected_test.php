@@ -36,10 +36,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SERVICE . 'export' . DIRECTORY_SEPARATOR . 'json_io.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
@@ -54,7 +57,10 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\service\export\json_io;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
@@ -71,6 +77,30 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class a_selected_test extends test_cleanup
 {
+
+    // the import json files to load for a fast single-file debugging cycle
+    // comment out the entries that are not needed to import just one file at a time
+    const array SELECTED_IMPORT_FILES = [
+        test_files::IMPORT_PRO_CONTRA_NPP_CH,
+        test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
+        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
+        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_DE,
+        //files::EDUCATION_FILE,
+        //files::POVERTY_FILE,
+        //files::HEALTH_FILE,
+        //files::POPULATION_FILE,
+        //files::POPULISM_FILE,
+        //files::GLOBAL_WARMING_FILE,
+        //files::GDP_FILE,
+        //files::ZURICH_FILE,
+        //files::MESSAGE_PATH . files::TIME_FILE,
+        //files::MESSAGE_PATH . files::BASE_VIEWS_FILE,
+        //files::MESSAGE_PATH . files::START_PAGE_DATA_FILE,
+        //files::MESSAGE_PATH . files::COMPANY_FILE,
+        //files::MESSAGE_PATH . files::COUNTRY_FILE,
+        //files::IMPORT_COUNTRY_ISO,
+        //files::IMPORT_WIND_INVESTMENT,
+    ];
 
     /**
      * run some manual selected tests for faster debugging
@@ -109,7 +139,7 @@ class a_selected_test extends test_cleanup
 
         // run the selected unit tests
         //new system_tests()->run($this);
-        new import_tests()->run($this);
+        //new import_tests()->run($this);
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
@@ -139,8 +169,8 @@ class a_selected_test extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            new word_list_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
@@ -190,24 +220,20 @@ class a_selected_test extends test_cleanup
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
             //new import_write_tests()->run($t);
+            // import just the json files selected in SELECTED_IMPORT_FILES for a fast single-file cycle
             $imf = new import_file();
-            $ta = new all_unit_write_tests();
-            //$ta->import_test_files($usr);
-            //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
-            //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
-            //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::IP_BLACKLIST_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::TIME_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
-            //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
-            //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
-            //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
+            foreach (self::SELECTED_IMPORT_FILES as $import_file) {
+                $imf->json_file($import_file, $usr, false);
+            }
+
+
+            /*
+             * export
+             */
+
+            // export the data related to "nuclear" and "power" (e.g. the triple "nuclear power"
+            // and its values) to a pretty json file named after the phrases, e.g. nuclear_power.json
+            new json_io()->export_to_file($usr, ['nuclear', 'power'], test_paths::EXPORT);
 
 
             /*
@@ -255,7 +281,7 @@ class a_selected_test extends test_cleanup
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
-            new sys_log_write_tests()->run($this);
+            //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
             //new word_write_tests()->run($this);
@@ -294,7 +320,8 @@ class a_selected_test extends test_cleanup
 
             //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
-            new xbrl_write_tests()->run($this);
+            //new xbrl_write_tests()->run($this);
+            //new wikidata_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);
@@ -303,7 +330,7 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            //new word_url_tests()->run($this);
+            new word_url_tests()->run($this);
 
         }
 

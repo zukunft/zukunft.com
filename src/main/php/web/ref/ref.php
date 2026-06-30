@@ -41,7 +41,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -59,9 +61,11 @@ include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
@@ -119,6 +123,10 @@ class ref extends sandbox
             $this->description = $value;
         }
     }
+    // a cached number used for the default sorting and as an importance indicator of the reference
+    public ?float $impact = null;
+    // timestamp of the last successful update of the reference (as the api formatted text)
+    public ?string $last_update = null;
 
 
     /*
@@ -242,6 +250,16 @@ class ref extends sandbox
             $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
             $this->description = null;
+        }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            $this->impact = $json_array[json_fields::IMPACT];
+        } else {
+            $this->impact = null;
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $json_array)) {
+            $this->last_update = $json_array[json_fields::LAST_UPDATE];
+        } else {
+            $this->last_update = null;
         }
         return $msg->is_ok();
     }
@@ -396,7 +414,14 @@ class ref extends sandbox
      */
     function name_tip(): string
     {
-        return $this->type_name() . ' ' . $this->external_key();
+        $result = $this->type_name() . ' ' . $this->external_key();
+        if ($this->last_update != null) {
+            $result .= ', last update ' . $this->last_update;
+        }
+        if ($this->impact != null) {
+            $result .= ', impact ' . $this->impact;
+        }
+        return $result;
     }
 
     /**
@@ -407,15 +432,34 @@ class ref extends sandbox
         $html = new html_base();
         $url = $this->used_url();
         if ($url != null) {
-            return $html->url_ex(
+            $name = $html->url_ex(
                 $url,
                 $this->external_key(),
                 $this->type_name(),
                 $this->get_description()
             );
+            return $name . ' ' . $this->refresh_job_link($html);
         } else {
             return 'ERROR: url is null';
         }
+    }
+
+    /**
+     * a refresh icon shown behind every reference name (e.g. in the reference list of the
+     * default word view) that links to a job which reloads the referenced data from the source
+     * @param html_base $html the html creator passed in to avoid creating it twice
+     * @returns string the html code of the refresh icon with the link to the job creation
+     */
+    private function refresh_job_link(html_base $html): string
+    {
+        global $mtr;
+        // TODO point to the dedicated refresh-job creation once that job and its view exist;
+        //      for now the link only opens the async job view and does not yet create a real job
+        $url = $html->url_new(views::JOB_ASYNC_ID, $this->id());
+        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';
+        // reuse the small inline icon style of the page title edit icon so the refresh icon
+        // is shown in a reduced size on the same line as the reference name
+        return $html->ref($url, $icon, $mtr->txt(msg_id::RELOAD), styles::HEADING_ICON_INLINE);
     }
 
 

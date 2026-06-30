@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test word html components (zukunft.com)
+            test word html components - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -273,6 +273,7 @@
                         </option>
                     </select>
                 </div>
+                <input type="hidden" name="8py" value="1">
                 <br>
                 <div class="form-group col-md-4">
                     <label for="d_form_select_view">
@@ -296,6 +297,7 @@
                         </option>
                     </select>
                 </div>
+                <input type="hidden" name="8d" value="90">
                 <br>
                 <div class="form-group col-md-4">
                     <label for="view_long_form_select_view">
@@ -328,6 +330,7 @@
                         </option>
                     </select>
                 </div>
+                <input type="hidden" name="8d" value="90">
                 <br>
                 <button type="submit" class="btn btn-outline-success btn-space">
                     save
@@ -390,7 +393,7 @@
                 view header
             </h4>
             <h2>
-                <a href="/http/view.php?m=3&id=1&back=1" title="Rename word">
+                <a href="/http/view.php?m=3&id=1&back=1&8k=mathematics&8lp=&8o=Mathematics%20is%20an%20area%20of%20knowledge%20that%20includes%20the%20topics%20of%20numbers%20and%20formulas&8py=1" title="Rename word">
                     <span class="glyphicon glyphicon-pencil">
                         mathematics
                     </span>
@@ -401,12 +404,12 @@
                 parents of Zurich
             </h4>
             all:
-            <a href="/http/view.php?m=92&id=98">
-                Zurich (City)
+            <a href="/http/view.php?m=92&id=98" title="Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.">
+                Zurich (city)
             </a>
             ,
-            <a href="/http/view.php?m=92&id=99">
-                Zurich (Canton)
+            <a href="/http/view.php?m=92&id=99" title="The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.">
+                Zurich (canton)
             </a>
             ,
             <a href="/http/view.php?m=92&id=140">
@@ -416,12 +419,12 @@
             filtered by a phrase list:
             <br>
             two levels up:
-            <a href="/http/view.php?m=92&id=98">
-                Zurich (City)
+            <a href="/http/view.php?m=92&id=98" title="Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.">
+                Zurich (city)
             </a>
             ,
-            <a href="/http/view.php?m=92&id=99">
-                Zurich (Canton)
+            <a href="/http/view.php?m=92&id=99" title="The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.">
+                Zurich (canton)
             </a>
             ,
             <a href="/http/view.php?m=92&id=140">
@@ -429,7 +432,7 @@
             </a>
             <br>
             <h4>
-                children of City
+                children of city
             </h4>
             <br>
             <h4>
@@ -468,47 +471,64 @@
                 phrases related to Swiss franc
             </h4>
             symbols and aliases:
-            <a href="/http/view.php?m=92&id=235">
+            <a href="/http/view.php?m=92&id=234">
                 CHF is symbol for Swiss franc
             </a>
             <br>
-            categories:
-            <a href="/http/view.php?m=92&id=2398">
-                Swiss franc is a currency
+            children without categories:
+            <br>
+            <h4>
+                children of currency
+            </h4>
+            children:
+            <br>
+            <h4>
+                currencies are
+            </h4>
+            <a href="/http/view.php?m=90&id=267">
+                Euro
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=321" title="The currency of Switzerland and Liechtenstein.">
+                Swiss franc
+            </a>
+            ,
+            <a href="/http/view.php?m=90&id=268">
+                US dollar
             </a>
             <br>
             <h4>
-                aliases and symbols of US dollar
+                single child of currency
             </h4>
-            <span class="text-nowrap">
-                has
-                <a href="/http/view.php?m=91&id=18">
-                    aliases
-                </a>
-                :
-                <a href="/http/view.php?m=90&id=274">
-                    $
-                </a>
-                ,
-                <a href="/http/view.php?m=90&id=2427">
-                    U.S. dollar
-                </a>
-            </span>
+            child:
             <br>
-            <span class="text-nowrap">
-                has
-                <a href="/http/view.php?m=91&id=29">
-                    symbol
+            <h4>
+                <a href="/http/view.php?m=90&id=267">
+                    Euro
                 </a>
-                :
-                <a href="/http/view.php?m=90&id=259">
-                    USD
-                </a>
-            </span>
+                is a currency
+            </h4>
+            <br>
+            <h4>
+                aliases and symbols of Euro
+            </h4>
+            <span class="text-nowrap">has <a href="/http/view.php?m=91&id=18">alias</a>: <a href="/http/view.php?m=90&id=275">€</a></span>
+            <br>
+            <span class="text-nowrap">has <a href="/http/view.php?m=91&id=29">symbol</a>: <a href="/http/view.php?m=90&id=2427">EUR</a></span>
             <br>
             other related phrases:
-            <a href="/http/view.php?m=92&id=2842">
-                in USD
+            <a href="/http/view.php?m=92&id=2843">
+                in EUR
+            </a>
+            <br>
+            related phrases without subtitles:
+            <h6>
+                <a href="/http/view.php?m=91&id=32">
+                    in
+                </a>
+            </h6>
+            <a href="/http/view.php?m=90&id=2427">
+                EUR
             </a>
             <br>
             <h4>
@@ -536,7 +556,7 @@
                 formulas assigned to minute
             </h4>
             formulas:
-            <a href="/http/view.php?m=97&id=1">
+            <a href="/http/view.php?m=97&id=1" title="to convert times in minutes to seconds and the other way round">
                 scale minute to sec
             </a>
             <br>
@@ -556,14 +576,14 @@
                 <a href="/http/view.php?m=92&id=140">
                     Zurich Insurance
                 </a>
-                <a href="/http/view.php?m=value_edit&id=14057612">
+                <a href="/http/view.php?m=96&id=14057612">
                     123.46
                 </a>
                 <br>
                 <a href="/http/view.php?m=92&id=98" title="the city of Zurich">
-                    City of Zurich
+                    city of Zurich
                 </a>
-                <a href="/http/view.php?m=value_edit&id=14057570">
+                <a href="/http/view.php?m=96&id=14057570">
                     123.46
                 </a>
                 <br>

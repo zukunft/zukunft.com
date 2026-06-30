@@ -45,6 +45,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -189,6 +191,84 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set_name(word_names::TEST_ADD);
         return $wrd;
+    }
+
+    /**
+     * the url parameters posted by the 'Change word' edit form on save, used by the change_word
+     * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
+     * the share and protection ids are the defaults of a newly added word; the object id and the back
+     * target are added by the workflow step, not here
+     *
+     * @return array the edit form url parameters of the pending change
+     */
+    function change_url_array(): array
+    {
+        return [
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
+            url_var::PLURAL => '',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID,
+            // the '8'-prefixed opening db values so the confirm change view can show the old value;
+            // only the description differs from the new value, so the diff shows one changed row
+            url_var::PRE . url_var::NAME => word_names::TEST_ADD,
+            url_var::PRE . url_var::DESCRIPTION => word_names::TEST_ADD_COM,
+            url_var::PRE . url_var::PLURAL => ''
+        ];
+    }
+
+    /**
+     * the url parameters posted by the 'Change word' edit form when every field is filled, used by the
+     * change_word workflow 'fill' step to show every editable field in the confirm change view; the new
+     * values come from the all-fields-filled test word, the '8'-prefixed opening values are the state the
+     * word has after the first change_word round (e.g. the public share), so the confirm view shows the
+     * existing value of each changed field in the 'from' column (docs/llm/state-and-messages.md); the
+     * object id and the back target are added by the workflow step
+     *
+     * @return array the edit form url parameters with every field filled
+     */
+    function fill_url_array(): array
+    {
+        // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
+        // value of every editable url field without renaming the word the change_word workflow runs on
+        $wrd = new word_ui($this->word_filled_add()->api_json());
+        $url_arr = $wrd->to_url_array();
+        // the workflow step adds the current db id of the test word, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        // the '8'-prefixed opening values: the test word state after the first change_word round (only the
+        // description was changed there), so the confirm view shows the existing value e.g. the public
+        // share in the 'from' column next to the new group share
+        // the edit form sends the '8'-prefixed pre value for the name, description and plural text fields
+        // and for the share and protection selects, but not yet for the view, so the same set is built
+        // here; the values are the word state after the first change_word round (only the description was
+        // changed there) so the confirm view shows e.g. the public share in the 'from' column
+        $url_arr[url_var::PRE . url_var::NAME] = word_names::TEST_ADD;
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
+        $url_arr[url_var::PRE . url_var::PLURAL] = '';
+        $url_arr[url_var::PRE . url_var::SHARE] = share_types::PUBLIC_ID;
+        $url_arr[url_var::PRE . url_var::PROTECTION] = protection_types::NO_PROTECT_ID;
+        return $url_arr;
+    }
+
+    /**
+     * the url parameters posted by the 'Add word' form on save, used by the add_word workflow test to
+     * show the new word in the confirm add view (docs/llm/testing.md); the new word has no id yet, so
+     * unlike change_url_array there is no back target
+     * TODO Prio 2 create the array based on a object
+     *
+     * @return array the add form url parameters of the new word
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => word_names::TEST_ADD_COM,
+            url_var::PLURAL => '',
+            url_var::VIEW => '0',
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
     /**
@@ -405,6 +485,22 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::METRE_ID, word_names::METRE);
+        return $wrd;
+    }
+
+    function joule(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::JOULE_ID, word_names::JOULE);
+        $wrd->description = word_names::JOULE_COM;
+        return $wrd;
+    }
+
+    function kg(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::KG_ID, word_names::KG);
+        $wrd->description = word_names::KG_COM;
         return $wrd;
     }
 
@@ -982,6 +1078,54 @@ class test_words extends test_objects
         $t_phr = new test_phrases($this->env);
         $wrd = new word_ui($this->us_dollar()->api_json());
         $wrd->phr_lst = $t_phr->list_us_dollar_related_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word the "€" euro sign word, the euro equivalent of word_dollar ("$")
+     */
+    function word_euro_sign(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::EURO_SIGN_ID, word_names::EURO_SIGN);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "Euro" word with its related phrases (alias, symbol, in EUR and the
+     * "is a currency" triple) - the euro equivalent of us_dollar_related_ui
+     */
+    function euro_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->euro()->api_json());
+        $wrd->phr_lst = $t_phr->list_euro_related_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "currency" word with its related phrases, used to show the
+     * children (subclasses) of the word, e.g. "Euro" and "Swiss franc" are a currency
+     */
+    function currency_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->currency()->api_json());
+        $wrd->plural = word_names::CURRENCIES;
+        $wrd->phr_lst = $t_phr->list_currency_ui();
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the "currency" word with a single child, used to show the
+     * single-child case of the "children of word" component, e.g. "Euro is a currency"
+     */
+    function single_currency_related_ui(): word_ui
+    {
+        $t_phr = new test_phrases($this->env);
+        $wrd = new word_ui($this->currency()->api_json());
+        $wrd->plural = word_names::CURRENCIES;
+        $wrd->phr_lst = $t_phr->list_single_currency_ui();
         return $wrd;
     }
 

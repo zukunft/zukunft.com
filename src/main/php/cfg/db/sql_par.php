@@ -165,6 +165,7 @@ class sql_par
             }
         }
         if ($unique) {
+            // TODO Prio 0 unique including keys
             $this->par = array_unique(array_merge($this->par, $qp->par));
         } else {
             $this->par = array_merge($this->par, $qp->par);

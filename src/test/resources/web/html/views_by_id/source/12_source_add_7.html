@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Add new source Federal Statistical Office (zukunft.com)
+            Federal Statistical Office - Add new source - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Add a new source
             </h4>
             <form action="/http/view.php" id="source_add">
-                <input class="form-control" type="hidden" name="mask" id="m" value="12">
+                <input class="form-control" type="hidden" name="m" id="mask" value="12">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="back" id="9" value="0">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="Federal Statistical Office">
+                        <input class="form-control" type="text" name="k" id="name" value="Federal Statistical Office">
                     </div>
+                    <input type="hidden" name="8k" value="Federal Statistical Office">
                     <div class="form-group col-md-4">
                         <label for="st_form_select_source_type">
                             Source type
@@ -175,19 +175,20 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="ur">
+                        <label for="url">
                             URL
                         </label>
-                        <input class="form-control" type="text" name="URL" id="ur" value="https://www.bfs.admin.ch/bfs/en/home.html">
+                        <input class="form-control" type="text" name="ur" id="url" value="https://www.bfs.admin.ch/bfs/en/home.html">
                     </div>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
+                        <input class="form-control" type="text" name="o" id="description" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
                     </div>
+                    <input type="hidden" name="8o" value="The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -231,6 +232,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="3">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -250,13 +252,14 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="2">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=93" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

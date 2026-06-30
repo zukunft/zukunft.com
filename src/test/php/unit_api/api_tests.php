@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -141,6 +143,7 @@ class api_tests
         //$t->assert_api_get(phrase::class);
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
         $t->assert_api_get(value::class, values::PI_ID);
+        $t->assert_api_get(group::class, groups::CH_2019_MIO);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_names::SCALE_TO_SEC);
         $t->assert_api_get(view::class);

@@ -64,6 +64,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -150,8 +152,8 @@ class sandbox_link_named extends sandbox_link
                     $this->set_name($db_row[$name_fld]);
                 }
             }
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[fields::FLD_DESCRIPTION];
             }
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
@@ -366,7 +368,7 @@ class sandbox_link_named extends sandbox_link
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -838,7 +840,7 @@ class sandbox_link_named extends sandbox_link
             parent::db_all_fields_link($sc_par_lst),
             [
                 $this->name_field(),
-                sql_db::FLD_DESCRIPTION
+                fields::FLD_DESCRIPTION
             ]);
     }
 

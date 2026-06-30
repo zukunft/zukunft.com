@@ -91,6 +91,8 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -118,6 +120,8 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 
 class source extends sandbox_code_id
 {
@@ -130,11 +134,10 @@ class source extends sandbox_code_id
     const string TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
 
     // forward the const string to enable usage of $this::CONST_NAME
-    const string FLD_ID = source_db::FLD_ID;
+    const string FLD_ID = source_fields::FLD_ID;
     const array FLD_NAMES = source_db::FLD_NAMES;
     const array FLD_NAMES_USR = source_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = source_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = source_db::ALL_SANDBOX_FLD_NAMES;
     const array FLD_LST_MUST_BE_IN_STD = source_db::FLD_LST_MUST_BE_IN_STD;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = source_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = source_db::FLD_LST_USER_CAN_CHANGE;
@@ -191,14 +194,14 @@ class source extends sandbox_code_id
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = source_db::FLD_ID,
-        string $name_fld = source_db::FLD_NAME,
-        string $type_fld = source_db::FLD_TYPE
+        string $id_fld = source_fields::FLD_ID,
+        string $name_fld = source_fields::FLD_NAME,
+        string $type_fld = source_fields::FLD_TYPE
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            $this->url = $db_row[source_db::FLD_URL];
+            $this->url = $db_row[fields::FLD_URL];
         }
         return $result;
     }
@@ -453,7 +456,7 @@ class source extends sandbox_code_id
 
     function name_field(): string
     {
-        return source_db::FLD_NAME;
+        return source_fields::FLD_NAME;
     }
 
     /**
@@ -470,7 +473,7 @@ class source extends sandbox_code_id
 
     function all_sandbox_fields(): array
     {
-        return source_db::ALL_SANDBOX_FLD_NAMES;
+        return source_fields::ALL_NAMES;
     }
 
 
@@ -597,8 +600,8 @@ class source extends sandbox_code_id
         return array_merge(
             parent::db_fields_all(),
             [
-                source_db::FLD_TYPE,
-                source_db::FLD_URL,
+                source_fields::FLD_TYPE,
+                fields::FLD_URL,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -628,13 +631,13 @@ class source extends sandbox_code_id
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . source_fields::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                source_db::FLD_TYPE,
+                source_fields::FLD_TYPE,
                 $this->type_id(),
                 type_object::FLD_ID_SQL_TYP,
                 $obj->type_id()
@@ -643,13 +646,13 @@ class source extends sandbox_code_id
         if ($obj->url !== $this->url) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
-                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_URL),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_URL,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                source_db::FLD_URL,
+                fields::FLD_URL,
                 $this->url,
                 source_db::FLD_URL_SQL_TYP,
                 $obj->url

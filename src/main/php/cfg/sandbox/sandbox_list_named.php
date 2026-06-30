@@ -71,6 +71,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
@@ -108,6 +109,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -284,7 +286,7 @@ class sandbox_list_named extends sandbox_list
     function load_sql_by_code_id_list(
         sql_creator $sc,
         array       $code_id_lst,
-        string      $fld = sql_db::FLD_CODE_ID
+        string      $fld = fields::FLD_CODE_ID
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'code_ids');

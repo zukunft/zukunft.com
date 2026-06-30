@@ -52,6 +52,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -152,6 +153,17 @@ class sandbox extends db_object
         return $usr_msg;
     }
 
+    /**
+     * @return array parent url array extended with the share and protection of this sandbox object
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::SHARE] = $this->share_id;
+        $url_array[url_var::PROTECTION] = $this->protection_id;
+        return $url_array;
+    }
+
     function view_id(): ?int
     {
         return $this->view_id;
@@ -208,6 +220,27 @@ class sandbox extends db_object
 
 
     /*
+     * load
+     */
+
+    /**
+     * add the user to the load of the user sandbox object e.g. word by id via api
+     * TODO Prio 1 add user_message as parameter
+     * @param int|string $id the database id of the object that should be loaded
+     * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool
+     */
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    {
+        if ($usr_id > 0) {
+            $data[url_var::USER] = $usr_id;
+        }
+        return parent::load_by_id($id, $data, $usr_id);
+    }
+
+
+    /*
      * selectors
      */
 
@@ -234,6 +267,7 @@ class sandbox extends db_object
     }
 
     /**
+     * TODO Prio 0 make sure that all selectors create a hidden form field with the original values
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
@@ -246,7 +280,13 @@ class sandbox extends db_object
             $used_share_id = $typ_lst->shr_typ->default_id();
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            return $typ_lst->shr_typ->selector($form, $used_share_id);
+            // also send the opening share id as the '8'-prefixed pre value so the confirm view can show
+            // the existing share and detect whether the user actually changed it (see url_var::PRE);
+            // a re-render after a save error keeps the original db snapshot via pre_value
+            $html = new html_base();
+            $pre_share = $this->pre_value(url_var::SHARE) ?? (string)$used_share_id;
+            return $typ_lst->shr_typ->selector($form, $used_share_id)
+                . $html->form_hidden(url_var::PRE . url_var::SHARE, $pre_share);
         } else {
             return '';
         }
@@ -265,7 +305,13 @@ class sandbox extends db_object
             $used_protection_id = $typ_lst->ptc_typ->default_id();
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            return $typ_lst->ptc_typ->selector($form, $used_protection_id);
+            // also send the opening protection id as the '8'-prefixed pre value so the confirm view can
+            // show the existing protection and detect whether the user changed it (see url_var::PRE);
+            // a re-render after a save error keeps the original db snapshot via pre_value
+            $html = new html_base();
+            $pre_protection = $this->pre_value(url_var::PROTECTION) ?? (string)$used_protection_id;
+            return $typ_lst->ptc_typ->selector($form, $used_protection_id)
+                . $html->form_hidden(url_var::PRE . url_var::PROTECTION, $pre_protection);
         } else {
             return '';
         }

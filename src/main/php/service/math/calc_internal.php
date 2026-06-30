@@ -98,6 +98,9 @@ class calc_internal
                 $result = substr($result, 1);
             }
 
+            // reduce sign pairs e.g. "+ -9" to "- 9" before the calculation is started
+            $result = $this->combine_signs($result);
+
             $result = $this->math_if($result);
             log_debug("math_parse after if:" . $result);
             $result = $this->math_bracket($result);
@@ -176,6 +179,54 @@ class calc_internal
 
         log_debug($pos);
         return $pos;
+    }
+
+    /**
+     * like pos_separator, but returns the position of the LAST top-level separator instead of the first
+     * needed so that left-associative operators (subtraction, division) are evaluated correctly:
+     * "a - b - c" must be read as "(a - b) - c", which means splitting at the last "-", not the first
+     * (splitting at the first "-" would wrongly compute "a - (b - c)")
+     * @returns int the position of the last separator at bracket level 0, or -1 if not found
+     */
+    private function pos_separator_last(string $formula, string $separator, int $start_pos): int
+    {
+        $pos = $start_pos;
+        $text_linked = False;  // do not look at text in high quotes
+        $open_brackets = 0;    // number of brackets open
+        $last = -1;            // position of the last separator found
+
+        while ($pos <= strlen($formula)) {
+            // don't look into text that is in high quotes
+            if ($open_brackets == 0) {
+                if (substr($formula, $pos, strlen(chars::TXT_FIELD)) == chars::TXT_FIELD) {
+                    if ($text_linked) {
+                        $text_linked = False;
+                    } else {
+                        $text_linked = True;
+                    }
+                }
+            }
+
+            // remember the separator only at the top bracket level and outside text
+            if (!$text_linked) {
+                if ($open_brackets == 0) {
+                    if (substr($formula, $pos, strlen($separator)) == $separator) {
+                        $last = $pos;
+                    }
+                }
+                if (substr($formula, $pos, strlen(chars::BRACKET_OPEN)) == chars::BRACKET_OPEN) {
+                    $open_brackets = $open_brackets + 1;
+                }
+                if (substr($formula, $pos, strlen(chars::BRACKET_CLOSE)) == chars::BRACKET_CLOSE && $open_brackets > 0) {
+                    $open_brackets = $open_brackets - 1;
+                }
+            }
+
+            $pos = $pos + 1;
+        }
+
+        log_debug($last);
+        return $last;
     }
 
 
@@ -484,7 +535,15 @@ class calc_internal
         } else {
 
 
-            $pos = $this->pos_separator($result, $operator, strlen($operator));
+            // subtraction and division are left-associative ("a - b - c" = "(a - b) - c"),
+            // so split at the last operator and recurse on the left; addition and
+            // multiplication are associative, so the first operator is fine and kept as before
+            // TODO Prio 1 review
+            if ($operator == chars::SUB or $operator == chars::DIV) {
+                $pos = $this->pos_separator_last($result, $operator, strlen($operator));
+            } else {
+                $pos = $this->pos_separator($result, $operator, strlen($operator));
+            }
             // echo $formula.": ".$pos." of ".$operator."<br>";
             // echo substr($result, $pos - 1, 1)."<br>";
             // if ($pos > 1 && has_operator(substr($result, $pos - 1, 1)) == false) {
@@ -564,6 +623,27 @@ class calc_internal
     private function math_sub(string $formula): string
     {
         return $this->calc($formula, chars::SUB);
+    }
+
+    /**
+     * combine a binary operator directly followed by the sign of the next number into a single operator
+     * so that e.g. "4 + -9" is calculated as "4 - 9" and "4 - -9" as "4 + 9"
+     * this runs before the calculation is started, because a sum formula with a negative input
+     * (e.g. GDP = consumption + investment + government spending + net exports) produces "+ -" pairs
+     * @param string $formula the math expression that may contain a "+ -", "- -", "+ +" or "- +" sign pair
+     * @returns string the expression with each sign pair reduced to a single "+" or "-" operator
+     */
+    private function combine_signs(string $formula): string
+    {
+        $result = preg_replace_callback(
+            '/\s*([+\-])\s*([+\-])\s*(?=\d)/',
+            function (array $match): string {
+                $sign = ($match[1] === $match[2]) ? chars::ADD : chars::SUB;
+                return ' ' . $sign . ' ';
+            },
+            $formula
+        );
+        return $result ?? $formula;
     }
 
     /**

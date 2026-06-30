@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'views.php';
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -49,8 +50,11 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -103,7 +107,10 @@ class system_views_read_tests
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1, $cfg);
-        //$t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), 1, $cfg);
+        $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::MATH_CONST_ID, $cfg);
+        $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::PI_ID, $cfg);
+        $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::SPEED_OF_LIGHT_ID, $cfg);
+        $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::CANTON_ZURICH_ID, $cfg);
         $t->assert_view(views::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
         $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1, $cfg);
         $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1, $cfg);
@@ -115,9 +122,14 @@ class system_views_read_tests
         // REF
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
         // VALUE
+        // PI (3.14) is the example for the related-phrase links and the grey value of the "Value title" component
+        $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::PI_ID, $cfg);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
+        // increase is the example for the assigned-phrase subtitle of the "Formula title" component
+        $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::INCREASE_ID, $cfg);
+        $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::CITY_POPULATION_ID, $cfg);
         $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
         $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1, $cfg);
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);
@@ -148,7 +160,7 @@ class system_views_read_tests
         $t->header($ts);
 
         $html = new html_base();
-        $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
+        $target = htmlspecialchars(trim('<title>Header test - zukunft.com</title>'));
         $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
 

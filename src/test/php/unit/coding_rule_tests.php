@@ -85,19 +85,11 @@ class coding_rule_tests
 
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
-        $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
-        $obj_upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$obj_upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_OBJECTS, $md_txt);
-        }
+        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS);
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
-        $doc_txt = file_get_contents(test_files::DOCS_FUNCTIONS);
-        $fnc_upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$fnc_upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_FUNCTIONS, $md_txt);
-        }
+        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS);
 
         $this->php_class_name_check($t);
 
@@ -120,6 +112,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
+
+        $t->subheader($ts . 'path consts');
+        $this->php_path_const_tests($t);
 
     }
 
@@ -214,11 +209,7 @@ class coding_rule_tests
     {
         $test_name = 'check that the object name exceptions doc is updated';
         $md_txt = $this->php_class_name_exceptions();
-        $doc_txt = file_get_contents(test_files::DOCS_NAME_EXCEPTIONS);
-        $upd = $t->assert($test_name, $md_txt, $doc_txt);
-        if (!$upd and test_files::AUTO_UPDATE_TEST_FILES) {
-            $t->update_path_file(test_files::DOCS_NAME_EXCEPTIONS, $md_txt);
-        }
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS);
     }
 
     /**
@@ -591,6 +582,68 @@ class coding_rule_tests
                     $test_name = 'web/ must read the user config from $ui_sys->cfg'
                         . ' but found new config() in ' . $code_file . ':' . ($line_idx + 1);
                     $t->assert($test_name, '', $line);
+                }
+            }
+        }
+    }
+
+    /**
+     * check that no php file extends a path const with an inline directory string literal:
+     * every directory is a const in one of the three paths.php files (cfg / web / test) and a longer
+     * path is composed from those consts (docs/llm/constants.md); only a leaf file name may stay
+     * inline, so a string literal ending in '/' next to a *paths:: const is the flagged violation
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces no assertions
+     *
+     * positive (test fires when it should): "test_paths::HTML . 'workflow/'" flags the rule violation
+     * negative (test tolerates good code): "paths::DB . 'sql_db.php'" (a leaf file name) passes, and
+     *     the three const/paths.php files are skipped because they are the home of the path consts
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_path_const_tests(test_cleanup $t): void
+    {
+        // a *paths:: const concatenated with a directory literal (a quoted string ending in '/'),
+        // in either order; the quote may be a single or double quote
+        $const = '[a-zA-Z_]*paths::[A-Z_]+';
+        $dir = '[\'"][^\'"]*/[\'"]';
+        $pattern = '#' . $const . '\s*\.\s*' . $dir . '|' . $dir . '\s*\.\s*' . $const . '#';
+        foreach ([paths::PHP_LIB, TEST_PHP_PATH] as $base_path) {
+            $this->php_path_const_scan($t, $base_path, $pattern);
+        }
+    }
+
+    /**
+     * scan every php file under $base_path and assert one failure per inline directory path violation;
+     * the three const/paths.php files (the allowed home of the path consts) are skipped
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::PHP_LIB
+     * @param string $pattern the regex matching a *paths:: const next to an inline directory literal
+     * @return void
+     */
+    private function php_path_const_scan(test_cleanup $t, string $base_path, string $pattern): void
+    {
+        $lib = new library();
+        $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        foreach ($code_files as $code_file) {
+            if (str_ends_with(str_replace('\\', '/', $code_file), 'const/paths.php')) {
+                continue;
+            }
+            $ctrl_code = file($base_path . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                // skip comment lines so a docblock that cites the anti-pattern is not flagged
+                $head = ltrim($line);
+                if ($head === '' or $head[0] === '*' or $head[0] === '#'
+                    or str_starts_with($head, '//') or str_starts_with($head, '/*')) {
+                    continue;
+                }
+                if (preg_match($pattern, $line)) {
+                    $test_name = 'a directory must be a paths.php const, not an inline string,'
+                        . ' but found one in ' . $code_file . ':' . ($line_idx + 1);
+                    $t->assert($test_name, '', trim($line));
                 }
             }
         }

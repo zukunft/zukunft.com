@@ -111,7 +111,7 @@ class triple_names
     const int SYSTEM_TEST_ADD_USAGE = 12;
     const float SYSTEM_TEST_ADD_IMPACT = 23.4;
     const string SYSTEM_TEST_RENAMED = 'System Test Triple renamed';
-    const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
+    const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the city of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
 
     // triple used in the default start view
@@ -153,21 +153,21 @@ class triple_names
     const int SECOND_ID = 20;
     const string TN_CUBIC_METER = 'm3';
 
-    const string CANTON_ZURICH = 'Zurich (Canton)';
+    const string CANTON_ZURICH = 'Zurich (canton)';
     const int CANTON_ZURICH_ID = 99;
-    const string CITY_ZH = 'Zurich (City)';
+    const string CITY_ZH = 'Zurich (city)';
     const int CITY_ZH_ID = 98;
-    const string CITY_ZH_NAME = 'City of Zurich';
+    const string CITY_ZH_NAME = 'city of Zurich';
     const string CITY_ZH_COM = 'the city of Zurich';
-    const string CITY_BE = 'Bern (City)';
+    const string CITY_BE = 'Bern (city)';
     const int CITY_BE_ID = 100;
-    const string CITY_GE = 'Geneva (City)';
+    const string CITY_GE = 'Geneva (city)';
     const int CITY_GE_ID = 101;
-    const string CANTON_ZURICH_NAME = 'Canton Zurich';
+    const string CANTON_ZURICH_NAME = 'canton Zurich';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
-    const int CHF_SYMBOL_ID = 235;
+    const int CHF_SYMBOL_ID = 234;
     const int US_DOLLAR_ID = 123;
     const int EURO_ID = 122;
     const string USD_SYMBOL = "USD is symbol for US dollar";
@@ -178,6 +178,12 @@ class triple_names
     const int U_S_DOLLAR_ALIAS_ID = 2847;
     const string IN_USD = "in USD";
     const int IN_USD_ID = 2842;
+    const string EUR_SYMBOL = "EUR is symbol for Euro";
+    const int EUR_SYMBOL_ID = 2845;
+    const string EURO_SIGN_ALIAS = "€ is alias of Euro";
+    const int EURO_SIGN_ALIAS_ID = 2844;
+    const string IN_EUR = "in EUR";
+    const int IN_EUR_ID = 2843;
     const string COMPANY_VESTAS = "Vestas SA";
     const int COMPANY_VESTAS_ID = 142;
     const string COMPANY_ABB = "ABB (company)";

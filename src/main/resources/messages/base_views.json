@@ -18,6 +18,24 @@
       "code_id": "title_of_named_with_edit_link_word"
     },
     {
+      "name": "Triple title",
+      "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
+      "type": "title_of_triple_with_edit_link",
+      "code_id": "title_of_triple_with_edit_link_triple"
+    },
+    {
+      "name": "Formula title",
+      "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
+      "type": "title_of_formula_with_edit_link",
+      "code_id": "title_of_formula_with_edit_link_formula"
+    },
+    {
+      "name": "Value title",
+      "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
+      "type": "title_of_value_with_edit_link",
+      "code_id": "title_of_value_with_edit_link_value"
+    },
+    {
       "name": "spreadsheet",
       "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
@@ -25,6 +43,11 @@
     {
       "name": "Expression",
       "type": "expression"
+    },
+    {
+      "name": "Expression with links",
+      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
+      "type": "expression_latex_link"
     },
     {
       "name": "Verb",
@@ -80,6 +103,11 @@
       "name": "related values",
       "description": "show the most relevant and related values",
       "type": "values_related"
+    },
+    {
+      "name": "values by triple",
+      "description": "show the most relevant values where this triple is used",
+      "type": "values_by_triple"
     },
     {
       "name": "value chart",
@@ -195,6 +223,13 @@
       "code_id": "list_phrases_related_ex_subtitle"
     },
     {
+      "name": "system sub title description",
+      "description": "show the language specific sub title for the description column",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_description",
+      "ui_msg_code_id": "system_sub_title_description"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -254,7 +289,7 @@
     },
     {
       "name": "view tab box",
-      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
       "type": "view_tab_box",
       "code_id": "view_tab_box_word"
     }
@@ -272,26 +307,27 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "system sub title description",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "system show field plural",
+          "name": "system show field description",
           "position_type": "combine"
         },
         {
           "position": "4",
-          "name": "phrase aliases",
+          "name": "system show field plural",
           "position_type": "combine"
         },
         {
           "position": "5",
-          "name": "phrase symbols",
+          "name": "phrase aliases",
           "position_type": "combine"
         },
         {
           "position": "6",
-          "name": "related phrases without subtitles",
+          "name": "phrase symbols",
           "position_type": "combine"
         },
         {
@@ -301,42 +337,48 @@
         },
         {
           "position": "8",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
         },
         {
           "position": "9",
-          "name": "value chart",
+          "name": "system sub title references",
           "position_type": "combine"
         },
         {
           "position": "10",
-          "name": "related values",
+          "name": "ref list word",
           "position_type": "combine"
         },
         {
           "position": "11",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "12",
-          "name": "formula list",
+          "name": "value chart",
           "position_type": "combine"
         },
         {
           "position": "13",
-          "name": "view tab box",
-          "position_type": "side_or_last_below"
+          "name": "related values",
+          "position_type": "combine"
         },
         {
           "position": "14",
-          "name": "system sub title references"
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
         },
         {
           "position": "15",
-          "name": "ref list word",
+          "name": "formula list",
           "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -364,11 +406,67 @@
       "components": [
         {
           "position": "1",
-          "name": "triple name"
+          "name": "Triple title"
         },
         {
           "position": "2",
-          "name": "related values"
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "10",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "12",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -428,27 +526,58 @@
       "components": [
         {
           "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
           "name": "main value"
         }
       ]
     },
     {
-      "name": "Formula",
+      "name": "Formula (default)",
       "description": "Show a formula and the related results and words",
       "code_id": "formula_default",
       "type": "formula",
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "Formula title"
         },
         {
           "position": "2",
-          "name": "Expression"
+          "name": "Expression with links",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "related results"
+          "name": "system sub title description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
         }
       ],
       "assigned": [

@@ -1,0 +1,356 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "populism",
+    "disinformation",
+    "social media",
+    "statistics"
+  ],
+  "description": "Most relevant base data around populism, disinformation and the documented risks of social media and the internet, drawn from published science: the share of the world population using the internet and social media (DataReportal 2024) derived by formula and reproduced in the calc-validation block, the finding that false news is about 70 percent more likely to be retweeted than the truth (Vosoughi, Roy and Aral, Science 2018), and the 230 percent rise in the usage of 'brain rot' (Oxford Word of the Year 2024). The concept triples capture studied relations (social media can cause disinformation, brain rot and polarization; disinformation can cause ignorance and influences populism) using the directed 'can cause' and 'influences' verbs. Base words owned by other files (world, population, percent, person, share) are re-declared name-only so the import does not overwrite their canonical description; the topic-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "populism",
+      "description": "a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.",
+      "refs": [
+        {
+          "name": "Populism",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "disinformation",
+      "description": "false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.",
+      "refs": [
+        {
+          "name": "Disinformation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "misinformation",
+      "description": "false or inaccurate information that is spread regardless of an intent to deceive.",
+      "refs": [
+        {
+          "name": "Misinformation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "false news",
+      "description": "false or misleading information presented as news, often to damage a reputation or for political or financial gain.",
+      "refs": [
+        {
+          "name": "Fake_news",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "agnotology",
+      "description": "the study of culturally induced ignorance or doubt, particularly through the publication of inaccurate or misleading data.",
+      "refs": [
+        {
+          "name": "Agnotology",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "brain rot",
+      "description": "the supposed deterioration of a person's mental state from the overconsumption of trivial or unchallenging online material.",
+      "refs": [
+        {
+          "name": "Brain_rot",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "social media",
+      "description": "interactive technologies that let people create and share content and form networks through virtual communities.",
+      "refs": [
+        {
+          "name": "Social_media",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "internet",
+      "description": "the global system of interconnected computer networks that links devices and people worldwide.",
+      "refs": [
+        {
+          "name": "Internet",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "polarization",
+      "description": "the division of public opinion into two sharply contrasting and opposing groups.",
+      "refs": [
+        {
+          "name": "Political_polarization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ignorance",
+      "description": "a lack of knowledge, understanding, or information about something.",
+      "refs": [
+        {
+          "name": "Ignorance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "virality",
+      "description": "the tendency of a piece of information to be circulated rapidly and widely from one user to another.",
+      "refs": [
+        {
+          "name": "Viral_phenomenon",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "description": "a person who uses a computer, network, or online service.",
+      "refs": [
+        {
+          "name": "User_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "usage",
+      "description": "how frequently a word, term, or service is used"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "false news",
+      "verb": "kind of",
+      "to": "misinformation"
+    },
+    {
+      "from": "disinformation",
+      "verb": "kind of",
+      "to": "misinformation"
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "disinformation"
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "brain rot"
+    },
+    {
+      "from": "social media",
+      "verb": "can cause",
+      "to": "polarization"
+    },
+    {
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "ignorance"
+    },
+    {
+      "from": "disinformation",
+      "verb": "influences",
+      "to": "populism"
+    },
+    {
+      "name": "internet user",
+      "from": "user",
+      "verb": "of",
+      "to": "internet"
+    },
+    {
+      "name": "social media user",
+      "from": "user",
+      "verb": "of",
+      "to": "social media"
+    },
+    {
+      "name": "internet share",
+      "from": "share",
+      "verb": "of",
+      "to": "internet",
+      "description": "the share of the world population that uses the internet"
+    },
+    {
+      "name": "social media share",
+      "from": "share",
+      "verb": "of",
+      "to": "social media",
+      "description": "the share of the world population that uses social media"
+    }
+  ],
+  "sources": [
+    {
+      "name": "DataReportal Digital 2024",
+      "description": "DataReportal, We Are Social and Meltwater, Digital 2024 Global Overview Report: about 5.35 billion internet users and 5.04 billion social media user identities against a world population of about 8.08 billion.",
+      "url": "https://datareportal.com/global-digital-overview"
+    },
+    {
+      "name": "Vosoughi Roy Aral 2018 Science",
+      "description": "Vosoughi S, Roy D, Aral S (2018). The spread of true and false news online. Science 359:1146-1151. False news spread significantly farther, faster and deeper than the truth and was about 70 percent more likely to be retweeted.",
+      "url": "https://doi.org/10.1126/science.aap9559"
+    },
+    {
+      "name": "Oxford Word of the Year 2024",
+      "description": "Oxford University Press (2024). 'Brain rot' named Oxford Word of the Year 2024; its usage rose 230 percent between 2023 and 2024.",
+      "url": "https://corp.oup.com/word-of-the-year/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "world",
+        "internet user",
+        "2024",
+        "person"
+      ],
+      "number": "5350000000",
+      "source": "DataReportal Digital 2024"
+    },
+    {
+      "words": [
+        "world",
+        "social media user",
+        "2024",
+        "person"
+      ],
+      "number": "5040000000",
+      "source": "DataReportal Digital 2024"
+    },
+    {
+      "words": [
+        "world",
+        "population",
+        "2024",
+        "person"
+      ],
+      "number": "8080000000",
+      "source": "DataReportal Digital 2024"
+    },
+    {
+      "words": [
+        "world",
+        "internet share",
+        "percent"
+      ],
+      "number": "66.21287128712871"
+    },
+    {
+      "words": [
+        "world",
+        "social media share",
+        "percent"
+      ],
+      "number": "62.37623762376238"
+    },
+    {
+      "words": [
+        "false news",
+        "virality",
+        "percent"
+      ],
+      "number": "70",
+      "source": "Vosoughi Roy Aral 2018 Science"
+    },
+    {
+      "words": [
+        "brain rot",
+        "usage",
+        "2024",
+        "percent"
+      ],
+      "number": "230",
+      "source": "Oxford Word of the Year 2024"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "internet share (formula)",
+      "expression": "\"internet share\" = \"internet user\" / \"population\" * 100",
+      "assigned": [
+        "world"
+      ]
+    },
+    {
+      "name": "social media share (formula)",
+      "expression": "\"social media share\" = \"social media user\" / \"population\" * 100",
+      "assigned": [
+        "world"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "world",
+        "internet user",
+        "population",
+        "2024",
+        "person"
+      ],
+      "formula": "internet share (formula)",
+      "words": [
+        "world",
+        "internet share",
+        "percent"
+      ],
+      "number": "66.21287128712871",
+      "note": "5350000000 / 8080000000 * 100"
+    },
+    {
+      "context": [
+        "world",
+        "social media user",
+        "population",
+        "2024",
+        "person"
+      ],
+      "formula": "social media share (formula)",
+      "words": [
+        "world",
+        "social media share",
+        "percent"
+      ],
+      "number": "62.37623762376238",
+      "note": "5040000000 / 8080000000 * 100"
+    }
+  ]
+}

@@ -68,6 +68,8 @@ include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_db.php';
@@ -82,6 +84,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class user_db extends db_object_seq_id
 {
@@ -105,10 +109,9 @@ class user_db extends db_object_seq_id
     const string FLD_PASSWORD = 'password';
     // description and type
     const string FLD_DESCRIPTION_COM = 'for system users the description to explain the profile to human users';
-    const string FLD_CODE_ID_COM = 'to select e.g. the system batch user';
-    const string FLD_CODE_ID = 'code_id';
     const string FLD_PROFILE_COM = 'to define the user roles and read and write rights';
     const string FLD_PROFILE = 'user_profile_id';
+    const string FLD_CODE_ID_COM = 'to select e.g. the system batch user';
     const string FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
     const string FLD_TYPE_ID = 'user_type_id';
     const string FLD_EXCLUDED_COM = 'true if the user is deactivated but cannot be deleted due to log entries';
@@ -141,7 +144,6 @@ class user_db extends db_object_seq_id
     const string FLD_TERM_COM = 'the last term that the user had used';
     const string FLD_TERM = 'term_id';
     const string FLD_VIEW_COM = 'the last mask that the user has used';
-    const string FLD_VIEW = 'view_id';
     const string FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
     const string FLD_SOURCE = 'source_id';
     const string FLD_STATUS_COM = 'e.g. to exclude inactive users';
@@ -168,19 +170,19 @@ class user_db extends db_object_seq_id
         self::FLD_LAST_LOGOUT,
 
         self::FLD_PROFILE,
-        sql_db::FLD_CODE_ID,
+        fields::FLD_CODE_ID,
         self::FLD_TYPE_ID,
         self::FLD_LEVEL,
         self::FLD_STATUS,
-        sql_db::FLD_EXCLUDED,
+        fields::FLD_EXCLUDED,
 
         self::FLD_CREATED,
-        sql_db::FLD_DESCRIPTION,
+        fields::FLD_DESCRIPTION,
         self::FLD_FIRST_NAME,
         self::FLD_LAST_NAME,
 
         self::FLD_TERM,
-        self::FLD_VIEW,
+        fields::FLD_VIEW,
         self::FLD_SOURCE,
 
         // TODO to be added
@@ -188,13 +190,13 @@ class user_db extends db_object_seq_id
     );
     // the database field names excluding the id and the fields for logon
     const array FLD_NAMES_LIST = array(
-        sql_db::FLD_CODE_ID,
+        fields::FLD_CODE_ID,
         self::FLD_IP_ADDR,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,
         self::FLD_LAST_NAME,
         self::FLD_TERM,
-        self::FLD_VIEW,
+        fields::FLD_VIEW,
         self::FLD_SOURCE,
         self::FLD_PROFILE
     );
@@ -206,11 +208,11 @@ class user_db extends db_object_seq_id
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
         [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
         // description and type
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [fields::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
-        [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
+        [fields::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
         // online verification
         [self::FLD_EMAIL, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_COM],
@@ -223,15 +225,15 @@ class user_db extends db_object_seq_id
         // offline verification
         [self::FLD_FIRST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_LAST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple_db::FLD_ID],
-        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple_db::FLD_ID],
+        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple_fields::FLD_ID],
+        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple_fields::FLD_ID],
         [self::FLD_GEO_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
         [self::FLD_OFFICIAL_ID, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_OFFICIAL_ID_COM],
         [self::FLD_OFFICIAL_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
         [self::FLD_OFFICIAL_ID_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
         // settings
         [self::FLD_TERM, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TERM_COM],
-        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
+        [fields::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
         [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
         [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', user_status::class, self::FLD_STATUS_COM],
         [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],

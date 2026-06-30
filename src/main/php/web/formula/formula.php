@@ -50,12 +50,14 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::FORMULA . 'expression.php';
 //include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -85,11 +87,15 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -110,6 +116,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula extends sandbox_code_id
 {
@@ -142,6 +150,14 @@ class formula extends sandbox_code_id
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
     // the impact used to sort the triples
     public float $impact = 0.0;
+
+    // the phrases this formula is assigned to; filled from the INCL_RELATED api message and
+    // shown in the subtitle of the "Formula title" component (like a word's related phrases)
+    public ?phrase_list $phr_lst = null;
+
+    // the terms used in the formula expression; filled from the api message and used to create
+    // the term links of the "expression_latex_link" component (web has no direct db access)
+    public ?term_list $trm_lst = null;
 
 
     /*
@@ -191,6 +207,26 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * @return array the ordered db field names of a formula used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return formula_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array the user-editable formula db field names mapped to their url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            formula_fields::FLD_NAME => url_var::NAME,
+            formula_fields::FLD_FORMULA_TEXT => url_var::USER_EXPRESSION,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+        ];
+    }
+
+    /**
      * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -233,6 +269,30 @@ class formula extends sandbox_code_id
             }
         } else {
             $this->impact = 0.0;
+        }
+        if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
+            $value = $json_array[json_fields::PHRASES_RELATED];
+            if (is_array($value)) {
+                $lst = new phrase_list();
+                $lst->api_mapper($value);
+                $this->phr_lst = $lst;
+            } else {
+                $this->phr_lst = null;
+            }
+        } else {
+            $this->phr_lst = null;
+        }
+        if (array_key_exists(json_fields::LATEX_TERMS, $json_array)) {
+            $value = $json_array[json_fields::LATEX_TERMS];
+            if (is_array($value)) {
+                $lst = new term_list();
+                $lst->api_mapper($value);
+                $this->trm_lst = $lst;
+            } else {
+                $this->trm_lst = null;
+            }
+        } else {
+            $this->trm_lst = null;
         }
         return $msg->is_ok();
     }
@@ -425,6 +485,102 @@ class formula extends sandbox_code_id
     function user_expression(): string
     {
         return str_replace('"', '&quot;', $this->usr_text);
+    }
+
+    /**
+     * load the formula incl. its related view-models by adding the ?incl_related=1 url flag so
+     * the api handler sets api_types::INCL_RELATED and the backend formula::api_json_array() emits
+     * the assigned phrases (for the "Formula title" subtitle) and the latex terms (for the
+     * "expression_latex_link" component); the frontend api_mapper picks them up into phr_lst/trm_lst
+     * @param int|string $id the formula id to load
+     * @param int $usr_id the id of the session user to load the formula for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
+    }
+
+    /**
+     * the formula expression in the latex format rendered as html without term links,
+     * e.g. for the increase formula "percent" = ( "this" - "prior" ) / "prior"
+     * @return string the html code of the latex expression on one line
+     */
+    function expression_latex(): string
+    {
+        return $this->latex_html($this->get_latex());
+    }
+
+    /**
+     * the formula expression in the latex format with each term shown as a link to the term
+     * that displays the term description as a tooltip; each "\text{<term>}" token in the latex
+     * is replaced by the term link, so the latex must wrap each term in "\text{}"; the terms are
+     * taken from the preloaded term list because the frontend has no direct database access
+     * @return string the latex expression with the term tokens replaced by the term links
+     */
+    function expression_latex_link(): string
+    {
+        $latex = $this->get_latex();
+        // link each "\text{<term>}" token to its term, keeping the latex layout; the link incl.
+        // the description as tooltip stays inside the \text{} wrapper that latex_to_html unwraps
+        if ($this->trm_lst != null) {
+            foreach ($this->trm_lst->lst() as $trm) {
+                $latex = str_replace(
+                    '\text{' . $trm->name() . '}',
+                    '\text{' . $trm->name_link() . '}',
+                    $latex
+                );
+            }
+        }
+        return $this->latex_html($latex);
+    }
+
+    /**
+     * render the given latex math markup as html and keep the whole expression on one line with
+     * the "text-nowrap" wrapper; shared by expression_latex and expression_latex_link
+     * @param string $latex the latex expression, the term names already replaced by links if wanted
+     * @return string the html code or an empty string if the latex is empty
+     */
+    private function latex_html(string $latex): string
+    {
+        $result = '';
+        if ($latex != '') {
+            $html = new html_base();
+            $result = $html->span($this->latex_to_html($latex), styles::TEXT_NOWRAP);
+        }
+        return $result;
+    }
+
+    /**
+     * convert the supported latex math markup to html so the expression can be shown without a
+     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" becomes
+     * a superscript, the product "\cdot" becomes a middle dot and a fraction "\frac{a}{b}" (or the
+     * display variant "\dfrac{a}{b}") becomes a numerator-over-denominator block styled by css
+     * @param string $latex the latex expression with the term names already replaced by their links
+     * @return string the html code that renders the expression with the same layout as latex
+     */
+    private function latex_to_html(string $latex): string
+    {
+        $html = new html_base();
+        // unwrap the "\text{...}" wrapper so the symbol or name is shown as plain text and its
+        // braces do not interfere with the fraction conversion below
+        $result = preg_replace('/\\\\text\{([^{}]*)}/', '$1', $latex);
+        // an exponent "^2" becomes a superscript "<sup>2</sup>"
+        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $result);
+        // the latex product "\cdot" becomes the html middle dot
+        $result = str_replace('\cdot', '&middot;', $result);
+        // a fraction "\frac{a}{b}" or the display variant "\dfrac{a}{b}" becomes the numerator
+        // shown above the denominator
+        $result = preg_replace_callback(
+            '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
+            function ($m) use ($html) {
+                $num = $html->span(trim($m[1]), styles::FRAC_NUM);
+                $den = $html->span(trim($m[2]), styles::FRAC_DEN);
+                return $html->span($num . $den, styles::FRAC);
+            },
+            $result
+        );
+        return $result;
     }
 
     /**

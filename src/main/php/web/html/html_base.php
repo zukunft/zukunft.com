@@ -184,6 +184,12 @@ class html_base
     const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
+    const string CLASS_CONTAINER = 'container';
+    // the css-only tab box classes (see tab_box and the matching :target rules in style_html.css)
+    const string CLASS_TABS = 'css-tabs';
+    const string CLASS_TAB = 'css-tab';
+    const string CLASS_TAB_LABEL = 'css-tab-label';
+    const string CLASS_TAB_PANE = 'css-tab-pane';
 
 
     /*
@@ -489,7 +495,7 @@ class html_base
     {
         $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
         if ($title != '' && $title != $name) {
-            $result .= ' ' . self::TITLE_HTML . '="' . $title . '"';
+            $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
         }
         if ($css_class != '') {
             $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
@@ -551,6 +557,15 @@ class html_base
         }
         $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
+    }
+
+    /**
+     * @param string $text the superscript text e.g. the exponent "2"
+     * @return string the html code that shows the given text as a superscript e.g. <sup>2</sup>
+     */
+    function sup(string $text): string
+    {
+        return '<' . html_names::SUP . '>' . $text . '</' . html_names::SUP . '>';
     }
 
     /*
@@ -641,9 +656,35 @@ class html_base
      */
     function back_url_part(array $url_array): string
     {
+        return $this->prefixed_url_part($url_array, url_var::BACK);
+    }
+
+    /**
+     * Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
+     * carrying the database value the field had when the edit view is opened, so that on save
+     * only the fields the user actually changed are written and a concurrent change by another
+     * user is not overwritten. See docs/llm/state-and-messages.md.
+     *
+     * @param array $field_values the editable fields keyed by their url var, e.g. [url_var::NAME => 'USD']
+     * @return string the additional URL parameters e.g. '8k=USD&8o=the%20dollar'
+     */
+    function pre_url_part(array $field_values): string
+    {
+        return $this->prefixed_url_part($field_values, url_var::PRE);
+    }
+
+    /**
+     * Build the additional URL parameters for an array, each key prefixed with the given prefix char.
+     *
+     * @param array $url_array the params keyed by their url var
+     * @param string $prefix the prefix char e.g. url_var::BACK ('9') or url_var::PRE ('8')
+     * @return string the prefixed URL parameter string e.g. '9m=3&9id=123'
+     */
+    private function prefixed_url_part(array $url_array, string $prefix): string
+    {
         $par = [];
         foreach ($url_array as $key => $val) {
-            $par[] = url_var::BACK . $key . '=' . rawurlencode($val);
+            $par[] = $prefix . $key . '=' . rawurlencode((string)$val);
         }
         return empty($par) ? '' : implode('&', $par);
     }
@@ -1042,7 +1083,7 @@ class html_base
     {
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $name .
-            '" ' . self::VALUE . '="' . $value . '">';
+            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
     }
 
     /**
@@ -1406,24 +1447,24 @@ class html_base
         $result .= '</' . self::UL . '>';
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom" ' . self::ID . '="comp-hist-tab-content">';
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade active show" ' . self::ID . '="' . $comp_id . '" role="tabpanel" aria-labelledby="' . $comp_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $comp_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
         if ($nbrs_name <> '') {
             $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $nbrs_id . '" role="tabpanel" aria-labelledby="' . $nbrs_id . '-tab">';
-            $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+            $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
             $result .= $nbrs_html;
             $result .= '    </' . self::DIV . '>';
             $result .= '  </' . self::DIV . '>';
         }
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $hist_id . '" role="tabpanel" aria-labelledby="' . $hist_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $hist_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $link_id . '" role="tabpanel" aria-labelledby="' . $link_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $link_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
@@ -1433,7 +1474,10 @@ class html_base
     }
 
     /**
-     * a Bootstrap tab box that shows the given tabs side by side with the first tab active
+     * a tab box that shows the given tabs side by side, the first tab active by default and the tab
+     * whose id matches the url fragment (e.g. '#changes') active otherwise; one section per tab holds
+     * the tab label and its content so that the pure css :target rule (see style_html.css) both shows
+     * the selected content and highlights its label - no javascript (see docs/llm/frontend.md)
      * e.g. on the word page a "Views" tab next to a "Changes" tab
      *
      * @param array $tabs an ordered map of tab label => tab html content
@@ -1445,24 +1489,16 @@ class html_base
         // drop tabs without content so an empty change log or view list shows no empty tab
         $tabs = array_filter($tabs, fn($content) => $content !== '');
         if ($tabs != []) {
-            $nav = '';
-            $panes = '';
-            $first = true;
+            $sections = '';
             foreach ($tabs as $label => $content) {
                 $tab_id = str_replace(' ', '_', strtolower($label));
-                $active = $first ? ' active' : '';
-                $selected = $first ? 'true' : 'false';
-                $show = $first ? ' active show' : '';
-                $nav .= '<' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
-                $nav .= '<' . self::A . ' ' . self::CLASS_HTML . '="nav-link' . $active . '" ' . self::ID . '="' . $tab_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $tab_id . '" role="tab" aria-controls="' . $tab_id . '" aria-selected="' . $selected . '">' . $label . '</' . self::A . '>';
-                $nav .= '</' . self::LI . '>';
-                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade' . $show . '" ' . self::ID . '="' . $tab_id . '" role="tabpanel" aria-labelledby="' . $tab_id . '-tab">';
-                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="container">' . $content . '</' . self::DIV . '>';
-                $panes .= '</' . self::DIV . '>';
-                $first = false;
+                // one section per tab: the label link sets the '#<tab_id>' fragment and the css :target
+                // rule on the section then shows this content and highlights this label (style_html.css)
+                $label_link = $this->ref('#' . $tab_id, $label, '', self::CLASS_TAB_LABEL);
+                $pane = $this->div($this->div($content, self::CLASS_CONTAINER), self::CLASS_TAB_PANE);
+                $sections .= $this->div($label_link . $pane, self::CLASS_TAB, $tab_id);
             }
-            $result = '<' . self::UL . ' ' . self::CLASS_HTML . '="nav nav-tabs">' . $nav . '</' . self::UL . '>';
-            $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom">' . $panes . '</' . self::DIV . '>';
+            $result = $this->div($sections, self::CLASS_TABS);
         }
         return $result;
     }
@@ -1745,8 +1781,38 @@ class html_base
     }
 
     /**
+     * the user-readable html id of a form field, derived from its translated label
+     * (e.g. id="mask"); a disambiguating url-var suffix is kept so the id stays unique
+     * when one label is reused across several forms on a page (e.g. an add form whose
+     * url var carries "_add" -> id="name_add" next to the edit form's id="name")
+     * @param string $url_id the url var of the field, optionally with a "_..." suffix
+     * @param string $label the translated field label, '' for an unlabelled field
+     * @return string the html id, matching the <label for> built in form_field
+     */
+    private function field_id(string $url_id, string $label): string
+    {
+        if ($label != '') {
+            // a label may contain spaces ("Plural reverse"); an html id may not, so use '_'
+            $id = str_replace(' ', '_', strtolower($label));
+            $sep = strpos($url_id, '_');
+            if ($sep !== false) {
+                $id .= substr($url_id, $sep);
+            }
+        } elseif ($url_id != '') {
+            $id = strtolower($url_id);
+        } else {
+            $id = '1';
+        }
+        return $id;
+    }
+
+    /**
      * create the HTML code for an input field
-     * @param string $url_id the url id of the input field e.g. Name
+     * the submitted field name is the url var ($url_id) so the form posts keys the
+     * url mapper understands (e.g. name="m"); the user-readable html id comes from the
+     * translated $msg_id (e.g. id="mask") and matches the <label for> set in form_field.
+     * the label text must never be the submit name (that breaks url_to_standard, see url_mapper)
+     * @param string $url_id the url id of the input field e.g. url_var::NAME
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string|null $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
@@ -1763,17 +1829,15 @@ class html_base
         string      $placeholder = ''): string
     {
         global $mtr;
-        $name = $mtr->txt($msg_id);
-        if ($name != '') {
-            $name = ' name="' . $name . '"';
-        }
+        $name = '';
         if ($url_id != '') {
-            $id = strtolower($url_id);
-        } else {
-            $id = '1';
+            $name = ' name="' . $url_id . '"';
         }
+        $id = $this->field_id($url_id, $mtr->txt($msg_id));
         if ($value != '') {
-            $value = ' value="' . $value . '"';
+            // escape the value so a name/description with " < > & cannot break out of the
+            // attribute; the browser decodes it back so the resubmitted value is unchanged
+            $value = ' value="' . htmlspecialchars($value, ENT_QUOTES) . '"';
         }
         if ($type != '') {
             $type = ' type="' . $type . '"';
@@ -1838,7 +1902,9 @@ class html_base
      */
     function form_start(string $form_name): string
     {
-        // switch on post forms for private values
+        // use a GET form for now so the submitted field values stay visible in the url for debugging;
+        // the named submit button (POST_SUBMIT) still routes the submit through url_to_action, so this
+        // can be switched back to method="post" once the confirm / write workflow is stable
         $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
         $id = ' ' . self::ID . '="' . $form_name . '"';
 
@@ -1884,7 +1950,8 @@ class html_base
         global $mtr;
         $name = $mtr->txt($msg_id);
         if (self::UI_USE_BOOTSTRAP) {
-            $text = $this->label($name, $url_id);
+            // the label for must equal the input id (field_id) so the pair stays linked
+            $text = $this->label($name, $this->field_id($url_id, $name));
             $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
             return $this->div_form($text, $style);
         } else {
@@ -1920,6 +1987,18 @@ class html_base
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
+        return $result;
+    }
+
+    /**
+     * @return string html code to combine the next elements to one row and center them
+     */
+    function row_center(): string
+    {
+        $result = $this->lf();
+        $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= ' justify-content-center">';
         return $result;
     }
 
@@ -2045,14 +2124,78 @@ class html_base
      * wrap the div tag around html code
      * @param string $txt the html code
      * @param string $style the html class name
+     * @param string $id the html id e.g. used as the css :target anchor of a tab section
      * @return string the wrapped html code
      */
-    function div(string $txt, string $style = ''): string
+    function div(string $txt, string $style = '', string $id = ''): string
+    {
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        if ($id != '') {
+            $attr .= ' ' . self::ID . '="' . $id . '"';
+        }
+        return '<' . self::DIV . $attr . '>' . $txt . '</' . self::DIV . '>';
+    }
+
+    /**
+     * wrap the h1 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h1(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H1, $txt, $style);
+    }
+
+    /**
+     * wrap the h2 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h2(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H2, $txt, $style);
+    }
+
+    /**
+     * wrap the h3 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h3(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H3, $txt, $style);
+    }
+
+    /**
+     * wrap the h4 heading tag around html code
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    function h4(string $txt, string $style = ''): string
+    {
+        return $this->hx(self::H4, $txt, $style);
+    }
+
+    /**
+     * wrap the given heading tag around html code; the shared helper for h1 to h4
+     * @param string $tag the heading tag const e.g. self::H1
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @return string the wrapped html code
+     */
+    private function hx(string $tag, string $txt, string $style = ''): string
     {
         if ($style != '') {
             $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
-        return '<' . self::DIV . $style . '>' . $txt . '</' . self::DIV . '>';
+        return '<' . $tag . $style . '>' . $txt . '</' . $tag . '>';
     }
 
     /**
@@ -2103,6 +2246,23 @@ class html_base
         $separator = $ui_sys?->cfg?->get_by(
             [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
         ) ?? def::FALLBACK_CATEGORY_SEPARATOR;
+        return $this->concat_text($left, $right, $separator);
+    }
+
+    /**
+     * concatenate two text snippets with the configured page-title separator e.g. " - "
+     * used to join the object, view and pod name in the html (browser tab) page title
+     *
+     * @param string $left the first text snippet
+     * @param string $right the second text snippet
+     * @return string the two snippets joined by the title separator
+     */
+    function concat_title_text(string $left, string $right): string
+    {
+        global $ui_sys;
+        $separator = $ui_sys?->cfg?->get_by(
+            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+        ) ?? def::FALLBACK_TITLE_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
 
@@ -2161,7 +2321,7 @@ class html_base
         return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
     }
 
-    function button_bs(string $text, string $style = '', string $type = ''): string
+    function button_bs(string $text, string $style = '', string $type = '', string $name = ''): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
@@ -2171,7 +2331,10 @@ class html_base
             $type = self::INPUT_SUBMIT;
         }
         $type = ' ' . self::TYPE . '="' . $type . '"';
-        return '<' . self::BUTTON . $class . $type . '>' . $text . '</' . self::BUTTON . '>';
+        // a named submit button posts its name as a url key (e.g. POST_SUBMIT) so the entry point can
+        // tell a data-changing submit apart from a plain navigation and run url_to_action
+        $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
+        return '<' . self::BUTTON . $class . $type . $name . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**
@@ -2283,14 +2446,13 @@ class html_base
      */
     private function title(string $txt, string $pod_name): string
     {
-        if ($txt == "") {
-            $txt = $pod_name;
+        // append the pod name with the configured title separator e.g. "US dollar - Word (default) - zukunft.com"
+        if ($txt == $pod_name) {
+            $title = $pod_name;
         } else {
-            if ($pod_name <> "" && $txt != $pod_name) {
-                $txt = $txt . ' (' . $pod_name . ')';
-            }
+            $title = $this->concat_title_text($txt, $pod_name);
         }
-        return '<' . self::TITLE . '>' . $txt . '</' . self::TITLE . '>';
+        return '<' . self::TITLE . '>' . $title . '</' . self::TITLE . '>';
     }
 
     /**

@@ -47,6 +47,10 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
+    // subarrays of the json url representation: the '8'-prefixed pre values (the db values when the
+    // edit view was opened) and the '9'-prefixed back targets (where cancel / confirm return to)
+    const string URL_ORIGINAL_DATA = 'url_part_original_data';
+    const string URL_PART_BACK = 'url_part_back';
     // the messages that should be shown to the user e.g. name already used. please use another name
     // TODO Prio 0 add unit test case
     const string MSG = 'message';
@@ -135,8 +139,8 @@ class json_fields
     // populated by the backend when api_types::INCL_RELATED is set on the request;
     // each entry is a phrase wrapping a triple so the renderer can show the "other end"
     // word as the link text and the triple's detail view as the link target — e.g. for
-    // the word "Zurich" the entries are the triples "City of Zurich", "Canton of Zurich",
-    // "Zurich Insurance" (their `to` words "City", "Canton", "Company" are the link labels);
+    // the word "Zurich" the entries are the triples "city of Zurich", "canton of Zurich",
+    // "Zurich Insurance" (their `to` words "city", "canton", "Company" are the link labels);
     // the number per verb is bounded by the related-per-verb config so the list stays compact
     const string PHRASES_RELATED = 'phrases_related';
 
@@ -201,6 +205,7 @@ class json_fields
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string LATEX = 'latex'; // the formula in latex format
+    const string LATEX_TERMS = 'latex_terms'; // the terms shown in the latex format, used to link each \text{} token
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
@@ -444,5 +449,29 @@ class json_fields
         self::REF_TEXT,
         self::USAGE,
     ];
+
+    // map a json field name to the matching database field code id (change_fields.csv)
+    // so the json field translation can reuse the database field translation
+    // most json field names are identical to the database field code id and need no entry here;
+    // only json fields that use a different name for the same database field are listed
+    const array JSON_TO_DB_FIELD = [
+        self::EX_VERB => self::VERB,
+        self::USR => self::USER_ID,
+        self::USER_NAME => self::USER_ID,
+        self::TYPE_NAME => self::TYPE,
+    ];
+
+    /**
+     * map a json field name to the database field code id used for the translation
+     * defaults to the json field name itself because most json fields share the db field code id;
+     * only the renamed fields in JSON_TO_DB_FIELD return a different code id
+     *
+     * @param string $json_field the json field name as defined by the consts of this class
+     * @return string the database field code id (change_fields.csv) to translate the json field
+     */
+    static function json_field_to_db_field(string $json_field): string
+    {
+        return self::JSON_TO_DB_FIELD[$json_field] ?? $json_field;
+    }
 
 }
