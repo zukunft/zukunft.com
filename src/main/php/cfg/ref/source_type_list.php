@@ -42,6 +42,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class source_type_list extends type_list
 {
@@ -74,9 +76,9 @@ class source_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_code_id = strval($db_entry[fields::FLD_CODE_ID]);
+                $type_name = strval($db_entry[fields::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[fields::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->id = $db_entry[self::FLD_ID];
                 //$type_obj->set_url($db_entry[self::FLD_URL]);

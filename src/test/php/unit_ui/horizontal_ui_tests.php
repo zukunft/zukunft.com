@@ -140,6 +140,9 @@ class horizontal_ui_tests
         $t->subheader($ts . 'component types');
         $html = new html_base();
         $test_page = $html->text_h1('Component display test');
+        // this catalog page stacks one form part per component type; count the parts up so
+        // each part's field names/ids stay unique (production passes no counter -> name="k")
+        $test_form_unique_id = 1;
         foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
@@ -149,15 +152,49 @@ class horizontal_ui_tests
                 $cmp = new component_exe();
                 $cmp->set_type_id($typ->id());
                 $cmp->code_id = $typ->code_id;
+                // a valid, unique form name per part (no spaces) so the field 'form=' and the
+                // form id stay valid and unique on this multi-part catalog page
+                $form_name = 'component_type_test_' . $test_form_unique_id;
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
-                $test_page .= $cmp->dsp_entries($ui_obj, 'component type tests', views::WORD_EDIT_ID, $ui->dto,
-                    null, '', '', true);
+                $part = $cmp->dsp_entries($ui_obj, $form_name, views::WORD_EDIT_ID, $ui->dto,
+                    null, '', '', true, [], $test_form_unique_id);
+                // wrap a field part that references its form by id so the reference resolves
+                if (str_contains($part, ' form="') and !str_contains($part, '<form')) {
+                    $part = $html->form_start($form_name) . $part . $html->form_end();
+                }
+                // some component types render only layout scaffolding (a lone <div>/<form> open
+                // or close that a sibling type balances on a real page); standalone here they
+                // would leave a tag unclosed, so balance them to keep the catalog valid html
+                $part = $this->balance_tags($part);
+                $test_page .= $part;
+                $test_form_unique_id++;
             } else {
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }
         }
         $t->html_page_test($test_page, 'all component types', 'all_component_types', $t);
+    }
+
+    /**
+     * balance the div and form tags of one catalog part so it is valid standalone html;
+     * a layout-scaffolding component type renders only a lone open or close tag that a
+     * sibling type balances on a real page, but in this catalog each part stands on its own
+     * @param string $html the rendered catalog part
+     * @return string the part with any unclosed div/form closed and any lone close opened
+     */
+    private function balance_tags(string $html): string
+    {
+        foreach (['div', 'form'] as $tag) {
+            $open = substr_count($html, '<' . $tag);
+            $close = substr_count($html, '</' . $tag . '>');
+            if ($open > $close) {
+                $html .= str_repeat('</' . $tag . '>', $open - $close);
+            } elseif ($close > $open) {
+                $html = str_repeat('<' . $tag . '>', $close - $open) . $html;
+            }
+        }
+        return $html;
     }
 
 }

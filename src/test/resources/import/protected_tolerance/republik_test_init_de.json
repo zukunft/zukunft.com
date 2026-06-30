@@ -1,0 +1,113 @@
+{
+  "words": [
+    {
+      "id": "w_nerv_test",
+      "name": "Nerv-Test Republik",
+      "description": "Taktik: Verleger gezielt reizen, um Open-Source-Implementierung von Ein-Klick-Verbergen auszulösen"
+    },
+    {
+      "id": "w_ein_klick_verbergen",
+      "name": "Ein-Klick-Verbergen",
+      "description": "Funktion, mit der ein Beitrag durch einen einzelnen reversiblen Klick verborgen wird"
+    },
+    {
+      "id": "w_platon_ziel",
+      "name": "Platon-Ziel",
+      "description": "Weitergabe der Idee an die naechste Generation als eigentlicher Adressat, nicht Mehrheitsueberzeugung"
+    },
+    {
+      "id": "w_p_verleger_bauen",
+      "name": "P(Verleger implementieren | genervt)",
+      "description": "Wahrscheinlichkeit, dass Verleger als Reaktion auf Reizung das Feature aufschalten"
+    },
+    {
+      "id": "w_p_einbremsen",
+      "name": "P(Verleger bremsen ein | genervt)",
+      "description": "Wahrscheinlichkeit der konkurrierenden billigeren Reaktion: ignorieren oder limitieren"
+    },
+    {
+      "id": "w_implementierungskosten",
+      "name": "Implementierungskosten",
+      "description": "Aufwand fuer Verleger, da Open-Source-PR von Timon geliefert wird"
+    },
+    {
+      "id": "w_scheiterrate_ensemble",
+      "name": "Scheiterrate Einzelversuch",
+      "description": "Anteil der Einzeltaktiken in einem Portfolio, die einzeln scheitern"
+    },
+    {
+      "id": "w_bus_faktor",
+      "name": "Bus-Faktor zukunft.com",
+      "description": "Anzahl Personen, deren Ausfall das Projekt stoppen wuerde"
+    }
+  ],
+  "values": [
+    {
+      "word": "w_implementierungskosten",
+      "value": 1,
+      "unit": "Klick (Merge eines fertigen PR)",
+      "type": "assumed value",
+      "confidence": 0.6,
+      "note_ref": "Annahme: PR ist mergebar und reversibel; reale Kosten umfassen Review, UX, Missbrauchspruefung"
+    },
+    {
+      "word": "w_p_verleger_bauen",
+      "value": 0.08,
+      "unit": "Wahrscheinlichkeit",
+      "type": "assumed value",
+      "confidence": 0.3,
+      "note_ref": "Claudes Schaetzung; durch Open-Source-PR nach oben revidierbar, da Bauen nicht mehr teuerste Option"
+    },
+    {
+      "word": "w_p_einbremsen",
+      "value": 0.55,
+      "unit": "Wahrscheinlichkeit",
+      "type": "assumed value",
+      "confidence": 0.3,
+      "note_ref": "Konkurrierende billigere Reaktion; Moos liefert Begruendung dafuer frei Haus"
+    },
+    {
+      "word": "w_scheiterrate_ensemble",
+      "value": 0.9,
+      "unit": "Anteil",
+      "type": "assumed value",
+      "confidence": 0.4,
+      "note_ref": "Timons eigene Einschaetzung: sehr hohe Scheiterwahrscheinlichkeit pro Einzelversuch, daher Portfolio noetig"
+    },
+    {
+      "word": "w_bus_faktor",
+      "value": 1,
+      "unit": "Personen",
+      "type": "assumed value",
+      "confidence": 0.7,
+      "note_ref": "Vater-Sohn-Weitergabe erhoeht nominell auf 2, bleibt aber strukturell Single-Point-of-Failure bis externer Mitstreiter dazukommt"
+    }
+  ],
+  "triples": [
+    {
+      "from": "w_nerv_test",
+      "verb": "ist Einzelversuch in",
+      "to": "w_scheiterrate_ensemble"
+    },
+    {
+      "from": "w_nerv_test",
+      "verb": "zielt auf Ausloesung von",
+      "to": "w_ein_klick_verbergen"
+    },
+    {
+      "from": "w_implementierungskosten",
+      "verb": "senkt Huerde fuer",
+      "to": "w_p_verleger_bauen"
+    },
+    {
+      "from": "w_p_einbremsen",
+      "verb": "konkurriert mit",
+      "to": "w_p_verleger_bauen"
+    },
+    {
+      "from": "w_platon_ziel",
+      "verb": "wird begrenzt durch",
+      "to": "w_bus_faktor"
+    }
+  ]
+}

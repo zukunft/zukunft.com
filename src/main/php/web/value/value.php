@@ -64,6 +64,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -85,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
 class value extends sandbox_value
 {
@@ -258,6 +260,33 @@ class value extends sandbox_value
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the value by id AND ask the backend to include the group phrases with their names
+     * so the page-title renderer (value::name_link via the group phrase list) can show the
+     * related phrases as links followed by the value, e.g. for "Pi (math) 3.14"
+     *
+     * Overrides the base load_by_id by attaching the WITH_PHRASES URL flag to the REST GET
+     * call. The backend handler (api/value/index.php) translates that flag into
+     * api_types::INCL_PHRASES, which makes sandbox_value::api_json_array() load the phrase
+     * names (prime and main values carry only the phrase ids) and emit the phrases array,
+     * which the frontend api_mapper picks up into $this->grp
+     *
+     * @param int|string $id the value id to load
+     * @param array $data additional data that should be included in the get request
+     * @param int $usr_id the id of the session user to load the value for, 0 for the default
+     * @return bool true on a successful load (mirrors load_by_id)
+     */
+    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    {
+        $data[url_var::WITH_PHRASES] = url_var::TRUE;
+        return parent::load_by_id($id, $data, $usr_id);
+    }
+
+
+    /*
      * select
      */
 
@@ -345,7 +374,7 @@ class value extends sandbox_value
     function value_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(rest_ctrl::VALUE_EDIT, $this->id(), '', $back);
+        $url = $html->url_new(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
         $txt = $this->value();
         return $html->ref($url, $txt);
     }
@@ -431,15 +460,19 @@ class value extends sandbox_value
     }
 
     /**
-     * create the HTML code to show the value name and the formatted value to the user
+     * create the HTML code to show the related phrases as links followed by the
+     * numeric value itself in grey without a link, used as the value page title
      *
      * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @param string $sep the separator string between the name and the value
+     * @param string $sep the separator string between the phrases and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
     function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
+        $html = new html_base();
+        $phr_links = $this->grp->name_link_list($phr_lst_exclude);
+        $val_grey = $html->span($this->value(), styles::STYLE_GREY);
+        return $phr_links . $sep . $val_grey;
     }
 
     /**
@@ -716,7 +749,7 @@ class value extends sandbox_value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.group_id,
-                    " . $db_con->get_usr_field(value_db::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value_fields::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM groups g,
@@ -788,9 +821,10 @@ class value extends sandbox_value
     // simple modal box to add a value
     function dsp_add_fast($back): string
     {
+        $html = new html_base();
         $result = '';
 
-        $result .= '  <h2>Modal Example</h2>';
+        $result .= '  ' . $html->h2('Modal Example');
         $result .= '  <!-- Button to Open the Modal -->';
         //$result .= '  <a href="/http/value_add.php?back=2" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
         $result .= '';

@@ -145,6 +145,15 @@ class data_object
 {
 
     /*
+     *  const
+     */
+
+    // decimal places a calc-validation result is rounded to before comparing,
+    // so floating-point roundoff between the import number and the recalculation does not fail the check
+    const int CALC_VALIDATION_DECIMALS = 2;
+
+
+    /*
      *  object vars
      */
 
@@ -986,7 +995,9 @@ class data_object
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
                 $num_chk = $calc->parse($r_part);
-                if ((float)$num_chk != (float)$res_chk->number()) {
+                $num_chk_rounded = round((float)$num_chk, self::CALC_VALIDATION_DECIMALS);
+                $num_imp_rounded = round((float)$res_chk->number(), self::CALC_VALIDATION_DECIMALS);
+                if ($num_chk_rounded != $num_imp_rounded) {
                     $msg->add(msg_id::CALC_VALIDATION_FAILED, [
                         msg_id::VAR_VALUE => $res_chk->number(),
                         msg_id::VAR_NAME => $res_name,
@@ -1095,6 +1106,22 @@ class data_object
 
         // import the sources
         $this->save_sources($usr_msg, $imp);
+
+        // add the id of the sources just added to the values so that the value source is
+        // persisted; without this the value still points to the source object with id 0
+        if ($usr_msg->is_ok()) {
+            foreach ($this->value_list()->lst() as $val) {
+                $src = $val->get_source();
+                if ($src != null) {
+                    if ($src->id() == 0 and $src->name() != '') {
+                        $src_saved = $this->source_list()->get_by_name($src->name());
+                        if ($src_saved != null) {
+                            $val->set_source($src_saved);
+                        }
+                    }
+                }
+            }
+        }
 
         // add the id of the phrases just added to the references
         if ($usr_msg->is_ok()) {

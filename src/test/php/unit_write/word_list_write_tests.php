@@ -73,9 +73,9 @@ class word_list_write_tests
          * prepare
          */
 
-        // create category test words for "Zurich is a Canton" and "Zurich is a City"
-        // which implies that Canton contains Zurich and City contains Zurich
-        // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
+        // create category test words for "Zurich is a canton" and "Zurich is a city"
+        // which implies that canton contains Zurich and city contains Zurich
+        // to avoid conflicts the test words actually used are 'System Test Word Category e.g. canton' as category word
         // and 'System Test Word Member e.g. Zurich' as member
         $wrd_canton = $t_db->test_word(word_names::CANTON);
         $wrd_city = $t_db->test_word(word_names::CITY);
@@ -142,7 +142,7 @@ class word_list_write_tests
         $target = "million,sales,wrd"; // order adjusted based on the number of usage
         $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); */
 
-        // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "company"
+        // test add by verb e.g. "Zurich" "is a" "canton", "city" or "company"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::ZH));
         $wrd_lst_linked = $wrd_lst->load_linked_words($sys->typ_lst->vrb->get_verb(verbs::IS), foaf_direction::UP);
@@ -198,7 +198,7 @@ class word_list_write_tests
         $target = $lib->dsp_array(array(word_names::CANTON, word_names::CITY, word_names::COMPANY)); // order adjusted based on the number of usage
         $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
-        // test "are" e.g. "Cantons are Zurich and ..."
+        // test "are" e.g. "cantons are Zurich and ..."
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON));
         $lst_are = $wrd_lst->are();
@@ -261,7 +261,7 @@ class word_list_write_tests
         $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word_names::TEST_WIND_ENERGY, $result, false);
         $wrd_energy = $t_db->load_word(word_names::TEST_ENERGY);
 
-        // test "keep_only_specific" e.g. keep "Zurich" but remove "Canton"
+        // test "keep_only_specific" e.g. keep "Zurich" but remove "canton"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON, word_names::ZH));
         $lst_specific = $wrd_lst->keep_only_specific();
@@ -281,7 +281,7 @@ class word_list_write_tests
         $result = $wrd_lst->has_time();
         $t->assert('word_list->has_time ' . $wrd_lst->dsp_id(), $result, true);
 
-        // test "has time" for Canton is supposed to be false
+        // test "has time" for canton is supposed to be false
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON));
         $result = $wrd_lst->has_time();
@@ -293,7 +293,7 @@ class word_list_write_tests
         $result = $wrd_lst->has_measure();
         $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, true);
 
-        // test "has_measure" for Canton is supposed to be false
+        // test "has_measure" for canton is supposed to be false
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON));
         $result = $wrd_lst->has_measure();
@@ -305,7 +305,7 @@ class word_list_write_tests
         $result = $wrd_lst->has_scaling();
         $t->assert('word_list->has_scaling ' . $wrd_lst->dsp_id(), $result, true);
 
-        // test "has_scaling" for Canton is supposed to be false
+        // test "has_scaling" for canton is supposed to be false
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON));
         $result = $wrd_lst->has_scaling();
@@ -317,7 +317,7 @@ class word_list_write_tests
         $result = $wrd_lst->has_percent();
         $t->assert('word_list->has_percent ' . $wrd_lst->dsp_id(), $result, true);
 
-        // test "has_percent" for Canton is supposed to be false
+        // test "has_percent" for canton is supposed to be false
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_names::CANTON));
         $result = $wrd_lst->has_percent();

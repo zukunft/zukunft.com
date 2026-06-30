@@ -1129,7 +1129,7 @@ class test_db_load
     function test_component_lnk(
         string $dsp_name,
         string $cmp_name,
-        int $pos): component_link
+        int    $pos): component_link
     {
         $usr_msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
@@ -1238,9 +1238,9 @@ class test_db_load
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times
      * @param user $usr the user for whom the api message should be created which can differ from the session user
-     * @return void
+     * @return bool true if everything is fine and if false a repeat is suggested
      */
-    function type_list_check(test_cleanup $t, user $usr): void
+    function type_list_check(test_cleanup $t, user $usr): bool
     {
         // start the test section (ts)
         $ts = 'db read types and system views ';
@@ -1249,12 +1249,29 @@ class test_db_load
 
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $t->assert_api($ui_cfg, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
+        $result = $t->assert_api($ui_cfg, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
 
-        // update the list of types a json file
+        // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $lib = new library();
+            $created = $t->assert_result_api_get($ui_cfg, [api_types::HEADER, api_types::INCL_COMPONENTS]);
+            $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath($ui_cfg::class);
+            $t->update_path_file($filepath, $lib->json_for_dev($created));
+        }
+
+        // check if the list of types matches the expected json file
         // called upfront also from the reset db run because this is used for the unit tests
-        $t->assert_api_get_list(type_lists::class);
+        $result = $t->assert_api_get_list(type_lists::class);
 
+        // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            $lib = new library();
+            $created = $t->assert_result_api_get_list(type_lists::class);
+            $filepath = test_paths::RESOURCE . $t->assert_parameter_api_list_filepath(type_lists::class);
+            $t->update_path_file($filepath, $lib->json_for_dev($created));
+        }
+
+        return $result;
     }
 
     function csv_recreate(): bool

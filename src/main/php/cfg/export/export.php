@@ -48,13 +48,17 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class export
@@ -93,6 +97,34 @@ class export
                 $export_obj->user = $usr->name;
                 $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
+                // 1.5. expand the selection to all triples (and their phrases) connected to the
+                //      selected phrases, e.g. from "nuclear" and "power" to the triple "nuclear power"
+                //      and on to "nuclear power plant", so that the related values, their sources and
+                //      the related formulas are exported too, not just the directly selected words
+                $phr_lst = clone $phr_lst; // keep the caller's selection list unchanged
+                $added_lst = clone $phr_lst;
+                $loops = 0;
+                do {
+                    $rel_trp_lst = new triple_list($usr);
+                    $rel_trp_lst->load_by_phr_lst($added_lst, null, foaf_direction::BOTH);
+                    $rel_phr_lst = $rel_trp_lst->phrase_list();
+                    $added_lst = clone $rel_phr_lst;
+                    $added_lst->remove($phr_lst);
+                    $phr_lst->merge($rel_phr_lst);
+                    $loops++;
+                } while (!$added_lst->is_empty() and $loops < def::MAX_LOOP);
+
+                // reload the expanded list fully by id so every word and triple has its type,
+                // verb and from/to set; the graph load above sets the link ids only, which would
+                // otherwise make the type and from/to access fail while exporting the triples
+                if (!$phr_lst->is_empty()) {
+                    $full_lst = new phrase_list($usr);
+                    $full_lst->load_by_ids($phr_lst->phrase_ids());
+                    if (!$full_lst->is_empty()) {
+                        $phr_lst = $full_lst;
+                    }
+                }
+
                 // 1.1. collect all personal values - value that cannot be seen by other user
 
                 // 2. collect values linked to the user selected words
@@ -129,21 +161,7 @@ class export
                     $export_obj->triples = $exp_triples;
                 }
 
-                // 6. export all used formula relations to reproduce the results
-                log_debug('export->get formulas');
-                $frm_lst = $phr_lst->frm_lst();
-                $exp_formulas = array();
-                if (!$frm_lst->is_empty()) {
-                    foreach ($frm_lst->lst() as $frm) {
-                        $exp_frm = $frm->export_json([]);
-                        if (isset($exp_frm)) {
-                            $exp_formulas[] = $exp_frm;
-                        }
-                    }
-                }
-                $export_obj->formulas = $exp_formulas;
-
-                // 7. add all sources to the export object
+                // 6. add all sources to the export object
                 log_debug('export->get sources');
                 $source_lst = $val_lst->source_lst();
                 log_debug('export->got ' . $lib->dsp_count($source_lst) . ' sources');
@@ -162,7 +180,7 @@ class export
                     $export_obj->sources = $exp_sources;
                 }
 
-                // 8. add all values to the export object
+                // 7. add all values to the export object
                 log_debug('export->get values');
                 $exp_values = array();
                 foreach ($val_lst->lst() as $val) {
@@ -174,6 +192,21 @@ class export
                     }
                 }
                 $export_obj->values = $exp_values;
+
+                // 8. export all used formula relations to reproduce the results
+                //    after the values so that the export matches the import file order
+                log_debug('export->get formulas');
+                $frm_lst = $phr_lst->frm_lst();
+                $exp_formulas = array();
+                if (!$frm_lst->is_empty()) {
+                    foreach ($frm_lst->lst() as $frm) {
+                        $exp_frm = $frm->export_json([]);
+                        if (isset($exp_frm)) {
+                            $exp_formulas[] = $exp_frm;
+                        }
+                    }
+                }
+                $export_obj->formulas = $exp_formulas;
 
                 // 9. add all views and view components to the export object
                 // TODO create an array add function that does not add duplicates

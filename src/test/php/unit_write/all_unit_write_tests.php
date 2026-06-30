@@ -200,7 +200,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 // TODO Prio 2 activate
                 //$this->run_api_test();
                 //run_word_ui_test($t);
-                // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
+                // TODO add a test to merge a separate opened phrase canton Zürich with Zurich (canton)
                 run_word_display_test($t);
 
                 // import_test_data() and import_base_data($usr) is intentionally not called here to keep test.php fast

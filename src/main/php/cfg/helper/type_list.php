@@ -125,6 +125,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
@@ -214,6 +215,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class type_list extends ListOfIdNamedCodeObjects
 {
@@ -386,11 +388,11 @@ class type_list extends ListOfIdNamedCodeObjects
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
-            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
+            $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID, ref_type_list::FLD_URL));
         } elseif ($class == language::class) {
-            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, language::FLD_WIKI_CODE, language::FLD_LOCAL_NAME, sql_db::FLD_USAGE));
+            $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID, language::FLD_WIKI_CODE, language::FLD_LOCAL_NAME, fields::FLD_USAGE));
         } else {
-            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+            $sc->set_fields(array(fields::FLD_DESCRIPTION, fields::FLD_CODE_ID));
         }
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
@@ -536,7 +538,7 @@ class type_list extends ListOfIdNamedCodeObjects
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
-                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+                $type_code_id = strval($db_row[fields::FLD_CODE_ID]);
                 // database field name exceptions
                 if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
@@ -566,14 +568,14 @@ class type_list extends ListOfIdNamedCodeObjects
                     $type_name = strval($db_row[db_cache_status::FLD_NAME]);
                 } else {
                     // TODO use a unique type name for each type
-                    if (array_key_exists(sql_db::FLD_TYPE_NAME, $db_row)) {
-                        $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    if (array_key_exists(fields::FLD_TYPE_NAME, $db_row)) {
+                        $type_name = strval($db_row[fields::FLD_TYPE_NAME]);
                     } else {
                         $type_name = '';
-                        log_err(sql_db::FLD_TYPE_NAME . ' missing for class ' . $class);
+                        log_err(fields::FLD_TYPE_NAME . ' missing for class ' . $class);
                     }
                 }
-                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[fields::FLD_DESCRIPTION]);
                 // TODO Prio 0 use a class to object function
                 if ($class == language::class) {
                     $type_obj = new language($type_code_id, $type_name, $type_comment, $type_id);
@@ -590,8 +592,8 @@ class type_list extends ListOfIdNamedCodeObjects
                     if (array_key_exists(language::FLD_LOCAL_NAME, $db_row)) {
                         $type_obj->local_name = strval($db_row[language::FLD_LOCAL_NAME]);
                     }
-                    if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                        $type_obj->usage = strval($db_row[sql_db::FLD_USAGE]);
+                    if (array_key_exists(fields::FLD_USAGE, $db_row)) {
+                        $type_obj->usage = strval($db_row[fields::FLD_USAGE]);
                     }
                 }
 
@@ -729,8 +731,8 @@ class type_list extends ListOfIdNamedCodeObjects
                         if (in_array(language::FLD_LOCAL_NAME, $col_names)) {
                             $local_name_col = array_search(language::FLD_LOCAL_NAME, $col_names);
                         }
-                        if (in_array(sql_db::FLD_USAGE, $col_names)) {
-                            $usage_col = array_search(sql_db::FLD_USAGE, $col_names);
+                        if (in_array(fields::FLD_USAGE, $col_names)) {
+                            $usage_col = array_search(fields::FLD_USAGE, $col_names);
                         }
                         if (in_array(change_field::FLD_TABLE, $col_names)) {
                             $table_col = array_search(change_field::FLD_TABLE, $col_names);

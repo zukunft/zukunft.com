@@ -115,6 +115,7 @@ class files
     CONST string IMPORT_TRIPLES = test_paths::IMPORT_UNIT . 'triples';
     CONST string IMPORT_SOURCES = test_paths::IMPORT_UNIT . 'sources';
     CONST string IMPORT_VALUES = test_paths::IMPORT_UNIT . 'values';
+    CONST string IMPORT_PHRASE_VALUES = test_paths::IMPORT_UNIT . 'phrase_values';
     CONST string IMPORT_FORMULAS = test_paths::IMPORT_UNIT . 'formulas';
     CONST string IMPORT_VIEWS = test_paths::IMPORT_UNIT . 'views';
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
@@ -141,6 +142,8 @@ class files
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_POPULISM_FERMI_ESTIMATE = test_paths::IMPORT . 'fermi_estimates' . self::JSON;
+    CONST string IMPORT_TRUE_COST_BURGER = test_paths::IMPORT . 'true_costs_burger' . self::JSON;
+
     CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
     CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
     CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
@@ -156,11 +159,15 @@ class files
     CONST string IMPORT_BUS_LINE_MEILEN_USTER = test_paths::IMPORT . 'BusLineMeilenUster' . self::JSON;
     CONST string IMPORT_CAR_COSTS = test_paths::IMPORT . 'car_costs' . self::JSON;
     CONST string IMPORT_CBAM_BLUEBERRY_PACKED = test_paths::IMPORT . 'CBAM_blueberry_packed' . self::JSON;
+    CONST string IMPORT_COSTS_ELECTRICITY_WIKI_DE = test_paths::IMPORT . 'costs_electricity_wiki_de' . self::JSON;
+    CONST string IMPORT_COSTS_ELECTRICITY_WIKI_EN = test_paths::IMPORT . 'costs_electricity_wiki_en' . self::JSON;
     CONST string IMPORT_COVID_19 = test_paths::IMPORT . 'COVID-19' . self::JSON;
     CONST string IMPORT_ELECTRICITY_PRICES = test_paths::IMPORT . 'electricity_prices' . self::JSON;
     CONST string IMPORT_FERMI_POLARISATION_US = test_paths::IMPORT . 'fermi_polarisation_us' . self::JSON;
     CONST string IMPORT_NESN_2019 = test_paths::IMPORT . 'NESN_2019' . self::JSON;
     CONST string IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON = test_paths::IMPORT . 'personal_climate_gas_emissions_timon' . self::JSON;
+    CONST string IMPORT_PRO_CONTRA_NPP_CH = test_paths::IMPORT . 'pro_contra_npp_ch' . self::JSON;
+    CONST string IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC = test_paths::IMPORT . 'pro_contra_npp_ch_republic' . self::JSON;
     CONST string IMPORT_REAL_ESTATE = test_paths::IMPORT . 'real_estate' . self::JSON;
     CONST string IMPORT_REFERENCES = test_paths::IMPORT . 'references' . self::JSON;
     CONST string IMPORT_THOMY_TEST = test_paths::IMPORT . 'THOMY_test' . self::JSON;
@@ -199,6 +206,7 @@ class files
         self::IMPORT_PORTFOLIO_INSTRUMENTS,
         self::IMPORT_PORTFOLIO_REPORT,
         self::IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE,
+        self::IMPORT_TRUE_COST_BURGER,
     ];
 
     const array TEST_DATA_FILES_DIRECT = [
@@ -216,11 +224,15 @@ class files
         self::IMPORT_ULTIMATUM_GAME,
         self::IMPORT_COVID_19,
         self::IMPORT_PERSONAL_CLIMATE_GAS_EMISSIONS_TIMON,
+        self::IMPORT_PRO_CONTRA_NPP_CH,
+        self::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
         self::IMPORT_THOMY_TEST,
         self::IMPORT_BASE_TEST_DATA,
         self::IMPORT_BUS_LINE_MEILEN_USTER,
         self::IMPORT_CAR_COSTS,
         self::IMPORT_CBAM_BLUEBERRY_PACKED,
+        self::IMPORT_COSTS_ELECTRICITY_WIKI_DE,
+        self::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
         self::IMPORT_ELECTRICITY_PRICES,
         self::IMPORT_FERMI_POLARISATION_US,
         self::IMPORT_REFERENCES,

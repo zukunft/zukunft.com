@@ -93,6 +93,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -127,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_named extends sandbox
 {
@@ -212,11 +214,11 @@ class sandbox_named extends sandbox
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[fields::FLD_DESCRIPTION];
             }
-            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                $this->set_usage($db_row[sql_db::FLD_USAGE]);
+            if (array_key_exists(fields::FLD_USAGE, $db_row)) {
+                $this->set_usage($db_row[fields::FLD_USAGE]);
             }
         }
         return $result;
@@ -1365,8 +1367,8 @@ class sandbox_named extends sandbox
             $this::FLD_ID,
             user_db::FLD_ID,
             $this->name_field(),
-            sql_db::FLD_DESCRIPTION,
-            sql_db::FLD_USAGE
+            fields::FLD_DESCRIPTION,
+            fields::FLD_USAGE
         ];
     }
 
@@ -1404,13 +1406,13 @@ class sandbox_named extends sandbox
         if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_USAGE,
+                fields::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
                 $obj->usage

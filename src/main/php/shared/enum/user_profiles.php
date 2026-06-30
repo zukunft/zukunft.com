@@ -60,4 +60,16 @@ enum user_profiles: string
     const string SYSTEM = "system";      // reserved for the system user which is executing cleanup tasks
     const int SYSTEM_ID = 19;            // only used for the initial setup
 
+    // the user profiles that are uniquely identified (beyond an ip or a chosen name)
+    // and so are allowed to change e.g. the type of an object (see user::is_unique / can_set_type_id)
+    const array CAN_CHANGE = [
+        self::EMAIL,
+        self::HUMAN,
+        self::SYS_LINK,
+        self::ADMIN,
+        self::DEV,
+        self::TEST,
+        self::SYSTEM,
+    ];
+
 }

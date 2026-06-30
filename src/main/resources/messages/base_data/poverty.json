@@ -1,0 +1,519 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "poverty",
+    "inequality",
+    "income",
+    "statistics"
+  ],
+  "description": "Most relevant base data around poverty and inequality, drawn from published science: absolute, relative, extreme, subjective and multidimensional poverty; the poverty line and threshold including the World Bank international poverty line of 2.15 USD per person per day (2017 PPP); the Gini coefficient and income inequality; deprivation, wealth distribution, economic mobility and the poverty trap. The formulas reproduce three relationships in the calc-validation block: the extreme-poverty headcount rate as the poor share of the world population (World Bank 2024), the relative poverty line as 60 percent of the median income (Eurostat), and the income quintile share ratio (S80/S20). Base words owned by other files (income, consumption, Gini, share, ratio, rate, mobility, world, population, person, percent, USD) are re-declared name-only so the import does not overwrite their canonical description; the poverty-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "poverty",
+      "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
+      "refs": [
+        {
+          "name": "Poverty",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "PPP",
+      "description": "purchasing power parity: a way of comparing currencies by the amount of goods and services each can buy, used to make cross-country income comparisons.",
+      "refs": [
+        {
+          "name": "Purchasing_power_parity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "inequality",
+      "description": "the unequal distribution of income, wealth or opportunity among individuals or groups within a society.",
+      "refs": [
+        {
+          "name": "Economic_inequality",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wealth",
+      "description": "the total value of the assets owned by a person, community or country, minus liabilities.",
+      "refs": [
+        {
+          "name": "Wealth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "MPI",
+      "description": "the multidimensional poverty index, a measure that captures the deprivations people face in health, education and living standards.",
+      "refs": [
+        {
+          "name": "Multidimensional_Poverty_Index",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "European Union",
+      "description": "a political and economic union of 27 member states located primarily in Europe.",
+      "refs": [
+        {
+          "name": "European_Union",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "deprivation",
+      "description": "the lack of resources or conditions regarded as necessary for an adequate standard of living"
+    },
+    {
+      "name": "absolute",
+      "description": "measured against a fixed standard, not relative to others"
+    },
+    {
+      "name": "relative",
+      "description": "measured in relation to others in the same society"
+    },
+    {
+      "name": "extreme",
+      "description": "the most severe degree"
+    },
+    {
+      "name": "subjective",
+      "description": "based on personal perception or self-assessment"
+    },
+    {
+      "name": "international",
+      "description": "applying across countries"
+    },
+    {
+      "name": "multidimensional",
+      "description": "covering several dimensions such as health, education and living standards"
+    },
+    {
+      "name": "median",
+      "description": "the middle value that separates the higher half from the lower half"
+    },
+    {
+      "name": "line",
+      "description": "a fixed level used as a boundary"
+    },
+    {
+      "name": "threshold",
+      "description": "a level at which something begins or changes"
+    },
+    {
+      "name": "trap",
+      "description": "a situation that is difficult to escape"
+    },
+    {
+      "name": "distribution",
+      "description": "the way something is shared across a population"
+    },
+    {
+      "name": "economic",
+      "description": "relating to the economy, income and wealth"
+    },
+    {
+      "name": "top",
+      "description": "the highest part or group"
+    },
+    {
+      "name": "bottom",
+      "description": "the lowest part or group"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "Gini"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "mobility"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "absolute poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "absolute",
+      "description": "poverty measured against a fixed minimum standard of basic needs"
+    },
+    {
+      "name": "relative poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "relative",
+      "description": "poverty measured relative to the typical income of the surrounding society"
+    },
+    {
+      "name": "extreme poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "extreme",
+      "description": "living below the international poverty line of 2.15 USD per person per day"
+    },
+    {
+      "name": "subjective poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "subjective",
+      "description": "poverty based on people's own assessment of their situation"
+    },
+    {
+      "name": "multidimensional poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "multidimensional",
+      "description": "poverty measured across health, education and living-standard deprivations"
+    },
+    {
+      "name": "poverty line",
+      "from": "line",
+      "verb": "of",
+      "to": "poverty",
+      "description": "the income or consumption level below which a person is counted as poor"
+    },
+    {
+      "name": "poverty threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "poverty",
+      "description": "the level of income or consumption that marks the boundary of poverty"
+    },
+    {
+      "name": "international poverty line",
+      "from": "poverty line",
+      "verb": "kind of",
+      "to": "international",
+      "description": "the World Bank line for extreme poverty, 2.15 USD per person per day in 2017 PPP"
+    },
+    {
+      "name": "relative poverty line",
+      "from": "poverty line",
+      "verb": "kind of",
+      "to": "relative",
+      "description": "a poverty line set at a fraction, often 60 percent, of the median income"
+    },
+    {
+      "name": "income inequality",
+      "from": "inequality",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "wealth distribution",
+      "from": "distribution",
+      "verb": "of",
+      "to": "wealth"
+    },
+    {
+      "name": "economic mobility",
+      "from": "mobility",
+      "verb": "kind of",
+      "to": "economic",
+      "description": "the ability of a person or family to improve their economic status over time"
+    },
+    {
+      "name": "poverty trap",
+      "from": "trap",
+      "verb": "of",
+      "to": "poverty",
+      "description": "a self-reinforcing mechanism that keeps people in poverty"
+    },
+    {
+      "name": "median income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "median"
+    },
+    {
+      "name": "poverty rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "poverty",
+      "description": "the share of a population living below the poverty line"
+    },
+    {
+      "name": "top income share",
+      "from": "share",
+      "verb": "of",
+      "to": "top",
+      "description": "the share of total income received by the richest 20 percent"
+    },
+    {
+      "name": "bottom income share",
+      "from": "share",
+      "verb": "of",
+      "to": "bottom",
+      "description": "the share of total income received by the poorest 20 percent"
+    },
+    {
+      "name": "income ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "income",
+      "description": "the income quintile share ratio S80/S20, the top income share divided by the bottom income share"
+    },
+    {
+      "from": "deprivation",
+      "verb": "kind of",
+      "to": "poverty"
+    },
+    {
+      "from": "inequality",
+      "verb": "influences",
+      "to": "poverty"
+    },
+    {
+      "from": "poverty trap",
+      "verb": "influences",
+      "to": "economic mobility",
+      "name": "poverty trap on mobility"
+    }
+  ],
+  "sources": [
+    {
+      "name": "World Bank Poverty and Inequality Platform 2024",
+      "description": "World Bank Poverty and Inequality Platform: about 692 million people (around 8.5 percent) lived in extreme poverty below 2.15 USD per day (2017 PPP) in 2024; global Gini coefficient about 0.62.",
+      "url": "https://pip.worldbank.org/"
+    },
+    {
+      "name": "UNDP OPHI Global MPI 2024",
+      "description": "UNDP and Oxford Poverty and Human Development Initiative, Global Multidimensional Poverty Index 2024: about 1.1 billion people are multidimensionally poor across more than 110 developing countries.",
+      "url": "https://hdr.undp.org/content/2024-global-multidimensional-poverty-index-mpi"
+    },
+    {
+      "name": "Eurostat Income and Living Conditions 2023",
+      "description": "Eurostat, EU Statistics on Income and Living Conditions: the at-risk-of-poverty threshold is set at 60 percent of the national median equivalised income; the income quintile share ratio (S80/S20) is about 5.",
+      "url": "https://ec.europa.eu/eurostat/web/income-and-living-conditions"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "world",
+        "extreme poverty",
+        "2024",
+        "person"
+      ],
+      "number": "692000000",
+      "source": "World Bank Poverty and Inequality Platform 2024"
+    },
+    {
+      "words": [
+        "world",
+        "population",
+        "2024",
+        "person"
+      ],
+      "number": "8160000000",
+      "source": "World Bank Poverty and Inequality Platform 2024"
+    },
+    {
+      "words": [
+        "world",
+        "poverty rate",
+        "2024",
+        "percent"
+      ],
+      "number": "8.480392156862745"
+    },
+    {
+      "words": [
+        "international poverty line",
+        "consumption",
+        "USD"
+      ],
+      "number": "2.15",
+      "source": "World Bank Poverty and Inequality Platform 2024"
+    },
+    {
+      "words": [
+        "world",
+        "Gini",
+        "2023"
+      ],
+      "number": "0.62",
+      "source": "World Bank Poverty and Inequality Platform 2024"
+    },
+    {
+      "words": [
+        "world",
+        "multidimensional poverty",
+        "2024",
+        "person"
+      ],
+      "number": "1100000000",
+      "source": "UNDP OPHI Global MPI 2024"
+    },
+    {
+      "words": [
+        "European Union",
+        "median income",
+        "2023",
+        "USD"
+      ],
+      "number": "20000",
+      "source": "Eurostat Income and Living Conditions 2023"
+    },
+    {
+      "words": [
+        "European Union",
+        "relative poverty line",
+        "2023",
+        "USD"
+      ],
+      "number": "12000"
+    },
+    {
+      "words": [
+        "European Union",
+        "top income share",
+        "2023",
+        "percent"
+      ],
+      "number": "40",
+      "source": "Eurostat Income and Living Conditions 2023"
+    },
+    {
+      "words": [
+        "European Union",
+        "bottom income share",
+        "2023",
+        "percent"
+      ],
+      "number": "8",
+      "source": "Eurostat Income and Living Conditions 2023"
+    },
+    {
+      "words": [
+        "European Union",
+        "income ratio",
+        "2023"
+      ],
+      "number": "5"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "poverty rate (formula)",
+      "expression": "\"poverty rate\" = \"extreme poverty\" / \"population\" * 100",
+      "assigned": [
+        "world"
+      ]
+    },
+    {
+      "name": "relative poverty line (formula)",
+      "expression": "\"relative poverty line\" = \"median income\" * 0.6",
+      "assigned": [
+        "European Union"
+      ]
+    },
+    {
+      "name": "income ratio (formula)",
+      "expression": "\"income ratio\" = \"top income share\" / \"bottom income share\"",
+      "assigned": [
+        "European Union"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "world",
+        "extreme poverty",
+        "population",
+        "2024",
+        "person"
+      ],
+      "formula": "poverty rate (formula)",
+      "words": [
+        "world",
+        "poverty rate",
+        "2024",
+        "percent"
+      ],
+      "number": "8.480392156862745",
+      "note": "692000000 / 8160000000 * 100"
+    },
+    {
+      "context": [
+        "European Union",
+        "median income",
+        "2023",
+        "USD"
+      ],
+      "formula": "relative poverty line (formula)",
+      "words": [
+        "European Union",
+        "relative poverty line",
+        "2023",
+        "USD"
+      ],
+      "number": "12000",
+      "note": "20000 * 0.6"
+    },
+    {
+      "context": [
+        "European Union",
+        "top income share",
+        "bottom income share",
+        "2023",
+        "percent"
+      ],
+      "formula": "income ratio (formula)",
+      "words": [
+        "European Union",
+        "income ratio",
+        "2023"
+      ],
+      "number": "5",
+      "note": "40 / 8"
+    }
+  ]
+}

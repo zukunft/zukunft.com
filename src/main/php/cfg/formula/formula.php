@@ -66,7 +66,9 @@ include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
@@ -75,17 +77,26 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -96,7 +107,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 class formula extends formula_map
 {
@@ -109,6 +123,16 @@ class formula extends formula_map
     // in memory-only fields
     // list of phrase that links to this formula
     public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
+
+    // the phrases this formula is assigned to; populated lazily by load_phrases_related() and
+    // only emitted via api_json_array() when the api_types::INCL_RELATED flag is set, so the
+    // default formula view can show the assigned phrases in the "Formula title" subtitle
+    public ?phrase_list $phrases_related = null;
+
+    // the terms shown in the latex format (one per "\text{...}" token); populated lazily by
+    // load_latex_terms() and emitted via api_json_array() under the INCL_RELATED flag so the
+    // "expression_latex_link" component can turn each latex token into a link to the term
+    public ?term_list $latex_terms = null;
 
 
     /*
@@ -135,6 +159,145 @@ class formula extends formula_map
         parent::reset($keep_user);
 
         $this->ref_text_r = '';
+    }
+
+
+    /*
+     * latex
+     */
+
+    /**
+     * create the latex format of this formula from the resolved text (usr_text): each phrase is
+     * shown as its symbol (the phrase linked via the "is symbol for" verb) or, if no symbol is
+     * linked, as its name; a product becomes "\cdot", a repeated factor a superscript and a
+     * division a "\frac"; the result is stored in the latex object field
+     * @param term_list|null $trm_lst preloaded terms to avoid database access where possible
+     * @return string the created latex format that is also stored in the latex object field
+     */
+    function update_latex(?term_list $trm_lst = null): string
+    {
+        $result = '';
+        if ($this->usr_text != null and $this->usr_text != '') {
+            $result = $this->latex_from_usr_text($this->usr_text, $this->symbol_map($trm_lst));
+            $this->set_latex($result);
+        }
+        return $result;
+    }
+
+    /**
+     * @param term_list|null $trm_lst preloaded terms to avoid database access where possible
+     * @return array the map of each expression phrase name to its symbol (the phrase linked via
+     *               the "is symbol for" verb) or, if no symbol is linked, to the phrase name
+     */
+    private function symbol_map(?term_list $trm_lst = null): array
+    {
+        $map = [];
+        $usr_msg = new user_message();
+        $phr_lst = $this->expression($trm_lst)->phrases($usr_msg, $trm_lst);
+        foreach ($phr_lst->lst() as $phr) {
+            $map[$phr->name()] = $this->phrase_symbol($phr) ?? $phr->name();
+        }
+        return $map;
+    }
+
+    /**
+     * @param phrase $phr the phrase whose symbol should be loaded
+     * @return string|null the name of the phrase that "is symbol for" the given phrase, or null
+     *                     if no symbol is linked
+     */
+    private function phrase_symbol(phrase $phr): ?string
+    {
+        $result = null;
+        $trp_lst = new triple_list($this->get_user());
+        $trp_lst->load_by_phr($phr, null, foaf_direction::BOTH);
+        foreach ($trp_lst->lst() as $trp) {
+            if ($trp->get_verb_code_id() == verbs::SYMBOL and $trp->get_to()?->id() == $phr->id()) {
+                $result = $trp->get_from()?->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * convert a resolved formula text to the latex format using the given phrase symbol map
+     * @param string $usr_text the resolved text e.g. '"joule" = ( "kg" * "metre" * "metre" ) / ...'
+     * @param array $symbol_map the map of each phrase name to the symbol (or name) used in latex
+     * @return string the latex format e.g. '\text{J} = \frac{\text{kg} \cdot \text{m}^2}{\text{s}^2}'
+     */
+    private function latex_from_usr_text(string $usr_text, array $symbol_map): string
+    {
+        // replace each quoted phrase name with its symbol wrapped in \text{}
+        $text = preg_replace_callback(
+            '/"([^"]*)"/',
+            fn($m) => '\text{' . ($symbol_map[$m[1]] ?? $m[1]) . '}',
+            $usr_text
+        );
+        // convert the right side of the first "=" (a fraction or a product)
+        $result = $text;
+        $parts = explode(' = ', $text, 2);
+        if (count($parts) == 2) {
+            $result = $parts[0] . ' = ' . $this->latex_side($parts[1]);
+        }
+        return $result;
+    }
+
+    /**
+     * convert one side of an expression to latex: a division becomes a fraction, otherwise the
+     * products are converted
+     * @param string $part the expression side e.g. '( \text{kg} * \text{m} ) / ( \text{s} * \text{s} )'
+     * @return string the latex format e.g. '\frac{\text{kg} \cdot \text{m}}{\text{s}^2}'
+     */
+    private function latex_side(string $part): string
+    {
+        $factor = '(\([^()]*\)|\\\\text\{[^}]*\}|[\d.]+)';
+        $division = '/^\s*' . $factor . '\s*\/\s*' . $factor . '\s*$/';
+        $result = '';
+        if (preg_match($division, trim($part), $m)) {
+            $result = '\frac{' . $this->latex_factor($m[1]) . '}{' . $this->latex_factor($m[2]) . '}';
+        } else {
+            $result = $this->latex_factor($part);
+        }
+        return $result;
+    }
+
+    /**
+     * strip the surrounding parentheses of one factor and convert its products
+     * @param string $factor e.g. '( \text{kg} * \text{m} * \text{m} )'
+     * @return string the latex format e.g. '\text{kg} \cdot \text{m}^2'
+     */
+    private function latex_factor(string $factor): string
+    {
+        $inner = preg_replace('/^\(\s*(.*?)\s*\)$/', '$1', trim($factor));
+        return $this->latex_product($inner);
+    }
+
+    /**
+     * convert the products of an expression part: a "*" becomes "\cdot" and a repeated factor a
+     * superscript e.g. '\text{m} * \text{m}' becomes '\text{m}^2'; other operators are kept
+     * @param string $product the expression part e.g. '\text{kg} * \text{m} * \text{m}'
+     * @return string the latex format e.g. '\text{kg} \cdot \text{m}^2'
+     */
+    private function latex_product(string $product): string
+    {
+        if (!str_contains($product, '*')) {
+            return $product;
+        }
+        $factors = array_map('trim', explode('*', $product));
+        $out = [];
+        $i = 0;
+        while ($i < count($factors)) {
+            $count = 1;
+            while ($i + $count < count($factors) and $factors[$i + $count] === $factors[$i]) {
+                $count++;
+            }
+            if ($count > 1) {
+                $out[] = $factors[$i] . '^' . $count;
+            } else {
+                $out[] = $factors[$i];
+            }
+            $i += $count;
+        }
+        return implode(' \cdot ', $out);
     }
 
 
@@ -361,6 +524,92 @@ class formula extends formula_map
     function assign_phr_ulst_direct(): ?phrase_list
     {
         return $this->assign_phr_glst_direct(true);
+    }
+
+    /**
+     * load the phrases this formula is assigned to into the in-memory phrases_related list so
+     * that api_json_array() can emit them under the INCL_RELATED flag (like word::load_phrases_related)
+     */
+    function load_phrases_related(): void
+    {
+        $phr_lst = $this->assign_phr_lst_direct();
+        if ($phr_lst == null) {
+            $phr_lst = new phrase_list($this->get_user());
+        }
+        $this->phrases_related = $phr_lst;
+    }
+
+    /**
+     * load the terms shown in the latex format into the in-memory latex_terms list so that
+     * api_json_array() can emit them under the INCL_RELATED flag; each "\text{...}" token of the
+     * latex is resolved to a term by its name (the symbol word or the phrase name)
+     */
+    function load_latex_terms(): void
+    {
+        $trm_lst = new term_list($this->get_user());
+        $latex = $this->get_latex();
+        if ($latex != null and $latex != '') {
+            if (preg_match_all('/\\\\text\{([^{}]*)}/', $latex, $matches)) {
+                foreach ($matches[1] as $name) {
+                    $trm = new term($this->get_user());
+                    if ($trm->load_by_name($name) != 0) {
+                        $trm_lst->add($trm);
+                    }
+                }
+            }
+        }
+        $this->latex_terms = $trm_lst;
+    }
+
+    /**
+     * load the formula and, in the same call, the related view-models the default formula view
+     * expects: the assigned phrases for the "Formula title" subtitle and the latex terms for the
+     * "expression_latex_link" component (like word::load_by_id_with_related)
+     * @param int $id the formula id to load
+     * @return int the id of the loaded formula, or 0 if not found
+     */
+    function load_by_id_with_related(int $id): int
+    {
+        $loaded_id = parent::load_by_id($id);
+        if ($loaded_id > 0) {
+            $this->load_phrases_related();
+            $this->load_latex_terms();
+        }
+        return $loaded_id;
+    }
+
+    /**
+     * extend the formula api message with the assigned phrases so the frontend "Formula title"
+     * component can show them in the subtitle; only added for a page request (INCL_RELATED)
+     * of a saved formula (a fresh formula with id 0 has no assigned phrases)
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the filled api json array
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($typ_lst->incl_related() and $this->id() != 0) {
+            if ($this->phrases_related == null and !$typ_lst->test_mode()) {
+                $this->load_phrases_related();
+            }
+            if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                // INCL_PHRASES so each assigned phrase carries its name (and description for the
+                // tooltip) needed by the subtitle links, sorted by impact in the frontend
+                $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+            }
+            if ($this->latex_terms == null and !$typ_lst->test_mode()) {
+                $this->load_latex_terms();
+            }
+            if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
+                // INCL_PHRASES so each latex term carries its name (and description for the
+                // tooltip) needed by the "expression_latex_link" component to create the links
+                $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+            }
+        }
+        return $vars;
     }
 
     /**

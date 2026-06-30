@@ -74,6 +74,7 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -88,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -190,8 +192,8 @@ class change extends change_log
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
-            } elseif (array_key_exists(group_db::FLD_ID, $db_row)) {
-                $this->row_id = $db_row[group_db::FLD_ID];
+            } elseif (array_key_exists(group_fields::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group_fields::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[change::FLD_OLD_VALUE];

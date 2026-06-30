@@ -51,6 +51,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 
 class formula_link_type extends type_object
 {
@@ -91,7 +93,7 @@ class formula_link_type extends type_object
 
     // field lists for the table creation of phrase type
     const array FLD_LST_EXTRA = array(
-        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', formula::class, ''],
+        [formula_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', formula::class, ''],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, '', phrase_type::class, ''],
     );
 
@@ -133,9 +135,9 @@ class formula_link_type extends type_object
     {
         $result = parent::row_mapper_typ_obj($db_row, $class);
         if ($result) {
-            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
-                if ($db_row[formula_db::FLD_ID] != '') {
-                    $this->frm_id = $db_row[formula_db::FLD_ID];
+            if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
+                if ($db_row[formula_fields::FLD_ID] != '') {
+                    $this->frm_id = $db_row[formula_fields::FLD_ID];
                 }
             }
             if (array_key_exists(phrase::FLD_TYPE, $db_row)) {
@@ -267,7 +269,7 @@ class formula_link_type extends type_object
         return array_merge(
             parent::db_fields_all(),
             [
-                formula_db::FLD_ID,
+                formula_fields::FLD_ID,
                 phrase::FLD_TYPE,
             ]
         );
@@ -297,13 +299,13 @@ class formula_link_type extends type_object
         if ($obj->frm_id !== $this->frm_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_ID,
+                formula_fields::FLD_ID,
                 $this->frm_id,
                 sql_field_type::INT_SMALL,
                 $obj->frm_id

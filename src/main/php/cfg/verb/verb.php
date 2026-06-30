@@ -74,6 +74,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class verb extends type_object
 {
@@ -336,9 +338,9 @@ class verb extends type_object
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql_db::FLD_CODE_ID] != null) {
-                    $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                if ($db_row[fields::FLD_CODE_ID] != null) {
+                    $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -354,21 +356,21 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
                 $this->frm_name = $db_row[verb_db::FLD_NAME_FORMULA];
             }
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[fields::FLD_DESCRIPTION];
             }
-            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                if ($db_row[sql_db::FLD_USAGE] == null) {
+            if (array_key_exists(fields::FLD_USAGE, $db_row)) {
+                if ($db_row[fields::FLD_USAGE] == null) {
                     $this->usage = null;
                 } else {
-                    $this->usage = $db_row[sql_db::FLD_USAGE];
+                    $this->usage = $db_row[fields::FLD_USAGE];
                 }
             }
-            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
-                if ($db_row[sql_db::FLD_IMPACT] == null) {
+            if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
+                if ($db_row[fields::FLD_IMPACT] == null) {
                     $this->impact = null;
                 } else {
-                    $this->impact = $db_row[sql_db::FLD_IMPACT];
+                    $this->impact = $db_row[fields::FLD_IMPACT];
                 }
             }
         }
@@ -537,7 +539,7 @@ class verb extends type_object
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(fields::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -866,7 +868,7 @@ class verb extends type_object
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
         $db_row = $db_con->get1($qp);
-        $usage = $db_row[sql_db::FLD_USAGE];
+        $usage = $db_row[fields::FLD_USAGE];
         if ($usage > 0) {
             $result = false;
         }
@@ -1220,8 +1222,8 @@ class verb extends type_object
                 verb_db::FLD_REVERSE,
                 verb_db::FLD_PLURAL_REVERSE,
                 verb_db::FLD_NAME_FORMULA,
-                sql_db::FLD_USAGE,
-                sql_db::FLD_IMPACT
+                fields::FLD_USAGE,
+                fields::FLD_IMPACT
             ]
         );
     }
@@ -1311,13 +1313,13 @@ class verb extends type_object
         if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_USAGE,
+                fields::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
                 $obj->usage
@@ -1326,13 +1328,13 @@ class verb extends type_object
         if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_IMPACT,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_IMPACT,
+                fields::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
                 $obj->impact

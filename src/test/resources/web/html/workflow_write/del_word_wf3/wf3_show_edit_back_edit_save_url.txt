@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?m=4&id=999&z=1&submit=
+/http/view.php?m=4&id=999&z=1&submit=
+/http/view.php?mask_id=word_del&id=999&step=confirm&
+{
+    "mask_id": "word_del",
+    "id": "999",
+    "step": "confirm"
+}

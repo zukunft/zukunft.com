@@ -62,6 +62,7 @@ class files
     const string SYSTEM_UNIT_TEST_DATA_PATH = self::MESSAGE_PATH . 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string SYSTEM_UNIT_TEST_DATA_FOLDER = 'system_unit_test_data' . DIRECTORY_SEPARATOR;
     const string DATA_START_PAGE_PATH = self::MESSAGE_PATH . 'start_page' . DIRECTORY_SEPARATOR;
+    const string BASE_DATA_PATH = self::MESSAGE_PATH . 'base_data' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -162,6 +163,30 @@ class files
     CONST string IMPORT_DEMOCRACY_INDEX = self::SYSTEM_UNIT_TEST_DATA_PATH . 'democracy_index_table' . self::JSON;
     CONST string IMPORT_WIND_INVESTMENT = self::SYSTEM_UNIT_TEST_DATA_PATH . 'wind_investment' . self::JSON;
 
+    // key figures for the city and canton of Zurich used as a real-world demo and for system testing
+    const string ZURICH_FILE = self::BASE_DATA_PATH . 'zurich' . self::JSON;
+
+    // most relevant base data around the gross domestic product (GDP) used as a real-world demo and for system testing
+    const string GDP_FILE = self::BASE_DATA_PATH . 'GDP' . self::JSON;
+
+    // most relevant base data around global warming used as a real-world demo and for system testing
+    const string GLOBAL_WARMING_FILE = self::BASE_DATA_PATH . 'global_warming' . self::JSON;
+
+    // most relevant base data around populism, disinformation and the risks of social media used as a real-world demo and for system testing
+    const string POPULISM_FILE = self::BASE_DATA_PATH . 'populism' . self::JSON;
+
+    // most relevant base data around the world population, children per woman and DALY used as a real-world demo and for system testing
+    const string POPULATION_FILE = self::BASE_DATA_PATH . 'population' . self::JSON;
+
+    // most relevant base data around health, disease, mortality, life expectancy and prevalence used as a real-world demo and for system testing
+    const string HEALTH_FILE = self::BASE_DATA_PATH . 'health' . self::JSON;
+
+    // most relevant base data around poverty, inequality, the poverty line and the Gini coefficient used as a real-world demo and for system testing
+    const string POVERTY_FILE = self::BASE_DATA_PATH . 'poverty' . self::JSON;
+
+    // most relevant base data around learning, cognition, Bloom's taxonomy and the zone of proximal development used as a real-world demo and for system testing
+    const string EDUCATION_FILE = self::BASE_DATA_PATH . 'education' . self::JSON;
+
     /*
      * file lists
      */
@@ -211,6 +236,19 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
+    ];
+
+    // sample data for the view unit tests, imported in the db setup right after the system config
+    // so that the views can be tested by name without relying on database ids
+    const array SAMPLE_VIEW_DATA_FILES = [
+        self::ZURICH_FILE,
+        self::GDP_FILE,
+        self::GLOBAL_WARMING_FILE,
+        self::POPULISM_FILE,
+        self::POPULATION_FILE,
+        self::HEALTH_FILE,
+        self::POVERTY_FILE,
+        self::EDUCATION_FILE,
     ];
 
 }

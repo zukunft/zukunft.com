@@ -1,0 +1,532 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "learning",
+    "knowledge",
+    "education",
+    "statistics"
+  ],
+  "description": "Most relevant base data around learning and the cognitive science of education, drawn from published studies: learning outcomes, cognitive development, metacognition, working memory, knowledge retention, transfer of learning, Bloom's taxonomy, constructivism and Vygotsky's zone of proximal development (ZPD). The formulas reproduce three relationships in the calc-validation block: knowledge retention as recalled over learned items (Ebbinghaus forgetting curve), the effect size as the standardised mean difference that gives Bloom's two-sigma tutoring advantage (Bloom 1984), and transfer efficiency as transfer over trained performance (Barnett and Ceci 2002). Base words owned by other files (learning, score, transfer, point, percent, efficiency) are re-declared name-only so the import does not overwrite their canonical description; the education-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "knowledge",
+      "description": "an awareness of facts, a familiarity with individuals and situations, or a practical skill.",
+      "refs": [
+        {
+          "name": "Knowledge",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "student",
+      "description": "a person enrolled in a school or other educational institution who attends classes to acquire knowledge.",
+      "refs": [
+        {
+          "name": "Student",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "working memory",
+      "description": "a cognitive system with limited capacity that temporarily holds information available for processing.",
+      "refs": [
+        {
+          "name": "Working_memory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metacognition",
+      "description": "awareness and understanding of one's own thought processes; thinking about thinking.",
+      "refs": [
+        {
+          "name": "Metacognition",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cognitive development",
+      "description": "the emergence of the ability to consciously think, reason and understand, from childhood to adulthood.",
+      "refs": [
+        {
+          "name": "Cognitive_development",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "constructivism",
+      "description": "a theory of learning holding that learners actively construct knowledge rather than passively receive it.",
+      "refs": [
+        {
+          "name": "Constructivism_(philosophy_of_education)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ZPD",
+      "description": "the zone of proximal development: the gap between what a learner can do unaided and what they can do with guidance, in Vygotsky's theory.",
+      "refs": [
+        {
+          "name": "Zone_of_proximal_development",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Bloom's taxonomy",
+      "description": "a set of hierarchical models used to classify educational learning objectives into levels of complexity.",
+      "refs": [
+        {
+          "name": "Bloom's_taxonomy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "effect size",
+      "description": "a quantitative measure of the magnitude of a phenomenon, such as the standardised difference between two means.",
+      "refs": [
+        {
+          "name": "Effect_size",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "standard deviation",
+      "description": "a measure of the amount of variation or dispersion of a set of values.",
+      "refs": [
+        {
+          "name": "Standard_deviation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "chunk",
+      "description": "a unit of information grouped together so it can be held more easily in working memory.",
+      "refs": [
+        {
+          "name": "Chunking_(psychology)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "outcome",
+      "description": "a result or effect of an action or process"
+    },
+    {
+      "name": "retention",
+      "description": "the continued possession or recall of learned information"
+    },
+    {
+      "name": "performance",
+      "description": "how well a task is carried out"
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum amount that something can hold or process"
+    },
+    {
+      "name": "item",
+      "description": "a single piece of information to be learned"
+    },
+    {
+      "name": "tutored",
+      "description": "taught individually by a tutor"
+    },
+    {
+      "name": "classroom",
+      "description": "taught in a conventional class group"
+    },
+    {
+      "name": "trained",
+      "description": "relating to the task on which one was trained"
+    },
+    {
+      "name": "learned",
+      "description": "the number of items correctly learned"
+    },
+    {
+      "name": "recalled",
+      "description": "the number of items correctly recalled"
+    },
+    {
+      "name": "near",
+      "description": "close to the original learning context"
+    },
+    {
+      "name": "far",
+      "description": "distant from the original learning context"
+    },
+    {
+      "name": "remember",
+      "description": "Bloom level: recall facts and basic concepts"
+    },
+    {
+      "name": "understand",
+      "description": "Bloom level: explain ideas or concepts"
+    },
+    {
+      "name": "apply",
+      "description": "Bloom level: use information in new situations"
+    },
+    {
+      "name": "analyze",
+      "description": "Bloom level: draw connections among ideas"
+    },
+    {
+      "name": "evaluate",
+      "description": "Bloom level: justify a stand or decision"
+    },
+    {
+      "name": "create",
+      "description": "Bloom level: produce new or original work"
+    },
+    {
+      "name": "learning"
+    },
+    {
+      "name": "score"
+    },
+    {
+      "name": "transfer"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "efficiency"
+    }
+  ],
+  "triples": [
+    {
+      "name": "learning outcome",
+      "from": "outcome",
+      "verb": "of",
+      "to": "learning",
+      "description": "a measurable result that a learner is expected to achieve"
+    },
+    {
+      "name": "transfer of learning",
+      "from": "transfer",
+      "verb": "of",
+      "to": "learning",
+      "description": "the application of skills or knowledge learned in one context to another"
+    },
+    {
+      "name": "knowledge retention",
+      "from": "retention",
+      "verb": "of",
+      "to": "knowledge",
+      "description": "the proportion of learned knowledge still remembered after a delay"
+    },
+    {
+      "name": "working memory capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "working memory",
+      "description": "the number of chunks that working memory can hold, about seven (Miller) or four (Cowan)"
+    },
+    {
+      "from": "metacognition",
+      "verb": "influences",
+      "to": "learning"
+    },
+    {
+      "from": "ZPD",
+      "verb": "is part of",
+      "to": "constructivism"
+    },
+    {
+      "from": "constructivism",
+      "verb": "influences",
+      "to": "learning"
+    },
+    {
+      "from": "working memory",
+      "verb": "influences",
+      "to": "learning"
+    },
+    {
+      "name": "near transfer",
+      "from": "transfer",
+      "verb": "kind of",
+      "to": "near"
+    },
+    {
+      "name": "far transfer",
+      "from": "transfer",
+      "verb": "kind of",
+      "to": "far"
+    },
+    {
+      "from": "remember",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "understand",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "apply",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "analyze",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "evaluate",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "from": "create",
+      "verb": "is part of",
+      "to": "Bloom's taxonomy"
+    },
+    {
+      "name": "tutored score",
+      "from": "score",
+      "verb": "kind of",
+      "to": "tutored",
+      "description": "the test score of students taught one-to-one by a tutor"
+    },
+    {
+      "name": "classroom score",
+      "from": "score",
+      "verb": "kind of",
+      "to": "classroom",
+      "description": "the test score of students taught in a conventional class"
+    },
+    {
+      "name": "trained performance",
+      "from": "performance",
+      "verb": "kind of",
+      "to": "trained",
+      "description": "performance on the task on which the learner was trained"
+    },
+    {
+      "name": "transfer performance",
+      "from": "performance",
+      "verb": "kind of",
+      "to": "transfer",
+      "description": "performance on a new task that requires transfer of learning"
+    },
+    {
+      "name": "transfer efficiency",
+      "from": "efficiency",
+      "verb": "of",
+      "to": "transfer",
+      "description": "the transfer performance as a share of the trained performance"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Ebbinghaus 1885 Murre Dros 2015",
+      "description": "Ebbinghaus H (1885) Ueber das Gedaechtnis, replicated by Murre JMJ and Dros J (2015) PLoS ONE 10:e0120644: about 34 percent of learned material is retained one day after learning.",
+      "url": "https://doi.org/10.1371/journal.pone.0120644"
+    },
+    {
+      "name": "Bloom 1984 two sigma",
+      "description": "Bloom BS (1984). The 2 sigma problem. Educational Researcher 13(6):4-16. One-to-one tutored students performed about two standard deviations above conventional class instruction.",
+      "url": "https://doi.org/10.3102/0013189X013006004"
+    },
+    {
+      "name": "Barnett Ceci 2002",
+      "description": "Barnett SM, Ceci SJ (2002). When and where do we apply what we learn? A taxonomy for far transfer. Psychological Bulletin 128:612-637.",
+      "url": "https://doi.org/10.1037/0033-2909.128.4.612"
+    },
+    {
+      "name": "Miller 1956",
+      "description": "Miller GA (1956). The magical number seven, plus or minus two. Psychological Review 63:81-97. Working memory holds about seven chunks of information.",
+      "url": "https://doi.org/10.1037/h0043158"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "student",
+        "learned",
+        "item"
+      ],
+      "number": "50",
+      "source": "Ebbinghaus 1885 Murre Dros 2015"
+    },
+    {
+      "words": [
+        "student",
+        "recalled",
+        "item"
+      ],
+      "number": "17",
+      "source": "Ebbinghaus 1885 Murre Dros 2015"
+    },
+    {
+      "words": [
+        "student",
+        "knowledge retention",
+        "percent"
+      ],
+      "number": "34"
+    },
+    {
+      "words": [
+        "student",
+        "tutored score",
+        "point"
+      ],
+      "number": "80",
+      "source": "Bloom 1984 two sigma"
+    },
+    {
+      "words": [
+        "student",
+        "classroom score",
+        "point"
+      ],
+      "number": "50",
+      "source": "Bloom 1984 two sigma"
+    },
+    {
+      "words": [
+        "student",
+        "standard deviation",
+        "point"
+      ],
+      "number": "15",
+      "source": "Bloom 1984 two sigma"
+    },
+    {
+      "words": [
+        "student",
+        "effect size"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "student",
+        "trained performance",
+        "percent"
+      ],
+      "number": "80",
+      "source": "Barnett Ceci 2002"
+    },
+    {
+      "words": [
+        "student",
+        "transfer performance",
+        "percent"
+      ],
+      "number": "60",
+      "source": "Barnett Ceci 2002"
+    },
+    {
+      "words": [
+        "student",
+        "transfer efficiency",
+        "percent"
+      ],
+      "number": "75"
+    },
+    {
+      "words": [
+        "working memory capacity",
+        "chunk"
+      ],
+      "number": "7",
+      "source": "Miller 1956"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "knowledge retention (formula)",
+      "expression": "\"knowledge retention\" = \"recalled\" / \"learned\" * 100",
+      "assigned": [
+        "student"
+      ]
+    },
+    {
+      "name": "effect size (formula)",
+      "expression": "\"effect size\" = ( \"tutored score\" - \"classroom score\" ) / \"standard deviation\"",
+      "assigned": [
+        "student"
+      ]
+    },
+    {
+      "name": "transfer efficiency (formula)",
+      "expression": "\"transfer efficiency\" = \"transfer performance\" / \"trained performance\" * 100",
+      "assigned": [
+        "student"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "student",
+        "recalled",
+        "learned",
+        "item"
+      ],
+      "formula": "knowledge retention (formula)",
+      "words": [
+        "student",
+        "knowledge retention",
+        "percent"
+      ],
+      "number": "34",
+      "note": "17 / 50 * 100"
+    },
+    {
+      "context": [
+        "student",
+        "tutored score",
+        "classroom score",
+        "standard deviation",
+        "point"
+      ],
+      "formula": "effect size (formula)",
+      "words": [
+        "student",
+        "effect size"
+      ],
+      "number": "2",
+      "note": "(80 - 50) / 15"
+    },
+    {
+      "context": [
+        "student",
+        "transfer performance",
+        "trained performance",
+        "percent"
+      ],
+      "formula": "transfer efficiency (formula)",
+      "words": [
+        "student",
+        "transfer efficiency",
+        "percent"
+      ],
+      "number": "75",
+      "note": "60 / 80 * 100"
+    }
+  ]
+}

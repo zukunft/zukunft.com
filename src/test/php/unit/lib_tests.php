@@ -140,9 +140,9 @@ class lib_tests
         $test_name = 'html_to_text';
         $text = '<div class="heading-line"><h4 class="heading-inline">Zurich</h4>'
             . '<a href="#"><i class="fas fa-edit"></i></a></div>'
-            . '<div class="subtitle">(is a City, Canton, ...) / measure</div>'
+            . '<div class="subtitle">(is a city, canton, ...) / measure</div>'
             . '<div class="subtitle">(personal, admin protection)</div>';
-        $target = 'Zurich <fas fa-edit> (is a City, Canton, ...) / measure (personal, admin protection)';
+        $target = 'Zurich <fas fa-edit> (is a city, canton, ...) / measure (personal, admin protection)';
         $result = $lib->html_to_text($text);
         $t->assert($test_name, $result, $target);
 
@@ -151,6 +151,23 @@ class lib_tests
         $text = '  no  tags  here  ';
         $target = 'no tags here';
         $result = $lib->html_to_text($text);
+        $t->assert($test_name, $result, $target);
+
+        // convert a realistic view fragment (a headline with an edit icon, two subtitles,
+        // related phrases and a values table) to markdown and compare it to the expected
+        // ".md" screenshot; the icon is kept as a readable '<fas fa-edit>' placeholder
+        $test_name = 'html_to_markdown';
+        $res_stem = test_paths::HTML . 'markdown/word_title_and_values';
+        $text = $t->file($res_stem . test_files::HTML);
+        $target = $t->file($res_stem . test_files::MD);
+        $result = $lib->html_to_markdown($text);
+        $t->assert($test_name, $result, $target);
+
+        // text without any tags is returned unchanged apart from collapsed spaces
+        $test_name = 'html_to_markdown without tags';
+        $text = '  no  tags  here  ';
+        $target = 'no tags here';
+        $result = $lib->html_to_markdown($text);
         $t->assert($test_name, $result, $target);
 
         // replace volatile CSRF token with a fixed dummy value for snapshot tests

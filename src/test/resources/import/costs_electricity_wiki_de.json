@@ -1,0 +1,1410 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-22 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "levelized cost of electricity"
+  ],
+  "description": "Werte und Formeln zum Thema Stromgestehungskosten (Levelized Cost of Electricity, LCOE) aus dem deutschen Wikipedia-Artikel \"Stromgestehungskosten\". Modelliert sind die LCOE neuer Kraftwerke nach Energietraeger (Fraunhofer ISE 2024, Eurocent je kWh, als Spannweiten) sowie die Kostenkomponenten (Kapitalkosten, fixe und variable Betriebs- und Wartungskosten, Netzkosten) und der daraus berechnete LCOE-Wert nach EIA (USD je MWh, Inbetriebnahme 2018 und 2022). Die Komponentensumme ist als Formel mit calc-validation hinterlegt. Quelle des Artikels: https://de.wikipedia.org/wiki/Stromgestehungskosten",
+  "words": [
+    {
+      "name": "power",
+      "description": "the rate, per unit time, at which electrical energy is transferred.",
+      "refs": [
+        {
+          "name": "Power_(physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nuclear",
+      "description": "relating to the nucleus of an atom and the energy released in nuclear reactions."
+    },
+    {
+      "name": "hydro",
+      "description": "relating to electricity generated from flowing water."
+    },
+    {
+      "name": "wind",
+      "description": "the use of air flow to generate electricity.",
+      "refs": [
+        {
+          "name": "Wind_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "onshore",
+      "description": "located on land, as opposed to offshore."
+    },
+    {
+      "name": "offshore",
+      "description": "located at sea."
+    },
+    {
+      "name": "photovoltaic",
+      "description": "converting light directly into electricity.",
+      "refs": [
+        {
+          "name": "Photovoltaics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "utility",
+      "description": "of a photovoltaic plant, large utility-scale ground-mounted."
+    },
+    {
+      "name": "rooftop",
+      "description": "of a photovoltaic plant, a small roof-mounted installation."
+    },
+    {
+      "name": "thermal",
+      "description": "relating to heat; here concentrating solar thermal power."
+    },
+    {
+      "name": "solar",
+      "description": "relating to energy from the sun.",
+      "refs": [
+        {
+          "name": "Solar_energy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cycle",
+      "description": "a thermodynamic cycle; here a gas-and-steam combined cycle."
+    },
+    {
+      "name": "combined",
+      "description": "of a gas plant, using a combined gas-and-steam cycle."
+    },
+    {
+      "name": "coal",
+      "description": "a combustible black sedimentary rock burned to generate electricity."
+    },
+    {
+      "name": "hard",
+      "description": "of coal, anthracite or bituminous hard coal."
+    },
+    {
+      "name": "lignite",
+      "description": "brown coal, a soft low-grade coal burned for electricity."
+    },
+    {
+      "name": "biomass",
+      "description": "organic material burned to generate electricity."
+    },
+    {
+      "name": "electricity",
+      "description": "the set of physical phenomena associated with electric charge.",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something.",
+      "refs": [
+        {
+          "name": "Cost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "levelized",
+      "description": "averaged over the lifetime of an asset as a present value per unit of output."
+    },
+    {
+      "name": "capital",
+      "description": "the up-front investment expenditure to build a plant."
+    },
+    {
+      "name": "maintenance",
+      "description": "the operations and upkeep of a plant during its lifetime."
+    },
+    {
+      "name": "fixed",
+      "description": "of a cost, independent of the amount produced."
+    },
+    {
+      "name": "variable",
+      "description": "of a cost, depending on the amount produced (here including fuel)."
+    },
+    {
+      "name": "grid",
+      "description": "the transmission network; here grid connection and system cost."
+    },
+    {
+      "name": "capacity",
+      "description": "the maximum output an installation can produce."
+    },
+    {
+      "name": "factor",
+      "description": "a ratio; here the ratio of actual to maximum possible output."
+    },
+    {
+      "name": "lower bound estimate",
+      "description": "the low end of an estimated range."
+    },
+    {
+      "name": "upper bound estimate",
+      "description": "the high end of an estimated range."
+    },
+    {
+      "name": "USD",
+      "description": "the United States dollar.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Eurocent",
+      "description": "one hundredth of a euro.",
+      "type": "measure"
+    },
+    {
+      "name": "MWh",
+      "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kWh",
+      "description": "kilowatt-hour, a unit of energy.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "description": "a proportion expressed as a fraction of 100.",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "2018",
+      "description": "the calendar year 2018.",
+      "type": "time"
+    },
+    {
+      "name": "2022",
+      "description": "the calendar year 2022.",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "description": "the calendar year 2024.",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "nuclear power",
+      "from": "power",
+      "verb": "kind of",
+      "to": "nuclear",
+      "refs": [
+        {
+          "name": "Nuclear_power",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hydropower",
+      "from": "power",
+      "verb": "kind of",
+      "to": "hydro",
+      "refs": [
+        {
+          "name": "Hydropower",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "onshore wind",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "onshore"
+    },
+    {
+      "name": "offshore wind",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "offshore"
+    },
+    {
+      "name": "utility photovoltaic",
+      "from": "photovoltaic",
+      "verb": "kind of",
+      "to": "utility"
+    },
+    {
+      "name": "rooftop photovoltaic",
+      "from": "photovoltaic",
+      "verb": "kind of",
+      "to": "rooftop"
+    },
+    {
+      "name": "solar thermal",
+      "from": "thermal",
+      "verb": "kind of",
+      "to": "solar"
+    },
+    {
+      "name": "combined cycle",
+      "from": "cycle",
+      "verb": "kind of",
+      "to": "combined"
+    },
+    {
+      "name": "hard coal",
+      "from": "coal",
+      "verb": "kind of",
+      "to": "hard"
+    },
+    {
+      "name": "levelized cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "levelized"
+    },
+    {
+      "name": "levelized cost of electricity",
+      "from": "levelized cost",
+      "verb": "of",
+      "to": "electricity",
+      "description": "the average net present cost of electricity generation over the lifetime of a generator, here the sum of capital, maintenance and grid cost per unit of energy; LCOE = sum((I_t + O&M_t + F_t) / (1 + i)^t) / sum(E_t / (1 + i)^t).",
+      "refs": [
+        {
+          "name": "Levelized_cost_of_electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "capital cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "capital"
+    },
+    {
+      "name": "maintenance cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "maintenance"
+    },
+    {
+      "name": "fixed maintenance cost",
+      "from": "maintenance cost",
+      "verb": "kind of",
+      "to": "fixed",
+      "description": "the fixed operations and maintenance cost, independent of output."
+    },
+    {
+      "name": "variable maintenance cost",
+      "from": "maintenance cost",
+      "verb": "kind of",
+      "to": "variable",
+      "description": "the variable operations and maintenance cost including fuel."
+    },
+    {
+      "name": "grid cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "grid"
+    },
+    {
+      "name": "capacity factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "capacity"
+    },
+    {
+      "from": "USD",
+      "verb": "per",
+      "to": "MWh",
+      "description": "US dollars per megawatt-hour generated."
+    },
+    {
+      "from": "Eurocent",
+      "verb": "per",
+      "to": "kWh",
+      "description": "euro-cents per kilowatt-hour generated."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Wikipedia Stromgestehungskosten",
+      "description": "German Wikipedia article \"Stromgestehungskosten\" (levelized cost of electricity), source of the tables.",
+      "url": "https://de.wikipedia.org/wiki/Stromgestehungskosten"
+    },
+    {
+      "name": "Fraunhofer ISE 2024",
+      "description": "Fraunhofer ISE study \"Stromgestehungskosten Erneuerbare Energien\" 2024; LCOE of new plants in Eurocent per kWh.",
+      "url": "https://www.ise.fraunhofer.de/content/dam/ise/de/documents/publications/studies/DE2024_ISE_Studie_Stromgestehungskosten_Erneuerbare_Energien.pdf"
+    },
+    {
+      "name": "EIA AEO 2013",
+      "description": "US EIA Annual Energy Outlook 2013, levelized cost of new generation resources entering service 2018, in USD/MWh.",
+      "url": "https://www.eia.gov/outlooks/aeo/pdf/electricity_generation.pdf"
+    },
+    {
+      "name": "EIA AEO 2018",
+      "description": "US EIA Annual Energy Outlook 2018, levelized cost of new generation resources entering service 2022, in USD/MWh.",
+      "url": "https://www.eia.gov/outlooks/aeo/electricity_generation/pdf/LCOE_methodology.pdf"
+    },
+    {
+      "name": "IEA Projected Costs 2015",
+      "description": "IEA/NEA Projected Costs of Generating Electricity 2015.",
+      "url": "https://origin.iea.org/reports/projected-costs-of-generating-electricity-2015"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "nuclear power",
+        "capacity factor",
+        "2018",
+        "percent",
+        "assumed value"
+      ],
+      "number": "90",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "capital cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "83.4",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "fixed maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "11.6",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "variable maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "12.3",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "1.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "108.4",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "capacity factor",
+        "2018",
+        "percent",
+        "assumed value"
+      ],
+      "number": "87.8",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "capital cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "15.8",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "fixed maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "1.7",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "variable maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "48.4",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "1.2",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "67.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "capacity factor",
+        "2018",
+        "percent",
+        "assumed value"
+      ],
+      "number": "34",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "capital cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "70.3",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "fixed maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "13.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "variable maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "3.2",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "86.6",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "capacity factor",
+        "2018",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "capital cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "130.4",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "fixed maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "9.9",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "variable maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "4.0",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "144.3",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "capacity factor",
+        "2018",
+        "percent",
+        "assumed value"
+      ],
+      "number": "52",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "capital cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "78.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "fixed maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "4.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "variable maintenance cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "6.1",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "2.0",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "hydropower",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "90.3",
+      "source": "EIA AEO 2013"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "capacity factor",
+        "2022",
+        "percent",
+        "assumed value"
+      ],
+      "number": "41",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "capital cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "43.1",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "fixed maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "13.4",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "variable maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "2.5",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "59.1",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "capacity factor",
+        "2022",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "capital cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "115.8",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "fixed maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "19.9",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "variable maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "2.3",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "138.0",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "capacity factor",
+        "2022",
+        "percent",
+        "assumed value"
+      ],
+      "number": "29",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "capital cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "51.2",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "fixed maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "8.7",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "variable maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "3.3",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "63.2",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "capacity factor",
+        "2022",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "capital cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "128.4",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "fixed maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "32.6",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "variable maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "0.0",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "4.1",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "solar thermal",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "165.1",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "capacity factor",
+        "2022",
+        "percent",
+        "assumed value"
+      ],
+      "number": "64",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "capital cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "48.2",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "fixed maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "9.8",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "variable maintenance cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "1.8",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "1.9",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "hydropower",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "number": "61.7",
+      "source": "EIA AEO 2018"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "7",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "nuclear power",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "12",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "lignite",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "15.1",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "lignite",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "25.7",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "hard coal",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "17.3",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "hard coal",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "29.3",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "10.9",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "combined cycle",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "18.1",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "4.3",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "9.2",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "5.5",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "offshore wind",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "10.3",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "biomass",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "11.5",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "biomass",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "23.5",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "rooftop photovoltaic",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "6.3",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "rooftop photovoltaic",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "14.4",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "lower bound estimate",
+        "assumed value"
+      ],
+      "number": "4.1",
+      "source": "Fraunhofer ISE 2024"
+    },
+    {
+      "words": [
+        "utility photovoltaic",
+        "levelized cost of electricity",
+        "2024",
+        "Eurocent per kWh",
+        "upper bound estimate",
+        "assumed value"
+      ],
+      "number": "6.9",
+      "source": "Fraunhofer ISE 2024"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "levelized cost of electricity component formula",
+      "expression": "\"levelized cost of electricity\" = \"capital cost\" + \"fixed maintenance cost\" + \"variable maintenance cost\" + \"grid cost\"",
+      "latex": "\\text{LCOE} = c_{\\text{cap}} + c_{\\text{O\\&M,fix}} + c_{\\text{O\\&M,var}} + c_{\\text{grid}}",
+      "assigned": [
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "nuclear power",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "nuclear power",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh"
+      ],
+      "number": "108.4",
+      "note": "nuclear power (2018): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    },
+    {
+      "context": [
+        "combined cycle",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "combined cycle",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh"
+      ],
+      "number": "67.1",
+      "note": "combined cycle (2018): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    },
+    {
+      "context": [
+        "onshore wind",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2018",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "onshore wind",
+        "levelized cost of electricity",
+        "2018",
+        "USD per MWh"
+      ],
+      "number": "86.6",
+      "note": "onshore wind (2018): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    },
+    {
+      "context": [
+        "offshore wind",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "offshore wind",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh"
+      ],
+      "number": "138.0",
+      "note": "offshore wind (2022): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    },
+    {
+      "context": [
+        "utility photovoltaic",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "utility photovoltaic",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh"
+      ],
+      "number": "63.2",
+      "note": "utility photovoltaic (2022): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    },
+    {
+      "context": [
+        "hydropower",
+        "capital cost",
+        "fixed maintenance cost",
+        "variable maintenance cost",
+        "grid cost",
+        "2022",
+        "USD per MWh",
+        "assumed value"
+      ],
+      "formula": "levelized cost of electricity component formula",
+      "words": [
+        "hydropower",
+        "levelized cost of electricity",
+        "2022",
+        "USD per MWh"
+      ],
+      "number": "61.7",
+      "note": "hydropower (2022): capital + fixed and variable maintenance + grid cost sum to the levelized cost of electricity."
+    }
+  ]
+}

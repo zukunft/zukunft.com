@@ -47,19 +47,23 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VERB . 'verb.php';
-//include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::VIEW . 'view_list.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -70,16 +74,27 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -90,6 +105,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class triple extends sandbox_code_id
 {
@@ -117,7 +135,7 @@ class triple extends sandbox_code_id
     // the triple components
     // they can be null to allow front end error messages to the user
     private ?phrase $from = null;
-    private ?verb $verb = null;
+    public ?verb $verb = null;
     private ?phrase $to = null;
     public ?float $weight = null;
     public ?string $plural = null {
@@ -131,8 +149,31 @@ class triple extends sandbox_code_id
     // the impact used to sort the triples
     public float $impact = 0.0;
 
+    // TODO Prio 2
+    // cache values that should later be moved to the general data_object cache, so that the
+    // related values/formulas live in exactly one place (DRY) instead of on each frontend object
+
     // the phrases connected to this triple by another triple
     public ?phrase_list $phr_lst = null;
+
+    // the values where this triple is used, e.g. for "Zurich (canton)" the population and GDP;
+    // filled from the INCL_RELATED api message and shown by the "values by triple" component
+    public ?value_list $val_lst = null;
+
+    // the formulas related to this triple; filled from the INCL_RELATED api message and
+    // shown by the formula list component
+    public ?formula_list $frm_lst = null;
+
+    // the external references of this triple; filled from the INCL_RELATED api message and
+    // shown by the "ref list word" component
+    public ?ref_list $ref_lst = null;
+
+    // the most recent change log entries of this triple; filled from the INCL_RELATED api
+    // message and shown by the "change log word" component
+    public ?change_log_list $chg_log = null;
+
+    // the views suggested for this triple; filled from the INCL_RELATED api message
+    public ?view_list $view_lst = null;
 
 
     /*
@@ -176,8 +217,49 @@ class triple extends sandbox_code_id
                     $this->impact = $url_array[url_var::IMPACT];
                 }
             }
+            // the phrase type field is posted as url_var::PHRASE_TYPE ('py'); url_var::TYPE ('y') is the
+            // triple predicate, so capture the phrase type here to persist a phrase type change
+            if (array_key_exists(url_var::PHRASE_TYPE, $url_array)) {
+                if ($url_array[url_var::PHRASE_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::PHRASE_TYPE]);
+                }
+            }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return array the ordered db field names of a triple used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return triple_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array the user-editable triple db field names mapped to their url var key
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            triple_fields::FLD_NAME_GIVEN => url_var::NAME,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            phrase_fields::FLD_TYPE => url_var::PHRASE_TYPE,
+            triple_fields::FLD_WIGHT => url_var::WEIGHT,
+        ];
+    }
+
+    /**
+     * load the triple for its page including the related data, in particular the from, verb
+     * and to phrases with their names so the page title can link each part (like the word,
+     * the INCL_RELATED flag triggers the backend to add the phrase names)
+     * @param int|string $id the database id of the triple to load
+     * @param int $usr_id the id of the session user to load the object for, 0 for the default
+     * @return bool true if the triple has been loaded
+     */
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    {
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
     /**
@@ -269,6 +351,66 @@ class triple extends sandbox_code_id
             }
         } else {
             $this->phr_lst = null;
+        }
+        if (array_key_exists(json_fields::VALUES, $json_array)) {
+            $value = $json_array[json_fields::VALUES];
+            if (is_array($value)) {
+                $lst = new value_list();
+                $lst->api_mapper($value);
+                $this->val_lst = $lst;
+            } else {
+                $this->val_lst = null;
+            }
+        } else {
+            $this->val_lst = null;
+        }
+        if (array_key_exists(json_fields::FORMULAS, $json_array)) {
+            $formula = $json_array[json_fields::FORMULAS];
+            if (is_array($formula)) {
+                $lst = new formula_list();
+                $lst->api_mapper($formula);
+                $this->frm_lst = $lst;
+            } else {
+                $this->frm_lst = null;
+            }
+        } else {
+            $this->frm_lst = null;
+        }
+        if (array_key_exists(json_fields::REFERENCES, $json_array)) {
+            $reference = $json_array[json_fields::REFERENCES];
+            if (is_array($reference)) {
+                $lst = new ref_list();
+                $lst->api_mapper($reference);
+                $this->ref_lst = $lst;
+            } else {
+                $this->ref_lst = null;
+            }
+        } else {
+            $this->ref_lst = null;
+        }
+        if (array_key_exists(json_fields::CHANGES, $json_array)) {
+            $change = $json_array[json_fields::CHANGES];
+            if (is_array($change)) {
+                $lst = new change_log_list();
+                $lst->api_mapper($change);
+                $this->chg_log = $lst;
+            } else {
+                $this->chg_log = null;
+            }
+        } else {
+            $this->chg_log = null;
+        }
+        if (array_key_exists(json_fields::VIEWS, $json_array)) {
+            $view = $json_array[json_fields::VIEWS];
+            if (is_array($view)) {
+                $lst = new view_list();
+                $lst->api_mapper($view);
+                $this->view_lst = $lst;
+            } else {
+                $this->view_lst = null;
+            }
+        } else {
+            $this->view_lst = null;
         }
         return $msg->is_ok();
     }
@@ -374,7 +516,14 @@ class triple extends sandbox_code_id
 
     function get_verb(): verb
     {
-        return $this->verb;
+        $vrb = $this->verb;
+        // a triple without a verb is a data error; log it (with the triple id) and fall back to an
+        // empty verb so the from/verb/to renderers and the api array do not crash on a null verb
+        if ($vrb == null) {
+            $vrb = new verb();
+            log_err('verb missing for triple ' . $this->dsp_id(), 'triple->get_verb');
+        }
+        return $vrb;
     }
 
     function get_to(): ?phrase
@@ -531,7 +680,14 @@ class triple extends sandbox_code_id
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
+        // the existing type and detect whether the user actually changed it (see url_var::PRE);
+        // a re-render after a save error keeps the original db snapshot via pre_value
+        $html = new html_base();
+        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
+        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
+        return $result;
     }
 
     /**

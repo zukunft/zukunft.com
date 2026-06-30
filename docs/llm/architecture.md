@@ -177,6 +177,27 @@ delegate to at the bottom (e.g. `load_by_phrase` before `load_sql_by_phrase`).
 A reader scanning a section meets the high-level function before the detail it
 calls, and the most common entry point is found first.
 
+## Separate loading from saving — the save path never loads
+
+Reading data from the database and writing it back are concentrated in their own
+functions and kept clearly separated. The **only** database read on the save path
+is the initial reload at the top of `save()` — `get_similar()` and the filling of
+`$db_rec` (the database record as it was before the change). After that, every
+function `save()` reaches — change detection, the SQL builders, the change-log
+helpers — works purely on the in-memory objects and that already-loaded `$db_rec`;
+none of them load from the database.
+
+Concretely, `db_fields_changed()` (and the `add_user` / `add_link_field` /
+`add_type_field` helpers it calls) must never call a `load_*` function: the names
+and ids it logs come from the objects already in memory. If a referenced object's
+name is missing at save time (e.g. a triple's from/to phrase loaded by id only),
+fix the **load** that built the object so it arrives complete — never load inside
+the save path to patch it up.
+
+Why: a stray load during save makes the write depend on database state mid-change,
+hides ordering bugs (an object reaching `save()` half-loaded), and couples the two
+responsibilities so neither can be reasoned about or tested in isolation.
+
 ## Standard function names
 
 | Function | Purpose |

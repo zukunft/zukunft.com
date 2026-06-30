@@ -63,6 +63,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class sandbox_typed extends sandbox_named
 {
@@ -220,11 +222,54 @@ class sandbox_typed extends sandbox_named
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
         return $msg;
+    }
+
+    /**
+     * check if the requesting user is allowed to change the type and if not
+     * surface a warning so that an actual type change is not silently dropped
+     *
+     * during api mapping set_type_id() denies the change for users without the
+     * permission but its warning is discarded; this is meant to be called from
+     * the save change detection (db_fields_changed) once an actual type change
+     * has been detected so that the denial becomes visible to the user instead
+     * of the change just vanishing (see fix #247)
+     *
+     * @param user_message $msg with the requesting user; enriched with the warning if not allowed
+     * @return bool true if the requesting user may change the type
+     */
+    function type_change_allowed(user_message $msg): bool
+    {
+        $result = false;
+        $usr_req = $msg->usr;
+        if ($usr_req !== null) {
+            if ($usr_req->can_set_type_id()) {
+                $result = true;
+            }
+        }
+        if (!$result) {
+            $lib = new library();
+            if ($usr_req !== null) {
+                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_name(),
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            } else {
+                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => 'missing user',
+                    msg_id::VAR_USER_PROFILE => '',
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $result;
     }
 
     /**

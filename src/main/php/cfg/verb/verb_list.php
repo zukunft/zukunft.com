@@ -50,6 +50,8 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -65,6 +67,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class verb_list extends type_list
 {
@@ -147,16 +151,16 @@ class verb_list extends type_list
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->get_user()->id);
-            $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
+            $db_con->set_usr_num_fields(array(fields::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
             // set the where clause depending on the values given
-            // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
+            // definition of up: if "Zurich" is a city, then "Zurich" is "from" and "city" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
-                $qp->sql = $db_con->select_by_field(triple_db::FLD_FROM);
+                $qp->sql = $db_con->select_by_field(triple_fields::FLD_FROM);
             } else {
-                $qp->sql = $db_con->select_by_field(triple_db::FLD_TO);
+                $qp->sql = $db_con->select_by_field(triple_fields::FLD_TO);
             }
             $qp->par = $db_con->get_par();
         }

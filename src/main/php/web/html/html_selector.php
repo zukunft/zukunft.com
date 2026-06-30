@@ -81,10 +81,12 @@ class html_selector
                 if ($key == $this->selected and $this->selected <> 0) {
                     $row_option = ' selected';
                 }
+                // the option text is a user-controlled name, so escape it before output
+                $option_text = htmlspecialchars($value, ENT_QUOTES);
                 if ($this->type == self::TYPE_DATALIST) {
-                    $result .= '<option data-value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+                    $result .= '<option data-value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
                 } else {
-                    $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+                    $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
                 }
             }
         }
@@ -130,7 +132,9 @@ class html_selector
             if ($this->type == self::TYPE_DATALIST) {
                 $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $dom_id . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $dom_id . '" ' . $this->attribute;
                 if (array_key_exists($this->selected, $this->lst)) {
-                    $result .= ' ' . html_names::VALUE . '="' . $this->lst[$this->selected] . '"';
+                    // the pre-filled value is the submitted field value (e.g. a phrase name)
+                    // so escape it like every other form field value (see html_base::input)
+                    $result .= ' ' . html_names::VALUE . '="' . htmlspecialchars($this->lst[$this->selected], ENT_QUOTES) . '"';
                 }
                 $result .= '>';
                 $result .= '<datalist id="' . $dom_id . '_list">';

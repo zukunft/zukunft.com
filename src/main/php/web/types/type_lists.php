@@ -80,6 +80,13 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -95,6 +102,13 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 
 class type_lists
 {
@@ -172,6 +186,30 @@ class type_lists
         } else {
             return null;
         }
+    }
+
+    /**
+     * map a type-id db field name to its preloaded type list so a caller can show the type name instead of the id
+     * e.g. the share field to the share type list for the confirm-change preview
+     *
+     * @param string $db_fld the database field name e.g. fields::FLD_SHARE
+     * @return type_list|null the matching type list or null if the field does not carry a type id
+     */
+    function field_to_type_list(string $db_fld): ?type_list
+    {
+        $result = match ($db_fld) {
+            fields::FLD_SHARE => $this->shr_typ,
+            fields::FLD_PROTECT => $this->ptc_typ,
+            fields::FLD_STYLE => $this->msk_sty,
+            phrase_fields::FLD_TYPE => $this->phr_typ,
+            source_fields::FLD_TYPE => $this->src_typ,
+            ref_fields::FLD_TYPE => $this->ref_typ,
+            formula_fields::FLD_TYPE => $this->frm_typ,
+            view_fields::FLD_TYPE => $this->msk_typ,
+            component_fields::FLD_TYPE => $this->cmp_typ,
+            default => null,
+        };
+        return $result;
     }
 
     /**
@@ -523,9 +561,9 @@ class type_lists
         return $this->msk_sys->get($id);
     }
 
-    function get_view(string $code_id): view
+    function get_view(string $code_id): ?view
     {
-        return $this->msk_sys->get($code_id);
+        return $this->msk_sys->get_by_code_id($code_id);
     }
 
     function get_html(string $code_id): string

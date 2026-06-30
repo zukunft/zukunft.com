@@ -74,9 +74,9 @@ $sys = new system_object('init');
 include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log.php';
-use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
-global $log_txt; // the log object for standard io logging
+include_once html_paths::LOG_TEXT . 'text_log.php';
+use Zukunft\ZukunftCom\main\php\web\log_text\text_log;
+global $log_txt; // the frontend log object for standard io logging (incl. the html header display)
 $log_txt = new text_log();
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter

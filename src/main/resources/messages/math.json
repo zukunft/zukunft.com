@@ -1297,7 +1297,7 @@
     {
       "name": "τ (unit symbol)",
       "from": "τ",
-      "verb": "is alias of",
+      "verb": "is symbol for",
       "to": "tau",
       "type": "hidden_triple"
     },

@@ -74,6 +74,12 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+// phrase.php is loaded elsewhere (kept as a commented placeholder like cfg word_db) to avoid
+// pulling the whole phrase class graph into the frontend just for the phrase_type_id field name
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -88,6 +94,9 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
@@ -123,6 +132,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 
 class word extends sandbox_code_id
 {
@@ -153,6 +165,14 @@ class word extends sandbox_code_id
     // the main parent phrase
     public ?phrase $parent = null;
 
+    // the system calculated impact of this word used to sort the words by relevance
+    // (highest impact first); same field name as triple, formula and verb so a term can
+    // read the impact of its wrapped object without knowing the concrete class
+    public float $impact = 0.0;
+
+    // TODO Prio 2
+    // cache values that should later be moved to the general data_object cache
+
     // the phrases connected to this word by a triple
     public ?phrase_list $phr_lst = null;
 
@@ -163,11 +183,6 @@ class word extends sandbox_code_id
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
-
-    // the system calculated impact of this word used to sort the words by relevance
-    // (highest impact first); same field name as triple, formula and verb so a term can
-    // read the impact of its wrapped object without knowing the concrete class
-    public float $impact = 0.0;
 
 
     /*
@@ -201,8 +216,54 @@ class word extends sandbox_code_id
                     $this->view_id = $url_array[url_var::VIEW];
                 }
             }
+            // the phrase type field is posted as url_var::PHRASE_TYPE ('py'), not the generic
+            // url_var::TYPE the parent reads, so capture it here to persist a phrase type change
+            if (array_key_exists(url_var::PHRASE_TYPE, $url_array)) {
+                if ($url_array[url_var::PHRASE_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::PHRASE_TYPE]);
+                }
+            }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return array parent url array extended with the plural and view of this word
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::PLURAL] = $this->plural;
+        $url_array[url_var::VIEW] = $this->view_id;
+        return $url_array;
+    }
+
+    /**
+     * @return array the ordered db field names of a word used for the change preview order
+     */
+    function sandbox_fld_order(): array
+    {
+        return word_fields::ALL_NAMES;
+    }
+
+    /**
+     * @return array all sandbox word db field names mapped to their url var key so that the change
+     *              preview can show any changed field; the keys match word_fields::ALL_NAMES
+     */
+    function db_fld_to_url(): array
+    {
+        return [
+            word_fields::FLD_NAME => url_var::NAME,
+            word_fields::FLD_PLURAL => url_var::PLURAL,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            phrase_fields::FLD_TYPE => url_var::PHRASE_TYPE,
+            fields::FLD_VIEW => url_var::VIEW,
+            fields::FLD_USAGE => url_var::USAGE,
+            fields::FLD_IMPACT => url_var::IMPACT,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
+        ];
     }
 
     /**
@@ -237,6 +298,9 @@ class word extends sandbox_code_id
             $this->parent = $json_array[json_fields::PARENT];
         } else {
             $this->parent = null;
+        }
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $this->view_id = $json_array[json_fields::VIEW];
         }
         if (array_key_exists(json_fields::PHRASES_RELATED, $json_array)) {
             $value = $json_array[json_fields::PHRASES_RELATED];
@@ -334,6 +398,8 @@ class word extends sandbox_code_id
         }
         // usage is not included here because this system value is never updated by the frontend
         $vars[json_fields::IMPACT] = $this->impact;
+        // send the selected default view id so a view change is persisted (backend reads it as the id)
+        $vars[json_fields::VIEW] = $this->view_id;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }
@@ -349,7 +415,7 @@ class word extends sandbox_code_id
      * load the word by id AND ask the backend to include the related-phrases view-model
      * (the connecting triples in both directions, capped by the per-verb config limit)
      * so the page-title renderer can produce the category subtitle below the heading
-     * (e.g. for "CHF": "is symbol for Swiss Franc"; for "Zurich": "is a City, Canton, ...")
+     * (e.g. for "CHF": "is symbol for Swiss Franc"; for "Zurich": "is a city, canton, ...")
      *
      * Overrides the no-op base implementation by attaching the ?incl_related=1 URL flag
      * to the REST GET call. The backend handler (api/word/index.php) translates that flag
@@ -358,11 +424,12 @@ class word extends sandbox_code_id
      * connecting verb_id), and the frontend api_mapper picks it up into $this->phrases_related
      *
      * @param int|string $id the word id to load
+     * @param int $usr_id the id of the session user to load the word for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id): bool
+    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1']);
+        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
 
@@ -442,8 +509,8 @@ class word extends sandbox_code_id
      * get the parent phrases of the given phrase (foaf_direction::UP)
      * if a phrase list is given get only the parent phrases within the list (no api call)
      * if no phrase list is given get the phrases from the api
-     * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and country
-     * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and country
+     * e.g. for Zurich the list is city and canton based on a phrase list with city, canton and country
+     * but  for Zurich the list is city, canton and company based on a phrase list with company, city, canton and country
      * @param phrase_list|null $phr_lst optional pre-loaded list to filter against, avoiding an api call
      * @param int $levels the number of parent levels
      * @return phrase_list capped by the user-specific frontend config limit
@@ -605,7 +672,14 @@ class word extends sandbox_code_id
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
+        // the existing type and detect whether the user actually changed it (see url_var::PRE);
+        // a re-render after a save error keeps the original db snapshot via pre_value
+        $html = new html_base();
+        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
+        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
+        return $result;
     }
 
 
@@ -786,8 +860,8 @@ class word extends sandbox_code_id
     /**
      * display a word as the view header
      * @param phrase|null $is_part_of the word group as a hint to the user
-     *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
-     *             that the Zurich (City) is the phrase to select
+     *        e.g. city Zurich because in many cases if just the word Zurich is given the assumption is,
+     *             that the Zurich (city) is the phrase to select
      * @returns string the HTML code to display a word
      */
     function header(?phrase $is_part_of = null): string
@@ -812,12 +886,36 @@ class word extends sandbox_code_id
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+            $url = $this->url_edit();
             $title .= $html->ref($url, $html->span($this->name(), styles::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
 
         return $result;
+    }
+
+    /**
+     * the url to open the edit (change) word view, including the '8'-prefixed baseline
+     * of the current database field values so that on save only the fields the user
+     * actually changed are written and a concurrent change by another user is not
+     * overwritten. See docs/llm/state-and-messages.md.
+     *
+     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&...&8k=USD&8o=...
+     */
+    private function url_edit(): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+        $pre = $html->pre_url_part([
+            url_var::NAME => $this->name(),
+            url_var::PLURAL => $this->plural,
+            url_var::DESCRIPTION => $this->get_description(),
+            url_var::PHRASE_TYPE => $this->type_id(),
+        ]);
+        if ($pre != '') {
+            $url .= '&' . $pre;
+        }
+        return $url;
     }
 
     /*
@@ -1065,7 +1163,14 @@ class word extends sandbox_code_id
         }
         $msk_lst = $msk_lst->ex_system();
         $msk_lst = $msk_lst->ex_non_phrase();
-        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+        // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
+        // existing view and detect whether the user actually changed it (see url_var::PRE);
+        // a re-render after a save error keeps the original db snapshot via pre_value
+        $html = new html_base();
+        $pre_view = $this->pre_value(url_var::VIEW) ?? (string)$view_id;
+        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, $pre_view);
+        return $result;
     }
 
 

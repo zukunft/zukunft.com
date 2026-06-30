@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Change view relation  (zukunft.com)
+            Change view relation - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,10 +136,9 @@
                 Change view relation
             </h4>
             <form action="/http/view.php" id="view_relation_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="43">
+                <input class="form-control" type="hidden" name="m" id="mask" value="43">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="back" id="9" value="1">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
                         <label for="d_form_select_view">
@@ -165,7 +164,7 @@
                                 Education
                             </option>
                             <option value="97"  >
-                                Formula
+                                Formula (default)
                             </option>
                             <option value="105"  >
                                 Graph
@@ -237,10 +236,10 @@
                         </select>
                     </div>
                     <div class="form-group col-md-1">
-                        <label for="po">
+                        <label for="component_link">
                             Component link
                         </label>
-                        <input class="form-control" type="text" name="Component link" id="po" value="position missing missing">
+                        <input class="form-control" type="text" name="po" id="component_link" value="position missing missing">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="d_form_select_view">
@@ -266,7 +265,7 @@
                                 Education
                             </option>
                             <option value="97"  >
-                                Formula
+                                Formula (default)
                             </option>
                             <option value="105"  >
                                 Graph
@@ -327,11 +326,12 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="add usage and log of a word">
+                        <input class="form-control" type="text" name="o" id="description" value="add usage and log of a word">
                     </div>
+                    <input type="hidden" name="8o" value="add usage and log of a word">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -362,6 +362,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="3">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -381,16 +382,17 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="2">
                 </div>
                 <div class="row col-md-12">
-                    Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview
+                    placeholder for popup diff
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

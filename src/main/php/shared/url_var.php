@@ -88,7 +88,8 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
-    const string BACK = '9'; // list of url targets for the back action
+    const string PRE = '8'; // prefix to add the database values the fields to an edit view when the view has be called. Used to detect the real user change requests
+    const string BACK = '9'; // prefix to list of url targets for the back action
     const string ACTION = 'a'; // the crud action
     const string VERB = 'b'; // the verB id
     const string VERBS = 'bl';  // to select the verbs that should be displayed
@@ -253,6 +254,19 @@ class url_var
     const string STEP_CANCEL = '-1'; // the user has requested to stop the process
     const string STEP_CANCELED = '-2'; // the process has been canceled
     const string STEP_FAILED = '-3'; // the process cannot be processed
+
+    // user reaction actions: the first parameter of frontend::url_user_reaction and the
+    // cumulative segment of a unit workflow snapshot filename (see docs/llm/testing.md)
+    const string ACTION_SHOW = 'show'; // display the requested object e.g. the test word in its default view
+    const string ACTION_EDIT = 'edit'; // open the edit view of the object
+    const string ACTION_BACK = 'back'; // leave the edit view without a change and return to the previous page
+    const string ACTION_SAVE = 'save'; // press save on the edit form which leads to the confirm change view
+    const string ACTION_FILL = 'fill'; // press save on an edit form with every field filled, like save it leads to the confirm change view
+    const string ACTION_CONFIRM = 'confirm'; // confirm the pending change so that it is written to the database
+    // the confirmed action actually adds / updates / deletes the object in the database; the confirm
+    // view mask selects which crud is run, so one action covers all three operations
+    const string ACTION_CONFIRMED = 'confirmed';
+    const string ACTION_CANCEL = 'cancel'; // cancel the pending change
 
 
     /*
@@ -533,6 +547,7 @@ class url_var
 
         // type
         [self::TYPE_HUMAN, self::TYPE],
+        [self::PHRASE_TYPE_HUMAN, self::PHRASE_TYPE],
 
         // word
         [self::WORD_HUMAN, self::WORD],
@@ -718,6 +733,42 @@ class url_var
     static function back_par(array $url_array): array
     {
         return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * the user process step that a user reaction action triggers
+     *
+     * @param string $action the user reaction action const e.g. self::ACTION_SAVE
+     * @return string the matching process step const e.g. self::STEP_CONFIRM
+     */
+    static function action_step(string $action): string
+    {
+        return match ($action) {
+            self::ACTION_SAVE,
+            self::ACTION_FILL => self::STEP_CONFIRM,
+            self::ACTION_CONFIRM,
+            self::ACTION_CONFIRMED => self::STEP_CONFIRMED,
+            self::ACTION_CANCEL => self::STEP_CANCEL,
+            default => self::STEP_BASE // show, edit and back just navigate, they do not change the process step
+        };
+    }
+
+    /**
+     * the human-readable (long) url key for a standard (short) url key
+     * the human key matches the json field name, so it can be translated like a json field
+     *
+     * @param string $std the standard short url key e.g. self::NAME ('k')
+     * @return string the matching human url key e.g. self::NAME_HUMAN ('name'), or '' if none matches
+     */
+    static function std_to_human(string $std): string
+    {
+        $result = '';
+        foreach (self::HUMAN_TO_STD as $entry) {
+            if ($entry[1] == $std) {
+                $result = $entry[0];
+            }
+        }
+        return $result;
     }
 
 }

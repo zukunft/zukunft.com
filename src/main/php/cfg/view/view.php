@@ -98,6 +98,8 @@ include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -135,6 +137,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class view extends sandbox_code_id
 {
@@ -147,7 +151,7 @@ class view extends sandbox_code_id
     const string TBL_COMMENT = 'to store all user interfaces entry points';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = view_db::FLD_ID;
+    const string FLD_ID = view_fields::FLD_ID;
     const array FLD_LST_MUST_BE_IN_STD = view_db::FLD_LST_MUST_BE_IN_STD;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = view_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = view_db::FLD_LST_USER_CAN_CHANGE;
@@ -155,7 +159,6 @@ class view extends sandbox_code_id
     const array FLD_NAMES = view_db::FLD_NAMES;
     const array FLD_NAMES_USR = view_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = view_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = view_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -224,15 +227,15 @@ class view extends sandbox_code_id
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = view_db::FLD_ID,
-        string $name_fld = view_db::FLD_NAME,
-        string $type_fld = view_db::FLD_TYPE
+        string $id_fld = view_fields::FLD_ID,
+        string $name_fld = view_fields::FLD_NAME,
+        string $type_fld = view_fields::FLD_TYPE
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(view_db::FLD_STYLE, $db_row)) {
-                $this->set_style_by_id($db_row[view_db::FLD_STYLE]);
+            if (array_key_exists(fields::FLD_STYLE, $db_row)) {
+                $this->set_style_by_id($db_row[fields::FLD_STYLE]);
             }
         }
         return $result;
@@ -418,7 +421,8 @@ class view extends sandbox_code_id
             foreach ($this->cmp_lnk_lst->lst() as $lnk) {
                 $type_code_id = $lnk->get_component()->type_code_id();
                 if ($type_code_id == component_types::ROW_START
-                    or $type_code_id == component_types::ROW_RIGHT) {
+                    or $type_code_id == component_types::ROW_RIGHT
+                    or $type_code_id == component_types::ROW_CENTER) {
                     $open++;
                 } elseif ($type_code_id == component_types::ROW_END) {
                     $open--;
@@ -767,8 +771,8 @@ class view extends sandbox_code_id
         $sc->set_join_fields(
             term_view::FLD_NAMES,
             term_view::class,
-            view_db::FLD_ID,
-            view_db::FLD_ID);
+            view_fields::FLD_ID,
+            view_fields::FLD_ID);
         $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
         // TODO Prio 2 activate
         //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
@@ -855,7 +859,7 @@ class view extends sandbox_code_id
             component::class);
         $db_con->add_par(sql_par_type::INT, $this->id());
         $db_con->set_order(component_link::FLD_ORDER_NBR);
-        $qp->sql = $db_con->select_by_field_list(array(view_db::FLD_ID));
+        $qp->sql = $db_con->select_by_field_list(array(view_fields::FLD_ID));
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -871,7 +875,7 @@ class view extends sandbox_code_id
      */
     function name_field(): string
     {
-        return view_db::FLD_NAME;
+        return view_fields::FLD_NAME;
     }
 
     /**
@@ -879,7 +883,7 @@ class view extends sandbox_code_id
      */
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return view_fields::ALL_NAMES;
     }
 
     /**
@@ -1250,8 +1254,8 @@ class view extends sandbox_code_id
         return array_merge(
             parent::db_fields_all(),
             [
-                view_db::FLD_TYPE,
-                view_db::FLD_STYLE,
+                view_fields::FLD_TYPE,
+                fields::FLD_STYLE,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1281,8 +1285,8 @@ class view extends sandbox_code_id
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . view_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . view_fields::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . view_fields::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1294,7 +1298,7 @@ class view extends sandbox_code_id
                 ]);
             }
             $lst->add_type_field(
-                view_db::FLD_TYPE,
+                view_fields::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $obj->type_id(),
@@ -1304,8 +1308,8 @@ class view extends sandbox_code_id
         if ($obj->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,
-                    $sys->typ_lst->cng_fld->id($table_id . view_db::FLD_STYLE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_STYLE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1318,7 +1322,7 @@ class view extends sandbox_code_id
                 ]);
             }
             $lst->add_type_field(
-                view_db::FLD_STYLE,
+                fields::FLD_STYLE,
                 view_style::FLD_NAME,
                 $this->get_style_id(),
                 $obj->get_style_id(),

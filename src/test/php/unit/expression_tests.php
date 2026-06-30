@@ -227,7 +227,7 @@ class expression_tests
         //      e.g. if the total needs to be adjusted, because
         //      the sum of tax payers of all cantons can be higher than
         //      the total number of tax payers in Switzerland
-        //      because one person can be tax payer in more than one Canton
+        //      because one person can be tax payer in more than one canton
         $test_name = 'get the formula element group list';
         $exp = new expression($frm);
         $exp->set_user_text(formula_names::PARTS_IN_PERCENT_EXP, $trm_lst);

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test (zukunft.com)
+            test - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Change word
             </h4>
             <form action="/http/view.php" id="word_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="3">
+                <input class="form-control" type="hidden" name="m" id="mask" value="3">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="back" id="9" value="1">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="mathematics">
+                        <input class="form-control" type="text" name="k" id="name" value="mathematics">
                     </div>
+                    <input type="hidden" name="8k" value="mathematics">
                     <div class="form-group col-md-4">
                         <label for="py_form_select_phrase_type">
                             Type of word or triple
@@ -241,22 +241,25 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8py" value="1">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                        <input class="form-control" type="text" name="o" id="description" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                     </div>
+                    <input type="hidden" name="8o" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="lp">
+                        <label for="plural">
                             Plural
                         </label>
-                        <input class="form-control" type="text" name="Plural" id="lp">
+                        <input class="form-control" type="text" name="lp" id="plural">
                     </div>
+                    <input type="hidden" name="8lp" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -281,6 +284,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8d" value="90">
                     <div class="form-group col-md-4">
                         <label for="s_form_select_share_type">
                             Share
@@ -309,6 +313,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="1">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -328,13 +333,14 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="3">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=90&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>
@@ -359,14 +365,24 @@
                     <h5>
                         References
                     </h5>
-                    <a href="https://en.wikipedia.org/wiki/Mathematics">
-                        wikipedia
-                    </a>
-                    <br>
-                    <a href="https://www.wikidata.org/wiki/Q395">
-                        wikidata
-                    </a>
-                    <br>
+                    <div class="col-md-12">
+                        <a href="https://www.wikidata.org/wiki/Q395">
+                            wikidata
+                        </a>
+                        <a href="/http/view.php?m=82&id=2" title="reloading" class="heading-icon-inline">
+                            <i class="fas fa-arrows-rotate">
+                            </i>
+                        </a>
+                        <br>
+                        <a href="https://en.wikipedia.org/wiki/Mathematics">
+                            wikipedia
+                        </a>
+                        <a href="/http/view.php?m=82&id=1" title="reloading" class="heading-icon-inline">
+                            <i class="fas fa-arrows-rotate">
+                            </i>
+                        </a>
+                        <br>
+                    </div>
                     mathematics is ranked by time of discovery
                 </div>
             </div>

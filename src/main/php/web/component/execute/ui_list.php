@@ -102,7 +102,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -113,13 +113,43 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples
-     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
     function children_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::DOWN, $this->related_list($wrd, $phr_lst));
+        global $ui_sys;
+        $result = '';
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        if ($phr_cac != null and $is_vrb != null) {
+            $phr = $wrd->phrase();
+            // the children of a word are its subclasses, i.e. the phrases that "are a" this word
+            $children = $phr_cac->parents($phr, $is_vrb);
+            if (!$children->is_empty()) {
+                $html = new html_base();
+                if ($children->count() == 1) {
+                    // a single child reads as the full statement, e.g. "Euro is a currency"
+                    $header = $children->name_link() . ' ' . $is_vrb->name() . ' ' . $phr->name();
+                } else {
+                    // several children get a header of the word plural and the verb plural,
+                    // e.g. "currencies are", followed by the list of the child phrases
+                    $plural = $wrd->get_plural();
+                    if ($plural == null or $plural == '') {
+                        $plural = $phr->name();
+                    }
+                    $header = $plural . ' ' . $is_vrb->plural_reverse();
+                }
+                // start with a line break and the header as an h4 subtitle, then (for several
+                // children) the linked child phrases
+                $result = $html->br() . $html->dsp_text_h2($header);
+                if ($children->count() > 1) {
+                    $result .= $children->name_link();
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -192,7 +222,7 @@ class ui_list extends ui_base
      */
     function phrases_related_ex_subtitle(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS]);
+        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], true);
     }
 
     /**
@@ -203,12 +233,15 @@ class ui_list extends ui_base
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @param array $ex_vrb_lst the code ids of the verbs whose triples should not be shown
+     * @param bool $grouped true to group the phrases by verb (each verb a linked header) as on
+     *                      the default word/triple page; false for a flat impact-sorted list
      * @return string the html code with the remaining related phrases
      */
     private function phrases_related_ex_verbs(
         word|phrase|db_object $wrd,
         ?phrase_list          $phr_lst,
-        array                 $ex_vrb_lst
+        array                 $ex_vrb_lst,
+        bool                  $grouped = false
     ): string
     {
         global $ui_sys;
@@ -228,7 +261,11 @@ class ui_list extends ui_base
             foreach ($ex_vrb_lst as $vrb_code_id) {
                 $vrb_ids[] = $vrb_cac->id($vrb_code_id);
             }
-            $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
+            if ($grouped) {
+                $result = $phr_cac->name_link_grouped_by_verb($phr, $vrb_ids);
+            } else {
+                $result = $phr_cac->parent_triples_ex_verbs($phr, $vrb_ids)->name_link_by_impact();
+            }
         }
         return $result;
     }
@@ -279,7 +316,7 @@ class ui_list extends ui_base
 
     /**
      * HTML for a list of words or triples linked to the given formula in order of impact
-     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "canton of Zurich"
      * @param data_object|null $cac the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
@@ -343,15 +380,20 @@ class ui_list extends ui_base
         global $mtr;
 
         $result = '';
-        $frm_lst = clone $cfg->frm_lst;
         if ($dbo::class == verb::class) {
+            $frm_lst = clone $cfg->frm_lst;
             $frm_lst = $frm_lst->get_by_verb($dbo);
             $result = $frm_lst->name_link();
+            if ($result == '') {
+                $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            }
+        } elseif ($dbo::class == word::class or $dbo::class == triple::class) {
+            // the word/triple carries its own related formulas from the INCL_RELATED api message
+            if ($dbo->frm_lst != null) {
+                $result = $dbo->frm_lst->name_link();
+            }
         } else {
-            log_err($dbo::class . '  is not expected to be a selection for formulas');
-        }
-        if ($result == '') {
-            $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
+            log_err($dbo::class . ' is not expected to be a selection for formulas');
         }
         return $result;
     }
@@ -407,9 +449,9 @@ class ui_list extends ui_base
             $phr = $dbo->phrase();
         }
         if ($phr != null) {
-            // a word loaded for its page carries its references directly (like the related
-            // values and formulas); otherwise fall back to the page reference cache
-            if ($dbo::class == word::class and $dbo->ref_lst != null) {
+            // a word or triple loaded for its page carries its references directly (like the
+            // related values and formulas); otherwise fall back to the page reference cache
+            if (($dbo::class == word::class or $dbo::class == triple::class) and $dbo->ref_lst != null) {
                 $ref_lst = $dbo->ref_lst;
             } else {
                 $ref_lst = $dto->ref_list_cloned()->get_by_phrase($phr);
@@ -417,6 +459,13 @@ class ui_list extends ui_base
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
             $result = $ref_lst->list($phr_lst);
+        }
+        // wrap the reference list in a block div so each reference name and its refresh icon
+        // stay on one line; without it the bare inline elements land directly in the
+        // flex-column main container and each is pushed onto its own line (same as the value list)
+        if ($result != '') {
+            $html = new html_base();
+            $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
     }
@@ -441,20 +490,20 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for the col-4 tab box of the word page: a "Views" tab with the related views
-     * (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
-     * with the change log of the word, latest first
+     * HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
+     * views (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
+     * with the change log of the object, latest first
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
-     * @param db_object $dbo the word that should be shown to the user
+     * @param db_object $dbo the word or triple that should be shown to the user
      * @param bool $test_mode true to create a reproducible result without a backend call
-     * @return string the html code of the tab box or an empty string for a non-word object
+     * @return string the html code of the tab box or an empty string for an unsupported object
      */
     function view_tab_box(db_object $dbo, bool $test_mode = false): string
     {
         global $mtr;
         $result = '';
-        if ($dbo::class == word::class) {
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
             $html = new html_base();
             // tab 1: each related view as a preview placeholder with the open and switch buttons
             $views_html = '';
@@ -627,6 +676,10 @@ class ui_list extends ui_base
     ): string
     {
         $val_lst = $dto->val_lst?->filter($dbo);
+        // the triple carries its own related values from the INCL_RELATED api message
+        if ($dbo::class == triple::class and $dbo->val_lst != null) {
+            $val_lst = $dbo->val_lst;
+        }
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);
@@ -792,7 +845,13 @@ class ui_list extends ui_base
      */
     function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
     {
-        return 'results_related placeholder';
+        // the results of e.g. a formula are loaded into the data object result list and shown
+        // as a table of the result phrases and their value
+        $result = '';
+        if ($cfg != null and !$cfg->res_lst->is_empty()) {
+            $result = $cfg->res_lst->table();
+        }
+        return $result;
     }
 
     /**

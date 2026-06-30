@@ -52,6 +52,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -147,8 +149,8 @@ class change_value extends change_log
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
-            } elseif (array_key_exists(group_db::FLD_ID, $db_row)) {
-                $this->row_id = $db_row[group_db::FLD_ID];
+            } elseif (array_key_exists(group_fields::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group_fields::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
@@ -303,7 +305,7 @@ class change_value extends change_log
             or $this::class == change_values_geo_big::class) {
             $grp_typ = sql_par_type::TEXT;
         }
-        $fvt_lst->add_field(group_db::FLD_ID, $this->group_id, $grp_typ);
+        $fvt_lst->add_field(group_fields::FLD_ID, $this->group_id, $grp_typ);
         return $fvt_lst;
     }
 
@@ -324,7 +326,7 @@ class change_value extends change_log
             $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
-        $sql_fields[] = group_db::FLD_ID;
+        $sql_fields[] = group_fields::FLD_ID;
         return $sql_fields;
     }
 

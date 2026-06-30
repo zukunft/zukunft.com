@@ -62,11 +62,15 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
+        // the session user may differ from the data user e.g. an admin wants to see the data
+        // of a user; the data user is included in the request in url_var::USER
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+
         if (is_numeric($val_id)) {
             $val_id = (int)$val_id;
         }
         if ($val_id != 0 and $val_id != '') {
-            $val = new value($usr);
+            $val = new value($load_usr);
             $val->load_by_id($val_id);
             $val->load_objects();
             if ($with_phr == url_var::TRUE) {

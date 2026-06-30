@@ -2,12 +2,15 @@
 
 Detail for the "Testing rules" in `CLAUDE.md`.
 
-## At least one positive and one negative test per function
+## Write the tests first — a positive and a negative test for every feature
 
-Every function — at minimum every **new** function — has at least one
-**positive** unit test (expected input → expected result) and one **negative**
-test (invalid/missing/boundary input rejected or handled gracefully). A
-happy-path-only function counts as untested for review.
+**Every** function — including every new one — is covered by tests that are
+written **first**, before the function body exists, so the function is shaped by
+its expected behaviour. Cover **every feature** of the function: each behaviour,
+branch and meaningful kind of input gets its own **positive** test (expected
+input → expected result) **and** its own **negative** test (invalid / missing /
+boundary input rejected or handled gracefully). One happy-path test, or testing
+only some of the features, counts as untested for review.
 
 - **Positive**: the documented good case returns the documented result, e.g.
   `body_search()` with a populated word list returns the matching links.
@@ -337,11 +340,20 @@ const, and (3) use the same const for cleanup and for any regeneration script.
 ## Never edit an existing test resource — only add
 
 Everything under `src/test/resources/` (HTML/SQL snapshots, dummy-cache JSON,
-fixture CSVs, import files) is **read-only to a code change**. When your change
-makes one of these fixtures stale, **do not** overwrite it — not by hand and not
-by flipping `AUTO_UPDATE_TEST_FILES` to `true`. Leave the test failing and the
-fixture untouched; the failing snapshot diff is exactly the evidence the next
-step needs.
+fixture CSVs, import files) is **read-only to a code change**. This includes every
+previously created snapshot — e.g. the workflow files like
+`src/test/resources/web/html/workflow/change_word_wf2/wf2_show_edit_back_edit.html`
+and their `_url.txt` siblings. When your change makes one of these fixtures stale,
+**do not** overwrite it — not by hand and not by flipping
+`AUTO_UPDATE_TEST_FILES` to `true`. Leave the test failing and the fixture
+untouched; the failing snapshot diff is exactly the evidence the next step needs.
+
+**Why an LLM must never touch them**: the developer diffs the *committed* baseline
+against the new test output to see precisely what the LLM's code change altered —
+the snapshot is the human's audit trail of the change. If the LLM rewrites the
+baseline to match its own new output, that diff goes silent and the developer can
+no longer tell what changed (or whether it was intended). Regenerating a baseline
+is the developer's deliberate act of accepting the new output, never the LLM's.
 
 The switch `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES` **must always
 stay `false` and must never be changed by an LLM** — not even temporarily and
@@ -421,6 +433,55 @@ When the new renderer doesn't apply to an object type (e.g. no `VIEW_EDIT`
 constant the renderer relies on), skip that test rather than forcing the call —
 and either add the missing piece to the object (preferred, so all object pages
 stay consistent) or document the skip in the helper's docblock.
+
+## Unit workflow tests snapshot every step
+
+A unit workflow test (`src/test/php/unit_workflow/`) simulates a sequence of user
+actions and **saves and checks the rendered HTML after every step** against a
+fixture under `src/test/resources/web/html/workflow/`. Every intermediate page is
+a snapshot (compared with `assert_html_page`, i.e. through `assert_file`), so a
+workflow whose HTML drifts is caught exactly like an `object_pages` snapshot.
+
+Naming is fixed so the fixture for any step is mechanical to locate:
+
+- Each workflow has a **unit name** (e.g. `change_word`) and a **unit id** (e.g.
+  `2`); its folder is `<name>_wf<id>`, so `change_word` id `2` →
+  `src/test/resources/web/html/workflow/change_word_wf2/`.
+- Inside that folder every page filename starts with `wf<id>` followed by the
+  **cumulative** user-action names joined by `_`. The first action `show`
+  (display the test word in its default word view) gives `wf2_show`; after the
+  further actions `edit`, `save`, `confirm` the page is
+  `wf2_show_edit_save_confirm`. Each step appends its action to the previous
+  step's filename — never a per-step standalone name.
+- A user action is passed as a **named const**, never a bare string, and that
+  const is the **first parameter** of the `url_user_reaction` call that performs
+  the step. The same action const names the segment appended to the snapshot
+  filename.
+
+- **Right**: the `save` step is driven by `url_user_reaction(<action const>, …)`
+  and its HTML is checked with `$t->assert_html_page($test_name, $html,
+  test_paths::HTML . 'workflow/change_word_wf2/wf2_show_edit_save')` (the path is
+  relative to the test resource root; `assert_html_page` adds the `.html`
+  extension).
+- **Wrong**: asserting only the final page (skipping the intermediate
+  `wf2_show`, `wf2_show_edit`, … snapshots), passing the action as a literal
+  string, or naming a step file by its action alone (`wf2_save`) instead of the
+  cumulative path.
+
+Never overwrite an existing `workflow/` fixture to make a step pass — leave it
+failing for the scripts / reviewer to regenerate (see the resource-file rule
+above).
+
+Write workflows use the parallel folder `workflow_write`. A read-only workflow
+test (`src/test/php/unit_workflow/`, run with `do_it = false`, no database
+change) snapshots into `src/test/resources/web/html/workflow/`; the matching
+**write** workflow test (`src/test/php/unit_write_workflow/`, run with
+`do_it = true` so the change is actually persisted) snapshots into
+`src/test/resources/web/html/workflow_write/` with the **same**
+`<name>_wf<id>/wf<id>_<cumulative-actions>` folder-and-file structure. The two
+folders mirror each other so the read-only and write runs of the same workflow
+are easy to compare; the write run additionally proves the database side
+effect of the confirmed step.
 
 ## Every machine-checkable coding rule has a coded test
 

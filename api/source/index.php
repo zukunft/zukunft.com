@@ -66,17 +66,21 @@ if ($db_con->is_open()) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
+        // the session user may differ from the data user e.g. an admin wants to see the data
+        // of a user; the data user is included in the request in url_var::USER
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+
         // load the source from the database for GET, UPDATE and DELETE
-        $src = new source($usr);
+        $src = new source($load_usr);
         if ($src_id > 0) {
             $src->load_by_id($src_id);
-            $result = $src->api_json([api_types::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $load_usr);
         } elseif ($src_name != '') {
             $src->load_by_name($src_name);
-            $result = $src->api_json([api_types::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $load_usr);
         } elseif ($src_code_id != '') {
             $src->load_by_code_id($src_code_id);
-            $result = $src->api_json([api_types::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $load_usr);
         } else {
             $msg = 'Cannot load source because id, name and code id is missing';
         }

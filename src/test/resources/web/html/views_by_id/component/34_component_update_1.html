@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Change view component Word (zukunft.com)
+            Word - Change view component - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Change element
             </h4>
             <form action="/http/view.php" id="component_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="34">
+                <input class="form-control" type="hidden" name="m" id="mask" value="34">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="back" id="9" value="1">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="Word">
+                        <input class="form-control" type="text" name="k" id="name" value="Word">
                     </div>
+                    <input type="hidden" name="8k" value="Word">
                     <div class="form-group col-md-4">
                         <label for="ct_form_select_component_type">
                             Component type
@@ -179,6 +179,9 @@
                             <option value="28"  >
                                 button cancel
                             </option>
+                            <option value="204"  >
+                                button confirm
+                            </option>
                             <option value="30"  >
                                 button delete
                             </option>
@@ -209,11 +212,17 @@
                             <option value="62"  >
                                 expression
                             </option>
+                            <option value="202"  >
+                                expression latex link
+                            </option>
                             <option value="180"  >
                                 field language symbol
                             </option>
                             <option value="4"  >
                                 fixed word
+                            </option>
+                            <option value="205"  >
+                                formatter row center
                             </option>
                             <option value="31"  >
                                 form end
@@ -683,8 +692,17 @@
                             <option value="3"  selected >
                                 text
                             </option>
+                            <option value="201"  >
+                                title of formula with edit link
+                            </option>
                             <option value="192"  >
                                 title of named with edit link
+                            </option>
+                            <option value="200"  >
+                                title of triple with edit link
+                            </option>
+                            <option value="203"  >
+                                title of value with edit link
                             </option>
                             <option value="57"  >
                                 triple name
@@ -754,11 +772,12 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="simply show the word or triple name">
+                        <input class="form-control" type="text" name="o" id="description" value="simply show the word or triple name">
                     </div>
+                    <input type="hidden" name="8o" value="simply show the word or triple name">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -780,34 +799,22 @@
                                 Bern
                             </option>
                             <option data-value="-100"  >
-                                Bern (City)
+                                Bern (city)
                             </option>
                             <option data-value="258"  >
                                 CHF
-                            </option>
-                            <option data-value="187"  >
-                                Canton
-                            </option>
-                            <option data-value="-99"  >
-                                Canton Zurich
-                            </option>
-                            <option data-value="189"  >
-                                City
-                            </option>
-                            <option data-value="-98"  >
-                                City of Zurich
                             </option>
                             <option data-value="2427"  >
                                 EUR
                             </option>
                             <option data-value="18"  >
-                                Euler's number
+                                Euler&#039;s number
                             </option>
                             <option data-value="193"  >
                                 Geneva
                             </option>
                             <option data-value="-101"  >
-                                Geneva (City)
+                                Geneva (city)
                             </option>
                             <option data-value="17"  >
                                 Pi
@@ -827,8 +834,20 @@
                             <option data-value="160"  >
                                 billion
                             </option>
+                            <option data-value="187"  >
+                                canton
+                            </option>
+                            <option data-value="-99"  >
+                                canton Zurich
+                            </option>
                             <option data-value="15"  >
                                 circumference
+                            </option>
+                            <option data-value="189"  >
+                                city
+                            </option>
+                            <option data-value="-98"  >
+                                city of Zurich
                             </option>
                             <option data-value="220"  >
                                 climate
@@ -971,34 +990,22 @@
                                 Bern
                             </option>
                             <option data-value="-100"  >
-                                Bern (City)
+                                Bern (city)
                             </option>
                             <option data-value="258"  >
                                 CHF
-                            </option>
-                            <option data-value="187"  >
-                                Canton
-                            </option>
-                            <option data-value="-99"  >
-                                Canton Zurich
-                            </option>
-                            <option data-value="189"  >
-                                City
-                            </option>
-                            <option data-value="-98"  >
-                                City of Zurich
                             </option>
                             <option data-value="2427"  >
                                 EUR
                             </option>
                             <option data-value="18"  >
-                                Euler's number
+                                Euler&#039;s number
                             </option>
                             <option data-value="193"  >
                                 Geneva
                             </option>
                             <option data-value="-101"  >
-                                Geneva (City)
+                                Geneva (city)
                             </option>
                             <option data-value="17"  >
                                 Pi
@@ -1018,8 +1025,20 @@
                             <option data-value="160"  >
                                 billion
                             </option>
+                            <option data-value="187"  >
+                                canton
+                            </option>
+                            <option data-value="-99"  >
+                                canton Zurich
+                            </option>
                             <option data-value="15"  >
                                 circumference
+                            </option>
+                            <option data-value="189"  >
+                                city
+                            </option>
+                            <option data-value="-98"  >
+                                city of Zurich
                             </option>
                             <option data-value="220"  >
                                 climate
@@ -1162,34 +1181,22 @@
                                 Bern
                             </option>
                             <option data-value="-100"  >
-                                Bern (City)
+                                Bern (city)
                             </option>
                             <option data-value="258"  >
                                 CHF
-                            </option>
-                            <option data-value="187"  >
-                                Canton
-                            </option>
-                            <option data-value="-99"  >
-                                Canton Zurich
-                            </option>
-                            <option data-value="189"  >
-                                City
-                            </option>
-                            <option data-value="-98"  >
-                                City of Zurich
                             </option>
                             <option data-value="2427"  >
                                 EUR
                             </option>
                             <option data-value="18"  >
-                                Euler's number
+                                Euler&#039;s number
                             </option>
                             <option data-value="193"  >
                                 Geneva
                             </option>
                             <option data-value="-101"  >
-                                Geneva (City)
+                                Geneva (city)
                             </option>
                             <option data-value="17"  >
                                 Pi
@@ -1209,8 +1216,20 @@
                             <option data-value="160"  >
                                 billion
                             </option>
+                            <option data-value="187"  >
+                                canton
+                            </option>
+                            <option data-value="-99"  >
+                                canton Zurich
+                            </option>
                             <option data-value="15"  >
                                 circumference
+                            </option>
+                            <option data-value="189"  >
+                                city
+                            </option>
+                            <option data-value="-98"  >
+                                city of Zurich
                             </option>
                             <option data-value="220"  >
                                 climate
@@ -1353,6 +1372,9 @@
                             <option value="4"  >
                                 full width
                             </option>
+                            <option value="5"  >
+                                left aligned
+                            </option>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
@@ -1383,6 +1405,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="3">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -1402,6 +1425,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="2">
                 </div>
                 <div class="row col-md-12">
                     preview placeholder
@@ -1411,7 +1435,7 @@
                     <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

@@ -94,7 +94,7 @@ class formula_list_read_tests
         $frm_lst->load_by_triple_ref($trp_sec);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::SCALE_TO_SEC]);
 
-        // test loading the formulas that use the results related to the triple "Zurich (City)"
+        // test loading the formulas that use the results related to the triple "Zurich (city)"
         $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
         $trp_zh->load_by_name(triple_names::CITY_ZH);

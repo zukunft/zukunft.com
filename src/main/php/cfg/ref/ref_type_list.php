@@ -39,10 +39,12 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class ref_type_list extends type_list
 {
@@ -68,9 +70,9 @@ class ref_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_code_id = strval($db_entry[fields::FLD_CODE_ID]);
+                $type_name = strval($db_entry[fields::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[fields::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->id = $db_entry[self::FLD_ID];
                 $type_obj->url = $db_entry[self::FLD_URL];

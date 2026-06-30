@@ -9,10 +9,6 @@
 
     if the user is an admin the import can force to set the standard
 
-    TODO
-    check that the formula results matches with the import
-    check that the view returns a similar result
-
 
     This file is part of zukunft.com - calc with words
 
@@ -859,14 +855,24 @@ class import
                 $usr_msg->merge($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
-            // TODO Prio 0 add json_fields::PHRASE_VALUES
+            if (key_exists(json_fields::PHRASE_VALUES, $json_array)) {
+                $phr_val_array = $json_array[json_fields::PHRASE_VALUES];
+                $this->step_start(msg_id::COUNT, value::class, count($phr_val_array), $step_time);
+                $usr_msg->merge($this->dto_get_phrase_values($phr_val_array, $dto, $usr_msg, $val_per_sec));
+                $this->step_end($dto->value_list()->count(), $val_per_sec);
+            }
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
                 $usr_msg->merge($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
                 $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
-            // TODO Prio 0 add json_fields::VALUE_LIST
+            if (key_exists(json_fields::VALUE_LIST, $json_array)) {
+                $val_lst_array = $json_array[json_fields::VALUE_LIST];
+                $this->step_start(msg_id::COUNT, value::class, count($val_lst_array), $step_time);
+                $usr_msg->merge($this->dto_get_value_list($val_lst_array, $dto, $usr_msg, $val_per_sec));
+                $this->step_end($dto->value_list()->count(), $val_per_sec);
+            }
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
@@ -885,7 +891,6 @@ class import
                 $usr_msg->merge($this->dto_get_results($res_array, $dto, $usr_msg, true, $res_per_sec));
                 $this->step_end($dto->result_list()->count(), $res_per_sec);
             }
-            // TODO Prio 0 add json_fields::CALC_VALIDATION
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
@@ -1259,6 +1264,82 @@ class import
     {
         $i = 0;
         foreach ($json_array as $val_json) {
+            $val = new value($this->usr);
+            if ($val->import_mapper($val_json, $usr_msg, $dto)) {
+                $dto->add_value($val);
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $val->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the values of a compact value-list to the data object
+     * a value-list shares a context (and optionally a source) for many values that
+     * differ only by one phrase and the number, e.g.
+     * { "context": ["Democracy Index","2019"], "source": "...", "values": [ {"Norway": 10}, ... ] }
+     * each "values" entry is expanded to the per-value json that value::import_mapper expects
+     * @param array $json_array the value-list part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param float $per_sec the expected number of values that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_value_list(
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $val_lst_json) {
+            $context = $val_lst_json[json_fields::CONTEXT] ?? [];
+            foreach ($val_lst_json[json_fields::VALUES] ?? [] as $val_obj) {
+                $entity = array_key_first($val_obj);
+                $val_json = [
+                    json_fields::WORDS => array_merge($context, [$entity]),
+                    json_fields::NUMBER => $val_obj[$entity]
+                ];
+                if (key_exists(json_fields::SOURCE_NAME, $val_lst_json)) {
+                    $val_json[json_fields::SOURCE_NAME] = $val_lst_json[json_fields::SOURCE_NAME];
+                }
+                $val = new value($this->usr);
+                if ($val->import_mapper($val_json, $usr_msg, $dto)) {
+                    $dto->add_value($val);
+                    $i++;
+                }
+                $this->display_progress($i, $per_sec, $val->dsp_id());
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the values of a compact phrase-values map to the data object
+     * a phrase-values map assigns a number directly to a single phrase, e.g.
+     * { "Zurich inhabitants": 421878, "Geneva inhabitants": 203856 }
+     * each entry is expanded to the per-value json that value::import_mapper expects
+     * @param array $json_array the phrase-values part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param float $per_sec the expected number of values that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_phrase_values(
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
+    ): user_message
+    {
+        $i = 0;
+        foreach ($json_array as $phr_name => $number) {
+            $val_json = [
+                json_fields::WORDS => [$phr_name],
+                json_fields::NUMBER => $number
+            ];
             $val = new value($this->usr);
             if ($val->import_mapper($val_json, $usr_msg, $dto)) {
                 $dto->add_value($val);

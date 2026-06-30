@@ -50,10 +50,10 @@
       "name": "Zurich"
     },
     {
-      "name": "City"
+      "name": "city"
     },
     {
-      "name": "Canton"
+      "name": "canton"
     },
     {
       "name": "Migros"
@@ -407,16 +407,16 @@
       "to": "company"
     },
     {
-      "name": "Zurich (City)",
+      "name": "Zurich (city)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "City"
+      "to": "city"
     },
     {
-      "name": "Zurich (Canton)",
+      "name": "Zurich (canton)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "name": "Migros (Cooperative)",

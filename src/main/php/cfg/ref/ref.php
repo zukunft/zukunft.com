@@ -109,6 +109,9 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -140,6 +143,10 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
+use DateTime;
 
 class ref extends sandbox_link
 {
@@ -154,11 +161,10 @@ class ref extends sandbox_link
     const string TBL_COMMENT = 'to link external data to internal for synchronisation';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = ref_db::FLD_ID;
+    const string FLD_ID = ref_fields::FLD_ID;
     const array FLD_NAMES = ref_db::FLD_NAMES;
     const array FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
     const array FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
@@ -166,8 +172,8 @@ class ref extends sandbox_link
 
     // overwrite the parent link const
     const string FLD_FROM = phrase::FLD_ID;
-    const string FLD_PREDICATE = ref_db::FLD_TYPE;
-    const string FLD_TO = ref_db::FLD_EX_KEY;
+    const string FLD_PREDICATE = ref_fields::FLD_TYPE;
+    const string FLD_TO = ref_fields::FLD_EX_KEY;
 
 
     // char used to create one unique key string for the reference
@@ -191,6 +197,8 @@ class ref extends sandbox_link
     public ?string $url;
     public ?string $code_id = null;
     public ?string $description = null;
+    public ?float $impact = null;          // a cached number used for the default sorting and as an importance indicator
+    private ?DateTime $last_update = null; // timestamp of the last successful update used to trigger the next refresh job
 
     // TODO deprecate
     public ?string $name = null;
@@ -255,11 +263,18 @@ class ref extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
-            $this->set_external_key($db_row[ref_db::FLD_EX_KEY]);
-            $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
-            $this->set_url($db_row[ref_db::FLD_URL]);
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-            $this->set_source_by_id($db_row[source_db::FLD_ID]);
+            $this->set_external_key($db_row[ref_fields::FLD_EX_KEY]);
+            $this->set_predicate_id($db_row[ref_fields::FLD_TYPE]);
+            $this->set_url($db_row[fields::FLD_URL]);
+            $this->description = $db_row[fields::FLD_DESCRIPTION];
+            $this->set_source_by_id($db_row[source_fields::FLD_ID]);
+            if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[fields::FLD_IMPACT];
+            }
+            if (array_key_exists(fields::FLD_LAST_UPDATE, $db_row)
+                and $db_row[fields::FLD_LAST_UPDATE] != null) {
+                $this->set_last_update(new DateTime($db_row[fields::FLD_LAST_UPDATE]));
+            }
             if ($this->reload_objects($msg)) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
@@ -299,6 +314,14 @@ class ref extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
             if ($api_json[json_fields::DESCRIPTION] != '') {
                 $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+        if (array_key_exists(json_fields::IMPACT, $api_json)) {
+            $this->impact = $api_json[json_fields::IMPACT];
+        }
+        if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
+            if ($api_json[json_fields::LAST_UPDATE] != '') {
+                $this->set_last_update(new DateTime($api_json[json_fields::LAST_UPDATE]));
             }
         }
 
@@ -416,6 +439,12 @@ class ref extends sandbox_link
                 $vars[json_fields::SOURCE_ID] = $this->get_source()?->id();
             }
             $vars[json_fields::DESCRIPTION] = $this->description;
+            if ($this->impact !== null) {
+                $vars[json_fields::IMPACT] = $this->impact;
+            }
+            if ($this->last_update() != null) {
+                $vars[json_fields::LAST_UPDATE] = $this->last_update()->format('Y-m-d H:i:s');
+            }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -640,7 +669,7 @@ class ref extends sandbox_link
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -669,6 +698,22 @@ class ref extends sandbox_link
     function get_url(): ?string
     {
         return $this->url;
+    }
+
+    /**
+     * @param DateTime|null $last_update the timestamp when this reference has last been updated from the source
+     */
+    function set_last_update(?DateTime $last_update): void
+    {
+        $this->last_update = $last_update;
+    }
+
+    /**
+     * @return DateTime|null the timestamp when this reference has last been updated from the source
+     */
+    function last_update(): ?DateTime
+    {
+        return $this->last_update;
     }
 
     /**
@@ -873,7 +918,7 @@ class ref extends sandbox_link
     {
         return parent::load_standard_by_type_link_parent(
             phrase::FLD_ID, $from_id,
-            ref_db::FLD_TYPE, $typ_id,
+            ref_fields::FLD_TYPE, $typ_id,
             '', 0, $msg
         );
     }
@@ -903,7 +948,7 @@ class ref extends sandbox_link
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
-        $sc->add_where(ref_db::FLD_TYPE, $type_id);
+        $sc->add_where(ref_fields::FLD_TYPE, $type_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -926,7 +971,7 @@ class ref extends sandbox_link
 
     function all_sandbox_fields(): array
     {
-        return ref_db::ALL_SANDBOX_FLD_NAMES;
+        return ref_fields::ALL_NAMES;
     }
 
     /**
@@ -967,7 +1012,7 @@ class ref extends sandbox_link
      */
     function to_field(): string
     {
-        return ref_db::FLD_EX_KEY;
+        return ref_fields::FLD_EX_KEY;
     }
 
     function to_value(): string|null
@@ -1337,12 +1382,12 @@ class ref extends sandbox_link
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
             [
-                ref_db::FLD_TYPE,
+                ref_fields::FLD_TYPE,
                 phrase::FLD_ID,
-                ref_db::FLD_EX_KEY,
-                ref_db::FLD_URL,
-                source_db::FLD_ID,
-                sql_db::FLD_DESCRIPTION,
+                ref_fields::FLD_EX_KEY,
+                fields::FLD_URL,
+                source_fields::FLD_ID,
+                fields::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1418,8 +1463,8 @@ class ref extends sandbox_link
         if ($obj->get_external_key() !== $this->get_external_key()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
-                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_EX_KEY),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_fields::FLD_EX_KEY,
+                    $sys->typ_lst->cng_fld->id($table_id . ref_fields::FLD_EX_KEY),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1428,7 +1473,7 @@ class ref extends sandbox_link
                 $old_key = null;
             }
             $lst->add_field(
-                ref_db::FLD_EX_KEY,
+                ref_fields::FLD_EX_KEY,
                 $this->get_external_key(),
                 ref_db::FLD_EX_KEY_SQL_TYP,
                 $old_key
@@ -1437,13 +1482,13 @@ class ref extends sandbox_link
         if ($obj->get_url() !== $this->get_url()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
-                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_URL),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_URL,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                ref_db::FLD_URL,
+                fields::FLD_URL,
                 $this->get_url(),
                 ref_db::FLD_URL_SQL_TYP,
                 $obj->get_url()
@@ -1452,14 +1497,14 @@ class ref extends sandbox_link
         if ($obj->get_source()?->id() !== $this->get_source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_fields::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                source_db::FLD_ID,
-                source_db::FLD_NAME,
+                source_fields::FLD_ID,
+                source_fields::FLD_NAME,
                 $this->get_source(),
                 $obj->get_source()
             );
@@ -1467,13 +1512,13 @@ class ref extends sandbox_link
         if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description

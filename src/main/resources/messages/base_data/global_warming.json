@@ -1,0 +1,348 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "global warming",
+    "climate change",
+    "CO2",
+    "statistics"
+  ],
+  "description": "Most relevant base data around global warming: the global mean surface temperature increase above the 1850-1900 pre-industrial baseline (2023 and 2024), the atmospheric CO2 concentration with the excess over the pre-industrial level derived by formula and reproduced in the calc-validation block, the annual fossil CO2 emissions, and the year-over-year CO2 growth derived by the system 'increase' formula through the time dimension (therefore not calc-validated). Base words owned by other files (Earth, degree Celsius, parts per million, tonne, year, percent, share) are re-declared name-only so the import does not overwrite their canonical description; the climate-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "global warming",
+      "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
+      "refs": [
+        {
+          "name": "Global_warming",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "climate change",
+      "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "CO2",
+      "description": "a colourless greenhouse gas with the formula CO2, the main driver of present-day global warming.",
+      "refs": [
+        {
+          "name": "Carbon_dioxide",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "greenhouse gas",
+      "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
+      "refs": [
+        {
+          "name": "Greenhouse_gas",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "emission",
+      "description": "the release of greenhouse gases into the atmosphere, chiefly from burning fossil fuels and land-use change.",
+      "refs": [
+        {
+          "name": "Greenhouse_gas_emissions",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "radiative forcing",
+      "description": "the change in the balance between incoming and outgoing energy in the atmosphere caused by a climate driver such as a greenhouse gas.",
+      "refs": [
+        {
+          "name": "Radiative_forcing",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "pre-industrial",
+      "description": "the period before the Industrial Revolution (about 1850-1900), used as the baseline for measuring global warming"
+    },
+    {
+      "name": "excess",
+      "description": "the amount by which a quantity exceeds a reference or baseline level"
+    },
+    {
+      "name": "Earth"
+    },
+    {
+      "name": "degree Celsius"
+    },
+    {
+      "name": "parts per million"
+    },
+    {
+      "name": "tonne"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "Now"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "global warming",
+      "verb": "is alias of",
+      "to": "climate change"
+    },
+    {
+      "from": "CO2",
+      "verb": "is a",
+      "to": "greenhouse gas"
+    },
+    {
+      "from": "greenhouse gas",
+      "verb": "can cause",
+      "to": "global warming"
+    },
+    {
+      "from": "greenhouse gas",
+      "verb": "can cause",
+      "to": "radiative forcing"
+    },
+    {
+      "name": "pre-industrial CO2",
+      "from": "CO2",
+      "verb": "of",
+      "to": "pre-industrial",
+      "description": "the atmospheric CO2 concentration before the Industrial Revolution, about 280 parts per million"
+    },
+    {
+      "name": "excess CO2",
+      "from": "CO2",
+      "verb": "kind of",
+      "to": "excess",
+      "description": "the atmospheric CO2 concentration above the pre-industrial baseline"
+    },
+    {
+      "name": "excess CO2 share",
+      "from": "share",
+      "verb": "of",
+      "to": "excess CO2",
+      "description": "the excess CO2 as a percentage of the pre-industrial level"
+    },
+    {
+      "from": "2023",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2024",
+      "verb": "is follower of",
+      "to": "2023"
+    }
+  ],
+  "sources": [
+    {
+      "name": "WMO State of the Global Climate 2024",
+      "description": "World Meteorological Organization, global mean surface temperature above the 1850-1900 pre-industrial baseline: 2023 about 1.45 degree Celsius, 2024 about 1.55 degree Celsius.",
+      "url": "https://wmo.int/publication-series/state-of-global-climate-2024"
+    },
+    {
+      "name": "NOAA Global Monitoring Laboratory 2024",
+      "description": "US NOAA, Mauna Loa annual mean atmospheric CO2: 2023 about 421 ppm, 2024 about 422.7 ppm; pre-industrial level about 280 ppm.",
+      "url": "https://gml.noaa.gov/ccgg/trends/"
+    },
+    {
+      "name": "Global Carbon Project 2023",
+      "description": "Global Carbon Project, fossil CO2 emissions 2023 about 37.4 gigatonnes of CO2.",
+      "url": "https://globalcarbonbudget.org/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Earth",
+        "global warming",
+        "2023",
+        "degree Celsius"
+      ],
+      "number": "1.45",
+      "source": "WMO State of the Global Climate 2024"
+    },
+    {
+      "words": [
+        "Earth",
+        "global warming",
+        "2024",
+        "degree Celsius"
+      ],
+      "number": "1.55",
+      "source": "WMO State of the Global Climate 2024"
+    },
+    {
+      "words": [
+        "Earth",
+        "CO2",
+        "2023",
+        "parts per million"
+      ],
+      "number": "421",
+      "source": "NOAA Global Monitoring Laboratory 2024"
+    },
+    {
+      "words": [
+        "Earth",
+        "CO2",
+        "2024",
+        "parts per million"
+      ],
+      "number": "422.7",
+      "source": "NOAA Global Monitoring Laboratory 2024"
+    },
+    {
+      "words": [
+        "pre-industrial CO2",
+        "parts per million"
+      ],
+      "number": "280",
+      "source": "NOAA Global Monitoring Laboratory 2024"
+    },
+    {
+      "words": [
+        "Earth",
+        "emission",
+        "2023",
+        "tonne"
+      ],
+      "number": "37400000000",
+      "source": "Global Carbon Project 2023"
+    },
+    {
+      "words": [
+        "Earth",
+        "excess CO2",
+        "2023",
+        "parts per million"
+      ],
+      "number": "141"
+    },
+    {
+      "words": [
+        "Earth",
+        "excess CO2 share",
+        "percent"
+      ],
+      "number": "50.35714285714286"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "excess CO2 (formula)",
+      "expression": "\"excess CO2\" = \"CO2\" - \"pre-industrial CO2\"",
+      "assigned": [
+        "Earth"
+      ]
+    },
+    {
+      "name": "excess CO2 share (formula)",
+      "expression": "\"excess CO2 share\" = ( \"CO2\" - \"pre-industrial CO2\" ) / \"pre-industrial CO2\" * 100",
+      "assigned": [
+        "Earth"
+      ]
+    },
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "CO2"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "Earth",
+        "CO2",
+        "pre-industrial CO2",
+        "2023",
+        "parts per million"
+      ],
+      "formula": "excess CO2 (formula)",
+      "words": [
+        "Earth",
+        "excess CO2",
+        "2023",
+        "parts per million"
+      ],
+      "number": "141",
+      "note": "421 - 280"
+    },
+    {
+      "context": [
+        "Earth",
+        "CO2",
+        "pre-industrial CO2",
+        "2023",
+        "parts per million"
+      ],
+      "formula": "excess CO2 share (formula)",
+      "words": [
+        "Earth",
+        "excess CO2 share",
+        "percent"
+      ],
+      "number": "50.35714285714286",
+      "note": "(421 - 280) / 280 * 100"
+    }
+  ]
+}

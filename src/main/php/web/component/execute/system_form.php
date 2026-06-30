@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::CONST . 'def.php';
@@ -52,6 +53,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -63,6 +65,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
@@ -81,12 +84,14 @@ include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
@@ -96,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation;
@@ -140,8 +146,8 @@ class system_form extends component
      *
      * example outputs:
      * - no related loaded:   "Zurich <edit-icon>"
-     * - related limit=2:     "Zurich" /n "is a <City>, <Canton>, ... <edit-icon>"
-     * - related limit=high:  "Zurich" /n "is a City, Canton, Company <edit-icon>"
+     * - related limit=2:     "Zurich" /n "is a <city>, <canton>, ... <edit-icon>"
+     * - related limit=high:  "Zurich" /n "is a city, canton, Company <edit-icon>"
      * - related symbol:      "CHF" /n "is symbol for <Swiss Franc> <edit-icon>"
      *
      * @param db_object $dbo the object whose name is shown as the page title
@@ -150,7 +156,98 @@ class system_form extends component
      */
     function title_named(
         db_object $dbo,
-        int $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        // for a named object the page title is simply its name shown big
+        return $this->title_box($dbo, $dbo->name(), $max);
+    }
+
+    /**
+     * the page title for a triple: show the triple name big as the title (not as a link)
+     * and the from, verb and to with a link to each word/triple and the verb in the
+     * subtitle, with the same edit link and category subtitle as the named title
+     *
+     * @param triple|db_object $dbo the triple whose name is the title and whose from, verb and to are the subtitle
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the triple page title
+     */
+    function title_triple(
+        triple|db_object $dbo,
+        int              $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        // the from/verb/to links move to the subtitle; the title shows the plain triple name
+        $from_verb_to = '';
+        if ($dbo::class == triple::class) {
+            if ($dbo->verb != null) {
+                $from_verb_to = $dbo->get_from()?->name_link() . ' '
+                    . $dbo->get_verb()->name_link() . ' '
+                    . $dbo->get_to()?->name_link();
+            } elseif ($dbo->get_from() != null or $dbo->get_to() != null) {
+                $from_verb_to = $dbo->get_from()->name_link() . ' '
+                    . $dbo->get_to()->name_link();
+            }
+        }
+        return $this->title_box($dbo, $dbo->name(), $max, $from_verb_to);
+    }
+
+    /**
+     * the page title for a formula: like the named title (formula name big plus the edit link),
+     * but the subtitle lists the phrases the formula is assigned to instead of parent phrases
+     * (the assigned phrases are rendered by category_subtitle() from the formula's phr_lst)
+     *
+     * @param db_object $dbo the formula whose name is the title and whose assigned phrases are the subtitle
+     * @param int $max to limit the number of assigned phrases shown before a "..." link
+     * @return string the html code for the formula page title
+     */
+    function title_formula(
+        db_object $dbo,
+        int       $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        return $this->title_named($dbo, $max);
+    }
+
+    /**
+     * the page title for a value: unlike a named object, the heading is not a plain
+     * name but the related phrases shown as links (each with the phrase description as
+     * tooltip) followed by the value itself, the same way a word title shows its name;
+     * the edit link and the type, share and protection subtitle are added by title_box
+     *
+     * @param db_object $dbo the value whose related phrases and number are the title
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @return string the html code for the value page title
+     */
+    function title_value(
+        db_object $dbo,
+        int       $max = def::LIMIT_RELATED_PER_VERB
+    ): string
+    {
+        // the heading shows the related phrases as links with tooltip plus the value
+        $heading_content = $dbo->name();
+        if ($dbo::class == value::class) {
+            $heading_content = $dbo->name_link();
+        }
+        return $this->title_box($dbo, $heading_content, $max);
+    }
+
+    /**
+     * the shared page-title box with the edit link and the category, type, share and
+     * protection subtitles; the big heading content is the object name, and a triple
+     * additionally passes its from/verb/to links shown first in the same subtitle line
+     *
+     * @param db_object $dbo the object whose page title is shown
+     * @param string $heading_content the html shown big in the title heading
+     * @param int $max to limit the number of related phrases shown before a "..." link
+     * @param string $lead_subtitle optional html prepended to the subtitle (e.g. a triple's from/verb/to links)
+     * @return string the html code for the page title
+     */
+    private function title_box(
+        db_object $dbo,
+        string    $heading_content,
+        int       $max = def::LIMIT_RELATED_PER_VERB,
+        string    $lead_subtitle = ''
     ): string
     {
         $html = new html_base();
@@ -169,10 +266,13 @@ class system_form extends component
         $ptc = $this->protection_subtitle($dbo);
         $shr_ptc = $html->concat_entry_text($shr, $ptc);
 
+        // join all subtitle parts with the category separator " / "; a triple prepends its
+        // from/verb/to links so the whole subtitle stays on one parenthesized line
         $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
+        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
-            . $dbo->name() . '</' . html_base::H4 . '>';
+            . $heading_content . '</' . html_base::H4 . '>';
         $txt = $html->div($heading . $lnk, styles::HEADING_LINE);
 
         if ($sub_txt !== '') {
@@ -200,6 +300,16 @@ class system_form extends component
             if ($dbo->phr_lst != null) {
                 $result = $dbo->phr_lst->category_subtitle($dbo->phrase(), $max);
             }
+        } elseif ($dbo::class == formula::class) {
+            // a formula is not verb-linked to its phrases, so show the assigned phrases as a
+            // plain comma-separated list of links instead of the verb-grouped category subtitle
+            if ($dbo->phr_lst != null) {
+                $result = $dbo->phr_lst->assigned_subtitle($max);
+            }
+        } elseif ($dbo::class == value::class) {
+            // a value lists its related phrases already in the title heading, so the
+            // subtitle is left to the type, share and protection parts
+            $result = '';
         } else {
             $lib = new library();
             log_warning('category_subtitle not yet defined for ' . $lib->class_to_name($dbo::class));
@@ -290,29 +400,41 @@ class system_form extends component
 
     /**
      * create the HTML code to select this and the previous views
+     * // TODO Prio 2 review
      *
      * @param int $msk_id the database id of the view that should be shown
      * @param int|string|null $id the database id of the object that should be shown in the view (string is used for the phrase list of values)
-     * @param string $back the history of the views and actions for the back und undo function
+     * @param array $url_array the url of the shown view, used to carry forward its '9'-prefixed back
+     *                         targets (e.g. the object's own view a confirm view should return to)
      * @return string the html code to include the back trace into the form result
      */
-    function form_back(int $msk_id, int|string|null $id, string $back): string
+    function form_back(int $msk_id, int|string|null $id, array $url_array = []): string
     {
         $result = '';
         $html = new html_base();
         $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
         $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
+        // carry the '9'-prefixed back targets so cancel and the post-action redirect return to where the
+        // user came from (the confirm view sets the object's own view + id as the back target)
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::BACK)) {
+                $result .= $html->form_hidden($key, (string)$val);
+            }
+        }
         return $result;
     }
 
     /**
+     * // TODO Prio 2 review
      * @return string the html code to check if the form changes has already confirmed by the user
      */
-    function form_confirm(): string
+    function form_confirm(int $msk_id = 0): string
     {
         $html = new html_base();
-        return $html->input(url_var::STEP, msg_id::FORM_FIELD_CONFIRM, url_var::STEP_CONFIRM, html_base::INPUT_HIDDEN);
+        // on a confirm view the next submit is the confirmation that writes the change, so advance the
+        // step to confirmed; on the edit / add / del view it is the save that first asks to confirm
+        $step = in_array($msk_id, views::CONFIRM_MASKS_IDS) ? url_var::STEP_CONFIRMED : url_var::STEP_CONFIRM;
+        return $html->input(url_var::STEP, msg_id::FORM_FIELD_CONFIRM, $step, html_base::INPUT_HIDDEN);
     }
 
     /**
@@ -551,16 +673,43 @@ class system_form extends component
      * @param db_object|type_object $dbo the object
      * @return string the html code to request the object name from the user
      */
-    function form_name(db_object|type_object $dbo, string $style_text): string
+    /**
+     * an editable text field of an edit / add form that also sends the unchanged db value as the
+     * '8'-prefixed pre value, so the confirm view can show the value before the change and detect which
+     * fields the user actually changed (see url_var::PRE)
+     *
+     * TODO Prio 1 send the '8'-prefixed pre value for the remaining select fields: the share and
+     *   protection selects already send it (see sandbox::share_type_selector / protection_type_selector);
+     *   still missing are the phrase type, the view and the triple from / verb / to so the confirm diff
+     *   is complete for every object type and field
+     *
+     * @param string $url_id the url var name of the field e.g. url_var::NAME
+     * @param msg_id $label the field label message id
+     * @param string|null $value the current db value shown in the field and kept as the pre value
+     * @param string $style_text the column style of the field
+     * @param db_object|type_object|null $dbo the object, used to keep the original db snapshot as the
+     *                       '8' pre value on a re-render (e.g. after a save error) instead of the change
+     * @return string the html code of the editable field plus the hidden pre value
+     */
+    private function form_field_tracked(
+        string $url_id,
+        msg_id $label,
+        ?string $value,
+        string $style_text,
+        db_object|type_object|null $dbo = null
+    ): string
     {
         $html = new html_base();
-        return $html->form_field(
-            url_var::NAME,
-            msg_id::FORM_FIELD_NAME,
-            $dbo->name(),
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        $value = $value ?? '';
+        // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
+        $pre = ($dbo instanceof db_object) ? ($dbo->pre_value($url_id) ?? $value) : $value;
+        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text)
+            . $html->form_hidden(url_var::PRE . $url_id, $pre);
+    }
+
+    function form_name(db_object|type_object $dbo, string $style_text): string
+    {
+        return $this->form_field_tracked(url_var::NAME, msg_id::FORM_FIELD_NAME, $dbo->name(), $style_text, $dbo);
     }
 
     /**
@@ -569,15 +718,8 @@ class system_form extends component
      */
     function form_description(db_object|type_object $dbo): string
     {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::DESCRIPTION,
-            msg_id::FORM_FIELD_DESCRIPTION,
-            $dbo->get_description(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12
-        );
+        return $this->form_field_tracked(
+            url_var::DESCRIPTION, msg_id::FORM_FIELD_DESCRIPTION, $dbo->get_description(), view_styles::COL_SM_12, $dbo);
     }
 
     /**
@@ -586,18 +728,7 @@ class system_form extends component
      */
     function form_field_plural(db_object $dbo, string $style_text): string
     {
-        $html = new html_base();
-        $plural = $dbo->get_plural();
-        if ($plural == null) {
-            $plural = '';
-        }
-        return $html->form_field(
-            url_var::PLURAL,
-            msg_id::FORM_FIELD_PLURAL,
-            $plural,
-            html_base::INPUT_TEXT,
-            '', $style_text
-        );
+        return $this->form_field_tracked(url_var::PLURAL, msg_id::FORM_FIELD_PLURAL, $dbo->get_plural(), $style_text, $dbo);
     }
 
     /**
@@ -1664,15 +1795,32 @@ class system_form extends component
     }
 
     /**
+     * the cancel button of an edit / add / del / confirm view that returns to the object's own view
+     *
+     * @param int $msk_id the database id of the view that shows the cancel button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the shown object (the same
+     *                         union as dsp_entries passes), used for the object id of the return url
+     * @param array $url_array the url of the shown view; its origin mask (the edit/add/del mask a
+     *                         confirm view was opened from) is used to find the base view because the
+     *                         confirm mask itself does not encode the object type
      * @return string the html code for a form cancel button
      */
-    function button_cancel(int $msk_id, int|string|null $id): string
+    function button_cancel(
+        int                                                   $msk_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        array                                                 $url_array = []
+    ): string
     {
         $html = new html_base();
         $views = new views();
-        $msk_ci = $views->id_to_code_id($msk_id);
-        $base_ci = $views->system_to_base($msk_ci);
-        $base_id = $views->code_id_to_id($base_ci);
+        $base_id = $views->code_id_to_id($views->system_to_base($views->id_to_code_id($msk_id)));
+        $id = $dbo?->id() ?? 0;
+        // a generic confirm view has no base mapping of its own, so return to the '9'-prefixed back
+        // target (the object's own default view + id set when the confirm view was opened)
+        if ($base_id == 0) {
+            $base_id = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
+            $id = (int)($url_array[url_var::BACK . url_var::ID] ?? $id);
+        }
         $result = '';
         $url = api::HOST_SAME . api::MAIN_SCRIPT_EXT
             . url_var::PAR . url_var::MASK . url_var::EQ . $base_id;
@@ -1691,7 +1839,19 @@ class system_form extends component
     {
         $html = new html_base();
         global $mtr;
-        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_SAVE));
+        // post the save as a form action so the edit view routes to the confirm view (see form_start)
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_SAVE), '', '', url_var::POST_SUBMIT);
+    }
+
+    /**
+     * @return string the html code for a form confirm button (used by the confirm change views)
+     */
+    function button_confirm(): string
+    {
+        $html = new html_base();
+        global $mtr;
+        // post the confirm as a form action so url_to_action writes the change to the database
+        return $html->button_bs($mtr->txt(msg_id::FORM_BUTTON_CONFIRM), '', '', url_var::POST_SUBMIT);
     }
 
     /**
@@ -1757,6 +1917,15 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->row_right();
+    }
+
+    /**
+     * @return string to start a new row and center the following components (e.g. the confirm buttons)
+     */
+    function row_center(): string
+    {
+        $html = new html_base();
+        return $html->row_center();
     }
 
     /**

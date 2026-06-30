@@ -110,6 +110,9 @@ include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -153,6 +156,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use DateTime;
 use Exception;
 
@@ -167,14 +173,13 @@ class formula_map extends sandbox_code_id
     const string TBL_COMMENT = 'the mathematical expression to calculate results based on values and results';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const string FLD_ID = formula_db::FLD_ID;
+    const string FLD_ID = formula_fields::FLD_ID;
     const array FLD_LST_MUST_BE_IN_STD = formula_db::FLD_LST_MUST_BE_IN_STD;
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = formula_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const array FLD_LST_USER_CAN_CHANGE = formula_db::FLD_LST_USER_CAN_CHANGE;
     const array FLD_NAMES = formula_db::FLD_NAMES;
     const array FLD_NAMES_USR = formula_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = formula_db::FLD_NAMES_NUM_USR;
-    const array ALL_SANDBOX_FLD_NAMES = formula_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -282,36 +287,36 @@ class formula_map extends sandbox_code_id
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = formula_db::FLD_ID,
-        string $name_fld = formula_db::FLD_NAME,
-        string $type_fld = formula_db::FLD_TYPE): bool
+        string $id_fld = formula_fields::FLD_ID,
+        string $name_fld = formula_fields::FLD_NAME,
+        string $type_fld = formula_fields::FLD_TYPE): bool
     {
         global $sys;
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(formula_db::FLD_FORMULA_TEXT, $db_row)) {
-                $this->ref_text = $db_row[formula_db::FLD_FORMULA_TEXT];
+            if (array_key_exists(formula_fields::FLD_FORMULA_TEXT, $db_row)) {
+                $this->ref_text = $db_row[formula_fields::FLD_FORMULA_TEXT];
             }
-            if (array_key_exists(formula_db::FLD_FORMULA_USER_TEXT, $db_row)) {
-                $this->usr_text = $db_row[formula_db::FLD_FORMULA_USER_TEXT];
+            if (array_key_exists(formula_fields::FLD_FORMULA_USER_TEXT, $db_row)) {
+                $this->usr_text = $db_row[formula_fields::FLD_FORMULA_USER_TEXT];
             }
-            if (array_key_exists(formula_db::FLD_LATEX, $db_row)) {
-                $this->latex = $db_row[formula_db::FLD_LATEX];
+            if (array_key_exists(formula_fields::FLD_LATEX, $db_row)) {
+                $this->latex = $db_row[formula_fields::FLD_LATEX];
             }
-            if (array_key_exists(formula_db::FLD_ALL_NEEDED, $db_row)) {
-                $this->need_all_val = $lib->get_bool($db_row[formula_db::FLD_ALL_NEEDED]);
+            if (array_key_exists(formula_fields::FLD_ALL_NEEDED, $db_row)) {
+                $this->need_all_val = $lib->get_bool($db_row[formula_fields::FLD_ALL_NEEDED]);
             }
-            if (array_key_exists(formula_db::FLD_LAST_UPDATE, $db_row)) {
-                $this->last_update = $lib->get_datetime($db_row[formula_db::FLD_LAST_UPDATE], $this->dsp_id());
+            if (array_key_exists(fields::FLD_LAST_UPDATE, $db_row)) {
+                $this->last_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE], $this->dsp_id());
             }
-            if (array_key_exists(formula_db::FLD_VIEW, $db_row)) {
-                if ($db_row[formula_db::FLD_VIEW] != null) {
-                    $this->set_view_id($db_row[formula_db::FLD_VIEW]);
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[fields::FLD_VIEW]);
                 }
             }
-            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
-                $this->impact = $db_row[sql_db::FLD_IMPACT];
+            if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[fields::FLD_IMPACT];
             }
 
             if ($this->type_id > 0) {
@@ -354,8 +359,8 @@ class formula_map extends sandbox_code_id
             }
         }
 
-        if (array_key_exists(sql_db::FLD_IMPACT, $api_json)) {
-            $this->impact = $api_json[sql_db::FLD_IMPACT];
+        if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
+            $this->impact = $api_json[fields::FLD_IMPACT];
         }
 
         if (array_key_exists(json_fields::LATEX, $api_json)) {
@@ -859,7 +864,7 @@ class formula_map extends sandbox_code_id
 
     function name_field(): string
     {
-        return formula_db::FLD_NAME;
+        return formula_fields::FLD_NAME;
     }
 
     /**
@@ -876,7 +881,7 @@ class formula_map extends sandbox_code_id
 
     function all_sandbox_fields(): array
     {
-        return formula_db::ALL_SANDBOX_FLD_NAMES;
+        return formula_fields::ALL_NAMES;
     }
 
 
@@ -1442,7 +1447,7 @@ class formula_map extends sandbox_code_id
         $db_con->set_usr($this->get_user()->id());
         $db_con->set_fields(array_merge(array(user_db::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_par_type::INT, strval($this->id()));
-        $qp->sql = $db_con->select_by_field(formula_db::FLD_ID);
+        $qp->sql = $db_con->select_by_field(formula_fields::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -1906,14 +1911,14 @@ class formula_map extends sandbox_code_id
         return array_merge(
             parent::db_fields_all(),
             [
-                formula_db::FLD_TYPE,
-                formula_db::FLD_FORMULA_TEXT,
-                formula_db::FLD_FORMULA_USER_TEXT,
-                formula_db::FLD_LATEX,
-                formula_db::FLD_ALL_NEEDED,
-                formula_db::FLD_LAST_UPDATE,
-                formula_db::FLD_VIEW,
-                sql_db::FLD_IMPACT
+                formula_fields::FLD_TYPE,
+                formula_fields::FLD_FORMULA_TEXT,
+                formula_fields::FLD_FORMULA_USER_TEXT,
+                formula_fields::FLD_LATEX,
+                formula_fields::FLD_ALL_NEEDED,
+                fields::FLD_LAST_UPDATE,
+                fields::FLD_VIEW,
+                fields::FLD_IMPACT
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1944,13 +1949,13 @@ class formula_map extends sandbox_code_id
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_TYPE,
+                formula_fields::FLD_TYPE,
                 $this->type_id(),
                 formula_db::FLD_TYPE_SQL_TYP,
                 $obj->type_id()
@@ -1965,13 +1970,13 @@ class formula_map extends sandbox_code_id
         if ($obj->ref_text !== $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_FORMULA_TEXT),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_TEXT,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_FORMULA_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_FORMULA_TEXT,
+                formula_fields::FLD_FORMULA_TEXT,
                 $this->ref_text,
                 formula_db::FLD_FORMULA_TEXT_SQL_TYP,
                 $obj->ref_text
@@ -1980,13 +1985,13 @@ class formula_map extends sandbox_code_id
         if ($obj->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_FORMULA_USER_TEXT),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_USER_TEXT,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_FORMULA_USER_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_FORMULA_USER_TEXT,
+                formula_fields::FLD_FORMULA_USER_TEXT,
                 $this->usr_text,
                 formula_db::FLD_FORMULA_USER_TEXT_SQL_TYP,
                 $obj->usr_text
@@ -1995,13 +2000,13 @@ class formula_map extends sandbox_code_id
         if ($obj->latex !== $this->latex) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_LATEX,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_LATEX),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_LATEX,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_LATEX),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_LATEX,
+                formula_fields::FLD_LATEX,
                 $this->latex,
                 formula_db::FLD_LATEX_SQL_TYP,
                 $obj->latex
@@ -2010,13 +2015,13 @@ class formula_map extends sandbox_code_id
         if ($obj->need_all_val !== $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_ALL_NEEDED),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_ALL_NEEDED,
+                    $sys->typ_lst->cng_fld->id($table_id . formula_fields::FLD_ALL_NEEDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_ALL_NEEDED,
+                formula_fields::FLD_ALL_NEEDED,
                 $this->need_all_val,
                 formula_db::FLD_ALL_NEEDED_SQL_TYP,
                 $obj->need_all_val
@@ -2027,7 +2032,7 @@ class formula_map extends sandbox_code_id
             or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
             $lst->add_field(
-                formula_db::FLD_LAST_UPDATE,
+                fields::FLD_LAST_UPDATE,
                 sql::NOW,
                 sql_field_type::TIME
             );
@@ -2035,14 +2040,14 @@ class formula_map extends sandbox_code_id
         if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
-                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                formula_db::FLD_VIEW,
-                view_db::FLD_NAME,
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
                 $this->view,
                 $obj->view
             );
@@ -2050,13 +2055,13 @@ class formula_map extends sandbox_code_id
         if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_IMPACT,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_IMPACT,
+                fields::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
                 $obj->impact

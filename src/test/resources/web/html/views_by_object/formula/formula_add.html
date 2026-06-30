@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test (zukunft.com)
+            test - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Add a new formula
             </h4>
             <form action="/http/view.php" id="formula_add">
-                <input class="form-control" type="hidden" name="mask" id="m" value="24">
+                <input class="form-control" type="hidden" name="m" id="mask" value="24">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="back" id="9" value="0">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k">
+                        <input class="form-control" type="text" name="k" id="name">
                     </div>
+                    <input type="hidden" name="8k" value="">
                     <div class="form-group col-md-4">
                         <label for="fy_form_select_formula_type">
                             Formula type
@@ -181,18 +181,19 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o">
+                        <input class="form-control" type="text" name="o" id="description">
                     </div>
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="fa">
+                        <label for="expression">
                             Expression
                         </label>
-                        <input class="form-control" type="text" name="Expression" id="fa">
+                        <input class="form-control" type="text" name="fa" id="expression">
                     </div>
                 </div>
                 <div class="row col-md-12">
@@ -209,6 +210,9 @@
                             View
                         </label>
                         <select class="form-control" name="d" form="formula_add" id="d_form_select_view" >
+                            <option value="97"  selected >
+                                Formula (default)
+                            </option>
                             <option value="0"  >
                                 ---
                             </option>
@@ -242,6 +246,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="1">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -261,13 +266,14 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="1">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=97" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

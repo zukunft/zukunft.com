@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Admin change user  (zukunft.com)
+            Admin change user - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,23 +136,22 @@
                 Change user (by admin)
             </h4>
             <form action="/http/view.php" id="admin_user_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="49">
+                <input class="form-control" type="hidden" name="m" id="mask" value="49">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="back" id="9" value="0">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
-                    <input class="form-control" type="text" name="Username" id="un">
-                    <input class="form-control" type="email" name="Email" id="um">
+                    <input class="form-control" type="text" name="un" id="username">
+                    <input class="form-control" type="email" name="um" id="email">
                 </div>
                 <div class="row col-md-12">
-                    <input class="form-control" type="password" name="Password" id="uw">
+                    <input class="form-control" type="password" name="uw" id="password">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

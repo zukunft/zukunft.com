@@ -42,6 +42,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 
 class source_list extends sandbox_list_named
 {
@@ -122,8 +124,8 @@ class source_list extends sandbox_list_named
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(source_db::FLD_ID, $ids);
-        $sc->set_order(source_db::FLD_ID, sql::ORDER_ASC);
+        $sc->add_where(source_fields::FLD_ID, $ids);
+        $sc->set_order(source_fields::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -140,7 +142,7 @@ class source_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(source_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(source_fields::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -192,7 +194,7 @@ class source_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array $names,
-        string $fld = source_db::FLD_NAME
+        string $fld = source_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);

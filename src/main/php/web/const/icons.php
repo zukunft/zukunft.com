@@ -46,5 +46,7 @@ class icons
     const string EDIT = 'fas fa-edit';
     const string GLOBE = 'fas fa-globe';
     const string USER_CIRCLE = 'fas fa-user-circle';
+    // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data
+    const string REFRESH = 'fas fa-arrows-rotate';
 
 }

@@ -252,7 +252,7 @@ class phrase_list extends sandbox_list_named
      * based on the verbs::CATEGORY_VERBS priority list
      *
      * e.g. "CHF is symbol for <Swiss Franc>"
-     * or if not a symbol e.g. "Zurich is a <City>, <Canton>, <Company>")
+     * or if not a symbol e.g. "Zurich is a <city>, <canton>, <Company>")
      *
      * @param phrase $phr the starting phrase whose category subtitle is being rendered
      * @param int|null $max the maximal number of links to show
@@ -304,6 +304,34 @@ class phrase_list extends sandbox_list_named
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * subtitle for a formula page: the assigned phrases as a plain comma-separated list of
+     * links (each carrying its description as a tooltip), sorted by impact for a deterministic
+     * order and capped at $max with a trailing "..." when more phrases are assigned
+     * @param int|null $max the max number of phrases shown before the "..." placeholder
+     * @return string the html code of the assigned-phrase links
+     */
+    function assigned_subtitle(?int $max = null): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            $this->sort_by_impact();
+            $links = [];
+            $i = 0;
+            foreach ($this->lst() as $phr) {
+                if ($max === null or $i < $max) {
+                    $links[] = $phr->name_link();
+                }
+                $i++;
+            }
+            if ($max !== null and $this->count() > $max) {
+                $links[] = '...';
+            }
+            $result = implode(', ', $links);
         }
         return $result;
     }
@@ -643,6 +671,47 @@ class phrase_list extends sandbox_list_named
     {
         $this->sort_by_impact();
         return implode(', ', $this->names_linked());
+    }
+
+    /**
+     * html for the parent triples pointing to $phr (excluding the given verbs) grouped by verb:
+     * each verb group shows the verb name as a small header linked to the verb default view,
+     * followed by the linked (from) phrases sorted by impact and name; the verb groups are
+     * ordered by verb name so the html order is deterministic
+     * e.g. for "currency" the "can have" group lists "ranked by daily turnover, ..."
+     * @param phrase $phr the page phrase whose related phrases are shown
+     * @param array $vrb_ids the database ids of the verbs to exclude (e.g. symbol, alias, is a)
+     * @return string the html code of the grouped related phrases
+     */
+    function name_link_grouped_by_verb(phrase $phr, array $vrb_ids): string
+    {
+        $html = new html_base();
+        $result = '';
+
+        // collect the linked (from) phrases per verb of the parent triples
+        $grp_lst = [];
+        foreach ($this->parent_triples_ex_verbs($phr, $vrb_ids)->lst() as $trp) {
+            $vrb = $trp->get_verb();
+            $from = $trp->get_from();
+            if ($vrb != null and $from != null) {
+                $vrb_id = $vrb->id();
+                if (!array_key_exists($vrb_id, $grp_lst)) {
+                    $grp_lst[$vrb_id] = ['verb' => $vrb, 'phrases' => new phrase_list()];
+                }
+                $grp_lst[$vrb_id]['phrases']->add($from);
+            }
+        }
+
+        // order the verb groups by verb name for a deterministic html order
+        usort($grp_lst, fn(array $a, array $b) => strcmp($a['verb']->name(), $b['verb']->name()));
+
+        // render each verb group as a header linked to the verb page (the header is a block
+        // element, so it starts a new line) followed by the impact-and-name sorted phrases
+        foreach ($grp_lst as $grp) {
+            $result .= $html->dsp_text_h3($grp['verb']->name_link());
+            $result .= $grp['phrases']->name_link_by_impact();
+        }
+        return $result;
     }
 
     function name_link_list(?phrase_list $phr_lst_header = null): string

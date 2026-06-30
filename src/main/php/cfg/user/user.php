@@ -124,6 +124,9 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -168,6 +171,9 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use DateTimeInterface;
 use DateTime;
 use Exception;
@@ -391,8 +397,8 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(user_db::FLD_PROFILE, $db_row)) {
                 $this->profile_id = $db_row[user_db::FLD_PROFILE];
             }
-            if (array_key_exists(user_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[fields::FLD_CODE_ID];
             }
             if (array_key_exists(user_db::FLD_TYPE_ID, $db_row)) {
                 $this->type_id = $db_row[user_db::FLD_TYPE_ID];
@@ -403,15 +409,15 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(user_db::FLD_STATUS, $db_row)) {
                 $this->status_id = $db_row[user_db::FLD_STATUS];
             }
-            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
-                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
+            if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
+                $this->excluded = $db_row[fields::FLD_EXCLUDED];
             }
 
             if (array_key_exists(user_db::FLD_CREATED, $db_row)) {
                 $this->created = $lib->get_datetime($db_row[user_db::FLD_CREATED], $this->dsp_id());
             }
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[fields::FLD_DESCRIPTION];
             }
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
@@ -428,10 +434,10 @@ class user extends db_id_object_non_sandbox
                     $this->trm = $trm;
                 }
             }
-            if (array_key_exists(user_db::FLD_VIEW, $db_row)) {
-                if ($db_row[user_db::FLD_VIEW] != null) {
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
                     $msk = new view($this);
-                    $msk->id = $db_row[user_db::FLD_VIEW];
+                    $msk->id = $db_row[fields::FLD_VIEW];
                     $this->msk = $msk;
                 }
             }
@@ -847,7 +853,7 @@ class user extends db_id_object_non_sandbox
             $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -1048,6 +1054,30 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * select the user whose data an api request should load: the session user ($this) by
+     * default, or the user given by id in the request when an (admin) caller wants to see
+     * another user's data (the frontend sandbox load sends the data user as url_var::USER)
+     * TODO check that the session user is permitted to see the requested user's data
+     * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @return user the session user, or the loaded requested user when a valid id is given
+     */
+    function data_user(int $req_usr_id): user
+    {
+        $result = $this;
+        // only switch to the requested data user if it differs from the session user; the session
+        // user is already fully loaded (via get()), so reloading it by id here would drop that setup
+        // and the object would load less than the session user can actually see
+        if ($req_usr_id > 0 and $req_usr_id != $this->id) {
+            $req_usr = new user();
+            $req_usr->load_by_id($req_usr_id);
+            if ($req_usr->id > 0) {
+                $result = $req_usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * load one user by name
      * @param string $name the username of the user
      * @return int the id of the found user and zero if nothing is found
@@ -1236,8 +1266,8 @@ class user extends db_id_object_non_sandbox
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, user_db::FLD_CODE_ID, $class);
-        $sc->add_where(user_db::FLD_CODE_ID, $code_id);
+        $qp = $this->load_sql($sc, fields::FLD_CODE_ID, $class);
+        $sc->add_where(fields::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -2179,14 +2209,10 @@ class user extends db_id_object_non_sandbox
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::EMAIL)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::HUMAN)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYS_LINK)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
-                $result = true;
+            foreach (user_profiles::CAN_CHANGE as $prf) {
+                if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
+                    $result = true;
+                }
             }
         }
         return $result;
@@ -3320,13 +3346,13 @@ class user extends db_id_object_non_sandbox
         if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                user_db::FLD_CODE_ID,
+                fields::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
                 $obj->code_id
@@ -3392,13 +3418,13 @@ class user extends db_id_object_non_sandbox
         if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_EXCLUDED,
+                fields::FLD_EXCLUDED,
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
                 $obj->excluded
@@ -3428,13 +3454,13 @@ class user extends db_id_object_non_sandbox
         if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description
@@ -3493,15 +3519,15 @@ class user extends db_id_object_non_sandbox
         if ($obj->msk?->id() !== $this->msk?->id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_VIEW,
-                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_VIEW,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             // TODO Prio 3 check that always the add_link_field function is used to add a link field
             $lst->add_link_field(
-                user_db::FLD_VIEW,
-                view_db::FLD_NAME,
+                fields::FLD_VIEW,
+                view_fields::FLD_NAME,
                 $this->src,
                 $obj->src
             );
@@ -3517,7 +3543,7 @@ class user extends db_id_object_non_sandbox
             }
             $lst->add_link_field(
                 user_db::FLD_SOURCE,
-                source_db::FLD_NAME,
+                source_fields::FLD_NAME,
                 $this->src,
                 $obj->src
             );

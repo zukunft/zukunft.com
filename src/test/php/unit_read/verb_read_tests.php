@@ -85,7 +85,7 @@ class verb_read_tests
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
-        //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
+        //                e.g. for Switzerland get at least 'Zurich (canton)' but not 'Zurich (city)'
         $parts = $switzerland->direct_parts();
         $t->assert_contains('direct parts of ' . words::CH,
             $parts->names(),
@@ -97,7 +97,7 @@ class verb_read_tests
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
-        //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
+        //                e.g. for Switzerland get at least 'Zurich (canton)' and 'Zurich (city)'
         $parts = $switzerland->parts();
         $t->assert_contains('parts of ' . words::CH . ' and parts of the parts',
             $parts->names(),
@@ -106,8 +106,8 @@ class verb_read_tests
 
 
         // TODO add to phrase and triple the methode
-        //      ->all_parents to get Canton, City and company for Zurich (Canton)
-        //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done
+        //      ->all_parents to get canton, city and company for Zurich (canton)
+        //      whereas ->parents just return canton for Zurich (canton) because the word splitting is not done
 
 
         $t->subheader($ts . 'list');

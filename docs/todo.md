@@ -11,6 +11,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO create a triple and formula "good enougth" default view
+    TODO create the main workflows including unit and write tests
     TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
     TODO add unit test for all frontend components
     TODO add a 'no change' parameter to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
@@ -308,7 +310,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a useful and self speaking verb unit test for all verbs
     TODO for some verbs such as "is part of" the triple itself should by de fault not be included in the foaf list
     TODO use phrase get_or_add in test
-    TODO add the word type "one level parent" e.g. to suggest that for City the direct children is the default selection
+    TODO add the word type "one level parent" e.g. to suggest that for city the direct children is the default selection
     TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test

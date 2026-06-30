@@ -10,10 +10,10 @@
       "name": "Zurich"
     },
     {
-      "name": "City"
+      "name": "city"
     },
     {
-      "name": "Canton"
+      "name": "canton"
     },
     {
       "name": "company"
@@ -45,10 +45,10 @@
   ],
   "triples": [
     {
-      "name": "Zurich (City)",
+      "name": "Zurich (city)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "City",
+      "to": "city",
       "refs": [
         {
           "name": "Zürich",
@@ -59,16 +59,17 @@
           "type": "wikidata"
         }
       ],
-      "impact": 71152
+      "impact": 71152,
+      "protection": "admin_protection"
     },
     {
-      "name": "Zurich (Canton)",
+      "name": "Zurich (canton)",
       "from": "Zurich",
       "verb": "is a",
-      "to": "Canton",
+      "to": "canton",
       "refs": [
         {
-          "name": "Canton_of_Zürich",
+          "name": "canton_of_Zürich",
           "type": "wikipedia"
         },
         {
@@ -76,7 +77,8 @@
           "type": "wikidata"
         }
       ],
-      "impact": 32400
+      "impact": 32400,
+      "protection": "admin_protection"
     },
     {
       "name": "Zurich Insurance",
@@ -93,7 +95,8 @@
           "type": "wikidata"
         }
       ],
-      "impact": 22500
+      "impact": 22500,
+      "protection": "admin_protection"
     },
     {
       "name": "2020 (year)",
@@ -143,7 +146,7 @@
   "values": [
     {
       "words": [
-        "Zurich (City)",
+        "Zurich (city)",
         "Population",
         "2018 (year)"
       ],
@@ -152,7 +155,7 @@
     },
     {
       "words": [
-        "Zurich (Canton)",
+        "Zurich (canton)",
         "Population",
         "2019 (year)"
       ],

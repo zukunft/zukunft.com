@@ -181,7 +181,9 @@ class change_log_list extends ListBase
         foreach ($this->lst() as $chg) {
             if (in_array($chg->table_id, $tbl_id_lst) ) {
                 if ($chg->row_id == $dbo->id()) {
-                    $result->add($chg);
+                    // allow duplicates: the api change entries carry no own id (all id 0), so the
+                    // default id-dedup of add() would collapse every change into a single row
+                    $result->add_obj($chg, true);
                 }
             }
         }
@@ -191,6 +193,28 @@ class change_log_list extends ListBase
     /*
      * list
      */
+
+    /**
+     * the first $limit changes of this list, used to show only the configured number of change rows
+     * (like sys_log_list::head limits the user error list)
+     *
+     * @param int $limit the maximal number of change entries to keep
+     * @return change_log_list a new list with at most the first $limit changes
+     */
+    function head(int $limit): change_log_list
+    {
+        $result = new change_log_list();
+        $i = 0;
+        foreach ($this->lst() as $chg) {
+            if ($i < $limit) {
+                // allow duplicates: the api change entries carry no own id (all id 0), so the
+                // default id-dedup of add() would collapse every change into a single row
+                $result->add_obj($chg, true);
+            }
+            $i++;
+        }
+        return $result;
+    }
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table

@@ -1,0 +1,353 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-23 16:20:00",
+  "user": "ai_collaborator",
+  "selection": [
+    "klimawandel_fermi_schaetzung"
+  ],
+  "description": "Fermi-Schätzung der globalen Kosten des Klimawandels und politischer Alternativen.",
+  "words": [
+    {
+      "name": "usd",
+      "type": "measure",
+      "description": "United States dollar, the currency of the United States.",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4917",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "billion",
+      "type": "measure",
+      "description": "A thousand million, represented as 10^9."
+    },
+    {
+      "name": "trillion",
+      "type": "measure",
+      "description": "A million million, represented as 10^12."
+    },
+    {
+      "name": "percent",
+      "type": "measure",
+      "description": "A ratio expressed as a fraction of 100."
+    },
+    {
+      "name": "gdp",
+      "description": "Gross domestic product is a monetary measure of the market value of all the final goods and services produced in a specific time period."
+    },
+    {
+      "name": "cost",
+      "description": "The value of money that has been used up to produce something or deliver a service."
+    },
+    {
+      "name": "damage",
+      "description": "Any change in a thing which disfigures it, detracts from its value, or limits its usefulness."
+    },
+    {
+      "name": "mitigation",
+      "description": "Efforts to reduce or prevent emission of greenhouse gases."
+    },
+    {
+      "name": "adaptation",
+      "description": "The adjustment in natural or human systems in response to actual or expected climatic stimuli."
+    },
+    {
+      "name": "total",
+      "description": "The whole amount of something."
+    },
+    {
+      "name": "global",
+      "description": "Relating to the whole world; worldwide."
+    },
+    {
+      "name": "scenario",
+      "description": "A postulated sequence or development of events."
+    },
+    {
+      "name": "unabated",
+      "description": "Without any reduction in intensity or strength."
+    },
+    {
+      "name": "cap_and_dividend",
+      "description": "A market-based policy to reduce carbon emissions by capping them and distributing revenues."
+    },
+    {
+      "name": "regulatory_mix",
+      "description": "A combination of command-and-control regulations and subsidies."
+    }
+  ],
+  "triples": [
+    {
+      "from": "gdp",
+      "verb": "of",
+      "to": "global",
+      "name": "global gdp"
+    },
+    {
+      "from": "global gdp",
+      "verb": "in",
+      "to": "trillion",
+      "name": "global gdp in trillion"
+    },
+    {
+      "from": "global gdp in trillion",
+      "verb": "in",
+      "to": "usd",
+      "name": "global gdp in trillion usd"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "mitigation",
+      "name": "mitigation cost"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "damage",
+      "name": "damage cost"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "adaptation",
+      "name": "adaptation cost"
+    },
+    {
+      "from": "damage cost",
+      "verb": "and",
+      "to": "adaptation cost",
+      "name": "damage and adaptation cost"
+    },
+    {
+      "from": "cost",
+      "verb": "of",
+      "to": "total",
+      "name": "total cost"
+    },
+    {
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "unabated",
+      "name": "unabated scenario"
+    },
+    {
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "cap_and_dividend",
+      "name": "cap and dividend scenario"
+    },
+    {
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "regulatory_mix",
+      "name": "regulatory mix scenario"
+    },
+    {
+      "from": "mitigation cost",
+      "verb": "of",
+      "to": "unabated scenario",
+      "name": "mitigation cost of unabated scenario"
+    },
+    {
+      "from": "damage and adaptation cost",
+      "verb": "of",
+      "to": "unabated scenario",
+      "name": "damage and adaptation cost of unabated scenario"
+    },
+    {
+      "from": "total cost",
+      "verb": "of",
+      "to": "unabated scenario",
+      "name": "total cost of unabated scenario"
+    },
+    {
+      "from": "mitigation cost",
+      "verb": "of",
+      "to": "cap and dividend scenario",
+      "name": "mitigation cost of cap and dividend scenario"
+    },
+    {
+      "from": "damage and adaptation cost",
+      "verb": "of",
+      "to": "cap and dividend scenario",
+      "name": "damage and adaptation cost of cap and dividend scenario"
+    },
+    {
+      "from": "total cost",
+      "verb": "of",
+      "to": "cap and dividend scenario",
+      "name": "total cost of cap and dividend scenario"
+    },
+    {
+      "from": "mitigation cost",
+      "verb": "of",
+      "to": "regulatory mix scenario",
+      "name": "mitigation cost of regulatory mix scenario"
+    },
+    {
+      "from": "damage and adaptation cost",
+      "verb": "of",
+      "to": "regulatory mix scenario",
+      "name": "damage and adaptation cost of regulatory mix scenario"
+    },
+    {
+      "from": "total cost",
+      "verb": "of",
+      "to": "regulatory mix scenario",
+      "name": "total cost of regulatory mix scenario"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "total climate cost formula",
+      "expression": "\"total cost\" = \"mitigation cost\" + \"damage and adaptation cost\"",
+      "latex": "\\text{Cost}_{\\text{total}} = \\text{Cost}_{\\text{mitigation}} + \\text{Cost}_{\\text{damage\\&adaptation}}",
+      "assigned": [
+        "unabated scenario",
+        "cap and dividend scenario",
+        "regulatory mix scenario"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "IPCC AR6 WGIII",
+      "description": "Intergovernmental Panel on Climate Change Sixth Assessment Report - Mitigation of Climate Change",
+      "url": "https://www.ipcc.ch/report/ar6/wg3/"
+    },
+    {
+      "name": "Stern Review",
+      "description": "The Economics of Climate Change by Nicholas Stern (2006)",
+      "url": "https://www.lse.ac.uk/granthaminstitute/publication/the-economics-of-climate-change-the-stern-review/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "global gdp in trillion usd"
+      ],
+      "number": "100",
+      "source": "IPCC AR6 WGIII"
+    },
+    {
+      "words": [
+        "mitigation cost of unabated scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "0",
+      "source": "Stern Review"
+    },
+    {
+      "words": [
+        "damage and adaptation cost of unabated scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "15",
+      "source": "Stern Review"
+    },
+    {
+      "words": [
+        "mitigation cost of cap and dividend scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "3",
+      "source": "IPCC AR6 WGIII"
+    },
+    {
+      "words": [
+        "damage and adaptation cost of cap and dividend scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "1.5",
+      "source": "IPCC AR6 WGIII"
+    },
+    {
+      "words": [
+        "mitigation cost of regulatory mix scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "4.5",
+      "source": "IPCC AR6 WGIII"
+    },
+    {
+      "words": [
+        "damage and adaptation cost of regulatory mix scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "1.5",
+      "source": "IPCC AR6 WGIII"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "unabated scenario",
+        "mitigation cost",
+        "damage and adaptation cost",
+        "total cost",
+        "trillion",
+        "usd"
+      ],
+      "formula": "total climate cost formula",
+      "words": [
+        "total cost of unabated scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "15.00",
+      "note": "0 + 15 = 15 Trillion USD"
+    },
+    {
+      "context": [
+        "cap and dividend scenario",
+        "mitigation cost",
+        "damage and adaptation cost",
+        "total cost",
+        "trillion",
+        "usd"
+      ],
+      "formula": "total climate cost formula",
+      "words": [
+        "total cost of cap and dividend scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "4.50",
+      "note": "3 + 1.5 = 4.5 Trillion USD"
+    },
+    {
+      "context": [
+        "regulatory mix scenario",
+        "mitigation cost",
+        "damage and adaptation cost",
+        "total cost",
+        "trillion",
+        "usd"
+      ],
+      "formula": "total climate cost formula",
+      "words": [
+        "total cost of regulatory mix scenario",
+        "trillion",
+        "usd"
+      ],
+      "number": "6.00",
+      "note": "4.5 + 1.5 = 6.0 Trillion USD"
+    }
+  ],
+  "components": [],
+  "views": [],
+  "view-validation": []
+}

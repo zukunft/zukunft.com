@@ -1,0 +1,168 @@
+{
+  "version": "0.0.3",
+  "pod": "zukunft.com",
+  "description": "Affective political polarization worldwide, encoded from WTW (Willis Towers Watson) Political Risk Index H1 2025, section 'Mapping political polarization around the world'. Figure 3 global time series (1900-2024) included. Narrative findings are tagged 'measured value'; the Figure 3 series is a manual chart digitization and therefore tagged 'assumed value' with per-point confidence.",
+  "words": [
+    {"name": "affective polarization", "description": "Degree to which people perceive supporters of other political parties as hostile / view them with dislike."},
+    {"name": "elite polarization", "description": "Degree to which political leaders are unwilling to accept each other as legitimate."},
+    {"name": "ideological polarization", "description": "Degree to which people in a country are divided on fundamental political issues."},
+    {"name": "global average", "description": "Unweighted/aggregate average across the covered countries and territories."},
+    {"name": "political polarization", "description": "Division of a society or its political elite into mutually antagonistic groups."},
+    {"name": "world", "description": "All countries and territories covered (more than 200)."},
+    {"name": "United States"},
+    {"name": "polarization index value", "description": "V-Dem-derived expert-rated affective polarization score; scale shown 1.8-2.6 in Figure 3."},
+    {"name": "share of voters", "description": "Percentage of surveyed voters."},
+    {"name": "displeased if child married across party lines", "description": "Survey question: would be displeased if their child married someone from the opposing political party."},
+    {"name": "Republicans"},
+    {"name": "Democrats"},
+    {"name": "year"},
+    {"name": "measured value", "description": "Provenance qualifier: value taken from a stated source."},
+    {"name": "assumed value", "description": "Provenance qualifier: value estimated/digitized, not directly published as a number."},
+    {"name": "Figure 3", "description": "WTW PRI H1 2025 chart: Global average affective polarization, 1900-2024."}
+  ],
+  "verbs": [
+    {"name": "is measured by"},
+    {"name": "has value for year"},
+    {"name": "is a"}
+  ],
+  "triples": [
+    {
+      "from": "affective polarization",
+      "verb": "is measured by",
+      "to": "polarization index value",
+      "name": "affective polarization measure (V-Dem expert rating)"
+    },
+    {
+      "from": "global average affective polarization",
+      "verb": "is a",
+      "to": "affective polarization",
+      "name": "global average affective polarization"
+    }
+  ],
+  "sources": [
+    {
+      "name": "WTW Political Risk Index H1 2025",
+      "type": "report",
+      "publisher": "Willis Towers Watson (WTW), with Oxford Analytica",
+      "title": "Political Risk Index H1 2025 - Mapping political polarization around the world",
+      "url": "https://willistowerswatson.turtl.co/story/political-risk-index-h1-2025-gated/",
+      "modified": "2025-07-15",
+      "underlying_data": "Varieties of Democracy (V-Dem) Project; Fragile States Index",
+      "verified": "from uploaded PDF, 120 pp., page section 'Mapping political polarization'"
+    },
+    {
+      "name": "Iyengar Sood Lelkes 2012",
+      "type": "article",
+      "title": "Affect, Not Ideology: A Social Identity Perspective on Polarization",
+      "note_for_user_not_in_schema": "Cited by WTW as the now-classic 2012 reframing; DOI not printed in the PDF and not verified here."
+    }
+  ],
+  "values": [
+    {
+      "phrases": ["global average affective polarization", "United States", "share of voters", "displeased if child married across party lines", "year"],
+      "number": 5,
+      "unit": "percent",
+      "context_year": 1960,
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025",
+      "comment_disambiguation_in_words": "US share of voters displeased by cross-party marriage, 1960 (~5%)"
+    },
+    {
+      "phrases": ["share of voters", "Republicans", "displeased if child married across party lines", "year"],
+      "number": 40,
+      "unit": "percent",
+      "context_year": 2010,
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025",
+      "comment_disambiguation_in_words": "Republican voters, above 40% by 2010"
+    },
+    {
+      "phrases": ["share of voters", "Democrats", "displeased if child married across party lines", "year"],
+      "number": 30,
+      "unit": "percent",
+      "context_year": 2010,
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025",
+      "comment_disambiguation_in_words": "Democratic voters, ~30% by 2010"
+    },
+    {
+      "phrases": ["share of voters", "displeased if child married across party lines", "year"],
+      "number": 60,
+      "unit": "percent",
+      "context_year": 2016,
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025",
+      "comment_disambiguation_in_words": "Both parties exceeded 60% in 2016"
+    }
+  ],
+  "time_series": [
+    {
+      "name": "Global average affective polarization (Figure 3)",
+      "phrases": ["global average affective polarization", "world", "polarization index value"],
+      "source": "WTW Political Risk Index H1 2025",
+      "underlying_data": "Varieties of Democracy (V-Dem) Project",
+      "qualifier": "assumed value",
+      "provenance_note_for_user": "Values manually digitized by reading the Figure 3 curve against its gridlines (axis 1.8-2.6, gridlines every 0.2). They are NOT published numbers. Confidence is per-point; turning points (1915 trough, 1944 spike, 1971 peak, 2003 trough, 2024 top) are more reliable than mid-segment interpolations. Replace with exact V-Dem v2cl_acjst / polarization series values when available.",
+      "unit": "index (V-Dem expert scale)",
+      "data": [
+        {"year": 1900, "value": 2.07, "confidence": 0.6},
+        {"year": 1905, "value": 2.06, "confidence": 0.5},
+        {"year": 1910, "value": 2.05, "confidence": 0.5},
+        {"year": 1915, "value": 2.02, "confidence": 0.6},
+        {"year": 1920, "value": 2.05, "confidence": 0.5},
+        {"year": 1925, "value": 2.08, "confidence": 0.5},
+        {"year": 1930, "value": 2.07, "confidence": 0.5},
+        {"year": 1935, "value": 2.12, "confidence": 0.5},
+        {"year": 1940, "value": 2.15, "confidence": 0.5},
+        {"year": 1944, "value": 2.22, "confidence": 0.6},
+        {"year": 1946, "value": 2.11, "confidence": 0.5},
+        {"year": 1950, "value": 2.12, "confidence": 0.5},
+        {"year": 1955, "value": 2.13, "confidence": 0.5},
+        {"year": 1960, "value": 2.16, "confidence": 0.5},
+        {"year": 1965, "value": 2.18, "confidence": 0.5},
+        {"year": 1971, "value": 2.28, "confidence": 0.6},
+        {"year": 1975, "value": 2.27, "confidence": 0.5},
+        {"year": 1980, "value": 2.20, "confidence": 0.5},
+        {"year": 1985, "value": 2.15, "confidence": 0.5},
+        {"year": 1989, "value": 2.10, "confidence": 0.5},
+        {"year": 1991, "value": 2.02, "confidence": 0.55},
+        {"year": 1995, "value": 2.01, "confidence": 0.5},
+        {"year": 2000, "value": 1.96, "confidence": 0.55},
+        {"year": 2003, "value": 1.94, "confidence": 0.6},
+        {"year": 2005, "value": 1.97, "confidence": 0.5},
+        {"year": 2010, "value": 2.02, "confidence": 0.55},
+        {"year": 2015, "value": 2.13, "confidence": 0.55},
+        {"year": 2020, "value": 2.30, "confidence": 0.55},
+        {"year": 2022, "value": 2.40, "confidence": 0.55},
+        {"year": 2024, "value": 2.43, "confidence": 0.6}
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "statement": "Affective polarization has been rising rapidly worldwide in recent years on a global-average basis.",
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025"
+    },
+    {
+      "statement": "On the V-Dem-based measure, global affective polarization has shot up since around 2000 to levels unprecedented in modern history.",
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025"
+    },
+    {
+      "statement": "Surges in polarization in democracies tend to be accompanied by the rise of populist movements and increased political violence.",
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025"
+    },
+    {
+      "statement": "Truth-and-reconciliation processes (Uruguay, Timor-Leste, Chile) and international war (post-WWII Norway, Luxembourg, Denmark; Ukraine) have historically reduced polarization.",
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025"
+    },
+    {
+      "statement": "The WTW measure relies on expert assessments (V-Dem, Fragile States Index) rather than opinion polls, which the report itself notes is probably less accurate than poll-based measures.",
+      "qualifier": "measured value",
+      "source": "WTW Political Risk Index H1 2025"
+    }
+  ]
+}

@@ -55,9 +55,12 @@ class impacts
     const float CURRENCY_EURO = 876543;
     const float CURRENCY_CHF = 765432;
     const float SYMBOL_USD = 87654;
+    const float SYMBOL_EUR = 87653;
     const float SYMBOL_CHF = 76543;
     const float IN_USD = 7654;
+    const float IN_EUR = 7653;
     const float ALIAS_DOLLAR = 765;
+    const float ALIAS_EURO = 764;
     const float ALIAS_U_S_DOLLAR = 76;
 
 }

@@ -280,7 +280,7 @@ class views
     const string LANGUAGE = 'language_default';
     const int LANGUAGE_ID = 95;
     const string VALUE = 'value_default';
-    const int VALUE_ID = 96;
+    const int VALUE_DEFAULT_ID = 96;
     const string FORMULA = 'formula_default';
     const int FORMULA_ID = 97;
     const string RESULT = 'result_default';
@@ -335,7 +335,7 @@ class views
 
     // full list of phrases related to a word/triple — the "..." link target shown in the
     // page title when the title's truncated related-list overflows the per-verb config limit
-    // (e.g. for Zurich with limit=2 the title 'Zurich (City, Canton, ...)' links the '...'
+    // (e.g. for Zurich with limit=2 the title 'Zurich (city, canton, ...)' links the '...'
     // to this view, which then renders every related triple grouped by verb)
     const string WORD_RELATED = 'word_related';
     const int WORD_RELATED_ID = 111;
@@ -542,7 +542,7 @@ class views
         self::VALUE_EDIT_ID,
         self::VALUE_DEL_ID,
         self::VALUE_DETAIL_ID,
-        self::VALUE_ID,
+        self::VALUE_DEFAULT_ID,
     ];
 
     // system masks that have a formula as the main object
@@ -711,7 +711,7 @@ class views
         self::SOURCE_ID,
         self::REF_ID,
         self::LANGUAGE_ID,
-        self::VALUE_ID,
+        self::VALUE_DEFAULT_ID,
         self::FORMULA_ID,
         self::RESULT_ID,
         self::RANKING_ID,
@@ -939,7 +939,7 @@ class views
         self::SOURCE_ID => self::SOURCE,
         self::REF_ID => self::REF,
         self::LANGUAGE_ID => self::LANGUAGE,
-        self::VALUE_ID => self::VALUE,
+        self::VALUE_DEFAULT_ID => self::VALUE,
         self::FORMULA_ID => self::FORMULA,
         self::RESULT_ID => self::RESULT,
         self::RANKING_ID => self::RANKING,

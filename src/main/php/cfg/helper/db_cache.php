@@ -62,6 +62,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class db_cache extends db_object_seq_id_user
 {
@@ -170,8 +172,8 @@ class db_cache extends db_object_seq_id_user
             if (array_key_exists(db_cache_db::FLD_STATUS, $db_row)) {
                 $this->status_id = $db_row[db_cache_db::FLD_STATUS];
             }
-            if (array_key_exists(db_cache_db::FLD_LAST_UPDATE, $db_row)) {
-                $this->last_update = $lib->get_datetime($db_row[db_cache_db::FLD_LAST_UPDATE], $this->dsp_id());
+            if (array_key_exists(fields::FLD_LAST_UPDATE, $db_row)) {
+                $this->last_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE], $this->dsp_id());
             }
             log_debug('Batch db_cache ' . $this->id() . ' loaded');
         }
@@ -308,7 +310,7 @@ class db_cache extends db_object_seq_id_user
                 db_cache_db::FLD_DATA,
                 user_db::FLD_ID,
                 db_cache_db::FLD_STATUS,
-                db_cache_db::FLD_LAST_UPDATE,
+                fields::FLD_LAST_UPDATE,
             ]
         );
     }
@@ -389,7 +391,7 @@ class db_cache extends db_object_seq_id_user
         }
         if ($obj->last_update != $this->last_update) {
             $lst->add_field(
-                db_cache_db::FLD_LAST_UPDATE,
+                fields::FLD_LAST_UPDATE,
                 $this->last_update?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
                 $obj->last_update?->format(sql_db::DATE_FORMAT)

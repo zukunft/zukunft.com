@@ -241,6 +241,7 @@ class words
     const string TIME = 'time';
     const string TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
     const int TIME_ID = 102;
+    const string TITLE = 'title';
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';

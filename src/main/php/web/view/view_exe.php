@@ -220,9 +220,12 @@ class view_exe extends view_base
                         $auto_row = true;
                     }
                     if (in_array($pos_type, position_types::SIDE_OR_BELOW_GROUP)) {
-                        // the collected components become a column of the side-or-below group
-                        $col_lst[] = $row;
+                        // the collected components become a column of the side-or-below group;
+                        // apply the column style (e.g. text-left set on the column's lead
+                        // component) so a column can opt out of the inherited centre alignment
+                        $col_lst[] = $html->add_style($row, $style_id);
                         $row = '';
+                        $style_id = null;
                     }
                     if ($pos_type == position_types::COLUMN) {
                         // the component html code is added without adding a table row using the same style
@@ -259,7 +262,7 @@ class view_exe extends view_base
             }
             if ($col_lst != []) {
                 // close a side-or-below group at the end of the view
-                $col_lst[] = $row;
+                $col_lst[] = $html->add_style($row, $style_id);
                 $result .= $this->dsp_side_or_below_row($col_lst);
             } elseif ($row != '') {
                 $result .= $row;

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Change confirm view  (zukunft.com)
+            Change confirm view - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,10 +136,9 @@
                 Confirm adding
             </h4>
             <form action="/http/view.php" id="view_preview">
-                <input class="form-control" type="hidden" name="mask" id="m" value="57">
+                <input class="form-control" type="hidden" name="m" id="mask" value="57">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="back" id="9" value="0">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="2">
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
                         <label for="d_form_select_view">
@@ -202,12 +201,13 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8d" value="90">
                 </div>
                 <div class="row col-md-12">
-                    Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview
+                    placeholder for the view after the change
                 </div>
                 <div class="row col-md-12">
-                    Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview
+                    placeholder for the view before the change
                 </div>
                 <a href="/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
                     cancel

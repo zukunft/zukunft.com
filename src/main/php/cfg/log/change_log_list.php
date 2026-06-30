@@ -59,8 +59,10 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -508,7 +510,7 @@ class change_log_list extends list_db_read
             $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
         }
         if ($class == value::class) {
-            $sc->add_where(group_db::FLD_ID, $id);
+            $sc->add_where(group_fields::FLD_ID, $id);
         } else {
             $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
@@ -565,9 +567,9 @@ class change_log_list extends list_db_read
         }
         $qp = $log_named->load_sql($sc, $query_ext);
         if ($class == value::class) {
-            $sc->add_where(group_db::FLD_ID, $id);
+            $sc->add_where(group_fields::FLD_ID, $id);
         } else {
-            $sc->add_where(change::FLD_ROW_ID, $id);
+            $sc->add_where(change_log::FLD_ROW_ID, $id);
         }
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test (zukunft.com)
+            test - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Change view
             </h4>
             <form action="/http/view.php" id="view_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="31">
+                <input class="form-control" type="hidden" name="m" id="mask" value="31">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="back" id="9" value="1">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="Start view">
+                        <input class="form-control" type="text" name="k" id="name" value="Start view">
                     </div>
+                    <input type="hidden" name="8k" value="Start view">
                     <div class="form-group col-md-4">
                         <label for="dt_form_select_view_type">
                             View type
@@ -217,11 +217,12 @@
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">
+                        <input class="form-control" type="text" name="o" id="description" value="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">
                     </div>
+                    <input type="hidden" name="8o" value="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -243,6 +244,9 @@
                             </option>
                             <option value="4"  >
                                 full width
+                            </option>
+                            <option value="5"  >
+                                left aligned
                             </option>
                         </select>
                     </div>
@@ -274,6 +278,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="1">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -293,13 +298,14 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="3">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=0&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

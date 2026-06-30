@@ -42,11 +42,15 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class group_db
 {
@@ -55,14 +59,10 @@ class group_db
      * db const
      */
 
-    // object specific database and JSON object field names
-    // *_COM: the description of the field
+    // object specific database and JSON object fields
+    // means: database fields only used for groups
+    // the field names and their descriptions are defined in group_fields
     // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
-    const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
-    const string FLD_ID = 'group_id';
-    const string FLD_NAME_COM = 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-    const string FLD_NAME = 'group_name';
     const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
@@ -75,19 +75,19 @@ class group_db
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
     const array FLD_KEY_PRIME = array(
-        [group_db::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM],
+        [group_fields::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', group_fields::FLD_ID_COM],
     );
     const array FLD_KEY_PRIME_USER = array(
-        [group_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
+        [group_fields::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', group_fields::FLD_ID_COM_USER],
     );
     const array FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
+        [group_fields::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', group_fields::FLD_NAME_COM],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', fields::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
-        sql_db::FLD_DESCRIPTION
+        fields::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
     // TODO check if this can be used somewhere else means if there are unwanted repeating

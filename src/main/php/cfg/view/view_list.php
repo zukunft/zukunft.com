@@ -51,6 +51,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class view_list extends sandbox_list_named
@@ -146,7 +148,7 @@ class view_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            view_db::FLD_TYPE,
+            view_fields::FLD_TYPE,
             implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -167,7 +169,7 @@ class view_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array       $names,
-        string      $fld = view_db::FLD_NAME
+        string      $fld = view_fields::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -205,8 +207,8 @@ class view_list extends sandbox_list_named
         $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
-            view_db::FLD_ID,
-            view_db::FLD_ID);
+            view_fields::FLD_ID,
+            view_fields::FLD_ID);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -228,6 +230,31 @@ class view_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of views by a name pattern
+     * unlike load_sql_names this uses the full field set so the loaded views carry
+     * their type, which the frontend needs to filter the views assignable to a word
+     * @param sql_creator $sc with the target db_type set
+     * @param string $pattern the pattern to filter the views by the name
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_pattern(sql_creator $sc, string $pattern = ''): sql_par
+    {
+        $qp = $this->load_sql($sc, 'pattern');
+        if ($pattern != '') {
+            $qp->name .= '_like';
+        }
+        $sc->set_name($qp->name);
+        if ($pattern != '') {
+            $sc->add_where(view_fields::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        }
+        $sc->set_order(view_fields::FLD_NAME);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the views that have a component linked from the database selected by id
      * @param int $id the id of the component
      * @return bool true if at least one component has been loaded
@@ -238,6 +265,19 @@ class view_list extends sandbox_list_named
 
         log_debug($id);
         $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $id);
+        return parent::load($qp);
+    }
+
+    /**
+     * load a list of views by a name pattern including the view type
+     * @param string $pattern the pattern to filter the views by the name
+     * @return bool true if at least one view has been loaded
+     */
+    function load_by_pattern(string $pattern = ''): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_pattern($db_con->sql_creator(), $pattern);
         return parent::load($qp);
     }
 

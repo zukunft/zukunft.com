@@ -84,6 +84,8 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -116,6 +118,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class component_link extends sandbox_link
 {
@@ -134,39 +138,38 @@ class component_link extends sandbox_link
     const string FLD_POS_TYPE = 'position_type_id';
     const string FLD_POS_TYPE_NAME = 'position'; // for log only
     const string FLD_STYLE_COM = 'the display style for this component link';
-    const string FLD_STYLE = 'view_style_id';
 
     // all database field names excluding the user-specific fields and the id
     const array FLD_NAMES = array(
-        view_db::FLD_ID,
+        view_fields::FLD_ID,
         component::FLD_ID
     );
     // list of the link database field names
     const array FLD_NAMES_LINK = array(
-        view_db::FLD_ID,
+        view_fields::FLD_ID,
         component::FLD_ID
     );
     // list of the user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
-        self::FLD_STYLE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_STYLE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
-        self::FLD_STYLE,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_STYLE,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
     const array FLD_LST_LINK = array(
-        [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [view_fields::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
     );
     // list of MANDATORY fields that CANNOT be CHANGED by the user
@@ -174,18 +177,18 @@ class component_link extends sandbox_link
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, self::FLD_LINK_TYPE_COM],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, position_type::class, self::FLD_POS_COM],
-        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
     // list of fields that CAN be CHANGED by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
-        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
+        [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
 
     // overwrite the parent link const
-    const string FLD_FROM = view_db::FLD_ID;
+    const string FLD_FROM = view_fields::FLD_ID;
     const string FLD_PREDICATE = component_link_type::FLD_ID;
     const string FLD_TO = component::FLD_ID;
 
@@ -288,14 +291,14 @@ class component_link extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            if (key_exists(view_db::FLD_ID, $db_row)) {
+            if (key_exists(view_fields::FLD_ID, $db_row)) {
                 $this->set_view(new view($this->get_user()));
-                $this->get_view()->id = $db_row[view_db::FLD_ID];
+                $this->get_view()->id = $db_row[view_fields::FLD_ID];
                 $this->set_component(new component($this->get_user()));
                 $this->get_component()->id = $db_row[component::FLD_ID];
                 $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
                 $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
-                $this->set_style_by_id($db_row[self::FLD_STYLE]);
+                $this->set_style_by_id($db_row[fields::FLD_STYLE]);
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
@@ -1001,7 +1004,7 @@ class component_link extends sandbox_link
     ): bool
     {
         return parent::load_standard_by_type_link_parent(
-            view_db::FLD_ID, $from_id,
+            view_fields::FLD_ID, $from_id,
             component_link_type::FLD_ID, $typ_id,
             component::FLD_ID, $to_id, $msg
         );
@@ -1048,7 +1051,7 @@ class component_link extends sandbox_link
     ): bool
     {
         return parent::load_standard_by_link_parent(
-            view_db::FLD_ID, $from_id,
+            view_fields::FLD_ID, $from_id,
             component::FLD_ID, $to_id, $msg
         );
     }
@@ -1147,7 +1150,7 @@ class component_link extends sandbox_link
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
-        $sc->add_where(view_db::FLD_ID, $id, sql_par_type::INT_SUB);
+        $sc->add_where(view_fields::FLD_ID, $id, sql_par_type::INT_SUB);
         $qp->sql = $sc->sql(1, false);
         $qp->par = $sc->get_par();
 
@@ -1200,7 +1203,7 @@ class component_link extends sandbox_link
 
     function from_field(): string
     {
-        return view_db::FLD_ID;
+        return view_fields::FLD_ID;
     }
 
     function to_field(): string
@@ -1505,7 +1508,7 @@ class component_link extends sandbox_link
                 component_link_type::FLD_ID,
                 self::FLD_ORDER_NBR,
                 self::FLD_POS_TYPE,
-                self::FLD_STYLE
+                fields::FLD_STYLE
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1596,8 +1599,8 @@ class component_link extends sandbox_link
         if ($obj->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_STYLE),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_STYLE,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1609,7 +1612,7 @@ class component_link extends sandbox_link
                 ]);
             }
             $lst->add_type_field(
-                self::FLD_STYLE,
+                fields::FLD_STYLE,
                 view_style::FLD_NAME,
                 $this->get_style_id(),
                 $obj->get_style_id(),

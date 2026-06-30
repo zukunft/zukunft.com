@@ -25,7 +25,11 @@ Every import JSON has this top-level shape:
   "triples":   [ ... ],
   "formulas":  [ ... ],
   "sources":   [ ... ],
-  "values":    [ ... ]
+  "values":    [ ... ],
+  "calc-validation": [ ... ],
+  "components": [ ... ],
+  "views":      [ ... ],
+  "view-validation": [ ... ]
 }
 ```
 
@@ -73,6 +77,61 @@ A word is the atomic phrase:
 - `name` is the unique key. Descriptions and `refs` are optional.
 - `type` is set only when the word is a measure (SI unit, `percent`, etc.).
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
+
+### Prefer a Wikipedia link over a free-text description
+
+Reach for a Wikipedia `ref` before writing a `description`: a
+`{ "name": "<article slug>", "type": "wikipedia" }` entry ties the word to a
+shared, maintained definition instead of prose that drifts. Add the matching
+Wikidata Q-id (`"type": "wikidata"`) too when you know it.
+
+When the Wikipedia article does **not** really match the meaning you need, do not
+force a near-miss description. Break the concept down into the single,
+well-defined items it is composed of — each its own word with its own Wikipedia
+ref — and combine them with triples, so the precise meaning emerges from
+referenced parts. E.g. rather than an unreferenced word `jet fuel for short-haul`,
+define `jet fuel` (wiki) and `short-haul flight` (wiki) and link them
+`jet fuel` `used for` `short-haul flight`.
+
+When something needed for a full match is missing from Wikipedia entirely, leave
+a **todo** by starting a job from the JSON rather than inventing an unreferenced
+description — the job records the gap so a maintained reference can be added (or
+created) later, and the word keeps its best partial reference until then.
+
+### Still carry the Wikipedia lead sentence as the `description`
+
+Preferring the `ref` does **not** mean leaving `description` empty. Even when a
+word or triple already has a Wikipedia (or Wikidata) `ref`, also fill its
+`description` with the **first sentence — or two — of the Wikipedia lead**, so the
+UI has tooltip text to show without a live fetch. The two work together: the
+`ref` does not *replace* the description, it *keeps it fresh* — a refresh job
+follows the Wikipedia link and re-pulls the lead, so the copied text is a cached
+snapshot the link refreshes, not hand-written prose that drifts (which is what the
+rule above warns against).
+
+Copy the lead as **clean prose**, stripped down to the defining sentence(s):
+
+- drop the inline wiki-links (keep the words, remove the markup),
+- drop the bracketed **alternative names / native spellings**,
+- drop the **pronunciation / IPA** parentheses,
+- drop the bold restatement of the name itself (the `name` already carries it).
+
+- **Wrong** — raw lead pasted in, with pronunciation, native name, link markup
+  and the repeated name:
+
+```json
+{ "name": "Zurich",
+  "description": "Zürich (/ˈzjʊərɪk/ ZURE-ik; Swiss Standard German: [ˈtsyːrɪç]) is the largest [[city]] in [[Switzerland]], in the north-central part of the country.",
+  "refs": [ { "name": "Zurich", "type": "wikipedia" } ] }
+```
+
+- **Right** — cleaned defining sentence; the `ref` still drives the refresh:
+
+```json
+{ "name": "Zurich",
+  "description": "the largest city in Switzerland, in the north-central part of the country.",
+  "refs": [ { "name": "Zurich", "type": "wikipedia" } ] }
+```
 
 ### Words are the most atomic text — no spaces if it can be avoided
 
@@ -172,6 +231,17 @@ source `name`, triple `from`/`to`, formula `assigned`/`assigned_word`, value
 an existing file, fix it everywhere in that file — a partial rename creates the
 same split-identity problem as a partial trim.
 
+**Refs are the exception — they carry an external key, not an internal name.**
+For a `ref` the identifying part is the **external key** (the Wikipedia article
+slug or the Wikidata Q-id, with its `type` / `ref_type`), and that key follows
+the **external source's** spelling and casing — Wikipedia and Wikidata
+capitalise (`Zurich (City)`, `Canton_of_Zürich`, `Q72`). Never lower-case a
+ref to match an internal phrase, and never assume a ref tracks the phrase name:
+the lower-case-first and byte-for-byte rules above govern *phrase names only*;
+in a `ref` the external key is what counts and the internal name is irrelevant,
+so leave refs exactly as the external system spells them even when the phrase
+they belong to is lower-cased.
+
 ### Intentional symbol / abbreviation aliasing
 
 A short symbol may alias several phrases on purpose. `m` is the symbol for the
@@ -180,6 +250,31 @@ SI unit `metre` (in `units.json`) and the abbreviation for `million` (in
 value's group) disambiguates. Do not force the symbol unique or rename one
 side; only flag a genuine unintended collision (e.g. a formula name equal to a
 triple name).
+
+### `is symbol for` (formula replacer) vs `is alias of` (one merged phrase)
+
+Both verbs link a short string to a phrase, but they mean different things — pick
+the right one, because only `is symbol for` drives the formula display:
+
+- **`is symbol for`** — the linked string is a *typographic symbol* that **stands
+  in for** the phrase when a formula is rendered. The latex generator
+  (`formula::update_latex`) replaces each expression phrase with its symbol, so
+  `( "kg" * "metre" * "metre" ) / ( "second (time)" * "second (time)" )` is shown
+  as `\frac{\text{kg} \cdot \text{m}^2}{\text{s}^2}`. The symbol stays a **separate
+  phrase** with its own meaning; it is only substituted in formula output.
+- **`is alias of`** — the two names are **the same phrase under another spelling**;
+  the alias adds no new meaning and is *not* used as a formula replacer. Use it for
+  alternative spellings / long forms, e.g. `U.S. dollar` / `US-Dollar` is alias of
+  `US dollar`, `Nestle` is alias of `Nestlé`.
+
+Rule of thumb: a one- or two-character typographic symbol (`s`, `m`, `kg`, `J`,
+`π`, `$`, `€`) is `is symbol for`; a longer alternative spelling or full name is
+`is alias of`. Multi-character unit notations that are not pure symbols (`mol`,
+`m/s`) stay `is alias of`.
+
+**Direction** — `is symbol for` always points **from the symbol to the phrase**
+(`from` = the symbol, `to` = the full phrase), so the replacer can find the symbol
+by the verb. Flip a triple that has the symbol on the `to` side.
 
 ### Disambiguate an ambiguous *word* with qualifier triples
 
@@ -234,6 +329,84 @@ A triple combines two phrases with a verb:
   same file).
 - `verb` must be one of the predicates in `src/main/resources/verbs.json`.
 - `name` is the unique display name of the triple.
+
+### Allowed verbs
+
+`verb` must be one of the predicates below (use the **name**; the `code_id` is the
+stable internal key). This is the set defined in `src/main/resources/verbs.json`
+at the moment:
+
+| name | code_id | use |
+|---|---|---|
+| `is a` | `is` | child → parent category (Zurich is a canton) |
+| `is part of` | `contains` | membership; the parts sum to the same total |
+| `can be part of` | `can_be_part_of` | optional membership in both directions |
+| `kind of` | `kind_of` | a sub-kind of a parent category |
+| `must be one of` | `must_be_one_of` | disambiguate a word's several meanings |
+| `of` | `of` | narrow a selection (population of humans) |
+| `with` | `with` | same-by-same comparison |
+| `has a` | `has` | assign a potential property |
+| `uses` | `uses` | real use (a turbine uses wind) |
+| `is used by` | `used_by` | passive form of `uses` |
+| `used for` | `used_for` | intended purpose (fuel used for a jet) |
+| `issue` | `issue` | issuer relation (a company issues a report) |
+| `influences` | `influence` | a directed influence |
+| `is an acronym for` | `acronym` | acronym expansion |
+| `is alias of` | `alias` | alternative spelling of the same phrase, merged to one (no formula replacement) |
+| `is symbol for` | `symbol` | the symbol shown in place of the phrase in formulas (`from`=symbol, `to`=phrase, e.g. USD for US dollar) |
+| `name of` | `name_of` | a proper name of a category |
+| `can` | `can` | assign a behavior (GDP can decline) |
+| `can be` | `can_be` | a possible state |
+| `can get` | `can_get` | a possible acquisition |
+| `can have` | `can_have` | a possible possession |
+| `can cause` | `can_cause` | a causal relation with a factor |
+| `can use` | `can_use` | a possible use that creates a new result |
+| `can be made of` | `can_be_made_of` | a possible material / composition |
+| `can be packed in` | `can_be_packed_in` | a possible packaging option |
+| `can be used as a differentiator for` | `can_contain` | table differentiator (row hidden when no value) |
+| `per` | `per` | quotient unit (metre per second) |
+| `times` | `times` | product unit (J⋅s for the Planck constant) |
+| `and` | `and` | combine two phrases into one |
+| `scaled by` | `scaled` | the usual scaling (kWh) |
+| `in` | `in` | the measure unit |
+| `on` | `on` | a subgroup (taxes on income) |
+| `to` | `to` | a time range or assignment type |
+| `between` | `between` | a range (lower–upper bound) |
+| `by parts` | `by_parts` | a method on the parts (integration by parts) |
+| `is selector for` | `selector` | group a selection list to shorten it |
+| `is ranked by` | `rank` | the sort key for related objects |
+| `is time jump for` | `time_jump` | the default time period |
+| `is term jump for` | `term_jump` | the default term jump |
+| `is measure type for` | `measure_type` | the default measure type |
+| `is follower of` | `follow` | sequence / successor |
+| `term type needed` | `term_needed` | the formula needs the linked term type |
+| `not set` | `not_set` | none — no verb selected |
+
+### Adding a new verb
+
+A verb not in the list above can be proposed in the **same object shape** as the
+entries in `src/main/resources/verbs.json` — `name` + `code_id` + `description`,
+plus the display forms `name_plural`, `name_reverse`, `name_plural_reverse` (leave
+a form empty when the reverse reading is not used, as `per` and `to` do), and the
+optional `formula_name` / `protection`:
+
+```json
+{
+  "name": "is supplier of",
+  "code_id": "supplier",
+  "description": "...",
+  "name_plural": "are suppliers of",
+  "name_reverse": "is supplied by",
+  "name_plural_reverse": "are supplied by"
+}
+```
+
+**Approval process.** A proposed verb is private to the requesting user until an
+**admin confirms** the request; only after that confirmation can other users use
+the new verb. The confirmation also raises a **request to the developer** to add
+fixed (coded) functionality for the verb — or at least to link it to an existing
+verb's code functionality — so the new predicate behaves consistently across the
+app rather than being a name-only relation.
 
 ### `from`/`verb`/`to` is unique within an import
 
@@ -369,6 +542,49 @@ If a formula's inputs all live elsewhere — e.g. `"molar mass" = "mass" /
 redefined — either define the formula in the file owning its inputs, or leave
 it **unassigned**.
 
+### Name the formula for the most *general* concept, not the instance
+
+A formula's `name` describes the **general operation** it performs, never the
+specific phrase it happens to compute in one file. Name it `foreign count`,
+`natural balance`, `welfare` — not `canton foreign count` or `city natural
+balance`. A general name lets the *one* formula be reused for every phrase it is
+assigned to (see *Assign the formula to the most parent phrase* below), so the
+general name and the parent-phrase assignment go together: a single
+`foreign count (formula)` assigned to `["city", "canton"]` serves both, where a
+`city foreign count formula` plus a `canton foreign count formula` would
+duplicate the same logic.
+
+The result variable **inside** the `expression` may be general (resolved per
+entity by the context, as below) or a specific instance (`"canton GDP per
+capita" = …`) — what must stay general is the formula's own `name`:
+
+- **Right** — general name, parent assignment:
+
+```json
+{ "name": "foreign count (formula)",
+  "expression": "\"foreign nationals\" = \"population\" * \"foreign share\" / 100",
+  "assigned": [ "city", "canton" ] }
+```
+
+- **Wrong** — instance-specific name duplicated per child phrase:
+
+```json
+{ "name": "city foreign count formula",   "expression": "...", "assigned": [ "city" ] },
+{ "name": "canton foreign count formula", "expression": "...", "assigned": [ "canton" ] }
+```
+
+A single general formula can only address every entity when each operand has a
+phrase the per-entity context resolves uniquely (here the genus word `population`
+plus the `foreign share` triple — see *Naming a formula operand: triple vs flat atoms*). If
+an operand has no such shared phrase (e.g. the area values are only keyed
+`city area` / `canton area`), the validator cannot pick it per entity, and you
+fall back to one specific formula per entity (`city density formula`,
+`canton density formula`).
+
+Append the ` formula` / ` (formula)` suffix only to break a clash with a word or
+triple of the same general name (see *Formula name uniqueness across types*) —
+never to dress an instance-specific name up as generic.
+
 ### Assign the formula to the most *parent* phrase
 
 Assign a formula at the highest level of the phrase hierarchy where it
@@ -391,6 +607,31 @@ A formula whose result is assigned to `percent` and that computes a ratio
 explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
+
+### Period-over-period change: reuse the system `increase` formula
+
+Do **not** write a bespoke "growth rate" / "year-over-year change" formula. The
+base data ships the canonical one in `time_definition.json`:
+
+```json
+{ "name": "increase", "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"", "assigned_word": "year" }
+```
+
+`this` and `prior` are hardcoded **time-jump** formulas (`type: time_this` /
+`time_prior`) that fetch the current and previous period's value through the time
+dimension. To apply it to your measure, mirror `country.json`: re-declare the
+time block (`this`, `next`, `prior`, the `Now` word, and `increase` with its
+`assigned_word` set to your measure, e.g. `population`), mark each year
+`{"type": "time"}`, link each `… is a year`, and chain them
+`{"from": "2025", "verb": "is follower of", "to": "2024"}` so `prior` can step
+back. Tag the year on the values (`["canton", "population", "2025", …]`); the
+increase is then derived for every entity that has both a year and its
+predecessor. The result goes to `percent`, so there is **no `* 100`** (above).
+
+`increase` resolves `this`/`prior` only at calc time through the time dimension,
+so it **cannot be reproduced by `calc-validation`** (which does literal value
+lookup — see below). That is why no base file calc-validates `increase`: leave
+the period-over-period result out of your `calc-validation` block.
 
 ### Formula name uniqueness across types
 
@@ -446,6 +687,41 @@ triple over a flat extra word**:
 - **Vague**: `{"words": ["price"], "number": "20", "share": "public", "source": "economics textbook example"}`
 - **Specific**: `{"words": ["price", "economics textbook example"], "number": "20", "source": "economics textbook example"}`
 
+### Name the entity globally, not just locally
+
+"As specific as the data allows" is judged from the **global** point of view, not
+only within the file: the `words` group must pin the number down to **one** real
+quantity in the whole graph. The qualifier that usually decides this is the
+**entity**, and a generic word is not specific enough.
+
+- **Wrong** — generic entity word, group is not globally unique:
+
+```json
+{ "words": ["canton", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+```
+
+There are 26 cantons, so this never says *which* canton's GDP it is — another
+canton's 2022 GDP would map to an indistinguishable group, and the row reads as
+no unique fact.
+
+- **Right** — name the actual entity as its own (disambiguated) triple, then
+  reference it:
+
+```json
+{ "name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton" }
+```
+
+```json
+{ "words": ["Zurich (canton)", "GDP", "2022", "CHF", "measured value"], "number": "159800000000" }
+```
+
+Now the group identifies one number globally. The shared atoms (`canton`, `GDP`,
+`2022`, `CHF`, `measured value`) stay reusable across every entity; only the
+entity phrase carries the global identity. Apply it to every value —
+`Zurich (city)` not bare `city`, `Vestas` not bare `company`. The entity triple
+doubles as the disambiguation of the ambiguous name (`Zurich` the canton vs the
+city — see *Disambiguate an ambiguous word with qualifier triples*).
+
 ### Word vs triple in a value — does the order carry meaning?
 
 A value's `words` array is an **unordered set**: the import cannot tell `["A", "B"]`
@@ -474,14 +750,117 @@ could change the meaning:
 
 - `{"words": ["Vestas", "revenue", "2024"], "number": "..."}` — "Vestas's revenue
   in 2024" reads the same whatever the qualifier order; no triple needed.
-- `{"words": ["City of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
+- `{"words": ["city of Zurich", "inhabitant", "2025"], "number": "443037"}` — the
   entity, measure and period have no direction among themselves.
 - `{"words": ["Switzerland", "population", "2023"], "number": "..."}` — a plain
   fact tagged by entity, measure and period.
 
+### Naming a formula operand: triple vs flat atoms
+
+The order test above decides triple-vs-flat for a value that is only ever **read
+back as data**. A value a **formula** consumes adds a second consideration: an
+`expression` (and `assigned`) references each input by a *single phrase name* that
+the one calc-validation `context` must resolve to exactly one value. Two shapes
+satisfy that, and the order is irrelevant to both:
+
+- **Triple operand** (`city population`): self-documenting —
+  `"city population" / "canton population"` plainly divides two populations — and
+  it resolves unambiguously whatever other values exist. Cost: a named triple and
+  a row, with the single-word atoms locked inside it.
+- **Flat atoms + context**: tag the value with single words
+  (`["city", "population", "2025", …]`) and let the expression name a
+  distinguishing atom — the entity (`"city" / "canton"`) or the genus
+  (`"population" * "foreign share"`) — with the per-entity context picking the
+  right value. Keeps the atoms reusable (the project's default leaning — see *Word
+  vs triple in a value*), at the cost of an expression that only reads correctly
+  with its context in hand and stays correct only while the context excludes every
+  other `city` / … value.
+
+It is a genuine trade-off, not a rule: weigh **self-documentation** against
+**atomic reuse** per case. `zurich.json` (a base-data file, where reusable atoms
+matter most) takes the flat route — `share of canton` is `"city" / "canton"`, and
+one general `foreign count = "population" * "foreign share" / 100` serves both
+entities because the shared atom `population` and the `foreign share` triple
+resolve per entity by context. A file that prizes legible formulas over atom reuse
+would instead keep `city population` / `canton population` triples and divide
+those. Either way the single calc-validation `context` must uniquely resolve every
+operand (see *Calc-validation*), and two same-measure operands that share *one*
+context can only be told apart by distinct names (entity atoms or triples), never
+by a bare genus word alone.
+
 ### `"share": "public"` is the default and must be omitted
 
 Only add `share` when it differs from `public`.
+
+## Calc-validation
+
+Optional. A list of *expected* formula results: instead of being stored, each
+entry is **recomputed** from the file's own values and formulas and compared, so
+a broken formula or a mistyped input is caught at import time. Same shape as a
+stored `result`, but routed through `validate_results` — a mismatch is reported
+as a failed validation, never saved as a value.
+
+```json
+{
+  "context": [ "status quo harm weight", "exposure duration", "DALY", "year", "adult" ],
+  "formula": "status quo harm per person formula",
+  "words":   [ "status quo harm per person", "DALY", "adult" ],
+  "number":  "0.08",
+  "note":    "optional human comment, ignored by the importer"
+}
+```
+
+- `context` — the phrases that select the **input** values. The match is
+  **literal, with no parent/child inheritance**: the validator takes each value
+  whose phrase group is *wholly contained* in `context`, so `context` must be a
+  **superset of every input value's full group** — include every qualifier the
+  values carry (measure, period, `measured value`, …), not just the phrase the
+  expression names. A value tagged `city population` is therefore *not* found by a
+  bare `population` unless the value also carries the word `population`; and to
+  tell two same-measure inputs apart, put the distinguishing word (`city` /
+  `canton`) in the context so the wrong one is excluded.
+- `formula` — the name of the formula (defined in this file's `formulas`) that
+  computes the result.
+- `words` — the phrases that identify the **result itself** (its group): what the
+  `number` is about.
+- `number` — the expected calculated value, as a string. The import recomputes it
+  and compares **rounded to `data_object::CALC_VALIDATION_DECIMALS` decimals**
+  (currently 2), so floating-point roundoff between the stored number and the
+  recalculation is tolerated — you need not store full machine precision. A
+  difference larger than that rounding is reported as a failed validation.
+- `note` — optional, ignored by the importer.
+
+### Keep every entry reproducible and order-independent
+
+Each entry must be reproducible from the file's values and formulas alone — no
+hidden state — and independent of the order the values are imported, so the check
+stays stable. Encode an alternative scenario (e.g. an upper-bound sign-flip) as
+its own value + `calc-validation` chain, never as prose in a `note`.
+
+## View-validation
+
+Optional. The counterpart of `calc-validation` for *pages* instead of numbers:
+each entry pins the most relevant output a page should show **after** the import,
+so a layout or wiring regression is caught at import time. An entry is a
+human-readable page URL plus the expected rendering as **Markdown** (the compact,
+diff-friendly form of the page — not the full HTML):
+
+```json
+{
+  "url": "http://localhost/http/view.php?words=Pi",
+  "result": "# Pi\n\nis a *mathematical constant*\n\n## Values\n\n- 3.14159265359\n"
+}
+```
+
+- `url` — the page to render, written in the **human-readable** url form
+  (`?words=Pi`, `?mask_id=word&id=…`, `…&show`), never with raw internal ids.
+- `result` — the expected most-relevant output of that page as Markdown; the
+  import renders the page and compares, reporting a mismatch as a failed
+  validation (it is not saved).
+
+Keep `result` to the *relevant* output — the title, the key related phrases and
+the top values/formulas — not every pixel, so the check stays stable across
+cosmetic layout changes.
 
 ## Components
 
@@ -529,6 +908,58 @@ inserted, so the unique `ui_msg_code_id` is not duplicated.
 
 This mirrors the "define once, link many" pattern already used inside
 `system_views.json`.
+
+## Views
+
+A view is a named page layout that links an ordered list of components to a main
+object type:
+
+```json
+{
+  "name": "Word (default)",
+  "description": "the default view for words",
+  "code_id": "word_default",
+  "type": "word",
+  "components": [
+    { "position": "1", "name": "Word title" },
+    { "position": "2", "name": "system show field description" },
+    { "position": "3", "name": "phrase aliases", "position_type": "combine" }
+  ]
+}
+```
+
+- `name` is the unique display name; `code_id` is the stable internal key
+  (`word_default`, `triple_default`, …).
+- `type` is the main object the view renders (`word`, `triple`, `verb`, `source`,
+  `formula`, …).
+- `components` is the ordered list of component links. Each entry references a
+  component **by `name`** — defined in the `components` block above or re-declared
+  canonically (see *Components*) — plus the link-only fields `position`,
+  `position_type`, `style`.
+
+### Component positions are contiguous, starting at 1
+
+`position` is `1, 2, 3, …` with **no gaps**: the importer rejects a hole
+(`the component position 4 is missing in the view "…"`, and every later component
+reported as "position N instead of N-1"). When you remove a component, renumber
+the rest so the sequence stays gapless.
+
+### `position_type` places the component in the row/column flow
+
+Optional, default `below`. The values that have coded layout behaviour:
+
+| value | effect |
+|---|---|
+| `below` | start a new full-width row (the default) |
+| `combine` | stack below the previous component **within the same column** |
+| `side_or_first_below` | start the first column of a side-by-side group |
+| `side_or_below` | start a following column of that group |
+| `side_or_last_below` | start the last column of that group |
+
+A side-or-below group shows its columns next to each other on wide screens and
+wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
+column by giving its first component the `side_or_*` type and the rest `combine`.
+`style` is an optional Bootstrap column class (e.g. `col-md-4`).
 
 ## `import_mapper` reads only from the per-file `$dto`
 

@@ -39,12 +39,14 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class change_table_field
 {
@@ -69,8 +71,8 @@ class change_table_field
         [
             [change_field::FLD_ID, 'f', self::FLD_ID_AS],
             [[[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']], '', self::FLD_NAME_AS],
-            [sql_db::FLD_DESCRIPTION, 'f'],
-            [[sql_db::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
+            [fields::FLD_DESCRIPTION, 'f'],
+            [[fields::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
         ],
         [[change_table::FLD_ID, 't'], [change_field::FLD_TABLE, 'f']]
     ];

@@ -42,6 +42,11 @@ use RecursiveIteratorIterator;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
+//include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
+//include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 //include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_REF . 'source_db.php';
@@ -52,6 +57,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -158,6 +165,11 @@ use Zukunft\ZukunftCom\test\php\utils\test_api;
 use DateTime;
 use Exception;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
 class library
 {
@@ -417,11 +429,30 @@ class library
         $result = '';
         $void_tags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
             'link', 'meta', 'param', 'source', 'track', 'wbr'];
+        // css class that marks a span whose whole subtree is kept on a single line
+        $one_line = 'text-nowrap';
+        // span nesting depth and buffer while collecting a one-line subtree
+        $one_line_depth = 0;
+        $one_line_buf = '';
 
         $tokens = preg_split('/(<[^>]+>)/', trim($html_string), -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
         foreach ($tokens as $token) {
+            if ($one_line_depth > 0) {
+                // keep the original spacing of the subtree by collecting the untrimmed tokens
+                $one_line_buf .= $token;
+                if (str_starts_with($token, '</span>')) {
+                    $one_line_depth--;
+                    if ($one_line_depth == 0) {
+                        $result .= str_repeat($tab, $indent) . trim($one_line_buf) . "\n";
+                        $one_line_buf = '';
+                    }
+                } elseif (str_starts_with($token, '<span')) {
+                    $one_line_depth++;
+                }
+                continue;
+            }
             $token = trim($token);
             if ($token === '') {
                 continue;
@@ -433,9 +464,15 @@ class library
             } elseif (preg_match('/^<([a-zA-Z][a-zA-Z0-9]*)([\s\S]*?)>$/', $token, $m)) {
                 $tag = strtolower($m[1]);
                 $attrs = $m[2];
-                $result .= str_repeat($tab, $indent) . $token . "\n";
-                if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
-                    $indent++;
+                if ($tag == 'span' and str_contains($attrs, $one_line)) {
+                    // start collecting the whole subtree (incl. this opening tag) on one line
+                    $one_line_depth = 1;
+                    $one_line_buf = $token;
+                } else {
+                    $result .= str_repeat($tab, $indent) . $token . "\n";
+                    if (!in_array($tag, $void_tags) && !str_ends_with(trim($attrs), '/')) {
+                        $indent++;
+                    }
                 }
             } else {
                 // text content or doctype/comment
@@ -902,7 +939,7 @@ class library
      * convert an HTML fragment to the plain text a user would see in the browser
      * so the result of a *_ui display function can be checked or logged in one line
      * e.g. the page title html of "Zurich" becomes
-     * 'Zurich <fas fa-edit> (is a City, Canton, ... / measure) (personal, admin protection)'
+     * 'Zurich <fas fa-edit> (is a city, canton, ... / measure) (personal, admin protection)'
      * an icon is kept as a readable placeholder of its css class (e.g.
      * '<i class="fas fa-edit"></i>' -> '<fas fa-edit>'); every other tag is removed
      * and its text kept; a block tag (e.g. div, h4) becomes a single space so the
@@ -929,6 +966,107 @@ class library
         $result = html_entity_decode($result, ENT_QUOTES | ENT_HTML5);
         // collapse the spaces left by the removed block tags to a single space
         return $this->trim($result);
+    }
+
+    /**
+     * convert an HTML fragment (e.g. the result of a view *_ui display function) to markdown
+     * so an imported view can be validated against a human-readable ".md" screenshot
+     *
+     * unlike html_to_text this keeps the structure a plain text loses: a heading becomes the
+     * matching number of '#', a table becomes a markdown table and a list item becomes a '- '
+     * bullet; an icon is kept as an inline-code `css class` placeholder (valid markdown, unlike
+     * the angle-bracket form of html_to_text) and every other tag is removed while its text is kept
+     *
+     * @param string $html_string the HTML fragment to convert
+     * @return string the markdown representation of the given HTML
+     */
+    function html_to_markdown(string $html_string): string
+    {
+        // collapse the whitespace between tags so the source layout (e.g. the line breaks
+        // and indentation between table rows) cannot add blank lines that break a markdown table
+        $result = preg_replace('/>\s+</', '><', $html_string);
+        // keep an icon as an inline-code placeholder of its css class so the next tag
+        // removal does not drop it and the result stays valid markdown (an angle-bracket
+        // placeholder would be hidden as an unknown html tag) e.g.
+        // '<i class="fas fa-edit">' -> `fas fa-edit`
+        $result = preg_replace(
+            '/<i\b[^>]*\bclass="([^"]*)"[^>]*>\s*<\/i>/i',
+            '`$1`',
+            $result
+        );
+        // a heading becomes the matching number of markdown '#' on its own line
+        $result = preg_replace_callback(
+            '/<h([1-6])\b[^>]*>(.*?)<\/h\1>/is',
+            function (array $m): string {
+                return "\n" . str_repeat('#', (int)$m[1]) . ' ' . trim(strip_tags($m[2])) . "\n";
+            },
+            $result
+        );
+        // bold and emphasis become the matching markdown markers
+        $result = preg_replace('/<(?:strong|b)\b[^>]*>(.*?)<\/(?:strong|b)>/is', '**$1**', $result);
+        $result = preg_replace('/<em\b[^>]*>(.*?)<\/em>/is', '*$1*', $result);
+        // each table row becomes a markdown table row, a header row adds the '---' separator
+        $result = preg_replace_callback(
+            '/<tr\b[^>]*>(.*?)<\/tr>/is',
+            function (array $m): string {
+                return $this->html_row_to_markdown($m[1]);
+            },
+            $result
+        );
+        // a list item becomes a '- ' bullet on its own line
+        $result = preg_replace('/<li\b[^>]*>(.*?)<\/li>/is', "\n- $1", $result);
+        // a line break or block boundary becomes a newline
+        $block_tags = 'br|hr|p|div|ul|ol|section|header|footer';
+        $result = preg_replace('/<\/?(?:' . $block_tags . ')\b[^>]*>/i', "\n", $result);
+        // drop the remaining tags (the table wrapper and e.g. the link around a phrase)
+        // without a newline so the converted table rows stay contiguous, but keep the text
+        $result = strip_tags($result);
+        // turn entities (incl. the encoded icon placeholder) into their characters
+        $result = html_entity_decode($result, ENT_QUOTES | ENT_HTML5);
+        // normalise the whitespace while keeping the markdown line structure
+        return $this->trim_markdown($result);
+    }
+
+    /**
+     * convert the inner HTML of one table row (between <tr> and </tr>) to a markdown table row;
+     * a row that uses header cells (<th>) is followed by the markdown '---' separator row
+     *
+     * @param string $row_html the inner HTML of a single table row
+     * @return string the markdown table row, with a separator line after a header row
+     */
+    private function html_row_to_markdown(string $row_html): string
+    {
+        $cells = [];
+        $is_header = false;
+        preg_match_all('/<(th|td)\b[^>]*>(.*?)<\/\1>/is', $row_html, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if (strtolower($match[1]) == 'th') {
+                $is_header = true;
+            }
+            $cells[] = trim(strip_tags($match[2]));
+        }
+        $row = "\n| " . implode(' | ', $cells) . ' |';
+        if ($is_header) {
+            $row .= "\n| " . implode(' | ', array_fill(0, count($cells), '---')) . ' |';
+        }
+        return $row;
+    }
+
+    /**
+     * normalise the whitespace of a markdown text without losing the line structure:
+     * trim each line and collapse its inner spaces, then reduce a run of blank lines to one
+     *
+     * @param string $markdown the raw markdown that may contain volatile extra whitespace
+     * @return string the markdown with a stable, minimal whitespace
+     */
+    private function trim_markdown(string $markdown): string
+    {
+        $clean = [];
+        foreach (explode("\n", $markdown) as $line) {
+            $clean[] = trim(preg_replace('!\h+!', ' ', $line));
+        }
+        $result = preg_replace('/\n{3,}/', "\n\n", implode("\n", $clean));
+        return trim($result);
     }
 
     /**
@@ -1076,7 +1214,7 @@ class library
      * @param string|null $maker e.g. "start<"
      * @return string the selected text e.g. "select"
      */
-    function str_right_of_or_all(?string $text, ?string $maker): string
+    static function str_right_of_or_all(?string $text, ?string $maker): string
     {
         if ($text == null) {
             $text = "";
@@ -2365,6 +2503,7 @@ class library
             'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
             'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
             'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
+            'Zukunft\ZukunftCom\main\php\shared\const\fields' => 'paths::SHARED_CONST_FIELDS',
             'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
             'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
             'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
@@ -2629,6 +2768,26 @@ class library
 
         return array_filter($in_json);
 
+    }
+
+    /**
+     * format a json for compare by developers
+     * @param array $data the json as array
+     * @return string the formatted json
+     */
+    function json_for_dev(array $data): string
+    {
+        return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * format a json how "normal" humans (not developers) would like to read (if they ever want)
+     * @param array $data the json as array
+     * @return string the formatted json
+     */
+    static function json_for_humans(array $data): string
+    {
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     private
@@ -3472,9 +3631,9 @@ class library
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
-    function class_to_name(string $class): string
+    static function class_to_name(string $class): string
     {
-        $result = $this->str_right_of_or_all($class, '\\');
+        $result = self::str_right_of_or_all($class, '\\');
         // TODO Prio 3 try to avoid these exceptions
         // for some lists and exceptions
         switch ($class) {
@@ -3530,7 +3689,7 @@ class library
                 break;
             case result::class:
             case value::class;
-                $id_fld = group_db::FLD_ID;
+                $id_fld = group_fields::FLD_ID;
                 break;
         }
         return $id_fld;
@@ -3730,6 +3889,28 @@ class library
         }
         if ($result == 'configs') {
             $result = 'config';
+        }
+        return $result;
+    }
+
+    /**
+     * the user-readable class name translated into the user language
+     * maps the class to its database table const via def::class_to_table and translates that
+     * table name with the translator, e.g. word::class -> 'words' -> "Words" / "Wörter";
+     * if the class has no table mapping the plain (untranslated) class name is returned
+     *
+     * @param string $class the complete class name including the namespace, e.g. word::class
+     * @param string $lan the code id of the target language or '' for the user language
+     * @return string the translated class name or the plain class name if the class has no table mapping
+     */
+    static function class_to_name_translated(string $class, string $lan = ''): string
+    {
+        global $mtr;
+        $table = def::class_to_table($class);
+        if ($table == '') {
+            $result = self::class_to_name($class);
+        } else {
+            $result = $mtr->text_db_table($table, $lan);
         }
         return $result;
     }
@@ -3963,14 +4144,14 @@ class library
         $result = [];
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
-                word_db::FLD_NAME => 'wrd',
-                sql_db::FLD_DESCRIPTION => 'des',
+                word_fields::FLD_NAME => 'wrd',
+                fields::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value_db::FLD_ID => 'grp',
+                value_fields::FLD_ID => 'grp',
                 user_db::FLD_ID => 'usr',
-                source_db::FLD_ID => 'src',
+                source_fields::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
-                sandbox_multi::FLD_LAST_UPDATE => 'upd',
+                fields::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1',
                     phrase::FLD_ID . '_2',
                     phrase::FLD_ID . '_3',

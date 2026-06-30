@@ -94,7 +94,7 @@ class value_list_read_tests
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 
         // load values related to all phrases of a list
-        $test_name = 'Load the the inhabitants of Canton Zurich over time';
+        $test_name = 'Load the the inhabitants of canton Zurich over time';
         $val_lst = new value_list($t->usr1);
         $phr_lst = $t_phr->ch_inhabitant_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst);

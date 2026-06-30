@@ -113,6 +113,14 @@ include_once paths::MODEL_REF . 'ref_db.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -156,6 +164,14 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -533,12 +549,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::WORD) {
                 $db_con->set_class(word::class);
-                foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (word_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD_USR) {
                 $db_con->set_class(word::class, true);
-                foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (word_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VERB) {
@@ -548,32 +564,32 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
-                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
-                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
-                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
-                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
-                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
-                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK) {
@@ -588,12 +604,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::VIEW) {
                 $db_con->set_class(view::class);
-                foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (view_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_USR) {
                 $db_con->set_class(view::class, true);
-                foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (view_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_TERM_LINK) {
@@ -603,12 +619,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::VIEW_COMPONENT) {
                 $db_con->set_class(component::class);
-                foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (component_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_COMPONENT_USR) {
                 $db_con->set_class(component::class, true);
-                foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (component_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_LINK) {
@@ -623,22 +639,22 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::REF) {
                 $db_con->set_class(ref::class);
-                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::REF_USR) {
                 $db_con->set_class(ref::class, true);
-                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
-                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
-                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_fields::ALL_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } else {

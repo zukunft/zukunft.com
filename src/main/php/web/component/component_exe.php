@@ -115,7 +115,8 @@ class component_exe extends component
         string                                                $back = '',
         string                                                $pattern = '',
         bool                                                  $test_mode = false,
-        array                                                 $url_array = []
+        array                                                 $url_array = [],
+        int|string                                            $test_form_unique_id = ''
     ): string
     {
         global $mtr;
@@ -186,6 +187,9 @@ class component_exe extends component
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo),
+            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo),
+            component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo),
+            component_types::TITLE_VALUE_EDIT => $form->title_value($dbo),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
@@ -206,10 +210,10 @@ class component_exe extends component
             component_types::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_types::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->result_list()),
             component_types::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->result_list()),
-            component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
-            component_types::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
+            component_types::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
             component_types::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
             component_types::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
 
@@ -240,7 +244,7 @@ class component_exe extends component
             component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
 
             // other select fields
-            component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
             component_types::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
             component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
 
@@ -285,8 +289,8 @@ class component_exe extends component
             component_types::FORM_PREVIEW => $page->preview(),
 
             // hidden - only used for formatting without functional behaviour
-            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
-            component_types::FORM_HIDDEN_STEP => $form->form_confirm(),
+            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $url_array),
+            component_types::FORM_HIDDEN_STEP => $form->form_confirm($msk_id),
 
             // admin - components that only admin user can use
             component_types::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
@@ -301,10 +305,12 @@ class component_exe extends component
             component_types::SYSTEM_ADMIN_JOBS_DELAYED => $page->admin_jobs_delayed(),
             component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->lan, $form_name),
             component_types::EXPRESSION => $base->expression($dbo),
+            component_types::EXPRESSION_LATEX_LINK => $base->expression_latex_link($dbo),
 
             // buttons
-            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
+            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo, $url_array),
             component_types::FORM_BUTTON_SAVE => $form->button_save(),
+            component_types::FORM_BUTTON_CONFIRM => $form->button_confirm(),
             component_types::FORM_BUTTON_DEL => $form->button_del(),
             component_types::FORM_BUTTON_IMPORT => $form->button_import(),
             component_types::FORM_BUTTON_EXPORT => $form->button_export(),
@@ -318,10 +324,10 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title(),
-            component_types::FORM_CLASS => $preview->popup_class(),
-            component_types::FORM_CHANGES => $preview->popup_changes(),
-            component_types::FORM_IMPACT => $preview->popup_impact(),
+            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo),
+            component_types::FORM_CLASS => $preview->popup_class($dbo),
+            component_types::FORM_CHANGES => $preview->popup_changes($url_array, $dbo),
+            component_types::FORM_IMPACT => $preview->popup_impact($url_array),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
@@ -350,6 +356,7 @@ class component_exe extends component
             // internal and hidden components used for formatting
             component_types::ROW_START => $form->row_start(),
             component_types::ROW_RIGHT => $form->row_right(),
+            component_types::ROW_CENTER => $form->row_center(),
             component_types::ROW_END => $form->row_end(),
 
             // components for user views
@@ -389,7 +396,7 @@ class component_exe extends component
             component_types::MAIN_VALUE => $base->main_value($dbo),
 
             // other
-            component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $select->view_list_for($dbo, $cfg)),
 
 
             // view only -
@@ -463,8 +470,29 @@ class component_exe extends component
             $this->log_err($result);
         }
 
+        // a test page may stack many form parts that never share a real page; suffix this
+        // part's field names/ids with the per-part counter so the stacked ids stay unique;
+        // empty in production so the real url vars (name="k") are kept, one form per page
+        if ($test_form_unique_id !== '') {
+            $result = $this->add_test_form_unique_id($result, $test_form_unique_id);
+        }
+
         // finally add the html style if requested
         return $result;
+    }
+
+    /**
+     * suffix the name / id / for / list attributes of one rendered form part so several
+     * parts stacked on one test page keep unique html ids (the for/list references move
+     * with their id); used only by the multi-form test pages, never in production
+     * @param string $html the rendered form part
+     * @param int|string $test_form_unique_id the per-part counter from the test page
+     * @return string the form part with disambiguated field identifiers
+     */
+    private function add_test_form_unique_id(string $html, int|string $test_form_unique_id): string
+    {
+        $suffix = '_' . $test_form_unique_id;
+        return preg_replace('/(\s(?:name|id|for|list)=")([^"]+)(")/', '${1}${2}' . $suffix . '${3}', $html);
     }
 
 }

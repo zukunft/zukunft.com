@@ -37,6 +37,12 @@ class styles
 
     // styles used
     const string STYLE_GREY = 'grey';
+    // light blue between the grey old value and the link blue to highlight a changed value
+    const string STYLE_CHANGED = 'changed';
+    // centered change preview table whose width follows the config 'side width' screen breakpoints
+    const string CHANGE_PREVIEW = 'change-preview';
+    // the change impact line centered below the change preview table
+    const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';
     const string STYLE_USER = 'user_specific';
     const string STYLE_RIGHT = 'right_ref';
@@ -60,6 +66,12 @@ class styles
 
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';
+
+    // css classes to render a latex fraction (\frac) as html: the numerator shown above the
+    // denominator with a dividing line, used by the expression_latex_link component
+    const string FRAC = 'frac';
+    const string FRAC_NUM = 'num';
+    const string FRAC_DEN = 'den';
 
 
 }

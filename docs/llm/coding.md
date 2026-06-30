@@ -10,16 +10,19 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The most relevant rule of all
+## The two rules above all others
 
-> Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter,
-> mais quand il n'y a plus rien à retrancher.
-> — Antoine de Saint-Exupéry
-
-Perfection is reached not when there is nothing left to add, but when there is
-nothing left to remove. Prefer the smallest change that does the job: fewer
-lines, fewer functions, fewer assertions, fewer parameters. When in doubt, leave
-it out — every rule below is subordinate to this one.
+1. **Reduce to the max.** Prefer the smallest change that does the job: fewer
+   lines, functions, assertions, parameters. When in doubt, leave it out — every
+   rule below is subordinate to this one. (Saint-Exupéry: perfection is reached
+   not when there is nothing left to add, but when there is nothing left to
+   remove.)
+2. **One logical element per line — three at most** (one assignment, one call,
+   one condition). When a line packs more, split it into named steps or push a
+   chain behind a well-named helper; but don't pad a simple expression across
+   many lines either — minimise lines subject to each line still reading at a
+   glance. Worked examples and the companion ~50-line function-body limit:
+   `docs/llm/structure.md`.
 
 ## Build / test / commit
 
@@ -45,11 +48,16 @@ detail file. Order is by how often they fire, not importance.
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
+- Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
+- A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
+- Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
 - Main object files follow the standard section order; functions use the standard names. → `docs/llm/architecture.md`
+- Loading and saving are separated: every function reached from `save()` (e.g. `db_fields_changed`, `add_user`) works only on in-memory objects + the initial `$db_rec`/`get_similar` reload and never calls a `load_*`; fix an incomplete object at its load, not in the save path. → `docs/llm/architecture.md`
 - Within a section, order functions top down: public / often-used entry points first, rarely-used private helpers last (`load_by_phrase` before `load_sql_by_phrase`). → `docs/llm/architecture.md`
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
 - Function names are spelled out in full (`load_by_phrase_list`, not `load_by_phr_lst`); the abbreviations are for variables only. → `docs/llm/architecture.md`
@@ -70,14 +78,20 @@ detail file. Order is by how often they fire, not importance.
 - Only the fixed global set is allowed (`$sys $db_con $cfg $cac $ui_sys $mtr $t $t_sys $debug`); introduce no others. → `docs/llm/state-and-messages.md`
 - `$msg` (the single `user_message` from `http/view.php`) is append-only: never overwrite, reset, or re-create it; use a local buffer + `merge()`. → `docs/llm/state-and-messages.md`
 - User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/state-and-messages.md`
+- A db field / table / action name shown to the user is translated via `$mtr->text_db_field`/`_table`/`_action` (the `code_id` → message id lookup), called as late as possible (at display, not when storing/passing the raw `code_id`). → `docs/llm/state-and-messages.md`
+- A json field name shown to the user is translated via `$mtr->text_json_field` (which maps the json field to its db field translation), called as late as possible (at display, not when storing/passing the raw field name). → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
+- Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
+- `web/` renders pure HTML + CSS, **no JavaScript**: interactivity uses native form posts, links and CSS state selectors (`:target`, `:checked`); never emit a `<script>` or inline handler. A separate JS frontend (Vue/React) may come later as its own app. → `docs/llm/frontend.md`
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
 - `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
 - Every list rendered on a frontend page is sorted by a deterministic key (impact, name, id, …) before output, so the HTML order never depends on API/DB row order and snapshot tests stay stable. → `docs/llm/frontend.md`
+- An HTML input's `name` is the url var (the submitted key the url mapper reads); the human label goes in `id` / `<label for>`, never in `name`. → `docs/llm/frontend.md`
+- Any paired tag (`<form>…</form>`, `<div>…</div>`, …) is emitted by an `html_base` function that builds both tags from a tag const; never inline a raw open/close tag at the call site. → `docs/llm/frontend.md`
 
 ### Unit-testability
 - No PHP superglobals inside functions (`$_GET/$_POST/$_SESSION/$_SERVER/...`); the allowed fixed globals are the only exception. → `docs/llm/state-and-messages.md`
@@ -95,11 +109,11 @@ noun definitions: `docs/llm/architecture.md`.
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
 - A triple whose `from`/`to` is a *named* triple must carry its own explicit `name` — but never repeat the auto-generated `<from> <verb> <to>` as the `name` (the importer builds that for you; only set `name` when it differs or would clash).
-- Phrase names start lower-case unless the first token is a proper noun / ticker / acronym; sentence-case caption copies (`"Gross profit"`) split the same concept in two.
+- Phrase names start lower-case unless the first token is a proper noun / ticker / acronym; sentence-case caption copies (`"Gross profit"`) split the same concept in two. A `ref` is the exception: its external key follows the external source's casing (Wikipedia/Wikidata capitalise, e.g. `Zurich (City)`), never the internal phrase name. → `docs/llm/json_structure.md`
 - Import files are self-consistent: every assigned phrase, and every triple `from`/`to`, is defined in the same file (re-declare base words name-only).
 - Assign an import formula to its *input* phrase(s) (`assigned_word` / `assigned`), never to its result.
-- Assign a formula to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
-- Qualify a value as specifically as the data allows; build qualifiers as triples from single words; omit `"share":"public"` (the default).
+- Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
+- Qualify a value as specifically as the data allows, globally unique — name the actual entity (`Zurich (canton)`, not bare `canton`); build qualifiers as triples from single words; omit `"share":"public"` (the default).
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
 - A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`.
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
@@ -109,7 +123,7 @@ noun definitions: `docs/llm/architecture.md`.
 
 Detail and worked examples: `docs/llm/testing.md`.
 
-- Write the test first. Every function has ≥1 positive and ≥1 negative test; a happy-path-only function counts as untested.
+- Write the tests first — before the function body — for *every* function (including new ones). Cover *every* feature (each behaviour / branch / meaningful input), each with a positive *and* a negative test; one happy-path test, or testing only some features, counts as untested. → `docs/llm/testing.md`
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
@@ -124,7 +138,8 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.
 - Every component-type renderer arm in `component_exe.php` has a page-based test in `unit_ui/<topic>_ui_tests.php`.
 - Every HTML-returning function in `web/` contributes a fragment to an `object_pages/<name>.html` snapshot; cross-object renderers go through a `test_base` helper.
-- Never modify an existing file under `src/test/resources/`; only *add* new resource files. A failing snapshot stays failing — the existing scripts or a human reviewer regenerate it to verify your change. → `docs/llm/testing.md`
+- A unit workflow test snapshots the HTML after every step into `resources/web/html/workflow/<name>_wf<id>/`, files named by the cumulative user actions (`wf2_show_edit_save_confirm`); each step's action is a named const passed as the first `url_user_reaction` arg. Write workflows (`unit_write_workflow/`, `do_it=true`) mirror the same structure under `workflow_write/`. → `docs/llm/testing.md`
+- Never modify an existing file under `src/test/resources/` (e.g. the `workflow/*.html` snapshots and `_url.txt` siblings); only *add* new resource files. The committed baseline is the developer's audit trail — they diff it against the new test output to see exactly what your code change altered; rewriting it to match your output erases that signal. A failing snapshot stays failing for the existing scripts or a human reviewer to regenerate. → `docs/llm/testing.md`
 - Never change `src/test/php/const/files.php::AUTO_UPDATE_TEST_FILES`; it must always stay `false`. Flipping it to `true` to regenerate fixtures is the existing scripts' / reviewer's job, never an LLM edit. → `docs/llm/testing.md`
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 

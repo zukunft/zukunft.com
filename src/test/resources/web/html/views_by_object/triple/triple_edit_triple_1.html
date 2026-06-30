@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test (zukunft.com)
+            test - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Change triple
             </h4>
             <form action="/http/view.php" id="triple_edit">
-                <input class="form-control" type="hidden" name="mask" id="m" value="10">
+                <input class="form-control" type="hidden" name="m" id="mask" value="10">
                 <input class="form-control" type="hidden" name="id" id="id" value="1">
-                <input class="form-control" type="hidden" name="back" id="9" value="1">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="mathematical constant">
+                        <input class="form-control" type="text" name="k" id="name" value="mathematical constant">
                     </div>
+                    <input type="hidden" name="8k" value="mathematical constant">
                     <div class="form-group col-md-4">
                         <label for="py_form_select_phrase_type">
                             Type of word or triple
@@ -241,14 +241,16 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8py" value="17">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="A mathematical constant that never changes e.g. Pi">
+                        <input class="form-control" type="text" name="o" id="description" value="A mathematical constant that never changes e.g. Pi">
                     </div>
+                    <input type="hidden" name="8o" value="A mathematical constant that never changes e.g. Pi">
                 </div>
                 <div class="row col-md-12">
                     <div class="row col-md-12">
@@ -289,28 +291,22 @@
                                     Bern
                                 </option>
                                 <option data-value="-100"  >
-                                    Bern (City)
+                                    Bern (city)
                                 </option>
                                 <option data-value="258"  >
                                     CHF
                                 </option>
-                                <option data-value="-235"  >
+                                <option data-value="-234"  >
                                     CHF is symbol for Swiss franc
                                 </option>
-                                <option data-value="187"  >
-                                    Canton
-                                </option>
-                                <option data-value="189"  >
-                                    City
-                                </option>
                                 <option data-value="18"  >
-                                    Euler's number
+                                    Euler&#039;s number
                                 </option>
                                 <option data-value="193"  >
                                     Geneva
                                 </option>
                                 <option data-value="-101"  >
-                                    Geneva (City)
+                                    Geneva (city)
                                 </option>
                                 <option data-value="17"  >
                                     Pi
@@ -334,16 +330,19 @@
                                     Zurich
                                 </option>
                                 <option data-value="-99"  >
-                                    Zurich (Canton)
+                                    Zurich (canton)
                                 </option>
                                 <option data-value="-98"  >
-                                    Zurich (City)
+                                    Zurich (city)
                                 </option>
                                 <option data-value="-140"  >
                                     Zurich Insurance
                                 </option>
                                 <option data-value="160"  >
                                     billion
+                                </option>
+                                <option data-value="187"  >
+                                    canton
                                 </option>
                                 <option data-value="282"  >
                                     cash
@@ -356,6 +355,9 @@
                                 </option>
                                 <option data-value="15"  >
                                     circumference
+                                </option>
+                                <option data-value="189"  >
+                                    city
                                 </option>
                                 <option data-value="220"  >
                                     climate
@@ -676,10 +678,10 @@
                             </select>
                         </div>
                         <div class="form-group col-md-1">
-                            <label for="tw">
+                            <label for="weight">
                                 Weight
                             </label>
-                            <input class="form-control" type="text" name="Weight" id="tw">
+                            <input class="form-control" type="text" name="tw" id="weight">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="pt_form_select_phrase_to">
@@ -718,28 +720,22 @@
                                     Bern
                                 </option>
                                 <option data-value="-100"  >
-                                    Bern (City)
+                                    Bern (city)
                                 </option>
                                 <option data-value="258"  >
                                     CHF
                                 </option>
-                                <option data-value="-235"  >
+                                <option data-value="-234"  >
                                     CHF is symbol for Swiss franc
                                 </option>
-                                <option data-value="187"  >
-                                    Canton
-                                </option>
-                                <option data-value="189"  >
-                                    City
-                                </option>
                                 <option data-value="18"  >
-                                    Euler's number
+                                    Euler&#039;s number
                                 </option>
                                 <option data-value="193"  >
                                     Geneva
                                 </option>
                                 <option data-value="-101"  >
-                                    Geneva (City)
+                                    Geneva (city)
                                 </option>
                                 <option data-value="17"  >
                                     Pi
@@ -763,16 +759,19 @@
                                     Zurich
                                 </option>
                                 <option data-value="-99"  >
-                                    Zurich (Canton)
+                                    Zurich (canton)
                                 </option>
                                 <option data-value="-98"  >
-                                    Zurich (City)
+                                    Zurich (city)
                                 </option>
                                 <option data-value="-140"  >
                                     Zurich Insurance
                                 </option>
                                 <option data-value="160"  >
                                     billion
+                                </option>
+                                <option data-value="187"  >
+                                    canton
                                 </option>
                                 <option data-value="282"  >
                                     cash
@@ -785,6 +784,9 @@
                                 </option>
                                 <option data-value="15"  >
                                     circumference
+                                </option>
+                                <option data-value="189"  >
+                                    city
                                 </option>
                                 <option data-value="220"  >
                                     climate
@@ -1022,6 +1024,7 @@
                                 </option>
                             </select>
                         </div>
+                        <input type="hidden" name="8s" value="1">
                         <div class="form-group col-md-4">
                             <label for="sp_form_select_protection_type">
                                 Protection
@@ -1041,6 +1044,7 @@
                                 </option>
                             </select>
                         </div>
+                        <input type="hidden" name="8sp" value="3">
                     </div>
                 </div>
                 <br>
@@ -1048,7 +1052,7 @@
                     <a href="/http/view.php?m=92&id=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>
@@ -1070,6 +1074,24 @@
                     <h5>
                         References
                     </h5>
+                    <div class="col-md-12">
+                        <a href="https://www.wikidata.org/wiki/Q186509">
+                            wikidata
+                        </a>
+                        <a href="/http/view.php?m=82&id=196" title="reloading" class="heading-icon-inline">
+                            <i class="fas fa-arrows-rotate">
+                            </i>
+                        </a>
+                        <br>
+                        <a href="https://en.wikipedia.org/wiki/Mathematical_constant">
+                            wikipedia
+                        </a>
+                        <a href="/http/view.php?m=82&id=195" title="reloading" class="heading-icon-inline">
+                            <i class="fas fa-arrows-rotate">
+                            </i>
+                        </a>
+                        <br>
+                    </div>
                     mathematical constant is ranked by time of discovery
                 </div>
             </div>
@@ -1078,7 +1100,6 @@
                     <h5>
                         Changes
                     </h5>
-                    26-12-2022 18:23 zukunft.com system added "mathematical constant"
                 </div>
             </div>
         </main>

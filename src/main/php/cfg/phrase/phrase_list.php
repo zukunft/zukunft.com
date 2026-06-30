@@ -97,6 +97,8 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -127,6 +129,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class phrase_list extends sandbox_list_named
 {
@@ -359,7 +363,7 @@ class phrase_list extends sandbox_list_named
         $sc->set_fields(phrase::FLD_NAMES);
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_USAGE) . ' DESC, ' . phrase::FLD_NAME);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(fields::FLD_USAGE) . ' DESC, ' . phrase::FLD_NAME);
         return $qp;
     }
 
@@ -396,14 +400,14 @@ class phrase_list extends sandbox_list_named
         $qp = $this->load_sql($sc, 'sc_phr_lst');
         if (!$this->empty()) {
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple_db::FLD_FROM, $this->ids());
+                $sc->add_where(triple_fields::FLD_FROM, $this->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple_db::FLD_TO, $this->ids());
+                $sc->add_where(triple_fields::FLD_TO, $this->ids());
                 $qp->name .= '_' . $direction->value;;
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST_OR);
-                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_fields::FLD_FROM, $this->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_fields::FLD_TO, $this->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -699,22 +703,22 @@ class phrase_list extends sandbox_list_named
 
 
     user samples
-        1. "Zurich is a" -> "City or Canton"
-        2. "City of Zurich is part of" -> "Canton of Zurich"
-        3. "City of Zurich is part of and ..." -> "Canton of Zurich"
+        1. "Zurich is a" -> "city or canton"
+        2. "city of Zurich is part of" -> "canton of Zurich"
+        3. "city of Zurich is part of and ..." -> "canton of Zurich"
         ...
-        7. "Switzerland has the cities" -> "Zurich (City)" and "Bern (City)"
+        7. "Switzerland has the cities" -> "Zurich (city)" and "Bern (city)"
 
     technical samples
 
-        1.       parents of  "Zurich"        and the verb "is"                  includes "City" and "Canton"
-        2.       parents of  "Zurich (City)" and the verb "is part of"          includes "Canton of Zurich"
-        3.  foaf_parents of  "Zurich (City)" and the verb "is part of"          includes "Canton of Zurich" and "Switzerland"
-        4.  foaf_parents of  "Zurich"        and the verb "is" and "is part of" includes "Canton", "City" and "Switzerland"
-        5.      children for "Switzerland"   and the verb "contains"            includes "Canton of Zurich"
-        6. foaf_children for "Switzerland"   and the verb "contains"            includes "Canton of Zurich" and "Zurich (City)"
+        1.       parents of  "Zurich"        and the verb "is"                  includes "city" and "canton"
+        2.       parents of  "Zurich (city)" and the verb "is part of"          includes "canton of Zurich"
+        3.  foaf_parents of  "Zurich (city)" and the verb "is part of"          includes "canton of Zurich" and "Switzerland"
+        4.  foaf_parents of  "Zurich"        and the verb "is" and "is part of" includes "canton", "city" and "Switzerland"
+        5.      children for "Switzerland"   and the verb "contains"            includes "canton of Zurich"
+        6. foaf_children for "Switzerland"   and the verb "contains"            includes "canton of Zurich" and "Zurich (city)"
         7. foaf_children for "Switzerland"   and the verb "contains"
-                                            and the direct children of "City"  includes "Zurich (City)" and "Bern (City)"
+                                            and the direct children of "city"  includes "Zurich (city)" and "Bern (city)"
 
 
             "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
@@ -730,10 +734,10 @@ class phrase_list extends sandbox_list_named
 
       if "wind energy" "is part of" "energy"
 
-      if only the word Zurich is given as base $phr, the selection should include City and Canton as optional preselection
-      by selection the preselection e.g. Canton the selection should be modified so that the 20 most often used Cantons are on the top
-      with "more Canton" the user can increase to list of cantons
-      at the end of the preselection list alternative groups such as City should be shown
+      if only the word Zurich is given as base $phr, the selection should include city and canton as optional preselection
+      by selection the preselection e.g. canton the selection should be modified so that the 20 most often used cantons are on the top
+      with "more canton" the user can increase to list of cantons
+      at the end of the preselection list alternative groups such as city should be shown
 
     */
 
@@ -842,7 +846,7 @@ class phrase_list extends sandbox_list_named
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
-                    if (is_null($db_phr[sql_db::FLD_EXCLUDED]) or $db_phr[sql_db::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_phr[fields::FLD_EXCLUDED]) or $db_phr[fields::FLD_EXCLUDED] == 0) {
                         // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->get_user());
@@ -910,7 +914,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the words and triples "below" the given phrases
-     * e.g. for "Switzerland" it will return "Canton of Zurich"
+     * e.g. for "Switzerland" it will return "canton of Zurich"
      *
      * @param verb|null $vrb if set to filter the children by the relation type
      *                       if not set the children are not filtered by the verb
@@ -924,7 +928,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the words and triples "below" the given phrases
-     * e.g. for "Zurich" it will return "Canton of Zurich"
+     * e.g. for "Zurich" it will return "canton of Zurich"
      *
      * @param verb|null $vrb if not null the verbs to filter the parents
      * @param int $max_level to limit the search depth
@@ -937,7 +941,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the words and triples related the given phrases
-     * e.g. for "Canton of Zurich" it will return "Zurich" and "Switzerland"
+     * e.g. for "canton of Zurich" it will return "Zurich" and "Switzerland"
      *
      * @param verb|null $vrb if not null the verbs to filter the parents
      * @param int $max_level to limit the search depth
@@ -951,8 +955,8 @@ class phrase_list extends sandbox_list_named
     /**
      * get the related words and triples
      * if requested filtered by the verb and number of levels
-     * e.g. for "Switzerland" and "DOWN" it will return "Canton of Zurich"
-     * e.g. for "Zurich" and "UP" it will return "Canton of Zurich"
+     * e.g. for "Switzerland" and "DOWN" it will return "canton of Zurich"
+     * e.g. for "Zurich" and "UP" it will return "canton of Zurich"
      *
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @param verb|null $vrb if set to filter the children by the relation type
@@ -1003,7 +1007,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the related phrase
-     * e.g. for "City" it will return "Zurich", "Bern" and "Geneva"
+     * e.g. for "city" it will return "Zurich", "Bern" and "Geneva"
      *
      * @return phrase_list a list of phrases that are related to this phrase list
      */
@@ -2416,7 +2420,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * load a list of phrases by a given phrase, verb and direction
-     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "company"
+     * e.g. for "Zurich" "is a" and "UP" the result is "canton", "city" and "company"
      *
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
@@ -2523,13 +2527,13 @@ class phrase_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple_db::FLD_TO;
+                $sc->add_where(triple_fields::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_fields::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                //$sql_where = sql_db::LNK_TBL . '.' . triple_db::FLD_TO . $sql_in . $db_con->par_name() . ')';
-                $join_field = triple_db::FLD_FROM;
+                $sc->add_where(triple_fields::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                //$sql_where = sql_db::LNK_TBL . '.' . triple_fields::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $join_field = triple_fields::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }

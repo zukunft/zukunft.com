@@ -86,6 +86,10 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -119,6 +123,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use DateTime;
 
 class result extends sandbox_value
@@ -210,18 +218,18 @@ class result extends sandbox_value
     function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_multi($db_row, $ext, result_db::FLD_ID);
+        $result = parent::row_mapper_multi($db_row, $ext, result_fields::FLD_ID);
         if ($result) {
-            $this->frm = $db_row[formula_db::FLD_ID];
+            $this->frm = $db_row[formula_fields::FLD_ID];
             if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
-                $this->src_grp->set_id((int)$db_row[result_db::FLD_SOURCE_GRP]);
+                $this->src_grp->set_id((int)$db_row[result_fields::FLD_SOURCE_GRP]);
             } else {
-                $this->src_grp->set_id($db_row[result_db::FLD_SOURCE_GRP]);
+                $this->src_grp->set_id($db_row[result_fields::FLD_SOURCE_GRP]);
             }
             $this->set_number($db_row[sandbox_multi::FLD_VALUE]);
             $this->set_owner_id($db_row[user_db::FLD_ID]);
-            $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
-            $this->last_val_update = $lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]);
+            $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
+            $this->last_val_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]);
 
             $this->load_phrases(true);
         }
@@ -575,7 +583,7 @@ class result extends sandbox_value
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
-        $sc->add_where(result_db::FLD_GRP, $grp->id());
+        $sc->add_where(result_fields::FLD_GRP, $grp->id());
         return $qp;
     }
 
@@ -609,8 +617,8 @@ class result extends sandbox_value
     {
         $qp = $this->load_sql($sc, 'frm_grp');
         $sc->set_name($qp->name);
-        $sc->add_where(formula_db::FLD_ID, $frm->id());
-        $sc->add_where(result_db::FLD_GRP, $grp->id());
+        $sc->add_where(formula_fields::FLD_ID, $frm->id());
+        $sc->add_where(result_fields::FLD_GRP, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -628,8 +636,8 @@ class result extends sandbox_value
     {
         $qp = $this->load_sql($sc, 'frm_grp_lst');
         $sc->set_name($qp->name);
-        $sc->add_where(formula_db::FLD_ID, $frm->id());
-        $sc->add_where(result_db::FLD_GRP, $lst->ids());
+        $sc->add_where(formula_fields::FLD_ID, $frm->id());
+        $sc->add_where(result_fields::FLD_GRP, $lst->ids());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -1275,7 +1283,7 @@ class result extends sandbox_value
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $res_upd = new result($this->get_user());
-                $res_upd->load_by_id($val_row[result_db::FLD_ID]);
+                $res_upd->load_by_id($val_row[result_fields::FLD_ID]);
                 $res_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
                 $res_upd->save($usr_msg);
@@ -1559,8 +1567,8 @@ class result extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = result_db::FLD_SOURCE . group_db::FLD_ID;
-            $fields[] = formula_db::FLD_ID;
+            $fields[] = result_fields::FLD_SOURCE . group_fields::FLD_ID;
+            $fields[] = formula_fields::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
         return $fields;
@@ -1585,14 +1593,14 @@ class result extends sandbox_value
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(
-                    result_db::FLD_SOURCE . group_db::FLD_ID,
+                    result_fields::FLD_SOURCE . group_fields::FLD_ID,
                     $this->src_grp_id(),
                     sql_field_type::INT
                 );
             }
             if ($sbx->formula_id() !== $this->formula_id()) {
                 $lst->add_field(
-                    formula_db::FLD_ID,
+                    formula_fields::FLD_ID,
                     $this->formula_id(),
                     formula_db::FLD_ID_SQL_TYP
                 );
@@ -1600,7 +1608,7 @@ class result extends sandbox_value
             // if any field has been updated, update the last_update field also
             if (!$lst->is_empty_except_internal_fields() or $this->last_update() == null) {
                 $lst->add_field(
-                    sandbox_multi::FLD_LAST_UPDATE,
+                    fields::FLD_LAST_UPDATE,
                     sql::NOW,
                     sql_field_type::TIME
                 );

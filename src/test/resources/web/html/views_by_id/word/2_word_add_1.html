@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Add new word mathematics (zukunft.com)
+            mathematics - Add new word - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -136,17 +136,17 @@
                 Add word
             </h4>
             <form action="/http/view.php" id="word_add">
-                <input class="form-control" type="hidden" name="mask" id="m" value="2">
+                <input class="form-control" type="hidden" name="m" id="mask" value="2">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
-                <input class="form-control" type="hidden" name="back" id="9" value="0">
-                <input class="form-control" type="hidden" name="confirm" id="z" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="k">
+                        <label for="name">
                             Name
                         </label>
-                        <input class="form-control" type="text" name="Name" id="k" value="mathematics">
+                        <input class="form-control" type="text" name="k" id="name" value="mathematics">
                     </div>
+                    <input type="hidden" name="8k" value="mathematics">
                     <div class="form-group col-md-4">
                         <label for="py_form_select_phrase_type">
                             Type of word or triple
@@ -241,22 +241,25 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8py" value="7">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
-                        <label for="o">
+                        <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="Description" id="o" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+                        <input class="form-control" type="text" name="o" id="description" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                     </div>
+                    <input type="hidden" name="8o" value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
-                        <label for="lp">
+                        <label for="plural">
                             Plural
                         </label>
-                        <input class="form-control" type="text" name="Plural" id="lp" value="mathematics">
+                        <input class="form-control" type="text" name="lp" id="plural" value="mathematics">
                     </div>
+                    <input type="hidden" name="8lp" value="mathematics">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -320,6 +323,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8d" value="107">
                     <div class="form-group col-md-4">
                         <label for="s_form_select_share_type">
                             Share
@@ -348,6 +352,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8s" value="3">
                     <div class="form-group col-md-4">
                         <label for="sp_form_select_protection_type">
                             Protection
@@ -367,13 +372,14 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8sp" value="2">
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
                     <a href="/http/view.php?m=90" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit">
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
                         save
                     </button>
                 </div>

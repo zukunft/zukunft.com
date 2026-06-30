@@ -1,6 +1,6 @@
 verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_reverse,name_plural,name_reverse,usage,impact
 1,not set,not_set,no verb / predicate selected,,,,,,,
-2,is a,is,the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...,,of all,are,are,are,,
+2,is a,is,the main child to parent relation e.g. Zurich is a canton. The reverse is valid and usually plural is used e.g. cantons are Zurich, Bern, ...,,of all,are,are,are,,
 3,is part of,contains,if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings,,,contains,is part of,contains,,
 4,can be part of,can_be_part_of,if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units,,,contains,can be part of,contains,,
 5,of,of,to narrow a selection e.g. the world population is usually the population of all humans,,,of,of,of,,
@@ -13,7 +13,7 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 12,uses,uses,real use e.g. wind energy is used by a wind turbine,,,are used by,uses,is used by,,
 13,issue,issue,e.g. a company issues an annual report,,,are issued by,issues,is issued by,,
 14,is measure type for,measure_type,is the default measure type for,,measure type,have the measure type,are measure type for,has the measure type,,
-15,is an acronym for,acronym,is an acronym for,,,are an acronyms of,are an acronyms for,is an acronym of,,
+15,is an acronym for,acronym,is an acronym for,,,has acronyms,are an acronyms for,has acronym,,
 16,can be used as a differentiator for,can_contain,similar to contains, but in a table view the row will not be shown if there is no corresponding value,,differentiator,can be differentiated by,can be used as a differentiator for,can be differentiated by,,
 17,influences,influence,,,,is influenced by,influences,is influenced by,,
 18,is alias of,alias,,,,is alias of,is alias of,is alias of,,

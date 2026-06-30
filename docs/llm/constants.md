@@ -15,6 +15,67 @@ When a constant from another class cannot yet be referenced (missing `use` or
 include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME`
 comment so the gap is tracked.
 
+## Definitional data lives in a const, not inlined in a function
+
+A fixed set, list or map that *defines* behaviour — which profiles may do
+something, which fields are required, the order of fields, the classes that get a
+feature — belongs as a `const` on the owning const / enum class and is referenced
+by the functions that need it. Never declare such a literal array inside a
+function body: it then has to be repeated in every sibling that needs the same
+rule (backend *and* frontend), and the definition drifts.
+
+The function keeps only the *logic* (the loop, the comparison); the *data* it
+operates on is the const. This is the constant rule applied to a collection, and
+the DRY rule (`docs/llm/dry.md`) applied to its definition — one edit changes the
+rule everywhere.
+
+- **Wrong** — the profile list is a literal in the function, and the backend copy
+  of `is_unique` repeats the same seven profiles as an `or`-chain:
+```php
+function is_unique(): bool
+{
+    $unique = [user_profiles::EMAIL, user_profiles::HUMAN, /* …5 more… */];
+    foreach ($unique as $prf) { … }
+}
+```
+- **Right** — the set is one const on the enum, both `is_unique` copies loop over it:
+```php
+// shared/enum/user_profiles.php
+const array CAN_CHANGE = [self::EMAIL, self::HUMAN, self::SYS_LINK,
+    self::ADMIN, self::DEV, self::TEST, self::SYSTEM];
+
+// cfg/user/user.php and web/user/user.php
+foreach (user_profiles::CAN_CHANGE as $prf) { … }
+```
+
+If no const class owns the data yet, add the const to the most relevant
+const / enum class first, then reference it.
+
+## Pass a class name as `::class`, never as a string literal
+
+When a value identifies a class — a parameter, a `match`/`switch` key, a lookup
+key into a class→x map — use the `::class` constant of the class, never the bare
+name string. The `::class` form is checked by the IDE and updated automatically
+on a rename, so renaming a class is one edit instead of a hunt for every `'word'`
+string. Derive the short name from it with `library::class_to_name($dbo::class)`
+rather than writing the noun out.
+
+- **Wrong** — bare class noun, silently breaks if the class is renamed:
+```php
+$name = 'word';
+$base = $views->object_to_base('triple');
+```
+- **Right** — the class constant, follows the rename:
+```php
+$name = library::class_to_name($dbo::class);   // 'word'
+$base = $views->object_to_base(library::class_to_name($dbo::class));
+```
+
+A `match`/`switch` that maps a class to something keys on `$obj::class` (the FQN)
+where it can; the few places that must compare against the short noun (e.g. a map
+keyed by `class_to_name` output) are the documented exception and should carry a
+`// TODO` to key on `::class` instead.
+
 ## Use a named icon constant — no inline icon literals
 
 Every frontend icon css class string (Font Awesome `fas`/`far`/`fab` or any
@@ -27,6 +88,25 @@ greppable by its constant name.
 
 When a needed icon is not yet declared, add a constant first (one per full css
 class string, e.g. `const string EDIT = 'fas fa-edit';`) then use it.
+
+## All filesystem paths live in a `paths.php` const file
+
+Every directory or path fragment the code uses is a constant in one of the three
+`paths.php` files, never an inline string literal:
+
+- `src/main/php/cfg/const/paths.php` — backend php script paths
+- `src/main/php/web/const/paths.php` — frontend php script paths
+- `src/test/php/const/paths.php` — test script and test resource paths
+
+Build a longer path by composing the existing consts (`self::HTML . 'workflow' .
+DIRECTORY_SEPARATOR`) so a moved folder is one edit and every path is greppable.
+
+- **Wrong**: `test_paths::HTML . 'workflow/' . $name`
+- **Right**: add `const string WORKFLOW = self::HTML . 'workflow' . DIRECTORY_SEPARATOR;`
+  then `test_paths::WORKFLOW . $name`
+
+Only a leaf file name or a folder segment built from a runtime value (e.g. a
+folder named after a test object) may stay inline at the call site.
 
 ## Link code to DB rows by `code_id` only — `*_NAME` / `*_ID` are test-only
 

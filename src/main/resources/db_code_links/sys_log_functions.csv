@@ -7,3 +7,4 @@ sys_log_function_id, sys_log_function_name, code_id, description
 6, 'api/config', 'api/config', 'request the configuration via api'
 7, 'cfg/application', 'cfg/application', 'fallback entry to log system errors'
 8, 'cfg/helper/config_numbers', 'cfg/helper/config_numbers', 'loader for the system and user configuration'
+9, 'Import sample view data', 'import_sample_view_data', 'Import the sample view test data used by the view unit tests'

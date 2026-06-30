@@ -21,7 +21,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Canton",
+      "name": "canton",
       "refs": [
         {
           "name": "canton of Switzerland",
@@ -519,7 +519,7 @@
     {
       "from": "Ticino",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Ticino",
@@ -534,7 +534,7 @@
     {
       "from": "Geneva",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Geneva",
@@ -549,7 +549,7 @@
     {
       "from": "Grisons",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Grisons",
@@ -564,7 +564,7 @@
     {
       "from": "Aargau",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Aargau",
@@ -577,11 +577,7 @@
       "to": "Aargau"
     },
     {
-      "from": "Zurich",
-      "verb": "is a",
-      "to": "Canton"
-    },
-    {
+      "name": "Zurich (canton)",
       "from": "Zurich",
       "verb": "is part of",
       "to": "Switzerland"
@@ -594,7 +590,7 @@
     {
       "from": "Vaud",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Vaud",
@@ -609,7 +605,7 @@
     {
       "from": "Basel-Stadt",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Basel-Stadt",
@@ -624,7 +620,7 @@
     {
       "from": "Bern",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Bern",
@@ -639,7 +635,7 @@
     {
       "from": "Basel-Landschaft",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Basel-Landschaft",
@@ -654,7 +650,7 @@
     {
       "from": "Valais",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Valais",
@@ -669,7 +665,7 @@
     {
       "from": "Fribourg",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Fribourg",
@@ -684,7 +680,7 @@
     {
       "from": "Neuchâtel",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Neuchâtel",
@@ -699,7 +695,7 @@
     {
       "from": "Schwyz",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Schwyz",
@@ -714,7 +710,7 @@
     {
       "from": "Zug",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Zug",
@@ -729,7 +725,7 @@
     {
       "from": "St. Gallen",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "St. Gallen",
@@ -744,7 +740,7 @@
     {
       "from": "Lucerne",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Lucerne",
@@ -759,7 +755,7 @@
     {
       "from": "Appenzell Ausserrhoden",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Appenzell Ausserrhoden",
@@ -774,7 +770,7 @@
     {
       "from": "Jura",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Jura",
@@ -789,7 +785,7 @@
     {
       "from": "Thurgau",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Thurgau",
@@ -804,7 +800,7 @@
     {
       "from": "Schaffhausen",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Schaffhausen",
@@ -819,7 +815,7 @@
     {
       "from": "Solothurn",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Solothurn",
@@ -834,7 +830,7 @@
     {
       "from": "Nidwalden",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Nidwalden",
@@ -849,7 +845,7 @@
     {
       "from": "Glarus",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Glarus",
@@ -864,7 +860,7 @@
     {
       "from": "Appenzell Innerrhoden",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Appenzell Innerrhoden",
@@ -879,7 +875,7 @@
     {
       "from": "Obwalden",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Obwalden",
@@ -894,7 +890,7 @@
     {
       "from": "Uri",
       "verb": "is a",
-      "to": "Canton"
+      "to": "canton"
     },
     {
       "from": "Uri",

@@ -79,9 +79,9 @@ if ($db_con->is_open()) {
             $t->set_users();
             $usr_msg = new user_message();
 
-            // run the workflow tests
-            $t_workflow = new all_workflow_tests();
-            $t_workflow->run_workflow_tests($t, $t->usr1, $usr_msg);
+            // run all workflow tests (read snapshot + db write) via the single shared entry point
+            // that test.php also calls, so the two never diverge
+            all_workflow_tests::run($t, $t->usr1, $usr_msg);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

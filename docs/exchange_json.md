@@ -19,7 +19,7 @@ The following sample contains the header and one entry for each main section:
     "sample of the zukunft.com exchange format"
   ],
   "words": [
-    { "name": "City", "description": "a large human settlement" },
+    { "name": "city", "description": "a large human settlement" },
     {
       "name": "Zurich",
       "description": "the largest city of Switzerland",
@@ -42,7 +42,7 @@ The following sample contains the header and one entry for each main section:
     { "name": "is a", "description": "link a word to its parent type", "reverse": "are" }
   ],
   "triples": [
-    { "name": "", "from": "Zurich", "verb": "is a", "to": "City" }
+    { "name": "Zurich (city)", "from": "Zurich", "verb": "is a", "to": "city" }
   ],
   "sources": [
     { "name": "Statistical Office Switzerland", "url": "https://www.bfs.admin.ch" }

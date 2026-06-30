@@ -70,6 +70,8 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -97,6 +99,8 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 
 class term_view extends sandbox_link
 {
@@ -115,42 +119,42 @@ class term_view extends sandbox_link
     const array FLD_NAMES = array(
         term::FLD_ID,
         view_link_type::FLD_ID,
-        view_db::FLD_ID
+        view_fields::FLD_ID
     );
     //
     const array FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION
+        fields::FLD_DESCRIPTION
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
     // TODO Prio 2 maybe add a priority
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
-        sql_db::FLD_DESCRIPTION,
-        sql_db::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
+        fields::FLD_DESCRIPTION,
+        fields::FLD_EXCLUDED,
+        fields::FLD_SHARE,
+        fields::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
     const array FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [view_fields::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
-        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
     // overwrite the parent link const
     const string FLD_FROM = term::FLD_ID;
     const string FLD_PREDICATE = view_link_type::FLD_ID;
-    const string FLD_TO = view_db::FLD_ID;
+    const string FLD_TO = view_fields::FLD_ID;
 
 
     /*
@@ -199,15 +203,15 @@ class term_view extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            if (key_exists(view_db::FLD_ID, $db_row)) {
+            if (key_exists(view_fields::FLD_ID, $db_row)) {
                 $msk = new view($this->get_user());
-                $msk->id = $db_row[view_db::FLD_ID];
+                $msk->id = $db_row[view_fields::FLD_ID];
                 $this->set_view($msk);
                 $trm = new term($this->get_user());
                 $trm->set_id($db_row[term::FLD_ID]);
                 $this->set_term($trm);
                 $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+                $this->description = $db_row[fields::FLD_DESCRIPTION];
             } else {
                 log_warning('view id missing for ' . $this->dsp_id());
             }
@@ -519,7 +523,7 @@ class term_view extends sandbox_link
      */
     function from_field(): string
     {
-        return view_db::FLD_ID;
+        return view_fields::FLD_ID;
     }
 
     /**
@@ -600,7 +604,7 @@ class term_view extends sandbox_link
     ): bool
     {
         return parent::load_standard_by_link_parent(
-            view_db::FLD_ID, $from_id,
+            view_fields::FLD_ID, $from_id,
             term::FLD_ID, $to_id, $msg
         );
     }
@@ -731,7 +735,7 @@ class term_view extends sandbox_link
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
             [
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
             ],
             parent::db_fields_all_sandbox()
@@ -763,13 +767,13 @@ class term_view extends sandbox_link
         if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . fields::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . fields::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql_db::FLD_DESCRIPTION,
+                fields::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $obj->description

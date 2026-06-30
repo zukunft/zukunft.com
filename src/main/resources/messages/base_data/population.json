@@ -1,0 +1,337 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-18 12:00:00",
+  "user": "timon",
+  "selection": [
+    "population",
+    "children per woman",
+    "DALY",
+    "statistics"
+  ],
+  "description": "Most relevant base data around the world population, the children per woman (total fertility rate) and the global disease burden in DALYs, drawn from published science: the world population 2023 and 2024 with the year-over-year growth derived by the system 'increase' formula through the time dimension (therefore not calc-validated), the global total fertility rate with its surplus over the replacement level of 2.1, and the global disease burden split into years of life lost (YLL) and years lived with disability (YLD) whose sum is the DALY total. The derived surplus and disease-burden total are reproduced in the calc-validation block. Base words owned by other files (world, population, person, percent, year) are re-declared name-only so the import does not overwrite their canonical description; the topic-specific words carry a Wikipedia ref plus the cleaned first sentence of the lead as the description.",
+  "words": [
+    {
+      "name": "DALY",
+      "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
+      "refs": [
+        {
+          "name": "Disability-adjusted_life_year",
+          "type": "wikipedia"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "disease burden",
+      "description": "the impact of a health problem in a population, often quantified in DALYs by mortality and morbidity.",
+      "refs": [
+        {
+          "name": "Disease_burden",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "YLL",
+      "description": "the years of potential life lost due to premature death, the mortality component of the disease burden.",
+      "refs": [
+        {
+          "name": "Years_of_potential_life_lost",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "YLD",
+      "description": "the years lived with disability, the morbidity component of the disease burden; healthy life lost to living in less than full health.",
+      "refs": [
+        {
+          "name": "Disability-adjusted_life_year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "child",
+      "description": "a human being between birth and puberty, or between infancy and adulthood.",
+      "refs": [
+        {
+          "name": "Child",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "woman",
+      "description": "an adult female human being.",
+      "refs": [
+        {
+          "name": "Woman",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "replacement",
+      "description": "the fertility level, about 2.1 children per woman, at which a population exactly replaces itself from one generation to the next"
+    },
+    {
+      "name": "surplus",
+      "description": "the amount by which a quantity exceeds a reference level"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "Now"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "children per woman",
+      "from": "child",
+      "verb": "per",
+      "to": "woman",
+      "description": "the total fertility rate: the average number of children a woman would bear over her lifetime at current age-specific rates.",
+      "refs": [
+        {
+          "name": "Total_fertility_rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "replacement fertility",
+      "from": "children per woman",
+      "verb": "kind of",
+      "to": "replacement",
+      "description": "the children per woman at which a population exactly replaces itself, about 2.1"
+    },
+    {
+      "name": "fertility surplus",
+      "from": "children per woman",
+      "verb": "kind of",
+      "to": "surplus",
+      "description": "the children per woman above the replacement level"
+    },
+    {
+      "from": "YLL",
+      "verb": "is part of",
+      "to": "disease burden"
+    },
+    {
+      "from": "YLD",
+      "verb": "is part of",
+      "to": "disease burden"
+    },
+    {
+      "from": "2023",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2024",
+      "verb": "is follower of",
+      "to": "2023"
+    }
+  ],
+  "sources": [
+    {
+      "name": "UN World Population Prospects 2024",
+      "description": "United Nations, World Population Prospects 2024: world population about 8.09 billion mid-2023 and 8.16 billion mid-2024; global total fertility rate about 2.25 children per woman in 2023.",
+      "url": "https://population.un.org/wpp/"
+    },
+    {
+      "name": "GBD 2021 Lancet",
+      "description": "Global Burden of Disease Study 2021 (GBD 2021 Collaborators, The Lancet 2024): global disease burden about 2.85 billion DALYs, comprising about 1.70 billion YLLs and 1.15 billion YLDs.",
+      "url": "https://www.thelancet.com/gbd"
+    },
+    {
+      "name": "Espenshade Guzman Westoff 2003",
+      "description": "Espenshade TJ, Guzman JC, Westoff CF (2003). The surprising global variation in replacement fertility. Population Research and Policy Review 22:575-583. Replacement-level fertility averages about 2.1 children per woman.",
+      "url": "https://doi.org/10.1023/B:POPU.0000020882.29684.8e"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "world",
+        "population",
+        "2023",
+        "person"
+      ],
+      "number": "8090000000",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "world",
+        "population",
+        "2024",
+        "person"
+      ],
+      "number": "8160000000",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "world",
+        "children per woman",
+        "2023"
+      ],
+      "number": "2.25",
+      "source": "UN World Population Prospects 2024"
+    },
+    {
+      "words": [
+        "replacement fertility"
+      ],
+      "number": "2.1",
+      "source": "Espenshade Guzman Westoff 2003"
+    },
+    {
+      "words": [
+        "world",
+        "fertility surplus",
+        "2023"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "world",
+        "YLL",
+        "2021",
+        "DALY"
+      ],
+      "number": "1700000000",
+      "source": "GBD 2021 Lancet"
+    },
+    {
+      "words": [
+        "world",
+        "YLD",
+        "2021",
+        "DALY"
+      ],
+      "number": "1150000000",
+      "source": "GBD 2021 Lancet"
+    },
+    {
+      "words": [
+        "world",
+        "disease burden",
+        "2021",
+        "DALY"
+      ],
+      "number": "2850000000",
+      "source": "GBD 2021 Lancet"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "disease burden (formula)",
+      "expression": "\"disease burden\" = \"YLL\" + \"YLD\"",
+      "assigned": [
+        "world"
+      ]
+    },
+    {
+      "name": "fertility above replacement (formula)",
+      "expression": "\"fertility surplus\" = \"children per woman\" - \"replacement fertility\"",
+      "assigned": [
+        "world"
+      ]
+    },
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "population"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "world",
+        "YLL",
+        "YLD",
+        "2021",
+        "DALY"
+      ],
+      "formula": "disease burden (formula)",
+      "words": [
+        "world",
+        "disease burden",
+        "2021",
+        "DALY"
+      ],
+      "number": "2850000000",
+      "note": "1700000000 + 1150000000"
+    },
+    {
+      "context": [
+        "world",
+        "children per woman",
+        "replacement fertility",
+        "2023"
+      ],
+      "formula": "fertility above replacement (formula)",
+      "words": [
+        "world",
+        "fertility surplus",
+        "2023"
+      ],
+      "number": "0.15",
+      "note": "2.25 - 2.1"
+    }
+  ]
+}
