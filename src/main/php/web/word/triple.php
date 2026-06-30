@@ -77,6 +77,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -105,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 
 class triple extends sandbox_code_id
@@ -215,6 +217,13 @@ class triple extends sandbox_code_id
                     $this->impact = $url_array[url_var::IMPACT];
                 }
             }
+            // the phrase type field is posted as url_var::PHRASE_TYPE ('py'); url_var::TYPE ('y') is the
+            // triple predicate, so capture the phrase type here to persist a phrase type change
+            if (array_key_exists(url_var::PHRASE_TYPE, $url_array)) {
+                if ($url_array[url_var::PHRASE_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::PHRASE_TYPE]);
+                }
+            }
         }
         return $usr_msg;
     }
@@ -235,6 +244,7 @@ class triple extends sandbox_code_id
         return [
             triple_fields::FLD_NAME_GIVEN => url_var::NAME,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            phrase_fields::FLD_TYPE => url_var::PHRASE_TYPE,
             triple_fields::FLD_WIGHT => url_var::WEIGHT,
         ];
     }
@@ -670,7 +680,12 @@ class triple extends sandbox_code_id
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
+        // the existing type and detect whether the user actually changed it (see url_var::PRE)
+        $html = new html_base();
+        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, (string)$used_phrase_id);
+        return $result;
     }
 
     /**

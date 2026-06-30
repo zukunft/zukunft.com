@@ -547,6 +547,7 @@ class url_var
 
         // type
         [self::TYPE_HUMAN, self::TYPE],
+        [self::PHRASE_TYPE_HUMAN, self::PHRASE_TYPE],
 
         // word
         [self::WORD_HUMAN, self::WORD],

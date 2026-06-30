@@ -95,14 +95,11 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase as phrase_cfg;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox as sandbox_cfg;
-use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -136,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 
 class word extends sandbox_code_id
@@ -218,6 +216,13 @@ class word extends sandbox_code_id
                     $this->view_id = $url_array[url_var::VIEW];
                 }
             }
+            // the phrase type field is posted as url_var::PHRASE_TYPE ('py'), not the generic
+            // url_var::TYPE the parent reads, so capture it here to persist a phrase type change
+            if (array_key_exists(url_var::PHRASE_TYPE, $url_array)) {
+                if ($url_array[url_var::PHRASE_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::PHRASE_TYPE]);
+                }
+            }
         }
         return $usr_msg;
     }
@@ -251,7 +256,7 @@ class word extends sandbox_code_id
             word_fields::FLD_NAME => url_var::NAME,
             word_fields::FLD_PLURAL => url_var::PLURAL,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
-            phrase_cfg::FLD_TYPE => url_var::TYPE,
+            phrase_fields::FLD_TYPE => url_var::PHRASE_TYPE,
             fields::FLD_VIEW => url_var::VIEW,
             fields::FLD_USAGE => url_var::USAGE,
             fields::FLD_IMPACT => url_var::IMPACT,
@@ -667,7 +672,12 @@ class word extends sandbox_code_id
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
-        return $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
+        // the existing type and detect whether the user actually changed it (see url_var::PRE)
+        $html = new html_base();
+        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, (string)$used_phrase_id);
+        return $result;
     }
 
 
