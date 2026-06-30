@@ -2142,7 +2142,7 @@ class html_base
     /**
      * wrap the h1 heading tag around html code
      * @param string $txt the html code
-     * @param string $style the html class namefor
+     * @param string $style the html class name
      * @return string the wrapped html code
      */
     function h1(string $txt, string $style = ''): string
