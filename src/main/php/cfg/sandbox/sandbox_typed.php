@@ -230,6 +230,49 @@ class sandbox_typed extends sandbox_named
     }
 
     /**
+     * check if the requesting user is allowed to change the type and if not
+     * surface a warning so that an actual type change is not silently dropped
+     *
+     * during api mapping set_type_id() denies the change for users without the
+     * permission but its warning is discarded; this is meant to be called from
+     * the save change detection (db_fields_changed) once an actual type change
+     * has been detected so that the denial becomes visible to the user instead
+     * of the change just vanishing (see fix #247)
+     *
+     * @param user_message $msg with the requesting user; enriched with the warning if not allowed
+     * @return bool true if the requesting user may change the type
+     */
+    function type_change_allowed(user_message $msg): bool
+    {
+        $result = false;
+        $usr_req = $msg->usr;
+        if ($usr_req !== null) {
+            if ($usr_req->can_set_type_id()) {
+                $result = true;
+            }
+        }
+        if (!$result) {
+            $lib = new library();
+            if ($usr_req !== null) {
+                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_name(),
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            } else {
+                $msg->add_warning_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => 'missing user',
+                    msg_id::VAR_USER_PROFILE => '',
+                    msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * set the predefined type of this object by the given code id or name
      * must be overwritten by the child objects
      *

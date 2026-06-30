@@ -184,6 +184,12 @@ class html_base
     const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
+    const string CLASS_CONTAINER = 'container';
+    // the css-only tab box classes (see tab_box and the matching :target rules in style_html.css)
+    const string CLASS_TABS = 'css-tabs';
+    const string CLASS_TAB = 'css-tab';
+    const string CLASS_TAB_LABEL = 'css-tab-label';
+    const string CLASS_TAB_PANE = 'css-tab-pane';
 
 
     /*
@@ -1441,24 +1447,24 @@ class html_base
         $result .= '</' . self::UL . '>';
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom" ' . self::ID . '="comp-hist-tab-content">';
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade active show" ' . self::ID . '="' . $comp_id . '" role="tabpanel" aria-labelledby="' . $comp_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $comp_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
         if ($nbrs_name <> '') {
             $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $nbrs_id . '" role="tabpanel" aria-labelledby="' . $nbrs_id . '-tab">';
-            $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+            $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
             $result .= $nbrs_html;
             $result .= '    </' . self::DIV . '>';
             $result .= '  </' . self::DIV . '>';
         }
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $hist_id . '" role="tabpanel" aria-labelledby="' . $hist_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $hist_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
         $result .= '  <' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade" ' . self::ID . '="' . $link_id . '" role="tabpanel" aria-labelledby="' . $link_id . '-tab">';
-        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="container">';
+        $result .= '    <' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_CONTAINER . '">';
         $result .= $link_html;
         $result .= '    </' . self::DIV . '>';
         $result .= '  </' . self::DIV . '>';
@@ -1468,7 +1474,10 @@ class html_base
     }
 
     /**
-     * a Bootstrap tab box that shows the given tabs side by side with the first tab active
+     * a tab box that shows the given tabs side by side, the first tab active by default and the tab
+     * whose id matches the url fragment (e.g. '#changes') active otherwise; one section per tab holds
+     * the tab label and its content so that the pure css :target rule (see style_html.css) both shows
+     * the selected content and highlights its label - no javascript (see docs/llm/frontend.md)
      * e.g. on the word page a "Views" tab next to a "Changes" tab
      *
      * @param array $tabs an ordered map of tab label => tab html content
@@ -1480,24 +1489,16 @@ class html_base
         // drop tabs without content so an empty change log or view list shows no empty tab
         $tabs = array_filter($tabs, fn($content) => $content !== '');
         if ($tabs != []) {
-            $nav = '';
-            $panes = '';
-            $first = true;
+            $sections = '';
             foreach ($tabs as $label => $content) {
                 $tab_id = str_replace(' ', '_', strtolower($label));
-                $active = $first ? ' active' : '';
-                $selected = $first ? 'true' : 'false';
-                $show = $first ? ' active show' : '';
-                $nav .= '<' . self::LI . ' ' . self::CLASS_HTML . '="nav-item">';
-                $nav .= '<' . self::A . ' ' . self::CLASS_HTML . '="nav-link' . $active . '" ' . self::ID . '="' . $tab_id . '-tab" data-toggle="tab" ' . self::HREF . '="#' . $tab_id . '" role="tab" aria-controls="' . $tab_id . '" aria-selected="' . $selected . '">' . $label . '</' . self::A . '>';
-                $nav .= '</' . self::LI . '>';
-                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-pane fade' . $show . '" ' . self::ID . '="' . $tab_id . '" role="tabpanel" aria-labelledby="' . $tab_id . '-tab">';
-                $panes .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="container">' . $content . '</' . self::DIV . '>';
-                $panes .= '</' . self::DIV . '>';
-                $first = false;
+                // one section per tab: the label link sets the '#<tab_id>' fragment and the css :target
+                // rule on the section then shows this content and highlights this label (style_html.css)
+                $label_link = $this->ref('#' . $tab_id, $label, '', self::CLASS_TAB_LABEL);
+                $pane = $this->div($this->div($content, self::CLASS_CONTAINER), self::CLASS_TAB_PANE);
+                $sections .= $this->div($label_link . $pane, self::CLASS_TAB, $tab_id);
             }
-            $result = '<' . self::UL . ' ' . self::CLASS_HTML . '="nav nav-tabs">' . $nav . '</' . self::UL . '>';
-            $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="tab-content border-right border-bottom border-left rounded-bottom">' . $panes . '</' . self::DIV . '>';
+            $result = $this->div($sections, self::CLASS_TABS);
         }
         return $result;
     }
@@ -2123,20 +2124,25 @@ class html_base
      * wrap the div tag around html code
      * @param string $txt the html code
      * @param string $style the html class name
+     * @param string $id the html id e.g. used as the css :target anchor of a tab section
      * @return string the wrapped html code
      */
-    function div(string $txt, string $style = ''): string
+    function div(string $txt, string $style = '', string $id = ''): string
     {
+        $attr = '';
         if ($style != '') {
-            $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
-        return '<' . self::DIV . $style . '>' . $txt . '</' . self::DIV . '>';
+        if ($id != '') {
+            $attr .= ' ' . self::ID . '="' . $id . '"';
+        }
+        return '<' . self::DIV . $attr . '>' . $txt . '</' . self::DIV . '>';
     }
 
     /**
      * wrap the h1 heading tag around html code
      * @param string $txt the html code
-     * @param string $style the html class name
+     * @param string $style the html class namefor
      * @return string the wrapped html code
      */
     function h1(string $txt, string $style = ''): string

@@ -624,6 +624,23 @@ class frontend
         // fields stay in the url so the confirm view can show the pending change
         $confirm_view = $this->confirm_view_id($view, $step);
         if ($confirm_view != 0) {
+            // before showing the confirm view validate the entered data so the user gets an orange
+            // warning on the edit view (e.g. for an empty name) instead of confirming an invalid change;
+            // the crud action is passed so checks that do not apply are skipped, e.g. an empty name
+            // when the object is being deleted
+            // TODO Prio 1 add an error message e.g. if the $dbo is null
+            $dbo = $this->dbo_for_url($view, $url_array);
+            if ($dbo instanceof db_object_ui) {
+                $crud = match (true) {
+                    in_array($view, views::DEL_MASKS_IDS) => url_var::CRUD_DELETE,
+                    in_array($view, views::ADD_MASKS_IDS) => url_var::CRUD_CREATE,
+                    default => url_var::CRUD_UPDATE,
+                };
+                $dbo->url_mapper($url_array, $usr_msg, $dto);
+                if (!$dbo->input_valid($usr_msg, $crud, $url_array)) {
+                    return $url;
+                }
+            }
             $url[url_var::MASK] = $confirm_view;
             // the confirm mask does not encode the object type and the confirm view has no back target
             // of its own, so set the back target to the object's own default view + id (derived from the

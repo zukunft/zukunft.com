@@ -34,7 +34,7 @@ view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_new, $msk_old, $msk_plain, $
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_auto, $wrd_chf, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_from, $wrd_high, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_percent, $wrd_pi, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_usr2, $wrd_usr2_reloaded, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_auto, $wrd_chf, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_from, $wrd_high, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_percent, $wrd_pi, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_usr2, $wrd_usr2_reloaded, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -219,7 +219,7 @@ unit_env: $u_env
 url_mapper: $url_map
 user_list: $result, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log, $log_ui
-user_message: $activate_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_reset_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui
+user_message: $activate_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_reset_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok
 user_official_type: $usr_idt
 user_profile: $usr_prf
 user_request: $req

@@ -2,6 +2,24 @@
 
 Detail for the "Frontend" rules in `CLAUDE.md`.
 
+## Pure HTML, no JavaScript
+
+The `web/` frontend renders **plain HTML and CSS only — no JavaScript**. Anything
+interactive must work without a script: use native form posts, links, and CSS
+state selectors (`:target`, `:checked`, `:hover`, `:focus-within`) instead of a
+client-side handler.
+
+- Tab switching is CSS `:target` keyed on the url fragment (`html_base::tab_box`
+  renders one `.css-tab` section per tab; the `.css-tab:target` rules in
+  `style_html.css` show the matched content **and** highlight its label, first tab
+  default): a link to `…#changes` opens the "Changes" tab — no script needed.
+- Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
+  for a JS plugin, …) from a `web/` renderer.
+
+A separate JavaScript frontend (likely Vue.js or React) is planned for later as
+its own app consuming the same api; that is a future, additional client and does
+not relax this rule for the current server-rendered HTML frontend.
+
 ## Public properties + PHP 8.4 property hooks
 
 In classes under `src/main/php/web/` (the HTML frontend layer), object

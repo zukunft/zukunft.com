@@ -119,6 +119,11 @@ class db_object extends TextIdObject
     // fields for the backend link
     public int|string $id = 0; // the database id of the object, which is the same as the related database object in the backend
 
+    // the '8'-prefixed opening db values from the url keyed by the unprefixed url var, captured on
+    // url_mapper so that a re-render of the edit view (e.g. after a save error) keeps the original db
+    // snapshot for the change compare instead of regenerating it from the just changed value
+    public array $pre_values = [];
+
 
     /*
      * construct and map
@@ -150,6 +155,13 @@ class db_object extends TextIdObject
     function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
         $usr_msg = new user_message();
+        // keep the '8'-prefixed opening db values so the edit view, when re-rendered after a save
+        // error, re-emits the original db snapshot instead of the just changed value (see url_var::PRE)
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::PRE)) {
+                $this->pre_values[substr($key, strlen(url_var::PRE))] = $val;
+            }
+        }
         if (!$this->url_is_add_action($url_array)) {
             // if the request is to add an object ignore the id
             if (array_key_exists(url_var::ID, $url_array)) {
@@ -160,6 +172,35 @@ class db_object extends TextIdObject
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * the '8'-prefixed opening db value of a field captured from the url on url_mapper, used by the
+     * selectors to re-emit the original db snapshot when the edit view is re-rendered after a save error
+     *
+     * @param string $url_key the unprefixed url var of the field e.g. url_var::PHRASE_TYPE
+     * @return string|null the opening db value or null if the url carried no '8'-prefixed value for it
+     */
+    function pre_value(string $url_key): ?string
+    {
+        return $this->pre_values[$url_key] ?? null;
+    }
+
+    /**
+     * check the entered data of a pending change before the confirm view is shown so the user
+     * gets an orange warning on the edit view (e.g. for an empty name) instead of confirming an
+     * invalid change; the base object has no required input, so it reports the input as valid
+     *
+     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param string $action the crud action of the change (e.g. url_var::CRUD_DELETE) used to
+     *                       skip checks that do not apply, e.g. an empty name when deleting
+     * @param array $url_array the pending change url (new values and their '8'-prefixed old values)
+     *                         so a check can tell whether a permission-gated field actually changed
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    {
+        return true;
     }
 
     function url_is_add_action(array $url_array): bool

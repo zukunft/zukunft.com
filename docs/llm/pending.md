@@ -8,6 +8,12 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
+in the 'changes' tab show more than one row. get how many rows should be shown from the config as done before e.g. for the number of values to show
+
+if in the word_default view is more than on tab e.g. '#view' and '#changes' based on the url tag switch the tabs
+
+in the word default view show also the formulas of the parent objects. e.g. if 'USD' is shown and USD is a symbol for 'US dollar' and that is a 'currency' than show the formulas assigned to the currency with 'assigned to currency' where currency is a link to the currency word page and shows a tooltip 
+
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
 
 fill the view selector of the word edit mask with the potential views that can be assigned to a word

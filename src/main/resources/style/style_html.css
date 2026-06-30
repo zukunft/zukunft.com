@@ -351,3 +351,50 @@ a:hover {
 .frac sup {
     font-size: 0.7em;
 }
+/* css-only tabs (no javascript, see docs/llm/frontend.md): one .css-tab section per tab holds its
+   label and content; flex order lays the labels out as a tab bar (order 0) with the content below
+   (order 1, full width). the section matched by the url fragment (e.g. '#changes') shows its content
+   and highlights its label; with no fragment the first tab is the default. so both the content and the
+   active highlight track the url - no script */
+.css-tabs {
+    display: flex;
+    flex-wrap: wrap;
+}
+.css-tab {
+    display: contents;
+}
+.css-tab-label {
+    order: 0;
+    padding: 0.5rem 1rem;
+    margin-right: 2px;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background: #f8f9fa;
+    color: #385eb7;
+    cursor: pointer;
+}
+.css-tab-pane {
+    order: 1;
+    width: 100%;
+    display: none;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-top: none;
+}
+/* the tab selected by the url fragment: show its content and highlight its label */
+.css-tab:target > .css-tab-label {
+    background: #fff;
+    font-weight: bold;
+}
+.css-tab:target > .css-tab-pane {
+    display: block;
+}
+/* default to the first tab when the url carries no fragment */
+.css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-label {
+    background: #fff;
+    font-weight: bold;
+}
+.css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-pane {
+    display: block;
+}

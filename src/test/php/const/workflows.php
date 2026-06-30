@@ -66,4 +66,10 @@ class workflows
     // the id of the current change_triple workflow; increase it to add the next workflow snapshot set
     const int WF_CHANGE_TRIPLE_NBR = 5;
 
+    // the change_word_invalid workflow name used for the snapshot folder and the test subheader:
+    // a save with an invalid change (e.g. an empty name) keeps the edit view instead of confirming
+    const string WF_CHANGE_WORD_INVALID = 'change_word_invalid';
+    // the id of the current change_word_invalid workflow; 4 to 6 are reserved for the triple workflows
+    const int WF_CHANGE_WORD_INVALID_NBR = 7;
+
 }

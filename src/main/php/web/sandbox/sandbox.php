@@ -281,10 +281,12 @@ class sandbox extends db_object
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
             // also send the opening share id as the '8'-prefixed pre value so the confirm view can show
-            // the existing share and detect whether the user actually changed it (see url_var::PRE)
+            // the existing share and detect whether the user actually changed it (see url_var::PRE);
+            // a re-render after a save error keeps the original db snapshot via pre_value
             $html = new html_base();
+            $pre_share = $this->pre_value(url_var::SHARE) ?? (string)$used_share_id;
             return $typ_lst->shr_typ->selector($form, $used_share_id)
-                . $html->form_hidden(url_var::PRE . url_var::SHARE, (string)$used_share_id);
+                . $html->form_hidden(url_var::PRE . url_var::SHARE, $pre_share);
         } else {
             return '';
         }
@@ -304,10 +306,12 @@ class sandbox extends db_object
         }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
             // also send the opening protection id as the '8'-prefixed pre value so the confirm view can
-            // show the existing protection and detect whether the user changed it (see url_var::PRE)
+            // show the existing protection and detect whether the user changed it (see url_var::PRE);
+            // a re-render after a save error keeps the original db snapshot via pre_value
             $html = new html_base();
+            $pre_protection = $this->pre_value(url_var::PROTECTION) ?? (string)$used_protection_id;
             return $typ_lst->ptc_typ->selector($form, $used_protection_id)
-                . $html->form_hidden(url_var::PRE . url_var::PROTECTION, (string)$used_protection_id);
+                . $html->form_hidden(url_var::PRE . url_var::PROTECTION, $pre_protection);
         } else {
             return '';
         }

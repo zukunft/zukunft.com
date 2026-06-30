@@ -80,8 +80,8 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
-//include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
@@ -102,8 +102,8 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase as phrase_cfg;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\ref_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -201,7 +201,7 @@ class type_lists
             fields::FLD_SHARE => $this->shr_typ,
             fields::FLD_PROTECT => $this->ptc_typ,
             fields::FLD_STYLE => $this->msk_sty,
-            phrase_cfg::FLD_TYPE => $this->phr_typ,
+            phrase_fields::FLD_TYPE => $this->phr_typ,
             source_fields::FLD_TYPE => $this->src_typ,
             ref_fields::FLD_TYPE => $this->ref_typ,
             formula_fields::FLD_TYPE => $this->frm_typ,

@@ -84,6 +84,7 @@ the object structure is:
 ├── fieldsShared - general field names used for the database, back- and frontend
 ├── formula_fieldsShared - the formula fields used database, back and frontend
 ├── group_fieldsShared - the group fields used database, back and frontend
+├── phrase_fieldsShared - the phrase fields used database, back and frontend
 ├── ref_fieldsShared - the reference fields used database, back and frontend
 ├── result_fieldsShared - the result fields used database, back and frontend
 ├── source_fieldsShared - the source fields used database, back and frontend

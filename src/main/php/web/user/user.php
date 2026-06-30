@@ -449,6 +449,33 @@ class user extends db_object
     }
 
     /**
+     * @returns bool true if the user is uniquely identified beyond an ip or a chosen name
+     *               (mirrors the backend user::is_unique used by can_set_type_id)
+     */
+    function is_unique(): bool
+    {
+        global $ui_sys;
+        $result = false;
+        if ($this->is_profile_valid()) {
+            foreach (user_profiles::CAN_CHANGE as $prf) {
+                if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id($prf)) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the user may change the type of an object e.g. the phrase type of a word;
+     *               an ip-only or name-only user is not permitted (mirrors backend user::can_set_type_id)
+     */
+    function can_set_type_id(): bool
+    {
+        return $this->is_unique();
+    }
+
+    /**
      * @return string|null the human-readable profile name e.g. "admin" or null if profile is not set
      */
     function profile_name(): ?string

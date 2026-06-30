@@ -4966,7 +4966,7 @@ class test_base
     function update_path_file(string $filepath, string $result): void
     {
         // TODO always set a breakpoint here
-        if (file_put_contents($filepath, $result) === false) {
+         if (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }
     }

@@ -31,12 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const\fields;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-//include_once paths::MODEL_PHRASE . 'phrase.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-
 class triple_fields
 {
 
@@ -75,7 +69,7 @@ class triple_fields
         self::FLD_NAME_AUTO,
         fields::FLD_DESCRIPTION,
         self::FLD_WIGHT,
-        phrase::FLD_TYPE,
+        phrase_fields::FLD_TYPE,
         fields::FLD_VIEW,
         fields::FLD_USAGE,
         fields::FLD_IMPACT,

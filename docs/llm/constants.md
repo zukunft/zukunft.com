@@ -15,6 +15,42 @@ When a constant from another class cannot yet be referenced (missing `use` or
 include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME`
 comment so the gap is tracked.
 
+## Definitional data lives in a const, not inlined in a function
+
+A fixed set, list or map that *defines* behaviour — which profiles may do
+something, which fields are required, the order of fields, the classes that get a
+feature — belongs as a `const` on the owning const / enum class and is referenced
+by the functions that need it. Never declare such a literal array inside a
+function body: it then has to be repeated in every sibling that needs the same
+rule (backend *and* frontend), and the definition drifts.
+
+The function keeps only the *logic* (the loop, the comparison); the *data* it
+operates on is the const. This is the constant rule applied to a collection, and
+the DRY rule (`docs/llm/dry.md`) applied to its definition — one edit changes the
+rule everywhere.
+
+- **Wrong** — the profile list is a literal in the function, and the backend copy
+  of `is_unique` repeats the same seven profiles as an `or`-chain:
+```php
+function is_unique(): bool
+{
+    $unique = [user_profiles::EMAIL, user_profiles::HUMAN, /* …5 more… */];
+    foreach ($unique as $prf) { … }
+}
+```
+- **Right** — the set is one const on the enum, both `is_unique` copies loop over it:
+```php
+// shared/enum/user_profiles.php
+const array CAN_CHANGE = [self::EMAIL, self::HUMAN, self::SYS_LINK,
+    self::ADMIN, self::DEV, self::TEST, self::SYSTEM];
+
+// cfg/user/user.php and web/user/user.php
+foreach (user_profiles::CAN_CHANGE as $prf) { … }
+```
+
+If no const class owns the data yet, add the const to the most relevant
+const / enum class first, then reference it.
+
 ## Pass a class name as `::class`, never as a string literal
 
 When a value identifies a class — a parameter, a `match`/`switch` key, a lookup

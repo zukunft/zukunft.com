@@ -111,6 +111,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
@@ -153,6 +154,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -169,7 +171,8 @@ class phrase extends combine_named
     const string FLD_ID = 'phrase_id';
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_NAME = 'phrase_name';
-    const string FLD_TYPE = 'phrase_type_id';
+    // forward the const to enable usage of $this::CONST_NAME (the field name lives in phrase_fields)
+    const string FLD_TYPE = phrase_fields::FLD_TYPE;
     const string FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
     const sql_field_type FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
 

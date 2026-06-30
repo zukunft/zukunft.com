@@ -31,12 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const\fields;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-//include_once paths::MODEL_PHRASE . 'phrase.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-
 class word_fields
 {
 
@@ -63,7 +57,7 @@ class word_fields
         self::FLD_NAME,
         self::FLD_PLURAL,
         fields::FLD_DESCRIPTION,
-        phrase::FLD_TYPE,
+        phrase_fields::FLD_TYPE,
         fields::FLD_VIEW,
         fields::FLD_USAGE,
         fields::FLD_IMPACT,

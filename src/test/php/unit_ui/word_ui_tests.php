@@ -40,6 +40,9 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -50,6 +53,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -267,6 +271,56 @@ class word_ui_tests
         $result = implode(',', $names);
         $target = word_names::EURO . ',' . word_names::US_DOLLAR;
         $t->assert($test_name, $result, $target);
+
+        // the entered data is checked before the confirm view is shown: a word with a name can be
+        // confirmed, but an empty name reports an orange warning that the user must fix first
+        $test_name = 'word->input_valid for a word with a name';
+        $t->assert_true($test_name, $wrd->input_valid(new user_message()));
+
+        $test_name = 'word->input_valid for a word with an empty name';
+        $wrd_empty = new word($t_wrd->word()->api_json());
+        $wrd_empty->set_name('');
+        $usr_msg = new user_message();
+        $t->assert_false($test_name, $wrd_empty->input_valid($usr_msg));
+
+        $test_name = 'word->input_valid reports the empty name';
+        $t->assert_true($test_name, $usr_msg->has_msg_id(msg_id::NAME_EMPTY));
+
+        $test_name = 'word->input_valid allows an empty name when the word is deleted';
+        $t->assert_true($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
+
+        $test_name = 'word->input_valid allows an empty name when the word is excluded';
+        $wrd_excluded = new word($t_wrd->word()->api_json());
+        $wrd_excluded->set_name('');
+        $wrd_excluded->excluded = true;
+        $t->assert_true($test_name, $wrd_excluded->input_valid(new user_message()));
+
+        // the phrase type may only be changed by a user that is allowed to set the type: a permitted
+        // user can confirm the change, a not permitted user (e.g. ip only) gets an orange warning
+        $t_usr = new test_users($t);
+        $type_changed = [
+            url_var::PHRASE_TYPE => '2',
+            url_var::PRE . url_var::PHRASE_TYPE => '1'
+        ];
+
+        $test_name = 'word->input_valid allows a phrase type change for a permitted user';
+        $usr_ok = new user_message(new user_ui($t_usr->user_sys_test()->api_json()));
+        $t->assert_true($test_name, $wrd->input_valid($usr_ok, '', $type_changed));
+
+        $test_name = 'word->input_valid blocks a phrase type change for a not permitted user';
+        $usr_no = new user_message(new user_ui($t_usr->user_ip()->api_json()));
+        $t->assert_false($test_name, $wrd->input_valid($usr_no, '', $type_changed));
+
+        $test_name = 'word->input_valid reports the missing phrase type permission';
+        $t->assert_true($test_name, $usr_no->has_msg_id(msg_id::TYPE_CHANGE_NOT_ALLOWED));
+
+        $test_name = 'word->input_valid allows an unchanged phrase type for a not permitted user';
+        $type_same = [
+            url_var::PHRASE_TYPE => '1',
+            url_var::PRE . url_var::PHRASE_TYPE => '1'
+        ];
+        $usr_no_2 = new user_message(new user_ui($t_usr->user_ip()->api_json()));
+        $t->assert_true($test_name, $wrd->input_valid($usr_no_2, '', $type_same));
 
     }
 

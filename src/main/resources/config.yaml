@@ -333,7 +333,9 @@ zukunft.com:
                 tooltip-comment: "the screen width in pixel from which the full set of 'side or below' columns (up to four) is shown side by side; on smaller screens the columns wrap onto fewer rows and finally stack"
           row limit:
             tooltip-comment: "number of rows to be shown"
-            word changes: 20
+            word changes:
+              sys-conf-value: 20
+              tooltip-comment: "number of change rows to show in the changes tab"
           behaviour:
             tooltip-comment: "reaction settings e.g. the expected response time"
             response time:

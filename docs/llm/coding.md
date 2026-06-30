@@ -50,6 +50,7 @@ detail file. Order is by how often they fire, not importance.
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
@@ -83,6 +84,7 @@ detail file. Order is by how often they fire, not importance.
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
+- `web/` renders pure HTML + CSS, **no JavaScript**: interactivity uses native form posts, links and CSS state selectors (`:target`, `:checked`); never emit a `<script>` or inline handler. A separate JS frontend (Vue/React) may come later as its own app. → `docs/llm/frontend.md`
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
