@@ -5310,6 +5310,7 @@
 \-- change_log_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_list.php
     \-- filter - section for function filter not yet defined that it should be filter in /log/change_log_list.php
+    \-- head - section for function head not yet defined that it should be list in /log/change_log_list.php
     \-- dsp - section for function dsp not yet defined that it should be list in /log/change_log_list.php
     \-- tbl - section for function tbl not yet defined that it should be table in /log/change_log_list.php
 \-- change_log_named
@@ -7409,21 +7410,21 @@
     \-- dsp_link_hist_box
         \-- html_base - display a paged, editable list of elements e.g. verbs
     \-- tab_box
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_tbl_start
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_tbl_start_half
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_tbl_start_hist
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_tbl_start_select
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_tbl_end
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_form_start
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- dsp_form_end
-        \-- html_base - a Bootstrap tab box that shows the given tabs side by side with the first tab active
+        \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- div_center
         \-- html_base - centre a html page
     \-- dsp_form_center
@@ -7523,6 +7524,8 @@
     \-- th
         \-- change_log_link - @return string with the html table header to show the link changes
 \-- list
+    \-- head
+        \-- change_log_list - the first $limit changes of this list, used to show only the configured number of change rows
     \-- dsp
         \-- change_log_list - show all changes of a named user sandbox object e.g. a word as table
 \-- sort

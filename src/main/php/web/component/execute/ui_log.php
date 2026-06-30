@@ -87,7 +87,15 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
-        return $log_lst->dsp(null, false, false, $test_mode);
+        // the number of change rows to show comes from the frontend config (like the values list)
+        global $ui_sys;
+        $limit = def::FALLBACK_DB_PAGE_ROWS;
+        if ($ui_sys?->cfg !== null) {
+            $limit = (int)$ui_sys->cfg->get_by(
+                [triples::WORD_CHANGES, triples::ROW_LIMIT, words::FRONTEND, words::USER],
+                def::FALLBACK_DB_PAGE_ROWS);
+        }
+        return $log_lst->head($limit)->dsp(null, false, false, $test_mode);
     }
 
     /**

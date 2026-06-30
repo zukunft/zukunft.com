@@ -256,38 +256,36 @@
                     </h5>
                 </div>
                 <div class="col" style="min-width: 700px">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="views-tab" data-toggle="tab" href="#views" role="tab" aria-controls="views" aria-selected="true">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="views">
+                            <a href="#views" class="css-tab-label">
                                 Views
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="changes-tab" data-toggle="tab" href="#changes" role="tab" aria-controls="changes" aria-selected="false">
-                                Changes
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content border-right border-bottom border-left rounded-bottom">
-                        <div class="tab-pane fade active show" id="views" role="tabpanel" aria-labelledby="views-tab">
-                            <div class="container">
-                                <div>
-                                    <div class="col-md-12">
-                                        view preview
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <div>
+                                        <div class="col-md-12">
+                                            view preview
+                                        </div>
+                                        company list with main ratios
+                                        <a href="/http/view.php?m=113&id=214">
+                                            view
+                                        </a>
+                                        <a href="/http/word_edit.php?id=214&d=113&confirm=1">
+                                            switch
+                                        </a>
                                     </div>
-                                    company list with main ratios
-                                    <a href="/http/view.php?m=113&id=214">
-                                        view
-                                    </a>
-                                    <a href="/http/word_edit.php?id=214&d=113&confirm=1">
-                                        switch
-                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="changes" role="tabpanel" aria-labelledby="changes-tab">
-                            <div class="container">
-                                26-12-2022 18:23 zukunft.com system added "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich."
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    26-12-2022 18:23 zukunft.com system added "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich."
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -8,11 +8,11 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-if save is pressed but the confirm view is not shown due to error messages do not change the '8' prefixed url values so that still the original db snap values are used for the compare. create a new workflow test for this case e.g. with number 7 because 4 to 6 will be the numbers for the triple add, change and del workflows.  
-
 in the 'changes' tab show more than one row. get how many rows should be shown from the config as done before e.g. for the number of values to show
 
 if in the word_default view is more than on tab e.g. '#view' and '#changes' based on the url tag switch the tabs
+
+in the word default view show also the formulas of the parent objects. e.g. if 'USD' is shown and USD is a symbol for 'US dollar' and that is a 'currency' than show the formulas assigned to the currency with 'assigned to currency' where currency is a link to the currency word page and shows a tooltip 
 
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
 

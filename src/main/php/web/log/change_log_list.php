@@ -193,6 +193,26 @@ class change_log_list extends ListBase
      */
 
     /**
+     * the first $limit changes of this list, used to show only the configured number of change rows
+     * (like sys_log_list::head limits the user error list)
+     *
+     * @param int $limit the maximal number of change entries to keep
+     * @return change_log_list a new list with at most the first $limit changes
+     */
+    function head(int $limit): change_log_list
+    {
+        $result = new change_log_list();
+        $i = 0;
+        foreach ($this->lst() as $chg) {
+            if ($i < $limit) {
+                $result->add($chg);
+            }
+            $i++;
+        }
+        return $result;
+    }
+
+    /**
      * show all changes of a named user sandbox object e.g. a word as table
      * @param back_trace|null $back the back trace url for the undo functionality
      * @return string the html code with all words of the list

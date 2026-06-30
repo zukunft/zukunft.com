@@ -84,6 +84,7 @@ detail file. Order is by how often they fire, not importance.
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 
 ### Frontend (`web/`)
+- `web/` renders pure HTML + CSS, **no JavaScript**: interactivity uses native form posts, links and CSS state selectors (`:target`, `:checked`); never emit a `<script>` or inline handler. A separate JS frontend (Vue/React) may come later as its own app. → `docs/llm/frontend.md`
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`

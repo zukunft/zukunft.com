@@ -106,6 +106,19 @@ class base_ui_tests
         $ts = 'unit ui html base ';
         $t->header($ts);
 
+        $t->subheader($ts . 'tab box');
+
+        // the tab box switches via the url fragment with pure css (:target) and no javascript: the
+        // 'Changes' label gives the pane id 'changes' and the nav link href '#changes'
+        $test_name = 'tab_box switches tabs via the url fragment';
+        $two_tabs = $html->tab_box(['View' => 'view content', 'Changes' => 'changes content']);
+        $t->assert_text_contains($test_name, $two_tabs, html_base::HREF . '="#changes"');
+        $t->assert_text_contains($test_name, $two_tabs, html_base::ID . '="changes"');
+
+        // the target is a pure html frontend, so the tab box must not contain javascript
+        $test_name = 'tab_box contains no javascript';
+        $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+
         $t->subheader($ts . 'login');
 
         $created_html = $html->about_page();
