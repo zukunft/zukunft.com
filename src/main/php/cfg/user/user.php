@@ -2209,14 +2209,10 @@ class user extends db_id_object_non_sandbox
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::EMAIL)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::HUMAN)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYS_LINK)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
-                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
-                $result = true;
+            foreach (user_profiles::CAN_CHANGE as $prf) {
+                if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
+                    $result = true;
+                }
             }
         }
         return $result;

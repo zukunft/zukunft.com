@@ -687,19 +687,29 @@ class system_form extends component
      * @param msg_id $label the field label message id
      * @param string|null $value the current db value shown in the field and kept as the pre value
      * @param string $style_text the column style of the field
+     * @param db_object|type_object|null $dbo the object, used to keep the original db snapshot as the
+     *                       '8' pre value on a re-render (e.g. after a save error) instead of the change
      * @return string the html code of the editable field plus the hidden pre value
      */
-    private function form_field_tracked(string $url_id, msg_id $label, ?string $value, string $style_text): string
+    private function form_field_tracked(
+        string $url_id,
+        msg_id $label,
+        ?string $value,
+        string $style_text,
+        db_object|type_object|null $dbo = null
+    ): string
     {
         $html = new html_base();
         $value = $value ?? '';
+        // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
+        $pre = ($dbo instanceof db_object) ? ($dbo->pre_value($url_id) ?? $value) : $value;
         return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text)
-            . $html->form_hidden(url_var::PRE . $url_id, $value);
+            . $html->form_hidden(url_var::PRE . $url_id, $pre);
     }
 
     function form_name(db_object|type_object $dbo, string $style_text): string
     {
-        return $this->form_field_tracked(url_var::NAME, msg_id::FORM_FIELD_NAME, $dbo->name(), $style_text);
+        return $this->form_field_tracked(url_var::NAME, msg_id::FORM_FIELD_NAME, $dbo->name(), $style_text, $dbo);
     }
 
     /**
@@ -709,7 +719,7 @@ class system_form extends component
     function form_description(db_object|type_object $dbo): string
     {
         return $this->form_field_tracked(
-            url_var::DESCRIPTION, msg_id::FORM_FIELD_DESCRIPTION, $dbo->get_description(), view_styles::COL_SM_12);
+            url_var::DESCRIPTION, msg_id::FORM_FIELD_DESCRIPTION, $dbo->get_description(), view_styles::COL_SM_12, $dbo);
     }
 
     /**
@@ -718,7 +728,7 @@ class system_form extends component
      */
     function form_field_plural(db_object $dbo, string $style_text): string
     {
-        return $this->form_field_tracked(url_var::PLURAL, msg_id::FORM_FIELD_PLURAL, $dbo->get_plural(), $style_text);
+        return $this->form_field_tracked(url_var::PLURAL, msg_id::FORM_FIELD_PLURAL, $dbo->get_plural(), $style_text, $dbo);
     }
 
     /**

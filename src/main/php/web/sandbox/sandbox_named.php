@@ -181,11 +181,12 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      *
      * @param user_message $usr_msg to enrich with a warning per invalid field
      * @param string $action the crud action of the change; a delete needs no name
+     * @param array $url_array the pending change url (passed on to the parent checks)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = ''): bool
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action);
+        $result = parent::input_valid($usr_msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE and !$this->is_excluded()) {
             if ($this->name == null or $this->name == '') {
                 $usr_msg->add_warning_with_vars(msg_id::NAME_EMPTY, [

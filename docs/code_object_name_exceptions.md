@@ -219,7 +219,7 @@ unit_env: $u_env
 url_mapper: $url_map
 user_list: $result, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log, $log_ui
-user_message: $activate_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_reset_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui
+user_message: $activate_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_reset_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $signup_msg, $sim_msg, $sim_name_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok
 user_official_type: $usr_idt
 user_profile: $usr_prf
 user_request: $req

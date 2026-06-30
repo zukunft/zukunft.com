@@ -681,10 +681,12 @@ class triple extends sandbox_code_id
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
         // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
-        // the existing type and detect whether the user actually changed it (see url_var::PRE)
+        // the existing type and detect whether the user actually changed it (see url_var::PRE);
+        // a re-render after a save error keeps the original db snapshot via pre_value
         $html = new html_base();
+        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
         $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, (string)$used_phrase_id);
+        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
         return $result;
     }
 

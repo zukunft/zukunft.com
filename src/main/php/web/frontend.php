@@ -637,7 +637,7 @@ class frontend
                     default => url_var::CRUD_UPDATE,
                 };
                 $dbo->url_mapper($url_array, $usr_msg, $dto);
-                if (!$dbo->input_valid($usr_msg, $crud)) {
+                if (!$dbo->input_valid($usr_msg, $crud, $url_array)) {
                     return $url;
                 }
             }

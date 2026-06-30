@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -292,6 +294,33 @@ class word_ui_tests
         $wrd_excluded->set_name('');
         $wrd_excluded->excluded = true;
         $t->assert_true($test_name, $wrd_excluded->input_valid(new user_message()));
+
+        // the phrase type may only be changed by a user that is allowed to set the type: a permitted
+        // user can confirm the change, a not permitted user (e.g. ip only) gets an orange warning
+        $t_usr = new test_users($t);
+        $type_changed = [
+            url_var::PHRASE_TYPE => '2',
+            url_var::PRE . url_var::PHRASE_TYPE => '1'
+        ];
+
+        $test_name = 'word->input_valid allows a phrase type change for a permitted user';
+        $usr_ok = new user_message(new user_ui($t_usr->user_sys_test()->api_json()));
+        $t->assert_true($test_name, $wrd->input_valid($usr_ok, '', $type_changed));
+
+        $test_name = 'word->input_valid blocks a phrase type change for a not permitted user';
+        $usr_no = new user_message(new user_ui($t_usr->user_ip()->api_json()));
+        $t->assert_false($test_name, $wrd->input_valid($usr_no, '', $type_changed));
+
+        $test_name = 'word->input_valid reports the missing phrase type permission';
+        $t->assert_true($test_name, $usr_no->has_msg_id(msg_id::TYPE_CHANGE_NOT_ALLOWED));
+
+        $test_name = 'word->input_valid allows an unchanged phrase type for a not permitted user';
+        $type_same = [
+            url_var::PHRASE_TYPE => '1',
+            url_var::PRE . url_var::PHRASE_TYPE => '1'
+        ];
+        $usr_no_2 = new user_message(new user_ui($t_usr->user_ip()->api_json()));
+        $t->assert_true($test_name, $wrd->input_valid($usr_no_2, '', $type_same));
 
     }
 

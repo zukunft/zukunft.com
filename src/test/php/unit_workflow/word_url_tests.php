@@ -50,6 +50,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -212,6 +213,7 @@ class word_url_tests extends url_test_base
         $this->add_word_workflow(workflows::WF_ADD_WORD_NBR, false);
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, false);
         $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, false);
+        $this->change_word_invalid_workflow(workflows::WF_CHANGE_WORD_INVALID_NBR, false);
 
 
         $t->subheader($ts . 'search');
@@ -467,6 +469,60 @@ class word_url_tests extends url_test_base
         if ($do_it) {
             $this->assert_word_removed('del_word workflow has removed the word');
         }
+    }
+
+    /**
+     * run the change_word_invalid workflow and snapshot the html after every user action
+     *
+     * checks that pressing save with an invalid change (here an empty name) does not show the confirm
+     * view but re-renders the edit view with the warning, and that the '8'-prefixed opening db values
+     * (here the phrase type) are kept so the original db snapshot is still used for the next change
+     * compare (see docs/llm/state-and-messages.md). a failed save writes nothing, so this workflow only
+     * runs read-only and has no write twin. snapshots go into
+     * src/test/resources/web/html/workflow/change_word_invalid_wf<nbr>/
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 7 for wf7
+     * @param bool $do_it false to only render the steps (a failed save never writes)
+     */
+    protected function change_word_invalid_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the workflow runs on the 'System Test Word'; resolve its current database id by name
+        $wrd = new word($this->t->usr1);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD_INVALID, $do_it);
+
+        // the invalid change: clear the name (which blocks the save) but change the phrase type and send
+        // its '8'-prefixed opening value, so the kept baseline can be checked after the failed save
+        $phr_typ = $this->ui->dto->typ_lst_cache->phr_typ;
+        $type_old = (string)$phr_typ->default_id();
+        $type_new = (string)$phr_typ->id(phrase_types::TIME);
+        $invalid = [
+            url_var::NAME => '',
+            url_var::PHRASE_TYPE => $type_new,
+            url_var::PRE . url_var::PHRASE_TYPE => $type_old,
+            url_var::PRE . url_var::NAME => word_names::TEST_ADD,
+        ];
+
+        // show: display the test word in its default word view
+        $this->assert_workflow_step(url_var::ACTION_SHOW, views::WORD_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SHOW;
+
+        // edit: open the word edit view
+        $this->assert_workflow_step(url_var::ACTION_EDIT, views::WORD_EDIT_ID);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_EDIT;
+
+        // save: press save with the empty name; the confirm view is not shown, the edit view is rendered
+        // again with the warning and the phrase type '8' baseline kept at the original db value
+        $html = $this->assert_workflow_step(url_var::ACTION_SAVE, views::WORD_EDIT_ID, $invalid);
+        $this->step_path .= workflows::NAME_SEP . url_var::ACTION_SAVE;
+
+        // the empty name is reported as a warning instead of confirming the change
+        $test_name = $this->step_path . workflows::NAME_SEP . 'keeps_pre';
+        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::NAME_EMPTY));
+        // the original phrase type '8' baseline is preserved for the next compare, not reset to the change
+        $this->t->assert_text_contains($test_name, $html,
+            'name="' . url_var::PRE . url_var::PHRASE_TYPE . '" value="' . $type_old . '"');
     }
 
     /**
