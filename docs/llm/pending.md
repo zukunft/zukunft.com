@@ -8,13 +8,12 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-in the 'changes' tab show more than one row. get how many rows should be shown from the config as done before e.g. for the number of values to show
+add in the word_default view beside the 'view' and 'changes' a 'your' tab with the use overwrite of the shown e.g. word object, so basically the values from the 'user_words' table
 
-in the word default view show also the formulas of the parent objects. e.g. if 'USD' is shown and USD is a symbol for 'US dollar' and that is a 'currency' than show the formulas assigned to the currency with 'assigned to currency' where currency is a link to the currency word page and shows a tooltip 
+align the src/test/resources/web/html/workflow/change_triple_wf5 to the src/test/resources/web/html/workflow/change_word_wf2 e.g. by adding the fill steps
+
 
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
-
-fill the view selector of the word edit mask with the potential views that can be assigned to a word
 
 use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes. 
 
@@ -64,6 +63,21 @@ use the '8' prefixed values (urlVar::PRE) to create a complex parallel change wo
 check that all api interfaces can load user specific data independent of the session user 
 
 check the open api definition and the openapi check script and suggest updates in the definition and the script
+
+
+### frontend requests
+
+If the frontend requests data from the backend, the backend sends cached data without refresh whenever possible
+
+but the backend adds a refresh trigger th the cache
+
+the triggers are picked up by the crontab job and the cache is refreshed
+
+a pure html frontend tries retries after an increasing time period to get the updated cache from the backend and stops the retry if it has received the update
+
+a js frontend can use subscribe to get the updated cache data
+
+additional the cache can be updated by time or by trigger words without frontend request
 
 
 ### word frontend

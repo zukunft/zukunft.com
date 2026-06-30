@@ -265,6 +265,13 @@ class word extends sandbox_code_id
     // formulas using the word; the frontend caps and sorts the list by impact when rendering
     public ?formula_list $formulas_related = null;
 
+    // the formulas assigned to the ancestor phrases of this word (the 'is a' / 'is symbol for' chain,
+    // e.g. for 'USD' the formulas of 'US dollar' and 'currency'); populated lazily by
+    // load_parent_formulas_related() and only emitted via api_json_array() under the INCL_RELATED flag
+    // so the default word view can show them grouped per ancestor as 'assigned to <ancestor>';
+    // each entry is ['phrase' => phrase, 'formulas' => formula_list] for an ancestor that has formulas
+    public ?array $parent_formulas_related = null;
+
     // the external references of this word (e.g. its wikidata or wikipedia link);
     // populated lazily by load_references_related() and only emitted via api_json_array()
     // when the api_types::INCL_RELATED flag is set, so the default word view can show the
@@ -545,6 +552,21 @@ class word extends sandbox_code_id
                         $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    if ($this->parent_formulas_related == null and !$typ_lst->test_mode()) {
+                        $this->load_parent_formulas_related();
+                    }
+                    if ($this->parent_formulas_related != null and $this->parent_formulas_related != []) {
+                        // emit one group per ancestor: the ancestor phrase (for the 'assigned to
+                        // <ancestor>' link and tooltip) and its formulas (own name, id and impact only)
+                        $grp_lst = [];
+                        foreach ($this->parent_formulas_related as $grp) {
+                            $grp_lst[] = [
+                                json_fields::PHRASE => $grp['phrase']->api_json_array(new api_type_list(), $usr),
+                                json_fields::FORMULAS => $grp['formulas']->api_json_array(new api_type_list(), $usr)
+                            ];
+                        }
+                        $vars[json_fields::PARENT_FORMULAS] = $grp_lst;
+                    }
                     if ($this->references_related == null and !$typ_lst->test_mode()) {
                         $this->load_references_related();
                     }
@@ -595,6 +617,25 @@ class word extends sandbox_code_id
         $frm_lst = new formula_list($this->get_user());
         $frm_lst->load_by_phr($this->phrase());
         $this->formulas_related = $frm_lst;
+    }
+
+    /**
+     * load the formulas assigned to the ancestor phrases of this word (the full 'is a' / 'is symbol
+     * for' chain) into the in-memory parent_formulas_related list so that api_json_array() can emit
+     * them per ancestor under the INCL_RELATED flag; an ancestor without formulas is skipped
+     */
+    function load_parent_formulas_related(): void
+    {
+        $result = [];
+        // all ancestors via any up-relation (is a, is symbol for, ...), nearest first
+        foreach ($this->phrase_list()->foaf_parents()->lst() as $par_phr) {
+            $frm_lst = new formula_list($this->get_user());
+            $frm_lst->load_by_phr($par_phr);
+            if (!$frm_lst->is_empty()) {
+                $result[] = ['phrase' => $par_phr, 'formulas' => $frm_lst];
+            }
+        }
+        $this->parent_formulas_related = $result;
     }
 
     /**

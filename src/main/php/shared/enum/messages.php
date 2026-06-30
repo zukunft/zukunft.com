@@ -2013,6 +2013,7 @@ enum messages: string
     // language elements to create a text
     case FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
     case OF = ' of ';   // e.g. to indicate which word would be deleted
+    case ASSIGNED_TO = 'assigned to'; // subheadline for the formulas of an ancestor phrase
 
     case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
     case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';

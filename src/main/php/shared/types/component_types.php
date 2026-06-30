@@ -444,6 +444,8 @@ class component_types
     const int LIST_VALUES_BY_SOURCE_ID = 152;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
+    const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";
+    const int LIST_FORMULAS_OF_PARENTS_ID = 206;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
     const int LIST_PHRASES_OF_FORMULA_ID = 48;
     const string LIST_REF = "ref_list";
@@ -882,6 +884,7 @@ class component_types
         [self::VIEW_TAB_BOX, self::VIEW_TAB_BOX_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
         [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
+        [self::LIST_FORMULAS_OF_PARENTS, self::LIST_FORMULAS_OF_PARENTS_ID],
         [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],
         [self::LIST_VALUES_BY_SOURCE, self::LIST_VALUES_BY_SOURCE_ID],
         [self::LIST_PHRASES_OF_FORMULA, self::LIST_PHRASES_OF_FORMULA_ID],

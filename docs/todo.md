@@ -202,6 +202,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
+    TODO add a source-phrases table for the properties of a source e.g. 'in review' or 'is peer reviewed' that is used to calculate the impact of a source
 
     TODO start with 3 item for a default selection (2 if the account is used on a smartphone) 
          and increase this values to 5 (8, 13, 21) if 3 times (5, 8, 13, 21) more has been pressed

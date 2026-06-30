@@ -1,0 +1,2703 @@
+{
+  "version": "0.0.3",
+  "time": "2026-06-30 12:00:00",
+  "user": "Timon",
+  "selection": [
+    "EU software sovereignty"
+  ],
+  "description": "Quantifies how independent the EU/EFTA could become from US-controlled software, per application sector, if digital-sovereignty policy is taken seriously after Trump v. Slaughter (2026). Independence is modelled on two separate axes: license sovereignty (is the code/model freely licensed and forkable, hence not US-switchable) and governance sovereignty (do stewardship, roadmap and funding sit in EU/EFTA hands). Current shares carry 'measured value' with a source; 3- and 5-year min/likely/max projections and per-year market sizes carry 'assumed value' with a numeric confidence (0-1) so weak assumptions surface later. All content in English per project convention. Sector share = realistically-expectable share of non-US-controlled solutions (actual substitution reading, not mere technical replaceability).",
+  "words": [
+    {
+      "name": "software",
+      "description": "a set of computer programs and associated documentation and data.",
+      "refs": [
+        {
+          "name": "Software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7397",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sovereignty",
+      "description": "the defining authority within an individual consciousness, social construct, or territory.",
+      "refs": [
+        {
+          "name": "Sovereignty",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170156",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "digital",
+      "description": "relating to data represented as discrete numerical values.",
+      "refs": [
+        {
+          "name": "Digital_data",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "license",
+      "description": "an official permission or permit to do, use, or own something.",
+      "refs": [
+        {
+          "name": "License",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q79719",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "governance",
+      "description": "the way that organizations or countries are managed at the highest level, and the systems for doing this.",
+      "refs": [
+        {
+          "name": "Governance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q633538",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "EU",
+      "description": "the European Union, a supranational political and economic union of member states located primarily in Europe.",
+      "refs": [
+        {
+          "name": "European_Union",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q458",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "US",
+      "description": "the United States of America, a country primarily located in North America.",
+      "refs": [
+        {
+          "name": "United_States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "control",
+      "description": "the power to influence or direct people's behaviour or the course of events.",
+      "refs": [
+        {
+          "name": "Control_(management)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "share",
+      "type": "percent",
+      "description": "a part or portion of a larger amount which is divided among a number of people, or to which a number of people contribute.",
+      "refs": [
+        {
+          "name": "Market_share",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "type": "percent",
+      "description": "a number or ratio expressed as a fraction of 100.",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11229",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "market",
+      "description": "a composition of systems, institutions, procedures, social relations or infrastructures whereby parties engage in exchange.",
+      "refs": [
+        {
+          "name": "Market_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "description": "the relative extent of something; a thing's overall dimensions or magnitude.",
+      "refs": [
+        {
+          "name": "Q1849177",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "euro",
+      "type": "measure",
+      "description": "the official currency of the eurozone.",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4916",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "billion",
+      "type": "measure",
+      "description": "the natural number following 999,999,999 and preceding 1,000,000,001; the short-scale 10^9.",
+      "refs": [
+        {
+          "name": "1,000,000,000",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "type": "measure",
+      "description": "the orbital period of a planetary body, in particular Earth's about the Sun.",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q577",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "2026",
+      "type": "time",
+      "description": "the current calendar year of the measured shares."
+    },
+    {
+      "name": "2029",
+      "type": "time",
+      "description": "the 3-year projection horizon (2026 + 3 years)."
+    },
+    {
+      "name": "2031",
+      "type": "time",
+      "description": "the 5-year projection horizon (2026 + 5 years)."
+    },
+    {
+      "name": "minimum",
+      "description": "the least or smallest amount possible, attainable, or required.",
+      "refs": [
+        {
+          "name": "Maxima_and_minima",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "likely",
+      "description": "the outcome carrying the highest probability mass under the assumed scenario.",
+      "refs": [
+        {
+          "name": "Likelihood_function",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "maximum",
+      "description": "the greatest or largest amount possible or attainable.",
+      "refs": [
+        {
+          "name": "Maxima_and_minima",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "measured",
+      "description": "ascertained by an external source rather than assumed; provenance qualifier marking a stored number as sourced."
+    },
+    {
+      "name": "assumed",
+      "description": "estimated or projected rather than sourced; provenance qualifier marking a stored number as a conjecture carrying a confidence."
+    },
+    {
+      "name": "value",
+      "description": "a stored number in the graph; combined with 'measured'/'assumed' to mark its provenance.",
+      "refs": [
+        {
+          "name": "Value_(mathematics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "confidence",
+      "type": "percent",
+      "description": "degree of belief, 0 to 1, that an assumed value is correct; low confidence flags an assumption as worth checking first.",
+      "refs": [
+        {
+          "name": "Confidence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "open-source",
+      "description": "software released under a license in which the copyright holder grants users the rights to use, study, change, and distribute the software and its source code.",
+      "refs": [
+        {
+          "name": "Open-source_software",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1130645",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "forkable",
+      "description": "able to be copied into an independent codebase that can be developed separately; the property that makes freely-licensed software non-switchable by any single party."
+    },
+    {
+      "name": "stewardship",
+      "description": "the job of supervising or taking care of something, such as an organization or property.",
+      "refs": [
+        {
+          "name": "Stewardship",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "operating",
+      "description": "of or relating to the system software that manages computer hardware and software resources."
+    },
+    {
+      "name": "system",
+      "description": "a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.",
+      "refs": [
+        {
+          "name": "System",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "description": "a personal computer designed for regular use at a single location on or near a desk.",
+      "refs": [
+        {
+          "name": "Desktop_computer",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "server",
+      "description": "computer hardware or software that provides functionality for other programs or devices, called clients.",
+      "refs": [
+        {
+          "name": "Server_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "smartphone",
+      "description": "a portable computer device that combines mobile telephone functions and computing functions into one unit.",
+      "refs": [
+        {
+          "name": "Smartphone",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "office",
+      "description": "application software designed for creating, editing and managing documents, spreadsheets and presentations.",
+      "refs": [
+        {
+          "name": "Productivity_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "browser",
+      "description": "an application for accessing websites.",
+      "refs": [
+        {
+          "name": "Web_browser",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "engine",
+      "description": "a core software component that performs a fundamental function for other software; here a browser layout engine.",
+      "refs": [
+        {
+          "name": "Browser_engine",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cloud",
+      "description": "on-demand availability of computer system resources, especially data storage and computing power, without direct active management by the user.",
+      "refs": [
+        {
+          "name": "Cloud_computing",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "collaboration",
+      "description": "the action of working with someone to produce or create something; here groupware/file-sharing platforms.",
+      "refs": [
+        {
+          "name": "Collaborative_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "messaging",
+      "description": "the exchange of messages between people, here including social and instant messaging.",
+      "refs": [
+        {
+          "name": "Instant_messaging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "videoconference",
+      "description": "the conduct of a conference between two or more participants at different sites by using computer networks to transmit audio and video data.",
+      "refs": [
+        {
+          "name": "Videotelephony",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "email",
+      "description": "messages distributed by electronic means from one computer user to one or more recipients via a network.",
+      "refs": [
+        {
+          "name": "Email",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "groupware",
+      "description": "software designed to help people working on a common task to attain their goals; here the mail/calendar server backend.",
+      "refs": [
+        {
+          "name": "Collaborative_software",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ERP",
+      "description": "enterprise resource planning: integrated management of main business processes, often in real time and mediated by software.",
+      "refs": [
+        {
+          "name": "Enterprise_resource_planning",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "education",
+      "description": "the transmission of knowledge, skills, and character traits; here learning-management software.",
+      "refs": [
+        {
+          "name": "Learning_management_system",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "map",
+      "description": "a symbolic depiction emphasizing relationships between elements of some space; here mapping and navigation software.",
+      "refs": [
+        {
+          "name": "Web_mapping",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "password",
+      "description": "a secret word or string of characters used for user authentication; here password-management software.",
+      "refs": [
+        {
+          "name": "Password_manager",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "database",
+      "description": "an organized collection of data stored and accessed electronically.",
+      "refs": [
+        {
+          "name": "Database",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "backup",
+      "description": "a copy of computer data taken and stored elsewhere so that it may be used to restore the original after a data-loss event; here backup/storage software.",
+      "refs": [
+        {
+          "name": "Backup",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "container",
+      "description": "operating-system-level virtualization that packages software with its dependencies; here container and orchestration software.",
+      "refs": [
+        {
+          "name": "Containerization_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "virtualization",
+      "description": "the act of creating a virtual version of computer hardware platforms, storage devices, and network resources.",
+      "refs": [
+        {
+          "name": "Virtualization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "proxy",
+      "description": "a server application that acts as an intermediary between a client and a destination server; here web/reverse-proxy software.",
+      "refs": [
+        {
+          "name": "Proxy_server",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "DNS",
+      "description": "the Domain Name System, a hierarchical naming system for computers and services connected to the internet.",
+      "refs": [
+        {
+          "name": "Domain_Name_System",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "firewall",
+      "description": "a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.",
+      "refs": [
+        {
+          "name": "Firewall_(computing)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "identity",
+      "description": "the management of individual identities, their authentication and authorization within or across systems; here identity/SSO software.",
+      "refs": [
+        {
+          "name": "Identity_management",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "forge",
+      "description": "a web-based collaborative software platform for developing and sharing code; here CI/CD and code hosting.",
+      "refs": [
+        {
+          "name": "Forge_(software)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "monitoring",
+      "description": "the observation of a system's state and performance over time; here observability software.",
+      "refs": [
+        {
+          "name": "System_monitor",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "LLM",
+      "description": "a large language model: a type of machine-learning model designed for natural-language processing tasks.",
+      "refs": [
+        {
+          "name": "Large_language_model",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "framework",
+      "description": "an abstraction providing generic functionality that can be selectively changed by additional user-written code; here a machine-learning framework.",
+      "refs": [
+        {
+          "name": "Software_framework",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "machine-learning",
+      "description": "the study of computer algorithms that can improve automatically through experience and by the use of data.",
+      "refs": [
+        {
+          "name": "Machine_learning",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "inferencing",
+      "description": "the process of running a trained machine-learning model to generate outputs, here run locally rather than via a remote API."
+    },
+    {
+      "name": "vector",
+      "description": "here a vector database storing embeddings for similarity search, used in retrieval-augmented generation.",
+      "refs": [
+        {
+          "name": "Vector_database",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "description": "a software system designed to carry out web searches.",
+      "refs": [
+        {
+          "name": "Search_engine",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Debian",
+      "description": "a free and open-source Linux distribution developed by the community-supported Debian Project.",
+      "refs": [
+        {
+          "name": "Debian",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7715973",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Linux",
+      "description": "a family of open-source Unix-like operating systems based on the Linux kernel.",
+      "refs": [
+        {
+          "name": "Linux",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q388",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "LineageOS",
+      "description": "a free and open-source operating system for smartphones and tablets, based on the Android mobile platform.",
+      "refs": [
+        {
+          "name": "LineageOS",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "GrapheneOS",
+      "description": "a privacy- and security-focused mobile operating system for selected Pixel devices, compatible with Android apps.",
+      "refs": [
+        {
+          "name": "GrapheneOS",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "LibreOffice",
+      "description": "a free and open-source office productivity software suite.",
+      "refs": [
+        {
+          "name": "LibreOffice",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q10135",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Firefox",
+      "description": "a free and open-source web browser developed by the Mozilla Foundation.",
+      "refs": [
+        {
+          "name": "Firefox",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gecko",
+      "description": "a browser engine developed by Mozilla; one of only two non-Chinese engines not derived from Chromium.",
+      "refs": [
+        {
+          "name": "Gecko_(software)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Nextcloud",
+      "description": "a suite of client-server software for creating and using file-hosting services; German-led, central to the Gaia-X European cloud effort.",
+      "refs": [
+        {
+          "name": "Nextcloud",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Matrix",
+      "description": "an open standard and communication protocol for real-time communication; basis of the Element client used by the German Bundeswehr.",
+      "refs": [
+        {
+          "name": "Matrix_(protocol)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Mastodon",
+      "description": "free and open-source software for running self-hosted social networking services, using the ActivityPub protocol.",
+      "refs": [
+        {
+          "name": "Mastodon_(social_network)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Jitsi",
+      "description": "a collection of free and open-source multiplatform voice, video conferencing and instant messaging applications.",
+      "refs": [
+        {
+          "name": "Jitsi",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Odoo",
+      "description": "a Belgian suite of business management software tools including ERP, CRM and others; dual-licensed.",
+      "refs": [
+        {
+          "name": "Odoo",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "SAP",
+      "description": "a German multinational software company; the largest European enterprise-software vendor, proprietary and non-US-controlled.",
+      "refs": [
+        {
+          "name": "SAP",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q==placeholder==",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Moodle",
+      "description": "a free and open-source learning management system.",
+      "refs": [
+        {
+          "name": "Moodle",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "OpenStreetMap",
+      "description": "a free, open geographic database updated and maintained by a community of volunteers.",
+      "refs": [
+        {
+          "name": "OpenStreetMap",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "KeePassXC",
+      "description": "a free and open-source password manager, a community fork of KeePass.",
+      "refs": [
+        {
+          "name": "KeePass",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "description": "a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
+      "refs": [
+        {
+          "name": "PostgreSQL",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Proxmox",
+      "description": "an Austrian open-source server virtualization management platform based on Debian, KVM and LXC.",
+      "refs": [
+        {
+          "name": "Proxmox_Virtual_Environment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "VMware",
+      "description": "a US virtualization and cloud computing vendor, acquired by Broadcom in 2023; its post-acquisition pricing drove a migration wave.",
+      "refs": [
+        {
+          "name": "VMware",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Kubernetes",
+      "description": "an open-source container-orchestration system; freely licensed but governed by the US-based Cloud Native Computing Foundation.",
+      "refs": [
+        {
+          "name": "Kubernetes",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nginx",
+      "description": "a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache.",
+      "refs": [
+        {
+          "name": "Nginx",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Knot",
+      "description": "an open-source DNS server developed by CZ.NIC, the Czech domain registry.",
+      "refs": [
+        {
+          "name": "Knot_DNS",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "OPNsense",
+      "description": "an open-source, FreeBSD-based firewall and routing platform.",
+      "refs": [
+        {
+          "name": "OPNsense",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Keycloak",
+      "description": "an open-source identity and access management solution; freely licensed but stewarded by US-based Red Hat.",
+      "refs": [
+        {
+          "name": "Keycloak",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Forgejo",
+      "description": "a self-hosted lightweight software forge, a community fork of Gitea, hosted by the European Codeberg e.V.",
+      "refs": [
+        {
+          "name": "Forgejo",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Prometheus",
+      "description": "a free software application used for event monitoring and alerting, a graduated CNCF project.",
+      "refs": [
+        {
+          "name": "Prometheus_(software)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Apertus",
+      "description": "a fully open, multilingual large language model released in 2025 by EPFL, ETH Zurich and CSCS; open weights, open data and open training process under Apache 2.0.",
+      "refs": [
+        {
+          "name": "Apertus_(LLM)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Mistral",
+      "description": "a French artificial-intelligence company producing open-weight large language models.",
+      "refs": [
+        {
+          "name": "Mistral_AI",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "PyTorch",
+      "description": "a machine-learning framework based on the Torch library; freely licensed (BSD) but governed by the US-based PyTorch Foundation under the Linux Foundation, originating at Meta.",
+      "refs": [
+        {
+          "name": "PyTorch",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Qdrant",
+      "description": "an open-source vector database and similarity-search engine; the company is Berlin-based.",
+      "refs": [
+        {
+          "name": "Qdrant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "YaCy",
+      "description": "a free distributed search engine built on the principles of peer-to-peer networks.",
+      "refs": [
+        {
+          "name": "YaCy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Trump",
+      "description": "Donald John Trump, 47th president of the United States.",
+      "refs": [
+        {
+          "name": "Donald_Trump",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22686",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Slaughter",
+      "description": "Rebecca Kelly Slaughter, a commissioner of the US Federal Trade Commission whose removal by the President was upheld.",
+      "refs": [
+        {
+          "name": "Rebecca_Kelly_Slaughter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "FTC",
+      "description": "the United States Federal Trade Commission, the enforcement authority the EU adequacy decision relies upon.",
+      "refs": [
+        {
+          "name": "Federal_Trade_Commission",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "independence",
+      "description": "the quality of not being controlled by another; here the EU-law requirement of an independent data-protection oversight authority.",
+      "refs": [
+        {
+          "name": "Independence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "convergence",
+      "description": "the property of a process settling toward a fixed point that needs no further development; here applied to a data format/program reaching maintenance-only stability.",
+      "refs": [
+        {
+          "name": "Limit_(mathematics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "community",
+      "description": "a social unit with commonality such as norms, religion, values, customs, or identity; here the developer community behind a software project.",
+      "refs": [
+        {
+          "name": "Community",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "software sovereignty",
+      "from": "sovereignty",
+      "verb": "of",
+      "to": "software",
+      "description": "the degree to which control over a piece of software's existence, evolution and operation rests outside US jurisdiction."
+    },
+    {
+      "name": "license sovereignty",
+      "from": "software sovereignty",
+      "verb": "kind of",
+      "to": "license",
+      "description": "axis 1: whether the code/model is freely licensed and forkable, hence cannot be switched off by any single (US) party. Near-100% for any open-source artefact regardless of origin."
+    },
+    {
+      "name": "governance sovereignty",
+      "from": "software sovereignty",
+      "verb": "kind of",
+      "to": "governance",
+      "description": "axis 2: whether stewardship, roadmap and funding sit in EU/EFTA hands. Can be near-zero even when license sovereignty is full (e.g. PyTorch, Gecko, Kubernetes, Keycloak)."
+    },
+    {
+      "name": "non-US control",
+      "from": "control",
+      "verb": "of",
+      "to": "US",
+      "description": "the property of a solution not being directable by US jurisdiction; the quantity the sector shares measure."
+    },
+    {
+      "name": "market share",
+      "from": "share",
+      "verb": "of",
+      "to": "market",
+      "description": "the realistically-expectable share of non-US-controlled solutions within a sector's EU/EFTA market."
+    },
+    {
+      "name": "market size",
+      "from": "size",
+      "verb": "of",
+      "to": "market",
+      "description": "the approximate annual EU/EFTA market volume of a sector."
+    },
+    {
+      "name": "euro billion",
+      "from": "billion",
+      "verb": "scaled by",
+      "to": "euro",
+      "description": "monetary measure: billions of euro per year."
+    },
+    {
+      "name": "measured value",
+      "from": "measured",
+      "verb": "of",
+      "to": "value",
+      "description": "provenance qualifier: the number is sourced from an external reference, not assumed."
+    },
+    {
+      "name": "assumed value",
+      "from": "assumed",
+      "verb": "of",
+      "to": "value",
+      "description": "provenance qualifier: the number is a projection/estimate carrying a confidence, not sourced."
+    },
+    {
+      "name": "desktop operating system",
+      "from": "operating",
+      "verb": "and",
+      "to": "desktop",
+      "description": "the OS sector for desktop and laptop computers (Debian/Linux vs Windows/macOS)."
+    },
+    {
+      "name": "server operating system",
+      "from": "operating",
+      "verb": "and",
+      "to": "server",
+      "description": "the OS sector for servers (Linux vs Windows Server), where Linux is already the industry default."
+    },
+    {
+      "name": "smartphone operating system",
+      "from": "operating",
+      "verb": "and",
+      "to": "smartphone",
+      "description": "the mobile OS sector (LineageOS/GrapheneOS vs Android/iOS)."
+    },
+    {
+      "name": "office software",
+      "from": "software",
+      "verb": "of",
+      "to": "office",
+      "description": "the office-suite sector (LibreOffice vs Microsoft 365)."
+    },
+    {
+      "name": "browser software",
+      "from": "software",
+      "verb": "of",
+      "to": "browser",
+      "description": "the web-browser sector (Firefox vs Chrome/Edge/Safari)."
+    },
+    {
+      "name": "browser engine",
+      "from": "engine",
+      "verb": "of",
+      "to": "browser",
+      "description": "the underlying layout-engine sector; only Gecko (Mozilla) and Chromium (Google) remain among non-Chinese engines."
+    },
+    {
+      "name": "cloud collaboration",
+      "from": "cloud",
+      "verb": "and",
+      "to": "collaboration",
+      "description": "the collaboration/file-sharing frontend sector (Nextcloud vs Google Workspace/Microsoft 365); distinct from the hyperscale IaaS layer beneath it."
+    },
+    {
+      "name": "messaging software",
+      "from": "software",
+      "verb": "of",
+      "to": "messaging",
+      "description": "the social/instant-messaging sector (Matrix, Mastodon vs US platforms)."
+    },
+    {
+      "name": "videoconference software",
+      "from": "software",
+      "verb": "of",
+      "to": "videoconference",
+      "description": "the video-conferencing sector (Jitsi, BigBlueButton vs Zoom/Teams)."
+    },
+    {
+      "name": "email groupware",
+      "from": "email",
+      "verb": "and",
+      "to": "groupware",
+      "description": "the mail/calendar server-backend sector (Open-Xchange, SOGo vs Microsoft Exchange)."
+    },
+    {
+      "name": "education software",
+      "from": "software",
+      "verb": "of",
+      "to": "education",
+      "description": "the learning-management sector (Moodle, ILIAS), where FOSS is already strong in the EU."
+    },
+    {
+      "name": "map software",
+      "from": "software",
+      "verb": "of",
+      "to": "map",
+      "description": "the mapping/navigation sector (OpenStreetMap, Organic Maps vs Google Maps)."
+    },
+    {
+      "name": "password software",
+      "from": "software",
+      "verb": "of",
+      "to": "password",
+      "description": "the password-management sector (KeePassXC vs proprietary managers)."
+    },
+    {
+      "name": "database software",
+      "from": "software",
+      "verb": "of",
+      "to": "database",
+      "description": "the database sector (PostgreSQL, MariaDB), where FOSS is already a strong default."
+    },
+    {
+      "name": "backup software",
+      "from": "software",
+      "verb": "of",
+      "to": "backup",
+      "description": "the backup/storage sector (Ceph, Restic, Borg)."
+    },
+    {
+      "name": "container orchestration",
+      "from": "software",
+      "verb": "of",
+      "to": "container",
+      "description": "the container/orchestration sector (Kubernetes, Podman); license-sovereign but US-governed (CNCF)."
+    },
+    {
+      "name": "virtualization software",
+      "from": "software",
+      "verb": "of",
+      "to": "virtualization",
+      "description": "the virtualization sector (Proxmox, KVM vs VMware), in an unusual EU-favourable migration window after the Broadcom price shock."
+    },
+    {
+      "name": "proxy software",
+      "from": "software",
+      "verb": "of",
+      "to": "proxy",
+      "description": "the web/reverse-proxy sector (nginx, Caddy, HAProxy), where the EU is technically strong."
+    },
+    {
+      "name": "DNS software",
+      "from": "software",
+      "verb": "of",
+      "to": "DNS",
+      "description": "the DNS/network-services sector (Knot, PowerDNS, Unbound, BIND)."
+    },
+    {
+      "name": "firewall software",
+      "from": "software",
+      "verb": "of",
+      "to": "firewall",
+      "description": "the firewall/security sector (OPNsense, pfSense, nftables)."
+    },
+    {
+      "name": "identity software",
+      "from": "software",
+      "verb": "of",
+      "to": "identity",
+      "description": "the identity/SSO sector (Keycloak, Authentik, FreeIPA), a key lever for migrating off Microsoft Entra."
+    },
+    {
+      "name": "forge software",
+      "from": "software",
+      "verb": "of",
+      "to": "forge",
+      "description": "the CI/CD and code-hosting sector (Forgejo/Codeberg vs GitHub/GitLab)."
+    },
+    {
+      "name": "monitoring software",
+      "from": "software",
+      "verb": "of",
+      "to": "monitoring",
+      "description": "the monitoring/observability sector (Prometheus, Zabbix, Checkmk)."
+    },
+    {
+      "name": "LLM software",
+      "from": "software",
+      "verb": "of",
+      "to": "LLM",
+      "description": "the large-language-model sector (Apertus, Mistral, open models vs OpenAI/Anthropic/Google)."
+    },
+    {
+      "name": "machine-learning framework",
+      "from": "framework",
+      "verb": "of",
+      "to": "machine-learning",
+      "description": "the ML-framework sector (PyTorch, TensorFlow): freely licensed but with almost no EU-governed alternative."
+    },
+    {
+      "name": "local inferencing",
+      "from": "inferencing",
+      "verb": "kind of",
+      "to": "machine-learning",
+      "description": "the local-inference sector (llama.cpp, Ollama, vLLM) running models on own infrastructure."
+    },
+    {
+      "name": "vector database",
+      "from": "database",
+      "verb": "of",
+      "to": "vector",
+      "description": "the vector-DB/RAG sector (Qdrant [DE], Weaviate [NL] vs Pinecone), one of the few EU-competitive AI subfields."
+    },
+    {
+      "name": "search software",
+      "from": "software",
+      "verb": "of",
+      "to": "search",
+      "description": "the web-search sector (YaCy, OpenWebSearch.eu); the hardest index-scale lock-in, even DuckDuckGo/Ecosia ride foreign indexes."
+    },
+    {
+      "name": "Trump v. Slaughter",
+      "from": "Trump",
+      "verb": "with",
+      "to": "Slaughter",
+      "description": "the 2026 US Supreme Court decision holding the FTC's for-cause removal protection unconstitutional, removing the FTC's structural independence."
+    },
+    {
+      "name": "FTC independence",
+      "from": "independence",
+      "verb": "of",
+      "to": "FTC",
+      "description": "the structural independence of the FTC that the EU-US adequacy decision relied on, and that Trump v. Slaughter removed."
+    },
+    {
+      "name": "convergence over community",
+      "from": "convergence",
+      "verb": "influences",
+      "to": "community",
+      "description": "thesis: once a format/program reaches a stable fixed point needing only maintenance, developer-community size stops being a moat, so a small EU steward can sustain it (cf. PostgreSQL, LaTeX). Subject-predicate-object triple structure is itself the candidate fixed point."
+    }
+  ],
+  "sources": [
+    {
+      "name": "StatCounter desktop OS Europe 2026",
+      "description": "StatCounter Global Stats, desktop operating-system market share Europe, Feb 2026: Windows ~69%, macOS ~18-20%, desktop Linux ~3%.",
+      "url": "https://gs.statcounter.com/os-market-share/desktop/europe"
+    },
+    {
+      "name": "Wikipedia usage share of OS 2026",
+      "description": "Usage share of operating systems, June 2026: server Linux ~63.1%; smartphone Android ~72%, iOS ~28%; desktop Linux ~3.09%.",
+      "url": "https://en.wikipedia.org/wiki/Usage_share_of_operating_systems"
+    },
+    {
+      "name": "Synergy European cloud 2025",
+      "description": "Synergy Research Group, 24 July 2025: EU cloud market EUR 61bn (2024), European providers ~15%, AWS+Azure+Google ~70%, SAP and Deutsche Telekom ~2% each; cloud is 'a game of scale'.",
+      "url": "https://www.srgresearch.com/articles/european-cloud-providers-local-market-share-now-holds-steady-at-15"
+    },
+    {
+      "name": "CNBC EU digital dependence 2026",
+      "description": "CNBC, 13 Feb 2026: of EU enterprise software at least 59% is US-held (Oracle 18%, Microsoft 10%); CRM dominated by Salesforce; per a Dec EU Parliament report.",
+      "url": "https://www.cnbc.com/2026/02/13/four-charts-europes-reliance-us-digital-infrastructure.html"
+    },
+    {
+      "name": "Cloudmagazin VMware 2026",
+      "description": "Cloudmagazin, Mar 2026: Gartner forecasts 70% of enterprise VMware customers will shift 50% of workloads to alternatives by 2028; Proxmox on ~1.5M hosts; CISPE reports 800-1500% price rises; CISPE EU complaint 19 Mar 2026.",
+      "url": "https://www.cloudmagazin.com/en/2026/03/18/vmware-cost-trap-2026-it-teams-examine-alternatives/"
+    },
+    {
+      "name": "ETH Apertus 2025",
+      "description": "ETH Zurich, 2 Sep 2025: Apertus, Switzerland's first large-scale open multilingual LLM by EPFL/ETH Zurich/CSCS; architecture, weights, training data and methods fully open; 8B and 70B; Apache 2.0; trained on 15T tokens, 1000+ languages.",
+      "url": "https://ethz.ch/en/news-and-events/eth-news/news/2025/09/press-release-apertus-a-fully-open-transparent-multilingual-language-model.html"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "StatCounter desktop OS Europe 2026"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "minimum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "6",
+      "source": "StatCounter desktop OS Europe 2026"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "minimum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "desktop operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "63",
+      "source": "Wikipedia usage share of OS 2026"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "70"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "75"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "88"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "server operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "Wikipedia usage share of OS 2026"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "smartphone operating system",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.15"
+    },
+    {
+      "words": [
+        "office software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "8",
+      "source": "CNBC EU digital dependence 2026"
+    },
+    {
+      "words": [
+        "office software",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "office software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "office software",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "55"
+    },
+    {
+      "words": [
+        "office software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "office software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.45"
+    },
+    {
+      "words": [
+        "browser software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "3",
+      "source": "StatCounter desktop OS Europe 2026"
+    },
+    {
+      "words": [
+        "browser software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "browser software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "browser engine",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "3",
+      "source": "StatCounter desktop OS Europe 2026"
+    },
+    {
+      "words": [
+        "browser engine",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "browser engine",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.25"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "15",
+      "source": "Synergy European cloud 2025"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "35"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "60"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market size",
+        "euro billion",
+        "year",
+        "measured value"
+      ],
+      "number": "61",
+      "source": "Synergy European cloud 2025"
+    },
+    {
+      "words": [
+        "cloud collaboration",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.35"
+    },
+    {
+      "words": [
+        "messaging software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "messaging software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "messaging software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "videoconference software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "videoconference software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "32"
+    },
+    {
+      "words": [
+        "videoconference software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "email groupware",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "email groupware",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "42"
+    },
+    {
+      "words": [
+        "email groupware",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "ERP",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "25",
+      "source": "CNBC EU digital dependence 2026"
+    },
+    {
+      "words": [
+        "ERP",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "ERP",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "60"
+    },
+    {
+      "words": [
+        "ERP",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "education software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "50"
+    },
+    {
+      "words": [
+        "education software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "70"
+    },
+    {
+      "words": [
+        "education software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "map software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "map software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "map software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "password software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "password software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "55"
+    },
+    {
+      "words": [
+        "password software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "database software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "database software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "65"
+    },
+    {
+      "words": [
+        "database software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "backup software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "backup software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "52"
+    },
+    {
+      "words": [
+        "backup software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "container orchestration",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "container orchestration",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "22"
+    },
+    {
+      "words": [
+        "container orchestration",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "container orchestration",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "container orchestration",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "measured value"
+      ],
+      "number": "20",
+      "source": "Cloudmagazin VMware 2026"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "58"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "78"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "virtualization software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.55"
+    },
+    {
+      "words": [
+        "proxy software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "55"
+    },
+    {
+      "words": [
+        "proxy software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "70"
+    },
+    {
+      "words": [
+        "proxy software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "DNS software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "DNS software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "65"
+    },
+    {
+      "words": [
+        "DNS software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "firewall software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "firewall software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "68"
+    },
+    {
+      "words": [
+        "firewall software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "identity software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "identity software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "42"
+    },
+    {
+      "words": [
+        "identity software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "forge software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "forge software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "32"
+    },
+    {
+      "words": [
+        "forge software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "monitoring software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "35"
+    },
+    {
+      "words": [
+        "monitoring software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "58"
+    },
+    {
+      "words": [
+        "monitoring software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market share",
+        "non-US control",
+        "2029",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "28"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "52"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "LLM software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market share",
+        "governance sovereignty",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market share",
+        "governance sovereignty",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "14"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market share",
+        "governance sovereignty",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "28"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market share",
+        "license sovereignty",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "100"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "8"
+    },
+    {
+      "words": [
+        "machine-learning framework",
+        "market share",
+        "governance sovereignty",
+        "2031",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "local inferencing",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "local inferencing",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "45"
+    },
+    {
+      "words": [
+        "local inferencing",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "6"
+    },
+    {
+      "words": [
+        "vector database",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "vector database",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "50"
+    },
+    {
+      "words": [
+        "vector database",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "4"
+    },
+    {
+      "words": [
+        "search software",
+        "market share",
+        "non-US control",
+        "2026",
+        "percent",
+        "assumed value"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "search software",
+        "market share",
+        "non-US control",
+        "2031",
+        "likely",
+        "percent",
+        "assumed value"
+      ],
+      "number": "10"
+    },
+    {
+      "words": [
+        "search software",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "percent",
+        "assumed value"
+      ],
+      "number": "25"
+    },
+    {
+      "words": [
+        "search software",
+        "market size",
+        "euro billion",
+        "year",
+        "assumed value"
+      ],
+      "number": "12"
+    },
+    {
+      "words": [
+        "search software",
+        "market share",
+        "non-US control",
+        "2031",
+        "maximum",
+        "confidence",
+        "assumed value"
+      ],
+      "number": "0.15"
+    }
+  ]
+}

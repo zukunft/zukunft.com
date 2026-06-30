@@ -180,6 +180,9 @@ class word extends sandbox_code_id
     // filled from the INCL_RELATED api message and shown by the related values component
     public ?value_list $val_lst = null;
     public ?formula_list $frm_lst = null;
+    // the formulas of the ancestor phrases grouped per ancestor (from the INCL_RELATED api message),
+    // each entry ['phrase' => phrase, 'formulas' => formula_list] to render 'assigned to <ancestor>'
+    public ?array $parent_formulas = null;
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
@@ -337,6 +340,20 @@ class word extends sandbox_code_id
             }
         } else {
             $this->frm_lst = null;
+        }
+        if (array_key_exists(json_fields::PARENT_FORMULAS, $json_array)
+            and is_array($json_array[json_fields::PARENT_FORMULAS])) {
+            $groups = [];
+            foreach ($json_array[json_fields::PARENT_FORMULAS] as $grp) {
+                $phr = new phrase();
+                $phr->api_mapper($grp[json_fields::PHRASE] ?? [], $msg);
+                $frm = new formula_list();
+                $frm->api_mapper($grp[json_fields::FORMULAS] ?? []);
+                $groups[] = ['phrase' => $phr, 'formulas' => $frm];
+            }
+            $this->parent_formulas = $groups;
+        } else {
+            $this->parent_formulas = null;
         }
         if (array_key_exists(json_fields::REFERENCES, $json_array)) {
             $reference = $json_array[json_fields::REFERENCES];

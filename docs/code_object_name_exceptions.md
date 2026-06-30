@@ -107,7 +107,7 @@ formula_dsp: $frm_html
 formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $frm_usr, $lnk, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lst
 formula_link_type: $frm_lnk_typ
-formula_list: $add_lst, $db_lst, $db_lst_all, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
+formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
 formula_type: $frm_typ
 formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj

@@ -204,3 +204,4 @@ component_type_id, type_name, description, code_id
 203, 'title of value with edit link', 'show the related phrases of a value with links as the page title and the value itself plus the edit link and the share and protection subtitle', 'title_of_value_with_edit_link'
 204, 'button confirm', 'a button of a form to confirm the change before it is written to the database', 'system_button_confirm'
 205, 'formatter row center', 'to start a new row and center the following components in one row until the row end is triggered', 'row_center'
+206, 'formulas of parents', 'list of formulas assigned to the ancestor phrases of a word, grouped per ancestor', 'formulas_of_parents'

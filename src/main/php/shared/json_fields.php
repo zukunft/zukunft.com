@@ -409,6 +409,7 @@ class json_fields
     const string RESULT = 'result'; // the expected result of a check formula e.g. of the XBRL summation-item validation
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string PARENT_FORMULAS = 'parent_formulas'; // formulas of the ancestor phrases, grouped per ancestor
     const string RESULTS = 'results';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section
