@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -86,6 +87,25 @@ class change_log_ui_tests
         $test_page .= $log_ui->tbl($back, true, true);
 
         $t->html_page_test($test_page, 'change_log', 'change_log', $t);
+
+        $t->subheader($ts . 'filter and limit');
+
+        // regression: the api change entries carry no own id (all id 0), so the default id-dedup of
+        // add() must not collapse filter()/head() to a single change row (see change_log_list)
+        $log_ui = new change_log_list($t_log->log_list_named()->api_json($api_typ_lst));
+
+        $test_name = 'change_log_list->head keeps more than one change despite id 0';
+        $t->assert_true($test_name, $log_ui->head(10)->count() > 1);
+
+        $test_name = 'change_log_list->head limits to the requested number of changes';
+        $t->assert($test_name, $log_ui->head(2)->count(), 2);
+
+        // filter the changes of the test word: all word changes share the same row_id and table,
+        // so several rows must remain (one per change), not be merged into one
+        $wrd = new word();
+        $wrd->set_id(word_names::MATH_ID);
+        $test_name = 'change_log_list->filter keeps all changes of a word despite id 0';
+        $t->assert_true($test_name, $log_ui->filter($wrd)->count() > 1);
 
         // link change history rendering (e.g. the triples added to or removed from a word)
         // the link list classes are loaded here, not at the top of the file, because the frontend

@@ -181,7 +181,9 @@ class change_log_list extends ListBase
         foreach ($this->lst() as $chg) {
             if (in_array($chg->table_id, $tbl_id_lst) ) {
                 if ($chg->row_id == $dbo->id()) {
-                    $result->add($chg);
+                    // allow duplicates: the api change entries carry no own id (all id 0), so the
+                    // default id-dedup of add() would collapse every change into a single row
+                    $result->add_obj($chg, true);
                 }
             }
         }
@@ -205,7 +207,9 @@ class change_log_list extends ListBase
         $i = 0;
         foreach ($this->lst() as $chg) {
             if ($i < $limit) {
-                $result->add($chg);
+                // allow duplicates: the api change entries carry no own id (all id 0), so the
+                // default id-dedup of add() would collapse every change into a single row
+                $result->add_obj($chg, true);
             }
             $i++;
         }
