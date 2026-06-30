@@ -8,6 +8,16 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
+before the confirmation page check if the user has the permission change the all fields and e.g. if he/she does not have the permission to change the phrase type show a message the usual way in orange / yellow
+
+in the 'changes' tab show more than one row. get how many rows should be shown from the config as done before e.g. for the number of values to show
+
+if in the word_default view is more than on tab e.g. '#view' and '#changes' based on the url tag switch the tabs
+
+if no field is changed or all changes undone due to restrictions do not show the confirm view after pressing save instead show the original view with the message
+
+add the 'can change phrase type test' to the input_valid test. 
+
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
 
 fill the view selector of the word edit mask with the potential views that can be assigned to a word

@@ -162,6 +162,21 @@ class db_object extends TextIdObject
         return $usr_msg;
     }
 
+    /**
+     * check the entered data of a pending change before the confirm view is shown so the user
+     * gets an orange warning on the edit view (e.g. for an empty name) instead of confirming an
+     * invalid change; the base object has no required input, so it reports the input as valid
+     *
+     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param string $action the crud action of the change (e.g. url_var::CRUD_DELETE) used to
+     *                       skip checks that do not apply, e.g. an empty name when deleting
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = ''): bool
+    {
+        return true;
+    }
+
     function url_is_add_action(array $url_array): bool
     {
         $is_add = false;

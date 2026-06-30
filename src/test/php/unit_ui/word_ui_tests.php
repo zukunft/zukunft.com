@@ -40,6 +40,8 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -267,6 +269,29 @@ class word_ui_tests
         $result = implode(',', $names);
         $target = word_names::EURO . ',' . word_names::US_DOLLAR;
         $t->assert($test_name, $result, $target);
+
+        // the entered data is checked before the confirm view is shown: a word with a name can be
+        // confirmed, but an empty name reports an orange warning that the user must fix first
+        $test_name = 'word->input_valid for a word with a name';
+        $t->assert_true($test_name, $wrd->input_valid(new user_message()));
+
+        $test_name = 'word->input_valid for a word with an empty name';
+        $wrd_empty = new word($t_wrd->word()->api_json());
+        $wrd_empty->set_name('');
+        $usr_msg = new user_message();
+        $t->assert_false($test_name, $wrd_empty->input_valid($usr_msg));
+
+        $test_name = 'word->input_valid reports the empty name';
+        $t->assert_true($test_name, $usr_msg->has_msg_id(msg_id::NAME_EMPTY));
+
+        $test_name = 'word->input_valid allows an empty name when the word is deleted';
+        $t->assert_true($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
+
+        $test_name = 'word->input_valid allows an empty name when the word is excluded';
+        $wrd_excluded = new word($t_wrd->word()->api_json());
+        $wrd_excluded->set_name('');
+        $wrd_excluded->excluded = true;
+        $t->assert_true($test_name, $wrd_excluded->input_valid(new user_message()));
 
     }
 

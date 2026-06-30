@@ -407,6 +407,9 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
     case WORD_NAME_MISSING = 'required word name missing';
+    case NAME_EMPTY = 'the name of the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' must not be empty';
     case WORD_ID_ADDITIONAL = 'word id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
