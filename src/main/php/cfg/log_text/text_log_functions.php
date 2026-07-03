@@ -208,7 +208,7 @@ function log_err(string $msg_text,
 function log_err_msg(string $msg_txt, user_message $msg): void
 {
     $log_lnk = log_err($msg_txt);
-    $msg->add(msg_id::USER_MISSING, [msg_id::VAR_LOG_LINK => $log_lnk]);
+    $msg->add(msg_id::INTERNAL, [msg_id::VAR_LOG_LINK => $log_lnk]);
 }
 
 /**
@@ -222,7 +222,7 @@ function log_err_msg(string $msg_txt, user_message $msg): void
 function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
 {
     $log_lnk = log_err($msg_txt);
-    $msg->add(msg_id::USER_MISSING, [msg_id::VAR_LOG_LINK => $log_lnk]);
+    $msg->add(msg_id::INTERNAL, [msg_id::VAR_LOG_LINK => $log_lnk]);
 }
 
 /**

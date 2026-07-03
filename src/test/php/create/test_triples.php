@@ -53,6 +53,7 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::CONST . 'triple_names.php';
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -249,10 +251,10 @@ class test_triples extends test_objects
      */
     function change_description_url_array(int $id): array
     {
-        $msg = new \Zukunft\ZukunftCom\main\php\web\user\user_message();
+        $msg = new user_message_ui();
         $trp = $this->triple();
         $trp->description = 'a confirm change test description';
-        $url_arr = test_mappers::object_to_url_array($this->triple(), $msg);
+        $url_arr = test_mappers::object_to_url_array($trp, $msg);
         $url_arr[url_var::BACK] = $id;
         return $url_arr;
     }

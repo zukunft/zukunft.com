@@ -40,10 +40,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'workflows.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
@@ -97,11 +99,16 @@ class triple_write_url_tests extends triple_url_tests
             $t->write_named_cleanup($trp, $trp_name);
             $t->write_named_cleanup_one($trp, $t->usr_system, $trp_name);
         }
-        // the change workflow writes a usr1 sandbox overlay on the seeded 'mathematical constant' triple;
-        // remove only that overlay (write_named_cleanup keeps the system base) so the seeded triple is
-        // restored to its original description for the next run
-        // TODO Prio 0 claude: has cost me two days to find it !!!
-        //$t->write_named_cleanup($trp, triple_names::MATH_CONST);
+        // the change workflow writes a usr1 sandbox overlay on the seeded 'mathematical constant'
+        // triple; remove only that overlay so the seeded triple shows its original description again.
+        // never use write_named_cleanup / del() here: on a seeded object that is still used del() does
+        // not remove the base row but writes a usr1 exclusion overlay, which silently hides the seeded
+        // triple for usr1 in all following tests
+        $trp->set_user($t->usr1);
+        $trp->load_by_name(triple_names::MATH_CONST);
+        if ($trp->has_usr_cfg()) {
+            $trp->del_usr_cfg(new user_message($t->usr1));
+        }
     }
 
 }

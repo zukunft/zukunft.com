@@ -631,13 +631,15 @@ class word extends sandbox_code_id
     }
 
     /**
-     * TODO Prio 1 review and add missing reloads
-     * load all related objects
+     * TODO Prio 1 review e.g. if the parent formulas should also be loaded
+     * load all related objects counted by update_usage
      */
     function load_related(): void
     {
         $this->load_phrases_related();
         $this->load_values_related();
+        $this->load_formulas_related();
+        $this->load_references_related();
     }
 
     /**

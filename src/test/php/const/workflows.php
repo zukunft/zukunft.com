@@ -157,13 +157,14 @@ class workflows
     }
 
     /**
-     * true if the workflow action submits a form (save, fill and the confirmed actions),
-     * false for the plain get navigation actions (show, edit, back, cancel).
+     * true if the workflow action submits a form (save, fill and the confirmed actions), false for the
+     * plain get navigation actions (show, edit, back, cancel). a form submit carries the named submit
+     * button marker (url_var::POST_SUBMIT) that view.php needs to route the request through url_to_action
      *
      * @param string $step the user reaction action const e.g. workflows::SAVE
      * @return bool true if the step submits a form
      */
-    protected function is_form_submit(string $step): bool
+    static function is_form_submit(string $step): bool
     {
         return in_array($step, [
             self::SAVE,

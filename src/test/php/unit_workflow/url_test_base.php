@@ -190,7 +190,7 @@ class url_test_base
         $test_name = $this->step_path . workflows::NAME_SEP . $step;
         // a form submit (save / *_confirmed) uses the method of the form of the previous page; show,
         // edit, back and cancel are plain get navigation links
-        $method = $this->is_form_submit_old($step) ? $this->http_method : rest_ctrl::GET;
+        $method = workflows::is_form_submit($step) ? $this->http_method : rest_ctrl::GET;
         // snapshot the url that this step's button press calls together with that http method
         $this->assert_wf_url($test_name, $step, $url_arr, $method);
         $result = $this->ui->execute_and_next($url_arr, $this->req);
@@ -198,44 +198,6 @@ class url_test_base
         $this->http_method = $this->form_method($result);
         $this->assert_wf_html($test_name, $result, $url_arr);
         return $result;
-    }
-
-    /**
-     * // TODO Prio 2 review
-     * true if the workflow action submits a form (save, fill and the confirmed actions), false for the plain
-     * get navigation actions (show, edit, back, cancel). a form submit carries the named submit button
-     * marker (url_var::POST_SUBMIT) that view.php needs to route the request through url_to_action
-     *
-     * @param string $step the user reaction action const e.g. url_var::ACTION_SAVE
-     * @return bool true if the step submits a form
-     */
-    protected function is_form_submit(string $step): bool
-    {
-        return in_array($step, [
-            url_var::ACTION_SAVE,
-            url_var::ACTION_FILL,
-            url_var::ACTION_CONFIRM,
-            url_var::ACTION_CONFIRMED
-        ], true);
-    }
-
-    /**
-     * // TODO Prio 2 review
-     * true if the workflow action submits a form (save, fill and the confirmed actions), false for the plain
-     * get navigation actions (show, edit, back, cancel). a form submit carries the named submit button
-     * marker (url_var::POST_SUBMIT) that view.php needs to route the request through url_to_action
-     *
-     * @param string $step the user reaction action const e.g. url_var::ACTION_SAVE
-     * @return bool true if the step submits a form
-     */
-    protected function is_form_submit_old(string $step): bool
-    {
-        return in_array($step, [
-            url_var::ACTION_SAVE,
-            url_var::ACTION_FILL,
-            url_var::ACTION_CONFIRM,
-            url_var::ACTION_CONFIRMED
-        ], true);
     }
 
     /**
@@ -277,7 +239,7 @@ class url_test_base
         // routes the directly called url through url_to_action (which writes); without it the url just
         // re-renders the form. the marker is a control key, so it is only in the callable / standard url
         $request_arr = $url_arr;
-        if ($this->is_form_submit_old($step)) {
+        if (workflows::is_form_submit($step)) {
             $request_arr[url_var::POST_SUBMIT] = '';
         }
         $query = http_build_query($request_arr);
@@ -327,7 +289,7 @@ class url_test_base
         // routes the directly called url through url_to_action (which writes); without it the url just
         // re-renders the form. the marker is a control key, so it is only in the callable / standard url
         $request_arr = $url_arr;
-        if ($this->is_form_submit_old($step)) {
+        if (workflows::is_form_submit($step)) {
             $request_arr[url_var::POST_SUBMIT] = '';
         }
         $query = http_build_query($request_arr);
