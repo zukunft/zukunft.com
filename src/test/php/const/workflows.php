@@ -34,8 +34,25 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 class workflows
 {
+
+    // workflow step names
+    // used to create the workflow file name
+    // and to define the url action parameter 'z' (url_var::STEP)
+    // and to select the http method
+    const string SHOW = 'show'; // just show a html page
+    const string BACK = 'back'; // leave the page and got back to the previous view
+    const string ADD = 'add'; // call the page to add an object
+    const string EDIT = 'edit'; // call the page to change an object
+    const string DEL = 'del'; // call the page to delete an object
+    const string SAVE = 'save'; // press the save button
+    const string FILL = 'fill'; // fill all object fields and press save
+    const string CANCEL = 'cancel'; // press the cancel button
+    const string CONFIRM = 'confirm'; // call the page to delete an object
+    const string CONFIRMED = 'confirmed'; // show the original view with the changes
 
     // separator between the name parts of a workflow snapshot file name e.g. 'wf2_show_edit'
     const string NAME_SEP = '_';
@@ -47,7 +64,7 @@ class workflows
     const string WF_PREFIX = 'wf';
 
     // the add_word workflow name used for the snapshot folder and the test subheader
-    const string WF_ADD_WORD = 'add_word';
+    const string ADD_WORD = 'add_word';
     // the id of the current add_word workflow; increase it to add the next workflow snapshot set
     const int WF_ADD_WORD_NBR = 1;
 
@@ -61,15 +78,99 @@ class workflows
     // the id of the current del_word workflow; increase it to add the next workflow snapshot set
     const int WF_DEL_WORD_NBR = 3;
 
+    // the add_triple workflow name used for the snapshot folder and the test subheader
+    const string WF_ADD_TRIPLE = 'add_triple';
+    // the id of the current add_triple workflow; increase it to add the next workflow snapshot set
+    const int WF_ADD_TRIPLE_NBR = 4;
+
     // the change_triple workflow name used for the snapshot folder and the test subheader
     const string WF_CHANGE_TRIPLE = 'change_triple';
     // the id of the current change_triple workflow; increase it to add the next workflow snapshot set
     const int WF_CHANGE_TRIPLE_NBR = 5;
 
-    // the change_word_invalid workflow name used for the snapshot folder and the test subheader:
+    // the del_triple workflow name used for the snapshot folder and the test subheader
+    const string WF_DEL_TRIPLE = 'del_triple';
+    // the id of the current del_triple workflow; increase it to add the next workflow snapshot set
+    const int WF_DEL_TRIPLE_NBR = 6;
+
+    // the change_word_fail workflow name used for the snapshot folder and the test subheader:
     // a save with an invalid change (e.g. an empty name) keeps the edit view instead of confirming
-    const string WF_CHANGE_WORD_INVALID = 'change_word_invalid';
-    // the id of the current change_word_invalid workflow; 4 to 6 are reserved for the triple workflows
-    const int WF_CHANGE_WORD_INVALID_NBR = 7;
+    const string WF_CHANGE_WORD_FAIL = 'change_word_fail';
+    // the id of the current change_word_fail workflow; 4 to 6 are reserved for the triple workflows
+    const int WF_CHANGE_WORD_FAIL_NBR = 7;
+
+    // the change_triple_by_name workflow name used for the snapshot folder and the test subheader:
+    // a save where the from and to phrases are posted as the phrase names the datalist fields submit
+    const string WF_CHANGE_TRIPLE_BY_NAME = 'change_triple_by_name';
+    // the id of the current change_triple_by_name workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_TRIPLE_BY_NAME_NBR = 8;
+
+    // the add_word_fail workflow name used for the snapshot folder and the test subheader:
+    // the negative twin of add_word where a save with an invalid entry (e.g. an empty name) keeps the
+    // add form with a warning instead of confirming the new word
+    const string WF_ADD_WORD_FAIL = 'add_word_fail';
+    // the id of the current add_word_fail workflow; increase it to add the next snapshot set
+    const int WF_ADD_WORD_FAIL_NBR = 9;
+
+    // the del_word_fail workflow name used for the snapshot folder and the test subheader:
+    // the negative twin of del_word where confirming the deletion of a word that is still in use keeps
+    // the delete form with a warning instead of confirming the deletion
+    const string WF_DEL_WORD_FAIL = 'del_word_fail';
+    // the id of the current del_word_fail workflow; increase it to add the next snapshot set
+    const int WF_DEL_WORD_FAIL_NBR = 10;
+
+    // snapshot file name marker for the failing input variant of a negative workflow step, e.g. the
+    // 'no_name' in 'wf9_edit_no_name_save' where the save is pressed with an empty name
+    const string STEP_NO_NAME = 'no_name';
+
+    // snapshot file name marker for a delete blocked because the object is still in use, e.g. the
+    // 'in_use' in 'wf10_show_edit_in_use_save' where delete is pressed on an in-use word
+    const string STEP_IN_USE = 'in_use';
+
+    // the add_triple_fail workflow name used for the snapshot folder and the test subheader:
+    // the negative twin of add_triple where a save without a from and a to phrase keeps the add form
+    // with a warning instead of confirming the invalid triple
+    const string WF_ADD_TRIPLE_FAIL = 'add_triple_fail';
+    // the id of the current add_triple_fail workflow; increase it to add the next snapshot set
+    const int WF_ADD_TRIPLE_FAIL_NBR = 11;
+
+    // snapshot file name marker for an add blocked because the from and to phrases are missing, e.g.
+    // the 'no_phrases' in 'wf11_edit_no_phrases_save' where save is pressed on a triple without them
+    const string STEP_NO_PHRASES = 'no_phrases';
+
+    /**
+     * the user process step that a user reaction action triggers
+     *
+     * @param string $action the user reaction action const e.g. self::ACTION_SAVE
+     * @return string the matching process step const e.g. self::STEP_CONFIRM
+     */
+    static function url_step(string $action): string
+    {
+        return match ($action) {
+            self::SAVE,
+            self::FILL => url_var::STEP_CONFIRM,
+            self::CONFIRM,
+            self::CONFIRMED => url_var::STEP_CONFIRMED,
+            self::CANCEL => url_var::STEP_CANCEL,
+            default => url_var::STEP_BASE // show, edit and back just navigate, they do not change the process step
+        };
+    }
+
+    /**
+     * true if the workflow action submits a form (save, fill and the confirmed actions),
+     * false for the plain get navigation actions (show, edit, back, cancel).
+     *
+     * @param string $step the user reaction action const e.g. workflows::SAVE
+     * @return bool true if the step submits a form
+     */
+    protected function is_form_submit(string $step): bool
+    {
+        return in_array($step, [
+            self::SAVE,
+            self::FILL,
+            self::CONFIRM,
+            self::CONFIRMED
+        ], true);
+    }
 
 }

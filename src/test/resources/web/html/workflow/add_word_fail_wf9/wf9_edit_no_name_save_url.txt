@@ -1,0 +1,15 @@
+GET
+http://localhost/http/view.php?id=0&8id=0&9m=1&m=2&z=1&submit=
+/http/view.php?id=0&8id=0&9m=1&m=2&z=1&submit=
+/http/view.php?id=0&8id=0&9mask_id=entry_view&mask_id=word_add&step=confirm&
+{
+    "id": "0",
+    "mask_id": "word_add",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "0"
+    },
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

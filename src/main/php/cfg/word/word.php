@@ -599,6 +599,47 @@ class word extends sandbox_code_id
         return $vars;
     }
 
+
+    /*
+     * related
+     */
+
+    /**
+     * TODO Prio 1 review
+     * set the usage object var based on the already loaded related object
+     * @return void
+     */
+    function update_usage(): void
+    {
+        $use = 0;
+        $use = $use + $this->phrases_related?->count();
+        $use = $use + $this->values_related?->count();
+        $use = $use + $this->formulas_related?->count();
+        $use = $use + $this->references_related?->count();
+        $this->usage = $use;
+    }
+
+    /**
+     * TODO Prio 1 move to sandbox or higher
+     * set the usage object var based on the already loaded related object
+     * @return void
+     */
+    function calc_usage(): void
+    {
+        $this->load_related();
+        $this->update_usage();
+    }
+
+    /**
+     * TODO Prio 1 review and add missing reloads
+     * load all related objects
+     */
+    function load_related(): void
+    {
+        $this->load_phrases_related();
+        $this->load_values_related();
+    }
+
     /**
      * load the values related to this word into the in-memory values_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
@@ -754,6 +795,7 @@ class word extends sandbox_code_id
         if ($loaded_id > 0) {
             $this->load_phrases_related();
             $this->load_values_related();
+            $this->update_usage();
         }
         return $loaded_id;
     }
@@ -1652,7 +1694,7 @@ class word extends sandbox_code_id
     /**
      * calculates how many times a word is used, because this can be helpful for sorting
      */
-    function calc_usage(): bool
+    function calc_usage_old(): bool
     {
         global $db_con;
 
@@ -1852,7 +1894,7 @@ class word extends sandbox_code_id
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->get_user()->id;
-                if ($this->can_change()) {
+                if ($this->can_change($usr_msg)) {
                     $this->update('view of word', $usr_msg);
                 } else {
                     if (!$this->has_usr_cfg()) {

@@ -167,6 +167,7 @@ class url_var
     const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
+    const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
     const string PATTERN = 'kp'; // the wildcard pattern to select a list of objects by name
     const string REF = 'l'; // l for data link to external
@@ -255,6 +256,7 @@ class url_var
     const string STEP_CANCELED = '-2'; // the process has been canceled
     const string STEP_FAILED = '-3'; // the process cannot be processed
 
+    // TODO move to workflows
     // user reaction actions: the first parameter of frontend::url_user_reaction and the
     // cumulative segment of a unit workflow snapshot filename (see docs/llm/testing.md)
     const string ACTION_SHOW = 'show'; // display the requested object e.g. the test word in its default view
@@ -318,6 +320,7 @@ class url_var
     //const string ID = 'id'; // repeated as comment from standard list above just to remember that it is the same as standard
     const string ID_LST_HUMAN = 'ids'; // a comma separated list of internal database ids
     const string NAME_HUMAN = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const string NAME_GIVEN_HUMAN = 'name_given'; // the unique name of a triple or group that overwrites the generated name
     const string PATTERN_HUMAN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const string DESCRIPTION_HUMAN = 'description';
     const string CODE_ID_HUMAN = 'code_id';
@@ -534,6 +537,7 @@ class url_var
         [self::ID, self::ID],
         [self::ID_LST_HUMAN, self::ID_LST],
         [self::NAME_HUMAN, self::NAME],
+        [self::NAME_GIVEN_HUMAN, self::NAME_GIVEN],
         [self::PATTERN_HUMAN, self::PATTERN],
         [self::DESCRIPTION_HUMAN, self::DESCRIPTION],
         [self::CODE_ID_HUMAN, self::CODE_ID],

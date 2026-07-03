@@ -112,6 +112,44 @@ class triple_tests
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
+        $t->subheader($ts . 'api mapping of an incomplete message');
+        // an api message with only the id maps the id and does not fail
+        $test_name = 'api_mapper with only the id keeps the id';
+        $trp = new triple($usr);
+        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], new user_message());
+        $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+
+        // an api message with only the name maps the name and leaves the id at 0
+        $test_name = 'api_mapper with only the name keeps the name';
+        $trp = new triple($usr);
+        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], new user_message());
+        $t->assert($test_name, $trp->name(), triple_names::MATH_CONST);
+        $test_name = 'api_mapper with only the name leaves the id at 0';
+        $t->assert($test_name, $trp->id(), 0);
+
+        // an api message with neither the id nor the name maps nothing and leaves the id at 0
+        $test_name = 'api_mapper with neither id nor name leaves the id at 0';
+        $trp = new triple($usr);
+        $trp->api_mapper([], new user_message());
+        $t->assert($test_name, $trp->id(), 0);
+
+        // an api message where the from, verb and to are present but null (an incomplete triple) maps
+        // them to empty objects instead of throwing a TypeError; guards the phrase_from_api_json and
+        // verb_from_api_json regression
+        $test_name = 'api_mapper with a null from leaves the from phrase empty';
+        $trp = new triple($usr);
+        $trp->api_mapper([
+            json_fields::ID => triple_names::MATH_CONST_ID,
+            json_fields::FROM => null,
+            json_fields::VERB => null,
+            json_fields::TO => null
+        ], new user_message());
+        $t->assert($test_name, $trp->get_from()?->id() ?? 0, 0);
+        $test_name = 'api_mapper with a null to leaves the to phrase empty';
+        $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
+        $test_name = 'api_mapper with a null from/verb/to keeps the id';
+        $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
         $t->assert_api_to_ui($trp, new triple_ui());

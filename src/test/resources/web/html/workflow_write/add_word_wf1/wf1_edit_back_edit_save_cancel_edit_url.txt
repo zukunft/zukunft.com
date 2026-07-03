@@ -1,8 +1,13 @@
 GET
-http://localhost/http/view.php?m=2&z=0
-/http/view.php?m=2&z=0
-/http/view.php?mask_id=word_add&step=no&
+http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=2&z=0
+/http/view.php?id=0&9m=1&k=System+Test+Word&m=2&z=0
+/http/view.php?id=0&9mask_id=entry_view&name=System+Test+Word&mask_id=word_add&step=no&
 {
+    "id": "0",
+    "name": "System Test Word",
     "mask_id": "word_add",
-    "step": "no"
+    "step": "no",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
 }

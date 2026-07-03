@@ -1,9 +1,13 @@
 GET
-http://localhost/http/view.php?m=56&id=999&z=2&submit=
-/http/view.php?m=56&id=999&z=2&submit=
-/http/view.php?mask_id=confirm_delete&id=999&step=confirmed&
+http://localhost/http/view.php?m=56&id=999&9m=90&9id=999&z=2&submit=
+/http/view.php?m=56&id=999&9m=90&9id=999&z=2&submit=
+/http/view.php?mask_id=confirm_delete&id=999&9mask_id=word_default&9id=999&step=confirmed&
 {
     "mask_id": "confirm_delete",
     "id": "999",
-    "step": "confirmed"
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
 }

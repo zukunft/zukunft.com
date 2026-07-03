@@ -909,19 +909,16 @@ class frontend
      * and the resulting url is rendered via url_to_html.
      * This is the two step dispatch of http/view.php wrapped in one call for the workflow tests.
      *
-     * @param string $action the user reaction action const e.g. url_var::ACTION_SAVE
-     * @param array $url_array the parsed url of the user action e.g. the submitted edit form
+     * @param array $url_arr the parsed url of the user action e.g. the submitted edit form
      * @param user_request $req the bundled request context (users, message, cache and the do_it flag)
      * @return string the html code of the next page shown to the user
      */
-    function url_user_reaction(
-        string       $action,
-        array        $url_array,
+    function execute_and_next(
+        array        $url_arr,
         user_request $req
     ): string
     {
-        $url_array[url_var::STEP] = url_var::action_step($action);
-        $next_url = $this->url_to_action($url_array, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
+        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
         return $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto);
     }
 
@@ -1391,7 +1388,9 @@ class frontend
         bool         $do_it
     ): array
     {
-        $dbo = $this->dbo_for_url($view, $url_array);
+        // a confirmed create/update/delete writes the object, so the back mask that carries its type is
+        // required here (unlike a standalone confirm view render)
+        $dbo = $this->dbo_for_url($view, $url_array, true);
         $dbo->url_mapper($url_array, $usr_msg, $dto);
 
         if ($do_it) {
@@ -1402,7 +1401,7 @@ class frontend
                 default => new user_message()
             };
             if (!$result_msg->is_ok()) {
-                $usr_msg->add_message($result_msg->get_last_message());
+                $usr_msg->merge($result_msg);
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
@@ -1431,7 +1430,7 @@ class frontend
     }
 
     /**
-     * // TODO Prio 2 review
+     * // TODO Prio 1 review
      * the main frontend object to display or change for a view: normally the object of the requested
      * view, but for a confirm view (whose mask does not encode the object type) the object of the
      * '9'-prefixed back target view (the object's own default view), so the confirm view and its write
@@ -1441,12 +1440,22 @@ class frontend
      * @param array $url_array the url that may carry the '9'-prefixed back target
      * @return sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui the matching frontend object
      */
-    private function dbo_for_url(int $view_id, array $url_array): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
+    private function dbo_for_url(int $view_id, array $url_array, bool $for_action = false): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
     {
         $dbo = $this->view_id_to_dbo_ui($view_id);
-        if (in_array($view_id, views::CONFIRM_MASKS_IDS)
-            and array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
-            $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
+        // a confirm view does not encode its own object type, so it takes the type from the '9'-prefixed
+        // back mask (the object's own default view). without it view_id_to_dbo_ui has fallen back to a
+        // word, which would let a confirmed change or delete target the wrong object, so log the
+        // inconsistency instead of defaulting silently (see docs/llm/structure.md). only a confirm view
+        // that triggers a write ($for_action) needs the back mask; rendering one standalone (e.g. the
+        // view catalog test) legitimately has none, so it is not logged
+        if (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
+            if (array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
+                $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
+            } elseif ($for_action) {
+                log_err('confirm view ' . $view_id . ' reached without a back mask, '
+                    . 'so its object type is unknown and defaults to a word');
+            }
         }
         // TODO Prio 2 review
         // stamp the prime object id from the url onto the dbo so it already knows which row it

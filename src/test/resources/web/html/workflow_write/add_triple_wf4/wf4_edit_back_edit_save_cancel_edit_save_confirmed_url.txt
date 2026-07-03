@@ -1,0 +1,21 @@
+GET
+http://localhost/http/view.php?id=0&k=System+Test+Triple&o=&b=1&uu=0&ui=0&m=54&z=2&submit=
+/http/view.php?id=0&k=System+Test+Triple&o=&b=1&uu=0&ui=0&m=54&z=2&submit=
+/http/view.php?id=0&name=System+Test+Triple&verb_id=1&usage=0&impact=0&mask_id=confirm_add&step=confirmed&
+{
+    "id": "0",
+    "share": "",
+    "protection": "",
+    "name": "System Test Triple",
+    "description": "",
+    "type": "",
+    "from_id": "",
+    "verb_id": "1",
+    "to_id": "",
+    "weight": "",
+    "plural": "",
+    "usage": "0",
+    "impact": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed"
+}

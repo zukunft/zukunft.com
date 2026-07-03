@@ -307,6 +307,16 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
+        $test_name = 'the url array contains the filled plural';
+        $wrd_ui = $t_wrd->word_dsp();
+        $wrd_ui->plural = word_names::MATH_PLURAL;
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::PLURAL], word_names::MATH_PLURAL);
+        $test_name = 'an empty plural is excluded from the url array';
+        $wrd_ui->plural = '';
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::PLURAL);
+
 
         $t->subheader($ts . 'subtitle with phrase limit');
 

@@ -673,6 +673,25 @@ class html_base
         return $this->prefixed_url_part($field_values, url_var::PRE);
     }
 
+    static function prefixed_url_array(array $url_arr, string $prefix): array
+    {
+        $par = [];
+        foreach ($url_arr as $key => $val) {
+            $par[$prefix . $key] = $val;
+        }
+        return $par;
+    }
+
+    static function back_url_array(array $url_arr): array
+    {
+        return self::prefixed_url_array($url_arr, url_var::BACK);
+    }
+
+    static function pre_url_array(array $url_arr): array
+    {
+        return self::prefixed_url_array($url_arr, url_var::PRE);
+    }
+
     /**
      * Build the additional URL parameters for an array, each key prefixed with the given prefix char.
      *

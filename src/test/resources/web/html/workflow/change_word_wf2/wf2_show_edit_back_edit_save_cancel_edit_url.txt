@@ -1,9 +1,19 @@
 GET
-http://localhost/http/view.php?m=3&id=999&z=0
-/http/view.php?m=3&id=999&z=0
-/http/view.php?mask_id=word_edit&id=999&step=no&
+http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=&m=3&z=0
+/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=&m=3&z=0
+/http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&mask_id=word_edit&step=no&
 {
-    "mask_id": "word_edit",
     "id": "999",
-    "step": "no"
+    "name": "System Test Word",
+    "description": "",
+    "mask_id": "word_edit",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word"
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
 }

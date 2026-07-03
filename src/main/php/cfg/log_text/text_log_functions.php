@@ -41,8 +41,10 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
@@ -56,9 +58,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -191,6 +195,34 @@ function log_err(string $msg_text,
         $function_name,
         $trace,
         $calling_usr);
+}
+
+/**
+ * log an error message and inform the user about the error
+ * TODO Prio 1 use this if even possible
+ * TODO Prio 1 limit the number of error message
+ * @param string $msg_txt the error message text
+ * @param user_message $msg the user message object that collect the messages for the user
+ * @return void
+ */
+function log_err_msg(string $msg_txt, user_message $msg): void
+{
+    $log_lnk = log_err($msg_txt);
+    $msg->add(msg_id::USER_MISSING, [msg_id::VAR_LOG_LINK => $log_lnk]);
+}
+
+/**
+ * log an error message via api and inform the user about the error
+ * TODO Prio 1 use this if even possible
+ * TODO Prio 1 limit the number of error message
+ * @param string $msg_txt the error message text
+ * @param user_message_ui $msg the frontend user message object that collect the messages for the user
+ * @return void
+ */
+function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
+{
+    $log_lnk = log_err($msg_txt);
+    $msg->add(msg_id::USER_MISSING, [msg_id::VAR_LOG_LINK => $log_lnk]);
 }
 
 /**

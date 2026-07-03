@@ -1,0 +1,13 @@
+GET
+http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=54&z=2&submit=
+/http/view.php?id=0&9m=1&k=System+Test+Word&m=54&z=2&submit=
+/http/view.php?id=0&9mask_id=entry_view&name=System+Test+Word&mask_id=confirm_add&step=confirmed&
+{
+    "id": "0",
+    "name": "System Test Word",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

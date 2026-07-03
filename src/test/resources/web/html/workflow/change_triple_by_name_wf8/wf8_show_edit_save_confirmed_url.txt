@@ -1,0 +1,24 @@
+GET
+http://localhost/http/view.php?m=55&id=1&k=mathematical+constant&pf=2&b=3&pt=1&o=A+mathematical+constant+that+never+changes+e.g.+Pi&sp=3&d=0&9=1&9m=92&9id=1&z=2&submit=
+/http/view.php?m=55&id=1&k=mathematical+constant&pf=2&b=3&pt=1&o=A+mathematical+constant+that+never+changes+e.g.+Pi&sp=3&d=0&9=1&9m=92&9id=1&z=2&submit=
+/http/view.php?mask_id=confirm_update&id=1&name=mathematical+constant&from_id=2&verb_id=3&to_id=1&description=A+mathematical+constant+that+never+changes+e.g.+Pi&protection=3&view_id=0&9mask_id=triple_default&9id=1&step=confirmed&
+{
+    "mask_id": "confirm_update",
+    "id": "1",
+    "name": "mathematical constant",
+    "from_id": "2",
+    "verb_id": "3",
+    "to_id": "1",
+    "name_given": "",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "share": "",
+    "protection": "3",
+    "view_id": "0",
+    "usage": "",
+    "impact": "",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "1"
+    }
+}

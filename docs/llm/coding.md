@@ -47,6 +47,8 @@ detail file. Order is by how often they fire, not importance.
 ### Structure & style
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
+- Never fail silently: a function carrying a `user_message $msg` that rejects or aborts must record the reason on `$msg` (a `msg_id` that renders to real text) and let it propagate to the UI — never return a failure with `$msg` unchanged, empty, or hidden by an `is_ok()` gate. → `docs/llm/structure.md`
+- A helper that can produce a *user-actionable* error takes a `user_message $msg` parameter (thread it from the callers) so it can return the specific problem and its solution; reserve `log_err` (no `$msg`) for internal inconsistencies the user cannot fix. E.g. `triple::verb_from_api_json`. → `docs/llm/structure.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`

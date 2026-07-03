@@ -69,7 +69,7 @@ class user_write_tests
         // start the test section (ts)
         $ts = 'db write user ';
         $t->header($ts);
-        $t_usr->cleanup($ts);
+        $t_usr->cleanup($ts, $t);
 
         $t->subheader($ts . 'add');
         $usr = $t_usr->user_ip();
@@ -169,7 +169,7 @@ class user_write_tests
         */
 
         // cleanup - fallback delete
-        $t_usr->cleanup($ts);
+        $t_usr->cleanup($ts, $t);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($usr_msg);

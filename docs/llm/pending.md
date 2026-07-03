@@ -8,10 +8,24 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
+add to /docs/llm/* that all function that could create an error that is relevanz for the user needs $msg as parameter to be able to return the specific error with the potential solution to the user. This is relevant for example for src/main/php/cfg/word/triple.php::verb_from_api_json
+
+reduce the number of load and save calls
+
+why does src/test/resources/web/html/workflow/change_word_wf2/wf2_show.html contain 'the name of the word must not be empty'? I guess this should not be the case.
+
+
+check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function  
+
+check that save() never fails add() silently
+
+in test_triples base the fill_url_array on the a ..._filled() function that returns an object and create the url_array using a object_to_url function. Note 
+
+rename the src/test/resources/web/html/workflow/change_word_invalid_wf7 to change_word_fail_wf7 because 'fail' is shorter and it is inline with 'add_word_fail_wf9' and change the 'invalid' to 'fail' within this wf code
+
+for each positiv workflow test create a negativ with the test cases that can fail. Let's start with 'add_word_wf1' and create 'add_word_fail_wf9' that has e.g. the steps 'wf9_edit_no_name_save'. 
+
 add in the word_default view beside the 'view' and 'changes' a 'your' tab with the use overwrite of the shown e.g. word object, so basically the values from the 'user_words' table
-
-align the src/test/resources/web/html/workflow/change_triple_wf5 to the src/test/resources/web/html/workflow/change_word_wf2 e.g. by adding the fill steps
-
 
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
 
