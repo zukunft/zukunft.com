@@ -414,7 +414,7 @@ class word_url_tests extends url_test_base
         $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
 
         // user is typing the new word description
-        $url_arr[url_var::DESCRIPTION] = word_names::TEST_ADD_COM;
+        $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
 
         // save: press save on the edit form which shows the confirm change view
         $html = $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
@@ -432,13 +432,15 @@ class word_url_tests extends url_test_base
         $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
 
         // user is typing the new word description
-        $url_arr[url_var::DESCRIPTION] = word_names::TEST_ADD_COM;
+        $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
 
         // save: press save again which shows the confirm change view
         $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
 
-        // update_confirmed: confirm the pending change so it is actually written to the database
-        $this->assert_step(workflows::CONFIRM, $url_arr, views::WORD_ID);
+        // update_confirmed: confirm the pending change so it is actually written to the database;
+        // the confirm form posts the confirm update mask, because url_to_action only routes a
+        // confirmed change of an edit mask to the database write (see views::EDIT_MASKS_IDS)
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
 
         // a write run must actually persist the change, so check the new description in the database;
         // the change is a usr1 user sandbox overlay on top of the system base, so read it as usr1
@@ -460,13 +462,14 @@ class word_url_tests extends url_test_base
         $this->assert_step(workflows::FILL, $url_arr, views::WORD_EDIT_ID);
 
         // confirmed: confirm the filled change so it is also written to the database (with $do_it true)
-        $this->assert_step(workflows::CONFIRM, $url_arr, views::WORD_ID);
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
 
         // a write run must persist the filled fields, so check a previously empty field (the plural) is
-        // now set in the database; the change is a usr1 user sandbox overlay, so read it as usr1
+        // now set in the database; the change is a usr1 user sandbox overlay, so read it as usr1;
+        // the expected plural comes from the same fill url so the check follows the filled test word
         if ($do_it) {
             $this->assert_word_filled_in_db('change_word workflow has filled the word',
-                word_names::TEST_ADD, $this->t->usr1, word_names::TEST_CHANGE_COM);
+                word_names::TEST_ADD, $this->t->usr1, $fill[url_var::PLURAL]);
         }
     }
 
@@ -619,8 +622,20 @@ class word_url_tests extends url_test_base
         // resolve its current database id by name and set the fixed snapshot id of the test word
         $this->wf_start($wf_nbr, workflows::WF_DEL_WORD, word_names::TEST_ADD_ID, $do_it);
 
-        // initial url with the added word
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $wrd = new word($this->t->usr1);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        // in a read-only run without the earlier test the word may be missing, so use the fixed id
+        if ($this->wf_id == 0) {
+            $this->wf_id = word_names::TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+
+        // initial url with the added word; the url carries the current db id of the word so the
+        // confirmed delete targets the real row (the snapshot files normalize the id back to the
+        // fixed test id)
         $url_arr = test_words::word_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
@@ -655,13 +670,14 @@ class word_url_tests extends url_test_base
         // $do_it true); the confirm mask does not encode the object type, so carry the '9'-prefixed back
         // target = the word view + id (as the real confirm form does) so dbo_for_url resolves the word
         // instead of falling back to the default word object
+        $url_arr[url_var::BACK . url_var::MASK] = views::WORD_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
         $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_DEL_ID);
 
         // a write run must actually delete the word; a non-owner delete is a soft delete, so check the
         // word is flagged as excluded in the user sandbox rather than physically removed
         if ($do_it) {
-            // TODO Prio 0 activate
-            //$this->assert_word_removed('del_word workflow has removed the word');
+            $this->assert_word_removed('del_word workflow has removed the word');
         }
     }
 
@@ -684,8 +700,8 @@ class word_url_tests extends url_test_base
         $wrd = new word($usr);
         $wrd->load_by_name($name);
         $this->t->assert($test_name, $wrd->name(), $name);
-        // TODO Prio 0 activate
-        //$this->t->assert($test_name, $wrd->get_description(), $des);
+        // a word added without a description has null in the database, which the caller expects as ''
+        $this->t->assert($test_name, $wrd->get_description() ?? '', $des);
     }
 
     /**
@@ -704,8 +720,7 @@ class word_url_tests extends url_test_base
         $wrd = new word($usr);
         $wrd->load_by_name($name);
         $this->t->assert($test_name, $wrd->name(), $name);
-        // TODO Prio 0 activate
-        //$this->t->assert($test_name, $wrd->plural, $plural);
+        $this->t->assert($test_name, $wrd->plural ?? '', $plural);
     }
 
     /**

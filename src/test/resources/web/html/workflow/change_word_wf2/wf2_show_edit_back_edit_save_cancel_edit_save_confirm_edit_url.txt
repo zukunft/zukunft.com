@@ -1,11 +1,11 @@
 GET
-http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=test+description+added+to+the+word+via+import&m=3&z=0
-/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=test+description+added+to+the+word+via+import&m=3&z=0
-/http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&description=test+description+added+to+the+word+via+import&mask_id=word_edit&step=no&
+http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=a+confirm+change+test+description&m=3&z=0
+/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&o=a+confirm+change+test+description&m=3&z=0
+/http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&description=a+confirm+change+test+description&mask_id=word_edit&step=no&
 {
     "id": "999",
     "name": "System Test Word",
-    "description": "test description added to the word via import",
+    "description": "a confirm change test description",
     "mask_id": "word_edit",
     "step": "no",
     "url_part_original_data": {

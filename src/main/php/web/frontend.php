@@ -670,7 +670,7 @@ class frontend
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
             in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
-            default => null
+            default => $this->log_ignored_write_step($view, $step, $usr_msg)
         };
 
         return $url;
@@ -1376,6 +1376,26 @@ class frontend
             }
         }
         return $confirm_view;
+    }
+
+    /**
+     * log a confirm or confirmed step that no action handles, because these steps are a write request
+     * and ignoring one silently would hide the missing database change from the user: the returned url
+     * just re-renders the requested view, which looks exactly like the redirect after a successful
+     * write (see docs/llm/structure.md); the plain navigation steps (show, edit, back, cancel) are
+     * expected to fall through without an action, so they are not logged
+     *
+     * @param int|string $view the requested view that no action arm has matched
+     * @param string $step the user process step of the request
+     * @param user_message $usr_msg to inform the user that the request has been ignored
+     */
+    private function log_ignored_write_step(int|string $view, string $step, user_message $usr_msg): void
+    {
+        if ($step == url_var::STEP_CONFIRM or $step == url_var::STEP_CONFIRMED) {
+            log_err_msg_ui('the ' . $step . ' step for view ' . $view . ' has been ignored,'
+                . ' because the view is not an add, edit or del mask, so nothing has been saved',
+                $usr_msg);
+        }
     }
 
     private function action_crud(
