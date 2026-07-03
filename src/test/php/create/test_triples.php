@@ -227,6 +227,9 @@ class test_triples extends test_objects
         $trp = $this->triple_filled_included();
         $trp->id = 0;
         $trp->set_name(triple_names::SYSTEM_TEST_ADD);
+        // overwrite the 'math const' given name of the filled base triple with the reserved test
+        // given name so the workflow urls never carry seeded data
+        $trp->name_given = triple_names::SYSTEM_TEST_ADD_GIVEN;
         $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
@@ -252,7 +255,8 @@ class test_triples extends test_objects
     function change_description_url_array(int $id): array
     {
         $msg = new user_message_ui();
-        $trp = $this->triple();
+        // use the reserved test triple so the workflow url never carries seeded (e.g. math) data
+        $trp = $this->triple_filled_add_name();
         $trp->description = 'a confirm change test description';
         $url_arr = test_mappers::object_to_url_array($trp, $msg);
         $url_arr[url_var::BACK] = $id;
@@ -293,17 +297,18 @@ class test_triples extends test_objects
      */
     function add_url_array(): array
     {
-        // the add form posts the phrase ids of the from and to phrases, so use two seeded words that
-        // always have a real database id (id != 0) - 'Pi' (from) and 'e' (to). they are two independent
-        // constants with no seeded triple between them in either direction, so the new triple neither
-        // collides with an existing triple nor with its reverse (get_similar rejects a reverse match);
-        // the id-0 to-be-added test words would make an invalid triple that cannot be confirmed
+        // the add form posts the phrase ids of the from and to phrases; only reserved test words are
+        // used so the workflow never changes seeded data (e.g. the usage of the math words): the write
+        // twin creates the two words before the workflows run, so their current db id is resolved by
+        // name, and a read-only run (where the words are not written) falls back to the fixed test id;
+        // two fresh test words have no triple between them in either direction, so the new triple
+        // neither collides with an existing triple nor with its reverse (get_similar rejects a reverse)
         $trp = $this->triple_filled_add_name();
         $t_wrd = new test_words($this->env);
         return [
-            url_var::PHRASE_FROM => $t_wrd->word_pi()->phrase()->id(),
+            url_var::PHRASE_FROM => $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID),
             url_var::VERB => $trp->get_verb_id(),
-            url_var::PHRASE_TO => $t_wrd->word_e()->phrase()->id(),
+            url_var::PHRASE_TO => $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID),
             url_var::NAME => triple_names::SYSTEM_TEST_ADD,
             url_var::DESCRIPTION => triple_names::SYSTEM_TEST_ADD_COM,
             url_var::SHARE => share_types::PUBLIC_ID,
@@ -340,8 +345,10 @@ class test_triples extends test_objects
 
     static function triple_add_ui(): triple_ui
     {
+        // link two reserved test words (with the fixed test ids) so the workflow urls built from this
+        // factory never reference seeded data
         $trp = self::triple_add(
-            test_words::word_static()->phrase(), test_verbs::verb_static(), test_words::word_add()->phrase());
+            test_words::word_add()->phrase(), test_verbs::verb_static(), test_words::word_add_to()->phrase());
         return new triple_ui($trp->api_json());
     }
 

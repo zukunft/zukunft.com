@@ -520,8 +520,9 @@ class word_url_tests extends url_test_base
         // edit: open the word edit view
         $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
 
-        // user is doing invalid changes
-        $url_arr = $url_arr + $invalid;
+         // user is doing invalid changes; the invalid values must win over the factory url values,
+        // so the union starts with them (the array union operator keeps the keys of the first array)
+        $url_arr = $invalid + $url_arr;
 
         // save: press save with the empty name; the confirm view is not shown, the edit view is rendered
         // again with the warning and the phrase type '8' baseline kept at the original db value
@@ -529,48 +530,59 @@ class word_url_tests extends url_test_base
 
         // the empty name is reported as a warning instead of confirming the change
         $test_name = $this->step_path . workflows::NAME_SEP . 'keeps_pre';
-        // TODO Prio 0 activate
-        //$this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::NAME_EMPTY));
+        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::NAME_EMPTY));
         // the original phrase type '8' baseline is preserved for the next compare, not reset to the change
-        // TODO Prio 0 activate
-        //$this->t->assert_text_contains($test_name, $html, 'name="' . url_var::PRE . url_var::PHRASE_TYPE . '" value="' . $type_old . '"');
+        $this->t->assert_text_contains($test_name, $html, 'name="' . url_var::PRE . url_var::PHRASE_TYPE . '" value="' . $type_old . '"');
     }
 
     /**
      * run the del_word_fail workflow and snapshot the html after every user action
      *
-     * the negative twin of del_word_workflow: confirming the deletion of a word that is still used by a
-     * value, formula or triple does not show the confirm delete view but re-renders the delete form with
-     * the in-use warning and writes nothing, so this workflow only runs read-only and has no write twin.
-     * snapshots go into src/test/resources/web/html/workflow/del_word_fail_wf<nbr>/ (docs/llm/testing.md)
+     * the negative twin of del_word_workflow: confirming the deletion of a word that is still in use
+     * (the frontend reads the usage posted with the url) does not show the confirm delete view but
+     * re-renders the delete form with the in-use warning and writes nothing, so this workflow only runs
+     * read-only and has no write twin. it runs on the reserved test word with a forced usage, so seeded
+     * data is never touched. snapshots go into
+     * src/test/resources/web/html/workflow/del_word_fail_wf<nbr>/ (docs/llm/testing.md)
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 10 for wf10
      * @param bool $do_it false to only render the steps (a blocked delete never writes)
      */
     protected function del_word_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        // the workflow runs on the seeded 'mathematics' word which is still used by the 'mathematical
-        // constant' triple; resolve its database id by name and set the fixed snapshot id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD_FAIL, word_names::MATH_ID, $do_it);
+        // the workflow runs on the reserved 'System Test Word' (created earlier in this test run) so a
+        // blocked delete can never touch seeded data; resolve its database id by name and set the fixed
+        // snapshot id
+        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD_FAIL, word_names::TEST_ADD_ID, $do_it);
 
-        // TODO Prio 0 remove workaround
+        // set the real and the fixed object id and load the related objects so the usage shows
+        // that the word is still in use
         $wrd = new word($this->t->usr1);
-        $this->wf_id = $wrd->load_by_name(word_names::MATH);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        // in a read-only run without the earlier test the word may be missing, so use the fixed id
+        if ($this->wf_id == 0) {
+            $this->wf_id = word_names::TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
         // TODO Prio 1 use load_related ? (without by_id?)
         $wrd->load_by_id_with_related($wrd->id());
-        // TODO Prio 0 remove workaround until load related loads really all related
-        $url_arr[url_var::USAGE] = 1;
         $wrd_ui = new word_ui($wrd->api_json());
-        $this->wf_fixed_id = word_names::MATH_ID;
+        // the api json does not yet carry the usage, and the test word is not really linked, so force
+        // the usage that blocks the deletion (the frontend check reads the usage posted with the url)
+        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        $wrd_ui->usage = $wrd->usage;
+        if ($wrd_ui->usage == 0) {
+            $wrd_ui->usage = 1;
+        }
 
-        // initial url with the added word
-        $url_arr = test_words::word_add_url();
+        // initial url with the in-use word
+        $url_arr = $wrd_ui->to_url_array();
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
         // add the previous page to the url
         $url_arr[url_var::BACK . url_var::MASK] = views::WORD_ID;
-        $url_arr[url_var::BACK . url_var::ID] = word_names::MATH_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
 
         // show: display the in-use word in its default word view
         $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
@@ -587,8 +599,7 @@ class word_url_tests extends url_test_base
 
         // the still-in-use word is reported as a warning instead of confirming the deletion
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_in_use';
-        // TODO Prio 0 activate
-        //$this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::DELETE_IN_USE));
+        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::DELETE_IN_USE));
     }
 
     /**

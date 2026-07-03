@@ -1,7 +1,7 @@
 GET
-http://localhost/http/view.php?id=998&k=System+Test+Triple&o=&pf=1&b=1&pt=999&uu=0&ui=0&8id=998&8k=System+Test+Triple&8o=&8pf=1&8b=1&8pt=999&8uu=0&8ui=0&9m=92&9id=998&m=92&z=0
-/http/view.php?id=998&k=System+Test+Triple&o=&pf=1&b=1&pt=999&uu=0&ui=0&8id=998&8k=System+Test+Triple&8o=&8pf=1&8b=1&8pt=999&8uu=0&8ui=0&9m=92&9id=998&m=92&z=0
-/http/view.php?id=998&name=System+Test+Triple&from_id=1&verb_id=1&to_id=999&usage=0&impact=0&8id=998&8name=System+Test+Triple&8from_id=1&8verb_id=1&8to_id=999&8usage=0&8impact=0&9mask_id=triple_default&9id=998&mask_id=triple_default&step=no&
+http://localhost/http/view.php?id=998&k=System+Test+Triple&o=&pf=999&b=1&pt=997&uu=0&ui=0&8id=998&8k=System+Test+Triple&8o=&8pf=999&8b=1&8pt=997&8uu=0&8ui=0&9m=92&9id=998&m=92&z=0
+/http/view.php?id=998&k=System+Test+Triple&o=&pf=999&b=1&pt=997&uu=0&ui=0&8id=998&8k=System+Test+Triple&8o=&8pf=999&8b=1&8pt=997&8uu=0&8ui=0&9m=92&9id=998&m=92&z=0
+/http/view.php?id=998&name=System+Test+Triple&from_id=999&verb_id=1&to_id=997&usage=0&impact=0&8id=998&8name=System+Test+Triple&8from_id=999&8verb_id=1&8to_id=997&8usage=0&8impact=0&9mask_id=triple_default&9id=998&mask_id=triple_default&step=no&
 {
     "id": "998",
     "share": "",
@@ -9,9 +9,9 @@ http://localhost/http/view.php?id=998&k=System+Test+Triple&o=&pf=1&b=1&pt=999&uu
     "name": "System Test Triple",
     "description": "",
     "type": "",
-    "from_id": "1",
+    "from_id": "999",
     "verb_id": "1",
-    "to_id": "999",
+    "to_id": "997",
     "weight": "",
     "plural": "",
     "usage": "0",
@@ -25,9 +25,9 @@ http://localhost/http/view.php?id=998&k=System+Test+Triple&o=&pf=1&b=1&pt=999&uu
         "name": "System Test Triple",
         "description": "",
         "type": "",
-        "from_id": "1",
+        "from_id": "999",
         "verb_id": "1",
-        "to_id": "999",
+        "to_id": "997",
         "weight": "",
         "plural": "",
         "usage": "0",

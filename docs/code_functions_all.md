@@ -5322,12 +5322,14 @@
 \-- change_log_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_list.php
     \-- filter - section for function filter not yet defined that it should be filter in /log/change_log_list.php
+    \-- sort_by_time_and_entry - section for function sort_by_time_and_entry not yet defined that it should be list in /log/change_log_list.php
     \-- head - section for function head not yet defined that it should be list in /log/change_log_list.php
     \-- dsp - section for function dsp not yet defined that it should be list in /log/change_log_list.php
     \-- tbl - section for function tbl not yet defined that it should be table in /log/change_log_list.php
 \-- change_log_named
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_named.php
     \-- tr - section for function tr not yet defined that it should be table in /log/change_log_named.php
+    \-- entry - section for function entry not yet defined that it should be helpers in /log/change_log_named.php
 \-- log
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/log.php
     \-- time - section for function time not yet defined that it should be set and get in /log/log.php
@@ -7544,7 +7546,11 @@
 \-- helpers
     \-- th
         \-- change_log_link - @return string with the html table header to show the link changes
+    \-- entry
+        \-- change_log_named - the human-readable text of this change without the change time, also used to sort changes
 \-- list
+    \-- sort_by_time_and_entry
+        \-- change_log_list - sort this change list in place so that the newest change is first; changes with the same
     \-- head
         \-- change_log_list - the first $limit changes of this list, used to show only the configured number of change rows
     \-- dsp

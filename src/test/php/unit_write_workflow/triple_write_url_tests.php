@@ -40,15 +40,19 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
-include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
+include_once test_paths::CREATE . 'test_db_load.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\unit_workflow\triple_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -66,10 +70,16 @@ class triple_write_url_tests extends triple_url_tests
         // description, which would fail the 'has written the triple' check
         $this->cleanup_test_triples($t);
 
+        // create the from and to test words of the workflow test triple so the confirmed add can link
+        // them; only test words are used so the workflows never change seeded data (e.g. the usage of
+        // the math words)
+        $t_db = new test_db_load($t);
+        $t_db->test_word(word_names::TEST_ADD);
+        $t_db->test_word(word_names::TEST_ADD_TO);
+
         // run the same three workflows as triple_url_tests but with do_it true so each confirmed step is
-        // persisted: add creates the test triple, del removes it again - the add must run first because
-        // the delete workflow loads the triple it created by name; the change workflow runs on the seeded
-        // 'mathematical constant' triple and only writes a usr1 user sandbox overlay on top of its base
+        // persisted: add creates the test triple, change modifies it and del removes it again - the add
+        // must run first because the change and delete workflows load the triple it created by name
         $this->add_triple_workflow(workflows::WF_ADD_TRIPLE_NBR, true);
         $this->change_triple_workflow(workflows::WF_CHANGE_TRIPLE_NBR, true);
         $this->del_triple_workflow(workflows::WF_DEL_TRIPLE_NBR, true);
@@ -84,8 +94,9 @@ class triple_write_url_tests extends triple_url_tests
 
     /**
      * TODO Prio 2 review
-     * delete the workflow test triples (and their user sandbox rows) from the database so a run is not
-     * affected by leftovers of a previous run
+     * delete the workflow test triples and their from and to test words (including the user sandbox
+     * rows) from the database so a run is not affected by leftovers of a previous run; the triples are
+     * removed first so the words are no longer linked when they are deleted
      *
      * @param test_cleanup $t the test environment
      */
@@ -99,15 +110,10 @@ class triple_write_url_tests extends triple_url_tests
             $t->write_named_cleanup($trp, $trp_name);
             $t->write_named_cleanup_one($trp, $t->usr_system, $trp_name);
         }
-        // the change workflow writes a usr1 sandbox overlay on the seeded 'mathematical constant'
-        // triple; remove only that overlay so the seeded triple shows its original description again.
-        // never use write_named_cleanup / del() here: on a seeded object that is still used del() does
-        // not remove the base row but writes a usr1 exclusion overlay, which silently hides the seeded
-        // triple for usr1 in all following tests
-        $trp->set_user($t->usr1);
-        $trp->load_by_name(triple_names::MATH_CONST);
-        if ($trp->has_usr_cfg()) {
-            $trp->del_usr_cfg(new user_message($t->usr1));
+        $wrd = new word($t->usr1);
+        foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
+            $t->write_named_cleanup($wrd, $wrd_name);
+            $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);
         }
     }
 

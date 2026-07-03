@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            System Test Word - Confirm delete - zukunft.com
+            System Test Word - Delete word - zukunft.com
         </title>
         <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=56&9id=1&9k=System%20Test%20Word&98id=1&98k=System%20Test%20Word&99m=90&99id=1&9m=56&9z=2">
+                                    <a href="/http/view.php?m=31&id=4&9id=999&9k=System%20Test%20Word&9uu=1&98id=999&98k=System%20Test%20Word&98uu=1&99m=90&99id=999&9m=4&9z=1">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9id=1&9k=System%20Test%20Word&98id=1&98k=System%20Test%20Word&99m=90&99id=1&9m=56&9z=2">
+                                    <a href="/http/view.php?m=30&9id=999&9k=System%20Test%20Word&9uu=1&98id=999&98k=System%20Test%20Word&98uu=1&99m=90&99id=999&9m=4&9z=1">
                                         add view
                                     </a>
                                 </li>
@@ -63,37 +63,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=en">
+                                    <a href="/http/view.php?m=4&q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=en_us">
+                                    <a href="/http/view.php?m=4&q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=de" title="German">
+                                    <a href="/http/view.php?m=4&q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=fr" title="French">
+                                    <a href="/http/view.php?m=4&q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=es" title="Spanish">
+                                    <a href="/http/view.php?m=4&q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=4&q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=56&q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=4&q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -114,12 +114,12 @@
                                     system test zukunft.com system test
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=64&9id=1&9k=System%20Test%20Word&98id=1&98k=System%20Test%20Word&99m=90&99id=1&9m=56&9z=2">
+                                    <a href="/http/view.php?m=64&9id=999&9k=System%20Test%20Word&9uu=1&98id=999&98k=System%20Test%20Word&98uu=1&99m=90&99id=999&9m=4&9z=1">
                                         logout
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9id=1&9k=System%20Test%20Word&98id=1&98k=System%20Test%20Word&99m=90&99id=1&9m=56&9z=2">
+                                    <a href="/settings?9id=999&9k=System%20Test%20Word&9uu=1&98id=999&98k=System%20Test%20Word&98uu=1&99m=90&99id=999&9m=4&9z=1">
                                         Settings
                                     </a>
                                 </li>
@@ -130,28 +130,57 @@
             </div>
         </nav>
         <main class="main-container">
-            <div class="heading-line">
-                <h4 class="heading-inline">
-                    delete word
-                </h4>
-            </div>
-            <form action="/http/view.php" id="confirm_delete">
-                <input class="form-control" type="hidden" name="m" id="mask" value="56">
-                <input class="form-control" type="hidden" name="id" id="id" value="1">
+            <h4>
+                Delete word
+            </h4>
+            <form action="/http/view.php" id="word_del">
+                <input class="form-control" type="hidden" name="m" id="mask" value="4">
+                <input class="form-control" type="hidden" name="id" id="id" value="999">
                 <input type="hidden" name="9m" value="90">
-                <input type="hidden" name="9id" value="1">
-                <input class="form-control" type="hidden" name="z" id="confirm" value="2">
+                <input type="hidden" name="9id" value="999">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    System Test Word
+                </div>
                 <br>
-                <div class="row col-md-12 justify-content-center">
-                    <a href="/http/view.php?m=90&id=1" class="btn btn-space col-1 btn-outline-secondary">
+                <div class="row col-md-12 justify-content-end">
+                    <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
-                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
-                        confirm
+                    <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
+                        delete
                     </button>
                 </div>
             </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Used 1 times
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Values
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        References
+                    </h5>
+                    System Test Word is ranked by time of discovery
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Changes
+                    </h5>
+                </div>
+            </div>
         </main>
+        <div class="alert alert-warning notification-bar">
+            the word &quot;System Test Word&quot; cannot be deleted because it is still in use
+        </div>
         <footer class="site-footer">
             <p>
                 <a href="/http/about.php">

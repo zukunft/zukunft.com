@@ -1,18 +1,20 @@
 GET
-http://localhost/http/view.php?id=1&k=System+Test+Word&8id=1&8k=System+Test+Word&9m=90&9id=1&m=4&z=1&submit=
-/http/view.php?id=1&k=System+Test+Word&8id=1&8k=System+Test+Word&9m=90&9id=1&m=4&z=1&submit=
-/http/view.php?id=1&name=System+Test+Word&8id=1&8name=System+Test+Word&9mask_id=word_default&9id=1&mask_id=word_del&step=confirm&
+http://localhost/http/view.php?id=999&k=System+Test+Word&uu=1&8id=999&8k=System+Test+Word&8uu=1&9m=90&9id=999&m=4&z=1&submit=
+/http/view.php?id=999&k=System+Test+Word&uu=1&8id=999&8k=System+Test+Word&8uu=1&9m=90&9id=999&m=4&z=1&submit=
+/http/view.php?id=999&name=System+Test+Word&usage=1&8id=999&8name=System+Test+Word&8usage=1&9mask_id=word_default&9id=999&mask_id=word_del&step=confirm&
 {
-    "id": "1",
+    "id": "999",
     "name": "System Test Word",
+    "usage": "1",
     "mask_id": "word_del",
     "step": "confirm",
     "url_part_original_data": {
-        "id": "1",
-        "name": "System Test Word"
+        "id": "999",
+        "name": "System Test Word",
+        "usage": "1"
     },
     "url_part_back": {
         "mask_id": "word_default",
-        "id": "1"
+        "id": "999"
     }
 }

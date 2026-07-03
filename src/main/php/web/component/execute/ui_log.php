@@ -87,6 +87,9 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
+        // newest change first; same-time changes are sorted descending by the entry text so the
+        // display order never depends on the api/db row order (see docs/llm/frontend.md)
+        $log_lst->sort_by_time_and_entry();
         // the number of change rows to show comes from the frontend config (like the values list)
         global $ui_sys;
         $limit = def::FALLBACK_DB_PAGE_ROWS;

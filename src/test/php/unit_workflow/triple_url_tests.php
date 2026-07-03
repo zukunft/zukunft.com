@@ -40,7 +40,9 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_WORD . 'triple.php';
 include_once test_paths::CREATE . 'test_triples.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 
@@ -52,8 +54,10 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_url_tests extends url_test_base
@@ -69,6 +73,22 @@ class triple_url_tests extends url_test_base
         $this->change_triple_workflow(workflows::WF_CHANGE_TRIPLE_NBR);
         //$this->change_triple_by_name_workflow(workflows::WF_CHANGE_TRIPLE_BY_NAME_NBR);
         $this->del_triple_workflow(workflows::WF_DEL_TRIPLE_NBR);
+    }
+
+    /**
+     * set the additional snapshot id normalization for the from and to test words of the test triple,
+     * so a write run snapshot shows the fixed test ids instead of the dynamically assigned word ids
+     * (in a read-only run the words are not in the db and the urls already carry the fixed ids)
+     */
+    private function set_word_norm_ids(): void
+    {
+        $t_wrd = new test_words($this->t);
+        $this->wf_norm_ids = [
+            $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID)
+            => word_names::TEST_ADD_ID,
+            $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID)
+            => word_names::TEST_ADD_TO_ID,
+        ];
     }
 
     /**
@@ -122,6 +142,7 @@ class triple_url_tests extends url_test_base
     {
         // the add_triple workflow creates a new triple, so there is no object id to load yet
         $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
 
         // initial url with an empty triple
         $url_arr = test_triples::triple_new_url();
@@ -187,11 +208,11 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_by_name_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        // the workflow runs on the seeded 'mathematical constant' triple; resolve its db id by name and
+        // the workflow runs on the reserved 'System Test Triple'; resolve its db id by name and
         // set the fixed snapshot id so the snapshot does not depend on the assigned id
         $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::MATH_CONST);
-        $this->wf_fixed_id = triple_names::MATH_CONST_ID;
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
         $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, $do_it);
 
         // the pending change posts the from and to phrases as names (as the datalist fields do) and an
@@ -225,6 +246,7 @@ class triple_url_tests extends url_test_base
     protected function change_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
         $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
@@ -333,6 +355,7 @@ class triple_url_tests extends url_test_base
         // the del_triple workflow runs on the reserved 'System Test Triple'; resolve its current db id
         // by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
         $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
 
         // initial url with the added triple
         $url_arr = test_triples::triple_add_url();

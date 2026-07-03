@@ -66,6 +66,7 @@ class url_test_base
     protected user_request $req;     // the bundled request context for the workflow steps
     protected int $wf_id;            // the dynamic db id of the object the workflow runs on
     protected int $wf_fixed_id;      // the fixed snapshot id that replaces the dynamic id
+    protected array $wf_norm_ids = []; // more volatile db ids replaced in the snapshots by their fixed test id (real id => fixed id) e.g. the from and to words of the test triple
     protected string $step_path;     // the snapshot file path grown by the cumulative spine steps
     protected string $http_method;   // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
     protected string $url;           // the last call url of the workflow
@@ -117,6 +118,8 @@ class url_test_base
         $wf = workflows::WF_PREFIX . $wf_nbr;
         $this->t->subheader($this->ts . $name . ' workflow ' . $wf);
         $this->wf_fixed_id = $fix_id;
+        // each workflow sets its own additional ids to normalize (e.g. the triple from/to words)
+        $this->wf_norm_ids = [];
         // start each workflow with a fresh message buffer so a warning from a previous workflow
         // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
         $this->usr_msg = new user_message();
@@ -251,19 +254,32 @@ class url_test_base
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
         $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
-        // replace the dynamically assigned object id with the fixed test id so the file is stable, both
-        // in the url ('=999') and in the json ('"999"')
-        if (array_key_exists(url_var::ID, $url_arr)) {
-            $id = $url_arr[url_var::ID];
-            if ($id > 0) {
+        $content = $this->normalize_ids($content, $url_arr[url_var::ID] ?? 0);
+        $this->t->assert_file($test_name . '_url', $content,
+            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
+    }
+
+    /**
+     * replace the volatile db ids with the fixed test ids so the snapshot file is stable: the prime
+     * object id of the workflow and the additional ids of the related objects (e.g. the from and to
+     * words of the test triple), each both in the url form ('=999') and in the json form ('"999"')
+     *
+     * @param string $content the url lines or the html of a workflow step
+     * @param int $id the current db id of the prime object of the workflow (0 if not known)
+     * @return string the content with the volatile ids replaced by the fixed test ids
+     */
+    private function normalize_ids(string $content, int $id): string
+    {
+        $norm_ids = [$id => $this->wf_fixed_id] + $this->wf_norm_ids;
+        foreach ($norm_ids as $db_id => $fixed_id) {
+            if ($db_id > 0 and $db_id != $fixed_id) {
                 $content = str_replace(
-                    [url_var::EQ . $id, '"' . $id . '"'],
-                    [url_var::EQ . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
+                    [url_var::EQ . $db_id, '"' . $db_id . '"'],
+                    [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
                     $content);
             }
         }
-        $this->t->assert_file($test_name . '_url', $content,
-            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
+        return $content;
     }
 
     /**
@@ -301,14 +317,7 @@ class url_test_base
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
         $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
-        // replace the dynamically assigned object id with the fixed test id so the file is stable, both
-        // in the url ('=999') and in the json ('"999"')
-        if ($this->wf_id > 0) {
-            $content = str_replace(
-                [url_var::EQ . $this->wf_id, '"' . $this->wf_id . '"'],
-                [url_var::EQ . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-                $content);
-        }
+        $content = $this->normalize_ids($content, $this->wf_id);
         $this->t->assert_file($test_name . '_url', $content,
             test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
     }
@@ -345,12 +354,7 @@ class url_test_base
     {
         // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id;
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
-        if ($this->wf_id > 0) {
-            $html = str_replace(
-                ['=' . $this->wf_id, '"' . $this->wf_id . '"'],
-                ['=' . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-                $html);
-        }
+        $html = $this->normalize_ids($html, $this->wf_id);
         // the change history of the test object shows the real change time and change user, both of
         // which vary per run; replace each change log line (date time + user + action) with a fixed
         // text - this covers the default view (in a container div) and the edit view (a bare line)
@@ -384,15 +388,7 @@ class url_test_base
     {
         // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id;
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
-        if (array_key_exists(url_var::ID, $url_arr)) {
-            $id = $url_arr[url_var::ID];
-            if ($id > 0) {
-                $html = str_replace(
-                    ['=' . $id, '"' . $id . '"'],
-                    ['=' . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-                    $html);
-            }
-        }
+        $html = $this->normalize_ids($html, $url_arr[url_var::ID] ?? 0);
         // the change history of the test object shows the real change time and change user, both of
         // which vary per run; replace each change log line (date time + user + action) with a fixed
         // text - this covers the default view (in a container div) and the edit view (a bare line)

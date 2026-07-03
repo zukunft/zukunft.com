@@ -208,6 +208,35 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word the second reserved test word used e.g. as the to phrase of the test triple
+     */
+    static function word_add_to(): word
+    {
+        $wrd = new word(test_users::user_sys_test());
+        $wrd->id = word_names::TEST_ADD_TO_ID;
+        $wrd->set_name(word_names::TEST_ADD_TO);
+        return $wrd;
+    }
+
+    /**
+     * the current database id of a reserved test word, or the fixed snapshot id if the word is not
+     * (yet) in the database e.g. in a read-only workflow run where nothing is written
+     *
+     * @param string $name the reserved name of the test word
+     * @param int $fixed_id the fixed test id used in the snapshot files
+     * @return int the database id of the test word or the fixed test id
+     */
+    function word_id_or_fixed(string $name, int $fixed_id): int
+    {
+        $wrd = new word($this->env->usr1);
+        $id = $wrd->load_by_name($name);
+        if ($id == 0) {
+            $id = $fixed_id;
+        }
+        return $id;
+    }
+
     static function word_add_ui(): word_ui
     {
         $wrd = self::word_add();
