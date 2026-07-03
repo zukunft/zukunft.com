@@ -200,7 +200,7 @@ class test_verbs extends test_objects
     /**
      * @return verb a standard verb with user null
      */
-    function verb_part(): verb
+    static function verb_part(): verb
     {
         return new verb(verbs::PART_ID, verbs::PART_NAME, verbs::PART_NAME);
     }

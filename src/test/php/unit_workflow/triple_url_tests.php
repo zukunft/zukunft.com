@@ -163,8 +163,9 @@ class triple_url_tests extends url_test_base
         // edit: re-open the add form to enter the new triple
         $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
 
-        // user is typing the new word description
-        $url_arr[url_var::NAME] = triple_names::SYSTEM_TEST_ADD;
+        // user is entering the new triple: the from and to phrases, the name and the description
+        // (a triple without a from and a to phrase would be blocked, see add_triple_fail_workflow)
+        $url_arr = $add + $url_arr;
 
         // save: press save on the add form which shows the confirm add view
         $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
@@ -175,23 +176,24 @@ class triple_url_tests extends url_test_base
         // edit: re-open the add form to redo the new triple
         $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
 
-        // user is typing the new word description
-        $url_arr[url_var::NAME] = triple_names::SYSTEM_TEST_ADD;
+        // user is entering the new triple again
+        $url_arr = $add + $url_arr;
 
         // save: press save again which shows the confirm add view
         $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
 
-        // add_confirmed: confirm the new triple so it would be added (do_it false here, so nothing is
-        // written); the confirm form carries the '9'-prefixed back target = the triple view (no id yet)
-        // TODO Prio 0 activate
-        //$this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_ADD_ID);
+        // confirmed: confirm the new triple so it is actually added (with do_it true); the confirm form
+        // posts the confirm add mask and the back mask carries the object type (like the url that
+        // url_to_action builds on save)
+        $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_ADD_ID);
 
         // a write run must actually create the triple, so check it is now in the database; the reserved
         // 'System Test Triple' is added as the system base, so read it as the system user (a stale usr1
         // sandbox overlay from a previous run must not mask the freshly written base value)
         if ($do_it) {
-            // TODO Prio 0 activate
-            //$this->assert_triple_in_db('add_triple workflow has written the triple', triple_names::SYSTEM_TEST_ADD, $this->t->usr_system, triple_names::SYSTEM_TEST_ADD_COM);
+            $this->assert_triple_in_db('add_triple workflow has written the triple',
+                triple_names::SYSTEM_TEST_ADD, $this->t->usr_system, triple_names::SYSTEM_TEST_ADD_COM);
         }
     }
 
@@ -315,8 +317,8 @@ class triple_url_tests extends url_test_base
         // a write run must actually persist the change, so check the new description in the database;
         // the change is a usr1 user sandbox overlay on top of the system base, so read it as usr1
         if ($do_it) {
-            // TODO Prio 0 activate
-            //$this->assert_triple_in_db('change_triple workflow has changed the triple', triple_names::SYSTEM_TEST_ADD, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_COM);
+            $this->assert_triple_in_db('change_triple workflow has changed the triple',
+                triple_names::SYSTEM_TEST_ADD, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_COM);
         }
 
         // the second round fills every still-missing field of the triple (the weight and phrase type)
@@ -330,15 +332,18 @@ class triple_url_tests extends url_test_base
         // fill: press save on the edit form with every field filled which shows the confirm change view
         $this->assert_step(workflows::FILL, $url_arr, views::TRIPLE_EDIT_ID);
 
-        // confirmed: confirm the filled change (do_it false here, so nothing is actually written)
-        // TODO Prio 0 activate
+        // confirmed: confirm the filled change so it is also written to the database (with do_it true)
+        // TODO Prio 0 activate: the confirmed fill write loses the verb of the test triple even though
+        //      the url carries the verb (b=3), so the web triple logs 'verb missing' (get_verb) and the
+        //      weight is not persisted; fix the verb handling in the frontend to backend save chain first
         //$this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
 
         // a write run must persist the filled fields, so check a previously empty field (the weight) is
         // now set in the database; the change is a usr1 user sandbox overlay, so read it as usr1
         if ($do_it) {
-            // TODO Prio 0 activate
-            //$this->assert_triple_filled_in_db('change_triple workflow has filled the triple', triple_names::SYSTEM_TEST_ADD, $this->t->usr1);
+            // TODO Prio 0 activate together with the confirmed fill step above
+            //$this->assert_triple_filled_in_db('change_triple workflow has filled the triple',
+            //    triple_names::SYSTEM_TEST_ADD, $this->t->usr1);
         }
     }
 
@@ -357,23 +362,25 @@ class triple_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
-        // initial url with the added triple
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $trp = new triple($this->t->usr1);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the triple, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added triple; the url carries the current db id of the triple so the
+        // confirmed delete targets the real row (the snapshot files normalize the id back to the fixed
+        // test id)
         $url_arr = test_triples::triple_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
         // add the previous page to the url
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
-
-        /*
-        $msg = new user_message();
-        $trp = new triple($this->t->usr1);
-        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
-        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
-        $trp->reload_objects($msg);
-        $trp_ui = new triple_ui($trp->api_json());
-        $url_arr = $trp_ui->to_url_array();
-        */
 
         // show: display the test triple in its default triple view
         $this->assert_step(workflows::SHOW, $url_arr, views::TRIPLE_ID);
@@ -403,6 +410,8 @@ class triple_url_tests extends url_test_base
         // $do_it true); the confirm mask does not encode the object type, so carry the '9'-prefixed back
         // target = the triple view + id (as the real confirm form does), otherwise dbo_for_url falls back
         // to the default word object and the delete would target a word instead of this triple
+        $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
         $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_DEL_ID);
 
         // a write run must actually delete the triple; a non-owner delete is a soft delete, so check the

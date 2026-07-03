@@ -249,7 +249,7 @@ class test_triples extends test_objects
     /**
      * url array of the main test triple with the description updated
      *
-     * @param int $id the database id of the changed triple, used as the back target
+     * @param int $id the database id of the changed triple, used as the '9'-prefixed back target id
      * @return array the edit form url parameters of the pending change
      */
     function change_description_url_array(int $id): array
@@ -259,7 +259,9 @@ class test_triples extends test_objects
         $trp = $this->triple_filled_add_name();
         $trp->description = 'a confirm change test description';
         $url_arr = test_mappers::object_to_url_array($trp, $msg);
-        $url_arr[url_var::BACK] = $id;
+        // back navigation is always a '9'-prefixed url var, never a standalone back field
+        // (see docs/llm/state-and-messages.md), otherwise the url mapper reports the key as missing
+        $url_arr[url_var::BACK . url_var::ID] = $id;
         return $url_arr;
     }
 
@@ -346,9 +348,10 @@ class test_triples extends test_objects
     static function triple_add_ui(): triple_ui
     {
         // link two reserved test words (with the fixed test ids) so the workflow urls built from this
-        // factory never reference seeded data
+        // factory never reference seeded data; use the same real verb as add_url_array, because a
+        // change posted with the 'not set' verb would erase the verb of the created test triple
         $trp = self::triple_add(
-            test_words::word_add()->phrase(), test_verbs::verb_static(), test_words::word_add_to()->phrase());
+            test_words::word_add()->phrase(), test_verbs::verb_part(), test_words::word_add_to()->phrase());
         return new triple_ui($trp->api_json());
     }
 
