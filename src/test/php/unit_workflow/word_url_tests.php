@@ -377,19 +377,26 @@ class word_url_tests extends url_test_base
         // resolve its current database id by name and set the fixed snapshot id of the test word
         $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD, word_names::TEST_ADD_ID, $do_it);
 
-        // initial url with the added word
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $wrd = new word($this->t->usr1);
+        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
+        // in a read-only run the add workflow has not written the word, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = word_names::TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+
+        // initial url with the added word; the url carries the current db id of the word so the
+        // rendered buttons and the confirmed write target the real row (the snapshot files normalize
+        // the id back to the fixed test id)
         $url_arr = test_words::word_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
         // add the previous page to the url
         $url_arr[url_var::BACK . url_var::MASK] = views::WORD_ID;
-        $url_arr[url_var::BACK . url_var::ID] = word_names::TEST_ADD_ID;
-
-        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
-        $wrd = new word($this->t->usr1);
-        $this->wf_id = $wrd->load_by_name(word_names::TEST_ADD);
-        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
 
         // show: display the test word in its default word view
         $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
@@ -398,8 +405,7 @@ class word_url_tests extends url_test_base
         $html = $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
 
         // the next back step presses this edit view's cancel button, so it must point to the word view
-        // TODO Prio 0 activate
-        //$this->assert_button_url($html, views::WORD_ID, $this->step_path);
+        $this->assert_button_url($html, views::WORD_ID, $this->step_path);
 
         // back: leave the edit view without a change and return to the word view (no write)
         $this->assert_step(workflows::BACK, $url_arr, views::WORD_ID);
@@ -414,8 +420,7 @@ class word_url_tests extends url_test_base
         $html = $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
 
         // the next cancel step presses this confirm view's cancel button, so it must point to the word view
-        // TODO Prio 0 activate
-        //$this->assert_button_url($html, views::WORD_ID, $this->step_path);
+        $this->assert_button_url($html, views::WORD_ID, $this->step_path);
 
         // TODO Prio 1 undo of the user typing should be done by the process not the test
         $url_arr[url_var::DESCRIPTION] = '';

@@ -226,19 +226,26 @@ class triple_url_tests extends url_test_base
     {
         $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
 
-        // initial url with the added triple
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $trp = new triple($this->t->usr1);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the triple, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added triple; the url carries the current db id of the triple so the
+        // rendered buttons and the confirmed write target the real row (the snapshot files normalize
+        // the id back to the fixed test id)
         $url_arr = test_triples::triple_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
         // add the previous page to the url
         $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
-        $url_arr[url_var::BACK . url_var::ID] = triple_names::SYSTEM_TEST_ADD_ID;
-
-        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
-        $wrd = new triple($this->t->usr1);
-        $this->wf_id = $wrd->load_by_name(triple_names::SYSTEM_TEST_ADD);
-        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
 
         // show: display the test triple in its default triple view
         $this->assert_step(workflows::SHOW, $url_arr, views::TRIPLE_ID);
@@ -247,8 +254,7 @@ class triple_url_tests extends url_test_base
         $html = $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_EDIT_ID);
 
         // the next back step presses this edit view's cancel button, so it must point to the triple view
-        // TODO Prio 0 activate
-        //$this->assert_button_url($html, views::TRIPLE_ID, $this->step_path);
+        $this->assert_button_url($html, views::TRIPLE_ID, $this->step_path);
 
         // back: leave the edit view without a change and return to the triple view (no write)
         $this->assert_step(workflows::BACK, $url_arr, views::TRIPLE_ID);
@@ -263,8 +269,7 @@ class triple_url_tests extends url_test_base
         $html = $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_EDIT_ID);
 
         // the next cancel step presses this confirm view's cancel button, so it must point to the triple view
-        // TODO Prio 0 activate
-        //$this->assert_button_url($html, views::TRIPLE_ID, $this->step_path);
+        $this->assert_button_url($html, views::TRIPLE_ID, $this->step_path);
 
         // TODO Prio 1 undo of the user typing should be done by the process not the test
         $url_arr[url_var::DESCRIPTION] = '';
