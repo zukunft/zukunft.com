@@ -80,9 +80,11 @@ class ref_type_list extends type_list
     }
 
     /**
-     * TODO Prio 1 should a null $id not create an error message
-     * @param int|null $id
-     * @return string
+     * a null id means the reference type is not (yet) set, e.g. for a new reference of an add
+     * form, which is a normal case without a type url and therefore not reported as an error;
+     * an unknown positive id is logged by type_list::get
+     * @param int|null $id the database id of the reference type or null if the type is not set
+     * @return string the url of the reference type or an empty string if the type is not set
      */
     function url(?int $id): string
     {

@@ -198,7 +198,7 @@ class triple extends sandbox_code_id
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
                 if ($url_array[url_var::PHRASE_FROM] != null) {
-                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto);
+                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $usr_msg);
                 }
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
@@ -206,11 +206,16 @@ class triple extends sandbox_code_id
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
                 if ($url_array[url_var::PHRASE_TO] != null) {
-                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto);
+                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $usr_msg);
                 }
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
-                $this->weight = $url_array[url_var::WEIGHT];
+                // an edit form without a weight entry posts an empty string, which is no weight
+                if (is_numeric($url_array[url_var::WEIGHT])) {
+                    $this->weight = $url_array[url_var::WEIGHT];
+                } else {
+                    $this->weight = null;
+                }
             }
             // TODO Prio 2 use the languages forms
             if (array_key_exists(url_var::PLURAL, $url_array)) {
@@ -250,7 +255,9 @@ class triple extends sandbox_code_id
         if ($action != url_var::CRUD_DELETE) {
             $from = $this->get_from();
             $to = $this->get_to();
-            if (($from == null or $from->id() == 0) and ($to == null or $to->id() == 0)) {
+            // a triple needs both linked phrases, so the save is also rejected if only one side is
+            // missing e.g. because a phrase name posted by the edit form could not be resolved
+            if (($from == null or $from->id() == 0) or ($to == null or $to->id() == 0)) {
                 $usr_msg->add_warning_with_vars(msg_id::TRIPLE_PHRASES_MISSING, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                 ]);
@@ -506,9 +513,13 @@ class triple extends sandbox_code_id
         $this->from = $from;
     }
 
-    function set_from_by_id(int|string $id, data_object|null $dto = null): void
+    function set_from_by_id(
+        int|string       $id,
+        data_object|null $dto = null,
+        user_message     $usr_msg = new user_message()
+    ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $dto);
+        $this->from = $this->set_phrase_by_id($id, $dto, $usr_msg);
     }
 
     function set_verb(verb $vrb): void
@@ -528,16 +539,46 @@ class triple extends sandbox_code_id
         $this->to = $to;
     }
 
-    function set_to_by_id(int $id, data_object|null $dto = null): void
+    function set_to_by_id(
+        int|string       $id,
+        data_object|null $dto = null,
+        user_message     $usr_msg = new user_message()
+    ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $dto);
+        $this->to = $this->set_phrase_by_id($id, $dto, $usr_msg);
     }
 
-    private function set_phrase_by_id(int|string $id, data_object|null $dto): phrase|null
+    /**
+     * the phrase of a value posted by the edit form: a numeric value is the phrase id (negative
+     * for a triple); the datalist edit fields submit the shown phrase name instead of the id, so
+     * a non-numeric value is resolved as the phrase name via the request cache or the backend
+     *
+     * @param int|string $id the phrase id or the phrase name posted by the edit form
+     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
+     * @param user_message $usr_msg to report a phrase name that the user needs to correct
+     * @return phrase|null the resolved phrase or null if the name is unknown
+     */
+    private function set_phrase_by_id(
+        int|string       $id,
+        data_object|null $dto,
+        user_message     $usr_msg = new user_message()
+    ): phrase|null
     {
         $phr = null;
         if (!is_numeric($id)) {
-            log_err($id . ' is not a valid phrase id');
+            // resolve the phrase name from the request cache first to avoid a backend call
+            if ($dto != null) {
+                $phr = $dto->phr_lst->get_by_name($id);
+            }
+            if ($phr == null) {
+                $phr_loaded = new phrase();
+                if ($phr_loaded->load_by_name($id)) {
+                    $phr = $phr_loaded;
+                } else {
+                    // an unknown phrase name is a user input that the user can correct
+                    $usr_msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
+                }
+            }
         } else {
             if ($dto != null) {
                 $phr_lst = $dto->phr_lst;

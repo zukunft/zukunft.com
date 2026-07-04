@@ -425,6 +425,9 @@ enum messages: string
     case TRIPLE_PHRASES_MISSING = 'the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' cannot be added without a from and a to phrase';
+    case PHRASE_NAME_NOT_FOUND = 'no word or triple found with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
     case TYPE_CHANGE_NOT_ALLOWED = 'changing the type of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' is not allowed for your user profile';

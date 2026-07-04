@@ -257,8 +257,10 @@ class type_list
     }
 
     /**
-     * TODO Prio 1 check if an empty $id should create an error message
-     * pick a type from the preloaded object list
+     * pick a type from the preloaded object list;
+     * a null or zero id means the type is simply not (yet) set, e.g. in an add form, which is a
+     * normal case and therefore not reported as an error, whereas an unknown positive id points
+     * to an inconsistency between the request and the preloaded type list and is logged below
      * @param int|null $id the database id of the expected type or null if the type is not set
      * @return verb|ref_type|type_object|null the type object or null if the type is not set
      */

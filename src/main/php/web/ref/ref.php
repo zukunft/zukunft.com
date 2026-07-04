@@ -275,13 +275,21 @@ class ref extends sandbox
     }
 
     /**
-     * TODO Prio 1: is it possible that the phrase can be null and if yes should this not create an error message
      * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
      *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
      */
     function phrase(): phrase
     {
-        return $this->phr ?? new phrase();
+        $phr = $this->phr;
+        if ($phr == null) {
+            // only a new reference of an add form has no phrase yet; a stored reference must be
+            // linked to a phrase, so a missing phrase is a data error (like triple::get_verb)
+            if ($this->id() > 0) {
+                log_err('phrase missing for reference ' . $this->dsp_id(), 'ref->phrase');
+            }
+            $phr = new phrase();
+        }
+        return $phr;
     }
 
     private function set_phrase_by_id(int $id): void
