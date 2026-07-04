@@ -1,35 +1,17 @@
 GET
-http://localhost/http/view.php?id=0&k=&o=&b=1&uu=0&ui=0&8id=0&8k=&8o=&8b=1&8uu=0&8ui=0&9m=1&m=9&z=1&submit=
-/http/view.php?id=0&k=&o=&b=1&uu=0&ui=0&8id=0&8k=&8o=&8b=1&8uu=0&8ui=0&9m=1&m=9&z=1&submit=
+http://localhost/http/view.php?id=0&b=1&uu=0&ui=0&8id=0&8b=1&8uu=0&8ui=0&9m=1&m=9&z=1&submit=
+/http/view.php?id=0&b=1&uu=0&ui=0&8id=0&8b=1&8uu=0&8ui=0&9m=1&m=9&z=1&submit=
 /http/view.php?id=0&verb_id=1&usage=0&impact=0&8id=0&8verb_id=1&8usage=0&8impact=0&9mask_id=entry_view&mask_id=triple_add&step=confirm&
 {
     "id": "0",
-    "share": "",
-    "protection": "",
-    "name": "",
-    "description": "",
-    "type": "",
-    "from_id": "",
     "verb_id": "1",
-    "to_id": "",
-    "weight": "",
-    "plural": "",
     "usage": "0",
     "impact": "0",
     "mask_id": "triple_add",
     "step": "confirm",
     "url_part_original_data": {
         "id": "0",
-        "share": "",
-        "protection": "",
-        "name": "",
-        "description": "",
-        "type": "",
-        "from_id": "",
         "verb_id": "1",
-        "to_id": "",
-        "weight": "",
-        "plural": "",
         "usage": "0",
         "impact": "0"
     },

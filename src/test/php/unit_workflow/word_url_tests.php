@@ -523,7 +523,7 @@ class word_url_tests extends url_test_base
         // edit: open the word edit view
         $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
 
-         // user is doing invalid changes; the invalid values must win over the factory url values,
+        // user is doing invalid changes; the invalid values must win over the factory url values,
         // so the union starts with them (the array union operator keeps the keys of the first array)
         $url_arr = $invalid + $url_arr;
 

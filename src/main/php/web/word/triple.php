@@ -473,7 +473,8 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @return array parent url array extended with the type id
+     * @return array parent url array extended with the triple fields, without empty values (like the
+     *               word url array), so that an unset field never masks a posted value in a url union
      */
     function to_url_array(): array
     {
@@ -485,7 +486,7 @@ class triple extends sandbox_code_id
         $url_array[url_var::PLURAL] = $this->plural;
         $url_array[url_var::USAGE] = $this->usage;
         $url_array[url_var::IMPACT] = $this->impact;
-        return $url_array;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
 

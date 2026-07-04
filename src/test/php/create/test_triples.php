@@ -369,6 +369,24 @@ class test_triples extends test_objects
     }
 
     /**
+     * the test triple url with the current db ids of the from and to test words: a write run must post
+     * the real word ids, because the backend cannot load the fixed test ids and would reject the save;
+     * in a read-only run (where the words are not written) the fixed test ids are kept
+     *
+     * @return array the triple url parameters with the resolved from and to phrase ids
+     */
+    function triple_add_url_resolved(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $url_arr = self::triple_add_url();
+        $url_arr[url_var::PHRASE_FROM]
+            = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $url_arr[url_var::PHRASE_TO]
+            = $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
+        return $url_arr;
+    }
+
+    /**
      * @return triple with all fields set and a reserved test name for testing the db write function
      */
     function triple_filled_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple

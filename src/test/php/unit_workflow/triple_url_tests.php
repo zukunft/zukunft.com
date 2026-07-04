@@ -259,10 +259,11 @@ class triple_url_tests extends url_test_base
         }
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
 
-        // initial url with the added triple; the url carries the current db id of the triple so the
-        // rendered buttons and the confirmed write target the real row (the snapshot files normalize
-        // the id back to the fixed test id)
-        $url_arr = test_triples::triple_add_url();
+        // initial url with the added triple; the url carries the current db ids of the triple and of
+        // its from and to words so the confirmed write targets the real rows (the snapshot files
+        // normalize the ids back to the fixed test ids)
+        $t_trp = new test_triples($this->t);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -322,7 +323,6 @@ class triple_url_tests extends url_test_base
         }
 
         // the second round fills every still-missing field of the triple (the weight and phrase type)
-        $t_trp = new test_triples($this->t);
         $fill = $t_trp->fill_url_array($this->wf_id);
         $url_arr = $url_arr + $fill;
 
@@ -333,17 +333,13 @@ class triple_url_tests extends url_test_base
         $this->assert_step(workflows::FILL, $url_arr, views::TRIPLE_EDIT_ID);
 
         // confirmed: confirm the filled change so it is also written to the database (with do_it true)
-        // TODO Prio 0 activate: the confirmed fill write loses the verb of the test triple even though
-        //      the url carries the verb (b=3), so the web triple logs 'verb missing' (get_verb) and the
-        //      weight is not persisted; fix the verb handling in the frontend to backend save chain first
-        //$this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
 
         // a write run must persist the filled fields, so check a previously empty field (the weight) is
         // now set in the database; the change is a usr1 user sandbox overlay, so read it as usr1
         if ($do_it) {
-            // TODO Prio 0 activate together with the confirmed fill step above
-            //$this->assert_triple_filled_in_db('change_triple workflow has filled the triple',
-            //    triple_names::SYSTEM_TEST_ADD, $this->t->usr1);
+            $this->assert_triple_filled_in_db('change_triple workflow has filled the triple',
+                triple_names::SYSTEM_TEST_ADD, $this->t->usr1);
         }
     }
 
@@ -371,10 +367,11 @@ class triple_url_tests extends url_test_base
         }
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
 
-        // initial url with the added triple; the url carries the current db id of the triple so the
-        // confirmed delete targets the real row (the snapshot files normalize the id back to the fixed
-        // test id)
-        $url_arr = test_triples::triple_add_url();
+        // initial url with the added triple; the url carries the current db ids of the triple and of
+        // its from and to words so the confirmed delete targets the real rows (the snapshot files
+        // normalize the ids back to the fixed test ids)
+        $t_trp = new test_triples($this->t);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
