@@ -568,7 +568,8 @@ class system_form extends component
      */
     function show_ref_key(ref|db_object $dbo): string
     {
-        return $dbo->external_key();
+        // a new reference of an add form has no external key yet
+        return $dbo->external_key() ?? '';
     }
 
     /**
@@ -590,7 +591,8 @@ class system_form extends component
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        return $dbo->url();
+        // a new reference of an add form has no url yet
+        return $dbo->url() ?? '';
     }
 
     /**

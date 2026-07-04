@@ -280,6 +280,21 @@ class url_var
     const string DEBUG = 'debug'; // to force the output of debug messages
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
 
+    // the url vars that control the view, the object selection and the render mode of a request
+    // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
+    const array CONTROL_VARS = [
+        self::MASK,
+        self::MASK_POD,
+        self::ID,
+        self::USER,
+        self::STEP,
+        self::ACTION,
+        self::LANGUAGE,
+        self::WORDS,
+        self::POST_SUBMIT,
+        self::DEBUG,
+    ];
+
 
     // the var names for the easy human-readable url (in content related order)
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url

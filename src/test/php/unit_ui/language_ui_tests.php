@@ -37,12 +37,17 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::SYSTEM . 'language.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -67,6 +72,21 @@ class language_ui_tests
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
         $t->html_page_test($test_page, 'language', 'language', $t);
+
+        // the popup form class must also accept a language (e.g. of the language add form),
+        // which is a type object but not a db object
+        $test_name = 'the popup form class of a language form is the language class name';
+        $preview = new ui_preview();
+        $t->assert_true($test_name, $preview->popup_class($src) != '');
+
+        // the popup change table must also accept a language; without an own db field order the
+        // change labels are derived from the url keys
+        $test_name = 'the popup change table of a language form shows the changed name';
+        $chg_html = $preview->popup_changes([
+            url_var::NAME => $src->name,
+            url_var::PRE . url_var::NAME => ''
+        ], $src);
+        $t->assert_text_contains($test_name, $chg_html, $src->name);
     }
 
 }

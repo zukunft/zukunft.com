@@ -246,7 +246,7 @@ class type_list
         return $result;
     }
 
-    function name(int $id): string
+    function name(?int $id): string
     {
         $result = '';
         $type = $this->get($id);
@@ -257,11 +257,12 @@ class type_list
     }
 
     /**
+     * TODO Prio 1 check if an empty $id should create an error message
      * pick a type from the preloaded object list
-     * @param int $id the database id of the expected type
-     * @return verb|ref_type|type_object|null the type object
+     * @param int|null $id the database id of the expected type or null if the type is not set
+     * @return verb|ref_type|type_object|null the type object or null if the type is not set
      */
-    function get(int $id): verb|ref_type|type_object|null
+    function get(?int $id): verb|ref_type|type_object|null
     {
         $result = null;
         if (count($this->hash) != count($this->lst)) {

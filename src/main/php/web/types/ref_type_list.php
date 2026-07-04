@@ -79,7 +79,12 @@ class ref_type_list extends type_list
         return parent::id(refs::WIKIDATA_TYPE);
     }
 
-    function url(int $id): string
+    /**
+     * TODO Prio 1 should a null $id not create an error message
+     * @param int|null $id
+     * @return string
+     */
+    function url(?int $id): string
     {
         $result = '';
         $ref = $this->get($id);

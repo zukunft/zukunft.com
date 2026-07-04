@@ -664,12 +664,18 @@ class frontend
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
+            // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
+            // explicit action overrules the crud action derived from the mask, because e.g. the delete
+            // of a just added object is posted with the add mask of the object
+            $action == url_var::CRUD_DELETE and $step == url_var::STEP_CONFIRMED,
+            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
+            // a confirmed create request: triggered by an add mask or by an explicit create action
+            $action == url_var::CRUD_CREATE and $step == url_var::STEP_CONFIRMED,
             in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
-            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
             default => $this->log_ignored_write_step($view, $step, $usr_msg)
         };
 
@@ -724,7 +730,7 @@ class frontend
             $back = '';
         }
 
-        // TODO move to the frontend __construct
+        // TODO Prio 1 move to the frontend __construct
         // get the fixed frontend config
         //$api_msg = $this->api_get(type_lists::class);
         //$frontend_cache = new type_lists($api_msg);
@@ -760,37 +766,25 @@ class frontend
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
 
-        // save form action
-        // if the save bottom has been pressed
-        if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array, $usr_msg, $dto);
-            if ($usr != null) {
-                $upd_result = $dbo->add_via_api($usr, $usr_msg);
-            }
-
-            // if update was fine ...
-            if ($upd_result->is_ok()) {
-                // TODO Prio 0 get the id from the result
-                //$id = $dbo->id();
-                $id = 0;
-                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                // switched off because maybe staying on the edit page is the expected behaviour
-                if ($back == '' or $back == 0) {
-                    $view_id = views::START_ID;
-                }
-                //$result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result->get_last_message();
+        // an unconfirmed create, update or delete request that the user has submitted (marked by the
+        // named submit button, see url_var::POST_SUBMIT) is first shown in the matching confirm view,
+        // so the user can check the change before it is written to the database; without the submit
+        // marker the url just renders the requested form, e.g. the add view with the given values
+        if ($action != null and $step <= 0 and array_key_exists(url_var::POST_SUBMIT, $url_array)) {
+            $confirm_view_id = $this->confirm_view_id($view_id, url_var::STEP_CONFIRM);
+            if ($confirm_view_id != 0) {
+                $view_id = $confirm_view_id;
             }
         }
 
-
         // get the main object to display
         if ($id != 0) {
-            // if only the id is included in the url load the data via api
-            // TODO Prio 1 why? better always reload from db
-            if (count($url_array) <= 3) {
+            // load the object from the database unless the url carries object field values (e.g. a
+            // form submit, a confirm view url or a prefilled edit link), because a control var like
+            // the debug flag must not switch the render from the loaded object to the incomplete url
+            // values; only a single db object can be loaded by the id, a list (e.g. of phrases)
+            // always takes the values from the url
+            if (!$this->url_has_object_values($url_array) and $dbo instanceof db_object_ui) {
                 // pass the session user id so the backend loads the user-related object (the user's
                 // sandbox overlay), not the default derived from the api caller
                 $usr_id = $usr?->id() ?? 0;
@@ -1379,6 +1373,27 @@ class frontend
     }
 
     /**
+     * true if the url carries object field values (e.g. of a form submit, a confirm view url or a
+     * prefilled edit link) and not only the control vars that select the view, the object and the
+     * render mode; the '9'-prefixed back vars are navigation targets and no object values either
+     *
+     * @param array $url_array the parsed url
+     * @return bool true if at least one url key is an object field value
+     */
+    private function url_has_object_values(array $url_array): bool
+    {
+        $result = false;
+        foreach ($url_array as $key => $val) {
+            if (!in_array($key, url_var::CONTROL_VARS)
+                and $key != rest_ctrl::PAR_VIEW_NEW_ID
+                and !str_starts_with($key, url_var::BACK)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * log a confirm or confirmed step that no action handles, because these steps are a write request
      * and ignoring one silently would hide the missing database change from the user: the returned url
      * just re-renders the requested view, which looks exactly like the redirect after a successful
@@ -1412,6 +1427,13 @@ class frontend
         // required here (unlike a standalone confirm view render)
         $dbo = $this->dbo_for_url($view, $url_array, true);
         $dbo->url_mapper($url_array, $usr_msg, $dto);
+
+        // a delete request by name (e.g. right after the confirmed add of the object, when the url
+        // does not yet carry the assigned id) resolves the database id first
+        if ($crud == url_var::CRUD_DELETE and $dbo instanceof sandbox_named_ui
+            and $dbo->id() == 0 and $dbo->name() != '') {
+            $dbo->load_by_name($dbo->name());
+        }
 
         if ($do_it) {
             $result_msg = match ($crud) {

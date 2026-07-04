@@ -37,12 +37,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'ui_log.php';
+include_once html_paths::EXECUTE . 'ui_preview.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
@@ -83,6 +85,16 @@ class user_ui_tests
         $test_name = 'without an open system error the user gets the no-error message';
         $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, $mtr->txt(msg_id::USER_SYSTEM_ERRORS_NONE));
+
+        $t->subheader($ts . 'popup form');
+
+        // the popup form class must also accept a user (e.g. of the user settings form),
+        // which is a db object but not a sandbox object
+        $preview = new ui_preview();
+        $test_name = 'the popup form class of a user form is the user class name';
+        $t->assert_true($test_name, $preview->popup_class($usr_ui) != '');
+        $test_name = 'without an object the popup form class is empty';
+        $t->assert($test_name, $preview->popup_class(), '');
 
         $t->html_page_test($test_page, 'user', 'user', $t);
     }

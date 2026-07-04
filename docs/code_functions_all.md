@@ -7107,6 +7107,7 @@
         \-- back_trace - 
     \-- 1
         \-- language_list - 
+        \-- view_link_type_list - @return int the database id of the default view link type
         \-- user_type_list - 
     \-- selector
         \-- component_link_type_list - create the HTML code to select a component link type

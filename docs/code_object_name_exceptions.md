@@ -18,7 +18,7 @@ job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_newer, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src, $typ_obj, $type_obj
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $rank_phr, $result, $switzerland, $time_phr, $to, $to_add, $to_ui, $trp, $val_phr, $val_time_phr, $wrd, $wrd_by_id, $zurich
 protection_type_list: $lst
-ref: $dbo, $dbo_ui, $obj, $ref2, $ref_obj, $std_rec, $type
+ref: $dbo, $dbo_ui, $obj, $ref2, $ref_new, $ref_obj, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_ui, $res_upd, $result, $rst
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_usr2, $src_usr2_reloaded, $usr_ui
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
@@ -34,7 +34,7 @@ view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_new, $msk_old, $msk_plain, $
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_auto, $wrd_chf, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_from, $wrd_high, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_percent, $wrd_pi, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_usr2, $wrd_usr2_reloaded, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_auto, $wrd_chf, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_from, $wrd_high, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_percent, $wrd_pi, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_usr2, $wrd_usr2_reloaded, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 

@@ -87,14 +87,12 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        // $t->assert_text_contains($test_name, $result, word_names::MATH);
+        $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate
-        //$t->assert_text_contains($test_name, $result, word_names::MATH);
+        $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = 'add request via url without name should return a missing error message';
         $url_arr = [];
@@ -106,21 +104,34 @@ class word_url_tests extends url_test_base
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
         $test_name = '... with name ask the user to confirm adding the word';
+        global $mtr;
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
+        // the user presses the save button of the add form, which adds the named submit marker;
+        // without the marker the same url just renders the add form with the given values
+        $url_arr[url_var::POST_SUBMIT] = '';
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate once url_to_html routes a create request to the views::CONFIRM_ADD mask
-        //$t->assert_text_contains($test_name, $result, $mtr->get(msg_id::FORM_TITLE_CONFIRM_ADD->text()));
+        $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD));
+
+        // a create or delete request is executed by url_to_action (not url_to_html, which only
+        // renders), so use the combined execute and render call and check the database result
+        $req = new user_request($t->usr1, $usr_ui, $usr_msg, $ui->dto, true);
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        $t->assert_text_contains($test_name, $result, word_names::TEST_ADD);
+        $ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
-        // TODO Prio 0 activate once url_to_html handles url_var::CRUD_DELETE like the create action
-        //$t->assert_text_contains($test_name, $result, word_names::TEST_ADD);
+        $ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        $t->assert($test_name, $wrd_chk->id(), 0);
+
+        // recreate the word deleted above, because the change and del word workflows below run on it
+        $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
+        $ui->execute_and_next($url_arr, $req);
 
 
         $t->subheader($ts . 'change save url');
@@ -573,7 +584,7 @@ class word_url_tests extends url_test_base
         // the api json does not yet carry the usage, and the test word is not really linked, so force
         // the usage that blocks the deletion (the frontend check reads the usage posted with the url)
         // TODO Prio 0 remove workaround until the backend maintains the usage field
-        $wrd_ui->usage = $wrd->usage;
+        $wrd_ui->usage = $wrd->usage ?? 0;
         if ($wrd_ui->usage == 0) {
             $wrd_ui->usage = 1;
         }

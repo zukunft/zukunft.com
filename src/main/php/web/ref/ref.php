@@ -274,9 +274,14 @@ class ref extends sandbox
         $this->phr = $phr;
     }
 
+    /**
+     * TODO Prio 1: is it possible that the phrase can be null and if yes should this not create an error message
+     * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
+     *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
+     */
     function phrase(): phrase
     {
-        return $this->phr;
+        return $this->phr ?? new phrase();
     }
 
     private function set_phrase_by_id(int $id): void
