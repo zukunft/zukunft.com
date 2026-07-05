@@ -161,12 +161,13 @@ class triple_names
     const string CITY_ZH = 'Zurich (city)';
     const int CITY_ZH_ID = 98;
     const string CITY_ZH_NAME = 'city of Zurich';
-    const string CITY_ZH_COM = 'the city of Zurich';
+    const string CITY_ZH_COM = 'Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.';
     const string CITY_BE = 'Bern (city)';
     const int CITY_BE_ID = 100;
     const string CITY_GE = 'Geneva (city)';
     const int CITY_GE_ID = 101;
     const string CANTON_ZURICH_NAME = 'canton Zurich';
+    const string CANTON_ZURICH_COM = 'The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";

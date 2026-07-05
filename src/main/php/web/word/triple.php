@@ -945,12 +945,14 @@ class triple extends sandbox_code_id
 
     /**
      * if this triple links a phrase with the given verb and direction
-     * create a html link to the linked phrase
+     * create a html link to this triple, labelled with the linked phrase name and using
+     * this triple's description as the tooltip (falling back to the linked phrase
+     * description); e.g. the triple "Zurich (city)" shown as "city" in Zurich's subtitle
      *
      * @param phrase $phr the staring phrase to select the link
      * @param verb $vrb use only triples with this verb
      * @param foaf_direction $dir to select either only parents or children
-     * @return string|null the html code to show the linked phrase if it matches
+     * @return string|null the html link to this triple, labelled with the linked phrase name
      */
     function get_link_by_verb(
         phrase         $phr,
@@ -976,15 +978,22 @@ class triple extends sandbox_code_id
             }
         }
 
-        // build the link
+        // build the link to this qualifying triple (e.g. "Zurich (city)"), not to the bare
+        // category phrase, so the user reaches the specific triple; the visible text stays
+        // the short category name (e.g. "city"). the tooltip prefers this triple's own
+        // description (e.g. "Zurich is the largest city ...") and only falls back to the
+        // linked phrase description when the triple has none (e.g. the "Swiss franc"
+        // description for "CHF is symbol for Swiss franc")
         if ($lnk_phr != null) {
-            $msk_id = views::WORD_ID;
-            if ($lnk_phr->is_triple()) {
-                $msk_id = views::TRIPLE_ID;
+            $url = $html->url_new(views::TRIPLE_ID, $this->id());
+            $title = $this->get_description();
+            if ($title == '') {
+                $title = $lnk_phr->get_description() ?? '';
             }
-            $url = $html->url_new($msk_id, $lnk_phr->id());
-            // the phrase description as link title so the user sees it as a tooltip
-            $result = $html->ref($url, $lnk_phr->name(), $lnk_phr->get_description() ?? '');
+            if ($title == '') {
+                $title = $this->name();
+            }
+            $result = $html->ref($url, $lnk_phr->name(), $title);
         }
         return $result;
     }

@@ -78,6 +78,16 @@ check that all api interfaces can load user specific data independent of the ses
 
 check the open api definition and the openapi check script and suggest updates in the definition and the script
 
+### value list
+
+create a 'most relevant' value list that, if the values have a time value (e.g. year or quarter), shows the newest values first
+
+if the year contains more than on value show all values with the same time word as a group and show the phrase left and the numbers on the right 
+
+if the list contains a phrase more that x times create a group of the values related to this phrase and use the aggregated impact for the sorting
+
+show below the other values sorted by impact descending
+
 
 ### frontend requests
 
