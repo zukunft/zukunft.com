@@ -375,8 +375,8 @@
     },
     {
       "name": "system form title confirm add",
-      "description": "show the language specific title for the system form to confirm adding a new entry",
-      "type": "system_form_title",
+      "description": "show the title for the system form to confirm adding a new entry combining the action, the class and the name of the new object",
+      "type": "system_popup_title",
       "code_id": "form_title_confirm_add",
       "ui_msg_code_id": "form_title_confirm_add"
     },
@@ -5876,37 +5876,27 @@
         },
         {
           "position": "4",
-          "name": "system form class",
-          "style": "col-md-8"
-        },
-        {
-          "position": "5",
-          "name": "system form field name",
-          "style": "col-md-8"
-        },
-        {
-          "position": "6",
           "name": "system form changes",
           "position_type": "side"
         },
         {
-          "position": "7",
+          "position": "5",
           "name": "system formatter row right"
         },
         {
-          "position": "8",
+          "position": "6",
           "name": "system form button cancel"
         },
         {
-          "position": "9",
+          "position": "7",
           "name": "system form button save"
         },
         {
-          "position": "10",
+          "position": "8",
           "name": "system formatter row end"
         },
         {
-          "position": "11",
+          "position": "9",
           "name": "system form end"
         }
       ]
@@ -5932,7 +5922,8 @@
         },
         {
           "position": "4",
-          "name": "system form changes"
+          "name": "system form changes",
+          "position_type": "side"
         },
         {
           "position": "5",

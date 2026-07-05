@@ -7020,7 +7020,7 @@
     \-- selection_text
         \-- ui_preview - show the description of a named selection
     \-- popup_title
-        \-- ui_preview - show the heading of a confirm popup combining the translated action and the object class
+        \-- ui_preview - show the heading of a confirm popup combining the translated action, the object class and the
     \-- popup_class
         \-- ui_preview - show the class of the object to add or change in a popup form
     \-- popup_changes

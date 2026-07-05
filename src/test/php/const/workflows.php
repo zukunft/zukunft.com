@@ -152,6 +152,12 @@ class workflows
     // the id of the current del_triple_fail workflow; increase it to add the next snapshot set
     const int WF_DEL_TRIPLE_FAIL_NBR = 13;
 
+    // the add_formula workflow name used for the snapshot folder and the test subheader:
+    // a new formula is entered in the add form and written after the user has confirmed the add
+    const string WF_ADD_FORMULA = 'add_formula';
+    // the id of the current add_formula workflow; increase it to add the next snapshot set
+    const int WF_ADD_FORMULA_NBR = 14;
+
     /**
      * the user process step that a user reaction action triggers
      *

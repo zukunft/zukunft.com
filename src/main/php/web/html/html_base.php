@@ -2017,7 +2017,7 @@ class html_base
         $result = $this->lf();
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
-        $result .= ' justify-content-center">';
+        $result .= ' ' . styles::JUSTIFY_CENTER . '">';
         return $result;
     }
 

@@ -46,6 +46,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_preview extends ui_base
@@ -119,10 +121,11 @@ class ui_preview extends ui_base
     }
 
     /**
-     * show the heading of a confirm popup combining the translated action and the object class
-     * e.g. 'update word' for the confirm update view; the action text is selected by the component
-     * via its ui_msg_code_id (e.g. system_popup_title_update) and the class is derived from the object,
-     * so this single component replaces the former split into popup_title and popup_class
+     * show the heading of a confirm popup combining the translated action, the object class and the
+     * object name, e.g. 'Confirm adding word "System Test Word"' for the confirm add view; the action
+     * text is selected by the component via its ui_msg_code_id (e.g. form_title_confirm_add), the class
+     * is derived from the object and the name comes from the pending change url, so this single
+     * component replaces the former split into popup_title, popup_class and the name form field
      *
      * this is the confirm-view analog of form_tile: it shows the heading and then opens the form, so
      * the component must be the first one of the confirm view (ahead of the hidden fields)
@@ -130,12 +133,14 @@ class ui_preview extends ui_base
      * @param string $form_name the name of the confirm view used as the html form name
      * @param msg_id|null $ui_msg_code_id the message code id of the component using this component type
      * @param db_object|null $dbo the object that is being changed, used for the object class name
-     * @return string the html heading line followed by the opening form tag
+     * @param array $url_array the pending change url used for the name of the changed object
+     * @return string the html heading followed by the opening form tag
      */
     function popup_title(
         string                                                $form_name = '',
         ?msg_id                                               $ui_msg_code_id = null,
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        array                                                 $url_array = []
     ): string
     {
         global $mtr;
@@ -146,8 +151,12 @@ class ui_preview extends ui_base
             if ($dbo != null) {
                 $title .= ' ' . library::class_to_name_translated($dbo::class);
             }
-            $heading = $html->h4($title, styles::HEADING_INLINE);
-            $result = $html->div($heading, styles::HEADING_LINE);
+            // the confirm view object is not loaded from the db, so the name comes from the posted url
+            $name = $url_array[url_var::NAME] ?? '';
+            if ($name != '') {
+                $title .= ' "' . $name . '"';
+            }
+            $result = $html->text_h2($title);
         }
         // open the confirm form after the heading (like form_tile) so the following hidden step field
         // and the confirm button submit together as one post
@@ -216,6 +225,11 @@ class ui_preview extends ui_base
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_FROM))
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
+        }
+        // the component brings its own centered row (matching its "side" position in the confirm
+        // views), so the hidden carry inputs and the preview table stay together in one row
+        if ($result != '') {
+            $result = $html->div_row($result, view_styles::COL_SM_12 . ' ' . styles::JUSTIFY_CENTER);
         }
         return $result;
     }
