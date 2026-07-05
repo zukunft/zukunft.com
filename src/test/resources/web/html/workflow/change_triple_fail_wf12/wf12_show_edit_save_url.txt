@@ -1,0 +1,30 @@
+GET
+http://localhost/http/view.php?pf=&pt=&o=an+invalid+change+description&id=998&k=System+Test+Triple&b=3&uu=0&ui=0&8id=998&8k=System+Test+Triple&8pf=999&8b=3&8pt=997&8uu=0&8ui=0&8o=System+Test+Triple+Description&9m=92&9id=998&m=10&z=1&submit=
+/http/view.php?pf=&pt=&o=an+invalid+change+description&id=998&k=System+Test+Triple&b=3&uu=0&ui=0&8id=998&8k=System+Test+Triple&8pf=999&8b=3&8pt=997&8uu=0&8ui=0&8o=System+Test+Triple+Description&9m=92&9id=998&m=10&z=1&submit=
+/http/view.php?description=an+invalid+change+description&id=998&name=System+Test+Triple&verb_id=3&usage=0&impact=0&8id=998&8name=System+Test+Triple&8from_id=999&8verb_id=3&8to_id=997&8usage=0&8impact=0&8description=System+Test+Triple+Description&9mask_id=triple_default&9id=998&mask_id=triple_edit&step=confirm&
+{
+    "from_id": "",
+    "to_id": "",
+    "description": "an invalid change description",
+    "id": "998",
+    "name": "System Test Triple",
+    "verb_id": "3",
+    "usage": "0",
+    "impact": "0",
+    "mask_id": "triple_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "998",
+        "name": "System Test Triple",
+        "from_id": "999",
+        "verb_id": "3",
+        "to_id": "997",
+        "usage": "0",
+        "impact": "0",
+        "description": "System Test Triple Description"
+    },
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "998"
+    }
+}

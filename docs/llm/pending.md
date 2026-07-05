@@ -8,6 +8,34 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
+add a triple change fail workflow similar to the src/test/resources/web/html/workflow/change_word_fail_wf7 workflow
+
+add a triple del fail workflow similar to src/test/resources/web/html/workflow/del_word_fail_wf10
+
+add a formula add workflow to add a formula similar to src/test/resources/web/html/workflow/add_triple_wf4
+
+add a formula change workflow to change a formula similar to src/test/resources/web/html/workflow/change_triple_wf5
+
+add a formula del workflow similar to delete the added formula similar to src/test/resources/web/html/workflow/del_triple_wf6
+
+add a formula add fail workflow to add a formula similar to src/test/resources/web/html/workflow/add_triple_fail_wf11
+
+add a formula change fail workflow to change a formula similar to src/test/resources/web/html/workflow/chnage_triple_fail_wf12
+
+add a formula del workflow fail similar to delete the added formula similar to src/test/resources/web/html/workflow/del_word_fail_wf10
+
+add a value add workflow to add a value similar to src/test/resources/web/html/workflow/add_triple_wf4
+
+add a value change workflow to change a value similar to src/test/resources/web/html/workflow/change_triple_wf5
+
+add a value del workflow similar to delete the added value similar to src/test/resources/web/html/workflow/del_triple_wf6
+
+add a value add fail workflow to add a value similar to src/test/resources/web/html/workflow/add_triple_fail_wf11
+
+add a value change fail workflow to change a value similar to src/test/resources/web/html/workflow/chnage_triple_fail_wf12
+
+add a value del workflow fail similar to delete the added value similar to src/test/resources/web/html/workflow/del_word_fail_wf10
+
 add to /docs/llm/* that all function that could create an error that is relevanz for the user needs $msg as parameter to be able to return the specific error with the potential solution to the user. This is relevant for example for src/main/php/cfg/word/triple.php::verb_from_api_json
 
 reduce the number of load and save calls

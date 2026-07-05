@@ -70,6 +70,7 @@ class triple_url_tests extends url_test_base
 
         $this->add_triple_fail_workflow(workflows::WF_ADD_TRIPLE_FAIL_NBR);
         $this->add_triple_workflow(workflows::WF_ADD_TRIPLE_NBR);
+        $this->change_triple_fail_workflow(workflows::WF_CHANGE_TRIPLE_FAIL_NBR);
         $this->change_triple_workflow(workflows::WF_CHANGE_TRIPLE_NBR);
         //$this->change_triple_by_name_workflow(workflows::WF_CHANGE_TRIPLE_BY_NAME_NBR);
         $this->del_triple_workflow(workflows::WF_DEL_TRIPLE_NBR);
@@ -210,12 +211,28 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_by_name_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        // the workflow runs on the reserved 'System Test Triple'; resolve its db id by name and
-        // set the fixed snapshot id so the snapshot does not depend on the assigned id
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $trp = new triple($this->t->usr1);
         $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the triple, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
+        }
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, $do_it);
+
+        // initial url with the added triple
+        $t_trp = new test_triples($this->t);
+        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
 
         // the pending change posts the from and to phrases as names (as the datalist fields do) and an
         // empty weight, so the save must resolve the names and keep the weight null instead of crashing
@@ -234,6 +251,81 @@ class triple_url_tests extends url_test_base
         // confirmed: confirm the pending change so it would be written (do_it false here, so nothing is
         // written); the from/to names must still resolve so the confirm form carries the resolved change
         $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_EDIT_ID);
+    }
+
+    /**
+     * run the change_triple_fail workflow and snapshot the html after every user action
+     *
+     * the negative twin of change_triple_workflow, mirroring change_word_fail_workflow: pressing save on
+     * the edit view with an invalid change (here the from and to phrases cleared) does not show the
+     * confirm change view but re-renders the edit view with the missing-phrases warning, and the
+     * '8'-prefixed opening db values (here the description) are kept so the original db snapshot is still
+     * used for the next change compare (see docs/llm/state-and-messages.md). a failed save writes nothing,
+     * so this workflow only runs read-only and has no write twin. snapshots go into
+     * src/test/resources/web/html/workflow/change_triple_fail_wf<nbr>/
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 12 for wf12
+     * @param bool $do_it false to only render the steps (a failed save never writes)
+     */
+    protected function change_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the workflow runs on the reserved 'System Test Triple'; resolve its db id by name and set the
+        // fixed snapshot id so the snapshot does not depend on the assigned id
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $trp = new triple($this->t->usr1);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the triple, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added triple; the url carries the current db ids of the triple and of its
+        // from and to words (the snapshot files normalize the ids back to the fixed test ids); the
+        // description is seeded so its kept '8' baseline can be checked after the failed save
+        $t_trp = new test_triples($this->t);
+        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr[url_var::ID] = $this->wf_id;
+        $url_arr[url_var::DESCRIPTION] = triple_names::SYSTEM_TEST_ADD_COM;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // the invalid change: clear the from and to phrases (an empty phrase is skipped by the url mapper,
+        // so the triple keeps no from and no to and the save is blocked) while changing the description;
+        // its '8'-prefixed opening value stays in $url_arr so the kept baseline can be checked
+        $invalid = [
+            url_var::PHRASE_FROM => '',
+            url_var::PHRASE_TO => '',
+            url_var::DESCRIPTION => 'an invalid change description',
+        ];
+
+        // show: display the test triple in its default triple view
+        $this->assert_step(workflows::SHOW, $url_arr, views::TRIPLE_ID);
+
+        // edit: open the triple edit view
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_EDIT_ID);
+
+        // user is doing invalid changes; the invalid values must win over the factory url values, so the
+        // union starts with them (the array union operator keeps the keys of the first array)
+        $url_arr = $invalid + $url_arr;
+
+        // save: press save with the cleared phrases; the confirm view is not shown, the edit view is
+        // rendered again with the warning and the description '8' baseline kept at the original db value
+        $html = $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_EDIT_ID);
+
+        // the missing from and to phrases are reported as a warning instead of confirming the change
+        $test_name = $this->step_path . workflows::NAME_SEP . 'keeps_pre';
+        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
+        // the original description '8' baseline is preserved for the next compare, not reset to the change
+        $this->t->assert_text_contains($test_name, $html,
+            'name="' . url_var::PRE . url_var::DESCRIPTION . '" value="' . triple_names::SYSTEM_TEST_ADD_COM . '"');
     }
 
     /**

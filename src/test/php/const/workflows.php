@@ -138,6 +138,13 @@ class workflows
     // the 'no_phrases' in 'wf11_edit_no_phrases_save' where save is pressed on a triple without them
     const string STEP_NO_PHRASES = 'no_phrases';
 
+    // the change_triple_fail workflow name used for the snapshot folder and the test subheader:
+    // the negative twin of change_triple where a save that clears the from and to phrases keeps the
+    // edit view with a warning instead of confirming the invalid change
+    const string WF_CHANGE_TRIPLE_FAIL = 'change_triple_fail';
+    // the id of the current change_triple_fail workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_TRIPLE_FAIL_NBR = 12;
+
     /**
      * the user process step that a user reaction action triggers
      *
