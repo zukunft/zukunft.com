@@ -73,6 +73,7 @@ class triple_url_tests extends url_test_base
         $this->change_triple_fail_workflow(workflows::WF_CHANGE_TRIPLE_FAIL_NBR);
         $this->change_triple_workflow(workflows::WF_CHANGE_TRIPLE_NBR);
         //$this->change_triple_by_name_workflow(workflows::WF_CHANGE_TRIPLE_BY_NAME_NBR);
+        $this->del_triple_fail_workflow(workflows::WF_DEL_TRIPLE_FAIL_NBR);
         $this->del_triple_workflow(workflows::WF_DEL_TRIPLE_NBR);
     }
 
@@ -433,6 +434,68 @@ class triple_url_tests extends url_test_base
             $this->assert_triple_filled_in_db('change_triple workflow has filled the triple',
                 triple_names::SYSTEM_TEST_ADD, $this->t->usr1);
         }
+    }
+
+    /**
+     * run the del_triple_fail workflow and snapshot the html after every user action
+     *
+     * the negative twin of del_triple_workflow, mirroring del_word_fail_workflow: pressing delete on a
+     * triple that is still in use (the frontend reads the usage posted with the url) does not show the
+     * confirm delete view but re-renders the delete form with the in-use warning and writes nothing, so
+     * this workflow only runs read-only and has no write twin. it runs on the reserved test triple with a
+     * forced usage, so seeded data is never touched. snapshots go into
+     * src/test/resources/web/html/workflow/del_triple_fail_wf<nbr>/ (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 13 for wf13
+     * @param bool $do_it false to only render the steps (a blocked delete never writes)
+     */
+    protected function del_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the workflow runs on the reserved 'System Test Triple' so a blocked delete can never touch
+        // seeded data; resolve its db id by name and set the fixed snapshot id
+        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->set_word_norm_ids();
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $trp = new triple($this->t->usr1);
+        $this->wf_id = $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the triple, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = triple_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the in-use triple; the url carries the current db ids of the triple and of its
+        // from and to words (the snapshot files normalize the ids back to the fixed test ids); the usage
+        // is forced so the frontend check reads the triple as still in use and blocks the deletion
+        // TODO Prio 0 remove workaround until the backend maintains the usage field
+        $t_trp = new test_triples($this->t);
+        $url_arr = $t_trp->triple_add_url_resolved();
+        $url_arr[url_var::ID] = $this->wf_id;
+        $url_arr[url_var::USAGE] = 1;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::TRIPLE_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // show: display the in-use triple in its default triple view
+        $this->assert_step(workflows::SHOW, $url_arr, views::TRIPLE_ID);
+
+        // edit: open the delete confirmation form
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_DEL_ID);
+
+        // mark the failing variant (the triple is still in use) in the snapshot file name
+        $this->step_path .= workflows::NAME_SEP . workflows::STEP_IN_USE;
+
+        // save: press delete; the confirm delete view is not shown, the delete form is rendered again
+        // with the in-use warning (no write)
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_DEL_ID);
+
+        // the still-in-use triple is reported as a warning instead of confirming the deletion
+        $test_name = $this->step_path . workflows::NAME_SEP . 'warns_in_use';
+        $this->t->assert_true($test_name, $this->usr_msg->has_msg_id(msg_id::DELETE_IN_USE));
     }
 
     /**

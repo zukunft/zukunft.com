@@ -145,6 +145,13 @@ class workflows
     // the id of the current change_triple_fail workflow; increase it to add the next snapshot set
     const int WF_CHANGE_TRIPLE_FAIL_NBR = 12;
 
+    // the del_triple_fail workflow name used for the snapshot folder and the test subheader:
+    // the negative twin of del_triple where confirming the deletion of a triple that is still in use
+    // keeps the delete form with a warning instead of confirming the deletion
+    const string WF_DEL_TRIPLE_FAIL = 'del_triple_fail';
+    // the id of the current del_triple_fail workflow; increase it to add the next snapshot set
+    const int WF_DEL_TRIPLE_FAIL_NBR = 13;
+
     /**
      * the user process step that a user reaction action triggers
      *

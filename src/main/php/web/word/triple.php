@@ -263,6 +263,37 @@ class triple extends sandbox_code_id
                 ]);
                 $result = false;
             }
+        } elseif ($this->is_in_use()) {
+            // a triple still linked to by a value, formula or another triple must not be deleted
+            // (mirrors word::input_valid); the frontend reads the usage posted with the delete url
+            $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                msg_id::VAR_NAME => $this->name()
+            ]);
+            $result = false;
+        }
+        return $result;
+    }
+
+    /**
+     * true if this triple is still used by another object (a value, formula or a triple that links it),
+     * so it must not be deleted; the usage is read from the INCL_RELATED api message which fills the
+     * related value, formula and phrase lists (mirrors word::is_in_use)
+     *
+     * @return bool true if the triple is still referenced by another object
+     */
+    function is_in_use(): bool
+    {
+        $result = false;
+        // TODO Prio 2 make sure that the backend always updates the usage
+        if ($this->usage > 0) {
+            $result = true;
+        } elseif ($this->id() != 0) {
+            if (($this->phr_lst != null and !$this->phr_lst->is_empty())
+                or ($this->val_lst != null and !$this->val_lst->is_empty())
+                or ($this->frm_lst != null and !$this->frm_lst->is_empty())) {
+                $result = true;
+            }
         }
         return $result;
     }
