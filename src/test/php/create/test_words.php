@@ -103,6 +103,20 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "mathematics" as the main word for unit testing
+     */
+    static function word_static(): word
+    {
+        $wrd = new word(test_users::user_sys_test());
+        $wrd->set(word_names::MATH_ID, word_names::MATH);
+        $wrd->description = word_names::MATH_COM;
+        $wrd->set_type(phrase_types::NORMAL, test_users::user_sys_test());
+        global $sys;
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        return $wrd;
+    }
+
+    /**
      * @return word object where the most specific mandatory var is not set which is in case of a word the id and the name
      */
     function word_incomplete(): word
@@ -186,12 +200,61 @@ class test_words extends test_objects
     /**
      * @return word to test the sql insert via function
      */
-    function word_add(): word
+    static function word_add(): word
     {
-        $wrd = new word($this->env->usr1);
+        $wrd = new word(test_users::user_sys_test());
+        $wrd->id = word_names::TEST_ADD_ID;
         $wrd->set_name(word_names::TEST_ADD);
         return $wrd;
     }
+
+    /**
+     * @return word the second reserved test word used e.g. as the to phrase of the test triple
+     */
+    static function word_add_to(): word
+    {
+        $wrd = new word(test_users::user_sys_test());
+        $wrd->id = word_names::TEST_ADD_TO_ID;
+        $wrd->set_name(word_names::TEST_ADD_TO);
+        return $wrd;
+    }
+
+    /**
+     * the current database id of a reserved test word, or the fixed snapshot id if the word is not
+     * (yet) in the database e.g. in a read-only workflow run where nothing is written
+     *
+     * @param string $name the reserved name of the test word
+     * @param int $fixed_id the fixed test id used in the snapshot files
+     * @return int the database id of the test word or the fixed test id
+     */
+    function word_id_or_fixed(string $name, int $fixed_id): int
+    {
+        $wrd = new word($this->env->usr1);
+        $id = $wrd->load_by_name($name);
+        if ($id == 0) {
+            $id = $fixed_id;
+        }
+        return $id;
+    }
+
+    static function word_add_ui(): word_ui
+    {
+        $wrd = self::word_add();
+        return new word_ui($wrd->api_json());
+    }
+
+    static function word_new_url(): array
+    {
+        $wrd_ui = new word_ui();
+        return $wrd_ui->to_url_array();
+    }
+
+    static function word_add_url(): array
+    {
+        $wrd_ui = self::word_add_ui();
+        return $wrd_ui->to_url_array();
+    }
+
 
     /**
      * the url parameters posted by the 'Change word' edit form on save, used by the change_word
@@ -236,18 +299,6 @@ class test_words extends test_objects
         $url_arr = $wrd->to_url_array();
         // the workflow step adds the current db id of the test word, so drop the factory id
         unset($url_arr[url_var::ID]);
-        // the '8'-prefixed opening values: the test word state after the first change_word round (only the
-        // description was changed there), so the confirm view shows the existing value e.g. the public
-        // share in the 'from' column next to the new group share
-        // the edit form sends the '8'-prefixed pre value for the name, description and plural text fields
-        // and for the share and protection selects, but not yet for the view, so the same set is built
-        // here; the values are the word state after the first change_word round (only the description was
-        // changed there) so the confirm view shows e.g. the public share in the 'from' column
-        $url_arr[url_var::PRE . url_var::NAME] = word_names::TEST_ADD;
-        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
-        $url_arr[url_var::PRE . url_var::PLURAL] = '';
-        $url_arr[url_var::PRE . url_var::SHARE] = share_types::PUBLIC_ID;
-        $url_arr[url_var::PRE . url_var::PROTECTION] = protection_types::NO_PROTECT_ID;
         return $url_arr;
     }
 

@@ -1,10 +1,10 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 3,
+    "user_id": 1,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-06-27T08:04:19+00:00",
+    "timestamp": "2026-07-05T19:37:57+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9085,6 +9085,12 @@
                 "code_id": "row_center",
                 "description": "to start a new row and center the following components in one row until the row end is triggered",
                 "id": 205
+            },
+            {
+                "name": "formulas of parents",
+                "code_id": "formulas_of_parents",
+                "description": "list of formulas assigned to the ancestor phrases of a word, grouped per ancestor",
+                "id": 206
             }
         ],
         "component_link_types": [
@@ -18430,8 +18436,8 @@
                         "link_id": 823,
                         "id": 54,
                         "name": "system form title confirm add",
-                        "description": "show the language specific title for the system form to confirm adding a new entry",
-                        "type_id": 17,
+                        "description": "show the title for the system form to confirm adding a new entry combining the action, the class and the name of the new object",
+                        "type_id": 158,
                         "code_id": "form_title_confirm_add",
                         "ui_msg_code_id": "form_title_confirm_add",
                         "position": 1,
@@ -18459,84 +18465,62 @@
                     },
                     {
                         "link_id": 826,
-                        "id": 217,
-                        "name": "system form class",
-                        "description": "for the universal confirmation popup show e.g. word, value, formula depending on the object that is changed",
-                        "type_id": 159,
-                        "position": 4,
-                        "position_type": 1,
-                        "style": 2
-                    },
-                    {
-                        "link_id": 827,
-                        "id": 129,
-                        "name": "system form field name",
-                        "description": "the name field in a form",
-                        "type_id": 21,
-                        "code_id": "form_field_name",
-                        "ui_msg_code_id": "form_field_name",
-                        "position": 5,
-                        "position_type": 1,
-                        "style": 2
-                    },
-                    {
-                        "link_id": 828,
                         "id": 218,
                         "name": "system form changes",
                         "description": "for the universal confirmation popup show the changes",
                         "type_id": 160,
-                        "position": 6,
+                        "position": 4,
                         "position_type": 2
                     },
                     {
-                        "link_id": 829,
+                        "link_id": 827,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
                         "type_id": 33,
                         "code_id": "row_right",
-                        "position": 7,
+                        "position": 5,
                         "position_type": 1
                     },
                     {
-                        "link_id": 830,
+                        "link_id": 828,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
                         "type_id": 28,
                         "code_id": "form_cancel_button",
                         "ui_msg_code_id": "form_button_cancel",
-                        "position": 8,
+                        "position": 6,
                         "position_type": 1
                     },
                     {
-                        "link_id": 831,
+                        "link_id": 829,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
                         "type_id": 29,
                         "code_id": "form_button_save",
                         "ui_msg_code_id": "form_button_save",
-                        "position": 9,
+                        "position": 7,
                         "position_type": 1
                     },
                     {
-                        "link_id": 832,
+                        "link_id": 830,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
                         "type_id": 34,
                         "code_id": "row_end",
-                        "position": 10,
+                        "position": 8,
                         "position_type": 1
                     },
                     {
-                        "link_id": 833,
+                        "link_id": 831,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
                         "code_id": "form_end",
-                        "position": 11,
+                        "position": 9,
                         "position_type": 1
                     }
                 ]
@@ -18550,7 +18534,7 @@
                 "code_id": "confirm_update",
                 "components": [
                     {
-                        "link_id": 834,
+                        "link_id": 832,
                         "id": 215,
                         "name": "system form title confirm update",
                         "description": "for the universal confirmation popup show title of the action e.g. update",
@@ -18560,7 +18544,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 835,
+                        "link_id": 833,
                         "id": 122,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -18570,7 +18554,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 836,
+                        "link_id": 834,
                         "id": 123,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -18580,16 +18564,16 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 837,
+                        "link_id": 835,
                         "id": 218,
                         "name": "system form changes",
                         "description": "for the universal confirmation popup show the changes",
                         "type_id": 160,
                         "position": 4,
-                        "position_type": 1
+                        "position_type": 2
                     },
                     {
-                        "link_id": 838,
+                        "link_id": 836,
                         "id": 219,
                         "name": "system form impact",
                         "description": "for the universal confirmation popup show the impact of the changes",
@@ -18598,7 +18582,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 839,
+                        "link_id": 837,
                         "id": 223,
                         "name": "system formatter row center",
                         "description": "to start a new row and center the following components in one row until the row end is triggered",
@@ -18608,7 +18592,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 840,
+                        "link_id": 838,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -18619,7 +18603,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 841,
+                        "link_id": 839,
                         "id": 211,
                         "name": "system form button confirm",
                         "description": "button to confirm the pending change so that it is written to the database",
@@ -18630,7 +18614,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 842,
+                        "link_id": 840,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -18640,7 +18624,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 843,
+                        "link_id": 841,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -18659,7 +18643,7 @@
                 "code_id": "confirm_delete",
                 "components": [
                     {
-                        "link_id": 844,
+                        "link_id": 842,
                         "id": 216,
                         "name": "system form title confirm delete",
                         "description": "for the universal confirmation popup show title of the action e.g. delete",
@@ -18669,7 +18653,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 845,
+                        "link_id": 843,
                         "id": 122,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -18679,7 +18663,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 846,
+                        "link_id": 844,
                         "id": 123,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -18689,7 +18673,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 847,
+                        "link_id": 845,
                         "id": 219,
                         "name": "system form impact",
                         "description": "for the universal confirmation popup show the impact of the changes",
@@ -18698,7 +18682,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 848,
+                        "link_id": 846,
                         "id": 223,
                         "name": "system formatter row center",
                         "description": "to start a new row and center the following components in one row until the row end is triggered",
@@ -18708,7 +18692,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 849,
+                        "link_id": 847,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -18719,7 +18703,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 850,
+                        "link_id": 848,
                         "id": 211,
                         "name": "system form button confirm",
                         "description": "button to confirm the pending change so that it is written to the database",
@@ -18730,7 +18714,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 851,
+                        "link_id": 849,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -18740,7 +18724,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 852,
+                        "link_id": 850,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -18759,7 +18743,7 @@
                 "code_id": "view_preview",
                 "components": [
                     {
-                        "link_id": 853,
+                        "link_id": 851,
                         "id": 55,
                         "name": "system form title confirm edit",
                         "description": "show the language specific title for the system form to confirm the change",
@@ -18770,7 +18754,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 854,
+                        "link_id": 852,
                         "id": 122,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -18780,7 +18764,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 855,
+                        "link_id": 853,
                         "id": 123,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -18790,7 +18774,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 856,
+                        "link_id": 854,
                         "id": 158,
                         "name": "system form select view",
                         "description": "select one view",
@@ -18801,7 +18785,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 857,
+                        "link_id": 855,
                         "id": 203,
                         "name": "system show view new",
                         "description": "show to the user how it would look like if the change is confirmed",
@@ -18811,7 +18795,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 858,
+                        "link_id": 856,
                         "id": 204,
                         "name": "system show view old",
                         "description": "show to the user how it looks without the change",
@@ -18821,7 +18805,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 859,
+                        "link_id": 857,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -18832,7 +18816,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 860,
+                        "link_id": 858,
                         "id": 212,
                         "name": "system form button del",
                         "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
@@ -18843,7 +18827,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 861,
+                        "link_id": 859,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -18861,7 +18845,7 @@
                 "code_id": "about",
                 "components": [
                     {
-                        "link_id": 862,
+                        "link_id": 860,
                         "id": 65,
                         "name": "system title about",
                         "description": "show the language specific title for the about page",
@@ -18872,7 +18856,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 863,
+                        "link_id": 861,
                         "id": 66,
                         "name": "system body about",
                         "description": "show the body of the about page",
@@ -18891,7 +18875,7 @@
                 "code_id": "setup",
                 "components": [
                     {
-                        "link_id": 864,
+                        "link_id": 862,
                         "id": 67,
                         "name": "system title setup",
                         "description": "show the language specific title for the setup page",
@@ -18902,7 +18886,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 865,
+                        "link_id": 863,
                         "id": 68,
                         "name": "system body setup",
                         "description": "show the body of the setup page",
@@ -18921,7 +18905,7 @@
                 "code_id": "signup",
                 "components": [
                     {
-                        "link_id": 866,
+                        "link_id": 864,
                         "id": 69,
                         "name": "system title signup",
                         "description": "show the language specific title for the signup page",
@@ -18932,7 +18916,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 867,
+                        "link_id": 865,
                         "id": 70,
                         "name": "system body signup",
                         "description": "show the body of the signup page",
@@ -18951,7 +18935,7 @@
                 "code_id": "login",
                 "components": [
                     {
-                        "link_id": 868,
+                        "link_id": 866,
                         "id": 71,
                         "name": "system title login",
                         "description": "show the language specific title for the login page",
@@ -18962,7 +18946,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 869,
+                        "link_id": 867,
                         "id": 72,
                         "name": "system body login",
                         "description": "show the body of the login page",
@@ -18981,7 +18965,7 @@
                 "code_id": "login_activate",
                 "components": [
                     {
-                        "link_id": 870,
+                        "link_id": 868,
                         "id": 73,
                         "name": "system title login activate",
                         "description": "show the language specific title for the login activate page",
@@ -18992,7 +18976,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 871,
+                        "link_id": 869,
                         "id": 74,
                         "name": "system body login activate",
                         "description": "show the body of the login activate page",
@@ -19011,7 +18995,7 @@
                 "code_id": "login_reset",
                 "components": [
                     {
-                        "link_id": 872,
+                        "link_id": 870,
                         "id": 75,
                         "name": "system title login reset",
                         "description": "show the language specific title for the login reset page",
@@ -19022,7 +19006,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 873,
+                        "link_id": 871,
                         "id": 76,
                         "name": "system body login reset",
                         "description": "show the body of the login reset page",
@@ -19041,7 +19025,7 @@
                 "code_id": "logout",
                 "components": [
                     {
-                        "link_id": 874,
+                        "link_id": 872,
                         "id": 77,
                         "name": "system title logout",
                         "description": "show the language specific title for the logout page",
@@ -19052,7 +19036,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 875,
+                        "link_id": 873,
                         "id": 78,
                         "name": "system body logout",
                         "description": "show the body of the logout page",
@@ -19071,7 +19055,7 @@
                 "code_id": "error_log",
                 "components": [
                     {
-                        "link_id": 876,
+                        "link_id": 874,
                         "id": 79,
                         "name": "system title error log",
                         "description": "show the language specific title for the error log page",
@@ -19082,7 +19066,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 877,
+                        "link_id": 875,
                         "id": 80,
                         "name": "system body error log",
                         "description": "show the body of the error log page",
@@ -19101,7 +19085,7 @@
                 "code_id": "error_update",
                 "components": [
                     {
-                        "link_id": 878,
+                        "link_id": 876,
                         "id": 81,
                         "name": "system title error update",
                         "description": "show the language specific title for the error update page",
@@ -19112,7 +19096,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 879,
+                        "link_id": 877,
                         "id": 82,
                         "name": "system body error update",
                         "description": "show the body of the error update page",
@@ -19131,7 +19115,7 @@
                 "code_id": "word_find",
                 "components": [
                     {
-                        "link_id": 880,
+                        "link_id": 878,
                         "id": 83,
                         "name": "system title search",
                         "description": "show the language specific title for the search page",
@@ -19142,7 +19126,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 881,
+                        "link_id": 879,
                         "id": 84,
                         "name": "system body search",
                         "description": "show the body of the search page",
@@ -19161,7 +19145,7 @@
                 "code_id": "search_full",
                 "components": [
                     {
-                        "link_id": 882,
+                        "link_id": 880,
                         "id": 85,
                         "name": "system title search full",
                         "description": "show the language specific title for the search full page",
@@ -19172,7 +19156,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 883,
+                        "link_id": 881,
                         "id": 86,
                         "name": "system body search full",
                         "description": "show the body of the search full page",
@@ -19192,7 +19176,7 @@
                 "code_id": "value_detail",
                 "components": [
                     {
-                        "link_id": 884,
+                        "link_id": 882,
                         "id": 87,
                         "name": "system title value detail",
                         "description": "show the language specific title for the system value detail page",
@@ -19203,7 +19187,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 885,
+                        "link_id": 883,
                         "id": 88,
                         "name": "system body value detail",
                         "description": "show the body of the value detail page",
@@ -19223,7 +19207,7 @@
                 "code_id": "result_explain",
                 "components": [
                     {
-                        "link_id": 886,
+                        "link_id": 884,
                         "id": 89,
                         "name": "system title result explain",
                         "description": "show the language specific title for the system result explain page",
@@ -19234,7 +19218,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 887,
+                        "link_id": 885,
                         "id": 90,
                         "name": "system body result explain",
                         "description": "show the body of the result explain page",
@@ -19254,7 +19238,7 @@
                 "code_id": "formula_test",
                 "components": [
                     {
-                        "link_id": 888,
+                        "link_id": 886,
                         "id": 91,
                         "name": "system title formula test",
                         "description": "show the language specific title for the system formula test page",
@@ -19265,7 +19249,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 889,
+                        "link_id": 887,
                         "id": 92,
                         "name": "system body formula test",
                         "description": "show the body of the formula test page",
@@ -19284,7 +19268,7 @@
                 "code_id": "sandbox",
                 "components": [
                     {
-                        "link_id": 890,
+                        "link_id": 888,
                         "id": 93,
                         "name": "system title sandbox",
                         "description": "show the language specific title for the sandbox page",
@@ -19295,7 +19279,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 891,
+                        "link_id": 889,
                         "id": 94,
                         "name": "system body sandbox",
                         "description": "show the body of the sandbox page",
@@ -19314,7 +19298,7 @@
                 "code_id": "undo",
                 "components": [
                     {
-                        "link_id": 892,
+                        "link_id": 890,
                         "id": 95,
                         "name": "system title undo",
                         "description": "show the language specific title for the undo page",
@@ -19325,7 +19309,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 893,
+                        "link_id": 891,
                         "id": 96,
                         "name": "system body undo",
                         "description": "show the body of the undo page",
@@ -19344,7 +19328,7 @@
                 "code_id": "user",
                 "components": [
                     {
-                        "link_id": 894,
+                        "link_id": 892,
                         "id": 97,
                         "name": "system title user settings",
                         "description": "show the language specific title for the system user settings page",
@@ -19355,7 +19339,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 895,
+                        "link_id": 893,
                         "id": 98,
                         "name": "system body user settings",
                         "description": "show the body of the user settings page",
@@ -19365,7 +19349,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 896,
+                        "link_id": 894,
                         "id": 99,
                         "name": "user system errors",
                         "description": "show the most relevant open system errors linked to the user",
@@ -19386,7 +19370,7 @@
                 "code_id": "paste_table",
                 "components": [
                     {
-                        "link_id": 897,
+                        "link_id": 895,
                         "id": 100,
                         "name": "system form title paste table",
                         "description": "show the language specific title for the drop table to db page",
@@ -19397,7 +19381,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 898,
+                        "link_id": 896,
                         "id": 101,
                         "name": "system form field context",
                         "description": "show the context used to import a data table",
@@ -19408,7 +19392,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 899,
+                        "link_id": 897,
                         "id": 102,
                         "name": "system form body paste table",
                         "description": "show the drop fields to import a data table",
@@ -19428,7 +19412,7 @@
                 "code_id": "import",
                 "components": [
                     {
-                        "link_id": 900,
+                        "link_id": 898,
                         "id": 104,
                         "name": "system title import",
                         "description": "show the language specific title for the import page",
@@ -19439,7 +19423,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 901,
+                        "link_id": 899,
                         "id": 188,
                         "name": "system form select file",
                         "description": "selector for a file to import",
@@ -19450,7 +19434,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 902,
+                        "link_id": 900,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -19460,7 +19444,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 903,
+                        "link_id": 901,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -19471,7 +19455,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 904,
+                        "link_id": 902,
                         "id": 213,
                         "name": "system form button import",
                         "description": "button to start the import",
@@ -19482,7 +19466,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 905,
+                        "link_id": 903,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -19492,7 +19476,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 906,
+                        "link_id": 904,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -19510,7 +19494,7 @@
                 "code_id": "export_in_selected_format",
                 "components": [
                     {
-                        "link_id": 907,
+                        "link_id": 905,
                         "id": 105,
                         "name": "system title export",
                         "description": "show the language specific title for the export page",
@@ -19521,7 +19505,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 908,
+                        "link_id": 906,
                         "id": 139,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -19532,7 +19516,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 909,
+                        "link_id": 907,
                         "id": 140,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -19543,7 +19527,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 910,
+                        "link_id": 908,
                         "id": 103,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -19554,7 +19538,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 911,
+                        "link_id": 909,
                         "id": 143,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -19565,7 +19549,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 912,
+                        "link_id": 910,
                         "id": 189,
                         "name": "system form select export format",
                         "description": "selector for the export format e.g. json",
@@ -19576,7 +19560,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 913,
+                        "link_id": 911,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -19586,7 +19570,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 914,
+                        "link_id": 912,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -19597,7 +19581,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 915,
+                        "link_id": 913,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -19608,7 +19592,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 916,
+                        "link_id": 914,
                         "id": 214,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -19619,7 +19603,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 917,
+                        "link_id": 915,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -19629,7 +19613,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 918,
+                        "link_id": 916,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -19647,7 +19631,7 @@
                 "code_id": "export_json",
                 "components": [
                     {
-                        "link_id": 919,
+                        "link_id": 917,
                         "id": 106,
                         "name": "system title export json",
                         "description": "show the language specific title for the export json page",
@@ -19658,7 +19642,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 920,
+                        "link_id": 918,
                         "id": 139,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -19669,7 +19653,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 921,
+                        "link_id": 919,
                         "id": 140,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -19680,7 +19664,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 922,
+                        "link_id": 920,
                         "id": 103,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -19691,7 +19675,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 923,
+                        "link_id": 921,
                         "id": 143,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -19702,7 +19686,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 924,
+                        "link_id": 922,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -19712,7 +19696,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 925,
+                        "link_id": 923,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -19723,7 +19707,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 926,
+                        "link_id": 924,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -19734,7 +19718,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 927,
+                        "link_id": 925,
                         "id": 214,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -19745,7 +19729,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 928,
+                        "link_id": 926,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -19755,7 +19739,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 929,
+                        "link_id": 927,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -19773,7 +19757,7 @@
                 "code_id": "export_xml",
                 "components": [
                     {
-                        "link_id": 930,
+                        "link_id": 928,
                         "id": 107,
                         "name": "system title export xml",
                         "description": "show the language specific title for the export xml page",
@@ -19784,7 +19768,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 931,
+                        "link_id": 929,
                         "id": 139,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -19795,7 +19779,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 932,
+                        "link_id": 930,
                         "id": 140,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -19806,7 +19790,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 933,
+                        "link_id": 931,
                         "id": 103,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -19817,7 +19801,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 934,
+                        "link_id": 932,
                         "id": 143,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -19828,7 +19812,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 935,
+                        "link_id": 933,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -19838,7 +19822,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 936,
+                        "link_id": 934,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -19849,7 +19833,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 937,
+                        "link_id": 935,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -19860,7 +19844,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 938,
+                        "link_id": 936,
                         "id": 214,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -19871,7 +19855,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 939,
+                        "link_id": 937,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -19881,7 +19865,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 940,
+                        "link_id": 938,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -19899,7 +19883,7 @@
                 "code_id": "export_csv",
                 "components": [
                     {
-                        "link_id": 941,
+                        "link_id": 939,
                         "id": 108,
                         "name": "system title export csv",
                         "description": "show the language specific title for the export csv page",
@@ -19910,7 +19894,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 942,
+                        "link_id": 940,
                         "id": 139,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -19921,7 +19905,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 943,
+                        "link_id": 941,
                         "id": 140,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -19932,7 +19916,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 944,
+                        "link_id": 942,
                         "id": 103,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -19943,7 +19927,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 945,
+                        "link_id": 943,
                         "id": 143,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -19954,7 +19938,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 946,
+                        "link_id": 944,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -19964,7 +19948,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 947,
+                        "link_id": 945,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -19975,7 +19959,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 948,
+                        "link_id": 946,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -19986,7 +19970,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 949,
+                        "link_id": 947,
                         "id": 214,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -19997,7 +19981,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 950,
+                        "link_id": 948,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -20007,7 +19991,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 951,
+                        "link_id": 949,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -20025,7 +20009,7 @@
                 "code_id": "export_ods",
                 "components": [
                     {
-                        "link_id": 952,
+                        "link_id": 950,
                         "id": 109,
                         "name": "system title export ods",
                         "description": "show the language specific title for the export ods page",
@@ -20036,7 +20020,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 953,
+                        "link_id": 951,
                         "id": 139,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -20047,7 +20031,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 954,
+                        "link_id": 952,
                         "id": 140,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -20058,7 +20042,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 955,
+                        "link_id": 953,
                         "id": 103,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -20069,7 +20053,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 956,
+                        "link_id": 954,
                         "id": 143,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -20080,7 +20064,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 957,
+                        "link_id": 955,
                         "id": 222,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -20090,7 +20074,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 958,
+                        "link_id": 956,
                         "id": 210,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -20101,7 +20085,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 959,
+                        "link_id": 957,
                         "id": 209,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -20112,7 +20096,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 960,
+                        "link_id": 958,
                         "id": 214,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -20123,7 +20107,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 961,
+                        "link_id": 959,
                         "id": 224,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -20133,7 +20117,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 962,
+                        "link_id": 960,
                         "id": 220,
                         "name": "system form end",
                         "type_id": 31,
@@ -20151,7 +20135,7 @@
                 "code_id": "job_async",
                 "components": [
                     {
-                        "link_id": 963,
+                        "link_id": 961,
                         "id": 110,
                         "name": "system title process async",
                         "description": "show the language specific title for the progress of one process",
@@ -20162,7 +20146,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 964,
+                        "link_id": 962,
                         "id": 111,
                         "name": "system body process async",
                         "description": "show the progress of one process",
@@ -20181,7 +20165,7 @@
                 "code_id": "job_control",
                 "components": [
                     {
-                        "link_id": 965,
+                        "link_id": 963,
                         "id": 112,
                         "name": "system title process list",
                         "description": "show the language specific title for the control of all processes",
@@ -20192,7 +20176,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 966,
+                        "link_id": 964,
                         "id": 113,
                         "name": "system body process list",
                         "description": "show all progress of one progress",
@@ -20211,7 +20195,7 @@
                 "code_id": "job_check",
                 "components": [
                     {
-                        "link_id": 967,
+                        "link_id": 965,
                         "id": 114,
                         "name": "system title process",
                         "description": "show the language specific title for the job dashboard",
@@ -20222,7 +20206,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 968,
+                        "link_id": 966,
                         "id": 115,
                         "name": "system body process",
                         "description": "show all progress of job dashboard",
@@ -20241,7 +20225,7 @@
                 "code_id": "admin_main",
                 "components": [
                     {
-                        "link_id": 969,
+                        "link_id": 967,
                         "id": 116,
                         "name": "system title admin",
                         "description": "show the language specific title for the administrator dashboard",
@@ -20252,7 +20236,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 970,
+                        "link_id": 968,
                         "id": 117,
                         "name": "system admin response times",
                         "description": "show the most relevant delays in response to user request",
@@ -20262,7 +20246,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 971,
+                        "link_id": 969,
                         "id": 118,
                         "name": "system admin failed logins",
                         "description": "show last and most critical failed login trails to be able to detect hacking attempts",
@@ -20272,7 +20256,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 972,
+                        "link_id": 970,
                         "id": 119,
                         "name": "system admin unassigned errors",
                         "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
@@ -20282,7 +20266,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 973,
+                        "link_id": 971,
                         "id": 120,
                         "name": "system admin pending error fixes",
                         "description": "show a list of errors where the fix has been expected but that are not yet fixed",
@@ -20292,7 +20276,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 974,
+                        "link_id": 972,
                         "id": 121,
                         "name": "system admin delayed jobs",
                         "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
@@ -20319,7 +20303,7 @@
                 "code_id": "complete",
                 "components": [
                     {
-                        "link_id": 975,
+                        "link_id": 973,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -20328,7 +20312,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 976,
+                        "link_id": 974,
                         "id": 227,
                         "name": "link list word",
                         "description": "changeable list of links of this word",
@@ -20338,7 +20322,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 977,
+                        "link_id": 975,
                         "id": 234,
                         "name": "formulas list word",
                         "description": "changeable list of formulas related to this word",
@@ -20348,7 +20332,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 978,
+                        "link_id": 976,
                         "id": 243,
                         "name": "result list word",
                         "description": "list of result related to this word",
@@ -20358,7 +20342,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 979,
+                        "link_id": 977,
                         "id": 246,
                         "name": "Export JSON",
                         "description": "export this word and the related value in the JSON format",
@@ -20368,7 +20352,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 980,
+                        "link_id": 978,
                         "id": 247,
                         "name": "Export XML",
                         "description": "export this word and the related value in the XML format",
@@ -20387,7 +20371,7 @@
                 "code_id": "language_select",
                 "components": [
                     {
-                        "link_id": 981,
+                        "link_id": 979,
                         "id": 269,
                         "name": "title language select",
                         "description": "show the page title to select a language",
@@ -20398,7 +20382,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 982,
+                        "link_id": 980,
                         "id": 270,
                         "name": "list of all languages",
                         "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
@@ -20408,7 +20392,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 983,
+                        "link_id": 981,
                         "id": 271,
                         "name": "request additional language",
                         "description": "a button to request an additional language",
@@ -20428,7 +20412,7 @@
                 "code_id": "base_units",
                 "components": [
                     {
-                        "link_id": 984,
+                        "link_id": 982,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -20446,7 +20430,7 @@
                 "code_id": "word_default",
                 "components": [
                     {
-                        "link_id": 985,
+                        "link_id": 983,
                         "id": 272,
                         "name": "Word title",
                         "description": "show the word name as a page title",
@@ -20456,7 +20440,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 986,
+                        "link_id": 984,
                         "id": 306,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -20468,7 +20452,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 987,
+                        "link_id": 985,
                         "id": 194,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -20478,7 +20462,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 988,
+                        "link_id": 986,
                         "id": 300,
                         "name": "system show field plural",
                         "description": "show the plural form of a word as read only text",
@@ -20488,7 +20472,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 989,
+                        "link_id": 987,
                         "id": 302,
                         "name": "phrase aliases",
                         "description": "show the phrases that are an alias of this phrase",
@@ -20498,7 +20482,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 990,
+                        "link_id": 988,
                         "id": 303,
                         "name": "phrase symbols",
                         "description": "show the symbols of this phrase",
@@ -20508,7 +20492,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 991,
+                        "link_id": 989,
                         "id": 229,
                         "name": "children of word",
                         "description": "list of words or triples where this word leading to",
@@ -20518,7 +20502,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 992,
+                        "link_id": 990,
                         "id": 305,
                         "name": "related phrases without subtitles",
                         "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
@@ -20528,7 +20512,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 993,
+                        "link_id": 991,
                         "id": 60,
                         "name": "system sub title references",
                         "description": "show the language specific sub title for a reference list",
@@ -20539,7 +20523,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 994,
+                        "link_id": 992,
                         "id": 233,
                         "name": "ref list word",
                         "description": "changeable list of reference of this word",
@@ -20549,7 +20533,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 995,
+                        "link_id": 993,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -20560,7 +20544,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 996,
+                        "link_id": 994,
                         "id": 290,
                         "name": "value chart",
                         "description": "show a chart of the most relevant values by impact on top of the value list",
@@ -20569,7 +20553,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 997,
+                        "link_id": 995,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20578,7 +20562,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 998,
+                        "link_id": 996,
                         "id": 62,
                         "name": "system sub title formulas",
                         "description": "show the language specific sub title for a formula list",
@@ -20589,7 +20573,7 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 999,
+                        "link_id": 997,
                         "id": 307,
                         "name": "formula list",
                         "description": "list of formulas",
@@ -20598,13 +20582,22 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1000,
-                        "id": 310,
+                        "link_id": 998,
+                        "id": 308,
+                        "name": "formulas of parents",
+                        "description": "list of formulas assigned to the ancestor phrases of this word, grouped per ancestor",
+                        "type_id": 206,
+                        "position": 16,
+                        "position_type": 3
+                    },
+                    {
+                        "link_id": 999,
+                        "id": 311,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
                         "code_id": "view_tab_box_word",
-                        "position": 16,
+                        "position": 17,
                         "position_type": 7
                     }
                 ]
@@ -20617,7 +20610,7 @@
                 "code_id": "verb_default",
                 "components": [
                     {
-                        "link_id": 1001,
+                        "link_id": 1000,
                         "id": 278,
                         "name": "Verb",
                         "description": "simply show the verb name",
@@ -20626,7 +20619,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1002,
+                        "link_id": 1001,
                         "id": 279,
                         "name": "related triples",
                         "description": "triples where this verb is used",
@@ -20644,7 +20637,7 @@
                 "code_id": "triple_default",
                 "components": [
                     {
-                        "link_id": 1003,
+                        "link_id": 1002,
                         "id": 273,
                         "name": "Triple title",
                         "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
@@ -20654,7 +20647,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1004,
+                        "link_id": 1003,
                         "id": 306,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -20666,7 +20659,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1005,
+                        "link_id": 1004,
                         "id": 194,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -20676,7 +20669,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1006,
+                        "link_id": 1005,
                         "id": 302,
                         "name": "phrase aliases",
                         "description": "show the phrases that are an alias of this phrase",
@@ -20686,7 +20679,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1007,
+                        "link_id": 1006,
                         "id": 303,
                         "name": "phrase symbols",
                         "description": "show the symbols of this phrase",
@@ -20696,7 +20689,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1008,
+                        "link_id": 1007,
                         "id": 305,
                         "name": "related phrases without subtitles",
                         "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
@@ -20706,7 +20699,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1009,
+                        "link_id": 1008,
                         "id": 60,
                         "name": "system sub title references",
                         "description": "show the language specific sub title for a reference list",
@@ -20717,7 +20710,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1010,
+                        "link_id": 1009,
                         "id": 233,
                         "name": "ref list word",
                         "description": "changeable list of reference of this word",
@@ -20727,7 +20720,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1011,
+                        "link_id": 1010,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -20738,7 +20731,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 1012,
+                        "link_id": 1011,
                         "id": 289,
                         "name": "values by triple",
                         "description": "show the most relevant values where this triple is used",
@@ -20747,7 +20740,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1013,
+                        "link_id": 1012,
                         "id": 62,
                         "name": "system sub title formulas",
                         "description": "show the language specific sub title for a formula list",
@@ -20758,7 +20751,7 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 1014,
+                        "link_id": 1013,
                         "id": 307,
                         "name": "formula list",
                         "description": "list of formulas",
@@ -20767,8 +20760,8 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1015,
-                        "id": 310,
+                        "link_id": 1014,
+                        "id": 311,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -20786,7 +20779,7 @@
                 "code_id": "source_default",
                 "components": [
                     {
-                        "link_id": 1016,
+                        "link_id": 1015,
                         "id": 281,
                         "name": "source name",
                         "description": "simply show the name of a source",
@@ -20795,7 +20788,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1017,
+                        "link_id": 1016,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20813,7 +20806,7 @@
                 "code_id": "ref_default",
                 "components": [
                     {
-                        "link_id": 1018,
+                        "link_id": 1017,
                         "id": 282,
                         "name": "reference name",
                         "description": "simply show the name of a reference",
@@ -20822,7 +20815,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1019,
+                        "link_id": 1018,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20840,7 +20833,7 @@
                 "code_id": "language_default",
                 "components": [
                     {
-                        "link_id": 1020,
+                        "link_id": 1019,
                         "id": 283,
                         "name": "language name",
                         "description": "simply show the name of a language",
@@ -20849,7 +20842,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1021,
+                        "link_id": 1020,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20867,7 +20860,7 @@
                 "code_id": "value_default",
                 "components": [
                     {
-                        "link_id": 1022,
+                        "link_id": 1021,
                         "id": 275,
                         "name": "Value title",
                         "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
@@ -20877,7 +20870,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1023,
+                        "link_id": 1022,
                         "id": 287,
                         "name": "main value",
                         "description": "show one most relevant value",
@@ -20895,7 +20888,7 @@
                 "code_id": "formula_default",
                 "components": [
                     {
-                        "link_id": 1024,
+                        "link_id": 1023,
                         "id": 274,
                         "name": "Formula title",
                         "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
@@ -20905,7 +20898,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1025,
+                        "link_id": 1024,
                         "id": 277,
                         "name": "Expression with links",
                         "description": "show the formula expression in the latex format with a tooltip and a link for each term",
@@ -20915,7 +20908,7 @@
                         "style": 5
                     },
                     {
-                        "link_id": 1026,
+                        "link_id": 1025,
                         "id": 306,
                         "name": "system sub title description",
                         "description": "show the language specific sub title for the description column",
@@ -20926,7 +20919,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1027,
+                        "link_id": 1026,
                         "id": 194,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -20936,7 +20929,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1028,
+                        "link_id": 1027,
                         "id": 61,
                         "name": "system sub title values",
                         "description": "show the language specific sub title for a value list",
@@ -20947,7 +20940,7 @@
                         "position_type": 5
                     },
                     {
-                        "link_id": 1029,
+                        "link_id": 1028,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -20956,7 +20949,7 @@
                         "position_type": 3
                     },
                     {
-                        "link_id": 1030,
+                        "link_id": 1029,
                         "id": 291,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -20965,8 +20958,8 @@
                         "position_type": 6
                     },
                     {
-                        "link_id": 1031,
-                        "id": 310,
+                        "link_id": 1030,
+                        "id": 311,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -20984,7 +20977,7 @@
                 "code_id": "result_default",
                 "components": [
                     {
-                        "link_id": 1032,
+                        "link_id": 1031,
                         "id": 291,
                         "name": "related results",
                         "description": "show the most relevant and related results",
@@ -21002,7 +20995,7 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1033,
+                        "link_id": 1032,
                         "id": 292,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
@@ -21011,7 +21004,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1034,
+                        "link_id": 1033,
                         "id": 293,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
@@ -21020,7 +21013,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1035,
+                        "link_id": 1034,
                         "id": 294,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
@@ -21094,7 +21087,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1036,
+                        "link_id": 1035,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21103,7 +21096,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1037,
+                        "link_id": 1036,
                         "id": 286,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
@@ -21112,7 +21105,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1038,
+                        "link_id": 1037,
                         "id": 285,
                         "name": "formulas",
                         "description": "simply show all related formulas",
@@ -21130,7 +21123,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1039,
+                        "link_id": 1038,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21139,7 +21132,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1040,
+                        "link_id": 1039,
                         "id": 295,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
@@ -21148,7 +21141,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1041,
+                        "link_id": 1040,
                         "id": 296,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
@@ -21157,7 +21150,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1042,
+                        "link_id": 1041,
                         "id": 297,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
@@ -21191,7 +21184,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1043,
+                        "link_id": 1042,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -21200,7 +21193,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1044,
+                        "link_id": 1043,
                         "id": 298,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
@@ -21209,7 +21202,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1045,
+                        "link_id": 1044,
                         "id": 288,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -21218,7 +21211,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1046,
+                        "link_id": 1045,
                         "id": 299,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",

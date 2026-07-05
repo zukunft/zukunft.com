@@ -160,7 +160,7 @@ class system_form extends component
     ): string
     {
         // for a named object the page title is simply its name shown big
-        return $this->title_box($dbo, $dbo->name(), $max);
+        return $this->subtitle($dbo, $dbo->name(), $max);
     }
 
     /**
@@ -189,7 +189,7 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->title_box($dbo, $dbo->name(), $max, $from_verb_to);
+        return $this->subtitle($dbo, $dbo->name(), $max, $from_verb_to);
     }
 
     /**
@@ -229,7 +229,7 @@ class system_form extends component
         if ($dbo::class == value::class) {
             $heading_content = $dbo->name_link();
         }
-        return $this->title_box($dbo, $heading_content, $max);
+        return $this->subtitle($dbo, $heading_content, $max);
     }
 
     /**
@@ -243,7 +243,7 @@ class system_form extends component
      * @param string $lead_subtitle optional html prepended to the subtitle (e.g. a triple's from/verb/to links)
      * @return string the html code for the page title
      */
-    private function title_box(
+    private function subtitle(
         db_object $dbo,
         string    $heading_content,
         int       $max = def::LIMIT_RELATED_PER_VERB,
@@ -568,7 +568,8 @@ class system_form extends component
      */
     function show_ref_key(ref|db_object $dbo): string
     {
-        return $dbo->external_key();
+        // a new reference of an add form has no external key yet
+        return $dbo->external_key() ?? '';
     }
 
     /**
@@ -590,7 +591,8 @@ class system_form extends component
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        return $dbo->url();
+        // a new reference of an add form has no url yet
+        return $dbo->url() ?? '';
     }
 
     /**

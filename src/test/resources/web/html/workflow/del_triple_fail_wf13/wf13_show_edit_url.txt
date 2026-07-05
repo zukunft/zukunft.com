@@ -1,0 +1,28 @@
+GET
+http://localhost/http/view.php?id=998&k=System+Test+Triple&pf=999&b=3&pt=997&uu=1&ui=0&8id=998&8k=System+Test+Triple&8pf=999&8b=3&8pt=997&8uu=1&8ui=0&9m=92&9id=998&m=11&z=0
+/http/view.php?id=998&k=System+Test+Triple&pf=999&b=3&pt=997&uu=1&ui=0&8id=998&8k=System+Test+Triple&8pf=999&8b=3&8pt=997&8uu=1&8ui=0&9m=92&9id=998&m=11&z=0
+/http/view.php?id=998&name=System+Test+Triple&from_id=999&verb_id=3&to_id=997&usage=1&impact=0&8id=998&8name=System+Test+Triple&8from_id=999&8verb_id=3&8to_id=997&8usage=1&8impact=0&9mask_id=triple_default&9id=998&mask_id=triple_del&step=no&
+{
+    "id": "998",
+    "name": "System Test Triple",
+    "from_id": "999",
+    "verb_id": "3",
+    "to_id": "997",
+    "usage": "1",
+    "impact": "0",
+    "mask_id": "triple_del",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "998",
+        "name": "System Test Triple",
+        "from_id": "999",
+        "verb_id": "3",
+        "to_id": "997",
+        "usage": "1",
+        "impact": "0"
+    },
+    "url_part_back": {
+        "mask_id": "triple_default",
+        "id": "998"
+    }
+}

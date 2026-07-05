@@ -8,13 +8,48 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-in the 'changes' tab show more than one row. get how many rows should be shown from the config as done before e.g. for the number of values to show
+add a formula change workflow to change a formula similar to src/test/resources/web/html/workflow/change_triple_wf5
 
-in the word default view show also the formulas of the parent objects. e.g. if 'USD' is shown and USD is a symbol for 'US dollar' and that is a 'currency' than show the formulas assigned to the currency with 'assigned to currency' where currency is a link to the currency word page and shows a tooltip 
+add a formula del workflow similar to delete the added formula similar to src/test/resources/web/html/workflow/del_triple_wf6
+
+add a formula add fail workflow to add a formula similar to src/test/resources/web/html/workflow/add_triple_fail_wf11
+
+add a formula change fail workflow to change a formula similar to src/test/resources/web/html/workflow/chnage_triple_fail_wf12
+
+add a formula del workflow fail similar to delete the added formula similar to src/test/resources/web/html/workflow/del_word_fail_wf10
+
+add a value add workflow to add a value similar to src/test/resources/web/html/workflow/add_triple_wf4
+
+add a value change workflow to change a value similar to src/test/resources/web/html/workflow/change_triple_wf5
+
+add a value del workflow similar to delete the added value similar to src/test/resources/web/html/workflow/del_triple_wf6
+
+add a value add fail workflow to add a value similar to src/test/resources/web/html/workflow/add_triple_fail_wf11
+
+add a value change fail workflow to change a value similar to src/test/resources/web/html/workflow/chnage_triple_fail_wf12
+
+add a value del workflow fail similar to delete the added value similar to src/test/resources/web/html/workflow/del_word_fail_wf10
+
+add to /docs/llm/* that all function that could create an error that is relevanz for the user needs $msg as parameter to be able to return the specific error with the potential solution to the user. This is relevant for example for src/main/php/cfg/word/triple.php::verb_from_api_json
+
+reduce the number of load and save calls
+
+why does src/test/resources/web/html/workflow/change_word_wf2/wf2_show.html contain 'the name of the word must not be empty'? I guess this should not be the case.
+
+
+check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function  
+
+check that save() never fails add() silently
+
+in test_triples base the fill_url_array on the a ..._filled() function that returns an object and create the url_array using a object_to_url function. Note 
+
+rename the src/test/resources/web/html/workflow/change_word_invalid_wf7 to change_word_fail_wf7 because 'fail' is shorter and it is inline with 'add_word_fail_wf9' and change the 'invalid' to 'fail' within this wf code
+
+for each positiv workflow test create a negativ with the test cases that can fail. Let's start with 'add_word_wf1' and create 'add_word_fail_wf9' that has e.g. the steps 'wf9_edit_no_name_save'. 
+
+add in the word_default view beside the 'view' and 'changes' a 'your' tab with the use overwrite of the shown e.g. word object, so basically the values from the 'user_words' table
 
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
-
-fill the view selector of the word edit mask with the potential views that can be assigned to a word
 
 use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes. 
 
@@ -64,6 +99,31 @@ use the '8' prefixed values (urlVar::PRE) to create a complex parallel change wo
 check that all api interfaces can load user specific data independent of the session user 
 
 check the open api definition and the openapi check script and suggest updates in the definition and the script
+
+### value list
+
+create a 'most relevant' value list that, if the values have a time value (e.g. year or quarter), shows the newest values first
+
+if the year contains more than on value show all values with the same time word as a group and show the phrase left and the numbers on the right 
+
+if the list contains a phrase more that x times create a group of the values related to this phrase and use the aggregated impact for the sorting
+
+show below the other values sorted by impact descending
+
+
+### frontend requests
+
+If the frontend requests data from the backend, the backend sends cached data without refresh whenever possible
+
+but the backend adds a refresh trigger th the cache
+
+the triggers are picked up by the crontab job and the cache is refreshed
+
+a pure html frontend tries retries after an increasing time period to get the updated cache from the backend and stops the retry if it has received the update
+
+a js frontend can use subscribe to get the updated cache data
+
+additional the cache can be updated by time or by trigger words without frontend request
 
 
 ### word frontend

@@ -211,6 +211,10 @@ enum messages: string
     const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
 
+    // internal error
+    // TODO Prio 2 use this to inform users about all internal errors
+    const string VAR_LOG_LINK = 'VarLogLink';
+
     // technical database vars
     const string VAR_SQL = 'VarObjSQL';
     const string VAR_TRACE_LINK = 'VarObjTraceLink';
@@ -386,6 +390,9 @@ enum messages: string
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
 
+    case INTERNAL = 'an internal system error has occurred that you can track with this link: '
+        . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' in database for '
@@ -410,6 +417,17 @@ enum messages: string
     case NAME_EMPTY = 'the name of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' must not be empty';
+    case DELETE_IN_USE = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" cannot be deleted because it is still in use';
+    case TRIPLE_PHRASES_MISSING = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' cannot be added without a from and a to phrase';
+    case PHRASE_NAME_NOT_FOUND = 'no word or triple found with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
     case TYPE_CHANGE_NOT_ALLOWED = 'changing the type of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' is not allowed for your user profile';
@@ -2013,6 +2031,7 @@ enum messages: string
     // language elements to create a text
     case FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
     case OF = ' of ';   // e.g. to indicate which word would be deleted
+    case ASSIGNED_TO = 'assigned to'; // subheadline for the formulas of an ancestor phrase
 
     case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
     case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';

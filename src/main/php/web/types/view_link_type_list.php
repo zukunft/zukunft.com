@@ -38,15 +38,25 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_link_type_list extends type_list
 {
 
     const string NAME = url_var::VIEW_LINK_TYPE;
+
+    /**
+     * @return int the database id of the default view link type
+     */
+    function default_id(): int
+    {
+        return parent::id(view_link_types::DEFAULT);
+    }
 
     /**
      * create the HTML code to select a view link type

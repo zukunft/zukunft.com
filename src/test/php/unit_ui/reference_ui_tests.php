@@ -54,6 +54,14 @@ class reference_ui_tests
         $test_page .= 'with link: ' . $ref->name_link() . '<br>';
         $test_page .= $t->dsp_title_named_edit($ref);
         $t->html_page_test($test_page, 'reference', 'reference', $t);
+
+        // a reference always provides a phrase for the rendering like the other db objects:
+        // the linked phrase, or an empty phrase e.g. for a new reference of an add form
+        $test_name = 'the phrase of a new reference is empty but never null';
+        $ref_new = new ref();
+        $t->assert($test_name, $ref_new->phrase()->id(), 0);
+        $test_name = 'the phrase of a linked reference is the linked phrase';
+        $t->assert_true($test_name, $ref->phrase()->id() != 0);
     }
 
 }

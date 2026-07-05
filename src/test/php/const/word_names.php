@@ -294,6 +294,8 @@ class word_names
     // the new description posted by the confirm change workflow to change the test word description
     const string TEST_CHANGE_COM = 'a confirm change test description';
     const string TEST_ADD_TO = 'System Test Word To';
+    // the fixed snapshot id of the 'System Test Word To' (like TEST_ADD_ID for the 'System Test Word')
+    const int TEST_ADD_TO_ID = 997;
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
@@ -350,6 +352,7 @@ class word_names
     // and that are never expected to be used by a user
     const array TEST_WORDS = array(
         self::TEST_ADD,
+        self::TEST_ADD_TO,
         self::TEST_ADD_VIA_FUNC,
         self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,

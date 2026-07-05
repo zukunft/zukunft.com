@@ -1,9 +1,17 @@
 GET
-http://localhost/http/view.php?m=4&id=999&z=1&submit=
-/http/view.php?m=4&id=999&z=1&submit=
-/http/view.php?mask_id=word_del&id=999&step=confirm&
+http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=4&z=1&submit=
+/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=4&z=1&submit=
+/http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=entry_view&mask_id=word_del&step=confirm&
 {
-    "mask_id": "word_del",
     "id": "999",
-    "step": "confirm"
+    "name": "System Test Word",
+    "mask_id": "word_del",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word"
+    },
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
 }

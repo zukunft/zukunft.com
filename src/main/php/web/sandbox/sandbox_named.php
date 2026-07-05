@@ -234,6 +234,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
         $url_array = parent::to_url_array();
         $url_array[url_var::NAME] = $this->name();
         $url_array[url_var::DESCRIPTION] = $this->get_description();
+        if ($this->usage > 0) {
+            $url_array[url_var::USAGE] = $this->usage;
+        }
         return $url_array;
     }
 

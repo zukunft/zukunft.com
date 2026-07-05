@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -307,6 +308,16 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
+        $test_name = 'the url array contains the filled plural';
+        $wrd_ui = $t_wrd->word_dsp();
+        $wrd_ui->plural = word_names::MATH_PLURAL;
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::PLURAL], word_names::MATH_PLURAL);
+        $test_name = 'an empty plural is excluded from the url array';
+        $wrd_ui->plural = '';
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::PLURAL);
+
 
         $t->subheader($ts . 'subtitle with phrase limit');
 
@@ -315,10 +326,10 @@ class word_tests
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_ui();
         $txt = $form->title_named($wrd, 2);
-        $lnk = word_names::CITY_ID . '">' . word_names::CITY . '</a>';
+        $lnk = triple_names::CITY_ZH_ID . '" ' . html_base::TITLE . '="' . triple_names::CITY_ZH_COM . '">' . word_names::CITY . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
-        $test_name = '... and canton';
-        $lnk = word_names::CANTON_ID . '">' . word_names::CANTON . '</a>';
+        $test_name = '... and canton with its description as tooltip';
+        $lnk = triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and "..." for more';
         $lnk = views::WORD_RELATED_ID . '&id=' . word_names::ZH_ID . '">...</a>';
@@ -338,8 +349,8 @@ class word_tests
         $txt = $form->title_named($wrd);
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
-        $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
-            . '&id=' . word_names::SWISS_FRANC_ID . '" title="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
+        $lnk = '<a href="/http/view.php?m=' . views::TRIPLE_ID
+            . '&id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -354,8 +365,8 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, '>' . word_names::COMPANY . '</a>');
         $test_name = '... and still canton';
         $t->assert_text_contains($test_name, $txt, '>' . word_names::CANTON . '</a>');
-        $test_name = '... without a tooltip because canton has no description';
-        $t->assert_text_contains($test_name, $txt, '&id=' . word_names::CANTON_ID . '">' . word_names::CANTON . '</a>');
+        $test_name = '... linking to the canton triple with its description as tooltip';
+        $t->assert_text_contains($test_name, $txt, '&id=' . triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>');
         $test_name = '... but city NOT';
         $t->assert_text_not_contains($test_name, $txt, '>' . word_names::CITY . '</a>');
 

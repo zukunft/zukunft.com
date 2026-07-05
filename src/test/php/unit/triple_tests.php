@@ -3,11 +3,17 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -15,11 +21,16 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -112,9 +123,86 @@ class triple_tests
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
+        $t->subheader($ts . 'api mapping of an incomplete message');
+        // an api message with only the id maps the id and does not fail
+        $test_name = 'api_mapper with only the id keeps the id';
+        $trp = new triple($usr);
+        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], new user_message());
+        $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+
+        // an api message with only the name maps the name and leaves the id at 0
+        $test_name = 'api_mapper with only the name keeps the name';
+        $trp = new triple($usr);
+        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], new user_message());
+        $t->assert($test_name, $trp->name(), triple_names::MATH_CONST);
+        $test_name = 'api_mapper with only the name leaves the id at 0';
+        $t->assert($test_name, $trp->id(), 0);
+
+        // an api message with neither the id nor the name maps nothing and leaves the id at 0
+        $test_name = 'api_mapper with neither id nor name leaves the id at 0';
+        $trp = new triple($usr);
+        $trp->api_mapper([], new user_message());
+        $t->assert($test_name, $trp->id(), 0);
+
+        // an api message where the from, verb and to are present but null (an incomplete triple) maps
+        // them to empty objects instead of throwing a TypeError; guards the phrase_from_api_json and
+        // verb_from_api_json regression
+        $test_name = 'api_mapper with a null from leaves the from phrase empty';
+        $trp = new triple($usr);
+        $trp->api_mapper([
+            json_fields::ID => triple_names::MATH_CONST_ID,
+            json_fields::FROM => null,
+            json_fields::VERB => null,
+            json_fields::TO => null
+        ], new user_message());
+        $t->assert($test_name, $trp->get_from()?->id() ?? 0, 0);
+        $test_name = 'api_mapper with a null to leaves the to phrase empty';
+        $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
+        $test_name = 'api_mapper with a null from/verb/to keeps the id';
+        $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
         $t->assert_api_to_ui($trp, new triple_ui());
+
+        $t->subheader($ts . 'url mapping of phrases posted by name');
+        // the datalist edit fields submit the shown phrase name instead of the id, so the url
+        // mapper must resolve the name (e.g. 'Zurich') via the request cache to the phrase
+        $t_phr = new test_phrases($t);
+        $dto_ui = new data_object_ui();
+        $dto_ui->phr_lst = $t_phr->list_ui();
+        $phr_name = $dto_ui->phr_lst->lst()[0]->name();
+        $trp_ui = new triple_ui();
+        $map_msg = new user_message_ui();
+        $trp_ui->url_mapper([
+            url_var::ID => 1,
+            url_var::NAME => triple_names::SYSTEM_TEST_ADD,
+            url_var::PHRASE_FROM => $phr_name,
+            url_var::WEIGHT => ''
+        ], $map_msg, $dto_ui);
+        $test_name = 'a from phrase posted by name is resolved via the request cache';
+        $t->assert($test_name, $trp_ui->get_from()?->name(), $phr_name);
+        $test_name = 'an empty weight posted by the edit form is kept as not set';
+        $t->assert_true($test_name, $trp_ui->weight === null);
+
+        $test_name = 'an unknown phrase name is reported to the user';
+        $trp_ui = new triple_ui();
+        $map_msg = new user_message_ui();
+        $trp_ui->url_mapper([
+            url_var::ID => 1,
+            url_var::NAME => triple_names::SYSTEM_TEST_ADD,
+            url_var::PHRASE_FROM => 'phrase name that does not exist'
+        ], $map_msg, $dto_ui);
+        $t->assert_true($test_name, $map_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
+
+        $test_name = 'a triple with only one linked phrase is rejected';
+        $trp_ui = new triple_ui();
+        $trp_ui->set_name(triple_names::SYSTEM_TEST_ADD);
+        $trp_ui->set_from_by_id(1, $dto_ui);
+        $val_msg = new user_message_ui();
+        $t->assert_false($test_name, $trp_ui->input_valid($val_msg, url_var::CRUD_UPDATE));
+        $test_name = '... and the user is told that both phrases are needed';
+        $t->assert_true($test_name, $val_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
 
         $t->subheader($ts . 'frontend phrases_related round-trip');
         // build a target phrase ("Pi") that should appear in the triple's related list, and

@@ -53,6 +53,8 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -75,6 +77,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -223,6 +227,9 @@ class test_triples extends test_objects
         $trp = $this->triple_filled_included();
         $trp->id = 0;
         $trp->set_name(triple_names::SYSTEM_TEST_ADD);
+        // overwrite the 'math const' given name of the filled base triple with the reserved test
+        // given name so the workflow urls never carry seeded data
+        $trp->name_given = triple_names::SYSTEM_TEST_ADD_GIVEN;
         $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
@@ -240,33 +247,143 @@ class test_triples extends test_objects
     }
 
     /**
-     * the url parameters posted by the 'Change triple' edit form on save, used by the change_triple
-     * workflow test to show the pending change in the confirm change view (docs/llm/testing.md);
-     * the share and protection ids are the defaults of a sandbox triple
+     * url array of the main test triple with the description updated
      *
-     * @param int $id the database id of the changed triple, used as the back target
+     * @param int $id the database id of the changed triple, used as the '9'-prefixed back target id
      * @return array the edit form url parameters of the pending change
      */
-    function change_url_array(int $id): array
+    function change_description_url_array(int $id): array
     {
+        $msg = new user_message_ui();
+        // use the reserved test triple so the workflow url never carries seeded (e.g. math) data
+        $trp = $this->triple_filled_add_name();
+        $trp->description = 'a confirm change test description';
+        $url_arr = test_mappers::object_to_url_array($trp, $msg);
+        // back navigation is always a '9'-prefixed url var, never a standalone back field
+        // (see docs/llm/state-and-messages.md), otherwise the url mapper reports the key as missing
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
+    }
+
+
+    /**
+     * TODO Prio 0 use $t_trp->filled() and a to_url function
+     * the filled triple url posted by the edit form in the second change_triple round, mirroring
+     * test_words::fill_url_array: the first round did not touch the weight or the phrase type, so the
+     * fill round adds them; the '8'-prefixed opening db values are taken from the change url so the
+     * confirm view shows no change for the already-set fields and only the two new ones
+     *
+     * @param int $id the database id of the triple the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening db values
+     */
+    function fill_url_array(int $id): array
+    {
+        $url_arr = $this->change_description_url_array($id);
+        $url_arr[url_var::WEIGHT] = '1';
+        $url_arr[url_var::PHRASE_TYPE] = phrase_types::NORMAL_ID;
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = $url_arr[url_var::DESCRIPTION];
+        $url_arr[url_var::PRE . url_var::SHARE] = $url_arr[url_var::SHARE];
+        $url_arr[url_var::PRE . url_var::PROTECTION] = $url_arr[url_var::PROTECTION];
+        return $url_arr;
+    }
+
+    /**
+     * TODO Prio 0 use to_url function
+     * the new triple fields posted by the add form on save and shown again in the confirm add view,
+     * mirroring test_words::add_url_array; a triple is defined by its from phrase, verb and to phrase,
+     * so those are posted instead of just a name (the reserved 'System Test Triple' name lets the
+     * del_triple workflow load the added triple back)
+     *
+     * @return array the add form url parameters of the new triple
+     */
+    function add_url_array(): array
+    {
+        // the add form posts the phrase ids of the from and to phrases; only reserved test words are
+        // used so the workflow never changes seeded data (e.g. the usage of the math words): the write
+        // twin creates the two words before the workflows run, so their current db id is resolved by
+        // name, and a read-only run (where the words are not written) falls back to the fixed test id;
+        // two fresh test words have no triple between them in either direction, so the new triple
+        // neither collides with an existing triple nor with its reverse (get_similar rejects a reverse)
+        $trp = $this->triple_filled_add_name();
+        $t_wrd = new test_words($this->env);
         return [
-            url_var::BACK => $id,
-            url_var::NAME => triple_names::MATH_CONST,
-            url_var::DESCRIPTION => 'a confirm change test description',
-            url_var::VIEW => '0',
+            url_var::PHRASE_FROM => $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID),
+            url_var::VERB => $trp->get_verb_id(),
+            url_var::PHRASE_TO => $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID),
+            url_var::NAME => triple_names::SYSTEM_TEST_ADD,
+            url_var::DESCRIPTION => triple_names::SYSTEM_TEST_ADD_COM,
             url_var::SHARE => share_types::PUBLIC_ID,
             url_var::PROTECTION => protection_types::NO_PROTECT_ID
         ];
     }
 
-    function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
+    /**
+     * the invalid new triple posted by the add form on save when neither the from nor the to phrase is
+     * entered, used by the add_triple_fail workflow to check that the frontend blocks a triple without a
+     * from and a to phrase (see web/word/triple.php::input_valid); the name is kept so only the missing
+     * phrases, not an empty name, trigger the warning
+     *
+     * @return array the add form url parameters of the new triple without the from, verb and to phrase
+     */
+    function add_missing_phrases_url_array(): array
     {
-        $trp = new triple($this->env->usr1);
+        $url_arr = $this->add_url_array();
+        unset($url_arr[url_var::PHRASE_FROM]);
+        unset($url_arr[url_var::VERB]);
+        unset($url_arr[url_var::PHRASE_TO]);
+        return $url_arr;
+    }
+
+    static function triple_add(phrase $wrd_from, verb $vrb, phrase $phr_to): triple
+    {
+        $trp = new triple(test_users::user_sys_test());
         $trp->set_name(triple_names::SYSTEM_TEST_ADD);
         $trp->set_from($wrd_from);
         $trp->set_verb($vrb);
         $trp->set_to($phr_to);
         return $trp;
+    }
+
+    static function triple_add_ui(): triple_ui
+    {
+        // link two reserved test words (with the fixed test ids) so the workflow urls built from this
+        // factory never reference seeded data; use the same real verb as add_url_array, because a
+        // change posted with the 'not set' verb would erase the verb of the created test triple
+        $trp = self::triple_add(
+            test_words::word_add()->phrase(), test_verbs::verb_part(), test_words::word_add_to()->phrase());
+        return new triple_ui($trp->api_json());
+    }
+
+    static function triple_new_url(): array
+    {
+        $trp_ui = new triple_ui();
+        $trp_ui->set_verb(test_verbs::verb_ui());
+        return $trp_ui->to_url_array();
+    }
+
+    static function triple_add_url(): array
+    {
+        $trp_ui = self::triple_add_ui();
+        return $trp_ui->to_url_array();
+    }
+
+    /**
+     * the test triple url with the current db ids of the from and to test words: a write run must post
+     * the real word ids, because the backend cannot load the fixed test ids and would reject the save;
+     * in a read-only run (where the words are not written) the fixed test ids are kept
+     *
+     * @return array the triple url parameters with the resolved from and to phrase ids
+     */
+    function triple_add_url_resolved(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $url_arr = self::triple_add_url();
+        $url_arr[url_var::PHRASE_FROM]
+            = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $url_arr[url_var::PHRASE_TO]
+            = $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
+        return $url_arr;
     }
 
     /**
@@ -608,6 +725,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_canton()->phrase());
+        $trp->set_description(triple_names::CANTON_ZURICH_COM);
         $trp->set_impact(impacts::HTP_ZH_CANTON);
         return $trp;
     }

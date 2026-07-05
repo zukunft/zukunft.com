@@ -59,30 +59,19 @@ class test_users
 {
 
     /*
-     * init
-     */
-
-    // use the global test environment only used for cleanup, so in many cases just null
-    private ?test_cleanup $env;
-
-    function __construct(?test_cleanup $env = null)
-    {
-        $this->env = $env;
-    }
-
-
-    /*
      * cleanup
      */
 
     /**
      * delete any remaining test words for a clean test start
+     * @param string $ts the name of the test section e.g. word db read tests
+     * @param test_cleanup $t the test object with some base test functions
      */
-    function cleanup(string $ts): void
+    function cleanup(string $ts, test_cleanup $t): void
     {
-        $this->env->subheader($ts . 'cleanup');
+        $t->subheader($ts . 'cleanup');
         foreach (users::TEST_USERS as $usr_name) {
-            $this->env->write_named_cleanup_user($usr_name, $this->env->usr_system);
+            $t->write_named_cleanup_user($usr_name, $t->usr_system);
         }
     }
 
@@ -104,15 +93,17 @@ class test_users
 
     /**
      * TODO Prio 1 fill up all used vars
+     * a backend user object with all fields set
+     * @param test_cleanup $t the test object with some base test functions
      * @return user used for unit testing with all vars set
      */
-    function user_filled(): user
+    function user_filled(test_cleanup $t): user
     {
         global $sys;
 
-        $t_trm = new test_terms($this->env);
-        $t_msk = new test_views($this->env);
-        $t_src = new test_sources($this->env);
+        $t_trm = new test_terms($t);
+        $t_msk = new test_views($t);
+        $t_src = new test_sources($t);
 
         $usr = new user();
         $usr->name = users::TEST_USER_NAME;
@@ -167,7 +158,7 @@ class test_users
     /**
      * @return user a user used for unit testing with the test profile
      */
-    function user_sys_test(): user
+    static function user_sys_test(): user
     {
         global $sys;
 

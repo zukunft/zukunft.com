@@ -1358,6 +1358,11 @@ class sandbox_link extends sandbox
         // check for linked objects
         if ($this->fob == null or $this->tob == null) {
             log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
+        } elseif ($this->predicate_id() == null or $this->predicate_id() == 0) {
+            // a link without a predicate (e.g. a triple with no verb) cannot be compared to a similar
+            // link, so skip the check and log the inconsistency instead of crashing the type-link load,
+            // which requires an int predicate (see docs/llm/structure.md)
+            log_err('The predicate of ' . $this->dsp_id() . ' is missing, so the similar link cannot be checked.', '_sandbox->get_similar');
         } else {
             $db_chk = $this->clone_reset(true);
             $db_chk->set_predicate_id($this->predicate_id());

@@ -105,7 +105,10 @@ class triple_names
     const int YEAR_2030_ID = 1147;
 
     const string SYSTEM_TEST_ADD = 'System Test Triple';
+    const int SYSTEM_TEST_ADD_ID = 998; // fixed snapshot id of the add/del workflow triple (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
+    // the given name that overwrites the generated '<from> <verb> <to>' name of the test triple
+    const string SYSTEM_TEST_ADD_GIVEN = 'System Test Triple Name Given';
     const string SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
     const string SYSTEM_TEST_ADD_CODE_ID = 'System Test Triple Code Id';
     const int SYSTEM_TEST_ADD_USAGE = 12;
@@ -158,12 +161,13 @@ class triple_names
     const string CITY_ZH = 'Zurich (city)';
     const int CITY_ZH_ID = 98;
     const string CITY_ZH_NAME = 'city of Zurich';
-    const string CITY_ZH_COM = 'the city of Zurich';
+    const string CITY_ZH_COM = 'Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.';
     const string CITY_BE = 'Bern (city)';
     const int CITY_BE_ID = 100;
     const string CITY_GE = 'Geneva (city)';
     const int CITY_GE_ID = 101;
     const string CANTON_ZURICH_NAME = 'canton Zurich';
+    const string CANTON_ZURICH_COM = 'The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.';
     const string COMPANY_ZURICH = "Zurich Insurance";
     const int COMPANY_ZURICH_ID = 140;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
@@ -196,6 +200,7 @@ class triple_names
 
     const array TEST_TRIPLES = array(
         self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_ADD_GIVEN,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,

@@ -105,6 +105,16 @@ class sandbox_typed extends sandbox_named
         return $msg->is_ok();
     }
 
+    /**
+     * @return array parent url array extended with the type id
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::TYPE] = $this->type_id();
+        return $url_array;
+    }
+
 
     /*
      * api

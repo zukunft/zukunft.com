@@ -1,0 +1,691 @@
+{
+  "version": "0.0.3",
+  "time": "2026-07-01 12:00:00",
+  "user": "timon",
+  "selection": [
+    "EU banking digital sovereignty market gap"
+  ],
+  "description": "Whether a market gap exists for an EU retail bank marketing digital/European sovereignty as its central value proposition. Captures the demand-side figures that are measurable, the layers where sovereignty is actually marketed, the sovereignty-washing risk, and the central negative finding (no such retail bank observed via web search up to 2026-07-01). Numeric confidence is not a schema field; epistemic limits are carried in the word and source descriptions instead.",
+  "words": [
+    {
+      "name": "sovereignty",
+      "description": "the quality of having independent authority over a territory or an area of activity, free from external control.",
+      "refs": [
+        {
+          "name": "Sovereignty",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q170584",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "digital",
+      "description": "relating to computer technology, especially the representation of data as discrete numerical values.",
+      "refs": [
+        {
+          "name": "Digital_data",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "European",
+      "description": "of or relating to Europe or its people.",
+      "refs": [
+        {
+          "name": "Europe",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q46",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "governance",
+      "description": "the way that organizations or countries are managed at the highest level, and the systems for doing this.",
+      "refs": [
+        {
+          "name": "Governance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1049544",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "license",
+      "description": "an official permission to do, use, or own something; in software, the terms under which a program may be used, modified, or shared.",
+      "refs": [
+        {
+          "name": "License",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "washing",
+      "description": "used figuratively for presenting something in a misleadingly favourable light, as in greenwashing.",
+      "refs": [
+        {
+          "name": "Greenwashing",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "bank",
+      "description": "a financial institution that accepts deposits from the public and creates a demand deposit while simultaneously making loans.",
+      "refs": [
+        {
+          "name": "Bank",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q22687",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "retail",
+      "description": "the sale of goods or services directly to end consumers, as opposed to wholesale or institutional business.",
+      "refs": [
+        {
+          "name": "Retail",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q126793",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "EU",
+      "description": "a political and economic union of member states located primarily in Europe.",
+      "refs": [
+        {
+          "name": "European_Union",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q458",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "SWIFT",
+      "description": "a cooperative that provides a network enabling financial institutions worldwide to send and receive information about financial transactions.",
+      "refs": [
+        {
+          "name": "SWIFT",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q496993",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "description": "a payment card such as a debit or credit card used to make electronic payments.",
+      "refs": [
+        {
+          "name": "Payment_card",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "description": "the voluntary tender of money or its equivalent in exchange for goods or services.",
+      "refs": [
+        {
+          "name": "Payment",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1148747",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "digital euro",
+      "description": "a proposed central bank digital currency to be issued by the Eurosystem as a digital form of the euro.",
+      "refs": [
+        {
+          "name": "Digital_euro",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "US CLOUD Act",
+      "description": "a United States federal law that allows federal law enforcement to compel US-based technology companies to provide requested data stored on servers regardless of whether the data are stored in the US or on foreign soil.",
+      "refs": [
+        {
+          "name": "CLOUD_Act",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q49459854",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "market",
+      "description": "a composition of systems, institutions, procedures, social relations or infrastructures whereby parties engage in exchange.",
+      "refs": [
+        {
+          "name": "Market_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gap",
+      "description": "an unfilled space or interval; here, an unmet segment of demand not served by any current provider."
+    },
+    {
+      "name": "share",
+      "description": "a portion or fraction of a whole, here of total payment volume."
+    },
+    {
+      "name": "percent",
+      "type": "percent",
+      "description": "a number or ratio expressed as a fraction of 100.",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "type": "measure",
+      "description": "the orbital period of the Earth moving in its orbit around the Sun.",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "2028",
+      "type": "time"
+    },
+    {
+      "name": "provider",
+      "description": "an entity that supplies a service, here a payment or cloud service."
+    },
+    {
+      "name": "US",
+      "description": "a country primarily located in North America.",
+      "refs": [
+        {
+          "name": "United_States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "geopolitical",
+      "description": "relating to politics as influenced by geographical factors.",
+      "refs": [
+        {
+          "name": "Geopolitics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "regional",
+      "description": "relating to a particular region rather than a whole country or the world."
+    },
+    {
+      "name": "intent",
+      "description": "a stated plan or purpose to act, here captured from a buyer survey."
+    },
+    {
+      "name": "measured value",
+      "description": "a value taken from a cited source or observation, as opposed to an assumed value."
+    },
+    {
+      "name": "assumed value",
+      "description": "a value that is a conjecture or interpretation rather than a sourced measurement; in this file it also flags findings whose confidence is intrinsically limited, such as a market-absence claim derived from web search that cannot be proven exhaustively."
+    },
+    {
+      "name": "euro area",
+      "description": "the group of European Union member states that have adopted the euro as their primary currency.",
+      "refs": [
+        {
+          "name": "Eurozone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q194047",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "account",
+      "description": "a payment or deposit account held by a consumer at a financial institution."
+    },
+    {
+      "name": "holder",
+      "description": "a person who holds an account or asset."
+    },
+    {
+      "name": "privacy",
+      "description": "the ability of an individual to seclude information about themselves and thereby express themselves selectively.",
+      "refs": [
+        {
+          "name": "Privacy",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1189470",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "concern",
+      "description": "a matter of interest or worry to someone."
+    },
+    {
+      "name": "customer",
+      "description": "a person who buys goods or services from a business."
+    },
+    {
+      "name": "switching",
+      "description": "the act of a customer moving from one provider to another."
+    },
+    {
+      "name": "willingness",
+      "description": "the quality of being prepared to do something."
+    },
+    {
+      "name": "capture",
+      "description": "the winning of a share of a market by a provider."
+    },
+    {
+      "name": "margin",
+      "description": "the contribution to profit remaining after the cost to serve a customer is deducted from the revenue that customer generates."
+    },
+    {
+      "name": "contribution",
+      "description": "the amount a unit contributes to covering fixed cost and profit."
+    },
+    {
+      "name": "profit",
+      "description": "the surplus remaining after total costs are deducted from total revenue.",
+      "refs": [
+        {
+          "name": "Profit_(accounting)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "EUR",
+      "description": "the official currency of the euro area.",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4916",
+          "type": "wikidata"
+        }
+      ],
+      "type": "measure"
+    },
+    {
+      "name": "sovereignty bank",
+      "description": "a hypothetical EU retail bank whose central value proposition is digital/European sovereignty; the subject of this Fermi estimate. Not an observed real entity."
+    }
+  ],
+  "triples": [
+    {
+      "name": "digital sovereignty",
+      "from": "sovereignty",
+      "verb": "kind of",
+      "to": "digital",
+      "description": "the capacity to retain full control over data, systems and technological decisions, free from external legal or political coercion; requires that ownership, operation and legal domicile all lie within the intended jurisdiction, so data residency alone is insufficient."
+    },
+    {
+      "name": "European sovereignty",
+      "from": "sovereignty",
+      "verb": "kind of",
+      "to": "European",
+      "description": "digital sovereignty specifically vested in European ownership, operation and jurisdiction."
+    },
+    {
+      "name": "governance sovereignty",
+      "from": "sovereignty",
+      "verb": "kind of",
+      "to": "governance",
+      "description": "axis of the two-axis zukunft.com sovereignty model: the degree to which ownership structure, operational control and legal jurisdiction of a provider lie outside foreign (especially US) reach."
+    },
+    {
+      "name": "license sovereignty",
+      "from": "sovereignty",
+      "verb": "kind of",
+      "to": "license",
+      "description": "axis of the two-axis zukunft.com sovereignty model: the degree to which the technology stack is open-source or otherwise free from proprietary foreign control."
+    },
+    {
+      "name": "sovereignty washing",
+      "from": "washing",
+      "verb": "of",
+      "to": "digital sovereignty",
+      "description": "marketing a product as digitally sovereign while it remains structurally and legally subject to a foreign jurisdiction; arises whenever the parent company is US-domiciled, so the US CLOUD Act conflict with EU data-protection law is unresolved regardless of EU data-centre location."
+    },
+    {
+      "name": "EU retail bank",
+      "from": "bank",
+      "verb": "kind of",
+      "to": "retail",
+      "description": "a licensed deposit-taking bank offering accounts and payment services to private end customers within the EU; distinguished from central banks, payment initiatives and B2B banking-software or cloud providers."
+    },
+    {
+      "name": "card payment",
+      "from": "payment",
+      "verb": "kind of",
+      "to": "card",
+      "description": "a payment made using a debit or credit card."
+    },
+    {
+      "name": "card payment in the euro area",
+      "from": "card payment",
+      "verb": "in",
+      "to": "euro area",
+      "description": "card payments processed for transactions within the euro area."
+    },
+    {
+      "name": "US payment provider",
+      "from": "provider",
+      "verb": "of",
+      "to": "US",
+      "description": "a payment-service provider domiciled in the United States (for example the large international card networks)."
+    },
+    {
+      "name": "share of US payment providers",
+      "from": "share",
+      "verb": "of",
+      "to": "US payment provider",
+      "description": "the fraction of card payments in the euro area processed by US-domiciled payment providers."
+    },
+    {
+      "name": "regional provider",
+      "from": "provider",
+      "verb": "kind of",
+      "to": "regional",
+      "description": "a local or regional technology provider, as opposed to a global hyperscaler."
+    },
+    {
+      "name": "geopolitical intent to use regional providers",
+      "from": "intent",
+      "verb": "of",
+      "to": "regional provider",
+      "description": "buyer-survey intent to increase use of local or regional providers for geopolitical reasons; Gartner labels the underlying trend geopatriation."
+    },
+    {
+      "name": "digital euro launch",
+      "from": "digital euro",
+      "verb": "has a",
+      "to": "year",
+      "description": "the earliest expected introduction year of the digital euro."
+    },
+    {
+      "name": "EU retail bank sovereignty market gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "EU retail bank",
+      "description": "the conjectured unmet market segment for an EU retail bank whose central value proposition is digital/European sovereignty; no such bank was observed via web search up to 2026-07-01, but a negative web-search finding cannot be proven exhaustive, so this is tagged as an assumed value."
+    },
+    {
+      "name": "sovereignty washing enabled by US CLOUD Act",
+      "from": "sovereignty washing",
+      "verb": "can be",
+      "to": "US CLOUD Act",
+      "description": "sovereignty washing is enabled where the US CLOUD Act (with FISA 702) lets US authorities reach data held by US-parented providers regardless of EU server location."
+    },
+    {
+      "name": "privacy concern",
+      "from": "concern",
+      "verb": "of",
+      "to": "privacy",
+      "description": "a consumer's concern about the privacy of their digital payments or banking activity; measured by ECB SPACE 2024 at 60% of euro-area consumers."
+    },
+    {
+      "name": "account holder",
+      "from": "holder",
+      "verb": "of",
+      "to": "account",
+      "description": "a consumer holding a payment account."
+    },
+    {
+      "name": "privacy-concerned account holder",
+      "from": "account holder",
+      "verb": "with",
+      "to": "privacy concern",
+      "description": "an account holder who reports privacy concern; the top of the addressable funnel for a sovereignty bank."
+    },
+    {
+      "name": "switching willingness",
+      "from": "willingness",
+      "verb": "of",
+      "to": "switching",
+      "description": "the share of privacy-concerned holders who would actually switch bank AND pay for a sovereignty offering. Deliberately discounted hard to reflect the attitude-behavior gap: stating a survey concern is not revealed willingness to switch a sticky primary bank and pay a fee."
+    },
+    {
+      "name": "captured market share",
+      "from": "capture",
+      "verb": "of",
+      "to": "market",
+      "description": "the share of the switch-willing pool a single new entrant realistically wins over several years, given competition, trust-building and incumbent stickiness."
+    },
+    {
+      "name": "sovereignty bank customer",
+      "from": "customer",
+      "verb": "of",
+      "to": "sovereignty bank",
+      "description": "a paying customer of the hypothetical sovereignty bank; the result of applying switching willingness and captured share to the privacy-concerned pool."
+    },
+    {
+      "name": "contribution margin per customer",
+      "from": "margin",
+      "verb": "of",
+      "to": "customer",
+      "description": "annual contribution margin per paying customer in EUR, net of cost to serve; assumes a fee-based model with no data monetization and no interchange-heavy card economics."
+    },
+    {
+      "name": "sovereignty bank annual profit",
+      "from": "profit",
+      "verb": "of",
+      "to": "sovereignty bank",
+      "description": "the estimated possible annual profit of the hypothetical sovereignty bank; the terminal node of the Fermi chain. Range spans more than two orders of magnitude because three independently uncertain discount factors multiply."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Bundesbank digital euro sovereignty",
+      "description": "Deutsche Bundesbank, speech and topic page by President Nagel on the digital euro and European sovereignty, 2026. Institutional source; the underlying ECB figure was not independently verified against the primary ECB study.",
+      "url": "https://www.bundesbank.de/de/aufgaben/themen/der-digitale-euro-und-die-europaeische-souveraenitaet-994146"
+    },
+    {
+      "name": "Gartner geopatriation via bancos",
+      "description": "Gartner Cloud Buying Behavior Survey 2025 figure, cited secondarily by bancos.com (2026). Secondary source; the primary Gartner survey was not verified.",
+      "url": "https://bancos.com/blog/digitale-souveraenitaet-fuer-banken-auf-welche-faktoren-kommt-es-an/"
+    },
+    {
+      "name": "digitalbusiness sovereignty washing",
+      "description": "digitalbusiness-magazin.de (2026), analysis of sovereignty washing and the conflict between EU data-protection law and the US CLOUD Act and FISA 702.",
+      "url": "https://www.digitalbusiness-magazin.de/digitale-souveraenitaet-die-illusion-der-unabhaengigkeit-a-716acbaa3fbed0dd72af433a1c69f8ed/"
+    },
+    {
+      "name": "zukunft.com market-gap analysis",
+      "description": "zukunft.com analysis, 2026-07-01. The market-absence finding is a negative result from web search and is intrinsically not exhaustively provable; recorded as an assumed value.",
+      "url": null
+    },
+    {
+      "name": "ECB SPACE 2024",
+      "description": "ECB, Study on the payment attitudes of consumers in the euro area (SPACE) 2024. Primary source. 60% of euro-area consumers concerned about privacy in digital payments; payment-account holding at 93%.",
+      "url": "https://www.ecb.europa.eu/stats/ecb_surveys/space/html/ecb.space2024~19d46f0f17.en.html"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "share of US payment providers",
+        "card payment in the euro area",
+        "percent",
+        "measured value"
+      ],
+      "number": "66.7",
+      "source": "Bundesbank digital euro sovereignty"
+    },
+    {
+      "words": [
+        "geopolitical intent to use regional providers",
+        "percent",
+        "measured value"
+      ],
+      "number": "61",
+      "source": "Gartner geopatriation via bancos"
+    },
+    {
+      "words": [
+        "digital euro launch",
+        "year",
+        "measured value"
+      ],
+      "number": "2028",
+      "source": "Bundesbank digital euro sovereignty"
+    },
+    {
+      "words": [
+        "EU retail bank sovereignty market gap",
+        "assumed value"
+      ],
+      "number": "0",
+      "source": "zukunft.com market-gap analysis"
+    },
+    {
+      "words": [
+        "privacy concern",
+        "percent",
+        "measured value"
+      ],
+      "number": "60",
+      "source": "ECB SPACE 2024"
+    },
+    {
+      "words": [
+        "privacy-concerned account holder",
+        "measured value"
+      ],
+      "number": "165000000",
+      "source": "ECB SPACE 2024"
+    },
+    {
+      "words": [
+        "switching willingness",
+        "percent",
+        "assumed value"
+      ],
+      "number": "2",
+      "source": "zukunft.com market-gap analysis"
+    },
+    {
+      "words": [
+        "captured market share",
+        "percent",
+        "assumed value"
+      ],
+      "number": "5",
+      "source": "zukunft.com market-gap analysis"
+    },
+    {
+      "words": [
+        "contribution margin per customer",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "45",
+      "source": "zukunft.com market-gap analysis"
+    },
+    {
+      "words": [
+        "sovereignty bank customer",
+        "assumed value"
+      ],
+      "number": "165000",
+      "source": "zukunft.com market-gap analysis"
+    },
+    {
+      "words": [
+        "sovereignty bank annual profit",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "7425000",
+      "source": "zukunft.com market-gap analysis"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "sovereignty bank profit (formula)",
+      "expression": "\"sovereignty bank annual profit\" = \"privacy-concerned account holder\" * \"switching willingness\" * \"captured market share\" * \"contribution margin per customer\"",
+      "assigned_word": "privacy-concerned account holder"
+    },
+    {
+      "name": "sovereignty bank customer count (formula)",
+      "expression": "\"sovereignty bank customer\" = \"privacy-concerned account holder\" * \"switching willingness\" * \"captured market share\"",
+      "assigned_word": "privacy-concerned account holder"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "privacy-concerned account holder",
+        "switching willingness",
+        "captured market share",
+        "contribution margin per customer",
+        "measured value",
+        "assumed value",
+        "percent",
+        "EUR"
+      ],
+      "formula": "sovereignty bank profit (formula)",
+      "words": [
+        "sovereignty bank annual profit",
+        "EUR",
+        "assumed value"
+      ],
+      "number": "7425000",
+      "note": "base case: 165,000,000 * 0.02 * 0.05 * 45. Percent values scale as fractions."
+    }
+  ]
+}

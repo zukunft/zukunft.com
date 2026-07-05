@@ -399,6 +399,34 @@ class ui_list extends ui_base
     }
 
     /**
+     * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
+     * small 'assigned to <ancestor>' subheading (the ancestor name links to its word page and shows a
+     * tooltip) followed by the ancestor's formulas; empty if the word has no ancestor formulas. the
+     * groups come from the word's parent_formulas, filled from the INCL_RELATED api message
+     *
+     * @param db_object $dbo the word whose ancestor formulas are shown
+     * @return string the html code of the ancestor formula groups, e.g. below the direct formulas
+     */
+    function formulas_of_parents(db_object $dbo): string
+    {
+        global $mtr;
+        $result = '';
+        if ($dbo::class == word::class and $dbo->parent_formulas != null) {
+            $html = new html_base();
+            foreach ($dbo->parent_formulas as $grp) {
+                $frm = $grp['formulas'];
+                if ($frm != null and !$frm->is_empty()) {
+                    // the ancestor name_link already carries the description as the title (tooltip)
+                    $head = $mtr->txt(msg_id::ASSIGNED_TO) . ' ' . $grp['phrase']->name_link();
+                    $result .= $html->text_h3($head);
+                    $result .= $frm->name_link();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * TODO Prio 1 review at least the verb part
      * @param phrase $phr
      * @param foaf_direction $dir

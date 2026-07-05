@@ -244,7 +244,7 @@ class all_unit_tests extends test_cleanup
 
         $t_usr = new test_users($this);
         $this->usr_dev = $t_usr->user_dev($msg);
-        $this->usr_normal = $t_usr->user_filled();
+        $this->usr_normal = $t_usr->user_filled($this);
 
     }
 

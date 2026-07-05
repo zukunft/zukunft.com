@@ -45,5 +45,7 @@ class html_names
     const string TITLE = 'title';
     const string INPUT = 'input';
     const string VALUE = 'value';
+    // the object id of a datalist option, unused without javascript but kept for a future js frontend
+    const string DATA_VALUE = 'data-value';
 
 }

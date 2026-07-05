@@ -66,8 +66,11 @@ class url_test_base
     protected user_request $req;     // the bundled request context for the workflow steps
     protected int $wf_id;            // the dynamic db id of the object the workflow runs on
     protected int $wf_fixed_id;      // the fixed snapshot id that replaces the dynamic id
+    protected array $wf_norm_ids = []; // more volatile db ids replaced in the snapshots by their fixed test id (real id => fixed id) e.g. the from and to words of the test triple
     protected string $step_path;     // the snapshot file path grown by the cumulative spine steps
     protected string $http_method;   // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
+    protected string $url;           // the last call url of the workflow
+
 
     /**
      * load the frontend and the test users into the shared run state and print the section header
@@ -105,14 +108,22 @@ class url_test_base
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
      * @param string $name the workflow name used for the snapshot folder and the subheader e.g. 'change_word'
+     * @param int $fix_id if the workflow adds an object the database id of the object may change. For the test files the id is fixed so that the test files are not volatile any more
      * @param bool $do_it false to only render the steps (snapshot unit test), true to also write the
      *                     confirmed change to the database (workflow write test)
      */
-    protected function wf_start(int $wf_nbr, string $name, bool $do_it = false): void
+    protected function wf_start(int $wf_nbr, string $name, int $fix_id = 0, bool $do_it = false): void
     {
         // the snapshot file name prefix of this workflow e.g. 'wf2'
         $wf = workflows::WF_PREFIX . $wf_nbr;
         $this->t->subheader($this->ts . $name . ' workflow ' . $wf);
+        $this->wf_fixed_id = $fix_id;
+        // each workflow sets its own additional ids to normalize (e.g. the triple from/to words)
+        $this->wf_norm_ids = [];
+        // start each workflow with a fresh message buffer so a warning from a previous workflow
+        // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
+        $this->usr_msg = new user_message();
+        $this->usr_msg->usr = $this->usr_sys;
         $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
@@ -121,6 +132,41 @@ class url_test_base
         $base_path = $do_it ? test_paths::WORKFLOW_WRITE : test_paths::WORKFLOW;
         $this->step_path = $base_path
             . $name . workflows::NAME_SEP . $wf . DIRECTORY_SEPARATOR . $wf;
+    }
+
+    /**
+     * run one workflow step and snapshot the resulting html:
+     * build the step url from the step view, the object id and any extra url parameters (the pending
+     * change for save and confirm), render the user reaction and compare the html against the
+     * cumulative snapshot file (docs/llm/testing.md). the file name is the cumulative step path plus
+     * this step, e.g. wf2_show_edit_save_confirm; the caller grows $this->step_path for the spine
+     * steps (show, edit, save) and leaves it for the excursions (back, confirm, cancel)
+     *
+     * @param string $step the user reaction action const e.g. url_var::ACTION_SHOW
+     * @param array $url_arr the extra url parameters of this step e.g. the fields of a pending change
+     * @param int $msk_id the view shown by this step e.g. views::WORD_EDIT_ID
+     * @return string the rendered html so the caller can check the button urls against the next step
+     */
+    protected function assert_step(string $step, array $url_arr, int $msk_id = 0): string
+    {
+        // remember the step for the next steps
+        $this->step_path .= workflows::NAME_SEP . $step;
+        // add the view to the url
+        if ($step == workflows::BACK) {
+            $url_arr = html_base::url_par_from_back_part($url_arr);
+        } else {
+            $url_arr[url_var::MASK] = $msk_id;
+        }
+        // add the step to the url
+        $url_arr[url_var::STEP] = workflows::url_step($step);
+        // compare the url with the fixed url test files
+        $this->assert_url($this->step_path, $step, $url_arr, rest_ctrl::GET);
+        $next_url = $this->ui->url_to_action($url_arr,
+            $this->req->usr_backend, $this->req->usr, $this->req->usr_msg,
+            $this->req->dto, $this->req->do_it);
+        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg, $this->req->dto);
+        $this->assert_html($this->step_path, $result, $next_url);
+        return $result;
     }
 
     /**
@@ -147,33 +193,14 @@ class url_test_base
         $test_name = $this->step_path . workflows::NAME_SEP . $step;
         // a form submit (save / *_confirmed) uses the method of the form of the previous page; show,
         // edit, back and cancel are plain get navigation links
-        $method = $this->is_form_submit($step) ? $this->http_method : rest_ctrl::GET;
+        $method = workflows::is_form_submit($step) ? $this->http_method : rest_ctrl::GET;
         // snapshot the url that this step's button press calls together with that http method
         $this->assert_wf_url($test_name, $step, $url_arr, $method);
-        $result = $this->ui->url_user_reaction($step, $url_arr, $this->req);
+        $result = $this->ui->execute_and_next($url_arr, $this->req);
         // remember the method of the form on the rendered page so the next save / confirm uses it
         $this->http_method = $this->form_method($result);
-        $this->assert_wf_html($test_name, $result);
+        $this->assert_wf_html($test_name, $result, $url_arr);
         return $result;
-    }
-
-    /**
-     * // TODO Prio 2 review
-     * true if the workflow action submits a form (save, fill and the confirmed actions), false for the plain
-     * get navigation actions (show, edit, back, cancel). a form submit carries the named submit button
-     * marker (url_var::POST_SUBMIT) that view.php needs to route the request through url_to_action
-     *
-     * @param string $step the user reaction action const e.g. url_var::ACTION_SAVE
-     * @return bool true if the step submits a form
-     */
-    protected function is_form_submit(string $step): bool
-    {
-        return in_array($step, [
-            url_var::ACTION_SAVE,
-            url_var::ACTION_FILL,
-            url_var::ACTION_CONFIRM,
-            url_var::ACTION_CONFIRMED
-        ], true);
     }
 
     /**
@@ -206,17 +233,16 @@ class url_test_base
      * @param array $url_arr the url parameters of the step before the process step is added
      * @param string $method the http method the request is sent with (from the previous page's form)
      */
-    protected function assert_wf_url(string $test_name, string $step, array $url_arr, string $method): void
+    protected function assert_url(string $test_name, string $step, array $url_arr, string $method): void
     {
         // the user reaction adds the process step (e.g. save -> to confirm) to the request url
-        $url_arr[url_var::STEP] = url_var::action_step($step);
         $script = api::HOST_SAME . api::MAIN_SCRIPT_EXT . url_var::PAR;
         $url_map = new url_mapper();
         // a form submit (save / *_confirmed) carries the named submit button marker so that view.php
         // routes the directly called url through url_to_action (which writes); without it the url just
         // re-renders the form. the marker is a control key, so it is only in the callable / standard url
         $request_arr = $url_arr;
-        if ($this->is_form_submit($step)) {
+        if (workflows::is_form_submit($step)) {
             $request_arr[url_var::POST_SUBMIT] = '';
         }
         $query = http_build_query($request_arr);
@@ -228,14 +254,70 @@ class url_test_base
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
         $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
-        // replace the dynamically assigned object id with the fixed test id so the file is stable, both
-        // in the url ('=999') and in the json ('"999"')
-        if ($this->wf_id > 0) {
-            $content = str_replace(
-                [url_var::EQ . $this->wf_id, '"' . $this->wf_id . '"'],
-                [url_var::EQ . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-                $content);
+        $content = $this->normalize_ids($content, $url_arr[url_var::ID] ?? 0);
+        $this->t->assert_file($test_name . '_url', $content,
+            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
+    }
+
+    /**
+     * replace the volatile db ids with the fixed test ids so the snapshot file is stable: the prime
+     * object id of the workflow and the additional ids of the related objects (e.g. the from and to
+     * words of the test triple), each both in the url form ('=999') and in the json form ('"999"')
+     *
+     * @param string $content the url lines or the html of a workflow step
+     * @param int $id the current db id of the prime object of the workflow (0 if not known)
+     * @return string the content with the volatile ids replaced by the fixed test ids
+     */
+    private function normalize_ids(string $content, int $id): string
+    {
+        $norm_ids = [$id => $this->wf_fixed_id] + $this->wf_norm_ids;
+        foreach ($norm_ids as $db_id => $fixed_id) {
+            if ($db_id > 0 and $db_id != $fixed_id) {
+                $content = str_replace(
+                    [url_var::EQ . $db_id, '"' . $db_id . '"'],
+                    [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
+                    $content);
+            }
         }
+        return $content;
+    }
+
+    /**
+     * // TODO Prio 2 review
+     * snapshot the url that the button of a workflow step calls into a parallel '<step>_url.txt' file
+     * next to the html snapshot, so a reviewer sees the request the step sends. the file lines are:
+     * the http method, the directly callable url (with the pod host), the standard url (numeric view id
+     * and url var keys), the same url in the human readable format (code id and long url var keys) and
+     * the human url as json. the volatile object id is normalized to the fixed id (docs/llm/testing.md)
+     *
+     * @param string $test_name the description and snapshot file path of the step
+     * @param string $step the user reaction action const e.g. url_var::ACTION_SAVE
+     * @param array $url_arr the url parameters of the step before the process step is added
+     * @param string $method the http method the request is sent with (from the previous page's form)
+     */
+    protected function assert_wf_url(string $test_name, string $step, array $url_arr, string $method): void
+    {
+        // the user reaction adds the process step (e.g. save -> to confirm) to the request url
+        $url_arr[url_var::STEP] = url_var::action_step($step);
+        $script = api::HOST_SAME . api::MAIN_SCRIPT_EXT . url_var::PAR;
+        $url_map = new url_mapper();
+        // a form submit (save / *_confirmed) carries the named submit button marker so that view.php
+        // routes the directly called url through url_to_action (which writes); without it the url just
+        // re-renders the form. the marker is a control key, so it is only in the callable / standard url
+        $request_arr = $url_arr;
+        if (workflows::is_form_submit($step)) {
+            $request_arr[url_var::POST_SUBMIT] = '';
+        }
+        $query = http_build_query($request_arr);
+        // the call url has the full pod host so a developer can paste it into a browser and call it
+        // directly; the standard url is the relative request the form sends
+        $call_url = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $query;
+        $std_url = $script . $query;
+        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->usr_msg);
+        // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
+        $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
+        $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
+        $content = $this->normalize_ids($content, $this->wf_id);
         $this->t->assert_file($test_name . '_url', $content,
             test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
     }
@@ -272,12 +354,41 @@ class url_test_base
     {
         // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id;
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
-        if ($this->wf_id > 0) {
-            $html = str_replace(
-                ['=' . $this->wf_id, '"' . $this->wf_id . '"'],
-                ['=' . $this->wf_fixed_id, '"' . $this->wf_fixed_id . '"'],
-                $html);
+        $html = $this->normalize_ids($html, $this->wf_id);
+        // the change history of the test object shows the real change time and change user, both of
+        // which vary per run; replace each change log line (date time + user + action) with a fixed
+        // text - this covers the default view (in a container div) and the edit view (a bare line)
+        $html = preg_replace(
+            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
+            workflows::WF_CHANGE_LOG,
+            $html);
+        // user::navbar_role() resolves the elevated role label only when the user profile cache is
+        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
+        // so always show the system role in the navbar user menu to keep the snapshot deterministic
+        $name = $this->req->usr->name();
+        if ($name != null and $name != '') {
+            // 'system test' is the display name of the system user profile (no const exists for it)
+            $role_name = 'system test ' . $name;
+            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
+            $html = str_replace($name, $role_name, $html); // then always show the role
         }
+        $this->t->assert_html_page($test_name, $html, $test_name);
+    }
+
+    /**
+     * snapshot a workflow step after replacing the values that are volatile between test runs
+     * (the dynamically assigned object id, the change log add time / add user and the navbar user
+     * role) with fixed text, so the result does not change every run
+     *
+     * @param string $test_name the description and snapshot file path of the step
+     * @param string $html the rendered html of the step
+     * @param array $url_arr array of the url parameter
+     */
+    protected function assert_html(string $test_name, string $html, array $url_arr): void
+    {
+        // replace the volatile object / back id (assigned dynamically on insert) with a fixed test id;
+        // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
+        $html = $this->normalize_ids($html, $url_arr[url_var::ID] ?? 0);
         // the change history of the test object shows the real change time and change user, both of
         // which vary per run; replace each change log line (date time + user + action) with a fixed
         // text - this covers the default view (in a container div) and the edit view (a bare line)

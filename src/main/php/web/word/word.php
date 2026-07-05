@@ -132,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
@@ -180,6 +181,9 @@ class word extends sandbox_code_id
     // filled from the INCL_RELATED api message and shown by the related values component
     public ?value_list $val_lst = null;
     public ?formula_list $frm_lst = null;
+    // the formulas of the ancestor phrases grouped per ancestor (from the INCL_RELATED api message),
+    // each entry ['phrase' => phrase, 'formulas' => formula_list] to render 'assigned to <ancestor>'
+    public ?array $parent_formulas = null;
     public ?ref_list $ref_lst = null;
     public ?change_log_list $chg_log = null;
     public ?view_list $view_lst = null;
@@ -228,14 +232,69 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return array parent url array extended with the plural and view of this word
+     * besides the base checks a word that is still used by a value, formula or triple may not be
+     * deleted; if the user confirms the deletion of an in-use word a warning is shown the usual way
+     * and the deletion is not confirmed (mirrors the backend used_by_someone_else guard)
+     *
+     * @param user_message $usr_msg with the requesting user and to enrich with a warning if in use
+     * @param string $action the crud action of the change; the in-use check only applies to a delete
+     * @param array $url_array the pending change url (unused here, kept for the common signature)
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    {
+        $result = parent::input_valid($usr_msg, $action, $url_array);
+        if ($action == url_var::CRUD_DELETE) {
+            if ($this->is_in_use()) {
+                $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_NAME => $this->name()
+                ]);
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 1 use also the field usage for detection
+     * true if this word is still used by another object (a value, formula or a triple that links it),
+     * so it must not be deleted; the usage is read from the INCL_RELATED api message which fills the
+     * related value, formula and phrase lists. loads onto this object, which is only the throw-away
+     * dbo built for the delete confirmation, so overwriting its fields here is harmless
+     *
+     * @return bool true if the word is still referenced by another object
+     */
+    function is_in_use(): bool
+    {
+        $result = false;
+        // TODO Prio 2 make sure that the backend always updates the usage
+        if ($this->usage > 0) {
+            $result = true;
+        } elseif ($this->id() != 0) {
+            // $this->load_by_id_with_related($this->id());
+            if (($this->phr_lst != null and !$this->phr_lst->is_empty())
+                or ($this->val_lst != null and !$this->val_lst->is_empty())
+                or ($this->frm_lst != null and !$this->frm_lst->is_empty())) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 0 make sure that all fields are mapped to the url
+     * @return array parent url array extended with the plural and view of this word, without empty strings
      */
     function to_url_array(): array
     {
-        $url_array = parent::to_url_array();
-        $url_array[url_var::PLURAL] = $this->plural;
-        $url_array[url_var::VIEW] = $this->view_id;
-        return $url_array;
+        $url_arr = parent::to_url_array();
+        $url_arr[url_var::PLURAL] = $this->plural;
+        $url_arr[url_var::VIEW] = $this->view_id;
+        if ($this->impact > 0) {
+            $url_arr[url_var::IMPACT] = $this->impact;
+        }
+        return array_filter($url_arr, fn($val) => !is_null($val) && $val !== '');
     }
 
     /**
@@ -337,6 +396,20 @@ class word extends sandbox_code_id
             }
         } else {
             $this->frm_lst = null;
+        }
+        if (array_key_exists(json_fields::PARENT_FORMULAS, $json_array)
+            and is_array($json_array[json_fields::PARENT_FORMULAS])) {
+            $groups = [];
+            foreach ($json_array[json_fields::PARENT_FORMULAS] as $grp) {
+                $phr = new phrase();
+                $phr->api_mapper($grp[json_fields::PHRASE] ?? [], $msg);
+                $frm = new formula_list();
+                $frm->api_mapper($grp[json_fields::FORMULAS] ?? []);
+                $groups[] = ['phrase' => $phr, 'formulas' => $frm];
+            }
+            $this->parent_formulas = $groups;
+        } else {
+            $this->parent_formulas = null;
         }
         if (array_key_exists(json_fields::REFERENCES, $json_array)) {
             $reference = $json_array[json_fields::REFERENCES];

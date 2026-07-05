@@ -122,7 +122,7 @@ class test_cleanup extends test_api
         $t_trp->cleanup($ts);
         $t_vrb->cleanup($ts);
         $t_wrd->cleanup($ts);
-        $t_usr->cleanup($ts);
+        $t_usr->cleanup($ts, $this);
         return true;
     }
 

@@ -249,6 +249,11 @@
       "type": "formula_list"
     },
     {
+      "name": "formulas of parents",
+      "description": "list of formulas assigned to the ancestor phrases of this word, grouped per ancestor",
+      "type": "formulas_of_parents"
+    },
+    {
       "name": "system sub title references",
       "description": "show the language specific sub title for a reference list",
       "type": "system_sub_title",
@@ -377,6 +382,11 @@
         },
         {
           "position": "16",
+          "name": "formulas of parents",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }

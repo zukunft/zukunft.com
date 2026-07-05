@@ -222,6 +222,12 @@ class all_tests extends all_unit_write_tests
                 new all_ui_tests()->run($this, $ui);
             }
 
+            // check the fixed csv files before the database tests for consistency
+            if ($sys->errors <= ERROR_LIMIT) {
+                // TODO Prio 0 activate
+                //$t_db->csv_recreate();
+            }
+
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
                 $t_wf = new all_workflow_tests();
                 $t_wf->run($this, $this->usr1, $usr_msg_ui);
@@ -229,6 +235,12 @@ class all_tests extends all_unit_write_tests
 
             if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
                 $this->run_db_write_tests($this);
+            }
+
+            // check the fixed csv files after the write test if it still matches and the write test has undone all changes
+            if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
+                // TODO Prio 0 activate
+                //$t_db->csv_recreate();
             }
 
             // recreate the type list api message based on the updated db
