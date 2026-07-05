@@ -158,6 +158,12 @@ class workflows
     // the id of the current add_formula workflow; increase it to add the next snapshot set
     const int WF_ADD_FORMULA_NBR = 14;
 
+    // the change_formula workflow name used for the snapshot folder and the test subheader:
+    // a formula field is changed in the edit form and written after the user has confirmed the change
+    const string WF_CHANGE_FORMULA = 'change_formula';
+    // the id of the current change_formula workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_FORMULA_NBR = 15;
+
     /**
      * the user process step that a user reaction action triggers
      *

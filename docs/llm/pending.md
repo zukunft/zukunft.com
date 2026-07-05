@@ -8,8 +8,6 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### workflow
 
-add a formula change workflow to change a formula similar to src/test/resources/web/html/workflow/change_triple_wf5
-
 add a formula del workflow similar to delete the added formula similar to src/test/resources/web/html/workflow/del_triple_wf6
 
 add a formula add fail workflow to add a formula similar to src/test/resources/web/html/workflow/add_triple_fail_wf11

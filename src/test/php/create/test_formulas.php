@@ -253,6 +253,42 @@ class test_formulas extends test_objects
     }
 
     /**
+     * the url of the added test formula, mirroring test_triples::triple_add_url: the change_formula
+     * workflow opens the views with these values as the current state of the formula; the object id
+     * and the back target are added by the workflow step
+     *
+     * @return array the formula url parameters of the added test formula
+     */
+    function formula_add_url(): array
+    {
+        $frm_ui = new formula_ui($this->formula_add()->api_json());
+        return $frm_ui->to_url_array();
+    }
+
+    /**
+     * the filled formula url posted by the edit form in the second change_formula round, mirroring
+     * test_triples::fill_url_array: the first round only changed the description, so the fill round
+     * adds the still-missing need-all-values flag; the '8'-prefixed opening values are the state the
+     * formula has after the first round, so the confirm view shows only the new flag as changed
+     *
+     * @param int $id the database id of the formula the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $url_arr = $this->formula_add_url();
+        // the workflow step adds the current db id of the test formula, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::DESCRIPTION] = formula_names::SYSTEM_TEST_ADD_COM;
+        $url_arr[url_var::NEED_ALL] = '1';
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = $url_arr[url_var::DESCRIPTION];
+        $url_arr[url_var::PRE . url_var::USER_EXPRESSION] = $url_arr[url_var::USER_EXPRESSION];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
+    }
+
+    /**
      * TODO Prio 0 use to_url function
      * the new formula fields posted by the add form on save and shown again in the confirm add view,
      * mirroring test_triples::add_url_array; a formula is defined by its name and expression, and the

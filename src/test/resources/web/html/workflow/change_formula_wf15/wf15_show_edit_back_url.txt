@@ -1,0 +1,9 @@
+GET
+http://localhost/http/view.php?m=97&id=996&z=0
+/http/view.php?m=97&id=996&z=0
+/http/view.php?mask_id=formula_default&id=996&step=no&
+{
+    "mask_id": "formula_default",
+    "id": "996",
+    "step": "no"
+}

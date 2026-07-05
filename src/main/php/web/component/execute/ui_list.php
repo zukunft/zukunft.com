@@ -315,28 +315,37 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for a list of words or triples linked to the given formula in order of impact
-     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "canton of Zurich"
-     * @param data_object|null $cac the cached list of phrases for initial display without backend call
-     * @return string the html code to start a new form and display the tile
+     * HTML for the list of words and triples assigned to the given formula in order of impact
+     * @param formula|db_object $frm the formula whose assigned phrases should be shown
+     * @param data_object|null $cac the cached formula links and phrases for a display without a backend call
+     * @param bool $test_mode true to skip the api load and use only the passed cache for a reproducible result
+     * @return string the html code with the linked names of the assigned phrases
      */
-    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null): string
+    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null, bool $test_mode = false): string
     {
         global $ui_sys;
 
         $page = new system_page();
-
         $result = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
-        $lnk_lst = $cac?->frm_lnk_lst;
-        // TODO Prio 2 decide if and when a reloading via api is done
-        if ($lnk_lst == null) {
-            $lnk_lst = new formula_link_list();
-            $lnk_lst->load_by_formula_id($frm->id());
-        }
-        $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
-        if ($phr_lst->is_empty()) {
+
+        // a formula loaded for its page carries its assigned phrases directly (like a word's
+        // related formulas), so use that list; otherwise fall back to the formula link cache or,
+        // outside the unit tests, an api load - never the full phrase list, which is not the
+        // assignment of this formula
+        if ($frm::class == formula::class and $frm->phr_lst != null) {
+            $phr_lst = $frm->phr_lst;
+        } else {
+            $lnk_lst = $cac?->frm_lnk_lst;
             $phr_lst = new phrase_list();
-            $phr_lst->load_by_formula($frm);
+            // the default cache is an empty list, so an empty cache triggers the backend call
+            if ($lnk_lst != null and !$lnk_lst->is_empty()) {
+                $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
+            } elseif (!$test_mode) {
+                // TODO Prio 2 decide if and when a reloading via api is done
+                $lnk_lst = new formula_link_list();
+                $lnk_lst->load_by_formula_id($frm->id());
+                $phr_lst = $lnk_lst->get_phrase_list($cac?->phr_lst ?? new phrase_list());
+            }
         }
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
