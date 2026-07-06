@@ -227,6 +227,28 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * @return array parent url array extended with the formula fields that url_mapper reads back
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        // an unset field is left out (not sent as an empty value) like the triple weight
+        if ($this->usr_text != '') {
+            $url_array[url_var::USER_EXPRESSION] = $this->usr_text;
+        }
+        if ($this->latex != '') {
+            $url_array[url_var::LATEX] = $this->latex;
+        }
+        if ($this->need_all_val) {
+            $url_array[url_var::NEED_ALL] = '1';
+        }
+        if ($this->impact > 0) {
+            $url_array[url_var::IMPACT] = $this->impact;
+        }
+        return $url_array;
+    }
+
+    /**
      * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message

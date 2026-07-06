@@ -44,8 +44,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -135,6 +137,24 @@ class formula_tests
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();
         $t->assert_api_to_ui($frm, new formula_ui());
+
+        $test_name = 'the url array contains the expression and the latex of the formula';
+        $frm_ui = new formula_ui($frm->api_json());
+        $url_arr = $frm_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::USER_EXPRESSION], formula_names::SCALE_TO_SEC_EXP);
+        $t->assert($test_name, $url_arr[url_var::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $test_name = 'the url array contains the set need all values flag and impact';
+        $frm_ui->need_all_val = true;
+        $frm_ui->impact = test_const::DUMMY_IMPACT;
+        $url_arr = $frm_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::NEED_ALL], '1');
+        $t->assert($test_name, $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
+        $test_name = 'the unset formula fields are excluded from the url array';
+        $url_arr = (new formula_ui())->to_url_array();
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::USER_EXPRESSION);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::LATEX);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::NEED_ALL);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::IMPACT);
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_frm->formula(), $usr_sys);
