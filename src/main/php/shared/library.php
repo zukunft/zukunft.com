@@ -3479,7 +3479,12 @@ class library
         } else {
             $result = str_split($text);
         }
-        return $result;
+        // TODO Prio 1
+        if ($result == null) {
+            return [];
+        } else {
+            return $result;
+        }
     }
 
     /**

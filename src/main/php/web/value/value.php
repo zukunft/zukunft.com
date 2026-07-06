@@ -438,6 +438,22 @@ class value extends sandbox_value
     }
 
     /**
+     * the time phrase (e.g. "2022 (year)") of this value used by the "most relevant" value list to
+     * group and to sort the values with a time newest first; a value has at most one time phrase
+     * @return phrase|null the first time phrase of the value's group or null if the value has no time
+     */
+    function time_phrase(): ?phrase
+    {
+        $result = null;
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_time()) {
+                $result = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function get_description(): string

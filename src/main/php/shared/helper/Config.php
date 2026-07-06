@@ -48,6 +48,9 @@ class Config
     // number of entries initial to show in a value list
     const int LIMIT_VALUE_LIST = 6;
 
+    // a phrase linked to more values than this to form its own group
+    const int MIN_PHRASE_GROUP = 2;
+
     // number of entries initial to show in a named list
     const int LIMIT_SEARCH_LIST = 40;
 

@@ -215,16 +215,60 @@ class test_values extends test_objects
 
     /**
      * @param phrase[] $phrases the phrases that should build the group of the value
-     * @return value with a sample number assigned to the group of the given phrases
+     * @param float $number the number assigned to the value (a sample number by default)
+     * @return value with the given number assigned to the group of the given phrases
      */
-    function value_for_phrases(array $phrases): value
+    function value_for_phrases(array $phrases, float $number = values::SAMPLE_FLOAT): value
     {
         $lst = new phrase_list($this->env->usr1);
         foreach ($phrases as $phr) {
             $lst->add($phr);
         }
         $grp = $lst->get_grp_id(false);
-        return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
+        return new value($this->env->usr1, $number, $grp);
+    }
+
+    /**
+     * a value list to test the "most relevant" value list component: two year groups (2022 newest and
+     * 2021, each shared by two values), a phrase group (three values sharing the phrase "ABB") and one
+     * ungrouped value; see value_list::list_most_relevant and docs/llm/pending.md
+     * @return value_list with time-grouped, phrase-grouped and ungrouped values
+     */
+    function value_list_most_relevant(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $bern = $t_wrd->word_bern()->phrase();
+        $abb = $t_wrd->word_abb()->phrase();
+        $vestas = $t_wrd->word_vestas()->phrase();
+        $pi = $t_wrd->word_pi()->phrase();
+        $y2021 = $t_wrd->word_2021()->phrase();
+        $y2022 = $t_wrd->word_2022()->phrase();
+
+        $lst = new value_list($this->env->usr1);
+        // time group 2022 (newest, shown first): two values share the year 2022
+        $lst->add($this->value_for_phrases([$inhab, $zh, $y2022], 434008));
+        $lst->add($this->value_for_phrases([$inhab, $bern, $y2022], 134591));
+        // time group 2021: two values share the year 2021
+        $lst->add($this->value_for_phrases([$inhab, $zh, $y2021], 421878));
+        $lst->add($this->value_for_phrases([$inhab, $bern, $y2021], 133883));
+        // phrase group "ABB": three values share the phrase ABB (no time)
+        $lst->add($this->value_for_phrases([$abb, $zh], 12.3));
+        $lst->add($this->value_for_phrases([$abb, $bern], 4.5));
+        $lst->add($this->value_for_phrases([$abb, $vestas], 6.7));
+        // one ungrouped value shown below by impact
+        $lst->add($this->value_for_phrases([$pi], 3.1415));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend "most relevant" test value list
+     */
+    function value_list_most_relevant_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_most_relevant(), [api_types::INCL_PHRASES]);
     }
 
     /**
