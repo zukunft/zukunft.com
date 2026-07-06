@@ -1839,7 +1839,11 @@ class sql_creator
                 sql::FLD_LOG_FIELD_PREFIX . $fld,
                 $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
                 sql_par_type::INT_SMALL);
-            if ($fvt_lst->get_old($fld) != null or $fvt_lst->get_old_id($fld) != null) {
+            // use a strict null check so a falsy old value (a boolean false or a 0) still declares
+            // the _old parameter that the change log body references (change::sql_insert_log emits
+            // the old_value column for any old_value !== null); a loose check would drop the
+            // parameter for e.g. all_values_needed and leave the log insert referencing an undeclared _old
+            if ($fvt_lst->get_old($fld) !== null or $fvt_lst->get_old_id($fld) !== null) {
                 if ($fvt_lst->get_old_id($fld) != null) {
                     $par_lst_out->add_field(
                         $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,

@@ -1795,14 +1795,17 @@ class system_form extends component
      */
     function form_formula_expression(db_object $dbo, string $form_name): string
     {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::NEED_ALL,
+        // the expression field posts the user expression (not the need-all flag, which is a
+        // separate checkbox with the same key); the raw expression is passed so form_field escapes
+        // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
+        // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
+        // formula text before the change (see url_var::PRE)
+        return $this->form_field_tracked(
+            url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
-            $dbo->user_expression(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12);
+            $dbo->get_usr_text(),
+            view_styles::COL_SM_12,
+            $dbo);
     }
 
     /**

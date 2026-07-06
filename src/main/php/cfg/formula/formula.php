@@ -1481,11 +1481,15 @@ class formula extends formula_map
     {
         parent::reload_objects($msg);
 
-        // convert the formula text to db format
-        // if all related
+        // convert the formula text to db format and recreate the latex from the same user
+        // expression, so a changed expression updates both derived db fields and an unchanged one
+        // recreates the identical value that the change detection then leaves unchanged
         // (any error messages should have been returned from the calling user script)
         if ($msg->is_ok()) {
             $this->generate_ref_text(null, $msg);
+        }
+        if ($msg->is_ok()) {
+            $this->update_latex();
         }
 
         return $msg->is_ok();

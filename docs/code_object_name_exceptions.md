@@ -12,7 +12,7 @@ change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_obj, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_usr2, $cmp_usr2_reloaded, $dbo, $msk, $obj, $usr_ui
 element: $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_city, $grp_city_pct, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_newer, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src, $typ_obj, $type_obj
@@ -159,7 +159,7 @@ sql_par: $qp, $qp_log
 sql_par_field_list: $fvt_insert_list, $fvt_lst, $fvt_lst_log, $fvt_lst_out, $fvt_lst_write, $fvt_split_list, $lst, $par_lst_out, $result, $update_fvt_lst
 sql_par_list: $result, $sql_list
 sql_sync_sequences: $sql_seq
-sql_type_list: $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_typ
+sql_type_list: $par_lst, $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_typ
 sql_where: $pwh
 sys_log_function: $fnc, $log_fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
 sys_log_level: $log_typ
