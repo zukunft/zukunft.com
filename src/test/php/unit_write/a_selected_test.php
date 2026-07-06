@@ -51,6 +51,7 @@ include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\formula_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -221,10 +223,12 @@ class a_selected_test extends test_cleanup
             */
             //new import_write_tests()->run($t);
             // import just the json files selected in SELECTED_IMPORT_FILES for a fast single-file cycle
+            /*
             $imf = new import_file();
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
                 $imf->json_file($import_file, $usr, false);
             }
+            */
 
 
             /*
@@ -233,7 +237,7 @@ class a_selected_test extends test_cleanup
 
             // export the data related to "nuclear" and "power" (e.g. the triple "nuclear power"
             // and its values) to a pretty json file named after the phrases, e.g. nuclear_power.json
-            new json_io()->export_to_file($usr, ['nuclear', 'power'], test_paths::EXPORT);
+            //new json_io()->export_to_file($usr, ['nuclear', 'power'], test_paths::EXPORT);
 
 
             /*
@@ -277,7 +281,7 @@ class a_selected_test extends test_cleanup
              */
 
             // cleanup - fallback delete
-            $this->cleanup_objects();
+            $this->cleanup_objects_ex_user();
 
             // run the selected db write tests
             //new user_write_tests()->run($this);
@@ -330,7 +334,11 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            new word_url_tests()->run($this);
+            //new word_url_tests()->run($this);
+            new formula_write_url_tests()->run($this);
+
+            // cleanup - fallback delete
+            $this->cleanup_objects();
 
         }
 

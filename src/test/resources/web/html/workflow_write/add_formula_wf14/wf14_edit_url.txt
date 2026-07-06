@@ -1,0 +1,14 @@
+GET
+http://localhost/http/view.php?id=0&k=&o=&m=24&z=0
+/http/view.php?id=0&k=&o=&m=24&z=0
+/http/view.php?id=0&mask_id=formula_add&step=no&
+{
+    "id": "0",
+    "share": "",
+    "protection": "",
+    "name": "",
+    "description": "",
+    "type": "",
+    "mask_id": "formula_add",
+    "step": "no"
+}

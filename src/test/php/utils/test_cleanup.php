@@ -99,6 +99,19 @@ class test_cleanup extends test_api
     function cleanup_objects(): bool
     {
         $ts = 'cleanup all ';
+        $this->cleanup_objects_ex_user();
+        $t_usr = new test_users();
+        $t_usr->cleanup($ts, $this);
+        return true;
+    }
+
+    /**
+     * simple clean-up of the standard objects excluding the test users
+     * @return bool
+     */
+    function cleanup_objects_ex_user(): bool
+    {
+        $ts = 'cleanup all ex users ';
         $t_cmp = new test_components($this);
         $t_msk = new test_views($this);
         $t_res = new test_results($this);
@@ -110,7 +123,6 @@ class test_cleanup extends test_api
         $t_trp = new test_triples($this);
         $t_vrb = new test_verbs($this);
         $t_wrd = new test_words($this);
-        $t_usr = new test_users($this);
         $t_cmp->cleanup($ts);
         $t_msk->cleanup($ts);
         //$t_res->cleanup($ts);
@@ -122,7 +134,6 @@ class test_cleanup extends test_api
         $t_trp->cleanup($ts);
         $t_vrb->cleanup($ts);
         $t_wrd->cleanup($ts);
-        $t_usr->cleanup($ts, $this);
         return true;
     }
 

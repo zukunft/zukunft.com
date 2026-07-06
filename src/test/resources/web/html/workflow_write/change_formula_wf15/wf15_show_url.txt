@@ -1,0 +1,28 @@
+GET
+http://localhost/http/view.php?id=996&k=System+Test+Formula&o=&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&8id=996&8k=System+Test+Formula&8o=&8y=1&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9m=97&9id=996&m=97&z=0
+/http/view.php?id=996&k=System+Test+Formula&o=&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&8id=996&8k=System+Test+Formula&8o=&8y=1&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9m=97&9id=996&m=97&z=0
+/http/view.php?id=996&name=System+Test+Formula&type=1&formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&8id=996&8name=System+Test+Formula&8type=1&8formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9mask_id=formula_default&9id=996&mask_id=formula_default&step=no&
+{
+    "id": "996",
+    "share": "",
+    "protection": "",
+    "name": "System Test Formula",
+    "description": "",
+    "type": "1",
+    "formula_text": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+    "mask_id": "formula_default",
+    "step": "no",
+    "url_part_original_data": {
+        "id": "996",
+        "share": "",
+        "protection": "",
+        "name": "System Test Formula",
+        "description": "",
+        "type": "1",
+        "formula_text": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\""
+    },
+    "url_part_back": {
+        "mask_id": "formula_default",
+        "id": "996"
+    }
+}
