@@ -376,21 +376,21 @@
     {
       "name": "system form title confirm add",
       "description": "show the title for the system form to confirm adding a new entry combining the action, the class and the name of the new object",
-      "type": "system_popup_title",
+      "type": "system_title_named_object",
       "code_id": "form_title_confirm_add",
       "ui_msg_code_id": "form_title_confirm_add"
     },
     {
       "name": "system form title confirm edit",
-      "description": "show the language specific title for the system form to confirm the change",
-      "type": "system_form_title",
+      "description": "show the language specific title for the system form to confirm the change of an object including the object name",
+      "type": "system_title_named_object",
       "code_id": "form_title_confirm_edit",
       "ui_msg_code_id": "form_title_confirm_edit"
     },
     {
       "name": "system form title confirm del",
-      "description": "show the language specific title for the system form to confirm the deletion or exclusion",
-      "type": "system_form_title",
+      "description": "show the language specific title for the system form to confirm the deletion or exclusion of an object including the object name",
+      "type": "system_title_named_object",
       "code_id": "form_title_confirm_del",
       "ui_msg_code_id": "form_title_confirm_del"
     },
@@ -1328,6 +1328,12 @@
       "code_id": "show_field_name"
     },
     {
+      "name": "system show field name big",
+      "description": "the object name huge in the center as read only e.g. for the delete confirm page",
+      "type": "system_show_field_name_big",
+      "code_id": "show_field_name_big"
+    },
+    {
       "name": "system show field description",
       "description": "the object description as read only",
       "type": "system_show_field_description",
@@ -1462,14 +1468,14 @@
     {
       "name": "system form title confirm update",
       "description": "for the universal confirmation popup show title of the action e.g. update",
-      "type": "system_popup_title",
-      "ui_msg_code_id": "system_popup_title_update"
+      "type": "system_title_named_object",
+      "ui_msg_code_id": "system_title_named_object_update"
     },
     {
       "name": "system form title confirm delete",
       "description": "for the universal confirmation popup show title of the action e.g. delete",
-      "type": "system_popup_title",
-      "ui_msg_code_id": "system_popup_title_delete"
+      "type": "system_title_named_object",
+      "ui_msg_code_id": "system_title_named_object_delete"
     },
     {
       "name": "system form class",
@@ -2067,7 +2073,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -2438,7 +2444,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -2818,7 +2824,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -3149,7 +3155,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -4072,7 +4078,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -4495,7 +4501,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -4710,7 +4716,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
@@ -5828,7 +5834,7 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system show field name big"
         },
         {
           "position": "5",

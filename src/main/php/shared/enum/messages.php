@@ -1960,8 +1960,8 @@ enum messages: string
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';
-    case SYSTEM_POPUP_TITLE_UPDATE = 'system_popup_title_update';
-    case SYSTEM_POPUP_TITLE_DELETE = 'system_popup_title_delete';
+    case SYSTEM_TITLE_OBJECT_NAMED_UPDATE = 'system_title_named_object_update';
+    case SYSTEM_TITLE_OBJECT_NAMED_DELETE = 'system_title_named_object_delete';
     case SELECT_VIEW = 'select_view';
 
     case FORM_BUTTON_CANCEL = 'form_button_cancel';

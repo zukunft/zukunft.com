@@ -1404,7 +1404,7 @@
       },
       {
         "name": "popup title",
-        "code_id": "system_popup_title",
+        "code_id": "system_title_named_object",
         "description": "for the universal confirmation popup show title of the action",
         "id": 158
       },
@@ -15241,7 +15241,7 @@
             "name": "system form title confirm update",
             "description": "for the universal confirmation popup show title of the action e.g. update",
             "type_id": 158,
-            "ui_msg_code_id": "system_popup_title_update",
+            "ui_msg_code_id": "system_title_named_object_update",
             "position": 1,
             "position_type": 1
           },
@@ -15374,7 +15374,7 @@
             "name": "system form title confirm delete",
             "description": "for the universal confirmation popup show title of the action e.g. delete",
             "type_id": 158,
-            "ui_msg_code_id": "system_popup_title_delete",
+            "ui_msg_code_id": "system_title_named_object_delete",
             "position": 1,
             "position_type": 1
           },

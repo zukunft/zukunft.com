@@ -1961,13 +1961,21 @@ class formula_map extends sandbox_code_id
                 $obj->type_id()
             );
         }
-        // TODO Prio 2 check why reserving the formula name without expression is a useful feature
-        if ($this->ref_text == null and !$sc_par_lst->is_delete()) {
-            $msg->add(msg_id::MANDATORY_FIELD_NAME_MISSING, [
-                msg_id::VAR_NAME => $this->dsp_id()
+        // a formula must have an expression, so reject a base change that would leave it without one
+        // (neither the update object nor the stored value carries an expression); a partial update
+        // that only keeps the stored expression is fine and preserved by the guards below. the
+        // expression lives only in the base formula, so a user overlay (user_formulas has no
+        // expression column) never carries it and must not be rejected for a missing expression
+        if ($this->ref_text == null and $obj->ref_text == null
+            and !$sc_par_lst->is_delete() and !$sc_par_lst->is_usr_tbl()) {
+            $msg->add(msg_id::FORMULA_EXPRESSION_MISSING, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         }
-        if ($obj->ref_text !== $this->ref_text) {
+        // preserve the stored expression when a partial update does not carry one (e.g. changing
+        // only the description of a predefined formula whose expression field is not shown to the
+        // user), so the expression is neither cleared nor reported as a missing mandatory field
+        if ($this->ref_text != null and $obj->ref_text !== $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_TEXT,
@@ -1982,7 +1990,7 @@ class formula_map extends sandbox_code_id
                 $obj->ref_text
             );
         }
-        if ($obj->usr_text !== $this->usr_text) {
+        if ($this->usr_text != null and $obj->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_USER_TEXT,
@@ -2027,7 +2035,9 @@ class formula_map extends sandbox_code_id
                 $obj->need_all_val
             );
         }
-        if ($obj->ref_text !== $this->ref_text
+        // an expression only counts as changed if the update actually carries one (see above),
+        // so a partial update that keeps the stored expression does not bump the last update time
+        if (($this->ref_text != null and $obj->ref_text !== $this->ref_text)
             or $obj->type_id() <> $this->type_id()
             or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {

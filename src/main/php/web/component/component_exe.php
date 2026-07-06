@@ -324,7 +324,7 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_array),
+            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_array),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
             component_types::FORM_CHANGES => $preview->popup_changes($url_array, $dbo),
             component_types::FORM_IMPACT => $preview->popup_impact($url_array),
@@ -402,6 +402,7 @@ class component_exe extends component
 
             // view only -
             component_types::SHOW_NAME => $form->show_name($dbo, $this->code_id),
+            component_types::SHOW_NAME_BIG => $form->show_name_big($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_types::SHOW_PLURAL => $form->show_plural($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo),
