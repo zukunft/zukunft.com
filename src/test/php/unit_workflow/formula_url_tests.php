@@ -63,6 +63,7 @@ class formula_url_tests extends url_test_base
 
         $this->add_formula_workflow(workflows::WF_ADD_FORMULA_NBR);
         $this->change_formula_workflow(workflows::WF_CHANGE_FORMULA_NBR);
+        $this->del_formula_workflow(workflows::WF_DEL_FORMULA_NBR);
     }
 
     /**
@@ -236,6 +237,79 @@ class formula_url_tests extends url_test_base
     }
 
     /**
+     * check the html pages and urls of the del_formula delete workflow
+     * and check the database results if $do_it is true
+     *
+     * @param int $wf_nbr the test internal workflow id
+     * @param bool $do_it true if the database actions should be executed and tested
+     */
+    protected function del_formula_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the del_formula workflow runs on the reserved 'System Test Formula'
+        // resolve its current db id by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
+        $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+
+        // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
+        $frm = new formula($this->t->usr1);
+        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
+        // in a read-only run the add workflow has not written the formula, so use the fixed id directly
+        if ($this->wf_id == 0) {
+            $this->wf_id = formula_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = formula_names::SYSTEM_TEST_ADD_ID;
+
+        // initial url with the added formula; the url carries the current db ids of the formula and of
+        // its from and to words so the confirmed delete targets the real rows (the snapshot files
+        // normalize the ids back to the fixed test ids)
+        $t_frm = new test_formulas($this->t);
+        $url_arr = $t_frm->formula_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
+
+        // show: display the test formula in its default formula view
+        $this->assert_step(workflows::SHOW, $url_arr, views::FORMULA_ID);
+
+        // edit: open the delete confirmation form
+        $this->assert_step(workflows::EDIT, $url_arr, views::FORMULA_DEL_ID);
+
+        // back: leave the delete form without deleting and return to the formula view (no write)
+        $this->assert_step(workflows::BACK, $url_arr, views::FORMULA_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::FORMULA_DEL_ID);
+
+        // save: press delete on the form which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::FORMULA_DEL_ID);
+
+        // cancel: discard the deletion in the confirm view and return to the formula view (no write)
+        $this->assert_step(workflows::CANCEL, $url_arr, views::FORMULA_ID);
+
+        // edit: re-open the delete form
+        $this->assert_step(workflows::EDIT, $url_arr, views::FORMULA_DEL_ID);
+
+        // save: press delete again which shows the confirm delete view
+        $this->assert_step(workflows::SAVE, $url_arr, views::FORMULA_DEL_ID);
+
+        // del_confirmed: confirm the deletion so the formula is actually removed from the database (with
+        // $do_it true); the confirm mask does not encode the object type, so carry the '9'-prefixed back
+        // target = the formula view + id (as the real confirm form does), otherwise dbo_for_url falls back
+        // to the default word object and the delete would target a word instead of this formula
+        $url_arr[url_var::BACK . url_var::MASK] = views::FORMULA_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::CONFIRM_DEL_ID);
+
+        // a write run must actually delete the formula; a non-owner delete is a soft delete, so check the
+        // formula is flagged as excluded in the user sandbox rather than physically removed
+        if ($do_it) {
+            $this->assert_formula_removed('del_formula workflow has removed the formula');
+        }
+    }
+
+    /**
      * check that the workflow test formula exists in the database with the expected description, used by
      * the add write workflow to verify the confirmed step was actually persisted (mirrors
      * triple_url_tests::assert_triple_in_db)
@@ -251,6 +325,18 @@ class formula_url_tests extends url_test_base
         $frm->load_by_name($name);
         $this->t->assert($test_name, $frm->name(), $name);
         $this->t->assert($test_name, $frm->description, $description);
+    }
+
+    /**
+     * check that the workflow test formula has been removed for usr1
+     *
+     * @param string $test_name the description of the assertion
+     */
+    private function assert_formula_removed(string $test_name): void
+    {
+        $trp = new formula($this->t->usr1);
+        $trp->load_by_name(formula_names::SYSTEM_TEST_ADD);
+        $this->t->assert_true($test_name, $trp->id() == 0 || $trp->is_excluded());
     }
 
 }

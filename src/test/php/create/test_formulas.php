@@ -253,9 +253,7 @@ class test_formulas extends test_objects
     }
 
     /**
-     * the url of the added test formula, mirroring test_triples::triple_add_url: the change_formula
-     * workflow opens the views with these values as the current state of the formula; the object id
-     * and the back target are added by the workflow step
+     * the url of the added test formula
      *
      * @return array the formula url parameters of the added test formula
      */

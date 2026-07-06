@@ -1,0 +1,8 @@
+GET
+http://localhost/http/view.php?m=1&z=0
+/http/view.php?m=1&z=0
+/http/view.php?mask_id=entry_view&step=no&
+{
+    "mask_id": "entry_view",
+    "step": "no"
+}
