@@ -171,6 +171,7 @@ class word_ui_tests
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
         $test_page .= $html->text_h2('values related to ' . $wrd_zh->name());
         $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $dto) . '<br>';
+        $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $dto) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 
         $t->subheader($ts . 'related phrases');

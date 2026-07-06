@@ -1552,6 +1552,12 @@
       "code_id": "value_list_word"
     },
     {
+      "name": "most relevant value list of word",
+      "description": "grouped list of the most relevant values related to this word: newest time period first, then the phrases used by several values, then the remaining values by impact",
+      "type": "values_most_relevant",
+      "code_id": "value_list_most_relevant_word"
+    },
+    {
       "name": "value list of triple",
       "description": "list of values related to this triple",
       "type": "values_by_triple",

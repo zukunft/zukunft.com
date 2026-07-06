@@ -349,6 +349,14 @@ class phrase extends combine_named
         return $this->obj()->is_measure();
     }
 
+    /**
+     * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
+     */
+    function is_time(): bool
+    {
+        return $this->obj()->is_time();
+    }
+
     function is_info(): bool
     {
         return $this->obj()->is_info();

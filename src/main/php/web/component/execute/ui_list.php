@@ -680,6 +680,28 @@ class ui_list extends ui_base
     }
 
     /**
+     * show the values related to the given object grouped for a quick overview: the newest time period
+     * first, then the phrases used by several values, then the remaining values by impact (see
+     * value_list::list_most_relevant and docs/llm/pending.md)
+     *
+     * @param word|db_object|type_object|null $dbo the object the values are related to
+     * @param data_object|null $dto the data cache used to fill the value list until the backend answers
+     * @param int|null $style_id the optional list column style
+     * @return string the html code to show the grouped list of values
+     */
+    function values_most_relevant(
+        word|db_object|type_object|null $dbo,
+        ?data_object                    $dto = null,
+        ?int                            $style_id = null
+    ): string
+    {
+        $val_lst = $this->value_related_list($dbo, $dto);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $this->value_list($val_lst, $phr_lst, $style_id, true);
+    }
+
+    /**
      * the values shown by values_by_word: a word loaded with its related values carries them
      * directly (e.g. the default word view), otherwise they are taken from the data cache
      *
@@ -775,7 +797,8 @@ class ui_list extends ui_base
     private function value_list(
         value_list  $val_lst,
         phrase_list $phr_lst,
-        ?int        $style_id = null
+        ?int        $style_id = null,
+        bool        $most_relevant = false
     ): string
     {
         global $ui_sys;
@@ -784,12 +807,17 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
+        // the "most relevant" component groups the values, the plain one just sorts them by impact
+        if ($most_relevant) {
+            $result = $val_lst->list_most_relevant($phr_lst, '', $style_txt);
+        } else {
+            $result = $val_lst->list($phr_lst, '', $style_txt);
+        }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
         // auto row, so without this block the bare inline phrases land directly
         // in the flex-column main container and every phrase is pushed onto its
         // own line
-        $result = $val_lst->list($phr_lst, '', $style_txt);
         if ($result != '') {
             $result = $html->div($result, view_styles::COL_SM_12);
         }
