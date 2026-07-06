@@ -1131,7 +1131,7 @@ class html_base
                 }
             }
             if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -1605,7 +1605,7 @@ class html_base
                 }
             }
             if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -2164,9 +2164,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h1(string $txt, string $style = ''): string
+    static function h1(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H1, $txt, $style);
+        return self::hx(self::H1, $txt, $style);
     }
 
     /**
@@ -2175,9 +2175,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h2(string $txt, string $style = ''): string
+    static function h2(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H2, $txt, $style);
+        return self::hx(self::H2, $txt, $style);
     }
 
     /**
@@ -2186,9 +2186,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h3(string $txt, string $style = ''): string
+    static function h3(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H3, $txt, $style);
+        return self::hx(self::H3, $txt, $style);
     }
 
     /**
@@ -2197,9 +2197,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h4(string $txt, string $style = ''): string
+    static function h4(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H4, $txt, $style);
+        return self::hx(self::H4, $txt, $style);
     }
 
     /**
@@ -2209,7 +2209,7 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    private function hx(string $tag, string $txt, string $style = ''): string
+    private static function hx(string $tag, string $txt, string $style = ''): string
     {
         if ($style != '') {
             $style = ' ' . self::CLASS_HTML . '="' . $style . '"';

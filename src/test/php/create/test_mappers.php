@@ -895,7 +895,7 @@ class test_mappers
             case component_types::SYSTEM_PASTE_TABLE_CONTEXT;
             case component_types::SYSTEM_PASTE_TABLE_BODY;
             case component_types::SYSTEM_SELECTION_TEXT;
-            case component_types::SYSTEM_POPUP_TITLE;
+            case component_types::SYSTEM_TITLE_OBJECT_NAMED;
             case component_types::CALC_SHEET;
             case component_types::WORDS_UP;
             case component_types::WORDS_DOWN;

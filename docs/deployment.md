@@ -27,3 +27,13 @@ The recommended steps to test any code changes are
 ### additional line in src/main/resources/db_code_links
 
 if an additional entry in any of the files in src/main/resources/db_code_links is done run test/reset_db.php at least once and update src/test/resources/api/ui_config/ui_config.json and src/test/resources/api/type_lists/type_lists.json based on the difference reported in the run to refresh the preloaded type list. After that refresh the local deployment to update the api tests. 
+
+## system db row changes
+
+if the system configuration is adjusted that is saved in the database e.g. a change in src/main/resources/messages/system_views.json or src/main/resources/db_code_links/component_types.csv
+the first step is to update the database, so 
+
+1. run /test/reset_db.php and confirm the file changes if they are fine to update the database and the fixed csv data snaps like src/test/resources/unit/component/list.csv
+2. update the local www files using a rsync command like 'rsync -av --delete /home/timon/PhpstormProjects/zukunft.com/ /var/www/html' to fix the local api tests
+3. run /test/test.php and update the test files if needed to finish the test
+

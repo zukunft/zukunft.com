@@ -324,8 +324,8 @@ class component_types
     const int SYSTEM_PASTE_TABLE_BODY_ID = 156;
     const string SYSTEM_SELECTION_TEXT = "system_selection_text";
     const int SYSTEM_SELECTION_TEXT_ID = 157;
-    const string SYSTEM_POPUP_TITLE = "system_popup_title";
-    const int SYSTEM_POPUP_TITLE_ID = 158;
+    const string SYSTEM_TITLE_OBJECT_NAMED = "system_title_named_object";
+    const int SYSTEM_TITLE_OBJECT_NAMED_ID = 158;
     const string FORM_CLASS = "form_class";
     const int FORM_CLASS_ID = 159;
     const string FORM_CHANGES = "form_changes";
@@ -507,6 +507,8 @@ class component_types
 
     const string SHOW_NAME = "system_show_field_name";
     const int SHOW_NAME_ID = 20;
+    const string SHOW_NAME_BIG = "system_show_field_name_big";
+    const int SHOW_NAME_BIG_ID = 208;
     const string SHOW_DESCRIPTION = "system_show_field_description";
     const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_PLURAL = "system_show_field_plural";
@@ -672,6 +674,7 @@ class component_types
         self::SYSTEM_ADMIN_JOBS_DELAYED,
         self::SELECT_LIST,
         self::SHOW_NAME,
+        self::SHOW_NAME_BIG,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
         self::SYSTEM_FIELD_PARENT_VIEW,
@@ -682,7 +685,7 @@ class component_types
         self::SYSTEM_PASTE_TABLE_CONTEXT,
         self::SYSTEM_PASTE_TABLE_BODY,
         self::SYSTEM_SELECTION_TEXT,
-        self::SYSTEM_POPUP_TITLE,
+        self::SYSTEM_TITLE_OBJECT_NAMED,
         self::FORM_CLASS,
         self::FORM_CHANGES,
         self::FORM_IMPACT,
@@ -712,7 +715,7 @@ class component_types
         self::FORM_TITLE,
         // the confirm-view title opens the confirm form like FORM_TITLE, so it must not be auto-wrapped
         // in a row div either - otherwise the row div closes around the still-open form (form straddle)
-        self::SYSTEM_POPUP_TITLE,
+        self::SYSTEM_TITLE_OBJECT_NAMED,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::FORM_END,
@@ -917,6 +920,7 @@ class component_types
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
+        [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
@@ -929,7 +933,7 @@ class component_types
         [self::SYSTEM_PASTE_TABLE_CONTEXT, self::SYSTEM_PASTE_TABLE_CONTEXT_ID],
         [self::SYSTEM_PASTE_TABLE_BODY, self::SYSTEM_PASTE_TABLE_BODY_ID],
         [self::SYSTEM_SELECTION_TEXT, self::SYSTEM_SELECTION_TEXT_ID],
-        [self::SYSTEM_POPUP_TITLE, self::SYSTEM_POPUP_TITLE_ID],
+        [self::SYSTEM_TITLE_OBJECT_NAMED, self::SYSTEM_TITLE_OBJECT_NAMED_ID],
         [self::FORM_CLASS, self::FORM_CLASS_ID],
         [self::FORM_CHANGES, self::FORM_CHANGES_ID],
         [self::FORM_IMPACT, self::FORM_IMPACT_ID],

@@ -507,16 +507,40 @@ class system_form extends component
      */
     function show_name(db_object|type_object $dbo, string $code_id = ''): string
     {
+        return $this->get_name($dbo, $code_id);
+    }
+
+    /**
+     * show the name of an object as a headline in the center
+     * @param db_object|type_object $dbo the object
+     * @param string $code_id e.g. to select the name in case of a link object
+     * @return string the html code to show the object name to the user
+     */
+    function show_name_big(db_object|type_object $dbo, string $code_id = ''): string
+    {
+        return html_base::h3($this->get_name($dbo, $code_id));
+    }
+
+    /**
+     * TODO Prio 2 remove exceptions
+     * get the name of an object
+     * @param db_object|type_object $dbo the object
+     * @param string $code_id e.g. to select the name in case of a link object
+     * @return string the html code to show the object name to the user
+     */
+    private function get_name(db_object|type_object $dbo, string $code_id = ''): string
+    {
         if ($code_id == '') {
-            return $dbo->name();
+            $result = $dbo->name();
         } elseif ($code_id == 'show_field_formula_name') {
-            return $dbo->formula_name();
+            $result = $dbo->formula_name();
         } elseif ($code_id == 'show_field_phrase_name') {
-            return $dbo->phrase_name();
+            $result = $dbo->phrase_name();
         } else {
             log_warning('code id ' . $code_id . ' not yet defined in show_name');
-            return $dbo->name();
+            $result = $dbo->name();
         }
+        return $result;
     }
 
     /**
@@ -694,10 +718,10 @@ class system_form extends component
      * @return string the html code of the editable field plus the hidden pre value
      */
     private function form_field_tracked(
-        string $url_id,
-        msg_id $label,
-        ?string $value,
-        string $style_text,
+        string                     $url_id,
+        msg_id                     $label,
+        ?string                    $value,
+        string                     $style_text,
         db_object|type_object|null $dbo = null
     ): string
     {
