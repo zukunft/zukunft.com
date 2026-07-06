@@ -949,6 +949,7 @@ class test_mappers
             case component_types::VALUE_NUMERIC;
             case component_types::LIST_VALUES_BY_TRIPLE;
             case component_types::VALUES_RELATED;
+            case component_types::VALUES_MOST_RELEVANT;
             case component_types::NUMERIC_VALUE;
             case component_types::VALUES_ALL;
             case component_types::SYSTEM_BODY_VALUE_DETAIL;

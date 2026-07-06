@@ -498,6 +498,10 @@ class component_types
     // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
     const string VALUES_RELATED = "values_related";
     const int VALUES_RELATED_ID = 11;
+    // like values_related but grouped for a quick overview: newest time period first, then the phrases
+    // used by several values, then the remaining values by impact
+    const string VALUES_MOST_RELEVANT = "values_most_relevant";
+    const int VALUES_MOST_RELEVANT_ID = 207;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 93;
 
@@ -723,6 +727,7 @@ class component_types
         self::SYSTEM_SUB_TITLE,
         self::SYSTEM_SUB_TITLE_VAR,
         self::VALUES_RELATED,
+        self::VALUES_MOST_RELEVANT,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -910,6 +915,7 @@ class component_types
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
+        [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],

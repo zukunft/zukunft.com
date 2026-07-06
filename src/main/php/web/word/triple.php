@@ -899,6 +899,14 @@ class triple extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the triple has the type "time" (e.g. a named period triple)
+     */
+    function is_time(): bool
+    {
+        return $this->is_type(phrase_types::TIME);
+    }
+
+    /**
      * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
      * if used for a value these phrases are shown only as a tooltip
      */
