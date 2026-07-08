@@ -216,17 +216,6 @@
     },
     {
       "name": "USD",
-      "description": "the official currency of the United States and several other countries and territories.",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4917",
-          "type": "wikidata"
-        }
-      ],
       "type": "measure"
     },
     {

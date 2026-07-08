@@ -398,15 +398,7 @@
       ]
     },
     {
-      "name": "USD",
-      "description": "the United States dollar.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "USD"
     },
     {
       "name": "MWh",
@@ -420,15 +412,7 @@
       ]
     },
     {
-      "name": "CHF",
-      "description": "the Swiss franc.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Swiss_franc",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "CHF"
     },
     {
       "name": "bn",

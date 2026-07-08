@@ -646,7 +646,7 @@
       "to": "agglomeration"
     },
     {
-      "name": "population density of Zurich (city)",
+      "name": "population density",
       "from": "density",
       "verb": "of",
       "to": "population"
@@ -658,7 +658,7 @@
       "to": "foreign"
     },
     {
-      "name": "median age of Zurich (city)",
+      "name": "median age",
       "from": "median",
       "verb": "of",
       "to": "age"
@@ -670,7 +670,7 @@
       "to": "Zurich (city)"
     },
     {
-      "name": "GDP per capita of Zurich (city)",
+      "name": "GDP per capita",
       "from": "gross domestic product",
       "verb": "per",
       "to": "inhabitant"
@@ -802,7 +802,7 @@
       "to": "Zurich (city)"
     },
     {
-      "name": "number of doctors per 1000 inhabitants",
+      "name": "doctors per 1000 inhabitants",
       "from": "doctor",
       "verb": "per",
       "to": "inhabitant"
@@ -970,7 +970,7 @@
       "to": "household"
     },
     {
-      "name": "annual births in Zurich (city)",
+      "name": "annual births",
       "from": "birth",
       "verb": "per",
       "to": "year"
@@ -1290,7 +1290,7 @@
     },
     {
       "words": [
-        "population density of Zurich (city)",
+        "population density",
         "inhabitant",
         "square kilometre",
         "2024",

@@ -186,10 +186,7 @@
             "type_code_id": "default"
         },
         {
-            "name": "USD",
-            "description": "the United States dollar.",
-            "type_code_id": "measure",
-            "type": "measure type"
+            "name": "USD"
         },
         {
             "name": "MWh",

@@ -356,8 +356,7 @@
       ]
     },
     {
-      "name": "billion",
-      "description": "the number 1,000,000,000 (ten to the ninth power)."
+      "name": "billion"
     },
     {
       "name": "kWh",

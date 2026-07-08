@@ -39,6 +39,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -145,6 +146,7 @@ class horizontal_ui_tests
                 and $filled_obj::class != formula_link::class
                 and $filled_obj::class != result::class
                 and $filled_obj::class != view_relation::class
+                and $filled_obj::class != component_link::class
                 and $filled_obj::class != term_view::class) {
                 $refilled_obj->usage = $filled_obj->usage;
             }

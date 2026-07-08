@@ -123,12 +123,16 @@ class word_names
     const int WARMER_ID = 223;
     const string POPULISM = 'populism';
     const int POPULISM_ID = 227;
+    const string POPULISM_COM = 'a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.';
     const string HEALTH = 'health';
     const int HEALTH_ID = 243;
+    const string HEALTH_COM = 'a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.';
     const string POVERTY = 'poverty';
     const int POVERTY_ID = 245;
+    const string POVERTY_COM = 'the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.';
     const string EDUCATION = 'education';
     const int EDUCATION_ID = 247;
+    const string EDUCATION_COM = 'process of teaching and learning';
     const string HTP = 'htp';
     const int HTP_ID = 255;
     const string TRILLION = 'trillion';
@@ -182,6 +186,7 @@ class word_names
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
+    const string COMPANY_COM = 'legal entity formed to carry on business';
     const int COMPANY_ID = 190;
     const string ABB = 'ABB';
     const int ABB_ID = 279;

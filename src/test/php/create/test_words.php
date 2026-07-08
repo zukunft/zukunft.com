@@ -968,6 +968,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::HEALTH_ID, word_names::HEALTH);
+        $wrd->description = word_names::HEALTH_COM;
         return $wrd;
     }
 
@@ -975,6 +976,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::POPULISM_ID, word_names::POPULISM);
+        $wrd->description = word_names::POPULISM_COM;
         return $wrd;
     }
 
@@ -982,6 +984,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::POVERTY_ID, word_names::POVERTY);
+        $wrd->description = word_names::POVERTY_COM;
         return $wrd;
     }
 
@@ -989,6 +992,7 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EDUCATION_ID, word_names::EDUCATION);
+        $wrd->description = word_names::EDUCATION_COM;
         return $wrd;
     }
 

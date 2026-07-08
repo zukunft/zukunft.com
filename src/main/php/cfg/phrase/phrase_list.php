@@ -947,7 +947,7 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @returns array a list of phrases, that characterises the given phrase
      */
-    function foaf_related(?verb $vrb = null, int $max_level = 0): phrase_list
+    function foaf_related(?verb $vrb = null, int $max_level = 1): phrase_list
     {
         return $this->foaf(foaf_direction::BOTH, $vrb, $max_level);
     }

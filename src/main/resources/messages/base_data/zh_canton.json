@@ -582,7 +582,7 @@
       "to": "population"
     },
     {
-      "name": "population density of Zurich (canton)",
+      "name": "population density",
       "from": "density",
       "verb": "of",
       "to": "population"
@@ -606,7 +606,7 @@
       "to": "Zurich (canton)"
     },
     {
-      "name": "median age of Zurich (canton)",
+      "name": "median age",
       "from": "median",
       "verb": "of",
       "to": "age"
@@ -624,7 +624,7 @@
       "to": "population"
     },
     {
-      "name": "annual births in Zurich (canton)",
+      "name": "annual births",
       "from": "birth",
       "verb": "per",
       "to": "year"
@@ -654,16 +654,22 @@
       "to": "Zurich (canton)"
     },
     {
-      "name": "GDP rank of Zurich (canton)",
+      "name": "GDP rank",
       "from": "rank",
       "verb": "of",
       "to": "gross domestic product"
     },
     {
-      "name": "GDP per capita of Zurich (canton)",
+      "name": "GDP per capita",
       "from": "gross domestic product",
       "verb": "per",
       "to": "inhabitant"
+    },
+    {
+      "name": "GDP per capita of Zurich (canton)",
+      "from": "GDP per capita",
+      "verb": "of",
+      "to": "Zurich (canton)"
     },
     {
       "name": "unemployment rate of Zurich (canton)",
@@ -1059,7 +1065,7 @@
   "formulas": [
     {
       "name": "population density formula",
-      "expression": "\"population density of Zurich (canton)\" = \"population of Zurich (canton)\" / \"area of Zurich (canton)\"",
+      "expression": "\"population density\" = \"population of Zurich (canton)\" / \"area of Zurich (canton)\"",
       "assigned": [
         "population of Zurich (canton)",
         "area of Zurich (canton)"
@@ -1194,7 +1200,7 @@
     },
     {
       "words": [
-        "population density of Zurich (canton)",
+        "population density",
         "inhabitant",
         "square kilometre",
         "2024",
@@ -2081,7 +2087,7 @@
       ],
       "formula": "population density formula",
       "words": [
-        "population density of Zurich (canton)",
+        "population density",
         "inhabitant",
         "square kilometre"
       ],

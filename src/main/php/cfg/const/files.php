@@ -165,6 +165,8 @@ class files
 
     // key figures for the city and canton of Zurich used as a real-world demo and for system testing
     const string ZURICH_FILE = self::BASE_DATA_PATH . 'zurich' . self::JSON;
+    const string ZH_CITY_FILE = self::BASE_DATA_PATH . 'zh_city' . self::JSON;
+    const string ZH_CANTON_FILE = self::BASE_DATA_PATH . 'zh_canton' . self::JSON;
 
     // most relevant base data around the gross domestic product (GDP) used as a real-world demo and for system testing
     const string GDP_FILE = self::BASE_DATA_PATH . 'GDP' . self::JSON;
@@ -242,6 +244,8 @@ class files
     // so that the views can be tested by name without relying on database ids
     const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
+        self::ZH_CITY_FILE,
+        self::ZH_CANTON_FILE,
         self::GDP_FILE,
         self::GLOBAL_WARMING_FILE,
         self::POPULISM_FILE,

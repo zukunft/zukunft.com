@@ -26,7 +26,7 @@
     },
     {
       "name": "billion",
-      "description": "to specify numbers in billions",
+      "description": "to specify numbers in billions - 10⁹",
       "type": "scaling",
       "protection": "admin_protection"
     },
