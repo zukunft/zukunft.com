@@ -293,6 +293,12 @@ class word_names
     const string TEST_ADD_COM = 'test description added to the word via import';
     // the new description posted by the confirm change workflow to change the test word description
     const string TEST_CHANGE_COM = 'a confirm change test description';
+    // words to test the no update import that only fills up empty fields
+    const string TEST_NO_UPD = 'System Test Word No Update';
+    const string TEST_NO_UPD_COM = 'the original description that a no update import must keep';
+    const string TEST_NO_UPD_CHANGED = 'the changed description that a no update import must ignore';
+    const string TEST_FILL_UP = 'System Test Word Fill Up';
+    const string TEST_FILL_UP_COM = 'the description added to an empty field by a no update import';
     const string TEST_ADD_TO = 'System Test Word To';
     // the fixed snapshot id of the 'System Test Word To' (like TEST_ADD_ID for the 'System Test Word')
     const int TEST_ADD_TO_ID = 997;

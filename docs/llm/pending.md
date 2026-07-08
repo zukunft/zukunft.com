@@ -4,6 +4,8 @@
 
 ## high prio
 
+add to the json import a parameter '$no_upd' (no update) that prevents existing object parameters such as the description or the formula expression to be overwritten. Only the fill up of empty fields is allowed. Create a positive and negative test case for this and set the parameter to true for the system json import but leave it to default of false for all other imports. 
+
 check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
 
 ## fine-tuning for next launch

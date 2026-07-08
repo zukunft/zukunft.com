@@ -674,11 +674,12 @@ class sandbox_named extends sandbox
     /**
      * create human-readable messages of the differences between the named sandbox objects
      * @param sandbox_named|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
+    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->name() != $obj->name()) {
             $lib = new library();
             $msg->add(msg_id::DIFF_NAME, [
@@ -688,6 +689,16 @@ class sandbox_named extends sandbox
                 msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);
         }
+        if ($this->get_description() != $obj->get_description()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_DESCRIPTION, [
+                msg_id::VAR_NAME => $obj->get_description(),
+                msg_id::VAR_NAME_CHK => $this->get_description(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+        $this->diff_field_msg($msg, fields::FLD_USAGE, $this->get_usage(), $obj->get_usage());
         return $msg;
     }
 

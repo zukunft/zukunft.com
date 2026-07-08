@@ -430,6 +430,11 @@ class triple extends sandbox_link_named
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
+
+        if (key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+        }
+
         if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
             $this->impact = $api_json[fields::FLD_IMPACT];
         }
@@ -2478,6 +2483,32 @@ class triple extends sandbox_link_named
         parent::db_ready($msg);
         $this->check($msg);
         return $msg->is_ok();
+    }
+
+    /**
+     * create human-readable messages of the differences between the triple objects
+     * @param triple|CombineObject|db_object_seq_id $obj which might be different to this triple
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the triple objects
+     */
+    function diff_msg(triple|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        if (!$ex_def and $this->type_id() != $obj->type_id()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $obj->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        $this->diff_field_msg($msg, verb_db::FLD_ID, $this->get_verb_id(), $obj->get_verb_id());
+        $this->diff_field_msg($msg, triple_fields::FLD_NAME_GIVEN, $this->name_given(), $obj->name_given());
+        $this->diff_field_msg($msg, triple_fields::FLD_WIGHT, $this->weight, $obj->weight);
+        $this->diff_field_msg($msg, fields::FLD_USAGE, $this->get_usage(), $obj->get_usage());
+        $this->diff_field_msg($msg, fields::FLD_IMPACT, $this->get_impact(), $obj->get_impact());
+        return $msg;
     }
 
     /**

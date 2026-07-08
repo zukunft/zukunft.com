@@ -1115,11 +1115,12 @@ class value_base extends sandbox_value
      * create human-readable messages of the differences between the value objects
      * TODO add time_stamp and user value if needed
      * @param value_base|db_object_multi $obj which might be different to this value object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the value objects
      */
-    function diff_msg(value_base|db_object_multi $obj): user_message
+    function diff_msg(value_base|db_object_multi $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->get_value() != $obj->get_value()
             and $obj->get_value() != null
             and $this->get_value() != null) {

@@ -104,6 +104,8 @@ enum messages: string
     const string VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
     const string VAR_NAME_CHK = 'VarObjNameCheck';
+    // the database field name of a sandbox object used to report a field difference
+    const string VAR_FIELD_NAME = 'VarFieldName';
     // the description of a sandbox object using dsp_id()
     const string VAR_SANDBOX_NAME = 'VarSandboxName';
     // the name of a word
@@ -181,6 +183,9 @@ enum messages: string
     // the exclusion status of the compare sandbox object
     const string VAR_EXCLUDE_CHK = 'VarExcludeCheck';
 
+    const string VAR_IMPACT = 'VarImpact';
+    // the exclusion status of the compare sandbox object
+    const string VAR_IMPACT_CHK = 'VarImpactCheck';
     const string VAR_JSON_TEXT = 'VarJsonText';
     const string VAR_SOURCE_NAME = 'VarSourceName';
     const string VAR_FORMULA_NAME = 'VarFormulaName';
@@ -278,6 +283,24 @@ enum messages: string
         . ' "'
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
+    case DIFF_DESCRIPTION = 'description is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_LANGUAGE_FORM = 'plural is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
     case DIFF_USER = 'user is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
         . '" instead of "'
@@ -322,6 +345,28 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_IMPACT = 'impact is "'
+        . self::VAR_START . self::VAR_IMPACT . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_IMPACT_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    // generic field difference used by the diff_msg of the sandbox objects
+    // to report a change of a field that has no dedicated message
+    case DIFF_FIELD = ''
+        . self::VAR_START . self::VAR_FIELD_NAME . self::VAR_END
+        . ' is "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
     case DIFF_EXCLUSION = 'exclusion is "'
         . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
@@ -1252,6 +1297,7 @@ enum messages: string
         . ' for '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
+    // TODO Prio 3 review: combine with VERB_MISSING_IMPORT ?
     case VERB_MISSING = 'verb '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '

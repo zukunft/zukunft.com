@@ -998,6 +998,25 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * create human-readable messages of the differences between the linked objects
+     * covering the from and to object of the link
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param sandbox_link|CombineObject|db_object_seq_id $obj which might be different to this linked object
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the linked objects
+     */
+    function diff_msg(sandbox_link|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this->diff_field_msg($msg, self::FLD_FROM, $this->fob?->id(), $obj->fob?->id());
+        $this_to = is_object($this->tob) ? $this->tob->id() : $this->tob;
+        $obj_to = is_object($obj->tob) ? $obj->tob->id() : $obj->tob;
+        $this->diff_field_msg($msg, self::FLD_TO, $this_to, $obj_to);
+        return $msg;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database

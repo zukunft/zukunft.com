@@ -1801,11 +1801,13 @@ class test_mappers
     static function triple_url(triple $trp, string $type = ''): array
     {
         $url_array = [];
-        $url_array[] = [url_var::NAME, $trp->name()];
         $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
         $url_array[] = [url_var::VERB, $trp->get_verb_id()];
         $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
-        $url_array[] = [url_var::NAME, $trp->name_given()];
+        $url_array[] = [url_var::WEIGHT, $trp->weight];
+        $url_array[] = [url_var::TYPE, $trp->type_id()];
+        $url_array[] = [url_var::NAME, $trp->name()];
+        $url_array[] = [url_var::NAME_GIVEN, $trp->name_given()];
         $url_array[] = [url_var::DESCRIPTION, $trp->get_description()];
         $url_array[] = [url_var::SHARE, $trp->share_id()];
         $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
@@ -1918,6 +1920,7 @@ class test_mappers
         $url_array[] = [url_var::NAME, $frm->name()];
         $url_array[] = [url_var::DESCRIPTION, $frm->get_description()];
         $url_array[] = [url_var::USER_EXPRESSION, $frm->get_usr_text()];
+        $url_array[] = [url_var::NEED_ALL, $frm->need_all_val];
         // all need
         // update
         $url_array[] = [url_var::TYPE, $frm->type_id()];
@@ -1960,6 +1963,7 @@ class test_mappers
         $url_array[] = [url_var::NAME, $msk->name()];
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
         $url_array[] = [url_var::TYPE, $msk->type_id()];
+        $url_array[] = [url_var::STYLE, $msk->get_style_id()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
         return $url_array;
@@ -1996,6 +2000,11 @@ class test_mappers
         $url_array[] = [url_var::NAME, $cmp->name()];
         $url_array[] = [url_var::DESCRIPTION, $cmp->get_description()];
         $url_array[] = [url_var::TYPE, $cmp->type_id()];
+        $url_array[] = [url_var::STYLE, $cmp->get_style_id()];
+        $url_array[] = [url_var::PHRASE_ROW, $cmp->row_phrase->id()];
+        $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];
+        $url_array[] = [url_var::PHRASE_COL_SUB, $cmp->col_sub_phrase->id()];
+        $url_array[] = [url_var::LINK_TYPE, $cmp->link_type_id];
         $url_array[] = [url_var::SHARE, $cmp->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
         return $url_array;
