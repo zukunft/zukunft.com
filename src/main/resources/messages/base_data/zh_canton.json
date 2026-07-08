@@ -1,0 +1,2092 @@
+{
+  "version": "0.0.3",
+  "time": "2026-07-07 08:00:00",
+  "user": "data-team",
+  "selection": [
+    "canton of Zurich",
+    "key figures",
+    "statistics",
+    "2024",
+    "2025"
+  ],
+  "description": "100 most relevant numeric indicators about the canton of Zurich, Switzerland — geography, administration, population, demographics, economy, labour market, public finances, taxes, housing, transport, education, research, health, environment, energy, governance and quality of life. Data from Statistik Kanton Zürich, BFS, Wikipedia, S&P, Mercer and official publications, mostly 2023–2025.",
+  "words": [
+    {
+      "name": "Zurich",
+      "description": "most populous canton of Switzerland, in the north‑eastern part of the country.",
+      "refs": [
+        {
+          "name": "Canton_of_Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11943",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "canton"
+    },
+    {
+      "name": "city"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "district",
+      "description": "administrative subdivision of a canton"
+    },
+    {
+      "name": "municipality",
+      "description": "smallest political administrative unit in Switzerland"
+    },
+    {
+      "name": "area",
+      "description": "extent of a surface measured in square units"
+    },
+    {
+      "name": "square kilometre"
+    },
+    {
+      "name": "rank",
+      "description": "position in an ordered list"
+    },
+    {
+      "name": "elevation",
+      "description": "height above mean sea level"
+    },
+    {
+      "name": "highest",
+      "description": "the greatest in a set of values"
+    },
+    {
+      "name": "lowest",
+      "description": "the smallest in a set of values"
+    },
+    {
+      "name": "metre",
+      "type": "measure",
+      "description": "SI base unit of length"
+    },
+    {
+      "name": "population",
+      "description": "number of people living in a place"
+    },
+    {
+      "name": "inhabitant",
+      "description": "person who lives permanently in a place"
+    },
+    {
+      "name": "density",
+      "description": "quantity per unit area or volume"
+    },
+    {
+      "name": "growth",
+      "description": "rate of increase over a period"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "foreign",
+      "description": "originating from outside the political unit"
+    },
+    {
+      "name": "nationality",
+      "description": "legal belonging to a state"
+    },
+    {
+      "name": "median",
+      "description": "value separating the higher half from the lower half"
+    },
+    {
+      "name": "age",
+      "description": "length of time a person has lived"
+    },
+    {
+      "name": "year",
+      "type": "measure",
+      "description": "time period of about 365 days"
+    },
+    {
+      "name": "male",
+      "description": "sex category"
+    },
+    {
+      "name": "female",
+      "description": "sex category"
+    },
+    {
+      "name": "birth",
+      "description": "start of life"
+    },
+    {
+      "name": "household",
+      "description": "people living together in one dwelling"
+    },
+    {
+      "name": "language",
+      "description": "system of communication"
+    },
+    {
+      "name": "German",
+      "description": "West‑Germanic language, official in Zurich"
+    },
+    {
+      "name": "gross domestic product",
+      "description": "total market value of goods and services produced",
+      "refs": [
+        {
+          "name": "Gross_domestic_product",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Swiss franc"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "unemployment",
+      "description": "share of labour force without paid work"
+    },
+    {
+      "name": "employment",
+      "description": "state of having paid work"
+    },
+    {
+      "name": "employee",
+      "description": "person working for an organisation in return for payment"
+    },
+    {
+      "name": "full‑time equivalent",
+      "description": "standardised measure of workload"
+    },
+    {
+      "name": "sector",
+      "description": "distinct part of an economy"
+    },
+    {
+      "name": "service",
+      "description": "economic activity not producing tangible goods"
+    },
+    {
+      "name": "industry",
+      "description": "economic activity concerned with processing goods"
+    },
+    {
+      "name": "agriculture",
+      "description": "cultivation of plants and rearing of animals"
+    },
+    {
+      "name": "salary",
+      "description": "fixed regular payment for work"
+    },
+    {
+      "name": "month",
+      "type": "measure",
+      "description": "calendar month"
+    },
+    {
+      "name": "company",
+      "description": "legal entity formed to carry on business"
+    },
+    {
+      "name": "startup",
+      "description": "newly created business seeking scalable growth"
+    },
+    {
+      "name": "patent",
+      "description": "legal right excluding others from using an invention"
+    },
+    {
+      "name": "budget",
+      "description": "plan of income and expenditure over a period"
+    },
+    {
+      "name": "debt",
+      "description": "sum of money owed"
+    },
+    {
+      "name": "tax",
+      "description": "compulsory financial charge to public authority"
+    },
+    {
+      "name": "profit",
+      "description": "financial gain, revenue minus costs"
+    },
+    {
+      "name": "rating",
+      "description": "assessment of creditworthiness"
+    },
+    {
+      "name": "dwelling",
+      "description": "place of residence"
+    },
+    {
+      "name": "apartment",
+      "description": "self‑contained housing unit inside a building"
+    },
+    {
+      "name": "rent",
+      "description": "payment for use of property"
+    },
+    {
+      "name": "price",
+      "description": "amount of money required to buy something"
+    },
+    {
+      "name": "vacancy",
+      "description": "share of dwellings available for occupation"
+    },
+    {
+      "name": "road",
+      "description": "way for traffic between places"
+    },
+    {
+      "name": "railway",
+      "description": "tracked transport system"
+    },
+    {
+      "name": "kilometre",
+      "type": "measure"
+    },
+    {
+      "name": "public transport",
+      "description": "shared passenger transport available to general public"
+    },
+    {
+      "name": "school",
+      "description": "institution for educating children"
+    },
+    {
+      "name": "university",
+      "description": "highest level teaching and research institution"
+    },
+    {
+      "name": "student",
+      "description": "person enrolled at an educational institution"
+    },
+    {
+      "name": "research",
+      "description": "systematic investigation to discover new knowledge"
+    },
+    {
+      "name": "hospital",
+      "description": "institution providing medical treatment"
+    },
+    {
+      "name": "doctor",
+      "description": "qualified medical practitioner"
+    },
+    {
+      "name": "expectancy",
+      "description": "statistical average time an event is awaited"
+    },
+    {
+      "name": "environment",
+      "description": "surroundings in which organisms live"
+    },
+    {
+      "name": "forest",
+      "description": "large area covered chiefly with trees"
+    },
+    {
+      "name": "agricultural",
+      "description": "relating to farming"
+    },
+    {
+      "name": "water",
+      "description": "liquid H₂O, essential for life"
+    },
+    {
+      "name": "lake",
+      "description": "large inland body of water"
+    },
+    {
+      "name": "carbon dioxide",
+      "type": "measure",
+      "description": "CO₂, main greenhouse gas"
+    },
+    {
+      "name": "tonne",
+      "type": "measure"
+    },
+    {
+      "name": "electricity",
+      "description": "energy from flow of electric charge"
+    },
+    {
+      "name": "renewable",
+      "description": "replenished naturally on human timescale"
+    },
+    {
+      "name": "waste",
+      "description": "materials no longer wanted"
+    },
+    {
+      "name": "recycling",
+      "description": "converting waste into reusable material"
+    },
+    {
+      "name": "tourism",
+      "description": "travel for pleasure or business"
+    },
+    {
+      "name": "overnight stay",
+      "description": "one night spent by a visitor in accommodation"
+    },
+    {
+      "name": "safety",
+      "description": "condition of being protected from harm"
+    },
+    {
+      "name": "homicide",
+      "description": "killing of one human by another"
+    },
+    {
+      "name": "quality of life",
+      "description": "general well‑being of individuals and societies"
+    },
+    {
+      "name": "index",
+      "description": "number representing change relative to a base"
+    },
+    {
+      "name": "human development index",
+      "description": "UN composite index of life expectancy, education, income",
+      "refs": [
+        {
+          "name": "Human_Development_Index",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gini coefficient",
+      "description": "measure of statistical dispersion for income or wealth inequality",
+      "refs": [
+        {
+          "name": "Gini_coefficient",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "seat",
+      "description": "position in an elected assembly"
+    },
+    {
+      "name": "councillor",
+      "description": "member of a council"
+    },
+    {
+      "name": "measured value",
+      "description": "quantity obtained by observation or measurement"
+    },
+    {
+      "name": "million",
+      "description": "10⁶"
+    },
+    {
+      "name": "S&P",
+      "description": "S&P Global Ratings, a credit rating agency"
+    },
+    {
+      "name": "Fitch",
+      "description": "Fitch Ratings, a credit rating agency"
+    },
+    {
+      "name": "GWh",
+      "type": "measure",
+      "description": "gigawatt hour, unit of energy"
+    },
+    {
+      "name": "region",
+      "description": "a defined geographic area"
+    },
+    {
+      "name": "Schnebelhorn",
+      "description": "highest summit of the canton of Zurich, 1292 m"
+    },
+    {
+      "name": "Rhine Weiach",
+      "description": "lowest point of the canton of Zurich on the river Rhine near Weiach, 332 m"
+    },
+    {
+      "name": "Kilchberg",
+      "description": "municipality on Lake Zurich with the lowest tax multiplier"
+    },
+    {
+      "name": "Maschwanden",
+      "description": "municipality in the Knonau district with the highest tax multiplier"
+    },
+    {
+      "name": "Regierungsrat",
+      "description": "the seven-member executive council of the canton of Zurich"
+    },
+    {
+      "name": "share",
+      "description": "a part of a whole expressed as a fraction"
+    },
+    {
+      "name": "ratio",
+      "description": "a quotient of two quantities"
+    },
+    {
+      "name": "gap",
+      "description": "a measured difference between two quantities"
+    },
+    {
+      "name": "mortality",
+      "description": "the number of deaths in a population"
+    },
+    {
+      "name": "bed",
+      "description": "a place for one patient in a hospital"
+    },
+    {
+      "name": "bicycle",
+      "description": "a pedal-driven two-wheeled vehicle"
+    },
+    {
+      "name": "walking",
+      "description": "travelling on foot"
+    },
+    {
+      "name": "age 0 to 19",
+      "description": "the population aged 0 to 19 years"
+    },
+    {
+      "name": "age 20 to 64",
+      "description": "the population aged 20 to 64 years"
+    },
+    {
+      "name": "age 65 plus",
+      "description": "the population aged 65 years and older"
+    },
+    {
+      "name": "2022",
+      "type": "time",
+      "description": "the year 2022"
+    },
+    {
+      "name": "2023",
+      "type": "time",
+      "description": "the year 2023"
+    },
+    {
+      "name": "2024",
+      "type": "time",
+      "description": "the year 2024"
+    },
+    {
+      "name": "2025",
+      "type": "time",
+      "description": "the year 2025"
+    },
+    {
+      "name": "2026",
+      "type": "time",
+      "description": "the year 2026"
+    },
+    {
+      "name": "2023–2027",
+      "type": "time",
+      "description": "the period 2023 to 2027"
+    },
+    {
+      "name": "2024‑12‑31",
+      "type": "time",
+      "description": "the date 31 December 2024"
+    },
+    {
+      "name": "2025‑06",
+      "type": "time",
+      "description": "the month June 2025"
+    },
+    {
+      "name": "2025‑09‑30",
+      "type": "time",
+      "description": "the date 30 September 2025"
+    },
+    {
+      "name": "2026‑01",
+      "type": "time",
+      "description": "the month January 2026"
+    }
+  ],
+  "triples": [
+    {
+      "name": "Zurich (canton)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "canton"
+    },
+    {
+      "name": "Zurich (city)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "city"
+    },
+    {
+      "name": "area of Zurich (canton)",
+      "from": "area",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "area rank of Zurich (canton)",
+      "from": "rank",
+      "verb": "of",
+      "to": "area"
+    },
+    {
+      "name": "highest elevation of Zurich (canton)",
+      "from": "elevation",
+      "verb": "kind of",
+      "to": "highest"
+    },
+    {
+      "name": "lowest elevation of Zurich (canton)",
+      "from": "elevation",
+      "verb": "kind of",
+      "to": "lowest"
+    },
+    {
+      "name": "number of districts",
+      "from": "district",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of municipalities",
+      "from": "municipality",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "population of Zurich (canton)",
+      "from": "population",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "population rank of Zurich (canton)",
+      "from": "rank",
+      "verb": "of",
+      "to": "population"
+    },
+    {
+      "name": "population density of Zurich (canton)",
+      "from": "density",
+      "verb": "of",
+      "to": "population"
+    },
+    {
+      "name": "population growth per year",
+      "from": "growth",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "foreign population share",
+      "from": "population",
+      "verb": "kind of",
+      "to": "foreign"
+    },
+    {
+      "name": "number of nationalities present",
+      "from": "nationality",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "median age of Zurich (canton)",
+      "from": "median",
+      "verb": "of",
+      "to": "age"
+    },
+    {
+      "name": "male population share",
+      "from": "male",
+      "verb": "kind of",
+      "to": "population"
+    },
+    {
+      "name": "female population share",
+      "from": "female",
+      "verb": "kind of",
+      "to": "population"
+    },
+    {
+      "name": "annual births in Zurich (canton)",
+      "from": "birth",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "number of households in Zurich (canton)",
+      "from": "household",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "average household size",
+      "from": "inhabitant",
+      "verb": "per",
+      "to": "household"
+    },
+    {
+      "name": "German language share",
+      "from": "German",
+      "verb": "kind of",
+      "to": "language"
+    },
+    {
+      "name": "GDP of Zurich (canton)",
+      "from": "gross domestic product",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "GDP rank of Zurich (canton)",
+      "from": "rank",
+      "verb": "of",
+      "to": "gross domestic product"
+    },
+    {
+      "name": "GDP per capita of Zurich (canton)",
+      "from": "gross domestic product",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "unemployment rate of Zurich (canton)",
+      "from": "unemployment",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of employees in Zurich (canton)",
+      "from": "employee",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "full‑time equivalent jobs",
+      "from": "full‑time equivalent",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "services share of employment",
+      "from": "service",
+      "verb": "kind of",
+      "to": "sector"
+    },
+    {
+      "name": "industry share of employment",
+      "from": "industry",
+      "verb": "kind of",
+      "to": "sector"
+    },
+    {
+      "name": "agriculture share of employment",
+      "from": "agriculture",
+      "verb": "kind of",
+      "to": "sector"
+    },
+    {
+      "name": "median monthly salary",
+      "from": "salary",
+      "verb": "per",
+      "to": "month"
+    },
+    {
+      "name": "number of companies in Zurich (canton)",
+      "from": "company",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of startups in Zurich (canton)",
+      "from": "startup",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "patent applications per 10 000",
+      "from": "patent",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "total canton budget",
+      "from": "budget",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "gross canton debt",
+      "from": "debt",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "cantonal profit tax rate",
+      "from": "tax",
+      "verb": "kind of",
+      "to": "profit"
+    },
+    {
+      "name": "cantonal tax multiplier",
+      "from": "tax",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "AAA credit rating",
+      "from": "rating",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of dwellings in Zurich (canton)",
+      "from": "dwelling",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "rented dwellings share",
+      "from": "apartment",
+      "verb": "kind of",
+      "to": "rent"
+    },
+    {
+      "name": "average monthly rent",
+      "from": "rent",
+      "verb": "per",
+      "to": "month"
+    },
+    {
+      "name": "apartment price per m²",
+      "from": "price",
+      "verb": "per",
+      "to": "square kilometre"
+    },
+    {
+      "name": "housing vacancy rate",
+      "from": "vacancy",
+      "verb": "of",
+      "to": "dwelling"
+    },
+    {
+      "name": "public road network length",
+      "from": "road",
+      "verb": "kind of",
+      "to": "kilometre"
+    },
+    {
+      "name": "railway network length",
+      "from": "railway",
+      "verb": "kind of",
+      "to": "kilometre"
+    },
+    {
+      "name": "public transport modal share",
+      "from": "public transport",
+      "verb": "kind of",
+      "to": "sector"
+    },
+    {
+      "name": "number of primary schools",
+      "from": "school",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of universities",
+      "from": "university",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "number of students in Zurich (canton)",
+      "from": "student",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "research expenditure share",
+      "from": "research",
+      "verb": "kind of",
+      "to": "gross domestic product"
+    },
+    {
+      "name": "number of hospitals in Zurich (canton)",
+      "from": "hospital",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "doctors per 1000 inhabitants",
+      "from": "doctor",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "life expectancy at birth",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "age"
+    },
+    {
+      "name": "forest share of area",
+      "from": "forest",
+      "verb": "kind of",
+      "to": "area"
+    },
+    {
+      "name": "agricultural share of area",
+      "from": "agricultural",
+      "verb": "kind of",
+      "to": "area"
+    },
+    {
+      "name": "settlement share of area",
+      "from": "area",
+      "verb": "kind of",
+      "to": "rank"
+    },
+    {
+      "name": "area of Lake Zurich",
+      "from": "area",
+      "verb": "of",
+      "to": "lake"
+    },
+    {
+      "name": "CO₂ emissions per capita",
+      "from": "carbon dioxide",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "renewable electricity share",
+      "from": "renewable",
+      "verb": "kind of",
+      "to": "electricity"
+    },
+    {
+      "name": "total electricity consumption",
+      "from": "electricity",
+      "verb": "in",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "waste recycling rate",
+      "from": "recycling",
+      "verb": "of",
+      "to": "waste"
+    },
+    {
+      "name": "annual tourist overnight stays",
+      "from": "overnight stay",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "homicide rate per 100 000",
+      "from": "homicide",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "Mercer quality of life rank",
+      "from": "rank",
+      "verb": "of",
+      "to": "quality of life"
+    },
+    {
+      "name": "Human Development Index value",
+      "from": "human development index",
+      "verb": "kind of",
+      "to": "index"
+    },
+    {
+      "name": "Gini coefficient of Zurich (canton)",
+      "from": "Gini coefficient",
+      "verb": "of",
+      "to": "Zurich (canton)"
+    },
+    {
+      "name": "cantonal council seats total",
+      "from": "seat",
+      "verb": "in",
+      "to": "canton"
+    },
+    {
+      "name": "executive councillors total",
+      "from": "councillor",
+      "verb": "in",
+      "to": "canton"
+    },
+    {
+      "name": "Zurich region",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "region"
+    },
+    {
+      "name": "GDP per capita rank",
+      "from": "rank",
+      "verb": "of",
+      "to": "GDP per capita of Zurich (canton)"
+    },
+    {
+      "name": "real GDP growth",
+      "from": "growth",
+      "verb": "of",
+      "to": "gross domestic product"
+    },
+    {
+      "name": "debt to revenue ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "debt"
+    },
+    {
+      "name": "gender pay gap",
+      "from": "gap",
+      "verb": "in",
+      "to": "salary"
+    },
+    {
+      "name": "highest municipal tax multiplier",
+      "from": "tax",
+      "verb": "kind of",
+      "to": "highest"
+    },
+    {
+      "name": "lowest municipal tax multiplier",
+      "from": "tax",
+      "verb": "kind of",
+      "to": "lowest"
+    },
+    {
+      "name": "infant mortality per 1000",
+      "from": "mortality",
+      "verb": "of",
+      "to": "birth"
+    },
+    {
+      "name": "motorised individual transport share",
+      "from": "share",
+      "verb": "of",
+      "to": "road"
+    },
+    {
+      "name": "number of acute care beds",
+      "from": "bed",
+      "verb": "in",
+      "to": "hospital"
+    },
+    {
+      "name": "number of secondary schools",
+      "from": "school",
+      "verb": "in",
+      "to": "canton"
+    },
+    {
+      "name": "owner‑occupied dwellings share",
+      "from": "share",
+      "verb": "of",
+      "to": "dwelling"
+    },
+    {
+      "name": "share of population 0–19",
+      "from": "population",
+      "verb": "kind of",
+      "to": "age 0 to 19"
+    },
+    {
+      "name": "share of population 20–64",
+      "from": "population",
+      "verb": "kind of",
+      "to": "age 20 to 64"
+    },
+    {
+      "name": "share of population 65+",
+      "from": "population",
+      "verb": "kind of",
+      "to": "age 65 plus"
+    },
+    {
+      "name": "tertiary education attainment 25–64",
+      "from": "student",
+      "verb": "in",
+      "to": "university"
+    },
+    {
+      "name": "walking modal share",
+      "from": "share",
+      "verb": "of",
+      "to": "walking"
+    },
+    {
+      "name": "bicycle modal share",
+      "from": "share",
+      "verb": "of",
+      "to": "bicycle"
+    },
+    {
+      "name": "water share of area",
+      "from": "share",
+      "verb": "of",
+      "to": "water"
+    },
+    {
+      "name": "year of accession to Confederation",
+      "from": "year",
+      "verb": "of",
+      "to": "Switzerland"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "population density formula",
+      "expression": "\"population density of Zurich (canton)\" = \"population of Zurich (canton)\" / \"area of Zurich (canton)\"",
+      "assigned": [
+        "population of Zurich (canton)",
+        "area of Zurich (canton)"
+      ]
+    },
+    {
+      "name": "foreign nationals count formula",
+      "expression": "\"foreign\" = \"population\" * \"percent\" / 100",
+      "assigned_word": "foreign population share"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Statistik Kanton Zürich 2025",
+      "description": "Statistisches Amt des Kantons Zürich, official key figures 2024/2025",
+      "url": "https://www.zh.ch/de/statistik.html"
+    },
+    {
+      "name": "BFS 2024/2025",
+      "description": "Swiss Federal Statistical Office, cantonal statistics",
+      "url": "https://www.bfs.admin.ch"
+    },
+    {
+      "name": "Wikipedia Canton of Zurich",
+      "description": "English Wikipedia entry, data as at May 2026",
+      "url": "https://en.wikipedia.org/wiki/Canton_of_Zurich"
+    },
+    {
+      "name": "S&P Global 2025",
+      "description": "S&P Global Ratings credit report for the canton of Zurich"
+    },
+    {
+      "name": "Mercer 2025",
+      "description": "Mercer Quality of Living Survey 2025"
+    },
+    {
+      "name": "SECO 2026",
+      "description": "State Secretariat for Economic Affairs, labour market data"
+    },
+    {
+      "name": "UNDP",
+      "description": "United Nations Development Programme, Human Development Report",
+      "url": "https://hdr.undp.org"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "area of Zurich (canton)",
+        "square kilometre",
+        "2024",
+        "measured value"
+      ],
+      "number": "1728.94",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "area rank of Zurich (canton)",
+        "Switzerland",
+        "2024",
+        "measured value"
+      ],
+      "number": "7",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "highest elevation of Zurich (canton)",
+        "metre",
+        "Schnebelhorn",
+        "measured value"
+      ],
+      "number": "1292",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "lowest elevation of Zurich (canton)",
+        "metre",
+        "Rhine Weiach",
+        "measured value"
+      ],
+      "number": "332",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "number of districts",
+        "Zurich (canton)",
+        "measured value"
+      ],
+      "number": "12",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of municipalities",
+        "Zurich (canton)",
+        "2025",
+        "measured value"
+      ],
+      "number": "160",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "population of Zurich (canton)",
+        "2024‑12‑31",
+        "measured value"
+      ],
+      "number": "1615112",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "population of Zurich (canton)",
+        "2025‑09‑30",
+        "measured value"
+      ],
+      "number": "1630151",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "population rank of Zurich (canton)",
+        "Switzerland",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "population density of Zurich (canton)",
+        "inhabitant",
+        "square kilometre",
+        "2024",
+        "measured value"
+      ],
+      "number": "934",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "population growth per year",
+        "Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.8",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "population growth per year",
+        "Zurich (canton)",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.9",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "foreign population share",
+        "Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "29.3",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "foreign population share",
+        "Zurich (canton)",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "28.8",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "number of nationalities present",
+        "Zurich (canton)",
+        "measured value"
+      ],
+      "number": "180",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "median age of Zurich (canton)",
+        "year",
+        "2024",
+        "measured value"
+      ],
+      "number": "40.6",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "male population share",
+        "Zurich (canton)",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "49.6",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "female population share",
+        "Zurich (canton)",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "50.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "share of population 0–19",
+        "Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "19.5",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "share of population 20–64",
+        "Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "62.5",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "share of population 65+",
+        "Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "18.0",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "annual births in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "15420",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "number of households in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "742000",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "average household size",
+        "Zurich (canton)",
+        "inhabitant",
+        "2024",
+        "measured value"
+      ],
+      "number": "2.17",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "German language share",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "81.5",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "GDP of Zurich (canton)",
+        "billion",
+        "Swiss franc",
+        "2022",
+        "measured value"
+      ],
+      "number": "164.5",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "GDP rank of Zurich (canton)",
+        "Switzerland",
+        "2022",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "GDP of Zurich (canton)",
+        "percent",
+        "Switzerland",
+        "2022",
+        "measured value"
+      ],
+      "number": "20.3",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "GDP per capita of Zurich (canton)",
+        "Swiss franc",
+        "2022",
+        "measured value"
+      ],
+      "number": "104620",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "GDP per capita rank",
+        "Switzerland",
+        "2022",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "real GDP growth",
+        "Zurich (canton)",
+        "2024",
+        "percent",
+        "measured value"
+      ],
+      "number": "2.1",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "unemployment rate of Zurich (canton)",
+        "2026‑01",
+        "percent",
+        "measured value"
+      ],
+      "number": "3.0",
+      "source": "SECO 2026"
+    },
+    {
+      "words": [
+        "unemployment rate of Zurich (canton)",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "3.1",
+      "source": "SECO 2026"
+    },
+    {
+      "words": [
+        "number of employees in Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "928400",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "full‑time equivalent jobs",
+        "Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "786200",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "services share of employment",
+        "Zurich (canton)",
+        "2023",
+        "percent",
+        "measured value"
+      ],
+      "number": "83.2",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "industry share of employment",
+        "Zurich (canton)",
+        "2023",
+        "percent",
+        "measured value"
+      ],
+      "number": "15.6",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "agriculture share of employment",
+        "Zurich (canton)",
+        "2023",
+        "percent",
+        "measured value"
+      ],
+      "number": "1.2",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "median monthly salary",
+        "Zurich (canton)",
+        "Swiss franc",
+        "2024",
+        "measured value"
+      ],
+      "number": "8230",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "gender pay gap",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "14.8",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "number of companies in Zurich (canton)",
+        "2025",
+        "measured value"
+      ],
+      "number": "98600",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of startups in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "2150",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "patent applications per 10 000",
+        "Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "18.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "total canton budget",
+        "Zurich (canton)",
+        "billion",
+        "Swiss franc",
+        "2026",
+        "measured value"
+      ],
+      "number": "16.8",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "gross canton debt",
+        "Zurich (canton)",
+        "billion",
+        "Swiss franc",
+        "2024",
+        "measured value"
+      ],
+      "number": "6.78",
+      "source": "S&P Global 2025"
+    },
+    {
+      "words": [
+        "debt to revenue ratio",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "32.9",
+      "source": "S&P Global 2025"
+    },
+    {
+      "words": [
+        "cantonal profit tax rate",
+        "Zurich (canton)",
+        "percent",
+        "2025",
+        "measured value"
+      ],
+      "number": "7.0",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "cantonal profit tax rate",
+        "Zurich (canton)",
+        "percent",
+        "2026",
+        "measured value"
+      ],
+      "number": "6.0",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "cantonal tax multiplier",
+        "Zurich (canton)",
+        "percent",
+        "2025",
+        "measured value"
+      ],
+      "number": "119",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "lowest municipal tax multiplier",
+        "Kilchberg",
+        "percent",
+        "2025",
+        "measured value"
+      ],
+      "number": "72",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "highest municipal tax multiplier",
+        "Maschwanden",
+        "percent",
+        "2025",
+        "measured value"
+      ],
+      "number": "129",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "AAA credit rating",
+        "Zurich (canton)",
+        "S&P",
+        "Fitch",
+        "2025",
+        "measured value"
+      ],
+      "number": "1",
+      "source": "S&P Global 2025"
+    },
+    {
+      "words": [
+        "number of dwellings in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "768300",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "rented dwellings share",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "62.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "owner‑occupied dwellings share",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "33.1",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "average monthly rent",
+        "Zurich (canton)",
+        "Swiss franc",
+        "2024",
+        "measured value"
+      ],
+      "number": "1768",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "apartment price per m²",
+        "Zurich (canton)",
+        "Swiss franc",
+        "2025",
+        "measured value"
+      ],
+      "number": "10300",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "housing vacancy rate",
+        "Zurich (canton)",
+        "2025‑06",
+        "percent",
+        "measured value"
+      ],
+      "number": "0.18",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "public road network length",
+        "Zurich (canton)",
+        "kilometre",
+        "measured value"
+      ],
+      "number": "4180",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "railway network length",
+        "Zurich (canton)",
+        "kilometre",
+        "measured value"
+      ],
+      "number": "520",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "public transport modal share",
+        "Zurich (canton)",
+        "percent",
+        "2023",
+        "measured value"
+      ],
+      "number": "43",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "motorised individual transport share",
+        "Zurich (canton)",
+        "percent",
+        "2023",
+        "measured value"
+      ],
+      "number": "41",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "bicycle modal share",
+        "Zurich (canton)",
+        "percent",
+        "2023",
+        "measured value"
+      ],
+      "number": "11",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "walking modal share",
+        "Zurich (canton)",
+        "percent",
+        "2023",
+        "measured value"
+      ],
+      "number": "5",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of primary schools",
+        "Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "252",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of secondary schools",
+        "Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "87",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of universities",
+        "Zurich (canton)",
+        "measured value"
+      ],
+      "number": "4",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of students in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "88500",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "tertiary education attainment 25–64",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "42.3",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "research expenditure share",
+        "Zurich (canton)",
+        "percent",
+        "2022",
+        "measured value"
+      ],
+      "number": "3.8",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "number of hospitals in Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "28",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "number of acute care beds",
+        "Zurich (canton)",
+        "2024",
+        "measured value"
+      ],
+      "number": "6420",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "doctors per 1000 inhabitants",
+        "Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "5.2",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "life expectancy at birth",
+        "Zurich (canton)",
+        "year",
+        "male",
+        "2023",
+        "measured value"
+      ],
+      "number": "82.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "life expectancy at birth",
+        "Zurich (canton)",
+        "year",
+        "female",
+        "2023",
+        "measured value"
+      ],
+      "number": "86.2",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "infant mortality per 1000",
+        "Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "2.0",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "forest share of area",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "30.5",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "agricultural share of area",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "42.8",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "settlement share of area",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "23.7",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "water share of area",
+        "Zurich (canton)",
+        "percent",
+        "measured value"
+      ],
+      "number": "3.0",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "area of Lake Zurich",
+        "square kilometre",
+        "measured value"
+      ],
+      "number": "88.2",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "CO₂ emissions per capita",
+        "Zurich (canton)",
+        "tonne",
+        "2022",
+        "measured value"
+      ],
+      "number": "4.1",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "renewable electricity share",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "78",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "total electricity consumption",
+        "Zurich (canton)",
+        "GWh",
+        "2024",
+        "measured value"
+      ],
+      "number": "9250",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "waste recycling rate",
+        "Zurich (canton)",
+        "percent",
+        "2024",
+        "measured value"
+      ],
+      "number": "56",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "annual tourist overnight stays",
+        "Zurich (canton)",
+        "million",
+        "2024",
+        "measured value"
+      ],
+      "number": "12.8",
+      "source": "Statistik Kanton Zürich 2025"
+    },
+    {
+      "words": [
+        "homicide rate per 100 000",
+        "Zurich (canton)",
+        "2023",
+        "measured value"
+      ],
+      "number": "0.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "Mercer quality of life rank",
+        "Zurich region",
+        "2025",
+        "measured value"
+      ],
+      "number": "2",
+      "source": "Mercer 2025"
+    },
+    {
+      "words": [
+        "Human Development Index value",
+        "Zurich region",
+        "2023",
+        "measured value"
+      ],
+      "number": "0.993",
+      "source": "UNDP"
+    },
+    {
+      "words": [
+        "Gini coefficient of Zurich (canton)",
+        "2022",
+        "measured value"
+      ],
+      "number": "32.4",
+      "source": "BFS 2024/2025"
+    },
+    {
+      "words": [
+        "cantonal council seats total",
+        "2023–2027",
+        "measured value"
+      ],
+      "number": "180",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "executive councillors total",
+        "Regierungsrat",
+        "measured value"
+      ],
+      "number": "7",
+      "source": "Wikipedia Canton of Zurich"
+    },
+    {
+      "words": [
+        "year of accession to Confederation",
+        "Zurich (canton)",
+        "measured value"
+      ],
+      "number": "1351",
+      "source": "Wikipedia Canton of Zurich"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "population of Zurich (canton)",
+        "area of Zurich (canton)",
+        "square kilometre",
+        "inhabitant",
+        "2024",
+        "2024‑12‑31",
+        "measured value"
+      ],
+      "formula": "population density formula",
+      "words": [
+        "population density of Zurich (canton)",
+        "inhabitant",
+        "square kilometre"
+      ],
+      "number": "934.1631288535172",
+      "note": "pop 1 615 112 / 1728.94 km²"
+    }
+  ]
+}
