@@ -511,9 +511,7 @@
       ]
     },
     {
-      "name": "year",
-      "description": "a unit of duration equal to the orbital period of the Earth.",
-      "type": "measure"
+      "name": "year"
     },
     {
       "name": "tonne",
@@ -521,9 +519,7 @@
       "type": "measure"
     },
     {
-      "name": "EUR",
-      "description": "the euro.",
-      "type": "measure"
+      "name": "EUR"
     },
     {
       "name": "GBP",

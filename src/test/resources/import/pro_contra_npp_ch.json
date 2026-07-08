@@ -366,14 +366,7 @@
       "description": "the permanent ceasing of operation of a plant."
     },
     {
-      "name": "year",
-      "description": "the orbital period of the Earth around the Sun; the standard period word.",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "TWh",

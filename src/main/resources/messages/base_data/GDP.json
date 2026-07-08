@@ -185,19 +185,7 @@
       "name": "Now"
     },
     {
-      "name": "year",
-      "description": "the time taken by the Earth to complete one orbit around the Sun, about 365 days.",
-      "type": "time",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "person",

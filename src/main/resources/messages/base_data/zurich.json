@@ -201,18 +201,7 @@
       "description": "attributable proportion of a whole, 0..1"
     },
     {
-      "name": "year",
-      "type": "time",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "person",

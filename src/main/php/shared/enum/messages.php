@@ -494,6 +494,14 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case IMPORT_TRIPLE_LINK_AMBIGUOUS = 'the from/verb/to link "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is used by two triples with different names, "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" and "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '"; a from/verb/to link must be unique within an import file, so give one of them an '
+        . 'intermediate building-block triple to make its link unique';
     case IMPORT_NOT_SAVED = 'import of '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' '
@@ -1058,9 +1066,13 @@ enum messages: string
     case NULL_VALUE_NOT_SAVED = 'null value for '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' not saved';
-    case CANNOT_SAVE_ZERO_ID = 'cannot save '
+    case CANNOT_SAVE_ZERO_ID = 'cannot save the value '
         . self::VAR_START . self::VAR_ID . self::VAR_END
-        . ' because id is zero';
+        . ' because the phrase(s) '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . ' are not defined in the import file, so they have no database id and the '
+        . 'value phrase group id stays zero; define every phrase used by the value '
+        . 'as a word or triple in the same file';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
     case VALUE_REFERENCE_LOG_REF_FAILED = 'adding the value reference in the system log failed';
     case SHARE_TYPE_NOT_EXPECTED = 'share type "'

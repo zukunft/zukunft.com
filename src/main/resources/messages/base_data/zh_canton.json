@@ -106,9 +106,7 @@
       "description": "length of time a person has lived"
     },
     {
-      "name": "year",
-      "type": "measure",
-      "description": "time period of about 365 days"
+      "name": "year"
     },
     {
       "name": "male",
@@ -192,8 +190,7 @@
       "description": "calendar month"
     },
     {
-      "name": "company",
-      "description": "legal entity formed to carry on business"
+      "name": "company"
     },
     {
       "name": "startup",

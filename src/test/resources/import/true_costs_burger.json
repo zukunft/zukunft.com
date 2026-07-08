@@ -126,19 +126,7 @@
       "description": "a fraction, here usually expressed as a percentage"
     },
     {
-      "name": "EUR",
-      "type": "measure",
-      "description": "euro",
-      "refs": [
-        {
-          "name": "Euro",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4916",
-          "type": "wikidata"
-        }
-      ]
+      "name": "EUR"
     },
     {
       "name": "USD"

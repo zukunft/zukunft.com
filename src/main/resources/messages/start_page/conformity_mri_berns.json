@@ -235,14 +235,7 @@
       ]
     },
     {
-      "name": "year",
-      "description": "the orbital period of the Earth around the Sun, the standard unit for dating calendar events",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "2005",

@@ -284,6 +284,19 @@ class ListOfIdObjects extends ListOf
     }
 
     /**
+     * replace an object with the given object by the id
+     *
+     * @param IdObject|TextIdObject|CombineObject $obj_to_upd the object that should be updated
+     * @returns bool true if the object has been updated
+     */
+    function update_object(IdObject|TextIdObject|CombineObject $obj_to_upd): bool
+    {
+        $id = $obj_to_upd->id();
+        $this->unset_by_id($id);
+        return $this->add_obj($obj_to_upd);
+    }
+
+    /**
      * remove / unset an object of the list
      * and set the cache to dirty
      *

@@ -75,9 +75,7 @@
       "description": "length of time a person has lived"
     },
     {
-      "name": "year",
-      "type": "measure",
-      "description": "time period of about 365 days"
+      "name": "year"
     },
     {
       "name": "male",
@@ -332,9 +330,7 @@
       "description": "unit of data rate"
     },
     {
-      "name": "day",
-      "type": "measure",
-      "description": "24‑hour period"
+      "name": "day"
     },
     {
       "name": "sunshine",

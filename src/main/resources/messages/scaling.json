@@ -7,10 +7,7 @@
   ],
   "words": [
     {
-      "name": "one",
-      "description": "Used to force the scaling to one unit",
-      "type": "scaling_hidden",
-      "protection": "admin_protection"
+      "name": "one"
     },
     {
       "name": "thousand",
@@ -83,8 +80,11 @@
     },
     {
       "name": "scale million to one",
+      "comment": "convert numbers in millions to one and back",
       "expression": "\"one\" = \"million\" * 1000000",
-      "assigned_word": "million"
+      "type": "scaling",
+      "assigned_word": "million",
+      "protection": "admin_protection"
     },
     {
       "name": "scale billion to one",

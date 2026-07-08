@@ -1040,7 +1040,6 @@ class sandbox_list_named extends sandbox_list
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
-        /*
         // TODO move this also to the non named objects
         // on a no update import keep the not empty database fields so that only empty fields are filled up
         if ($imp?->no_upd) {
@@ -1068,7 +1067,6 @@ class sandbox_list_named extends sandbox_list
                 }
             }
         }
-        */
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());

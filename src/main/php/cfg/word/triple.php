@@ -569,7 +569,9 @@ class triple extends sandbox_link_named
                     }
                 }
             }
-            $this->set_verb($vrb);
+            if ($vrb->check($msg, $this->dsp_id())) {
+                $this->set_verb($vrb);
+            }
         }
 
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
@@ -607,6 +609,20 @@ class triple extends sandbox_link_named
         if ($this->name() == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
+        }
+
+        // reject an ambiguous duplicate from/verb/to link within the import: if a triple already
+        // mapped in this file uses the same link with a different name the link id is ambiguous
+        // (see docs/llm/json_structure.md - a from/verb/to key must be unique within an import)
+        if ($dto != null) {
+            $conflict = $dto->triple_list()->get_link_conflict($this);
+            if ($conflict != null) {
+                $msg->add(msg_id::IMPORT_TRIPLE_LINK_AMBIGUOUS, [
+                    msg_id::VAR_NAME => $this->generate_name(),
+                    msg_id::VAR_NAME_CHK => $conflict->name(),
+                    msg_id::VAR_TRIPLE_NAME => $this->name()
+                ]);
+            }
         }
 
         // map the external references and register them with the data object so that the import
@@ -1332,6 +1348,22 @@ class triple extends sandbox_link_named
     function name_given(): ?string
     {
         return $this->name_given;
+    }
+
+    /**
+     * the unique link key of the from/verb/to phrases, used by the import to detect a duplicate
+     * link within a file (see docs/llm/json_structure.md - a from/verb/to key must be unique)
+     * @return string the from/verb/to link key, or an empty string if the from or to phrase is missing
+     */
+    function link_key(): string
+    {
+        $result = '';
+        if ($this->get_from() != null and $this->get_to() != null) {
+            if ($this->get_from()->name() != '' and $this->get_to()->name() != '') {
+                $result = $this->get_from()->name() . '|' . $this->get_verb_name() . '|' . $this->get_to()->name();
+            }
+        }
+        return $result;
     }
 
     /**

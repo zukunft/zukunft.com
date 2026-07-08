@@ -125,7 +125,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 258;
+    const int CHF_ID = 363;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -245,7 +245,7 @@ class words
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 287;
+    const int TOTAL_ID = 275;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -257,7 +257,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 419;
+    const int VERBS_ID = 694;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';
@@ -379,6 +379,8 @@ class words
         self::PCT,
         word_names::COMPANY,
         word_names::TEST_ADD,
+        word_names::TEST_NO_UPD,
+        word_names::TEST_FILL_UP,
         word_names::TEST_ADD_VIA_FUNC,
         word_names::TEST_ADD_GROUP_MOST_FUNC,
         word_names::TEST_ADD_GROUP_MOST_SQL,
@@ -451,6 +453,8 @@ class words
     // and that are never expected to be used by a user
     const array TEST_WORDS = array(
         word_names::TEST_ADD,
+        word_names::TEST_NO_UPD,
+        word_names::TEST_FILL_UP,
         word_names::TEST_ADD_VIA_FUNC,
         word_names::TEST_ADD_GROUP_PRIME,
         word_names::TEST_ADD_GROUP_PRIME_FUNC,

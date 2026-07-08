@@ -19,6 +19,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
@@ -117,6 +118,26 @@ class triple_tests
         $t->subheader($ts . 'view base object handling');
         $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
+
+        $t->subheader($ts . 'no update diff treats an unset link end as empty');
+        // under ex_def (the no_upd import mode) an unset from (id 0) is empty,
+        // so filling it from the import is a fill-up, not a reported overwrite
+        $trp_full = $t_trp->triple();
+        $trp_empty_from = $t_trp->triple();
+        $trp_empty_from->set_from(new phrase($usr));
+        $test_name = 'diff_msg reports no overwrite when the db from is empty and ex_def is set';
+        $diff = $trp_empty_from->diff_msg($trp_full, true);
+        $t->assert_true($test_name, $diff->is_ok());
+        // without ex_def the same unset from is a real, reported difference
+        $test_name = 'diff_msg reports the difference for an empty db from without ex_def';
+        $diff = $trp_empty_from->diff_msg($trp_full, false);
+        $t->assert_false($test_name, $diff->is_ok());
+        // two set from ends that differ stay a reported overwrite even under ex_def
+        $trp_other_from = $t_trp->triple();
+        $trp_other_from->set_from($trp_other_from->get_to());
+        $test_name = 'diff_msg reports an overwrite when both from ends are set but differ';
+        $diff = $trp_full->diff_msg($trp_other_from, true);
+        $t->assert_false($test_name, $diff->is_ok());
 
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();

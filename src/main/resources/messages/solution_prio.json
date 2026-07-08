@@ -335,12 +335,9 @@
       "name": "b"
     },
     {
-      "name": "CHF",
-      "type": "measure"
-    },
-    {
-      "name": "USD",
-      "type": "measure"
+      "name": "EUR",
+      "type": "measure",
+      "description": "ISO 4217 alphabetic code for the euro."
     },
     {
       "name": "world"
@@ -552,7 +549,7 @@
         "world",
         "GDP",
         "million",
-        "USD",
+        "EUR",
         "2024"
       ],
       "number": "110047109"

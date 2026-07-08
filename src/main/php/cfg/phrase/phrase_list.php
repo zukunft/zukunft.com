@@ -518,6 +518,23 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+    /**
+     * the highest impact of the phrases of this list used to sort the related objects by relevance
+     * a phrase without an impact is treated as impact zero
+     * @return float the highest phrase impact or zero if no phrase of this list has an impact
+     */
+    function max_impact(): float
+    {
+        $max = 0.0;
+        foreach ($this->lst() as $phr) {
+            $impact = $phr->get_impact() ?? 0.0;
+            if ($impact > $max) {
+                $max = $impact;
+            }
+        }
+        return $max;
+    }
+
 
 
     /*
@@ -2191,6 +2208,7 @@ class phrase_list extends sandbox_list_named
     {
         $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr_lst($this, true);
+        $val_lst->sort();
 
         return $val_lst;
     }

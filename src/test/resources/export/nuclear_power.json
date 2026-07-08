@@ -205,10 +205,7 @@
             "type_code_id": "default"
         },
         {
-            "name": "EUR",
-            "description": "the euro.",
-            "type_code_id": "measure",
-            "type": "measure type"
+            "name": "EUR"
         },
         {
             "protection": "admin_protection",

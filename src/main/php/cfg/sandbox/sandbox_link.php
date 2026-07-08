@@ -1009,10 +1009,20 @@ class sandbox_link extends sandbox
     function diff_msg(sandbox_link|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
         $msg = parent::diff_msg($obj, $ex_def);
-        $this->diff_field_msg($msg, self::FLD_FROM, $this->fob?->id(), $obj->fob?->id());
+        $this_from = $this->fob?->id();
+        $obj_from = $obj->fob?->id();
         $this_to = is_object($this->tob) ? $this->tob->id() : $this->tob;
         $obj_to = is_object($obj->tob) ? $obj->tob->id() : $obj->tob;
-        $this->diff_field_msg($msg, self::FLD_TO, $this_to, $obj_to);
+        // under ex_def an unset link end (from_id/to_id 0 or null) counts as empty,
+        // so filling it from the import is a fill-up, not a reported overwrite
+        $from_both_set = !empty($this_from) && !empty($obj_from);
+        $to_both_set = !empty($this_to) && !empty($obj_to);
+        if (!$ex_def or $from_both_set) {
+            $this->diff_field_msg($msg, self::FLD_FROM, $this_from, $obj_from);
+        }
+        if (!$ex_def or $to_both_set) {
+            $this->diff_field_msg($msg, self::FLD_TO, $this_to, $obj_to);
+        }
         return $msg;
     }
 

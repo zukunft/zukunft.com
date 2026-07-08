@@ -176,19 +176,7 @@
       "name": "billion"
     },
     {
-      "name": "year",
-      "type": "measure",
-      "description": "the orbital period of a planetary body, in particular Earth's about the Sun.",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "2026",
