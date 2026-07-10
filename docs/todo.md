@@ -28,6 +28,14 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add phrase_id for the additional selection to the component link so that 
          e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
          for a sorted phrase list solution
+    TODO add an auto fallback path to a single "too much trafic" frontpage
+         The step towards this path are
+         1. prevent ip user from writing to the database (defualt setup for the alpha an beta testing)
+         2. auto exclude single users if they cause too many database update
+         3. auto exclude single IP if they cause too much trafic
+         4. switch to ip white list if the number of blocked IP is exeeding a limit
+         5. auto exclude single IP from white list until only the maintanence ip remains
+         use the server side try_files fallback and limit_req_zone / limit_conn_zone to reduce the php requests
     TODO create a useful page e.g. for currencies
     TODO add links for the values in the frontend page 
     TODO fill the workflox unit tests
@@ -200,6 +208,10 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
          the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
 
+    TODO in docs/concept_paper_long_en.md explain why the internet "one-klick-hide" rule is at the moment more relevant than the climate protection
+         and explain why a complete and double sided CBAM is the most relevant step for climate protection
+         and add the calculation of the economic usage instead the GDP changes the point of view 
+    
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
