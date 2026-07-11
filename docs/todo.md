@@ -12,6 +12,18 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
+    TODO create a server_admin page protected by an IP range and a public key or a password that has these function
+         - activate file based user whitelist (otherwise db based blacklist)   
+         - activate file base IP whitelist (otherwise db based blacklist)
+         - update program
+         - upgrade database
+
+    TODO create offline fallback page
+         create a user reject page if user whitelist if activated and user is rejected
+         create a ip reject page if ip whitelist if activated and ip is rejected
+         create a upgrade page if program is updated     
+         create a upgrade page if database is updated     
+
     TODO add an auto fallback path to a single "too much trafic" frontpage
          The step towards this path are
          1. prevent ip user from writing to the database (defualt setup for the alpha an beta testing)

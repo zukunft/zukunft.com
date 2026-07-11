@@ -2,7 +2,7 @@
 
 **Timon Zielonka**
 
-Version: 0.5 (Entwurf) — April 2026
+Version: 0.6 (Entwurf) — Juli 2026
 Lizenz: CC BY-SA 4.0
 DOI: https://doi.org/10.5281/zenodo.19371011
 
@@ -10,7 +10,7 @@ DOI: https://doi.org/10.5281/zenodo.19371011
 
 ## Zusammenfassung
 
-Dieses Arbeitspapier wendet die ethischen Prinzipien des kategorischen Imperativs (Immanuel Kant) und der Goldenen Regel auf konkrete Politikfelder an. Ausgehend von der Maxime „Mache andere nicht unglücklich" werden neun Bereiche identifiziert, in denen sich eine verallgemeinerbare Praxis umsetzen lässt: von der Regulierung von Desinformation über Klimaschutz und Vermögenskonzentration bis hin zu digitaler Souveränität und offener KI-Infrastruktur. Das Papier versteht sich als Diskussionsgrundlage zur Anwendung deontologischer und kontraktualistischer Ethik auf die Politikgestaltung. Es stützt sich auf John Rawls' *Theorie der Gerechtigkeit* (insbesondere das Differenzprinzip) sowie auf Tim Berners-Lees Konzept des Giant Global Graph als Grundlage präzisen und neutralen Wissens.
+Dieses Arbeitspapier wendet die ethischen Prinzipien des kategorischen Imperativs (Immanuel Kant) und der Goldenen Regel auf konkrete Politikfelder an. Ausgehend von der Maxime „Mache andere nicht unglücklich" werden zehn Bereiche identifiziert, in denen sich eine verallgemeinerbare Praxis umsetzen lässt: von der Regulierung von Desinformation über Klimaschutz und Vermögenskonzentration bis hin zu digitaler Souveränität und offener KI-Infrastruktur. Das Papier versteht sich als Diskussionsgrundlage zur Anwendung deontologischer und kontraktualistischer Ethik auf die Politikgestaltung. Es stützt sich auf John Rawls' *Theorie der Gerechtigkeit* (insbesondere das Differenzprinzip) sowie auf Tim Berners-Lees Konzept des Giant Global Graph als Grundlage präzisen und neutralen Wissens.
 
 ---
 
@@ -20,13 +20,13 @@ Der kategorische Imperativ lautet in seiner Kernformulierung: „Handle nur nach
 
 John Rawls' *Theorie der Gerechtigkeit* (1971) erweitert diese Tradition um die Idee der Fairness: Gerechtigkeitsprinzipien sind jene, die rationale Personen in einer fairen Ausgangsposition (Schleier des Nichtwissens) wählen würden. Insbesondere das Differenzprinzip — soziale und wirtschaftliche Ungleichheiten sind nur dann gerechtfertigt, wenn sie den am wenigsten Begünstigten zugutekommen — bietet eine Brücke von der formalen Ethik zur konkreten Verteilungsgerechtigkeit.
 
-Die Reihenfolge der folgenden neun Punkte folgt einer Priorisierung auf Grundlage der erwarteten Schwere des Leids: Die dringlichsten Punkte werden zuerst genannt, basierend auf einer Erweiterung der unteren beiden Ebenen von Maslows Bedürfnishierarchie (physiologische Grundbedürfnisse und Sicherheit) um den Disability-Adjusted-Life-Year-(DALY-)Index der Weltgesundheitsorganisation. DALYs messen die durch Krankheit und vorzeitigen Tod verlorenen gesunden Lebensjahre (Murray & Lopez 1996; WHO 2024). Diese Kombination, „Happy Time points (htp)" genannt, ermöglicht eine evidenzbasierte Priorisierung: Themen, die unmittelbar Leib und Leben betreffen (Desinformation mit Gesundheitsfolgen, Klimaschutz, existenzsichernde Ressourcen), werden vor solchen behandelt, die höhere Bedürfnisebenen ansprechen (Selbstverwirklichung, kulturelle Teilhabe). Bei Abhängigkeiten.
+Die Reihenfolge der folgenden zehn Punkte folgt einer Priorisierung auf Grundlage der erwarteten Schwere des Leids: Die dringlichsten Punkte werden zuerst genannt, basierend auf einer Erweiterung der unteren beiden Ebenen von Maslows Bedürfnishierarchie (physiologische Grundbedürfnisse und Sicherheit) um den Disability-Adjusted-Life-Year-(DALY-)Index der Weltgesundheitsorganisation. DALYs messen die durch Krankheit und vorzeitigen Tod verlorenen gesunden Lebensjahre (Murray & Lopez 1996; WHO 2024). Diese Kombination, „Happy Time points (htp)" genannt, ermöglicht eine evidenzbasierte Priorisierung: Themen, die unmittelbar Leib und Leben betreffen (Desinformation mit Gesundheitsfolgen, Klimaschutz, existenzsichernde Ressourcen), werden vor solchen behandelt, die höhere Bedürfnisebenen ansprechen (Selbstverwirklichung, kulturelle Teilhabe). Bei Abhängigkeiten.
 
 Methodisch folgt dieses Papier dem Prinzip der Delphi-Methode: einem strukturierten Verfahren zur schrittweisen Annäherung an Expertise durch iterative, anonymisierte Konsultationen von Fachleuten (Linstone & Turoff 1975). Auf politische Entscheidungsfindung angewandt bedeutet dies, dass komplexe Probleme nicht durch Einzelmeinungen, sondern durch iterative, transparente Konsensbildung gelöst werden sollten.
 
 Dieses Papier fragt: Wie können diese Prinzipien in konkrete, gesellschaftlich umsetzbare Schritte übersetzt werden?
 
-Die folgenden neun Punkte sind als Vorschläge formuliert, die einer ethischen Prüfung standhalten sollten.
+Die folgenden zehn Punkte sind als Vorschläge formuliert, die einer ethischen Prüfung standhalten sollten.
 
 ---
 
@@ -36,7 +36,7 @@ Die folgenden neun Punkte sind als Vorschläge formuliert, die einer ethischen P
 
 **Empirische Befunde:** Viele Wählerinnen und Wähler treffen Entscheidungen zu ihrem eigenen Nachteil (Funke et al. 2024). Seit der weiten Verbreitung sozialer Medien und Smartphones hat sich der Flynn-Effekt (der langfristige Anstieg gemessener Intelligenz) umgekehrt (Flynn 2007; Dutton et al. 2016). Parallel dazu ist der Anteil der Menschen, die in Demokratien leben, zurückgegangen (Herre et al. 2013; Lührmann et al. 2018). Experimente mit Mäusen zeigen, dass Reizüberflutung die Orientierungsfähigkeit dauerhaft beeinträchtigt (Christakis et al. 2012). Es besteht also eine Korrelation, und es gibt Hinweise auf einen kausalen Zusammenhang zwischen digitaler Reizüberflutung und kognitivem sowie demokratischem Niedergang (Wurzer 2025).
 
-Man könnte die Konsequenz ziehen und einen Damm gegen die Strategie des „Flood the zone with shit" (das bewusste Fluten des öffentlichen Diskurses mit Desinformation) errichten (Sirens Call Book 2024; Campact 2026). fMRT-Scans belegen, dass das menschliche Gehirn unter Bedingungen kognitiver Überlastung faktisch nicht mehr in der Lage ist, Wahrheit von Falschinformation zu unterscheiden (Simons et al. 2005). Ein wesentlicher Grund, warum dies politisch nicht umgesetzt wird, ist wahrscheinlich der Unterlassungs-Bias (omission bias): Das Unterlassen einer Massnahme wird psychologisch als weniger schädlich empfunden als die aktive Umsetzung einer (selbst notwendigen) regulatorischen Handlung.
+Man könnte die Konsequenz ziehen und einen Damm gegen die Strategie des „Flood the zone with shit" (das bewusste Fluten des öffentlichen Diskurses mit Desinformation) errichten (Sirens Call Book 2024; Campact 2026). fMRT-Scans belegen, dass das menschliche Gehirn unter Bedingungen kognitiver Überlastung faktisch nicht mehr in der Lage ist, Wahrheit von Falschinformation zu unterscheiden (Berns et al. 2005). Ein wesentlicher Grund, warum dies politisch nicht umgesetzt wird, ist wahrscheinlich der Unterlassungs-Bias (omission bias): Das Unterlassen einer Massnahme wird psychologisch als weniger schädlich empfunden als die aktive Umsetzung einer (selbst notwendigen) regulatorischen Handlung.
 
 **Vorschlag:** Die Gesellschaft muss auf Grundlage demokratischer Verfahren Regeln gegen Desinformation aufstellen. Diese Regeln müssen rechtsstaatlich, transparent und anfechtbar sein. Toleranz gegenüber den Intoleranten darf nicht zur Selbstzerstörung führen (Toleranzparadoxon, nach Popper), aber die Entscheidung darüber, wo die Grenze zu ziehen ist, muss demokratisch und justiziabel sein. *Primum non nocere* bedeutet hier: Regelungen müssen so gestaltet sein, dass sie legitime Meinungsäusserung nicht unverhältnismässig einschränken.
 
@@ -46,7 +46,17 @@ Man könnte die Konsequenz ziehen und einen Damm gegen die Strategie des „Floo
 
 ---
 
-## 3. Klimaschutz wirksam umsetzen — Vorschlag für einen transparenten, öffentlich berechneten Klimazoll
+## 3. Klimaschutz wirksam umsetzen
+
+### Warum ein CBAM Voraussetzung für wirksamen Klimaschutz ist
+
+**Divergierende nationale Interessen als Ausgangslage:** Klimaschutz ist ein globales öffentliches Gut: Die Kosten der Emissionsminderung fallen lokal an, der Nutzen verteilt sich weltweit. Daraus folgt ein systematischer Anreiz zum Trittbrettfahren — jedes einzelne Land profitiert davon, wenn andere ihre Emissionen senken, ohne selbst Minderungskosten zu tragen (Nordhaus 2015). Hinzu kommen strukturell unterschiedliche Interessen: Länder unterscheiden sich stark in ihrer Verwundbarkeit gegenüber Klimaschäden, ihrer wirtschaftlichen Abhängigkeit von fossilen Energieträgern und ihrer Transitionsfähigkeit. Der Production Gap Report zeigt, dass die grossen Förderländer zusammengenommen für 2030 rund 110 % mehr fossile Brennstoffe produzieren wollen, als mit dem 1,5-°C-Ziel vereinbar wäre — obwohl die meisten dieser Regierungen Netto-Null-Ziele verkündet haben, und kein einziges der 20 profilierten Förderländer hat sich zu 1,5-°C-kompatiblen Produktionssenkungen verpflichtet (SEI et al. 2023). Auch bei der CO₂-Bepreisung bleibt die Asymmetrie messbar: Nur rund 28 % der globalen Treibhausgasemissionen unterliegen überhaupt einem direkten CO₂-Preis, und der Durchschnittspreis der implementierten Instrumente liegt bei lediglich rund 19 USD pro Tonne (World Bank 2025). Auf absehbare Zeit ist deshalb nicht mit einem weltweit einheitlichen, ausreichend hohen CO₂-Preis zu rechnen — die Klimapolitik bleibt ein Flickenteppich aus Regionen mit hohen, niedrigen und gar keinen CO₂-Preisen.
+
+**Carbon Leakage — warum Emissionsverlagerung dem Klimaschutz schadet:** Solange CO₂-Preise regional unterschiedlich sind, entsteht ein ökonomischer Anreiz, emissionsintensive Produktion in Regionen ohne oder mit geringer Bepreisung zu verlagern („Carbon Havens", Branger & Quirion 2014a). Die im regulierten Raum eingesparten Emissionen entstehen dann teilweise andernorts erneut — oft mit schlechterer Energieeffizienz und kohlenstoffintensiverem Strommix. Modellstudien schätzen diese Verlagerungsrate (Carbon Leakage) ohne Gegenmassnahmen auf typischerweise 5–25 % der vermiedenen Emissionen, im Mittel rund 14 % (Branger & Quirion 2014b). Für das Klima zählt aber ausschliesslich die globale Emissionssumme: Jede verlagerte Tonne CO₂-eq macht die lokale Minderungsanstrengung teilweise wirkungslos, erhöht die Gesamtkosten der Vermeidung und kann die Absicht der Klimapolitik im Extremfall in ihr Gegenteil verkehren. Hinzu kommt ein politischer Schaden: Der Verlust von Industrie und Arbeitsplätzen an unregulierte Regionen untergräbt die gesellschaftliche Akzeptanz ambitionierter Klimapolitik im regulierenden Land — und liefert damit das zentrale Argument gegen deren Verschärfung gleich mit. Aus Sicht der Maxime „Mache andere nicht unglücklich" ist die Verlagerung doppelt problematisch: Der Klimaschaden trifft weiterhin alle, während die Lasten der Scheinlösung lokal getragen werden.
+
+**Der Grenzausgleich als Bedingung wirksamer Klimapolitik:** Beide Probleme — Trittbrettfahren und Leakage — lassen sich ohne einen Grenzausgleich nicht lösen. Nordhaus (2015) zeigt modellgestützt, dass internationale Klimakoalitionen ohne Sanktionen gegen Nichtteilnehmer instabil bleiben und nur minimale Minderungsniveaus erreichen; erst moderate Handelsmassnahmen gegen Nichtteilnehmer („Climate Club") machen grosse, stabile Koalitionen mit hohen Minderungszielen möglich. Ein CBAM ist die konkrete Umsetzung dieses Mechanismus: Er stellt Importe preislich mit inländischer Produktion gleich, senkt die Leakage-Rate in Modellrechnungen von im Mittel rund 14 % auf rund 6 % (Branger & Quirion 2014b) und schafft zugleich einen Anreiz für Drittstaaten, eigene CO₂-Preise einzuführen — denn ohne eigene Bepreisung fliessen die Abgaben als Zolleinnahmen an das importierende Land statt in den eigenen Staatshaushalt. Ein CBAM ist damit nicht Protektionismus, sondern die Voraussetzung dafür, dass einseitige oder koalitionsbasierte Klimapolitik überhaupt wirksam sein kann: Er schützt die ökologische Wirksamkeit (gegen Leakage), die politische Tragfähigkeit (gegen Wettbewerbsnachteile) und die internationale Ausbreitung der CO₂-Bepreisung (über den Klub-Anreiz). Der im Folgenden vorgeschlagene transparente, öffentlich berechnete Klimazoll adressiert das verbleibende Haupthindernis: die Komplexität der Berechnung.
+
+### Vorschlag für einen transparenten, öffentlich berechneten Klimazoll
 
 **Problem:** Der Schweizer Bundesrat hat sich gegen die Einführung eines Carbon Border Adjustment Mechanism (CBAM) entschieden, unter anderem wegen des unsicheren Kosten-Nutzen-Verhältnisses (Bundesrat 2023). Ab 2026 werden Importe aus der EU (z. B. Metalle) schrittweise dem EU-Klimazoll unterworfen. Der Klimazoll wird jedoch bei der Ausfuhr von Fertigwaren in Länder ausserhalb der EU nicht erstattet. Bei Metallen verursacht dies geschätzte jährliche Verluste von rund 140 Mio. CHF. Sollte die EU den Emissionshandel (ETS 2) auf fossile Brennstoffe ausweiten, steigt der Verlust durch Nichtumsetzung und Nichterstattung auf geschätzte 500 Mio. CHF pro Jahr (zukunft.com 2023).
 
@@ -125,7 +135,7 @@ Das System baut auf offenen Standards und Open-Source-Komponenten auf: Zahlen au
 
 2. **Niedriger Ausgangspunkt mit kontrollierten Erhöhungen:** Das „Ur-BGE" (Ur-BGE-Vorschlag 2026) wird zunächst so niedrig angesetzt, dass die überwältigende Mehrheit keine wesentliche Wirkung spürt. Der Betrag wird dann schrittweise angepasst und erhöht, solange der Nettoeffekt positiv bleibt. Dies ermöglicht eine kontrollierte, evidenzbasierte Einführung.
 
-3. **Messung der Wirkungen:** Die Wirkungen sind entlang mehrerer Dimensionen zu messen: Veränderungen der Gesundheitskosten; und Veränderungen des Nutzens im Verhältnis zur Arbeitsleistung (zukunft.com 2020). Letzteres Konzept (Gross Domestic Usage, GDU) versucht, den tatsächlichen gesellschaftlichen Nutzen zu erfassen — etwa wenn eine App die Effizienz von Dienstleistungen steigert oder freies Wissen (Wikipedia) kostenlos verfügbar wird, während das Bruttoinlandsprodukt dies oft nur unzureichend abbildet.
+3. **Messung der Wirkungen:** Die Wirkungen sind entlang mehrerer Dimensionen zu messen: Veränderungen der Gesundheitskosten; und Veränderungen des Nutzens im Verhältnis zur Arbeitsleistung (zukunft.com 2020). Letzteres Konzept (Gross Domestic Usage, GDU; ausführlich in Abschnitt 11) versucht, den tatsächlichen gesellschaftlichen Nutzen zu erfassen — etwa wenn eine App die Effizienz von Dienstleistungen steigert oder freies Wissen (Wikipedia) kostenlos verfügbar wird, während das Bruttoinlandsprodukt dies oft nur unzureichend abbildet.
 
 4. **Versicherungsmodell als Paralleltest:** Eine „Versicherungsvariante" ermöglicht eine freiwillige, risikominimierte Pilotierung: Teilnehmende zahlen einen einmaligen oder jährlichen Betrag in einen Pool ein; zufällig ausgewählte Personen erhalten ein lebenslanges Grundeinkommen. Nicht beanspruchte Mittel fliessen in weitere Auslosungen. Begleitstudien untersuchen die Wirkungen auf Gesundheit und Arbeitsverhalten.
 
@@ -341,6 +351,36 @@ Durch die Verbindung der Transparenzfunktion von Voting Advice Applications mit 
 
 ---
 
+## 11. Den Nutzen der Wirtschaft messen — Gross Domestic Usage (GDU)
+
+**Problem:** Das Bruttoinlandsprodukt (BIP) wird häufig als Massstab für den Entwicklungsstand einer Gesellschaft verwendet. Es misst jedoch Marktproduktion, nicht Nutzen. Aussagekräftiger wäre der Blick auf den „Nutzen pro Kopf" — oder anders formuliert: auf die „Vermeidung von Unglück". Was Menschen glücklich macht, ist individuell verschieden; was unglücklich macht, ist dagegen weitgehend universell. Und ab einem gewissen Wohlstandsniveau steigert zusätzliche Kaufkraft das Glück einer Person kaum noch. Es ist daher vertretbar zu sagen: Wenn niemand unglücklich ist, ist ein hoher Entwicklungsstand erreicht. Das BIP bildet dies nicht ab — kostenlose Güter gehen mit dem Preis null und damit dem Wert null in die volkswirtschaftliche Gesamtrechnung ein, und Schäden (etwa Umweltverschmutzung) mindern das BIP nicht, solange sie nicht behoben werden.
+
+**Warum Messkonzepte auf die wirtschaftliche Realität zurückwirken:** Die Wahl der Messgrösse ist keine neutrale Buchhaltungsfrage — sie verändert das Gemessene. Drei Forschungsstränge belegen diese Rückkopplung:
+
+1. *Messgrössen steuern Politik:* Die Stiglitz-Sen-Fitoussi-Kommission kam zum Ergebnis, dass das, was gemessen wird, beeinflusst, was getan wird — wer das Falsche misst, tut das Falsche (Stiglitz, Sen & Fitoussi 2009). Der Nachfolgebericht zeigt konkret, dass die Überbetonung des BIP als Leistungsmassstab Entscheidungsträger die Krise von 2008 nicht kommen sah und dass die Konzentration auf die falschen Indikatoren nach Ausbruch der Krise zu unzureichenden politischen Entscheidungen mit schweren, langanhaltenden Folgen führte (Stiglitz, Fitoussi & Durand 2018).
+
+2. *Messgrössen steuern Verhalten (Goodharts Gesetz):* Sobald eine Kennzahl zum Ziel wird, hört sie auf, eine gute Kennzahl zu sein (Goodhart 1975; Strathern 1997). Akteure optimieren dann die Kennzahl statt des dahinterliegenden Zwecks. Auf das BIP übertragen: Eine Politik, die BIP-Wachstum zum Ziel erklärt, wird Markttransaktionen maximieren — auch dort, wo der tatsächliche Nutzen sinkt, etwa wenn Umweltschäden künftige Reinigungskosten erzeugen, die das heutige BIP nicht erfasst.
+
+3. *Modelle formen Märkte (Performativität):* MacKenzie (2006) zeigt am Beispiel des Black-Scholes-Optionspreismodells, dass ökonomische Modelle nicht nur Kameras sind, die die Wirtschaft abbilden, sondern Motoren, die sie verändern: Nach Publikation des Modells näherten sich die tatsächlichen Optionspreise den Modellpreisen an — die Messtheorie erschuf die Realität, die sie zu beschreiben vorgab. Dasselbe gilt für das BIP: Als dominantes Messkonzept prägt es Investitionsentscheidungen, Zielvorgaben und politische Prioritäten. Dieselbe Rückkopplung zeigt sich am Schweizer Derivatmarkt: 1998 trieben ungesicherte Call-Warrant-Käufe Volatilität und Aktienkurse — und je stärker die implizite Volatilität beachtet wurde, desto schneller wurden Ungleichgewichte ausgeglichen und desto schwächer ihr Signal (Zielonka 2004).
+
+Die Konsequenz: Ein Messkonzept, das Nutzen statt Umsatz erfasst, würde über dieselbe Rückkopplung eine Wirtschaftspolitik begünstigen, die Nutzen statt Umsatz maximiert.
+
+**Vorschlag — Gross Domestic Usage (GDU):** Um die Zunahme (oder Abnahme) der Vermeidung von Unglück zu berechnen, wird die tatsächliche Nutzung von einer Zeitperiode zur nächsten verglichen. Für dieses Mass wird die Bezeichnung GDU (Gross Domestic Usage) vorgeschlagen (zukunft.com 2020). Drei Beispiele illustrieren die Differenz zum BIP:
+
+1. **Taxi:** Angenommen, im Vorjahr wurden Taxis für 10 Mio. Meilen genutzt und die Fahrgäste haben dafür 10 Mio. USD ausgegeben. Dieses Jahr können die Fahrgäste Taxis per App bestellen, was die Kosten um 20 % senkt; wegen der tieferen Preise steigt die Nutzung um 10 %. Das BIP (für Taxis) fällt von 10 Mio. auf 8,8 Mio. USD — der tatsächlich erlebte Nutzen ist aber auf 11 Mio. Meilen gestiegen. Das GDU würde abbilden, was die Menschen tatsächlich erfahren.
+
+2. **Wikipedia:** Um 2001 verkaufte die Brockhaus Enzyklopädie gedruckte Ausgaben für rund 60 Mio. EUR pro Jahr. Nimmt man an, dass die rund 300'000 Käufer das Werk je 100-mal jährlich nutzten, entsprach dies etwa 2 EUR pro Nachschlagevorgang. Heute verzeichnet die deutschsprachige Wikipedia rund 5 Mrd. Seitenaufrufe pro Jahr — bei einem Preis von null. Das BIP für Enzyklopädien ist nahezu verschwunden, während das GDU für Enzyklopädien um Grössenordnungen gestiegen ist und sich über mehr als 15 Jahre im Schnitt jährlich etwa verdoppelt hat. Brynjolfsson et al. (2019) nennen genau diesen Fall — Wikipedia ersetzt Enzyklopädien — als Beispiel dafür, dass das Problem der im BIP unsichtbaren Wohlfahrtsgewinne mit der Verbreitung kostenloser digitaler Güter immer gravierender wird.
+
+3. **Luft:** Angenommen, vor vielen Jahren war die Luft in China sauber und das BIP betrug 1 Mrd. USD. Nach dem Aufbau von Fabriken hat sich das BIP auf 2 Mrd. USD verdoppelt, aber die Luftverschmutzung ist hoch. Würde die Reinigung der Luft 1,2 Mrd. USD kosten, so ist das GDU gesunken, während das bisher gemessene BIP sich verdoppelt hat.
+
+**Anschlussfähigkeit an die Forschung — GDP-B:** Der GDU-Vorschlag steht nicht allein. Brynjolfsson, Collis, Diewert, Eggers und Fox (2019) haben mit *GDP-B* ein formal ausgearbeitetes Mass vorgelegt, das den Nutzen („Benefits") neuer und kostenloser Güter erfasst, die in der herkömmlichen Rechnung mit dem Wert null eingehen. Methodisch ermitteln sie über anreizkompatible Wahlexperimente, welche Entschädigung Menschen verlangen, um auf ein kostenloses Gut zu verzichten (Willingness to Accept): Für Facebook lag der Median 2016/17 bei rund 42 USD pro Monat; allein die Berücksichtigung dieses einen Dienstes hätte das US-Wachstum nach GDP-B um 0,05–0,11 Prozentpunkte pro Jahr erhöht. Besonders aufschlussreich ist ihr Smartphone-Kamera-Beispiel, das der Logik des Taxi-Beispiels entspricht: Ersetzt ein Smartphone die separate Digitalkamera, sinkt das konventionell gemessene BIP (weil keine Kamera mehr gekauft wird), während die Konsumentenwohlfahrt steigt — die gemessene Veränderung hat das umgekehrte Vorzeichen der tatsächlichen. Das GDU geht über GDP-B hinaus, indem es auch negative externe Effekte (Beispiel 3, Luftverschmutzung) einbezieht, die GDP-B ausklammert. Umgekehrt liefert GDP-B die messmethodische Grundlage (Reservationspreise, Wahlexperimente, Total-Income-Ansatz), auf der eine GDU-Berechnung aufbauen kann. Die transparente, semantische Datenstruktur von zukunft.com (Abschnitt 3 und 4) würde es erlauben, solche Nutzenberechnungen — wie die Klimazollberechnungen — öffentlich, nachvollziehbar und iterativ verbesserbar zu machen.
+
+**Wissenschaftlicher Kontext:** Schon Simon Kuznets, der Architekt der volkswirtschaftlichen Gesamtrechnung, warnte 1934, dass sich die Wohlfahrt einer Nation kaum aus dem BIP ableiten lasse (zitiert nach Brynjolfsson et al. 2019). Die Stiglitz-Sen-Fitoussi-Kommission (2009) hat diese Kritik in eine breite „Beyond GDP"-Agenda überführt. Für dieses Papier ist das GDU zudem methodisch zentral: Die in der Einleitung beschriebene Priorisierung nach „Happy Time points" und die Wirkungsmessung des Ur-BGE (Abschnitt 5) setzen ein Nutzenmass voraus, das Unglücksvermeidung statt Umsatz erfasst. Aus Rawls' Differenzprinzip folgt dieselbe Stossrichtung: Beurteilt werden muss, wie es den am wenigsten Begünstigten tatsächlich geht — nicht, wie viel Umsatz eine Volkswirtschaft generiert. *Primum non nocere* verlangt schliesslich, dass ein Messsystem Schäden sichtbar macht, statt sie (wie das BIP im Luft-Beispiel) als Wachstum auszuweisen.
+
+**Weiterführend:** Konzeptseite „Gross Domestic Usage" auf [zukunft.com](https://www.zukunft.com/).
+
+---
+
 ## Schluss
 
 Die Umsetzung ethischer Prinzipien wie des kategorischen Imperativs oder der Gerechtigkeit als Fairness (Rawls) erfordert mehr als die Formulierung von Maximen. Sie verlangt die Übersetzung in konkrete Politikfelder, institutionelle Reformen und demokratisch legitimierte Verfahren. Dieses Papier versteht sich als Beitrag zu solcher Übersetzungsarbeit. Es verbindet philosophische Grundlagen (Kant, Rawls) mit technischen Infrastrukturen (Giant Global Graph, Open Source) und konkreten Politikvorschlägen (Klimazoll, Monopolbesteuerung, digitale Souveränität). Die nächsten Schritte liegen in der breiten Diskussion und der Überführung in politische Prozesse.
@@ -359,6 +399,8 @@ Behrens, J., Kistner, A., Nitsche, A. & Swierczek, B. (2014): *The Principles of
 
 Berners-Lee, T. (2007): Giant Global Graph. W3C Design Issues.
 
+Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E. & Richards, J. (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. *Biological Psychiatry*, 58(4), 245--253. https://doi.org/10.1016/j.biopsych.2005.04.012
+
 Bloom, D. E. & Canning, D. (2008): Population Health and Economic Growth. Commission on Growth and Development, Working Paper No. 24. Washington: World Bank.
 
 Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic Growth: A Production Function Approach. *World Development*, 32(1), 1–13.
@@ -366,6 +408,12 @@ Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic
 Blum, C. & Zuber, C. I. (2016): Liquid Democracy: Potentials, Problems, and Perspectives. *Journal of Political Philosophy*, 24(2), 162–182.
 
 BMWi (2022): Gutachten zum CO₂-Grenzausgleich. Bundesministerium für Wirtschaft und Energie.
+
+Branger, F. & Quirion, P. (2014a): Climate Policy and the 'Carbon Haven' Effect. *WIREs Climate Change*, 5(1), 53–71. https://doi.org/10.1002/wcc.245
+
+Branger, F. & Quirion, P. (2014b): Would Border Carbon Adjustments Prevent Carbon Leakage and Heavy Industry Competitiveness Losses? Insights from a Meta-Analysis of Recent Economic Studies. *Ecological Economics*, 99, 29–39. https://doi.org/10.1016/j.ecolecon.2013.12.010
+
+Brynjolfsson, E., Collis, A., Diewert, W. E., Eggers, F. & Fox, K. J. (2019): GDP-B: Accounting for the Value of New and Free Goods in the Digital Economy. NBER Working Paper 25695. https://ssrn.com/abstract=3356697
 
 Byrd, B. S., Hruschka, J. & Joerden, J. C. (Hrsg.) (2004): Zur Entwicklungsgeschichte moralischer Grundprinzipien in der Philosophie der Aufklärung. *Jahrbuch für Recht und Ethik*, Bd. 12. Duncker & Humblot.
 
@@ -417,6 +465,8 @@ Godfrey-Smith, P. & Kerr, B. (2019): Tolerance: A Hierarchical Analysis. *Journa
 
 Gölz, P., Kahng, A., Mackenzie, S. & Procaccia, A. D. (2021): The Fluid Mechanics of Liquid Democracy. *ACM Transactions on Economics and Computation*, 9(4), Artikel 23.
 
+Goodhart, C. A. E. (1975): Problems of Monetary Management: The UK Experience. In: *Papers in Monetary Economics*, Bd. 1. Reserve Bank of Australia.
+
 Gutmann, A. & Thompson, D. (1996): *Democracy and Disagreement*. Harvard University Press.
 
 Habermas, J. (1996): *Between Facts and Norms: Contributions to a Discourse Theory of Law and Democracy*. MIT Press.
@@ -445,11 +495,15 @@ List, C. & Pettit, P. (2002): Aggregating Sets of Judgments: An Impossibility Re
 
 Lührmann, A., Tannenberg, M. & Lindberg, S. (2018): Regimes of the World (RoW). *Politics and Governance*, 6(1), 60–77.
 
+MacKenzie, D. (2006): *An Engine, Not a Camera: How Financial Models Shape Markets*. MIT Press.
+
 Maslow, A. H. (1943): A Theory of Human Motivation. *Psychological Review*, 50(4), 370–396.
 
 MoneyPark (2025): *Der Schweizer Hypothekarmarkt 2024 — Hypothekarmarktstudie*. MoneyPark AG. https://www.moneypark.ch/content/dam/os/ch/mp/documents/mortgages/de/MoneyPark_Hypothekarmarktstudie_2024.pdf
 
 Murray, C. J. L. & Lopez, A. D. (1996): *The Global Burden of Disease*. Harvard University Press.
+
+Nordhaus, W. (2015): Climate Clubs: Overcoming Free-Riding in International Climate Policy. *American Economic Review*, 105(4), 1339–1370. https://doi.org/10.1257/aer.15000001
 
 Popper, K. (1945): *The Open Society and Its Enemies*. Routledge.
 
@@ -461,9 +515,15 @@ Rawls, J. (1993): *Political Liberalism*. Columbia University Press.
 
 Rebbe, C. (2023): Sollte die EU einen Klimazoll einführen? *Politisches Lernen*, 41(3–4), 64–67.
 
-Simons, A. et al. (2005): fMRI evidence for the role of the prefrontal cortex in the detection of deception. *NeuroImage*, 25(4), 1215–1222.
+SEI, Climate Analytics, E3G, IISD & UNEP (2023): *The Production Gap Report 2023: Phasing Down or Phasing Up? Top Fossil Fuel Producers Plan Even More Extraction Despite Climate Promises*. Stockholm Environment Institute u. a. https://doi.org/10.51414/sei2023.050
 
 Stark, J. (2025): Postulat 25.3951: Grundlagen für ein neues schlankes und wirksames CO₂-Gesetz. Ständerat. https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20253951
+
+Stiglitz, J. E., Sen, A. & Fitoussi, J.-P. (2009): *Report by the Commission on the Measurement of Economic Performance and Social Progress*. Paris.
+
+Stiglitz, J. E., Fitoussi, J.-P. & Durand, M. (2018): *Beyond GDP: Measuring What Counts for Economic and Social Performance*. OECD Publishing, Paris. https://doi.org/10.1787/9789264307292-en
+
+Strathern, M. (1997): 'Improving ratings': Audit in the British University System. *European Review*, 5(3), 305–321.
 
 Trepanier, S. (2025): The Paradox of Tolerance as a Shield to Demonstrate Intolerance. *Journal of Continuing Education in Nursing*, 56(8), 312–313.
 
@@ -475,9 +535,13 @@ Washington, A. L. (2025): Built on sand: The hidden risks of generative AI for t
 
 WHO (2024): Global Health Estimates: Disability-Adjusted Life Years (DALYs). World Health Organization.
 
+World Bank (2025): *State and Trends of Carbon Pricing 2025*. Washington, DC: World Bank. https://www.worldbank.org/en/publication/state-and-trends-of-carbon-pricing
+
 Wurzer, D. (2025): Brain Rot: Werden wir wirklich dümmer? Spektrum.de SciLogs.
 
 yacy.net (2025): Freie, dezentrale Suchmaschine. https://yacy.net
+
+Zielonka, T. (2004): Dank der Belebung an den Derivatmärkten steigt die Aussagekraft des VLEU (Teil 3). Finanz und Wirtschaft, 21. Februar 2004. https://www.fuw.ch/article/dank-der-belebung-an-den
 
 Züger, T. & Asghari, H. (2025): The landscape of public-interest-oriented AI. Digital Society Blog, Alexander von Humboldt Institut für Internet und Gesellschaft.
 
