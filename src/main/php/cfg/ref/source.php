@@ -391,6 +391,21 @@ class source extends sandbox_code_id
      */
 
     /**
+     * create human-readable messages of the differences between the source objects
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param source|CombineObject|db_object_seq_id $obj which might be different to this source
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the source objects
+     */
+    function diff_msg(source|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this->diff_field_msg($msg, fields::FLD_URL, $this->url, $obj->url);
+        return $msg;
+    }
+
+    /**
      * check if the source in the database needs to be updated
      * e.g. for import if this source has only the name set, the protection should not be updated in the database
      *

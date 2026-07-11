@@ -519,6 +519,37 @@ class db_object_seq_id extends db_object
         return $msg;
     }
 
+    /**
+     * add a human-readable message to $msg if the given field value of this object
+     * differs from the value of the reference object loaded from the database
+     * used by the diff_msg functions of the sandbox objects to cover a field
+     * that has no dedicated difference message
+     *
+     * @param user_message $msg the message collection the difference is added to
+     * @param string $field_name the database field name shown to the user
+     * @param mixed $this_val the field value of this object e.g. from the import
+     * @param mixed $obj_val the field value of the reference object e.g. from the database
+     * @return void
+     */
+    protected function diff_field_msg(
+        user_message $msg,
+        string       $field_name,
+        mixed        $this_val,
+        mixed        $obj_val
+    ): void
+    {
+        if ($this_val != $obj_val) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_FIELD, [
+                msg_id::VAR_FIELD_NAME => $field_name,
+                msg_id::VAR_VALUE => $obj_val,
+                msg_id::VAR_VALUE_CHK => $this_val,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+    }
+
 
     /*
      * modify

@@ -674,11 +674,12 @@ class sandbox extends db_object_seq_id_user
      * is expected to be similar to the needs_db_update function
      *
      * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj which might be different to this sandbox object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj): user_message
+    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         $lib = new library();
         if ($this->owner_id() != $obj->owner_id() and $obj->owner_id() != null) {
             $msg->add(msg_id::DIFF_OWNER, [

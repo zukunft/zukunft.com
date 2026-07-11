@@ -1199,14 +1199,15 @@ class type_object extends db_object_seq_id
      */
 
     /**
-     * check if the user can add this object to the database
+     * check if the type exists and is valid or if the user can add this object to the database
      * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
      * to be overwritten by the child objects
      *
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param string $con description of the context already translated
      * @return bool true if everything has been fine
      */
-    protected function check(user_message $msg): bool
+    function check(user_message $msg, string $con = ''): bool
     {
         // all types must have a code_id or a name
         // TODO Prio 3 review

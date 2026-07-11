@@ -737,6 +737,53 @@ class triple_list extends sandbox_list_named
         return $trp_lst;
     }
 
+    /**
+     * find a triple in the list that links the same from/verb/to as the given triple but carries
+     * a different name; used by the import to reject an ambiguous duplicate link key within a file
+     * (see docs/llm/json_structure.md - a from/verb/to key must be unique within an import)
+     * @param triple $trp the just mapped triple whose from/verb/to link is checked
+     * @return triple|null the already added triple with the same link but a different name, or null
+     */
+    function get_link_conflict(triple $trp): ?triple
+    {
+        $result = null;
+        $key = $trp->link_key();
+        if ($key != '') {
+            foreach ($this->lst() as $chk) {
+                if ($result == null) {
+                    if ($chk->link_key() == $key and $chk->name() != $trp->name()) {
+                        $result = $chk;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * rename each triple in the list that re-declares an existing from/verb/to link under a new
+     * name by updating the original database triple; without this an import that reuses a link
+     * with a different name would drop a duplicate-link insert and keep the old name
+     * (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
+     * the id of a renamed triple is set from the original so it is excluded from the insert step
+     * @param user_message $usr_msg to collect the messages of the triggered rename
+     * @return void
+     */
+    function rename_link_conflicts(user_message $usr_msg): void
+    {
+        foreach ($this->lst() as $trp) {
+            if ($trp->id() == 0 and $trp->from_id() != 0 and $trp->to_id() != 0) {
+                $db_trp = new triple($this->get_user());
+                $db_trp->load_by_link_id($trp->from_id(), $trp->predicate_id(), $trp->to_id());
+                if ($db_trp->id() > 0 and $db_trp->name() != $trp->name()) {
+                    $db_trp->set_name($trp->name());
+                    $db_trp->save($usr_msg);
+                    $trp->id = $db_trp->id();
+                }
+            }
+        }
+    }
+
 
     /*
      * save
@@ -765,6 +812,12 @@ class triple_list extends sandbox_list_named
         if ($this->is_empty()) {
             log_info('no triples to save');
         } else {
+
+            // rename any triple that re-declares an existing from/verb/to link under a different
+            // name so the original triple is updated instead of dropping a duplicate-link insert
+            // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
+            $this->fill_by_name($cache, true);
+            $this->rename_link_conflicts($usr_msg);
 
             // repeat filling the database id to the triple list
             // and adding missing triples to the database

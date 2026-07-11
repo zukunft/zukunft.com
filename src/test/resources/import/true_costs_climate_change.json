@@ -23,14 +23,10 @@
       ]
     },
     {
-      "name": "billion",
-      "type": "measure",
-      "description": "A thousand million, represented as 10^9."
+      "name": "billion"
     },
     {
-      "name": "trillion",
-      "type": "measure",
-      "description": "A million million, represented as 10^12."
+      "name": "trillion"
     },
     {
       "name": "percent",

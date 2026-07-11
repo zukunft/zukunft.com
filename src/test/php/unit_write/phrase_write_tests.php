@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -96,8 +97,11 @@ class phrase_write_tests
 
         $phr_ui = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_ui->dsp_tbl());
-        $url = '<td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
-        $target = $lib->trim_html($url . $company_id . '">' . word_names::COMPANY . '</a></td> ');
+        $url = '<td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID
+            . '&' . url_var::ID . '=';
+        $target = $lib->trim_html($url . $company_id . '" '
+            . html_base::TITLE . '="' . word_names::COMPANY_COM . '">'
+            . word_names::COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . word_names::COMPANY, $result, $target);
 
         // test the phrase display functions for triples

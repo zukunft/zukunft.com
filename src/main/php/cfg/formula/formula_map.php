@@ -367,6 +367,19 @@ class formula_map extends sandbox_code_id
             $this->latex = $api_json[json_fields::LATEX];
         }
 
+        if (array_key_exists(json_fields::NEED_ALL_VAL, $api_json)) {
+            $this->need_all_val = $api_json[json_fields::NEED_ALL_VAL];
+        }
+
+        if (array_key_exists(json_fields::VIEW, $api_json)) {
+            $msk = new view($this->get_user());
+            $id = $api_json[json_fields::VIEW];
+            if ($id != 0) {
+                $msk->id = $id;
+                $this->view = $msk;
+            }
+        }
+
         return $usr_msg->is_ok();
     }
 
@@ -1048,6 +1061,26 @@ class formula_map extends sandbox_code_id
     /*
      * info
      */
+
+    /**
+     * create human-readable messages of the differences between the formula objects
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param formula|CombineObject|db_object_seq_id $obj which might be different to this formula
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the formula objects
+     */
+    function diff_msg(formula|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_TEXT, $this->get_ref_text(), $obj->get_ref_text());
+        $this->diff_field_msg($msg, formula_fields::FLD_FORMULA_USER_TEXT, $this->get_usr_text(), $obj->get_usr_text());
+        $this->diff_field_msg($msg, formula_fields::FLD_LATEX, $this->latex, $obj->latex);
+        $this->diff_field_msg($msg, formula_fields::FLD_ALL_NEEDED, $this->need_all_val, $obj->need_all_val);
+        $this->diff_field_msg($msg, fields::FLD_IMPACT, $this->impact, $obj->impact);
+        $this->diff_field_msg($msg, fields::FLD_VIEW, $this->get_view_id(), $obj->get_view_id());
+        return $msg;
+    }
 
     /**
      * check if the formula in the database needs to be updated

@@ -139,11 +139,11 @@ class triple_names
     const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 117;
     const string CASH_FLOW = 'cash flow';
-    const int CASH_FLOW_ID = 131;
+    const int CASH_FLOW_ID = 392;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';
-    const int CASH_FLOW_STATEMENT_ID = 132;
+    const int CASH_FLOW_STATEMENT_ID = 393;
     const string INCOME_TAX = 'income taxes';
-    const int INCOME_TAX_ID = 133;
+    const int INCOME_TAX_ID = 394;
     // income statement concepts that the base setup defines as a triple (re-declared on XBRL import)
     const string GROSS_PROFIT = 'gross profit';
     const string COST_OF_REVENUE = 'cost of revenue';
@@ -169,9 +169,9 @@ class triple_names
     const string CANTON_ZURICH_NAME = 'canton Zurich';
     const string CANTON_ZURICH_COM = 'The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.';
     const string COMPANY_ZURICH = "Zurich Insurance";
-    const int COMPANY_ZURICH_ID = 140;
+    const int COMPANY_ZURICH_ID = 127;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
-    const int CHF_SYMBOL_ID = 234;
+    const int CHF_SYMBOL_ID = 226;
     const int US_DOLLAR_ID = 123;
     const int EURO_ID = 122;
     const string USD_SYMBOL = "USD is symbol for US dollar";

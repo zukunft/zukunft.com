@@ -404,11 +404,12 @@ class sandbox_code_id extends sandbox_typed
     /**
      * create human-readable messages of the differences between the objects
      * @param sandbox|CombineObject|db_object_seq_id $obj which might be different to this sandbox object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(sandbox|CombineObject|db_object_seq_id $obj): user_message
+    function diff_msg(sandbox|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->get_code_id() != $obj->get_code_id()) {
             $lib = new library();
             $msg->add(msg_id::DIFF_CODE_ID, [

@@ -116,8 +116,7 @@
       "description": "quantity multiplied with others to produce a result"
     },
     {
-      "name": "year",
-      "description": "calendar year used to anchor a historical phase"
+      "name": "year"
     }
   ],
   "triples": [

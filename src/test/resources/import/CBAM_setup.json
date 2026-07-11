@@ -1,0 +1,244 @@
+{
+  "version": "0.0.3",
+  "time": "2026-07-06 23:50:00",
+  "user": "cbam_setup",
+  "description": "CBAM base definitions, formulas, and reference data according to EU Regulation 2023/956 and Implementing Regulation 2025/2547",
+  "words": [
+    {
+      "name": "t",
+      "description": "Metric ton, unit of mass",
+      "type": "measure",
+      "refs": [
+        { "name": "Tonne", "type": "wikipedia" },
+        { "name": "Q25317", "type": "wikidata" }
+      ]
+    },
+    {
+      "name": "CO2",
+      "description": "Carbon dioxide, greenhouse gas",
+      "type": "substance",
+      "refs": [
+        { "name": "Carbon_dioxide", "type": "wikipedia" },
+        { "name": "Q2062", "type": "wikidata" }
+      ]
+    },
+    {
+      "name": "eq",
+      "description": "Equivalent, used to express global warming potential relative to CO2",
+      "type": "modifier",
+      "refs": [
+        { "name": "Carbon_dioxide_equivalent", "type": "wikipedia" }
+      ]
+    },
+    {
+      "name": "mass",
+      "description": "Mass of a product or material",
+      "type": "measure"
+    },
+    {
+      "name": "direct emissions",
+      "description": "GHG emissions released directly during production",
+      "type": "measure"
+    },
+    {
+      "name": "indirect emissions",
+      "description": "GHG emissions from purchased electricity, heat, or cooling",
+      "type": "measure"
+    },
+    {
+      "name": "mass fraction",
+      "description": "Share of a component's mass relative to the total product mass",
+      "type": "ratio"
+    },
+    {
+      "name": "specific emissions",
+      "description": "GHG emissions per unit of mass of a material or product",
+      "type": "measure"
+    },
+    {
+      "name": "CO2 price",
+      "description": "Market price per tonne of CO2 equivalent",
+      "type": "measure"
+    },
+    {
+      "name": "credit applied",
+      "description": "CO2 price already paid in the country of origin",
+      "type": "measure"
+    },
+    {
+      "name": "steel",
+      "description": "Unalloyed crude steel, CBAM basic material",
+      "refs": [
+        { "name": "Steel", "type": "wikipedia" },
+        { "name": "Q1142", "type": "wikidata" }
+      ]
+    },
+    {
+      "name": "aluminium",
+      "description": "Primary aluminium, CBAM basic material",
+      "refs": [
+        { "name": "Aluminium", "type": "wikipedia" },
+        { "name": "Q663", "type": "wikidata" }
+      ]
+    },
+    {
+      "name": "cement",
+      "description": "Portland cement clinker, CBAM basic material",
+      "refs": [
+        { "name": "Cement", "type": "wikipedia" },
+        { "name": "Q739", "type": "wikidata" }
+      ]
+    },
+    {
+      "name": "electricity",
+      "description": "Electrical energy, indirect emission source",
+      "type": "energy"
+    }
+  ],
+  "triples": [
+    {
+      "name": "CO2 equivalent",
+      "from": "CO2",
+      "verb": "with",
+      "to": "eq",
+      "description": "Carbon dioxide equivalent (CO2e), unit for comparing greenhouse gases"
+    },
+    {
+      "name": "tonne of CO2 equivalent",
+      "from": "t",
+      "verb": "of",
+      "to": "CO2 equivalent",
+      "description": "tCO2e: standard unit for embedded emissions"
+    },
+    {
+      "name": "embedded emissions of product",
+      "from": "specific emissions",
+      "verb": "of",
+      "to": "product",
+      "description": "Total GHG emissions embodied in a manufactured good"
+    },
+    {
+      "name": "component of product",
+      "from": "material",
+      "verb": "can be part of",
+      "to": "product",
+      "description": "Raw material or semi-finished good used in final production"
+    },
+    {
+      "name": "CBAM liability",
+      "from": "amount",
+      "verb": "of",
+      "to": "CBAM duty",
+      "description": "Net charge due under the Carbon Border Adjustment Mechanism"
+    },
+    {
+      "name": "standard emission factor",
+      "from": "specific emissions",
+      "verb": "kind of",
+      "to": "default value",
+      "description": "Conservative fallback value when actual data is unavailable"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "specific embedded emissions formula",
+      "expression": "\"specific emissions\" = ( \"direct emissions\" + \"indirect emissions\" + Σ ( \"mass fraction\" × \"specific emissions of component\" ) ) / \"mass\"",
+      "latex": "E_{spec} = \\frac{E_{dir} + E_{indir} + \\sum (m_i \\times E_{spec,i})}{M}",
+      "description": "Calculation according to EU Implementing Regulation 2025/2547, Article 7",
+      "assigned": ["product", "material"]
+    },
+    {
+      "name": "CBAM amount formula",
+      "expression": "\"CBAM amount\" = \"specific emissions\" × \"mass\" × \"CO2 price\" - \"credit applied\"",
+      "latex": "CBAM = E_{spec} \\times M \\times P_{CO2} - K_{paid}",
+      "description": "Net duty calculation including foreign carbon price credits",
+      "assigned_word": "CBAM liability"
+    },
+    {
+      "name": "fallback estimate formula",
+      "expression": "\"specific emissions\" = \"maximum sector value\" × 1.10",
+      "latex": "E_{spec,est} = E_{max,sector} \\times 1.10",
+      "description": "Conservative upper estimate when verified data is missing",
+      "assigned_word": "standard emission factor"
+    }
+  ],
+  "sources": [
+    {
+      "name": "EU CBAM Regulation",
+      "description": "Regulation (EU) 2023/956 of the European Parliament and of the Council",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/956/oj"
+    },
+    {
+      "name": "EU CBAM Implementing Regulation",
+      "description": "Commission Implementing Regulation (EU) 2025/2547",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2025/2547/oj"
+    },
+    {
+      "name": "ecoinvent v3.10",
+      "description": "Reference life cycle inventory database, standard for Switzerland and EU",
+      "url": "https://ecoinvent.org"
+    },
+    {
+      "name": "KBOB Emission Factors",
+      "description": "Swiss Federal Coordination Body for Construction and Infrastructure",
+      "url": "https://www.kbob.ch/en/ecological-assessment"
+    }
+  ],
+  "values": [
+    {
+      "words": ["steel", "specific emissions", "tCO2e per tonne"],
+      "number": "1.85",
+      "source": "ecoinvent v3.10"
+    },
+    {
+      "words": ["aluminium", "specific emissions", "tCO2e per tonne"],
+      "number": "8.60",
+      "source": "ecoinvent v3.10"
+    },
+    {
+      "words": ["cement", "specific emissions", "tCO2e per tonne"],
+      "number": "0.82",
+      "source": "ecoinvent v3.10"
+    },
+    {
+      "words": ["CO2 price", "EU ETS 2026", "EUR per tCO2e"],
+      "number": "85.00",
+      "source": "EU Emissions Trading System"
+    },
+    {
+      "words": ["CO2 price", "Swiss EHS 2026", "CHF per tCO2e"],
+      "number": "83.50",
+      "source": "Federal Office for the Environment FOEN"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": ["steel", "mass", "1 tonne", "direct emissions", "indirect emissions"],
+      "formula": "specific embedded emissions formula",
+      "words": ["steel", "specific emissions", "tCO2e per tonne"],
+      "number": "1.85",
+      "note": "Validation check for basic steel emission value"
+    }
+  ],
+  "components": [
+    {
+      "name": "CBAM calculation result",
+      "type": "system_sub_title",
+      "code_id": "cbam_result_display",
+      "ui_msg_code_id": "cbam_result_display"
+    }
+  ],
+  "views": [
+    {
+      "name": "CBAM Product View",
+      "description": "Standard view to display embedded emissions and CBAM duty",
+      "code_id": "cbam_product_view",
+      "type": "product",
+      "components": [
+        { "position": "1", "name": "Word title" },
+        { "position": "2", "name": "system show field description" },
+        { "position": "3", "name": "CBAM calculation result" }
+      ]
+    }
+  ]
+}

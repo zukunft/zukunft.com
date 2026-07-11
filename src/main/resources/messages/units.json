@@ -1281,7 +1281,7 @@
     {
       "name": "time",
       "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
-      "type": "measure",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1297,7 +1297,7 @@
     {
       "name": "minute",
       "description": "A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",
-      "type": "measure",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1313,7 +1313,7 @@
     {
       "name": "hour",
       "description": "An hour is a unit of time equal to 60 minutes, or 3600 seconds.",
-      "type": "measure",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1328,8 +1328,9 @@
     },
     {
       "name": "day",
+      "plural": "days",
       "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
-      "type": "measure",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1345,7 +1346,8 @@
     {
       "name": "week",
       "description": "A week is a unit of time equal to 7 days.",
-      "type": "measure",
+      "plural": "weeks",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1361,7 +1363,8 @@
     {
       "name": "month",
       "description": "A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",
-      "type": "measure",
+      "plural": "months",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1377,7 +1380,8 @@
     {
       "name": "year",
       "description": "A year is a unit of time equal to the orbital period of the Earth around the Sun, about 365.25 days.",
-      "type": "measure",
+      "plural": "years",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {

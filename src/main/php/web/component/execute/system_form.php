@@ -261,10 +261,14 @@ class system_form extends component
         $typ = $this->type_subtitle($dbo);
         $cat_typ = $html->concat_category_text($cat, $typ);
 
-        // share and protection subtitle if not default
-        $shr = $this->share_subtitle($dbo);
-        $ptc = $this->protection_subtitle($dbo);
-        $shr_ptc = $html->concat_entry_text($shr, $ptc);
+        if ($dbo instanceof sandbox) {
+            // share and protection subtitle if not default
+            $shr = $this->share_subtitle($dbo);
+            $ptc = $this->protection_subtitle($dbo);
+            $shr_ptc = $html->concat_entry_text($shr, $ptc);
+        } else {
+            $shr_ptc = '';
+        }
 
         // join all subtitle parts with the category separator " / "; a triple prepends its
         // from/verb/to links so the whole subtitle stays on one parenthesized line

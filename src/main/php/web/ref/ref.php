@@ -161,7 +161,7 @@ class ref extends sandbox
                 $this->phr = null;
             }
             if (array_key_exists(url_var::SOURCE, $url_array)) {
-                $this->set_source_by_id($url_array[url_var::PHRASE]);
+                $this->set_source_by_id($url_array[url_var::SOURCE]);
             } else {
                 $this->source = null;
             }

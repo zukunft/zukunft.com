@@ -202,6 +202,11 @@ class formula extends sandbox_code_id
             } else {
                 $this->impact = 0.0;
             }
+            if (array_key_exists(url_var::VIEW, $url_array)) {
+                if ($url_array[url_var::VIEW] != null) {
+                    $this->view_id = $url_array[url_var::VIEW];
+                }
+            }
         }
         return $usr_msg;
     }
@@ -392,6 +397,8 @@ class formula extends sandbox_code_id
         $vars[json_fields::USER_TEXT] = $this->get_usr_text();
         $vars[json_fields::LATEX] = $this->get_latex();
         // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::NEED_ALL_VAL] = $this->need_all_val;
+        $vars[json_fields::VIEW] = $this->view_id;
         $vars[json_fields::IMPACT] = $this->impact;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

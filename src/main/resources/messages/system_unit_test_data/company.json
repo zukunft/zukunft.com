@@ -7,54 +7,34 @@
   ],
   "words": [
     {
-      "name": "currency",
-      "type": "measure",
+      "name": "company",
+      "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
+      "protection": "admin_protection",
       "refs": [
         {
-          "name": "Currency",
+          "name": "Company",
           "type": "wikipedia"
         },
         {
-          "name": "Q8142",
+          "name": "Q783794",
           "type": "wikidata"
         }
       ]
     },
     {
-      "name": "Euro",
-      "refs": [
-        {
-          "name": "Euro",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "currency"
     },
     {
-      "name": "US dollar",
-      "refs": [
-        {
-          "name": "United States dollar",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "Euro"
     },
     {
-      "name": "Pound sterling",
-      "refs": [
-        {
-          "name": "Pound sterling",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "US dollar"
     },
     {
-      "name": "Japanese yen",
-      "refs": [
-        {
-          "name": "Japanese yen",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "Pound (sterling)"
+    },
+    {
+      "name": "Japanese yen"
     },
     {
       "name": "Denomination"
@@ -63,31 +43,13 @@
       "name": "pence"
     },
     {
-      "name": "€",
-      "refs": [
-        {
-          "name": "Euro_sign",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "€"
     },
     {
-      "name": "$",
-      "refs": [
-        {
-          "name": "Dollar_sign",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "$"
     },
     {
-      "name": "£",
-      "refs": [
-        {
-          "name": "Pound_sign",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "£"
     },
     {
       "name": "p"
@@ -158,7 +120,7 @@
       "to": "currency"
     },
     {
-      "from": "Pound sterling",
+      "from": "Pound (sterling)",
       "verb": "is a",
       "to": "currency"
     },
@@ -192,7 +154,7 @@
     {
       "from": "£",
       "verb": "is symbol for",
-      "to": "Pound sterling"
+      "to": "Pound (sterling)"
     },
     {
       "from": "p",
@@ -232,7 +194,7 @@
     },
     {
       "name": "scale pence to Pound",
-      "expression": "\"Pound sterling\" = \"pence\" * 100",
+      "expression": "\"Pound (sterling)\" = \"pence\" * 100",
       "assigned_word": "pence"
     }
   ],

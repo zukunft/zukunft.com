@@ -98,12 +98,10 @@
       "description": "synonym used in popular reporting for the external, non-priced cost"
     },
     {
-      "name": "environmental",
-      "description": "external cost scope: greenhouse gases, fertiliser / nutrient pollution, energy, land, water"
+      "name": "environmental"
     },
     {
-      "name": "health",
-      "description": "external cost scope: diet-related disease attributed to the product"
+      "name": "health"
     },
     {
       "name": "subsidy",
@@ -128,49 +126,13 @@
       "description": "a fraction, here usually expressed as a percentage"
     },
     {
-      "name": "EUR",
-      "type": "measure",
-      "description": "euro",
-      "refs": [
-        {
-          "name": "Euro",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4916",
-          "type": "wikidata"
-        }
-      ]
+      "name": "EUR"
     },
     {
-      "name": "USD",
-      "type": "measure",
-      "description": "US dollar",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4917",
-          "type": "wikidata"
-        }
-      ]
+      "name": "USD"
     },
     {
-      "name": "CHF",
-      "type": "measure",
-      "description": "Swiss franc",
-      "refs": [
-        {
-          "name": "Swiss_franc",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q25344",
-          "type": "wikidata"
-        }
-      ]
+      "name": "CHF"
     },
     {
       "name": "percent",

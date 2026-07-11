@@ -1105,11 +1105,12 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create human-readable messages of the differences between the sandbox objects
      * @param sandbox_multi|db_object_multi $obj which might be different to this sandbox object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(sandbox_multi|db_object_multi $obj): user_message
+    function diff_msg(sandbox_multi|db_object_multi $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         $lib = new library();
         // TODO Prio 2 check owner is sometimes null on load?
         if ($this->owner_id() != $obj->owner_id()

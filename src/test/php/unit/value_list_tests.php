@@ -49,10 +49,12 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_tests
@@ -72,6 +74,7 @@ class value_list_tests
         $sc = new sql_creator();
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
+        $t_wrd = new test_words($t);
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
@@ -86,6 +89,30 @@ class value_list_tests
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
+
+        $t->subheader($ts . 'sort value list');
+        // the factory adds the low impact value first and the high impact value second
+        $impact_lst = $t_val->value_list_zh_impact();
+        $impact_lst->sort();
+        $test_name = 'sort by impact descending puts the high impact value first';
+        $t->assert($test_name, $impact_lst->lst()[0]->impact(), impacts::HIGH);
+        $test_name = 'sort by impact descending keeps the low impact value last';
+        $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
+
+        // two values of the same (zero) impact are sorted by the numeric value descending
+        $num_lst = new value_list($usr);
+        $num_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 2));
+        $num_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 8));
+        $num_lst->sort();
+        $test_name = 'sort by number descending puts the higher value first when the impact is equal';
+        $t->assert($test_name, $num_lst->lst()[0]->number(), 8);
+        $test_name = 'sort by number descending puts the lower value last when the impact is equal';
+        $t->assert($test_name, $num_lst->lst()[1]->number(), 2);
+
+        $test_name = 'sort of an empty value list keeps it empty';
+        $empty_lst = new value_list($usr);
+        $empty_lst->sort();
+        $t->assert($test_name, $empty_lst->count(), 0);
 
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';

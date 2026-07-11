@@ -89,9 +89,10 @@ class import_file
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
      * @param bool $direct true if each object should be saved separately in the database
      * @param bool $ignore_errors true if the import should continue even if some objects cannot be saved
+     * @param bool $no_upd true if an existing not empty object field must not be overwritten and only empty fields are filled up
      * @return user_message
      */
-    function json_file(string $filename, user $usr, bool $direct = true, bool $ignore_errors = false): user_message
+    function json_file(string $filename, user $usr, bool $direct = true, bool $ignore_errors = false, bool $no_upd = false): user_message
     {
         global $cfg;
 
@@ -100,6 +101,7 @@ class import_file
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
         $imp->usr = $usr;
+        $imp->no_upd = $no_upd;
 
         // load the config e.g. after initial setup
         if ($cfg == null) {
@@ -343,8 +345,9 @@ class import_file
             $usr, true
         );
 
+        // the system data import only fills up empty fields so that a later user change is never overwritten
         foreach (files::SYSTEM_DATA_FILES as $filename) {
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct, false, true)->get_last_message();
         }
 
         log_debug('load base config ... done');

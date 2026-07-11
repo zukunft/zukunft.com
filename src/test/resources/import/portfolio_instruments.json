@@ -8,12 +8,7 @@
   "description": "Catalogue of financial instruments used by the inheritance-split sample: 30 Swiss-priority equities (SIX tickers + full company names + is-symbol-for links), 5 bonds (Swiss, German, US), 7 trading currencies (Germany-centric), and each security's main trading currency. The impact of the main stock triples is the approximate market capitalisation in CHF so that the related phrases of e.g. CHF are always shown in the same order. Companion files: portfolio_split_calc.json (algorithm + formulas), portfolio_report.json (bank-reported holdings, prices, FX rates), portfolio_split_parameters_sample.json (concrete split agreement and sample allocations).",
   "words": [
     {
-      "name": "company",
-      "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
-      "refs": [
-        {"name": "Company", "type": "wikipedia"},
-        {"name": "Q783794", "type": "wikidata"}
-      ]
+      "name": "company"
     },
     {
       "name": "security",
@@ -48,12 +43,7 @@
       ]
     },
     {
-      "name": "currency",
-      "description": "system of money in common use within a specific environment, especially for people in a nation state",
-      "refs": [
-        {"name": "Currency", "type": "wikipedia"},
-        {"name": "Q8142", "type": "wikidata"}
-      ]
+      "name": "currency"
     },
     {
       "name": "main",

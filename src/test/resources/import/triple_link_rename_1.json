@@ -1,0 +1,24 @@
+{
+  "version": "0.0.3",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "a triple that a later import renames by re-declaring the same from/verb/to link"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To"
+    }
+  ]
+}

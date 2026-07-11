@@ -1201,6 +1201,48 @@ class verb extends type_object
 
 
     /*
+     * db helper
+     */
+
+    /**
+     * check if the verb exists and is valid or if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param string $con description of the context already translated
+     * @return bool true if everything has been fine
+     */
+    function check(user_message $msg, string $con = ''): bool
+    {
+        if ($this->id() == 0) {
+            if ($this->name() != '') {
+                global $sys;
+                $vrb = $sys->typ_lst->vrb->get_by_name($this->name());
+                if ($vrb == null) {
+                    $msg->add(msg_id::VERB_MISSING, [
+                        msg_id::VAR_TYPE => $this->name(),
+                        msg_id::VAR_NAME => $con
+                    ]);
+                }
+            }
+        }
+        // all types must have a code_id or a name
+        // TODO Prio 3 review
+        /*
+        if ($this->code_id != '') {
+            if ($this->name != '') {
+                $msg->add_err(msg_id::TYPE_CODE_ID_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $this::class
+                ]);
+            }
+        }
+        */
+        return $msg->is_ok();
+    }
+
+
+    /*
      * sql write fields
      */
 
