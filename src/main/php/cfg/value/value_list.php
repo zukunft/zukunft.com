@@ -1308,6 +1308,22 @@ class value_list extends sandbox_value_list
     */
 
     /**
+     * sort this value list in place so that the value with the highest impact is first
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * values with the same impact are sorted by the numeric value descending
+     * and values with the same impact and number by the id for a stable order
+     * @return void
+     */
+    function sort(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(value_base $a, value_base $b) => $b->impact() <=> $a->impact()
+            ?: $b->number() <=> $a->number()
+            ?: $a->id() <=> $b->id());
+        $this->set_lst($lst);
+    }
+
+    /**
      * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */

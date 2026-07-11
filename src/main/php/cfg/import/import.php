@@ -114,6 +114,10 @@ class import
     // the user who wants to import data
     public ?user $usr = null;
 
+    // true if an existing object field that is not empty must not be overwritten by the import
+    // e.g. for the system data import only empty fields are filled up so that a user change is kept
+    public bool $no_upd = false;
+
     // description of the import job
     // the message id of the job name that is translated on the fly inti the language of the frontend
     // so if the user changes the frontend language during a long import

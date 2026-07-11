@@ -125,6 +125,11 @@ class files
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
     CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
+    CONST string IMPORT_TRIPLE_LINK_AMBIGUOUS = test_paths::IMPORT_INCONSISTENCY . 'triple_link_ambiguous';
+    CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
+    CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
+    CONST string IMPORT_NO_UPDATE_CHANGED = test_paths::IMPORT . 'no_update_changed';
     CONST string IMPORT_UPDATE_EXT = '_update';
     CONST string IMPORT_UNDO_EXT = '_undo';
 

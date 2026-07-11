@@ -213,15 +213,7 @@
       ]
     },
     {
-      "name": "year",
-      "type": "measure",
-      "description": "the orbital period of the Earth moving in its orbit around the Sun.",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "2028",
@@ -346,19 +338,7 @@
       ]
     },
     {
-      "name": "EUR",
-      "description": "the official currency of the euro area.",
-      "refs": [
-        {
-          "name": "Euro",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4916",
-          "type": "wikidata"
-        }
-      ],
-      "type": "measure"
+      "name": "EUR"
     },
     {
       "name": "sovereignty bank",

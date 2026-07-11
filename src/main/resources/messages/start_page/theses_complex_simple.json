@@ -243,17 +243,7 @@
       "description": "causally preventable, not merely correlated"
     },
     {
-      "name": "year",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "baseline",

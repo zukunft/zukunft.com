@@ -124,7 +124,6 @@ class view_relation extends sandbox_link
     const string FLD_TO = view_relation_db::FLD_CHILD;
 
 
-
     /*
      * object vars
      */
@@ -187,6 +186,43 @@ class view_relation extends sandbox_link
     }
 
     /**
+     * map a view related api json to this model component link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successfully
+     */
+    function api_mapper(array $api_json, user_message $usr_msg): bool
+    {
+        parent::api_mapper($api_json, $usr_msg);
+
+        // reset of object not needed, because the calling function has just created the object
+        // name is not mandatory because might be generated based on the link
+        if (key_exists(json_fields::PARENT_ID, $api_json)) {
+            // TODO Prio 1 get from dto cache if possible
+            $msk = new view($this->get_user());
+            $msk->id = $api_json[json_fields::PARENT_ID];
+            $this->set_parent($msk);
+        }
+        if (key_exists(json_fields::CHILD_ID, $api_json)) {
+            // TODO Prio 1 get from dto cache if possible
+            $msk = new view($this->get_user());
+            $msk->id = $api_json[json_fields::CHILD_ID];
+            $this->set_child($msk);
+        }
+        if (key_exists(json_fields::TYPE_NAME, $api_json)) {
+            $this->set_relation_type($api_json[json_fields::TYPE_NAME]);
+        }
+        if (key_exists(json_fields::POSITION, $api_json)) {
+            $this->start_pos = $api_json[json_fields::POSITION];
+        }
+        if (key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->description = $api_json[json_fields::DESCRIPTION];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
      * set the vars of this named link object based on the given json without writing to the database
      * import the name and description of a sandbox link object
      *
@@ -235,7 +271,6 @@ class view_relation extends sandbox_link
 
         return $msg->is_ok();
     }
-
 
 
     /*
@@ -684,8 +719,8 @@ class view_relation extends sandbox_link
      * @return bool true if the standard object has been loaded
      */
     function load_standard_by_link(
-        int $from_id,
-        int $to_id,
+        int          $from_id,
+        int          $to_id,
         user_message $msg
     ): bool
     {

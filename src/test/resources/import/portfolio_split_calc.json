@@ -24,12 +24,7 @@
       "description": "an intended end state, here the value or share count a beneficiary should end up holding"
     },
     {
-      "name": "one",
-      "description": "the cardinal number 1, used here as the identifier of the first child's portfolio",
-      "refs": [
-        {"name": "1", "type": "wikipedia"},
-        {"name": "Q199", "type": "wikidata"}
-      ]
+      "name": "one"
     },
     {
       "name": "two",

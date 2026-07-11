@@ -24,8 +24,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "currency",
-      "protection": "admin_protection"
+      "name": "currency"
     },
     {
       "name": "metre",

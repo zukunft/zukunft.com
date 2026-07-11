@@ -356,8 +356,7 @@
       ]
     },
     {
-      "name": "billion",
-      "description": "the number 1,000,000,000 (ten to the ninth power)."
+      "name": "billion"
     },
     {
       "name": "kWh",
@@ -390,19 +389,7 @@
       ]
     },
     {
-      "name": "year",
-      "description": "the orbital period of the Earth around the Sun, used as a unit of time.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "percent",

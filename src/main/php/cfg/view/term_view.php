@@ -231,6 +231,19 @@ class term_view extends sandbox_link
 
         parent::api_mapper($api_json, $usr_msg);
 
+        if (key_exists(json_fields::VIEW_ID, $api_json)) {
+            // TODO Prio 1 get from dto cache if possible
+            $msk = new view($this->get_user());
+            $msk->id = $api_json[json_fields::VIEW_ID];
+            $this->set_view($msk);
+        }
+        if (key_exists(json_fields::TERM_ID, $api_json)) {
+            // TODO Prio 1 get from dto cache if possible
+            $msk = new term($this->get_user());
+            $msk->set_id($api_json[json_fields::TERM_ID]);
+            $this->set_term($msk);
+        }
+
         if (array_key_exists(json_fields::TYPE, $api_json)) {
             $this->predicate_id = $api_json[json_fields::TYPE];
         }

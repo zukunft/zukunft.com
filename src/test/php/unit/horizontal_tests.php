@@ -199,7 +199,14 @@ class horizontal_tests
                 $api_json_ui = json_encode($t->json_remove_component_fields(json_decode($api_json_ui, true)));
             }
             $check_obj->set_from_api($ui_json, $usr_msg);
-            $diff = $check_obj->diff_msg($filled_obj);
+            // build the reference object from the api the backend actually sends
+            // (without the unidirectional and the combined child fields) because the
+            // diff_msg also covers fields that are only used for the database import
+            // and are not part of the frontend api
+            $api_obj = $filled_obj->clone_all();
+            $api_obj->reset(true);
+            $api_obj->set_from_api($api_json_ui, new user_message($t->usr1));
+            $diff = $check_obj->diff_msg($api_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());
             } else {

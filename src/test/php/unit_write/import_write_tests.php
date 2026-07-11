@@ -174,6 +174,90 @@ class import_write_tests
         $this->assert_import_json_named($t, $ts, new view($usr),
             views::TEST_ADD_NAME, views::TEST_ADD_COM, test_files::IMPORT_VIEWS);
 
+        $t->subheader($ts . 'triple link rename across imports');
+
+        $imf = new import_file();
+
+        // a first import creates the triple with the from/verb/to link and its original name
+        $test_name = 'import a triple that a later import renames';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $usr, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $trp = new triple($usr);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $t->assert_greater_zero($test_name, $trp->id());
+        $org_id = $trp->id();
+
+        // a second import that declares the same link with a different name selects and renames the
+        // original triple instead of creating a duplicate link (see triple::get_similar)
+        $test_name = 'a second import with the same link but a different name renames the original';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_2 . test_files::JSON, $usr, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $trp = new triple($usr);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED);
+        $t->assert($test_name, $trp->id(), $org_id);
+
+        // the original name no longer resolves, proving the triple was renamed and not duplicated
+        $test_name = 'the original triple name no longer exists after the rename';
+        $trp_old = new triple($usr);
+        $trp_old->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $trp_old->id(), 0);
+
+        // cleanup the renamed triple and its link words
+        $trp = new triple($usr);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED);
+        if ($trp->id() > 0) {
+            $trp->del($usr_msg);
+        }
+        foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
+            $wrd = new word($usr);
+            $wrd->load_by_name($wrd_name);
+            if ($wrd->id() > 0) {
+                $wrd->del($usr_msg);
+            }
+        }
+
+        $t->subheader($ts . 'no update import only fills up empty fields');
+
+        $imf = new import_file();
+
+        // create a word with a description and a word without a description
+        $test_name = 'import the words for the no update test';
+        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE . test_files::JSON, $usr, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $wrd = new word($usr);
+        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_COM);
+
+        // a no update import must keep the existing description and only fill up the empty one
+        $test_name = 'the no update import keeps the existing description';
+        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $usr, false, true, true);
+        $t->assert_false($test_name . ' ' . $imp_msg->text(), $imp_msg->is_ok());
+        $wrd = new word($usr);
+        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_COM);
+
+        $test_name = 'the no update import fills up the empty description';
+        $wrd_fill = new word($usr);
+        $wrd_fill->load_by_name(word_names::TEST_FILL_UP);
+        $t->assert($test_name, $wrd_fill->description, word_names::TEST_FILL_UP_COM);
+
+        // without the no update flag the same import overwrites the existing description
+        $test_name = 'a normal import overwrites the existing description';
+        $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $usr, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $wrd = new word($usr);
+        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_CHANGED);
+
+        // cleanup the no update test words
+        foreach ([word_names::TEST_NO_UPD, word_names::TEST_FILL_UP] as $wrd_name) {
+            $wrd = new word($usr);
+            $wrd->load_by_name($wrd_name);
+            if ($wrd->id() > 0) {
+                $wrd->del($usr_msg);
+            }
+        }
+
         $t->subheader($ts . 'version check');
 
         $test_name = 'json_file rejects a file created with a newer program version';

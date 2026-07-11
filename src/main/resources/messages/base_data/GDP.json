@@ -185,19 +185,7 @@
       "name": "Now"
     },
     {
-      "name": "year",
-      "description": "the time taken by the Earth to complete one orbit around the Sun, about 365 days.",
-      "type": "time",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q577",
-          "type": "wikidata"
-        }
-      ]
+      "name": "year"
     },
     {
       "name": "person",
@@ -216,17 +204,6 @@
     },
     {
       "name": "USD",
-      "description": "the official currency of the United States and several other countries and territories.",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4917",
-          "type": "wikidata"
-        }
-      ],
       "type": "measure"
     },
     {

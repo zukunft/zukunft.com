@@ -1112,6 +1112,21 @@ class view extends sandbox_code_id
     }
 
     /**
+     * create human-readable messages of the differences between the view objects
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param view|CombineObject|db_object_seq_id $obj which might be different to this view
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the view objects
+     */
+    function diff_msg(view|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this->diff_field_msg($msg, fields::FLD_STYLE, $this->get_style_id(), $obj->get_style_id());
+        return $msg;
+    }
+
+    /**
      * check if the view in the database needs to be updated
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *

@@ -135,11 +135,12 @@ class db_object_multi_user extends db_object_multi
     /**
      * create human-readable messages of the differences between the db id objects
      * @param db_object_multi_user|db_object_multi $obj which might be different to this db id object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the db id objects
      */
-    function diff_msg(db_object_multi_user|db_object_multi $obj): user_message
+    function diff_msg(db_object_multi_user|db_object_multi $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         $lib = new library();
         if ($this->get_user_id() != $obj->get_user_id()) {
             $msg->add(msg_id::DIFF_USER, [

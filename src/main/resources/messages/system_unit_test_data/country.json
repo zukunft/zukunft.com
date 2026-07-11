@@ -30,16 +30,7 @@
     { "name": "suburb"},
     { "name": "total"},
     {
-      "name": "one",
-      "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
-      "type": "scaling_hidden",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "1",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "one"
     },
     {
       "name": "percent"
@@ -164,10 +155,7 @@
     {
       "name": "scale million to one",
       "expression": "\"one\" = \"million\" * 1000000",
-      "comment": "to specify numbers in millions",
-      "type": "scaling",
-      "assigned_word": "million",
-      "protection": "admin_protection"
+      "assigned_word": "million"
     },
     {
       "name": "increase",

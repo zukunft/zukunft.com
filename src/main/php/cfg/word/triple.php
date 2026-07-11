@@ -430,6 +430,11 @@ class triple extends sandbox_link_named
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
+
+        if (key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+        }
+
         if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
             $this->impact = $api_json[fields::FLD_IMPACT];
         }
@@ -564,7 +569,9 @@ class triple extends sandbox_link_named
                     }
                 }
             }
-            $this->set_verb($vrb);
+            if ($vrb->check($msg, $this->dsp_id())) {
+                $this->set_verb($vrb);
+            }
         }
 
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
@@ -602,6 +609,20 @@ class triple extends sandbox_link_named
         if ($this->name() == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
+        }
+
+        // reject an ambiguous duplicate from/verb/to link within the import: if a triple already
+        // mapped in this file uses the same link with a different name the link id is ambiguous
+        // (see docs/llm/json_structure.md - a from/verb/to key must be unique within an import)
+        if ($dto != null) {
+            $conflict = $dto->triple_list()->get_link_conflict($this);
+            if ($conflict != null) {
+                $msg->add(msg_id::IMPORT_TRIPLE_LINK_AMBIGUOUS, [
+                    msg_id::VAR_NAME => $this->generate_name(),
+                    msg_id::VAR_NAME_CHK => $conflict->name(),
+                    msg_id::VAR_TRIPLE_NAME => $this->name()
+                ]);
+            }
         }
 
         // map the external references and register them with the data object so that the import
@@ -1327,6 +1348,22 @@ class triple extends sandbox_link_named
     function name_given(): ?string
     {
         return $this->name_given;
+    }
+
+    /**
+     * the unique link key of the from/verb/to phrases, used by the import to detect a duplicate
+     * link within a file (see docs/llm/json_structure.md - a from/verb/to key must be unique)
+     * @return string the from/verb/to link key, or an empty string if the from or to phrase is missing
+     */
+    function link_key(): string
+    {
+        $result = '';
+        if ($this->get_from() != null and $this->get_to() != null) {
+            if ($this->get_from()->name() != '' and $this->get_to()->name() != '') {
+                $result = $this->get_from()->name() . '|' . $this->get_verb_name() . '|' . $this->get_to()->name();
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2478,6 +2515,32 @@ class triple extends sandbox_link_named
         parent::db_ready($msg);
         $this->check($msg);
         return $msg->is_ok();
+    }
+
+    /**
+     * create human-readable messages of the differences between the triple objects
+     * @param triple|CombineObject|db_object_seq_id $obj which might be different to this triple
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the triple objects
+     */
+    function diff_msg(triple|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        if (!$ex_def and $this->type_id() != $obj->type_id()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $obj->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        $this->diff_field_msg($msg, verb_db::FLD_ID, $this->get_verb_id(), $obj->get_verb_id());
+        $this->diff_field_msg($msg, triple_fields::FLD_NAME_GIVEN, $this->name_given(), $obj->name_given());
+        $this->diff_field_msg($msg, triple_fields::FLD_WIGHT, $this->weight, $obj->weight);
+        $this->diff_field_msg($msg, fields::FLD_USAGE, $this->get_usage(), $obj->get_usage());
+        $this->diff_field_msg($msg, fields::FLD_IMPACT, $this->get_impact(), $obj->get_impact());
+        return $msg;
     }
 
     /**

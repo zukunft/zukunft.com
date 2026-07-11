@@ -4,7 +4,40 @@
 
 ## high prio
 
+add to the json import a parameter '$no_upd' (no update) that prevents existing object parameters such as the description or the formula expression to be overwritten. Only the fill up of empty fields is allowed. Create a positive and negative test case for this and set the parameter to true for the system json import but leave it to default of false for all other imports. 
+
 check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
+
+## fine-tuning for next launch
+
+### tutorial
+
+add a few tutorial pages that explain:
+
+The main start page shows the "most relevant" global problems with the solution that most likely can fix these issues
+
+"Most relevant" is defined by an extended UN DALY Index that includes physical needs and security called "Happy Time Point". Click on the blue Links for more details.
+
+If you wonder how the list is calculated you can click on the number to see more details. The calculation is based on many assumptions and yes, they can be wrong.
+
+Ich you create an account and log in, you can change the assumptions. The list is than adjusted based on your personal assumptions, but only for you. 
+
+Other user still see the original list, but they can see, that you have done some changes and they can also use your assumptions if they want.
+
+So each your has its own "sandbox", that never changes, but can see everything that other users have done.
+
+### fill the screen 
+
+for big screens add more data so that the screen is filled or increase the font size
+
+### more
+
+"more" should always be a link that shows more values
+
+### speed 
+
+check why the database loading takes longer if more data ist added and increase the cache usage
+
 
 ### workflow
 

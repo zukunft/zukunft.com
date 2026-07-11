@@ -523,6 +523,36 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * create human-readable messages of the differences between the linked named objects
+     * the type is added by the child object (e.g. triple) that knows the type name
+     * @param sandbox_link_named|CombineObject|db_object_seq_id $obj which might be different to this object
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences
+     */
+    function diff_msg(sandbox_link_named|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $lib = new library();
+        if ($this->name() != $obj->name()) {
+            $msg->add(msg_id::DIFF_NAME, [
+                msg_id::VAR_NAME => $obj->name(),
+                msg_id::VAR_NAME_CHK => $this->name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->get_description() != $obj->get_description()) {
+            $msg->add(msg_id::DIFF_DESCRIPTION, [
+                msg_id::VAR_NAME => $obj->get_description(),
+                msg_id::VAR_NAME_CHK => $this->get_description(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $msg;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database

@@ -239,6 +239,8 @@ class json_fields
     const string PHRASE_ROW = 'word_row';
     // the phrase to select the column name of a view component
     const string PHRASE_COL = 'word_col';
+    const string PHRASE_COL_SUB = 'word_col_sub';
+    const string LINK_TYPE = 'link_type';
 
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';

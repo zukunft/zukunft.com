@@ -156,6 +156,7 @@
     },
     {
       "name": "populism",
+      "description": "a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.",
       "refs": [
         {
           "name": "Populism",
@@ -316,22 +317,13 @@
       "name": "one"
     },
     {
-      "name": "million",
-      "comment": "to specify numbers in millions",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "million"
     },
     {
-      "name": "billion",
-      "comment": "to specify numbers in billion",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "billion"
     },
     {
-      "name": "trillion",
-      "comment": "to specify numbers in trillion",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "trillion"
     },
     {
       "name": "mio"
@@ -343,12 +335,9 @@
       "name": "b"
     },
     {
-      "name": "CHF",
-      "type": "measure"
-    },
-    {
-      "name": "USD",
-      "type": "measure"
+      "name": "EUR",
+      "type": "measure",
+      "description": "ISO 4217 alphabetic code for the euro."
     },
     {
       "name": "world"
@@ -560,7 +549,7 @@
         "world",
         "GDP",
         "million",
-        "USD",
+        "EUR",
         "2024"
       ],
       "number": "110047109"

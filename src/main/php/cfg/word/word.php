@@ -1167,21 +1167,31 @@ class word extends sandbox_code_id
     }
 
     /**
+     * TODO Prio 1 review this for all obejcts
      * create human-readable messages of the differences between the word objects
      * TODO Prio 2 move to db_object_seq_id ?
      * @param word|CombineObject|db_object_seq_id $obj which might be different to this word
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the word objects
      */
-    function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
+    function diff_msg(word|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         $lib = new library();
-        if ($this->id() != $obj->id()) {
-            $msg->add(msg_id::DIFF_ID, [
-                msg_id::VAR_ID => $obj->dsp_id(),
-                msg_id::VAR_ID_CHK => $this->dsp_id(),
+        if ($this->plural != $obj->plural) {
+            $msg->add(msg_id::DIFF_LANGUAGE_FORM, [
+                msg_id::VAR_NAME => $obj->plural,
+                msg_id::VAR_NAME_CHK => $this->plural,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_WORD_NAME => $this->dsp_id(),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->impact != $obj->impact) {
+            $msg->add(msg_id::DIFF_IMPACT, [
+                msg_id::VAR_IMPACT => $obj->impact,
+                msg_id::VAR_IMPACT_CHK => $this->impact,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);
         }
         return $msg;

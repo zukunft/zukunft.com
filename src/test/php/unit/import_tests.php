@@ -289,6 +289,25 @@ class import_tests
         $test_name = 'the json order warning names the unexpected position';
         $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'Unexpected position');
 
+        $t->subheader($ts . 'triple link uniqueness check');
+
+        // two triples that share the same from/verb/to link but carry different names give an
+        // ambiguous link id, so the import reports it (see docs/llm/json_structure.md)
+        $test_name = 'JSON import reports two triples with the same link but different names';
+        $usr_msg = new user_message($usr);
+        $json_str = file_get_contents(test_files::IMPORT_TRIPLE_LINK_AMBIGUOUS . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $usr_msg);
+        $target = 'the from/verb/to link "elevation kind of rank" is used by two triples with different names';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $target);
+
+        // the same two names are a valid import once their links differ (here the second uses "of")
+        $test_name = 'JSON import accepts two triples with different names and different links';
+        $usr_msg = new user_message($usr);
+        $json_array[json_fields::TRIPLES][1][json_fields::EX_VERB] = 'of';
+        $imp->get_data_object($json_array, $usr_msg);
+        $t->assert_true($test_name, $usr_msg->is_ok());
+
         $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';

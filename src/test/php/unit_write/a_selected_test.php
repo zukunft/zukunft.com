@@ -323,7 +323,7 @@ class a_selected_test extends test_cleanup
             //new component_link_write_tests()->run($this);
 
             //new api_write_tests()->run($this);
-            //new import_write_tests()->run($this);
+            new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             //new wikidata_write_tests()->run($this);
 
@@ -335,7 +335,7 @@ class a_selected_test extends test_cleanup
              */
 
             //new word_url_tests()->run($this);
-            new formula_write_url_tests()->run($this);
+            //new formula_write_url_tests()->run($this);
 
             // cleanup - fallback delete
             $this->cleanup_objects();

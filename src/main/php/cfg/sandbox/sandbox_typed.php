@@ -462,19 +462,22 @@ class sandbox_typed extends sandbox_named
     /**
      * create human-readable messages of the differences between the named sandbox objects
      * @param sandbox_typed|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
+    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
-        if ($this->type_id() != $obj->type_id()) {
-            $lib = new library();
-            $msg->add(msg_id::DIFF_TYPE, [
-                msg_id::VAR_TYPE => $obj->type_name(),
-                msg_id::VAR_TYPE_CHK => $this->type_name(),
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-            ]);
+        $msg = parent::diff_msg($obj, $ex_def);
+        if (!$ex_def) {
+            if ($this->type_id() != $obj->type_id()) {
+                $lib = new library();
+                $msg->add(msg_id::DIFF_TYPE, [
+                    msg_id::VAR_TYPE => $obj->type_name(),
+                    msg_id::VAR_TYPE_CHK => $this->type_name(),
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_NAME => $this->name(),
+                ]);
+            }
         }
         return $msg;
     }

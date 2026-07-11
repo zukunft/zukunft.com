@@ -50,6 +50,47 @@ A formula's `expression` may still reference phrases from earlier base files
 (every physics formula uses units like `kg`, `metre`); those resolve at
 calculation time, not via the per-file import cache.
 
+### Split a large domain into a concept file and a list file
+
+A word's full definition (description, refs, type) lives in exactly one **home
+file**; everywhere else it is re-declared name-only. When a domain has many
+instances, split that home in two:
+
+- **concept file** (`currency.json`) — the genus word `currency`, its
+  qualifiers, and its *behaviour*: the formulas that apply to every instance
+  (`exchange rate`, `bid-ask spread`, `conversion`, `cross rate`).
+- **list file** (`currencies.json`) — one entry per instance (`US dollar`,
+  `Euro`, …), each with its own description, ISO code and symbol.
+
+The concept file imports before the list file and before any consumer, so every
+borrowed word resolves to its home. A word already owned by a general base file
+(`million` → `scaling.json`, `year` → `time_definition.json`, `price` →
+`economics.json`) is re-declared name-only in both — never re-described.
+
+System-data imports run with `no_upd` (existing non-empty fields are kept; only
+empty fields are filled), so a file that repeats an owned word with a
+*divergent* description fails the import — a signal the definition has leaked
+out of its home file.
+
+### Don't overwrite the initial-setup default; change it under another user
+
+The words, triples and formulas loaded during the initial system setup (the
+`files::SYSTEM_DATA_FILES` sequence — `base_phrases`, `units`, `scaling`,
+`time_definition`, `country`, `currency`, `currencies`, …) are the shared
+**default** every new user starts from. Do not overwrite an existing non-empty
+field (`description`, formula `expression`, `protection`, …) of one of these
+without a good reason. `no_upd` enforces this for the system imports (only empty
+fields are filled), but treat it as the rule everywhere: when a later file names
+an already-defined phrase, either **repeat its existing value verbatim** or
+re-declare it **name-only** — never supply a divergent one. E.g. `Euro` keeps
+the description it received at initial setup; a file that references `Euro` again
+repeats that same description (or is name-only), it does not give a different one.
+
+If a value genuinely must change, do not edit the shared default in place.
+Import the change **under a different user** so it becomes that user's personal
+(sandbox) version, while the original stays the default description that new
+users still see.
+
 ### Version check
 
 `version` is matched against `def::PRG_VERSION`. If the file's version is newer,

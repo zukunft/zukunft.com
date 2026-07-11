@@ -518,6 +518,23 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+    /**
+     * the highest impact of the phrases of this list used to sort the related objects by relevance
+     * a phrase without an impact is treated as impact zero
+     * @return float the highest phrase impact or zero if no phrase of this list has an impact
+     */
+    function max_impact(): float
+    {
+        $max = 0.0;
+        foreach ($this->lst() as $phr) {
+            $impact = $phr->get_impact() ?? 0.0;
+            if ($impact > $max) {
+                $max = $impact;
+            }
+        }
+        return $max;
+    }
+
 
 
     /*
@@ -947,7 +964,7 @@ class phrase_list extends sandbox_list_named
      * @param int $max_level to limit the search depth
      * @returns array a list of phrases, that characterises the given phrase
      */
-    function foaf_related(?verb $vrb = null, int $max_level = 0): phrase_list
+    function foaf_related(?verb $vrb = null, int $max_level = 1): phrase_list
     {
         return $this->foaf(foaf_direction::BOTH, $vrb, $max_level);
     }
@@ -2191,6 +2208,7 @@ class phrase_list extends sandbox_list_named
     {
         $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr_lst($this, true);
+        $val_lst->sort();
 
         return $val_lst;
     }

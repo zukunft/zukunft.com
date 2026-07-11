@@ -1040,6 +1040,34 @@ class sandbox_list_named extends sandbox_list
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
+        // TODO move this also to the non named objects
+        // on a no update import keep the not empty database fields so that only empty fields are filled up
+        if ($imp?->no_upd) {
+            foreach ($this->lst() as $sbx) {
+                $dbo = $db_lst->get_by_name($sbx->name());
+                if ($dbo != null) {
+                    // create and fill import object to check the diff without fill up
+                    $sbc = $sbx->clone_all();
+                    $sbc->fill($dbo, $imp->usr);
+                    $diff = $dbo->diff_msg($sbc, true);
+                    // if thee would be an overwrite
+                    // remember the error message
+                    // add remove the overwrites from the import object
+                    if (!$diff->is_ok()) {
+                        $usr_msg->merge($diff);
+                        // create an import object based on the database object
+                        // so that the database based are not overwritten
+                        $dbc = $dbo->clone_all();
+                        // fill up the import object with the database values
+                        // e.g. if the description has been empty set it
+                        $dbc->fill($sbx, $imp->usr);
+                        // if there is a difference, report it
+                        $this->update_object($dbc);
+                    }
+                }
+            }
+        }
+
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
         $upd_lst = $this->update_list($db_lst, $usr_msg);
