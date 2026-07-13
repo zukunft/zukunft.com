@@ -46,11 +46,24 @@ maintenance_on() {
     log "maintenance page live: optional/$page"
 }
 
+# after a program update the repository holds the new index.html, so let git restore
+# it and use the backup only if index.html is not under git control
+restore_index() {
+    if git -C "$ROOT" ls-files --error-unmatch index.html &>/dev/null \
+        && git -C "$ROOT" checkout -- index.html; then
+        log "restored index.html from the repository"
+    elif [[ -f "$BACKUP" ]]; then
+        cp -f "$BACKUP" "$INDEX"
+        log "restored index.html from the backup"
+    else
+        die "cannot restore index.html"
+    fi
+}
+
 maintenance_off() {
     if [[ -f "$BACKUP" ]]; then
-        cp -f "$BACKUP" "$INDEX"
+        restore_index
         rm -f "$BACKUP"
-        log "restored index.html"
     else
         log "no backup found - nothing to restore"
     fi
@@ -72,7 +85,9 @@ update_program() {
     cd "$ROOT"
     log "updating program ..."
     if [[ -x "$SCRIPT_DIR/update.sh" ]]; then
-        "$SCRIPT_DIR/update.sh" "$@"
+        # index.html is under git control, so update.sh needs to know the page to
+        # keep the maintenance page live around the git checkout
+        MAINTENANCE_PAGE="optional/program_upgrade.html" "$SCRIPT_DIR/update.sh" "$@"
     else
         die "update.sh not found or not executable"
     fi

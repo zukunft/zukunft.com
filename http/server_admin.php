@@ -253,6 +253,29 @@ function run_admin_script(string $action): array
     return [implode("\n", $out), $code];
 }
 
+/**
+ * turn a failed admin script run into an actionable error for the (already authenticated) admin
+ * surfaces the last output line - which is also shown in full in the Output box below the forms,
+ * so this exposes nothing the admin cannot already see - and names the most common cause when the
+ * command produced no output at all (typically sudo is not permitted for the web server user)
+ * @param string $label the action shown to the admin e.g. 'Program update'
+ * @param string $output the combined stdout/stderr captured from the script
+ * @param int $code the non-zero exit code returned by the script
+ * @return string the error message to show above the form
+ */
+function run_error(string $label, string $output, int $code): string
+{
+    $lines = array_filter(array_map('trim', explode("\n", $output)), fn($line) => $line !== '');
+    $last = $lines === [] ? '' : (string)end($lines);
+    if ($last === '') {
+        $result = $label . ' could not be started (exit code ' . $code . '); the web server user is '
+            . 'likely not permitted to run "sudo -n ' . basename(ADMIN_SCRIPT) . '" without a password.';
+    } else {
+        $result = $label . ' failed (exit code ' . $code . '): ' . $last;
+    }
+    return $result;
+}
+
 function h(string $s): string
 {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
@@ -442,14 +465,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     [$output, $code] = run_admin_script('update-program');
                     $notice = $code === 0 ? 'Program update finished.' : '';
                     if ($code !== 0) {
-                        $error = 'Program update reported an error (exit code ' . $code . ').';
+                        $error = run_error('Program update', $output, $code);
                     }
                     break;
                 case 'upgrade_database':
                     [$output, $code] = run_admin_script('upgrade-database');
                     $notice = $code === 0 ? 'Database upgrade finished.' : '';
                     if ($code !== 0) {
-                        $error = 'Database upgrade reported an error (exit code ' . $code . ').';
+                        $error = run_error('Database upgrade', $output, $code);
                     }
                     break;
                 default:

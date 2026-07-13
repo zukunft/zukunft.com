@@ -38,6 +38,7 @@ main() {
         installAndConfigurePhp
         downloadZukunft
         installZukunft
+        configureServerAdmin
         testZukunft
         #testInstallation
     else
@@ -263,6 +264,41 @@ installZukunft() {
     #      e.g. if this is done via git clone to the webserver folder
     #      and how the .env file can be kept
     rm -rf zukunft.com
+
+    sleep 3
+}
+
+configureServerAdmin() {
+    echo -e "\n${GREEN}Configuring the server admin page ...${NC}"
+
+    WEB_USER="${WEB_USER:-www-data}"
+    ADMIN_SCRIPT="$WWW_ROOT/script/server_admin.sh"
+    UPDATE_SCRIPT="$WWW_ROOT/script/update.sh"
+    SUDOERS_FILE="/etc/sudoers.d/zukunft-server-admin"
+
+    # the admin page starts these scripts, so both need the execute bit
+    chmod +x "$ADMIN_SCRIPT" "$UPDATE_SCRIPT"
+
+    # the admin page runs the update as root, but the web root belongs to another user,
+    # so without this git would reject the repo with "detected dubious ownership"
+    # --system (/etc/gitconfig) not --global, because sudo may keep the caller HOME
+    git config --system --add safe.directory "$WWW_ROOT"
+
+    # allow the web server user to run exactly this one script as root without a password
+    cat > "$SUDOERS_FILE" <<EOF
+# created by zukunft.com install.sh
+# lets the server admin page switch maintenance pages, update the program and upgrade the database
+$WEB_USER ALL=(root) NOPASSWD: $ADMIN_SCRIPT
+EOF
+    chmod 0440 "$SUDOERS_FILE"
+
+    # a broken drop-in would block sudo for everyone, so never keep one
+    if visudo -cf "$SUDOERS_FILE"; then
+        echo -e "${GREEN}$WEB_USER may now run $ADMIN_SCRIPT as root${NC}"
+    else
+        rm -f "$SUDOERS_FILE"
+        echo -e "\n${RED}invalid sudo rule removed again: $SUDOERS_FILE${NC}"
+    fi
 
     sleep 3
 }

@@ -6,6 +6,10 @@
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
 
+before the program or database upgrade script are started the actual program version should be check and the execution should be rejected if there is no mathing script or no new version
+
+before the database upgrade is executed the program should always be updated first, because the upgrade script is part of the program
+
 move the php scripts from /http/ to /http_old/ that are not used any more and exclude /http_old/ from the web access via .htaccess file
 
 if ip and user whitelist configuration are switched off and the server is back to the normal stat copy  the backup /optional/index.html page to the www root to restore the normal frontpage. 
