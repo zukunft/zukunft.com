@@ -79,6 +79,8 @@ class sys_log extends log
     // TODO use a simple user object instead of the id
     // the user or user group who is supposed to fix the issue
     public ?int $solver_id = null;
+    // the solver name transported in the api message so the frontend needs no db lookup to show it
+    public ?string $solver_name = null;
     public ?int $status_id = null;
 
 
@@ -135,6 +137,9 @@ class sys_log extends log
             }
         } else {
             $this->set_solver_id(0);
+        }
+        if (array_key_exists(json_fields::SOLVER_NAME, $json_array)) {
+            $this->solver_name = $json_array[json_fields::SOLVER_NAME];
         }
         if (array_key_exists(json_fields::STATUS, $json_array)) {
             $this->status_id = $json_array[json_fields::STATUS];
@@ -210,6 +215,9 @@ class sys_log extends log
         }
         if ($this->solver_id > 0) {
             $vars[json_fields::SOLVER] = $this->solver_id;
+        }
+        if ($this->solver_name != null && $this->solver_name != '') {
+            $vars[json_fields::SOLVER_NAME] = $this->solver_name;
         }
         $vars[json_fields::STATUS] = $this->status();
         return $vars;
@@ -334,7 +342,7 @@ class sys_log extends log
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
         if ($this->user_id() > 0) {
-            $row_text .= $html->td($this->user()->name());
+            $row_text .= $html->td($this->user_name() ?? $this->user()->name());
         } else {
             $row_text .= $html->td();
         }
@@ -343,7 +351,7 @@ class sys_log extends log
         $row_text .= $html->td($this->trace);
         $row_text .= $html->td($this->function_id);
         if ($this->owner_id() > 0) {
-            $row_text .= $html->td($this->owner()->name());
+            $row_text .= $html->td($this->owner_name());
         } else {
             $row_text .= $html->td();
         }
@@ -371,6 +379,15 @@ class sys_log extends log
         $usr = new user();
         $usr->load_by_id($this->owner_id());
         return $usr;
+    }
+
+    /** the owner (solver) name to show; the name from the api message, else a db lookup by id */
+    function owner_name(): string
+    {
+        if ($this->solver_name !== null && $this->solver_name !== '') {
+            return $this->solver_name;
+        }
+        return $this->owner()->name();
     }
 
     // TODO review

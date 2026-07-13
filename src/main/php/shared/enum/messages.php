@@ -1820,6 +1820,7 @@ enum messages: string
     case SIGNUP_ERR_PW_RETYPE_EMPTY = 'signup_err_pw_retype_empty';
     case SIGNUP_ERR_PW_MISMATCH = 'signup_err_pw_mismatch';
     case SIGNUP_ERR_FAILED = 'signup_err_failed';
+    case SIGNUP_ERR_WHITELIST = 'signup_err_whitelist';
     case SYSTEM_TITLE_LOGIN = 'system_title_login';
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
     case ACTIVATE_SUBMIT = 'activate_submit';

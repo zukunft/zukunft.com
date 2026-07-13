@@ -12,3 +12,18 @@
 <FilesMatch "\.(sh|sql|yaml|yml|md)$">
     Require all denied
 </FilesMatch>
+
+# The /optional folder holds source-only offline fallback pages. They are never
+# served from here; the server_admin script copies the needed page into the
+# docroot when a fallback goes live. Block direct access so the folder is inert.
+RedirectMatch 404 ^/optional/
+
+# The /server_admin folder holds admin state, whitelist lists, keys and the CLI
+# helpers. It must never be reachable over the web (the admin UI lives at
+# /http/server_admin.php instead). Return 404 so the folder looks non-existent.
+RedirectMatch 404 ^/server_admin/
+
+# The /script folder holds install / update / admin shell scripts. They are run
+# from a shell, never over the web (.sh is already blocked above; this hides the
+# whole folder as well). Return 404 so it looks non-existent.
+RedirectMatch 404 ^/script/

@@ -46,7 +46,7 @@ To install this version 0.0.3 on a [debian](https://wiki.debian.org/) system do 
    git clone -b develop https://github.com/zukunft/zukunft.com.git
    ```
    ```bash
-   chmod 777 zukunft.com/install.sh
+   chmod 777 zukunft.com/script/install.sh
    ```
 
 2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
@@ -69,7 +69,7 @@ To install this version 0.0.3 on a [debian](https://wiki.debian.org/) system do 
    
 3. Start the application:
    ```bash
-   sudo ./zukunft.com/install.sh
+   sudo ./zukunft.com/script/install.sh
    ```
 
 If fine you should see the frontpage at [localhost/http/view.php](http://localhost/http/view.php)

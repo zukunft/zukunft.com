@@ -1,0 +1,9 @@
+# runtime state written by the admin page / ops script - installation specific
+state.json
+user_whitelist.txt
+ip_whitelist.txt
+index.html.bak
+
+# the admin private key must never leave the admin's machine / be committed
+admin.key
+*.key

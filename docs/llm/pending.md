@@ -4,6 +4,12 @@
 
 ## high prio
 
+add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
+
+move the php scripts from /http/ to /http_old/ that are not used any more and exclude /http_old/ from the web access via .htaccess file
+
+if ip and user whitelist configuration are switched off and the server is back to the normal stat copy  the backup /optional/index.html page to the www root to restore the normal frontpage. 
+
 add to the json import a parameter '$no_upd' (no update) that prevents existing object parameters such as the description or the formula expression to be overwritten. Only the fill up of empty fields is allowed. Create a positive and negative test case for this and set the parameter to true for the system json import but leave it to default of false for all other imports. 
 
 check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible

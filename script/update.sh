@@ -4,9 +4,15 @@
 # TODO the test.php script has run without errors on the local server
 # TODO using a temp test database e.g "zukunft_test"
 
+# this script lives in <repo>/script/ ; ROOT is the repo (and web) root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 # Defaults
 ENV=""
 BRANCH=""
+# the git repository the program updates are pulled from; overridable via .env
+SOURCE_REPO_URL="https://github.com/zukunft/zukunft.com"
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -20,11 +26,24 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# Check for upstream remote
+# read the source repository url from .env (falls back to the default above)
+if [[ -f "$ROOT/.env" ]]; then
+    ENV_REPO="$(grep -E '^[[:space:]]*SOURCE_REPO_URL[[:space:]]*=' "$ROOT/.env" | tail -n1 | cut -d= -f2-)"
+    ENV_REPO="${ENV_REPO%%#*}"                       # drop any inline comment
+    ENV_REPO="$(echo "$ENV_REPO" | tr -d '"'\''[:space:]')"  # strip quotes and whitespace
+    if [[ -n "$ENV_REPO" ]]; then
+        SOURCE_REPO_URL="$ENV_REPO"
+    fi
+fi
+
+# Check for upstream remote and make sure it points at the configured repository
 if ! git remote get-url upstream &>/dev/null; then
     echo "No 'upstream' remote found."
-    echo "Adding upstream ..."
-    git remote add upstream https://github.com/zukunft/zukunft.com
+    echo "Adding upstream $SOURCE_REPO_URL ..."
+    git remote add upstream "$SOURCE_REPO_URL"
+elif [[ "$(git remote get-url upstream)" != "$SOURCE_REPO_URL" ]]; then
+    echo "Updating upstream remote to $SOURCE_REPO_URL ..."
+    git remote set-url upstream "$SOURCE_REPO_URL"
 fi
 
 # Fetch all from upstream

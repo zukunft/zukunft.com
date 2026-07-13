@@ -78,6 +78,7 @@ messages:
   signup_err_pw_retype_empty: "You must re-type your password"
   signup_err_pw_mismatch: "Passwords don't match"
   signup_err_failed: "Signup failed, please try again."
+  signup_err_whitelist: "This installation currently only accepts pre-approved users. Please ask the administrator to add your username to the access list, then sign up again."
   system_title_login: ""
   system_title_login_activate: "Activate"
   activate_submit: "Change password"

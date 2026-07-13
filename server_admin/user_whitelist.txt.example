@@ -1,0 +1,7 @@
+# one allowed user per line (user name or user id); lines starting with # are ignored
+# only used when the user whitelist is activated on the server admin page
+admin
+timon
+heang
+linus
+julian

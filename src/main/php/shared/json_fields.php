@@ -231,6 +231,7 @@ class json_fields
     const string TRACE = 'trace'; // what has lead to the issue
     const string FUNCTION_ID = 'function_id'; // id of a code part that has caused an issue
     const string SOLVER = 'solver'; // the developer which wants to fix the problem
+    const string SOLVER_NAME = 'solver_name'; // the name of the developer which wants to fix the problem
 
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
