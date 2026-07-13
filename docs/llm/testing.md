@@ -382,6 +382,17 @@ of silently masking a regression in an existing baseline.
 - **Wrong**: hand-editing a `views_by_id/*.html` or `db/**/*.sql` fixture so the
   assertion passes again.
 
+### The page footer shows the minor version in a test run
+
+The footer of every page contains the program version, and about 400 html snapshots
+contain the footer. To keep a micro release (the build number raised with every commit)
+from changing all of them, `test/test_const.php` defines `SYSTEM_TEST_RUN`, so that
+`SYSTEM_PAGE_VERSION` (`src/main/php/cfg/const/env.php`) is the minor version `0.0.3`
+instead of the micro version `0.0.3.0`. Never remove that flag and never write a version
+into a snapshot by hand. A **minor** release does change the snapshots on purpose - the
+version of the json format and of the database has changed - and then the developer
+regenerates them. → `docs/llm/versions.md`
+
 ## Page-based UI tests for component-type renderers
 
 Every UI rendering function dispatched from `web/component/component_exe.php` —

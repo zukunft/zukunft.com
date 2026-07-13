@@ -1977,25 +1977,29 @@ class library
      */
 
     /**
-     * returns true if the version to check is older than this program version
+     * returns true if the version to check is newer than this program version
      * used e.g. for import to allow importing of files of an older version without warning
+     * a missing part counts as zero, so 0.0.3 is the same version as 0.0.3.0
+     * and a release version can be compared with a version that has a build number
+     * @param string $prg_version_to_check the version that should be compared with this version
+     * @param string $this_version the version to compare with e.g. the release part of the code version
+     * @return bool true if the version to check is newer than this version
      */
-    function prg_version_is_newer($prg_version_to_check, $this_version = def::PRG_VERSION): bool
+    function prg_version_is_newer(string $prg_version_to_check, string $this_version = def::PRG_VERSION): bool
     {
         $is_newer = false;
-
-        $this_prg_version_parts = explode(".", $this_version);
-        $to_check = explode(".", $prg_version_to_check);
         $is_older = false;
-        foreach ($this_prg_version_parts as $key => $this_part) {
-            if (!$is_newer and !$is_older) {
-                if ($this_part < $to_check[$key]) {
-                    $is_newer = true;
-                } else {
-                    if ($this_part > $to_check[$key]) {
-                        $is_older = true;
-                    }
-                }
+
+        $this_parts = explode(".", $this_version);
+        $to_check = explode(".", $prg_version_to_check);
+        $part_count = max(count($this_parts), count($to_check));
+        for ($i = 0; $i < $part_count and !$is_newer and !$is_older; $i++) {
+            $this_part = (int)($this_parts[$i] ?? 0);
+            $check_part = (int)($to_check[$i] ?? 0);
+            if ($this_part < $check_part) {
+                $is_newer = true;
+            } elseif ($this_part > $check_part) {
+                $is_older = true;
             }
         }
 

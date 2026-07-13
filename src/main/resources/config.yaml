@@ -5,8 +5,7 @@ zukunft.com:
     source-name: "config.yaml"
     source-description: "internal system configuration yaml file"
     database:
-      version: 0.0.3
-      tooltip-comment: "the version of the database of the master pod"
+      tooltip-comment: "the database settings of the master pod; the database version is in the config table, the program version in version.txt"
       retry:
         start delay:
           sec: 1
@@ -419,9 +418,6 @@ zukunft.com:
     pod:
       url: "zukunft.com"
       tooltip-comment: "the url name of this pod"
-      database:
-        version: 0.0.3
-        tooltip-comment: "the version of the database of this pod"
       phrase distribution:
         top level:
           pods: 16380

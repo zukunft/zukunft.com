@@ -32,6 +32,8 @@
 
 // the name of the environment file
 const ENV_FILE = '.env';
+// the name of the version file, which unlike .env is part of the git release
+const VERSION_FILE = 'version.txt';
 
 // names that can be used in the .env file
 const ENV_OS = 'OS';
@@ -52,7 +54,6 @@ const ENV_PGSQL_ADMIN_USERNAME = 'PGSQL_ADMIN_USERNAME';
 const ENV_PGSQL_ADMIN_PASSWORD = 'PGSQL_ADMIN_PASSWORD';
 const ENV_PGSQL_HOST = 'PGSQL_HOST';
 const ENV_PGSQL_PORT = 'PGSQL_PORT';
-const ENV_PGSQL_ZUKUNFT_VERSION = 'PGSQL_ZUKUNFT_VERSION';
 const ENV_MYSQL_DATABASE = 'MYSQL_DATABASE';
 const ENV_MYSQL_USERNAME = 'MYSQL_USERNAME';
 const ENV_MYSQL_PASSWORD = 'MYSQL_PASSWORD';
@@ -61,7 +62,6 @@ const ENV_MYSQL_ADMIN_USERNAME = 'MYSQL_ADMIN_USERNAME';
 const ENV_MYSQL_ADMIN_PASSWORD = 'MYSQL_ADMIN_PASSWORD';
 const ENV_MYSQL_HOST = 'MYSQL_HOST';
 const ENV_MYSQL_PORT = 'MYSQL_PORT';
-const ENV_MYSQL_ZUKUNFT_VERSION = 'MYSQL_ZUKUNFT_VERSION';
 const ENV_WWW_ROOT = 'WWW_ROOT';
 
 // server admin page (http/server_admin.php) settings
@@ -106,7 +106,6 @@ const ENV_USER_MAIL = 'USER_MAIL';
 const ENV_CO_USER_NAME = 'CO_USER_NAME'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_USER_PW = 'CO_USER_PW'; // if empty requested on initial startup
 const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
-const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
 const SOURCE_REPO_URL_FALLBACK = 'https://github.com/zukunft/zukunft.com';  // the default source repository for program updates
@@ -130,7 +129,6 @@ const ENV_VARS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_PGSQL_HOST,
     ENV_PGSQL_PORT,
-    ENV_PGSQL_ZUKUNFT_VERSION,
     ENV_MYSQL_DATABASE,
     ENV_MYSQL_USERNAME,
     ENV_MYSQL_PASSWORD,
@@ -139,7 +137,6 @@ const ENV_VARS = [
     ENV_MYSQL_ADMIN_PASSWORD,
     ENV_MYSQL_HOST,
     ENV_MYSQL_PORT,
-    ENV_MYSQL_ZUKUNFT_VERSION,
     ENV_WWW_ROOT,
     ENV_SERVER_ADMIN_IP,
     ENV_SERVER_ADMIN_USER,
@@ -283,8 +280,38 @@ define('SERVER_ADMIN_3_PW', getenv(ENV_SERVER_ADMIN_3_PW) ?: '');
 define('SERVER_ADMIN_3_IP_FROM', getenv(ENV_SERVER_ADMIN_3_IP_FROM) ?: '');
 define('SERVER_ADMIN_3_IP_TO', getenv(ENV_SERVER_ADMIN_3_IP_TO) ?: '');
 
-define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBACK);
-define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
+// the program version is read from the version file, never from .env,
+// because .env is not part of the release
+// and would still contain the version of the release that has created it
+$version = [];
+foreach (file(ROOT_PATH . VERSION_FILE) as $line) {
+    if (!str_starts_with($line, '#') and trim($line) != '') {
+        if (str_contains($line, '#')) {
+            $line = substr($line, 0, strpos($line, '#'));
+        }
+        $parts = explode('=', trim($line));
+        if (count($parts) != 2) {
+            log_err('unexpected line format in ' . ROOT_PATH . VERSION_FILE . ': ' . $line);
+        } else {
+            $version[trim($parts[0])] = trim($parts[1]);
+        }
+    }
+}
+
+// the version file is part of the release, so the code and the ui version are never missing
+// and there is no fallback version in the code which could differ from the version file
+if (!key_exists(ENV_CODE_VERSION, $version) or !key_exists(ENV_UI_VERSION, $version)) {
+    log_err('the code or the ui version is missing in ' . ROOT_PATH . VERSION_FILE);
+}
+// the micro version with four parts e.g. 0.0.3.0 where the last part is the build number
+define('SYSTEM_CODE_VERSION', $version[ENV_CODE_VERSION] ?? '');
+define('SYSTEM_UI_VERSION', $version[ENV_UI_VERSION] ?? '');
+// the minor version with three parts e.g. 0.0.3 which changes only if the json format
+// or the database structure changes; it is the version of the json exports and of the database
+define('SYSTEM_MINOR_VERSION', implode('.', array_slice(explode('.', SYSTEM_CODE_VERSION), 0, 3)));
+// the version shown in the page footer: the micro version of the running code, but the minor
+// version during a test run, so that a micro release does not change all html test files
+define('SYSTEM_PAGE_VERSION', defined('SYSTEM_TEST_RUN') ? SYSTEM_MINOR_VERSION : SYSTEM_CODE_VERSION);
 define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
 define('THIS_URL', getenv(ENV_THIS_URL) ?: THIS_URL_FALLBACK);
 define('SYS_LOG_URL', getenv(ENV_SYS_LOG_URL) ?: '');
