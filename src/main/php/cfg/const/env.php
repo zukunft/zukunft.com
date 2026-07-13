@@ -38,12 +38,12 @@ const ENV_OS = 'OS';
 const ENVIRONMENT = 'ENV';
 const ENV_BRANCH = 'BRANCH';
 const ENV_DB = 'DB';
-const ENV_IP_ADMIN = 'IP_ADMIN';
 const ENV_CODE_VERSION = 'CODE_VERSION';
 const ENV_UI_VERSION = 'UI_VERSION';
 const ENV_POD_NAME = 'POD_NAME';
 const ENV_THIS_URL = 'THIS_URL';
 const ENV_SYS_LOG_URL = 'SYS_LOG_URL';
+const ENV_SOURCE_REPO_URL = 'SOURCE_REPO_URL'; // the git repository the program updates are pulled from
 const ENV_PGSQL_DATABASE = 'PGSQL_DATABASE';
 const ENV_PGSQL_USERNAME = 'PGSQL_USERNAME';
 const ENV_PGSQL_PASSWORD = 'PGSQL_PASSWORD';
@@ -64,6 +64,25 @@ const ENV_MYSQL_PORT = 'MYSQL_PORT';
 const ENV_MYSQL_ZUKUNFT_VERSION = 'MYSQL_ZUKUNFT_VERSION';
 const ENV_WWW_ROOT = 'WWW_ROOT';
 
+// server admin page (http/server_admin.php) settings
+// a comma separated list of IPs / CIDR ranges allowed to reach the server admin page
+// (also the fixed IP of the main system admin; falls back to 'localhost')
+const ENV_SERVER_ADMIN_IP = 'SERVER_ADMIN_IP';
+// the full access server admin (may switch the IP whitelist off); username + bcrypt password hash
+const ENV_SERVER_ADMIN_USER = 'SERVER_ADMIN_USER';
+const ENV_SERVER_ADMIN_PW = 'SERVER_ADMIN_PW';
+// two restricted server admins that log in with a fixed username and password (bcrypt hash);
+// they may not switch the IP whitelist off (reduce it to the database blacklist)
+const ENV_SERVER_ADMIN_2_USER = 'SERVER_ADMIN_2_USER';
+const ENV_SERVER_ADMIN_2_PW = 'SERVER_ADMIN_2_PW';
+// optional client IP range (inclusive) the restricted admin may log in from; empty = no extra range check
+const ENV_SERVER_ADMIN_2_IP_FROM = 'SERVER_ADMIN_2_IP_FROM';
+const ENV_SERVER_ADMIN_2_IP_TO = 'SERVER_ADMIN_2_IP_TO';
+const ENV_SERVER_ADMIN_3_USER = 'SERVER_ADMIN_3_USER';
+const ENV_SERVER_ADMIN_3_PW = 'SERVER_ADMIN_3_PW';
+const ENV_SERVER_ADMIN_3_IP_FROM = 'SERVER_ADMIN_3_IP_FROM';
+const ENV_SERVER_ADMIN_3_IP_TO = 'SERVER_ADMIN_3_IP_TO';
+
 const ENV_SYSTEM_TIME_LIMIT_INFO = 'SYSTEM_TIME_LIMIT_INFO';
 const ENV_SYSTEM_TIME_LIMIT_WARN = 'SYSTEM_TIME_LIMIT_WARN';
 const ENV_SYSTEM_TIME_LIMIT_ERR = 'SYSTEM_TIME_LIMIT_ERR';
@@ -76,6 +95,8 @@ const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
 const ENV_ADMIN_USER = 'ADMIN_USER';  // can be set for a ui free setup
 const ENV_ADMIN_PW = 'ADMIN_PW'; // can be set for a ui free setup; in test and prod should be taken from the secret store
 const ENV_ADMIN_MAIL = 'ADMIN_MAIL';
+// public admin contact email shown to rejected visitors (whitelist reject pages); defaults to ADMIN_MAIL
+const ENV_SERVER_ADMIN_MAIL = 'SERVER_ADMIN_MAIL';
 const ENV_CO_ADMIN_USER = 'CO_ADMIN_USER'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_ADMIN_PW = 'CO_ADMIN_PW'; // if empty requested on initial startup
 const ENV_CO_ADMIN_MAIL = 'CO_ADMIN_MAIL';
@@ -88,18 +109,19 @@ const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
 const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
+const SOURCE_REPO_URL_FALLBACK = 'https://github.com/zukunft/zukunft.com';  // the default source repository for program updates
 
 const ENV_VARS = [
     ENV_OS,
     ENVIRONMENT,
     ENV_BRANCH,
     ENV_DB,
-    ENV_IP_ADMIN,
     ENV_CODE_VERSION,
     ENV_UI_VERSION,
     ENV_POD_NAME,
     ENV_THIS_URL,
     ENV_SYS_LOG_URL,
+    ENV_SOURCE_REPO_URL,
     ENV_PGSQL_DATABASE,
     ENV_PGSQL_USERNAME,
     ENV_PGSQL_PASSWORD,
@@ -119,11 +141,23 @@ const ENV_VARS = [
     ENV_MYSQL_PORT,
     ENV_MYSQL_ZUKUNFT_VERSION,
     ENV_WWW_ROOT,
+    ENV_SERVER_ADMIN_IP,
+    ENV_SERVER_ADMIN_USER,
+    ENV_SERVER_ADMIN_PW,
+    ENV_SERVER_ADMIN_2_USER,
+    ENV_SERVER_ADMIN_2_PW,
+    ENV_SERVER_ADMIN_2_IP_FROM,
+    ENV_SERVER_ADMIN_2_IP_TO,
+    ENV_SERVER_ADMIN_3_USER,
+    ENV_SERVER_ADMIN_3_PW,
+    ENV_SERVER_ADMIN_3_IP_FROM,
+    ENV_SERVER_ADMIN_3_IP_TO,
     ENV_CACHE,
     ENV_CACHE_MAX_AGE,
     ENV_ADMIN_USER,
     ENV_ADMIN_PW,
     ENV_ADMIN_MAIL,
+    ENV_SERVER_ADMIN_MAIL,
     ENV_CO_ADMIN_USER,
     ENV_CO_ADMIN_PW,
     ENV_CO_ADMIN_MAIL,
@@ -140,6 +174,9 @@ const ENV_SECRETS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_MYSQL_PASSWORD,
     ENV_MYSQL_ADMIN_PASSWORD,
+    ENV_SERVER_ADMIN_PW,
+    ENV_SERVER_ADMIN_2_PW,
+    ENV_SERVER_ADMIN_3_PW,
 ];
 
 // the possible environments
@@ -226,15 +263,32 @@ foreach ($env as $line) {
     }
 }
 
+// server admin page authentication (see http/server_admin.php)
+// IPs / CIDR ranges allowed to reach the server admin page; falls back to 'localhost'
+define('SERVER_ADMIN_IP', getenv(ENV_SERVER_ADMIN_IP) ?: SYSTEM_ADMIN_IP_FALLBACK);
+
 // SYSTEM configuration from environment variables or the default fallback value
 // fixed IP of the main system admin as a second line of defence to prevent remote manipulation
-define('SYSTEM_ADMIN_IP', getenv(ENV_IP_ADMIN) ?: SYSTEM_ADMIN_IP_FALLBACK);
+define('SYSTEM_ADMIN_IP', SERVER_ADMIN_IP);
+// the full access server admin (username + bcrypt password hash); empty = not configured
+define('SERVER_ADMIN_USER', getenv(ENV_SERVER_ADMIN_USER) ?: '');
+define('SERVER_ADMIN_PW', getenv(ENV_SERVER_ADMIN_PW) ?: '');
+// two restricted server admins (username + bcrypt password hash, optional IP range); empty = not configured
+define('SERVER_ADMIN_2_USER', getenv(ENV_SERVER_ADMIN_2_USER) ?: '');
+define('SERVER_ADMIN_2_PW', getenv(ENV_SERVER_ADMIN_2_PW) ?: '');
+define('SERVER_ADMIN_2_IP_FROM', getenv(ENV_SERVER_ADMIN_2_IP_FROM) ?: '');
+define('SERVER_ADMIN_2_IP_TO', getenv(ENV_SERVER_ADMIN_2_IP_TO) ?: '');
+define('SERVER_ADMIN_3_USER', getenv(ENV_SERVER_ADMIN_3_USER) ?: '');
+define('SERVER_ADMIN_3_PW', getenv(ENV_SERVER_ADMIN_3_PW) ?: '');
+define('SERVER_ADMIN_3_IP_FROM', getenv(ENV_SERVER_ADMIN_3_IP_FROM) ?: '');
+define('SERVER_ADMIN_3_IP_TO', getenv(ENV_SERVER_ADMIN_3_IP_TO) ?: '');
 
 define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBACK);
 define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
 define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
 define('THIS_URL', getenv(ENV_THIS_URL) ?: THIS_URL_FALLBACK);
 define('SYS_LOG_URL', getenv(ENV_SYS_LOG_URL) ?: '');
+define('SOURCE_REPO_URL', getenv(ENV_SOURCE_REPO_URL) ?: SOURCE_REPO_URL_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);
@@ -271,6 +325,8 @@ define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
 define('ADMIN_USER', getenv(ENV_ADMIN_USER) ?: '');
 define('ADMIN_PW', getenv(ENV_ADMIN_PW) ?: '');
 define('ADMIN_MAIL', getenv(ENV_ADMIN_MAIL) ?: '');
+// public admin contact email shown on the whitelist reject pages; defaults to the admin mail
+define('SERVER_ADMIN_MAIL', getenv(ENV_SERVER_ADMIN_MAIL) ?: ADMIN_MAIL);
 define('CO_ADMIN_USER', getenv(ENV_CO_ADMIN_USER) ?: '');
 define('CO_ADMIN_PW', getenv(ENV_CO_ADMIN_PW) ?: '');
 define('CO_ADMIN_MAIL', getenv(ENV_CO_ADMIN_MAIL) ?: '');

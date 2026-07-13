@@ -49,6 +49,9 @@ include_once paths::SHARED . 'url_var.php';
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
+// server admin whitelist enforcement (file based IP / user whitelist)
+include_once html_paths::WEB . 'server_guard.php';
+
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -295,6 +298,10 @@ class frontend
             }
         }
 
+        // enforce the file based IP / user whitelist activated on the server admin page;
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
+
         /*
         require __DIR__ . '/vendor/autoload.php';
         // Looking for .env at the root directory
@@ -428,6 +435,9 @@ class frontend
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+
+        // enforce the file based IP / user whitelist activated on the server admin page
+        server_guard::enforce();
 
         // just for cache loading
         // TODO Prio 2 switch to user setting later
@@ -966,6 +976,8 @@ class frontend
         }
 
         if ($logged_in) {
+            // reject at once if a user whitelist is active and this user is not on it
+            server_guard::enforce_user((string)$usr_backend->id(), $usr_name);
             $back_array = html_base::url_par_from_back_part($url_array);
             $next_url = empty($back_array) ? [url_var::MASK => views::LOGIN_ID] : $back_array;
         } else {
@@ -1004,6 +1016,11 @@ class frontend
         $signed_up = false;
 
         if ($do_it) {
+            // block signup up front if a user whitelist is active and this name is not on it;
+            // no account is created and the user is told how to get access (see is_ok() gate below)
+            if (server_guard::user_rejected('', $usr_name)) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_WHITELIST, []);
+            }
             $existing = new user_backend();
             $existing->load_by_name($usr_name);
             if ($existing->has_db_id()) {
@@ -1135,6 +1152,8 @@ class frontend
                                 $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
                                 $_SESSION[url_var::USERNAME_HUMAN] = $usr_by_id->name();
                                 $_SESSION[url_var::SESSION_LOGGED] = true;
+                                // reject at once if a user whitelist is active and this user is not on it
+                                server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
                                 $usr_backend = $usr_by_id;
                                 $usr_ui->set_from_json($usr_by_id->api_json(), $usr_msg);
                                 $activated = true;

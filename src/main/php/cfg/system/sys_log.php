@@ -434,6 +434,7 @@ class sys_log extends db_object_seq_id
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::TIME] = $this->log_time->format(DateTimeInterface::ATOM);
         $vars[json_fields::USER_ID] = $this->usr->id();
+        $vars[json_fields::USER_NAME] = $this->usr->name();
         $vars[json_fields::FUNCTION_ID] = $this->function_id;
         $vars[json_fields::TRACE] = $this->log_trace;
         $vars[json_fields::TYPE] = $this->level_id;
@@ -442,6 +443,7 @@ class sys_log extends db_object_seq_id
         $vars[json_fields::TEXT] = $this->log_text;
         $vars[json_fields::DESCRIPTION] = $this->log_description;
         $vars[json_fields::SOLVER] = $this->solver?->id();
+        $vars[json_fields::SOLVER_NAME] = $this->solver?->name();
         $vars[json_fields::STATUS] = $this->status_id;
 
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

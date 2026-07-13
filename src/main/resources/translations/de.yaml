@@ -32,6 +32,7 @@ messages:
   signup_err_pw_retype_empty: "Bitte Passwort wiederholen"
   signup_err_pw_mismatch: "Passwörter stimmen nicht überein"
   signup_err_failed: "Registrierung fehlgeschlagen, bitte versuchen Sie es erneut."
+  signup_err_whitelist: "Diese Installation akzeptiert derzeit nur freigeschaltete Benutzer. Bitte bitten Sie den Administrator, Ihren Benutzernamen zur Zugriffsliste hinzuzufügen, und registrieren Sie sich dann erneut."
   navbar_login: "Anmelden"
   navbar_signup: "Registrieren"
   navbar_settings: "Einstellungen"

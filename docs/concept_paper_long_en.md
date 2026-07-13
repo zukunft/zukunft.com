@@ -2,9 +2,9 @@
 
 **Timon Zielonka**
 
-Version: 0.6 (draft) — July 2026
+Version: 0.7 (draft) — July 2026
 License: CC BY-SA 4.0
-DOI: https://doi.org/10.5281/zenodo.19371011
+DOI: https://doi.org/10.5281/zenodo.21315000
 
 ---
 
@@ -20,7 +20,7 @@ The Categorical Imperative in its core formulation states: "Act only according t
 
 John Rawls' *Theory of Justice* (1971) extends this tradition with the idea of fairness: principles of justice are those that rational persons would choose in a fair initial position (veil of ignorance). In particular, the Difference Principle — social and economic inequalities are justified only if they benefit the least advantaged — offers a bridge from formal ethics to concrete distributive justice.
 
-The order of the following ten points follows a prioritisation based on expected severity of suffering: the most urgent points are listed first, based on an extension of the lower two levels of Maslow's hierarchy of needs (physiological basic needs and safety) by the Disability-Adjusted Life Year (DALY) index of the World Health Organization. DALYs measure the healthy life years lost due to disease and premature death (Murray & Lopez 1996; WHO 2024). This combination named "Happy Time points (htp)" allows an evidence-based prioritisation: topics that directly affect life and limb (disinformation with health consequences, climate protection, subsistence-securing resources) are addressed before those that target higher levels of needs (self-actualisation, cultural participation). In case of dependencies.
+The order of the following ten points follows a prioritisation based on expected severity of suffering: the most urgent points are listed first, based on an extension of the lower two levels of Maslow's hierarchy of needs (physiological basic needs and safety) by the Disability-Adjusted Life Year (DALY) index of the World Health Organization. DALYs measure the healthy life years lost due to disease and premature death (Murray & Lopez 1996; WHO 2024). This combination named "Happy Time points (htp)" allows an evidence-based prioritisation: topics that directly affect life and limb (disinformation with health consequences, climate protection, subsistence-securing resources) are addressed before those that target higher levels of needs (self-actualisation, cultural participation) in case of dependencies.
 
 Methodologically, this paper follows the principle of the Delphi Method: a structured procedure for stepwise approximation of expertise through iterative, anonymised consultations of domain experts (Linstone & Turoff 1975). Applied to political decision-making, this means that complex problems should be solved not by individual opinions but through iterative, transparent consensus-building.
 

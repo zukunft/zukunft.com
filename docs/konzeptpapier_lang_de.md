@@ -2,9 +2,9 @@
 
 **Timon Zielonka**
 
-Version: 0.6 (Entwurf) — Juli 2026
+Version: 0.7 (Entwurf) — Juli 2026
 Lizenz: CC BY-SA 4.0
-DOI: https://doi.org/10.5281/zenodo.19371011
+DOI: https://doi.org/10.5281/zenodo.21315000
 
 ---
 
@@ -20,7 +20,7 @@ Der kategorische Imperativ lautet in seiner Kernformulierung: „Handle nur nach
 
 John Rawls' *Theorie der Gerechtigkeit* (1971) erweitert diese Tradition um die Idee der Fairness: Gerechtigkeitsprinzipien sind jene, die rationale Personen in einer fairen Ausgangsposition (Schleier des Nichtwissens) wählen würden. Insbesondere das Differenzprinzip — soziale und wirtschaftliche Ungleichheiten sind nur dann gerechtfertigt, wenn sie den am wenigsten Begünstigten zugutekommen — bietet eine Brücke von der formalen Ethik zur konkreten Verteilungsgerechtigkeit.
 
-Die Reihenfolge der folgenden zehn Punkte folgt einer Priorisierung auf Grundlage der erwarteten Schwere des Leids: Die dringlichsten Punkte werden zuerst genannt, basierend auf einer Erweiterung der unteren beiden Ebenen von Maslows Bedürfnishierarchie (physiologische Grundbedürfnisse und Sicherheit) um den Disability-Adjusted-Life-Year-(DALY-)Index der Weltgesundheitsorganisation. DALYs messen die durch Krankheit und vorzeitigen Tod verlorenen gesunden Lebensjahre (Murray & Lopez 1996; WHO 2024). Diese Kombination, „Happy Time points (htp)" genannt, ermöglicht eine evidenzbasierte Priorisierung: Themen, die unmittelbar Leib und Leben betreffen (Desinformation mit Gesundheitsfolgen, Klimaschutz, existenzsichernde Ressourcen), werden vor solchen behandelt, die höhere Bedürfnisebenen ansprechen (Selbstverwirklichung, kulturelle Teilhabe). Bei Abhängigkeiten.
+Die Reihenfolge der folgenden zehn Punkte folgt einer Priorisierung auf Grundlage der erwarteten Schwere des Leids: Die dringlichsten Punkte werden zuerst genannt, basierend auf einer Erweiterung der unteren beiden Ebenen von Maslows Bedürfnishierarchie (physiologische Grundbedürfnisse und Sicherheit) um den Disability-Adjusted-Life-Year-(DALY-)Index der Weltgesundheitsorganisation. DALYs messen die durch Krankheit und vorzeitigen Tod verlorenen gesunden Lebensjahre (Murray & Lopez 1996; WHO 2024). Diese Kombination, „Happy Time points (htp)" genannt, ermöglicht eine evidenzbasierte Priorisierung: Themen, die unmittelbar Leib und Leben betreffen (Desinformation mit Gesundheitsfolgen, Klimaschutz, existenzsichernde Ressourcen), werden vor solchen behandelt, die höhere Bedürfnisebenen ansprechen (Selbstverwirklichung, kulturelle Teilhabe) bei Abhängigkeiten.
 
 Methodisch folgt dieses Papier dem Prinzip der Delphi-Methode: einem strukturierten Verfahren zur schrittweisen Annäherung an Expertise durch iterative, anonymisierte Konsultationen von Fachleuten (Linstone & Turoff 1975). Auf politische Entscheidungsfindung angewandt bedeutet dies, dass komplexe Probleme nicht durch Einzelmeinungen, sondern durch iterative, transparente Konsensbildung gelöst werden sollten.
 
@@ -553,4 +553,4 @@ zukunft.com (2025): OpenAPI-Spezifikation. https://app.swaggerhub.com/apis/zukun
 
 ## Veröffentlichungshinweis
 
-Dieses Arbeitspapier wurde im April 2026 verfasst und unter der Lizenz CC BY-SA 4.0 (Creative Commons Attribution-ShareAlike 4.0 International) veröffentlicht.
+Dieses Arbeitspapier wurde erstmals im April 2026 verfasst und unter der Lizenz CC BY-SA 4.0 (Creative Commons Attribution-ShareAlike 4.0 International) veröffentlicht.
