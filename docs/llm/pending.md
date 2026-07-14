@@ -400,6 +400,24 @@ allow to open a value by the names of its phrases: the old page took the url par
 
 the legacy controller http_old/phrase_list.php had no caller and did not do what its header says ('return a phrase list API object'): its body is a copy of the retired word_add.php (it loads the word_add view, adds a word and links it with a triple to an existing word), it carries the TODO 'use view_shared::PHRASE_LIST instead of WORD_ADD' for a view that does not exist in shared/const/views.php, and its last render call (word_ui::dsp_add) is commented out, so the page showed only the navbar. Nothing has to be migrated: what it really did is the word add view /http/view.php?m=2, and the parts that are missing there are already listed in the word add view section above. A phrase list as an api object is delivered by http/get_json.php resp. the rest controller, and a single phrase is shown with the phrase default view /http/view.php?m=110 (views::PHRASE_ID)
 
+### result explain view (missing parts of the retired http_old/formula_result.php)
+
+the legacy controller http_old/formula_result.php ('explains one formula result') has a mask in the new frontend: the result explain view called via /http/view.php?m=70 (views::RESULT_EXPLAIN_ID). But the component of the view is a stub: web/component/execute/system_page.php::result_explain() returns the text 'result_explain placeholder' and carries the TODO Prio 0 'fill with real code' (see the snapshot src/test/resources/web/html/views_by_id/result/70_result_*.html). The old page had no caller in the program code, but it was the only place that really explained a result, so the explanation of a result is currently not available.
+
+fill web/component/execute/system_page.php::result_explain() with the real code: web/result/result.php::explain($lead_phr_id, $back) already creates the explanation (which values and which formula lead to the result) and has no caller any more since http_old/formula_result.php is retired. Read the result of the view from the url (the old page took the result id, and alternatively the formula id, the leading phrase to sort the explanation and the time phrase) and add a page test with the html snapshot
+
+the same TODO Prio 0 placeholders exist for the other system body components of web/component/execute/system_page.php: value_details, formula_test, sandbox and undo (and 'user_setting' resp. 'main_value' in the user and value view, see the sections above). Fill them all with the real code, so that the views that replace the retired controllers really show their content, and add a page test per component
+
+### formula test view (missing parts of the retired http_old/formula_test.php)
+
+the legacy controller http_old/formula_test.php ('to debug the formula results') has a mask in the new frontend: the formula test view called via /http/view.php?m=71 (views::FORMULA_TEST_ID). But as for the result explain view its component is a stub: web/component/execute/system_page.php::formula_test() returns 'formula_test placeholder' (see the snapshot src/test/resources/web/html/views_by_id/formula/71_formula_formula_test.html). The only caller of the old page were the 'Test' and 'Refresh results' buttons of web/formula/formula.php::dsp_test_and_samples, which is reached only via formula::dsp_edit, i.e. only from the retired formula_add.php and formula_edit.php, so the buttons are in dead code. This means that the formula calculation can currently not be tested from the frontend at all.
+
+fill web/component/execute/system_page.php::formula_test() with the real code of the old page: for the formula given by the url show the phrases used, the values found and the calculated result step by step, with the 'more details' link that increases the debug level, and respect the configured frontend response time (the old page stopped the drill down when the response time was reached). Add the 'refresh' function of the old page (delete all results of the formula and calculate them again) as an own button that writes through the standard confirm flow, and add a page test
+
+decide if the 'user' url parameter of the old formula test page is still wanted (it showed the formula calculation as another user sees it, to debug a user specific overwrite). If yes, allow it only for an admin user, because it shows the data of another user
+
+remove the dead formula edit render path: web/formula/formula.php::dsp_edit and the functions that only it calls (dsp_test_and_samples with its links to the retired formula_test.php, dsp_used4words, dsp_hist, dsp_hist_links) have no caller any more since http_old/formula_add.php and http_old/formula_edit.php are retired. This is the same clean up as for view::dsp_edit and linked_components (see the view edit view section above)
+
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
