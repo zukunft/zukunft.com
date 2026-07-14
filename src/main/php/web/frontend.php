@@ -814,32 +814,16 @@ class frontend
         }
 
         // select the view
+        // an edit or del mask is the view that the user has requested, so it is never overwritten here
+        // and only a view that the user has selected for the object needs to be saved
         if (in_array($view_id, views::EDIT_DEL_MASKS_IDS)) {
             // TODO move as much a possible to backend functions
-            if ($dbo->id() > 0) {
-                // if the user has changed the view for this word, save it
-                if ($new_view_id != '') {
-                    $dbo->save_view($new_view_id);
-                    $view_id = $new_view_id;
-                } else {
-                    // if the user has selected a special view, use it
-                    if ($view_id == 0) {
-                        // if the user has set a view for this word, use it
-                        $view_id = $dbo->view_id();
-                        if ($view_id <= 0) {
-                            // if any user has set a view for this word, use the common view
-                            $view_id = $dbo->calc_view_id();
-                            if ($view_id <= 0) {
-                                // if no one has set a view for this word, use the fallback view
-                                $msk = $this->dto->typ_lst_cache->get_view(views::WORD_NAME);
-                                $view_id = $msk->id();
-                            }
-                        }
-                    }
-                }
-            } else {
-                $result .= log_err("No word selected.", "view.php", '',
+            if ($dbo->id() === 0 or $dbo->id() === '' or $dbo->id() === null) {
+                $result .= log_err("id of " . library::class_to_name($dbo::class) . " is empty", "view.php", '',
                     (new Exception)->getTraceAsString());
+            } elseif ($new_view_id != '' and $new_view_id != 0) {
+                $dbo->save_view($new_view_id);
+                $view_id = $new_view_id;
             }
         }
 

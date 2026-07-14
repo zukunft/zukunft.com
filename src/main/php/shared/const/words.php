@@ -107,6 +107,7 @@ class words
     // in alphabetic order except the main keywords listed above
     const string ACCESS = 'access';
     const string ACCOUNT = 'account';
+    const string ALLOWED = 'allowed';
     const string API = 'api';
     const string API_WORD = 'API';
     const string AUTOMATIC = 'automatic';

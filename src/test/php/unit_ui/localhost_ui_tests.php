@@ -76,11 +76,25 @@ class localhost_ui_tests
         $t->assert($test_name, $mtr->txt(msg_id::FORM_TITLE_VERB_ADD, language_codes::DE), 'Neues Verb');
 
         $t->subheader($ts . 'views');
-        $test_name = 'word edit by url';
+        // the tests are done without login, so the requesting user is an ip user
+        // and the word edit view changes data, so the request is blocked before the view is created
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        $test_name = 'word edit by url is blocked for a user without login';
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . word_names::MATH_ID);
         $sys->times->switch(system_time_type::DEFAULT);
-        $t->assert_text_contains($test_name, $page, word_names::MATH, test_base::TIMEOUT_LOCALHOST);
+        $t->assert_text_contains(
+            $test_name, $page, $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER), test_base::TIMEOUT_LOCALHOST);
+        // but with a login the same word edit view is shown
+        $test_name = 'word edit by url with a login';
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $page = $t->web_page_with_login(
+            api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
+            . url_var::ADD_ID . word_names::MATH_ID);
+        $sys->times->switch(system_time_type::DEFAULT);
+        if ($page != '') {
+            $t->assert_text_contains($test_name, $page, word_names::MATH, test_base::TIMEOUT_LOCALHOST);
+        }
         $test_name = 'verb add by url';
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::VERB_ADD_ID);

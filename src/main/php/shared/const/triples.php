@@ -53,6 +53,7 @@ class triples
     const string BY_IP_ADDRESS = 'by ip-address';
     const string BY_LOCATION = 'by location';
     const string CHECK_PERIOD = 'check period';
+    const string DATABASE_CHANGE = 'database change';
     const string DECREASE_DAYS = 'decrease days';
     const string EMAIL_SERVER = 'email server';
     const string EXPECTED_TIME = 'expected time';

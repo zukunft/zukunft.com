@@ -1530,6 +1530,7 @@
 \-- config_numbers
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_numbers.php
     \-- language - section for function language not yet defined that it should be predefined in /helper/config_numbers.php
+    \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /helper/config_numbers.php
 \-- data_object
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/data_object.php
     \-- api_array - section for function api_array not yet defined that it should be api in /helper/data_object.php
@@ -4458,6 +4459,8 @@
 \-- predefined
     \-- language
         \-- config_numbers - @return string the code_id of the user frontend language
+    \-- ip_user_can_change
+        \-- config_numbers - the pod permission that decides if a user without login can change data in the database
 \-- get
     \-- get_object_by_name
         \-- data_object - @return ip_range_list with the ip ranges of this data object
