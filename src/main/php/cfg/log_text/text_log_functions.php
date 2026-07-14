@@ -44,6 +44,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED . 'library.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -416,7 +418,8 @@ function log_msg(string  $msg_text,
                 echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
                 if ($sys_log->id > 0) {
                     $html = new html_base();
-                    $url_rel = api::SCRIPT_PATH . api::ERROR_LOG_SCRIPT. '?' . url_var::ID . '=' . $sys_log->id;
+                    $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID
+                        . url_var::ADD . url_var::ID . url_var::EQ . $sys_log->id;
                     $url = THIS_URL . $url_rel;
                     $ref = $html->ref($url_rel, $url);
                     echo 'You can track the solving of the error with this link: ' . $ref . '<br>';
