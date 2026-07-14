@@ -42,6 +42,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -100,6 +102,10 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
         $usr_msg = new user_message($usr);
 
@@ -148,8 +154,12 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
 
         $dbo->api_mapper($api_json, $usr_msg);
         $dbo->id = $id;
@@ -190,8 +200,12 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
 
         if ($id > 0) {
             $dbo->load_by_id($id);
@@ -219,6 +233,31 @@ class controller
     {
         http_response_code(401);
         $this->curl_response('', $msg, rest_ctrl::GET);
+    }
+
+    /**
+     * true if the requesting user is permitted to change data in this pod
+     * this is the same check as in the model (sandbox->save and sandbox->del),
+     * but done before the api json is mapped, so that a user without login
+     * gets a clear rejection instead of a change that fails later
+     *
+     * @param user $usr the session user who has started the request
+     * @param string $msg the message text collected until now
+     * @return bool false if a user without login has requested a change that this pod does not permit
+     */
+    private function change_permitted(user $usr, string $msg): bool
+    {
+        $permitted = true;
+
+        if ($usr->is_blocked()) {
+            $permitted = false;
+            // tell the user why the change has been rejected and how to solve it
+            $usr_msg = new user_message($usr);
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $this->not_permitted($msg . $usr_msg->all_message_text());
+        }
+
+        return $permitted;
     }
 
 

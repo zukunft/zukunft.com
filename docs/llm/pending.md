@@ -4,9 +4,7 @@
 
 ## high prio
 
-check if config.yaml contains a parameter that prevents ip user from doing database changes and if not, add it
-
-check that if the ip user cannot do database changes the actually prevents all database changes and if not suggest the steps to fix it
+block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 the general security check has been done on 2026-07-14 (five parallel read-only audits: auth/session, injection/file handling, xss/csrf, authorization, secrets/exposure). The result is the '### security before go live' section below, ordered by exploitability. The injection surface (prepared statement layer, no command injection, no path traversal on a live route) and the server admin console and setup.php were found sound. Work off the blockers first; repeat the check after they are fixed
 

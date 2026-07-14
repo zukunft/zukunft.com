@@ -1677,6 +1677,7 @@
     \-- has_db_id - section for function has_db_id not yet defined that it should be db helper in /helper/db_object_seq_id.php
     \-- can_be_added_by - section for function can_be_added_by not yet defined that it should be db helper in /helper/db_object_seq_id.php
     \-- can_be_changed_by - section for function can_be_changed_by not yet defined that it should be db helper in /helper/db_object_seq_id.php
+    \-- can_be_deleted_by - section for function can_be_deleted_by not yet defined that it should be db helper in /helper/db_object_seq_id.php
     \-- get_similar - section for function get_similar is expected to be save in /helper/db_object_seq_id.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper of row_mapper,api_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,order of section construct and map has difference at api_mapper should be before row_mapper of row_mapper,api_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,order of section api has difference at api_json_array should be before api_json of api_json,api_json_array does not match 1,api_json_array,api_json,api_array,order of section api has difference at api_json_array should be before api_json of api_json,api_json_array does not match 1,api_json_array,api_json,api_array
 \-- db_object_seq_id_user
@@ -2960,7 +2961,7 @@
     \-- start_api
         \-- application - open the database connection to answer an api request
     \-- end_api
-        \-- application - open the database connection to answer an api request
+        \-- application - load the system configuration to the global config numbers
     \-- start
         \-- application - should be called from all code that can be accessed by an url
     \-- open_db

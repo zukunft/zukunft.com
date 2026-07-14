@@ -214,6 +214,23 @@ class db_object_seq_id_user extends db_object_seq_id
         return $this->usr->id;
     }
 
+    /**
+     * make sure that the user who has requested the change is set on the message,
+     * because the permission checks of save and del are based on the requesting user
+     *
+     * the user of the object is used as fallback, because a caller may reset the message
+     * and user_message->reset() sets an empty user, which has the profile of a user without login
+     *
+     * @param user_message $usr_msg the message of the change request
+     * @return void
+     */
+    protected function set_requesting_user(user_message $usr_msg): void
+    {
+        if ($usr_msg->usr == null or $usr_msg->usr->id() <= 0) {
+            $usr_msg->usr = $this->get_user();
+        }
+    }
+
 
     /*
      * load
