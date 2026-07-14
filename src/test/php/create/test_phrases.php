@@ -820,6 +820,22 @@ class test_phrases
     }
 
     /**
+     * the config phrases have no database id, so they are added by name,
+     * because add() adds only the first phrase of a list of phrases without id
+     * @return phrase_list with the phrases to select the database change permission of an ip user in the config
+     */
+    function phrase_list_ip_user_change(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase());
+        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase());
+        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with the phrases to select the geolocation of this pod development in the config
      */
     function phrase_list_pod_point(): phrase_list

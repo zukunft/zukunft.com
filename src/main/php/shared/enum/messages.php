@@ -1852,6 +1852,8 @@ enum messages: string
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
     case USER_SYSTEM_ERRORS = 'user_system_errors';
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
+    // shown if a user without login tries to change data, but the pod does not permit that
+    case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';

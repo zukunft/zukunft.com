@@ -431,6 +431,11 @@ zukunft.com:
           not trusted: "hw-i.ru"
         country:
           trusted: "Switzerland"
+        database change:
+          ip user:
+            allowed:
+              sys-conf-value: false
+              tooltip-comment: "if false a user without login (an ip user) cannot change any data in the database; if true an ip user can change data up to the max change daily limit of the ip user"
       launch: 2026-06-07
       point:
         sys-conf-value: "50.478517691532666, 12.33581966347697"

@@ -797,6 +797,14 @@ class views
         self::CONFIRM_DEL_ID,
     ];
 
+    // system masks that add, change or delete data incl. the confirm steps
+    // used to block a user without login from any data change (see https://wiki.php.net/rfc/spread_operator_for_array )
+    const array CHANGE_MASKS_IDS = [
+        ...self::ADD_MASKS_IDS,
+        ...self::EDIT_MASKS_IDS,
+        ...self::DEL_MASKS_IDS,
+    ];
+
     // system masks that should not have the standard zukunft header
     const array NO_NAVBAR_IDS = [
         self::SIGNUP_ID,
@@ -810,8 +818,8 @@ class views
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array EDIT_DEL_MASKS_IDS = [
-        self::EDIT_MASKS_IDS,
-        self::DEL_MASKS_IDS,
+        ...self::EDIT_MASKS_IDS,
+        ...self::DEL_MASKS_IDS,
     ];
 
     // system masks that are used to modify other system masks

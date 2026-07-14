@@ -61,6 +61,7 @@ messages:
   error_update_permission_denied: "Sie sind nicht berechtigt, den Fehlerstatus zu ändern. Wenn Sie die Berechtigung möchten, fordern Sie sie bitte unter admin@zukunft.com an."
   user_system_errors: "Offene Probleme, die Sie betreffen"
   user_system_errors_none: "Es ist kein offenes Problem mit Ihnen verknüpft."
+  change_blocked_for_ip_user: "Dieser Pod erlaubt keine Änderungen ohne Anmeldung. Bitte melden Sie sich an, um Daten zu erfassen oder zu ändern."
   phrase_has: "hat"
   phrase_alias: "Alias"
   phrase_aliases: "Aliasse"

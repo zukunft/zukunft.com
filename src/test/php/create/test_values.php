@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
@@ -56,6 +57,7 @@ include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -226,6 +228,34 @@ class test_values extends test_objects
         }
         $grp = $lst->get_grp_id(false);
         return new value($this->env->usr1, $number, $grp);
+    }
+
+    /**
+     * the system configuration with only the permission that decides
+     * if a user without login (an ip user) can change data in the database
+     * the yaml true of config.yaml is imported as one and the yaml false as zero
+     *
+     * @param bool $permitted true if an ip user is allowed to change data in the database
+     * @return config_numbers the pod configuration with the ip user database change permission set
+     */
+    function config_ip_user_change(bool $permitted): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->phrase_list_ip_user_change()->get_grp_id(false);
+        $val = new value($this->env->usr1, (float)$permitted, $grp);
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst([$val]);
+        return $cfg;
+    }
+
+    /**
+     * @return config_numbers a pod configuration without any config value
+     */
+    function config_empty(): config_numbers
+    {
+        return new config_numbers($this->env->usr1);
     }
 
     /**

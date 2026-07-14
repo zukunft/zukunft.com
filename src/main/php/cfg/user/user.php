@@ -2219,12 +2219,38 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * @returns bool true if the user is known only by the ip of the request, so has no login
+     */
+    function is_ip_user(): bool
+    {
+        global $sys;
+        $result = false;
+
+        // the profile list is still empty while the code links are created on the initial setup
+        // and this is checked for every database row added, so the missing profile is not logged here
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY, false)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user is not allowed to do any changes
      */
     function is_blocked(): bool
     {
+        global $cfg;
         $result = false;
-        return false;
+
+        // a user without login can change data only if the pod admin permits it
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // during the initial setup the config is not yet loaded, so no user is blocked
+        if ($cfg != null and $this->is_ip_user()) {
+            $result = !$cfg->ip_user_can_change();
+        }
+        return $result;
     }
 
     /**

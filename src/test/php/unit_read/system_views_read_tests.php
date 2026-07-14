@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
@@ -179,9 +180,12 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
+        // the error update view changes data, so a user without login is blocked before the view is created
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        global $mtr;
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?m=66&id=1',
-            'not permitted',
+            $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=error_update contains at least', $is_connected);
         // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(

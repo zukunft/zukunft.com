@@ -313,6 +313,13 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * save
      */
 
+    /**
+     * TODO Prio 1 save the view that the user has selected for this object via the api
+     * this is still a stub that saves nothing, so the view selection of the user is lost
+     * the caller (frontend->url_to_html) even sends the new view id, which is ignored here
+     * the backend counterpart is e.g. word::save_view(int $view_id)
+     * @return user_message the message to the user if the view cannot be saved
+     */
     function save_view(): user_message
     {
         return new user_message();

@@ -1509,10 +1509,13 @@ class sql_db
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
 
         // create a dummy system user for pre initial load
+        // the system profile must be set explicit because the default profile of a new user is the ip user profile
+        // and an ip user is not permitted to change the database if the pod config does not allow it
         // TODO Prio 3 review
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
+        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
         $msg->usr = $usr_sys;
 
         // load the csv

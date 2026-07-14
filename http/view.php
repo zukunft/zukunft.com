@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the main frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -118,6 +119,16 @@ if ($db_con->is_open()) {
         // TODO Prio 1 load the config from cache if nothing has been changed
         $ui_sys->cfg = new config();
         $ui_sys->cfg->load($sys);
+
+        // block an add, edit or del request of a user without login before any change is done
+        // if this pod does not permit the changes of an ip user
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        $mask_id = $url_array[url_var::MASK] ?? 0;
+        if (in_array($mask_id, views::CHANGE_MASKS_IDS) and $usr->is_blocked()) {
+            log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
+            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $url_array = [url_var::MASK => views::START_ID];
+        }
 
         // execute the user request and POST-Redirect-GET to prevent re-submission on reload
         $sys->times->switch(system_time_type::URL_TO_ACTION);

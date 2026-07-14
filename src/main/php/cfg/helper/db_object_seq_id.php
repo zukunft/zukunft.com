@@ -1570,6 +1570,8 @@ class db_object_seq_id extends db_object
         } else {
             if ($usr_msg->usr->is_blocked()) {
                 $can_change = false;
+                // tell the user why the change has been rejected and how to solve it
+                $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
                 log_warning('adding of ' . $class . ' ' . $this->dsp_id() . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
             }
         }

@@ -412,6 +412,9 @@ class test_base
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
+    // prefix of the temp file that keeps the session cookie of a web test with a login
+    const string COOKIE_FILE_PREFIX = 'zukunft_test_session_';
+
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
@@ -4622,6 +4625,81 @@ class test_base
             }
         }
         return $is_connected;
+    }
+
+    /**
+     * request a page of this pod with a login
+     * needed to test the add, edit and del views, because these views change data
+     * and a user without login is blocked if the pod does not permit the changes of an ip user
+     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     *
+     * the admin user of the env file is used, because on a fresh setup
+     * this is the only user with a password (see sql_db->add_admin_users_from_env)
+     *
+     * @param string $url_path the url path of the requested page e.g. 'http/view.php?m=3&id=1'
+     * @return string the html page of a user with a login or an empty string if the login has not been possible
+     */
+    function web_page_with_login(string $url_path): string
+    {
+        $result = '';
+
+        if (!function_exists('curl_init')) {
+            $this->dsp_warning('the php curl module is missing, so the login tests are skipped');
+        } elseif (ADMIN_USER == '' or ADMIN_PW == '') {
+            $this->dsp_warning('the admin user is missing in the env file, so the login tests are skipped');
+        } else {
+            // the session cookie of the login is needed for the request of the page
+            $cookie_file = tempnam(sys_get_temp_dir(), self::COOKIE_FILE_PREFIX);
+
+            // after the login the start view is requested, because showing the login view again
+            // would reset the logged flag of the session
+            $login_url = THIS_URL . api::LOGIN_SCRIPT
+                . url_var::ADD . url_var::BACK . url_var::MASK . url_var::EQ . views::START_ID;
+            $login_form = [
+                url_var::USERNAME => ADMIN_USER,
+                url_var::USER_PASSWORD => ADMIN_PW,
+                url_var::POST_SUBMIT => 1
+            ];
+            $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form);
+
+            if ($login_page == '') {
+                $this->dsp_warning('the login of the admin user for the web tests has failed');
+            } else {
+                $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+            }
+
+            unlink($cookie_file);
+        }
+
+        return $result;
+    }
+
+    /**
+     * request one page of this pod and keep the session cookie for the next request
+     *
+     * @param string $url the complete url of the requested page
+     * @param string $cookie_file the file to read and write the session cookie
+     * @param array $post_form the form fields to post or an empty array for a simple get request
+     * @return string the html page or an empty string if the page cannot be requested
+     */
+    private function web_page_curl(string $url, string $cookie_file, array $post_form = []): string
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($curl, CURLOPT_TIMEOUT, self::TIMEOUT_LIMIT_LONG);
+        if ($post_form != []) {
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($post_form));
+        }
+        $page = curl_exec($curl);
+        if ($page === false) {
+            $this->dsp_warning('requesting ' . $url . ' failed due to ' . curl_error($curl));
+            $page = '';
+        }
+        curl_close($curl);
+        return $page;
     }
 
     /**

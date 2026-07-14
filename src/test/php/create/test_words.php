@@ -759,6 +759,18 @@ class test_words extends test_objects
     }
 
     /**
+     * the database id is not set, because the id of a config word depends on the import sequence
+     * and the word is only used to select a config value by name
+     * @return word allowed
+     */
+    function word_allowed(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::ALLOWED);
+        return $wrd;
+    }
+
+    /**
      * @return word geo point
      */
     function word_point(): word

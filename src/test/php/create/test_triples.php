@@ -652,6 +652,29 @@ class test_triples extends test_objects
     }
 
     /**
+     * the database id is not set, because the id of a config triple depends on the import sequence
+     * and the triple is only used to select a config value by name
+     * @return triple to select the user without login in the config
+     */
+    function triple_ip_user(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set_name(triples::IP_USER);
+        return $trp;
+    }
+
+    /**
+     * the database id is not set, see triple_ip_user
+     * @return triple to select the database change permissions in the config
+     */
+    function triple_database_change(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set_name(triples::DATABASE_CHANGE);
+        return $trp;
+    }
+
+    /**
      * @return triple "e (math const)" used for unit testing
      */
     function triple_e(): triple

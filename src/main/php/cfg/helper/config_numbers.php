@@ -96,6 +96,7 @@ class config_numbers extends value_list
     // list of words that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these words exists and are admin protected
     const array ADMIN_KEYWORDS = [
+        words::ALLOWED,
         words::AUTOMATIC,
         words::AVERAGE,
         words::BACKEND,
@@ -155,6 +156,7 @@ class config_numbers extends value_list
     // list of triples that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these triples exists and are admin protected
     const array ADMIN_KEY_TRIPLES = [
+        [words::DATABASE, words::CHANGE],
         [words::START, words::DELAY],
         [words::MAX, words::DELAY],
         [words::SYS_CONF_VALUE, words::TABLE],
@@ -526,6 +528,23 @@ class config_numbers extends value_list
             words::FRONTEND],
             language_codes::SYS
         );
+    }
+
+    /**
+     * the pod permission that decides if a user without login can change data in the database
+     * no fallback is given to get_by, because get_by would replace the false of the config value with it
+     * the yaml false is imported as the number zero, and a missing permission is as restrictive as the
+     * default of config.yaml, so only an explicit true permits the changes of an ip user
+     * @return bool false if a user without login is not permitted to change any data of this pod
+     */
+    function ip_user_can_change(): bool
+    {
+        $permitted = $this->get_by([
+            words::ALLOWED,
+            triples::IP_USER,
+            triples::DATABASE_CHANGE]
+        );
+        return $permitted != 0;
     }
 
 }

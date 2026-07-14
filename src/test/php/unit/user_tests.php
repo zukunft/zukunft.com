@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -106,6 +107,32 @@ class user_tests
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file, $t->usr_admin);
+
+
+        $t->subheader($ts . 'change permission');
+
+        // a user without login has the ip only profile, an admin has a login
+        $test_name = 'a user with the ip only profile is an ip user';
+        $usr_ip = $t_usr->user_filled($t);
+        $t->assert_true($test_name, $usr_ip->is_ip_user());
+        $test_name = 'the admin user is not an ip user';
+        $t->assert_false($test_name, $t->usr_admin->is_ip_user());
+
+        // by default config.yaml does not permit the changes of an ip user
+        $test_name = 'the ip user is blocked while the pod does not permit the changes of an ip user';
+        $t->assert_true($test_name, $usr_ip->is_blocked());
+        $test_name = 'a user with a login is never blocked by the ip user permission';
+        $t->assert_false($test_name, $t->usr_admin->is_blocked());
+
+        // the default profile of a new user object is the ip user profile
+        // so any system function that creates a user object without loading it from the database
+        // needs to set the system profile to be able to change the database (e.g. sql_db->load_db_code_link_file)
+        $test_name = 'a new user object without profile is an ip user';
+        $t->assert_true($test_name, (new user())->is_ip_user());
+        $test_name = 'the system user of the initial database setup is not blocked';
+        $usr_sys = new user();
+        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
+        $t->assert_false($test_name, $usr_sys->is_blocked());
 
     }
 
