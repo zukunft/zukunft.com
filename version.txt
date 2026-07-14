@@ -1,0 +1,7 @@
+# the program version of this git commit, so unlike .env this file is part of the release
+# same key=value format as .env, so that the scripts and the php code can read it the same way
+# the micro version of the backend program code; the fourth part is the build number, which changes with every commit
+# the minor version (the first three parts) changes only if the json format or the database structure changes
+CODE_VERSION=0.0.3.0
+# the micro version of the frontend program code
+UI_VERSION=0.0.3.0

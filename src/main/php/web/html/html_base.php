@@ -464,7 +464,7 @@ class html_base
         $result .= $this->ref(def::LINK_CC0, $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_LICENCE_UNLESS) . ' ' . "\n";
         $result .= $this->ref(def::LINK_GITHUB, $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
-        $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_CODE_VERSION . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_PAGE_VERSION . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ' . $this->ref(def::LINK_AGPL, $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE) . '. ' . "\n";
         $result .= '</' . self::P . '> ' . "\n";
 

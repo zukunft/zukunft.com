@@ -239,7 +239,9 @@ class def
      * main code const
      */
 
-    const string PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
+    // the release part of the code version from version.txt; to detect the correct update script and to mark the data export
+    // the minor version from version.txt because a json format or database change raises the minor version
+    const string PRG_VERSION = SYSTEM_MINOR_VERSION;
     const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
     const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
 

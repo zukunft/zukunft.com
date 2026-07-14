@@ -1761,5 +1761,18 @@ class sandbox_tests
         $result = $lib->dsp_bool($lib->prg_version_is_newer('0.2.3', '1.1.1'));
         $target = 'false';
         $t->assert('prg_version 0.2.3 is newer than 1.1.1', $result, $target);
+        // a missing build number is the same as a build number of zero
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.0.3.0', '0.0.3'));
+        $target = 'false';
+        $t->assert('prg_version 0.0.3.0 is newer than 0.0.3', $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.0.3', '0.0.3.0'));
+        $target = 'false';
+        $t->assert('prg_version 0.0.3 is newer than 0.0.3.0', $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.0.3.1', '0.0.3'));
+        $target = 'true';
+        $t->assert('prg_version 0.0.3.1 is newer than 0.0.3', $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.0.3', '0.0.3.1'));
+        $target = 'false';
+        $t->assert('prg_version 0.0.3 is newer than 0.0.3.1', $result, $target);
     }
 }

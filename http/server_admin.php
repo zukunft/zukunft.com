@@ -53,6 +53,9 @@ const STATE_FILE = ADMIN_DIR . 'state.json';
 const USER_WL_FILE = ADMIN_DIR . 'user_whitelist.txt';
 const IP_WL_FILE = ADMIN_DIR . 'ip_whitelist.txt';
 const ADMIN_SCRIPT = ROOT . 'script' . DIRECTORY_SEPARATOR . 'server_admin.sh';
+const ENV_FILE = ROOT . '.env';
+// the program version is part of the release, so it is not in .env but in the version file
+const VERSION_FILE = ROOT . 'version.txt';
 
 // idle timeout for an authenticated session, in seconds
 const SESSION_TTL = 1800;
@@ -338,7 +341,9 @@ function pod_subtitle(string $pod_name, string $pod_url): string
 session_name('zu_srv_admin');
 session_start();
 
-$env = read_env(ROOT . '.env');
+$env = read_env(ENV_FILE);
+// the program version is not in .env but in the version file, because it is part of the release
+$version = read_env(VERSION_FILE);
 $admins = read_admins($env);
 $ip_list = trim($env['SERVER_ADMIN_IP'] ?? '');
 
@@ -586,8 +591,8 @@ echo page_head('Server admin');
         <p>
             environment <strong><?= h($env['ENV'] ?? '') ?></strong> &middot;
             branch <strong><?= h($env['BRANCH'] ?? '') ?></strong> &middot;
-            code version <strong><?= h($env['CODE_VERSION'] ?? '') ?></strong> &middot;
-            ui version <strong><?= h($env['UI_VERSION'] ?? '') ?></strong>
+            code version <strong><?= h($version['CODE_VERSION'] ?? '') ?></strong> &middot;
+            ui version <strong><?= h($version['UI_VERSION'] ?? '') ?></strong>
         </p>
         <p>
             source repository <a href="<?= h($repo_url) ?>" target="_blank" rel="noopener noreferrer"><?= h($repo_url) ?></a>
