@@ -326,6 +326,30 @@ the legacy controller http_old/formula_del.php has been replaced by the formula_
 
 tell the user in the formula del view (m=26) if the formula is only excluded and not removed: the old controller asked 'Exclude "<name>"?' instead of 'Delete "<name>"?' if formula::is_used() was true, because a formula that is still used by another user or by a result can only be excluded, not deleted. The new view always says 'delete'. Show the exclude wording (and the reason) if the object is still in use, best as a shared solution for all del views, because the same applies e.g. to the view del view (see the section above) and to the word del view, where web/word/word.php::input_valid already warns with msg_id::DELETE_IN_USE via is_in_use
 
+### value add view (missing parts of the retired http_old/value_add.php)
+
+the legacy controller http_old/value_add.php has been replaced by the value_add view called via /http/view.php?m=18 (views::VALUE_ADD_ID), which the 'add value' button already uses (web/html/button.php::add_value with url_new(views::VALUE_ADD_ID)). The new form has the value, the description, the source, the value type, the view style, the default view, the share and the protection type and it saves through the confirm step, so it has more fields than the old controller. But the phrases of the value, which are its key, are only a free text 'group' field, and the conversion of the user entry is lost.
+
+give the value add view (m=18) the phrases of the new value: the old controller took them from the url ('phrase1', 'phrase2', ... with the matching 'type1', 'type2', ... to preselect the phrase type, or 'phrases' as a comma separated id list) and preloaded the value with them, so that 'add a new value similar to <phrase list>' really preselected the phrases of the calling page. The new view has only the free text field url_var::GROUP_NAME ('gn'), and the prefill is switched off in the button itself (web/html/button.php::add_value, '// TODO Prio 2 activate  //$url_phr = $phr_lst->id_url_long();'). Add a phrase selector to the value add form, fill it from the url of the calling page and activate the prefill in the button
+
+call the value conversion again when a value is saved: cfg/value/value_base.php::convert() (it removes spaces and thousand separators from the user entry and sets the number) is no longer called by any live code, only the retired controllers called it. Check where the user entry of the value form (url_var::VALUE 'v') is converted to the database number today, add the conversion to the write path of the value if it is missing and add a test with a user entry like "1'000"
+
+save the source of a value as the new default source of the user: the old controller stored the selected source on the user (user::src) and saved the user, so that the next value of the same user got the same source suggested. The new value add view has the source selector, but does not remember the choice
+
+### value edit view (missing parts of the retired http_old/value_edit.php)
+
+the legacy controller http_old/value_edit.php has been replaced by the value_edit view called via /http/view.php?m=19 (views::VALUE_EDIT_ID), which the 'change value' button already uses (web/value/value.php::VIEW_EDIT_ID). The new form has the same fields as the value add view (value, description, source, value type, view style, default view, share and protection type) and it saves through the confirm step. The old controller had no caller left in the program code, only in commented out blocks of the value tests (and in the dead class web/user/user_display_old.php, see above). The missing parts are the same as for the value add view plus the check of an empty value.
+
+show and change the phrases of a value in the value edit view (m=19): the old controller loaded the value by id including its phrases and let the user add or remove a phrase ('phrase1', 'phrase2', ... with the matching 'type1', 'type2', ...), showing the form again after each change. The new view has only the free text field url_var::GROUP_NAME ('gn'), which is even empty in the rendered page, so the phrases of a value can neither be seen nor changed. Solve it together with the phrase selector of the value add view (see the section above)
+
+add web/value/value.php::input_valid, which does not exist today, so an empty number is saved without any warning: the old controller answered an empty value with 'An empty number should not be saved. Please delete/exclude the value instead.' and used the value from the database as a fallback if only the phrases had been changed. Add both, with a negative test for the empty value
+
+### value del view (missing parts of the retired http_old/value_del.php)
+
+the legacy controller http_old/value_del.php has been replaced by the value_del view called via /http/view.php?m=20 (views::VALUE_DEL_ID), which the 'delete value' button already uses (web/value/value.php::VIEW_DEL). The new view asks for the confirmation and writes the delete through the confirm step. The old controller had no caller left in the program code, only in the commented out block of src/test/php/unit_ui/value_ui_tests.php. What is missing is the phrases of the value in the question to the user.
+
+show the phrases of the value in the value del view (m=20): the old controller loaded them (value::load_phrases) and asked '<number> for <phrase names>?', while the new view shows only the number, e.g. '3.14', so the user cannot see which of his values he is about to delete. Add the phrase list of the value to the delete question (and the same for the value edit view, see the section above). Note that a value has no name, so unlike a word the number alone does not identify it
+
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
