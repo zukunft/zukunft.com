@@ -94,6 +94,11 @@ class application
     {
         global $sys;
         global $mtr;
+        // the config and db_cache loaded below read the db connection from the
+        // global $db_con (e.g. db_cache::load_by_type_id), so the connection
+        // opened here must populate that global and not just a local variable,
+        // otherwise every api request fails with 'sql_creator() on null'
+        global $db_con;
 
         // init system
         $code_name = 'api/' . $code_name;
@@ -137,6 +142,12 @@ class application
     function start_api(string $code_name): sql_db
     {
         global $sys;
+        // the config and db_cache loaded below read the db connection from the
+        // global $db_con (e.g. db_cache::load_by_type_id), so the connection
+        // opened here must populate that global and not just a local variable,
+        // otherwise every api request fails with 'sql_creator() on null'
+        // TODO Prio 2 split from the backend
+        global $db_con;
 
         $code_name = 'api/' . $code_name;
         log_debug($code_name . ' ..');

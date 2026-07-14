@@ -1408,16 +1408,28 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * set the ip of the
-     * @return string the ip address of the active user
+     * @return bool true if the code runs on the command line (install, cron or the
+     *              unit tests), where the passwordless system admin ip fallback is
+     *              allowed; false for any web request, because a real HTTP request
+     *              always runs under a web SAPI and never reports 'cli'
+     */
+    private function is_cli(): bool
+    {
+        return PHP_SAPI == 'cli';
+    }
+
+    /**
+     * set the ip address of the active user from the request
      */
     private function get_ip(): void
     {
         if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
             $this->ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
         }
-        // TODO Prio 1 switch this off!!
-        if ($this->ip_addr == null) {
+        // only the command line (install / cron / unit tests) may fall back to the
+        // passwordless system admin ip; a web request without REMOTE_ADDR must never
+        // become the ip admin, so its ip stays empty and it is treated as anonymous
+        if ($this->ip_addr == null and $this->is_cli()) {
             $this->ip_addr = users::SYSTEM_ADMIN_IP;
         }
     }
@@ -1463,19 +1475,29 @@ class user extends db_id_object_non_sandbox
         if ($this->id <= 0 and $result == '') {
             // else use the IP address (for testing don't overwrite any testing ip)
             log_debug('load by ip addr ' . $this->ip_addr);
-            $this->load_by_ip($this->ip_addr);
+            $req_ip = $this->ip_addr;
+            $this->load_by_ip($req_ip);
+            // ip equality must never authenticate a privileged account over the web:
+            // a real admin logs in via a session (checked above), so the reserved
+            // system or admin user matched here by ip alone would be a passwordless
+            // grant. only the command line (install / unit tests) may run as the ip
+            // admin; over the web drop the account and continue as an anonymous ip user
+            if ($this->id > 0 and !$this->is_cli()
+                and ($this->id == users::SYSTEM_ID or $this->id == users::SYSTEM_ADMIN_ID)) {
+                log_warning('ip based system access blocked for ip ' . $req_ip);
+                $this->reset();
+                $this->ip_addr = $req_ip;
+            }
             if ($this->id <= 0) {
                 // use the ip address as the username and add the user
                 $this->name = $this->ip_addr;
 
-                // allow to fill the database only if a local user has logged in
-                if ($this->name == users::SYSTEM_ADMIN_IP) {
-
-                    // create the main system user upfront direct from the code
-                    // but only if needed and allowed which is only the case directly after the database structure creation
-                    // TODO switch this fallback off because it should anyway never be called
+                // create the main system user upfront directly from the code, but only
+                // on the command line right after the database structure creation; a web
+                // request must never bootstrap the passwordless admin, so it only adds
+                // an anonymous ip user
+                if ($this->name == users::SYSTEM_ADMIN_IP and $this->is_cli()) {
                     $this->create_system_user($usr_msg);
-
                 } else {
                     $this->save_user($usr_msg);
                 }

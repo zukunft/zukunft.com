@@ -801,6 +801,13 @@ class triple extends sandbox_code_id
      */
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list,
+        // like dsp_type_selector which reads $ui_sys->typ_lst_cache directly
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
@@ -852,6 +859,12 @@ class triple extends sandbox_code_id
         string      $style = view_styles::COL_SM_3
     ): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         if ($this->verb != null) {
             $id = $this->get_verb()->id();
         } else {
@@ -1032,7 +1045,7 @@ class triple extends sandbox_code_id
             if ($title == '') {
                 $title = $this->name();
             }
-            $result = $html->ref($url, $lnk_phr->name(), $title);
+            $result = $html->ref($url, $html->esc($lnk_phr->name()), $title);
         }
         return $result;
     }
@@ -1098,7 +1111,8 @@ class triple extends sandbox_code_id
      */
     function display_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
+        $html = new html_base();
+        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $html->esc($this->name()));
     }
 
 }

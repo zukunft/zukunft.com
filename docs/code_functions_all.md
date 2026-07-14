@@ -5224,6 +5224,7 @@
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- ref_view - section for function ref_view not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- img - section for function img not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
+    \-- esc - section for function esc not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -7367,6 +7368,8 @@
         \-- html_base - create the html code to show an object
     \-- img
         \-- html_base - create the html code to show an object
+    \-- esc
+        \-- html_base - escape user settable text so it is shown literally and cannot inject html
     \-- span
         \-- html_base - @param string $text the text that should be formatted
     \-- sup

@@ -439,7 +439,8 @@ class formula extends sandbox_code_id
     function edit_link(?string $back = ''): string
     {
         $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
-        return (new html_base())->ref($url, $this->name(), $this->name());
+        $html = new html_base();
+        return $html->ref($url, $html->esc($this->name()), $this->name());
     }
 
 
@@ -486,6 +487,12 @@ class formula extends sandbox_code_id
      */
     function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->frm_typ->selector($form);
     }
 
@@ -496,6 +503,12 @@ class formula extends sandbox_code_id
      */
     public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
             $used_formula_type_id = $typ_lst->frm_typ->default_id();
@@ -733,7 +746,7 @@ class formula extends sandbox_code_id
             $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
             $form_name = views::FORMULA_EDIT;
-            $result .= $html->dsp_text_h2('Formula "' . $this->name . '"');
+            $result .= $html->dsp_text_h2('Formula "' . $html->esc($this->name) . '"');
         }
         $result .= '<div class="row">';
 

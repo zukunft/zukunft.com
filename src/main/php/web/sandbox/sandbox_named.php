@@ -292,7 +292,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     function name_tip(): string
     {
         $html = new html_base();
-        return $html->span($this->name(), '', $this->get_description());
+        // escape the user settable name so it cannot inject markup; the
+        // description goes into the title attribute, which span() escapes
+        return $html->span($html->esc($this->name()), '', $this->get_description());
     }
 
     /**
@@ -305,7 +307,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->get_description(), $style);
+        // escape the user settable name (link body); ref() escapes the
+        // description that becomes the title attribute
+        return $html->ref($url, $html->esc($this->name()), $this->get_description(), $style);
     }
 
 

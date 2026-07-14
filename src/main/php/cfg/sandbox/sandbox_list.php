@@ -383,7 +383,15 @@ class sandbox_list extends list_db_write
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_lst = $db_con_used->get($qp);
-            $result = $this->rows_mapper($db_lst, $load_all);
+            // get() returns false only when the sql query itself failed (an empty
+            // result is []), so guard it here: log the failed load and report
+            // 'nothing loaded' instead of passing false into rows_mapper(?array),
+            // which would abort the whole request with a TypeError
+            if ($db_lst === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
+                $result = $this->rows_mapper($db_lst, $load_all);
+            }
         }
         return $result;
     }

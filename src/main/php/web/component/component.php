@@ -336,6 +336,12 @@ class component extends sandbox_code_id
      */
     function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -404,6 +410,12 @@ class component extends sandbox_code_id
      */
     function style_text(?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $style_name = '';
         if ($typ_lst->msk_sty == null) {
             $this->log_err('msk_sty are empty');
@@ -514,6 +526,12 @@ class component extends sandbox_code_id
      */
     function type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -529,6 +547,12 @@ class component extends sandbox_code_id
      */
     function style_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_sty->default_id();
@@ -548,6 +572,12 @@ class component extends sandbox_code_id
      */
     private function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->cmp_typ->selector($form);
     }
 
@@ -587,7 +617,7 @@ class component extends sandbox_code_id
             $header = $html->text_h2('Create a view element');
         } else {
             $script = views::COMPONENT_EDIT;
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         // only the multi-form test page passes a counter; production keeps name="k"
@@ -638,7 +668,7 @@ class component extends sandbox_code_id
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit the view element "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
@@ -736,7 +766,7 @@ class component extends sandbox_code_id
         } else {
             $script = views::COMPONENT_EDIT;
             $fld_ext = '';
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         $hidden_fields .= $html->form_hidden("back", $back);

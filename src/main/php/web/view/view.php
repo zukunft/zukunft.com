@@ -401,7 +401,7 @@ class view extends view_exe
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit view "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
@@ -474,6 +474,12 @@ class view extends view_exe
      */
     private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst = null): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
         return $typ_lst->msk_typ->selector($form);
@@ -595,7 +601,7 @@ class view extends view_exe
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();;
-            $view_name = $msk->name();
+            $view_name = $html->esc($msk->name());
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
@@ -667,7 +673,7 @@ class view extends view_exe
             $url .= '&word=' . $wrd->id();
         }
         $url .= '&back=' . $back;
-        return $html->ref($url, $this->name);
+        return $html->ref($url, $html->esc($this->name));
     }
 
 }

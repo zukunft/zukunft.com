@@ -741,6 +741,13 @@ class word extends sandbox_code_id
      */
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list,
+        // like dsp_type_selector above which reads $ui_sys->typ_lst_cache directly
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
@@ -956,11 +963,11 @@ class word extends sandbox_code_id
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
                     $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
-                    $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
+                    $title .= ' (' . $html->ref($url, $html->esc($is_part_of->name())) . ')';
                 }
             }
             $url = $this->url_edit();
-            $title .= $html->ref($url, $html->span($this->name(), styles::STYLE_GLYPH), 'Rename word');
+            $title .= $html->ref($url, $html->span($html->esc($this->name()), styles::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
 
@@ -1010,7 +1017,7 @@ class word extends sandbox_code_id
         $result = '';
 
         if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields = $html->form_hidden("id", $this->id());
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
@@ -1115,6 +1122,11 @@ class word extends sandbox_code_id
         */
         global $ui_sys;
         $usr = $ui_sys->usr;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         // TODO add $id to the parameters
         $result = $typ_lst->vrb->selector($form);
 
