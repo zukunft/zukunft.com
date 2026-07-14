@@ -69,7 +69,6 @@ class api
     const string LOGIN_ACTIVATE_FORWARD = DIRECTORY_SEPARATOR . 'login_activate';
     const string RESET_FORWARD = DIRECTORY_SEPARATOR . 'reset';
     const string LOGOUT_FORWARD = DIRECTORY_SEPARATOR . 'logout';
-    const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
