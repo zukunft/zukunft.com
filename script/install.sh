@@ -111,6 +111,9 @@ initEnvironment() {
 
 readVar() {
     set -o allexport; source .env; set +o allexport
+    # fallback for an older .env that predates the separate git dir: keep the git
+    # repository next to, but outside, the web root so /.git/* stays unreachable
+    ZUKUNFT_GIT_DIR="${ZUKUNFT_GIT_DIR:-${WWW_ROOT%/}.git}"
 }
 
 checkEnv() {
@@ -236,7 +239,12 @@ downloadZukunft() {
     echo -e "\n${GREEN}Download selected zukunft.com branch ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    # keep the git repository (objects + full history) OUT of the web root: with
+    # --separate-git-dir the working tree stays at $WWW_ROOT but .git becomes a
+    # one-line file pointing at $ZUKUNFT_GIT_DIR, so /.git/* cannot be downloaded
+    # while "git -C $WWW_ROOT pull|checkout" (used by the update-program flow)
+    # still works
+    git clone -b "$BRANCH" --separate-git-dir="$ZUKUNFT_GIT_DIR" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
     # copy the .env file to the webserver
     cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
 
@@ -326,7 +334,8 @@ installZukunftInDocker() {
     echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    # keep .git out of the web root, see downloadZukunft above
+    git clone -b "$BRANCH" --separate-git-dir="$ZUKUNFT_GIT_DIR" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
 
     cd "$WWW_ROOT" || exit
 
