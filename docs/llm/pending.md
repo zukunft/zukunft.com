@@ -4,8 +4,6 @@
 
 ## high prio
 
-check if config.yaml contains a parameter that prevents ip user from doing database changes and if not, add it
-
 check that if the ip user cannot do database changes the actually prevents all database changes and if not suggest the steps to fix it
 
 repeat a general security check and list the most urgent things to do before go live

@@ -117,6 +117,11 @@ class db_object_seq_id extends db_object
     // *_SQL_TYP is the sql data type used for the field
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
+    // the requested change used for the log message of the permission checks
+    const string ACTION_ADD = 'adding';
+    const string ACTION_CHANGE = 'changing';
+    const string ACTION_DELETE = 'deleting';
+
 
     /*
      * construct and map
@@ -1552,6 +1557,38 @@ class db_object_seq_id extends db_object
     }
 
     /**
+     * true if the requesting user is permitted to change any data of this pod
+     * the base check for adding, changing and deleting an object
+     * a user without login (an ip user) is blocked if this pod does not permit the changes of an ip user
+     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     *
+     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param string $action the requested change used for the log message e.g. 'adding'
+     * @return bool true if the user is permitted to change data
+     */
+    private function user_can_change(user_message $usr_msg, string $action): bool
+    {
+        $can_change = false;
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+
+        if ($usr_msg->usr == null) {
+            // the calling function adds the message for the user, e.g. db_add adds NO_UPDATE_PRIVILEGES
+            // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
+            log_warning('user missing while ' . $action . ' of ' . $class);
+        } elseif ($usr_msg->usr->is_blocked()) {
+            // tell the user why the change has been rejected and how to solve it
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            log_warning($action . ' of ' . $class . ' ' . $this->dsp_id()
+                . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
+        } else {
+            $can_change = true;
+        }
+
+        return $can_change;
+    }
+
+    /**
      * true if the requesting user is allowed to add this object
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
@@ -1559,48 +1596,60 @@ class db_object_seq_id extends db_object
      */
     function can_be_added_by(user_message $usr_msg): bool
     {
-        $can_change = true;
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-
-        // default is that all user can add data if they are not blocked
-        if ($usr_msg->usr == null) {
-            $can_change = false;
-            log_warning('user missing while adding of ' . $class);
-        } else {
-            if ($usr_msg->usr->is_blocked()) {
-                $can_change = false;
-                // tell the user why the change has been rejected and how to solve it
-                $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
-                log_warning('adding of ' . $class . ' ' . $this->dsp_id() . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
-            }
-        }
-
-        return $can_change;
+        // any user that is not blocked can add data
+        return $this->user_can_change($usr_msg, self::ACTION_ADD);
     }
 
     /**
      * true if the requesting user is allowed to change this object
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
-     * @param db_object_seq_id $db_rec the object that is loaded from the database to project single field changes
+     * @param db_object_seq_id|null $db_rec the object that is loaded from the database to project single field changes
      * @return bool true if the is allowed to change the object
      */
-    function can_be_changed_by(user_message $usr_msg, db_object_seq_id $db_rec): bool
+    function can_be_changed_by(user_message $usr_msg, ?db_object_seq_id $db_rec = null): bool
+    {
+        return $this->can_be_modified_by($usr_msg, self::ACTION_CHANGE);
+    }
+
+    /**
+     * true if the requesting user is allowed to delete or exclude this object
+     * a delete needs the same permissions as a change of an existing object
+     *
+     * @param user_message $usr_msg the user who has requested the deletion and the object to collect the potential reject messages
+     * @return bool true if the is allowed to delete the object
+     */
+    function can_be_deleted_by(user_message $usr_msg): bool
+    {
+        return $this->can_be_modified_by($usr_msg, self::ACTION_DELETE);
+    }
+
+    /**
+     * true if the requesting user is allowed to change or delete an existing object
+     *
+     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param string $action the requested change used for the log message e.g. 'deleting'
+     * @return bool true if the user is allowed to change the existing object
+     */
+    private function can_be_modified_by(user_message $usr_msg, string $action): bool
     {
         $can_change = false;
         $lib = new library();
         $class = $lib->class_to_name($this::class);
 
-        if ($usr_msg->usr === null) {
-            log_err('user not set in user_message', 'can_be_changed_by');
-            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            // if the user has a unique id e.g. if at least the email is known
-            // the user if potentially allowed to change the object
-            if ($usr_msg->usr->is_unique()) {
+        if ($this->user_can_change($usr_msg, $action)) {
+            // an existing row can be changed by a user with a login (so with a unique id e.g. the email)
+            // or by an ip user, if this pod permits the changes of an ip user (checked by user_can_change)
+            if ($usr_msg->usr->is_unique() or $usr_msg->usr->is_ip_user()) {
                 $can_change = true;
                 log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $usr_msg->usr->dsp_id());
+            } else {
+                $usr_msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
+                    msg_id::VAR_CLASS_NAME => $class,
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_USER_NAME => $usr_msg->usr->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_msg->usr->profile_name()
+                ]);
             }
         }
 

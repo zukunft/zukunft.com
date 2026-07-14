@@ -56,6 +56,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -161,6 +163,16 @@ class application
         // preload all types from the database
         // TODO Prio 3 try to speed up
         $sys->load_type_lists($db_con);
+
+        // load the system configuration, because the api needs to know
+        // e.g. if this pod permits the database changes of a user without login
+        global $cfg;
+        $usr_sys = new user();
+        $usr_sys->id = users::SYSTEM_ID;
+        $usr_sys->name = users::SYSTEM_NAME;
+        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
+        $cfg = new config_numbers($usr_sys);
+        $cfg->load_cfg(null, $usr_sys);
 
         return $db_con;
     }
