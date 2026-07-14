@@ -517,6 +517,10 @@ class html_base
      */
     function ref_view(int $msk_id, int $id, string $name, string $par = ''): string
     {
+        // $name is always the plain object name shown as the link text, so
+        // escape it here to stop a name like '<img src=x onerror=...>' from
+        // running when another user browses or searches for the object
+        $name = $this->esc($name);
         if ($par == '') {
             return $this->ref(api::MAIN_SCRIPT
                 . '?' . url_var::MASK . '=' . $msk_id
@@ -533,12 +537,24 @@ class html_base
     {
         $result = '<' . self::IMG
             . ' ' . self::SRC . '="' . $img_path . '"'
-            . ' ' . self::ALT . '="' . $alt . '"';
+            . ' ' . self::ALT . '="' . htmlspecialchars($alt, ENT_QUOTES) . '"';
         if ($class !== '') {
             $result .= ' ' . self::CLASS_HTML . '="' . $class . '"';
         }
         $result .= '>';
         return $result;
+    }
+
+    /**
+     * escape user settable text so it is shown literally and cannot inject html
+     * (e.g. a word, triple, formula or verb name or description placed into the
+     * html body); the element helpers escape values that go into an attribute
+     * @param string|null $text the raw user text
+     * @return string the text safe to place between html tags
+     */
+    function esc(?string $text): string
+    {
+        return htmlspecialchars($text ?? '', ENT_NOQUOTES);
     }
 
     /**
@@ -553,7 +569,7 @@ class html_base
             $result .= ' ' . html_names::HTML_CLASS . '="' . $style . '"';
         }
         if ($title != '') {
-            $result .= ' ' . html_names::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+            $result .= ' ' . html_names::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '" ' . self::TOGGLE_TOOLTIP;
         }
         $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
@@ -1312,7 +1328,7 @@ class html_base
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
                 $url = $this->url_new($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
-                $result .= $this->ref($url, $item->name());
+                $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }

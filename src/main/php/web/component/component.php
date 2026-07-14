@@ -587,7 +587,7 @@ class component extends sandbox_code_id
             $header = $html->text_h2('Create a view element');
         } else {
             $script = views::COMPONENT_EDIT;
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         // only the multi-form test page passes a counter; production keeps name="k"
@@ -638,7 +638,7 @@ class component extends sandbox_code_id
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit the view element "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
@@ -736,7 +736,7 @@ class component extends sandbox_code_id
         } else {
             $script = views::COMPONENT_EDIT;
             $fld_ext = '';
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         $hidden_fields .= $html->form_hidden("back", $back);

@@ -189,8 +189,12 @@ class change_log_named extends change_log
 
         $time_text = date_format($this->change_time, $ui_sys->cfg->date_time_format());
         if (!$user_changes) {
-            $time_text .= ' by ' . $this->usr->name;
+            $time_text .= ' by ' . $html->esc($this->usr->name);
         }
+        // the old and new value are user settable (e.g. a word name or a
+        // description), so escape them before they reach the history table
+        $txt_old = $html->esc($txt_old);
+        $txt_new = $html->esc($txt_new);
         $html_text .= $html->td($time_text);
         if ($condensed) {
             $html_text .= $html->td($txt_fld . ': ' . $txt_new);

@@ -18,25 +18,25 @@ findings of the security check on 2026-07-14, ordered by exploitability. Each li
 
 BLOCKER: GET /api/user?id= (or ?name= / ?email=) returns the api_json of any user without authentication. api/user/index.php gates only on '$usr->id > 0', which is always true because an anonymous visitor gets an auto created ip user, and cfg/user/user.php::api_json_array (around line 665) includes email, ip_addr, profile_id and the activation_key. This is user enumeration plus account takeover (the activation key feeds the activation flow). Require an admin or the user himself, and never send activation_key or ip_addr over the api. The file header already carries the TODO for it
 
-BLOCKER: stored xss via the name and the description of a word, triple, formula or verb, cross user and fired on passive viewing. The element body html helpers interpolate their content raw: html_base.php::ref (the link body, around line 504), ::span (the body and the title attribute, around line 556) and ::text_h (around line 806). A word named '<img src=x onerror=...>' runs in any other user session that browses or searches for it. Escape at these render helpers (ref, span, text_h, td) or at every name() / get_description() display call
-
-fix the site wide csrf gap: the token check in frontend.php (around line 291) runs only in an 'elseif (!empty($url_arr[SESSION_TOKEN]))', so a request that omits the token is not rejected, and the crud forms do not send the token anyway (only the login and signup forms do). Make the check fail closed - require a valid token for every write of views::CHANGE_MASKS_IDS - and emit the token as a hidden field in every crud form. Combined with the stored xss above an attacker can csrf a victim into creating an object that carries the xss payload
+fix the site wide csrf gap: the token check in frontend.php (around line 291) runs only in an 'elseif (!empty($url_arr[SESSION_TOKEN]))', so a request that omits the token is not rejected, and the crud forms do not send the token anyway (only the login and signup forms do). Make the check fail closed - require a valid token for every write of views::CHANGE_MASKS_IDS - and emit the token as a hidden field in every crud form. without it an attacker can csrf a victim into creating or changing an object
 
 close the api authorization bypass: the 'ip user may not change data' control lives only in http/view.php (around line 127, is_blocked on CHANGE_MASKS_IDS); the rest endpoints (api/word/index.php -> sandbox save/del) never call is_blocked, so config_numbers::ip_user_can_change (default false) is ignored on POST / PUT / DELETE /api/word. Enforce the block centrally in the model save/del, not per entry point, and add a negative test that an ip user write via the api is refused
 
-fix the reflected xss on the search pattern: url_var::PATTERN flows unescaped through shared/library.php::msg_var_replace (around line 1313, plain str_replace) into html_base::text_h2, so /http/view.php?m=67&pattern=<script>... executes. Escape the pattern before it reaches the html (solve together with the stored xss by escaping in the render helper)
-
-get the cleartext login passwords out of the deployed .env: .env lines 60-73 hold real plaintext ADMIN_PW / USER_PW etc. and script/install.sh line 241 copies .env into $WWW_ROOT. Verified good: .env is gitignored and never committed and .env.example is sanitised, so this is a deployment issue not a repo leak. Hash the login passwords at setup and store .env outside the docroot
+fix the reflected xss on the search pattern: url_var::PATTERN flows unescaped through shared/library.php::msg_var_replace (around line 1313, plain str_replace) into html_base::text_h2, so /http/view.php?m=67&pattern=<script>... executes. Escape the pattern before it reaches the html (the stored xss escape helper html_base::esc can be reused here)
 
 fix the session fixation on signup and activation: only cfg/user/user.php::login regenerates the session id, the signup (frontend.php around line 1038) and the activation (around line 1128) auto login paths do not, and session.use_strict_mode is not set, so a planted session id becomes authenticated. Call session_regenerate_id(true) on every authentication transition
-
-harden the session cookie and the transport: there is no session_set_cookie_params / ini_set for cookie_httponly, cookie_secure, cookie_samesite or use_strict_mode anywhere (every session_start inherits the php.ini defaults), and there is no https redirect and no HSTS. Set the cookie flags before session_start and enforce tls at the web server. This amplifies the xss, csrf and fixation findings above
 
 remove the profile_id privilege escalation: cfg/user/user.php::api_mapper (around line 480) copies profile_id straight from the request json without a can_set_profile check (the safe setter set_profile enforces it but is only used on the import path), and the update gate lets a user change his own record, so a user could set his own record to the admin profile. Route the api path through set_profile / add the can_set_profile check before the save, with a negative test
 
 add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
 
-fix the idor on ownerless objects: cfg/sandbox/sandbox.php::can_change (around line 1596) returns true when owner_id <= 0, so any shared or seed object whose owner was never set is writable by every user including the anonymous ip user, and the change hits the standard row seen by all users. Decide the intended rule (only an admin may change an ownerless standard object) and enforce it, and check how much seed data ships with owner_id = 0
+fix the idor on ownerless objects: cfg/sandbox/sandbox.php::can_change (around line 1596) returns true when owner_id <= 0, so any shared or seed object whose owner was never set is writable by every user including the anonymous ip user, and the change hits the standard row seen by all users. Every non IP user can take catch the ownership of ownerless object but not IP users
+
+
+
+get the cleartext login passwords out of the deployed .env: .env lines 60-73 hold real plaintext ADMIN_PW / USER_PW etc. and script/install.sh line 241 copies .env into $WWW_ROOT. Verified good: .env is gitignored and never committed and .env.example is sanitised, so this is a deployment issue not a repo leak. Hash the login passwords at setup and store .env outside the docroot
+
+harden the session cookie and the transport: there is no session_set_cookie_params / ini_set for cookie_httponly, cookie_secure, cookie_samesite or use_strict_mode anywhere (every session_start inherits the php.ini defaults), and there is no https redirect and no HSTS. Set the cookie flags before session_start and enforce tls at the web server. This amplifies the xss, csrf and fixation findings above
 
 reduce the login and reset user enumeration: cfg/user/user.php::login (around line 817) returns a different message for an unknown user than for a wrong password and skips the bcrypt computation for an unknown user (a timing oracle), and the reset flow (frontend.php around line 1288) confirms which emails are registered. Use a generic message for both cases and always run a password_verify against a dummy hash. Also store the reset key hashed, shorten its one day validity and compare it with hash_equals instead of '==='
 
@@ -140,7 +140,6 @@ for big screens add more data so that the screen is filled or increase the font 
 
 check why the database loading takes longer if more data ist added and increase the cache usage
 
-
 ### workflow
 
 add a formula del workflow similar to delete the added formula similar to src/test/resources/web/html/workflow/del_triple_wf6
@@ -169,7 +168,6 @@ reduce the number of load and save calls
 
 why does src/test/resources/web/html/workflow/change_word_wf2/wf2_show.html contain 'the name of the word must not be empty'? I guess this should not be the case.
 
-
 check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function  
 
 check that save() never fails add() silently
@@ -188,10 +186,7 @@ use function like src/main/php/shared/helper/Translator.php::text_db_table and _
 
 create function like src/main/php/shared/helper/Translator.php::text_db_field for alle types that are part of src/main/resources/db_code_links
 
-
-
 see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeated.
-
 
 add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
 
@@ -214,7 +209,6 @@ create a const for all db field comments e.g. move 'the user-specific geolocatio
 fill in all placeholder
 
 add all missing
-
 
 add a '8' url prefix that is used to include the database values in the url for the url_to_html function to confirm the changes
 
@@ -246,7 +240,6 @@ a pure html frontend tries retries after an increasing time period to get the up
 a js frontend can use subscribe to get the updated cache data
 
 additional the cache can be updated by time or by trigger words without frontend request
-
 
 ### word frontend
 
@@ -502,8 +495,6 @@ add the licence to the subtitle if not the standard cc0
 
 in the footer add dynamically other licences if used
 
-
-
 ### backend
 
 in src/main/php/shared/json_fields.php rename 'view-validation' to 'view_validations' and 'calc-validation' to 'calc_validations' and 'value-list' to 'value_list' and 'ip-blacklist' to 'ip_blacklist' to always use '_" instead of '-' for json field names 
@@ -531,8 +522,6 @@ add a job to create a wikipedia article
 if type_list_check fails update the json and reload the config and try again
 
 create a phrase_value_key table that contains the phrase_id and the value_table_id and the value key for a fast (db index based) selection of all values related to a phrase
-
-
 
 add the default date format 'd-m-Y H:i' to the config.yaml that the user can overwrite to display a date and use the config value where 'd-m-Y H:i' is used until now. For any system tests used a fixed const to replace 'd-m-Y H:i'
 
@@ -615,8 +604,6 @@ scan of 2026-06-13: the frontend must never open or query the database (see docs
 after each step src/main/php/web must stay free of `new sql_db` / `new sql_creator` / `global $db_con`.
 
 ### fix error and warnings
-
-
 
 ### general
 

@@ -439,7 +439,8 @@ class formula extends sandbox_code_id
     function edit_link(?string $back = ''): string
     {
         $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
-        return (new html_base())->ref($url, $this->name(), $this->name());
+        $html = new html_base();
+        return $html->ref($url, $html->esc($this->name()), $this->name());
     }
 
 
@@ -733,7 +734,7 @@ class formula extends sandbox_code_id
             $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
             $form_name = views::FORMULA_EDIT;
-            $result .= $html->dsp_text_h2('Formula "' . $this->name . '"');
+            $result .= $html->dsp_text_h2('Formula "' . $html->esc($this->name) . '"');
         }
         $result .= '<div class="row">';
 

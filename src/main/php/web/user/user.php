@@ -583,7 +583,7 @@ class user extends db_object
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->get_description(), $style);
+        return $html->ref($url, $html->esc($this->name()), $this->get_description(), $style);
     }
 
     /**
@@ -722,7 +722,7 @@ class user extends db_object
 
         if ($this->id > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
-            $header = $html->text_h2('User "' . $this->name . '"');
+            $header = $html->text_h2('User "' . $html->esc($this->name) . '"');
             $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
             $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);

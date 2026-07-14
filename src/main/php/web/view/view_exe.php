@@ -397,7 +397,7 @@ class view_exe extends view_base
         } else {
             $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit view "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
@@ -602,7 +602,7 @@ class view_exe extends view_base
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();
-            $view_name = $msk->name();
+            $view_name = $html->esc($msk->name());
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
