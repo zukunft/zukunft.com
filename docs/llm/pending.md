@@ -274,6 +274,34 @@ the 'switch' and 'view' buttons of the view box are also rendered for a triple (
 
 the old controller answered an empty name with the hint 'An empty name should never be saved. Please delete the word instead.'; the new flow only shows the generic msg_id::NAME_EMPTY warning of sandbox_named::input_valid. Add the hint to delete the object instead to the empty name warning of an edit view (not of an add view)
 
+### view add view (missing parts of the retired http_old/view_add.php)
+
+the legacy controller http_old/view_add.php has been replaced by the view_add view called via /http/view.php?m=30 (views::VIEW_ADD_ID), which the 'add view' button of the navbar already uses. The new form has all fields of the old controller (name, description and view type) plus the view style, the share and the protection type, and it saves through the confirm step. The remaining callers of the old controller were the legacy render path web/view/view.php::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and the 'add view component' button of view.php resp. view_exe.php::linked_components; both now call url_new(views::VIEW_ADD_ID, ...). The following parts of the old controller have no equivalent yet.
+
+after a new view has been created open the view edit view (m=31) for it, so the user can directly add the components: the old controller showed the new view with its component list (view::dsp_edit) instead of just returning to the calling page, and it carried the TODO to set the new view as the default view of the sample term. Today /http/view.php?m=30 only creates the view and goes back, so a new view stays empty and the user has to find it again to add any component
+
+add the sample word of the old controller ('word' url parameter, used to simulate how the new view looks for a real term) to the view add and the view edit view. Without it the user creates a view without seeing its effect
+
+the phrase type resp. view type could be preset via the url ('type') in the old controller. This is not possible in the new view for the same reason as for the word add view (frontend::url_has_object_values, see the word edit view section above)
+
+### view edit view (missing parts of the retired http_old/view_edit.php)
+
+the legacy controller http_old/view_edit.php has been replaced by the view_edit view called via /http/view.php?m=31 (views::VIEW_EDIT_ID), which the 'change view' link of the navbar and the 'design the view' button of the view selector already use. The new form has all fields of the old controller (name, description and view type) plus the view style, the share and the protection type, and it saves through the confirm step. But the old controller was not only a form for these fields, it was the view designer, and that part is completely missing in the new view.
+
+add the component list of a view to the view edit view (m=31), so that a view can be designed again. The old controller could, for the view given by the id: link an existing component ('add_component' with the component id), create a new component and link it ('entry_name' plus 'new_entry_type'), unlink a component ('del' with the component id) and change the order of the components ('move_up' / 'move_down' with the component id, using view::entry_up and entry_down). Today /http/view.php?m=31 shows only the fields of the view itself, so a view can neither get a component nor lose one, and the order of the components cannot be changed from the frontend. Reuse the existing component views (views::COMPONENT_ADD_ID ff) and the component_link views for the single steps and add a test per step
+
+add the sample word to the view edit view as well ('word' url parameter of the old controller, the term used to simulate how the view looks with real data), see the view add view section above
+
+remove the now unreachable legacy view designer code: web/view/view.php and web/view/view_exe.php contain a nearly identical private linked_components() (a DRY violation) plus dsp_edit(), which were only called by http_old/view_add.php and http_old/view_edit.php. Their remaining buttons link to api::DSP_COMPONENT_LINK / DSP_COMPONENT_ADD, i.e. to controllers that are also already retired to /http_old, so these links are dead. Remove dsp_edit / linked_components (and the DSP_COMPONENT_* consts in shared/api.php) once the component list is part of the view edit view. The same applies to view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and to view::selector_page, which is only called by the legacy http/view_select.php
+
+remove the dead class web/user/user_display_old.php: it is only included by src/test/php/utils/test_base.php, is never instantiated, uses rest_ctrl without importing it (so it would fail if it were called) and links to controllers that are retired (view_edit.php, value_edit.php, user_triple.php, user_value.php, user_formula_link.php)
+
+### view del view (missing parts of the retired http_old/view_del.php)
+
+the legacy controller http_old/view_del.php has been replaced by the view_del view called via /http/view.php?m=32 (views::VIEW_DEL_ID), which the 'delete the view' button of the view selector already uses. The new view shows the name of the view to delete and writes the delete through the confirm step, so it covers the yes/no dialog of the old controller completely. No feature of the old controller is missing, but the delete itself is not protected.
+
+add an in-use check to the delete of a view: web/view/view.php has no input_valid override, so unlike web/word/word.php::input_valid (msg_id::DELETE_IN_USE via is_in_use) a view can be deleted even if it is still the default view of a word or a triple, or if components are still linked to it. Add the check to the frontend view object (and the matching negative test) so the user gets a warning instead of dangling references. The old controller did not check this either, so this is not a regression of the migration but a gap of both
+
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests

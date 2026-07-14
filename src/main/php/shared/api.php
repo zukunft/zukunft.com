@@ -126,9 +126,6 @@ class api
     const string API_WORD = 'word';
     const string API_TRIPLE = 'triple';
 
-    const string DSP_VIEW_ADD = "view_add";
-    const string DSP_VIEW_EDIT = "view_edit";
-    const string DSP_VIEW_DEL = "view_del";
     const string DSP_COMPONENT_ADD = "component_add";
     const string DSP_COMPONENT_EDIT = "component_edit";
     const string DSP_COMPONENT_DEL = "component_del";
