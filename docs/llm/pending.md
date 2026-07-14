@@ -292,7 +292,7 @@ add the component list of a view to the view edit view (m=31), so that a view ca
 
 add the sample word to the view edit view as well ('word' url parameter of the old controller, the term used to simulate how the view looks with real data), see the view add view section above
 
-remove the now unreachable legacy view designer code: web/view/view.php and web/view/view_exe.php contain a nearly identical private linked_components() (a DRY violation) plus dsp_edit(), which were only called by http_old/view_add.php and http_old/view_edit.php. Their remaining buttons link to api::DSP_COMPONENT_LINK / DSP_COMPONENT_ADD, i.e. to controllers that are also already retired to /http_old, so these links are dead. Remove dsp_edit / linked_components (and the DSP_COMPONENT_* consts in shared/api.php) once the component list is part of the view edit view. The same applies to view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and to view::selector_page, which is only called by the legacy http/view_select.php
+remove the now unreachable legacy view designer code: web/view/view.php and web/view/view_exe.php contain a nearly identical private linked_components() (a DRY violation) plus dsp_edit(), which were only called by http_old/view_add.php and http_old/view_edit.php. Their remaining buttons link to api::DSP_COMPONENT_LINK / DSP_COMPONENT_ADD, i.e. to controllers that are also already retired to /http_old, so these links are dead. Remove dsp_edit / linked_components (and the DSP_COMPONENT_* consts in shared/api.php) once the component list is part of the view edit view. The same applies to view::dsp_navbar_html (only used if html_base::UI_USE_BOOTSTRAP is false) and to view::selector_page and view::dsp_navbar_no_view, which have no caller at all since http_old/view_select.php is retired
 
 remove the dead class web/user/user_display_old.php: it is only included by src/test/php/utils/test_base.php, is never instantiated, uses rest_ctrl without importing it (so it would fail if it were called) and links to controllers that are retired (view_edit.php, value_edit.php, user_triple.php, user_value.php, user_formula_link.php)
 
@@ -349,6 +349,56 @@ add web/value/value.php::input_valid, which does not exist today, so an empty nu
 the legacy controller http_old/value_del.php has been replaced by the value_del view called via /http/view.php?m=20 (views::VALUE_DEL_ID), which the 'delete value' button already uses (web/value/value.php::VIEW_DEL). The new view asks for the confirmation and writes the delete through the confirm step. The old controller had no caller left in the program code, only in the commented out block of src/test/php/unit_ui/value_ui_tests.php. What is missing is the phrases of the value in the question to the user.
 
 show the phrases of the value in the value del view (m=20): the old controller loaded them (value::load_phrases) and asked '<number> for <phrase names>?', while the new view shows only the number, e.g. '3.14', so the user cannot see which of his values he is about to delete. Add the phrase list of the value to the delete question (and the same for the value edit view, see the section above). Note that a value has no name, so unlike a word the number alone does not identify it
+
+### view select page (missing parts of the retired http_old/view_select.php)
+
+the legacy controller http_old/view_select.php ('Select the display format for "<word>"') has no mask of its own in the new frontend. Its replacement is the 'Views' tab of the word and triple page (component_types::VIEW_TAB_BOX -> web/component/execute/ui_list.php::view_tab_box), which lists the views of the object with the 'view' and the 'switch' button, and its second tab shows the change log that the old page appended via word::log_view. The old page had no caller left in the program code (only in a commented out navbar block of web/view/view.php). Two things of the old page are missing in the tab box.
+
+add the 'design the view' and the 'delete the view' button to each view of the views tab box: the old page offered them per view (view::selector_page), so a view could be edited or deleted directly from the object page. The new tab box has only 'view' and 'switch'. Use the standard urls /http/view.php?m=31 and m=32 (views::VIEW_EDIT_ID and VIEW_DEL_ID) and remember that a delete must only be offered if the user may delete the view
+
+the 'switch' button of the views tab box does not save the selected view as the default view of the word, see the word edit view section above; this was the main purpose of the old view select page, so without it the page has no full replacement yet
+
+check the 'alternative view' link of the navbar (web/html/html_base.php::view_change_list): it points to the hard coded string '?m=view_change&id=2', but there is no view_change const in shared/const/views.php, so the link probably does not resolve to a view. Either add the missing view and its const or let the link open the views tab of the object
+
+### verb list view (missing parts of the retired http_old/verbs.php)
+
+the legacy controller http_old/verbs.php ('Word link types', the list of all verbs for the admin user) has a mask in the new frontend: the verbs view called via /http/view.php?m=86 (views::VERBS_ID). But the view is defined in src/main/resources/messages/system_views.json with a name, a description and the code_id 'verbs' only and has no components, so /http/view.php?m=86 shows an empty page and the verb list is nowhere visible. The old page had no caller in the program code either, so the verbs can currently not be seen or maintained in the frontend at all.
+
+add a component to the verbs view (m=86) that shows the list of all verbs with the name, the reverse name, the description and the usage of each verb, and give each row an edit and a delete button plus one add button for the list, using the existing verb masks /http/view.php?m=6, m=7 and m=8 (views::VERB_ADD_ID, VERB_EDIT_ID and VERB_DEL_ID). Only an admin may change a verb, so show the buttons only for an admin user. Add a page test with the html snapshot of the view
+
+remove or rewrite web/verb/verb_list.php::dsp_list, the renderer of the old page: it has no caller any more since http_old/verbs.php is retired, it builds the item urls from a hard coded script name ('link_type_edit.php' and 'link_type_add.php'), and these two scripts do not exist in the program at all, so even in the old page the links were dead. The new list component must build its urls with html_base::url_new and the views consts
+
+### user settings view (missing parts of the retired http_old/user.php)
+
+the legacy controller http_old/user.php (the settings page of the user) has a mask in the new frontend: the user view called via /http/view.php?m=74 (views::USER_ID), which the user reaches with the 'settings' link of the navbar (api::SETTINGS_REL). The new view shows 'Open issues related to you' (the same as the old dsp_errors of the user), but the main component is only the text 'user_setting placeholder' (see the snapshot src/test/resources/web/html/views_by_id/user/74_user.html). The old controller had no caller in the program code any more, only in the dead class web/user/user_display_old.php, and it would fail anyway, because it calls user_ui::dsp_sandbox, which exists only in that dead class. So the following parts of the old page have to be built in the new view.
+
+replace the 'user_setting placeholder' component of the user view (m=74) with the real user settings form: web/user/user.php::form_edit already creates it (name, email, ...). Save the change through the standard confirm flow and add a page test
+
+show the user sandbox in the user view (m=74): the old page listed under 'Your changes, which are not standard' all objects that the user has changed for himself only (words, triples, values, formulas, formula links, views and components) and offered an undo per object that removed the user overwrite (del_usr_cfg, called via the url parameters 'undo_word', 'undo_triple', 'undo_value', 'undo_formula', 'undo_formula_link', 'undo_view', 'undo_component'). Without this the user can no longer see or revert his own overwrites. There is already a views::UNDO_ID (73) mask that can be used for the confirmation of the undo. The renderer of the old page (web/user/user_display_old.php::dsp_sandbox_*) reads the database directly and must not be reused as it is, because web/ may only use the api (see docs/llm/frontend.md)
+
+show 'Your latest changes' in the user view (m=74) with web/user/user.php::dsp_changes, the change log of the user
+
+show the link to the json import (http/import.php) in the user view (m=74) for a user that may import (user::can_import), as the old page did. Do not bring back the links to /test/test.php and the other test scripts that the old page showed to an admin, because the tests must not be startable over the web; the admin functions belong to http/server_admin.php
+
+show all open program issues to an admin user in the user view (m=74): the old page called dsp_errors with the type 'other' for an admin, the new view shows only the issues of the user himself
+
+### triple page (nothing missing from the retired http_old/triple.php)
+
+the legacy controller http_old/triple.php ('display a RDF triple') is replaced by the triple default view called via /http/view.php?m=92 (views::TRIPLE_ID) with the triple add, edit and del masks m=9, m=10 and m=11 (views::TRIPLE_ADD_ID, TRIPLE_EDIT_ID and TRIPLE_DEL_ID). No feature is missing: the old page had no caller, it loaded the triple from the url parameter 'triples' and echoed only triple::dsp_id(), the internal debug identification of the object, without a navbar and without any html page frame, so the new view shows much more than the old page ever did.
+
+if a machine readable (RDF / linked data) representation of a triple is really wanted, as the title of the old page suggests, it belongs to the api (http/get_json.php resp. the rest controller), not to a separate html page, and it needs its own issue
+
+### value page (missing parts of the retired http_old/value.php)
+
+the legacy controller http_old/value.php has a mask in the new frontend: the value default view called via /http/view.php?m=96 (views::VALUE_DEFAULT_ID), which is used e.g. as the cancel target of the value edit view. It shows the phrases of the value as the headline with a link to each phrase, the share and protection type and the 'change value' button to m=19, but the number itself is not shown, because the main component is only the text 'main_value placeholder' (see the snapshot src/test/resources/web/html/views_by_id/value/96_value_*.html). The old page had no caller in the program code. The stray file http_old/value (an html page that redirected to http://www.zukunft.com/value.php via a meta refresh, unencrypted and to a page that no longer exists) is retired with it.
+
+replace the 'main_value placeholder' component of the value default view (m=96) with the number of the value, so that a value page really shows the value. Show it with the unit of the phrases and add a page test
+
+allow to open a value by the names of its phrases: the old page took the url parameter 't' with a comma separated list of word names, loaded the word list, showed the names and the value of the group of these words and offered the number directly as an input field (value_ui::value_edit), so a value could be looked up and changed without knowing its database id. Decide if this shortcut is still wanted (it is the natural url for 'calc with words', e.g. /http/view.php?m=96&t=zurich,inhabitants) and if yes read the phrase names in web/value/value.php::url_mapper and load the value by the group of the phrases
+
+### phrase list page (nothing new missing from the retired http_old/phrase_list.php)
+
+the legacy controller http_old/phrase_list.php had no caller and did not do what its header says ('return a phrase list API object'): its body is a copy of the retired word_add.php (it loads the word_add view, adds a word and links it with a triple to an existing word), it carries the TODO 'use view_shared::PHRASE_LIST instead of WORD_ADD' for a view that does not exist in shared/const/views.php, and its last render call (word_ui::dsp_add) is commented out, so the page showed only the navbar. Nothing has to be migrated: what it really did is the word add view /http/view.php?m=2, and the parts that are missing there are already listed in the word add view section above. A phrase list as an api object is delivered by http/get_json.php resp. the rest controller, and a single phrase is shown with the phrase default view /http/view.php?m=110 (views::PHRASE_ID)
 
 ### data load
 
