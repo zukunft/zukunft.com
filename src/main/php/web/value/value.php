@@ -135,11 +135,6 @@ class value extends sandbox_value
                     $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
-            if (array_key_exists(url_var::SOURCE, $url_array)) {
-                if ($url_array[url_var::SOURCE] != null) {
-                    $this->set_source_id($url_array[url_var::SOURCE]);
-                }
-            }
         }
         return $usr_msg;
     }
