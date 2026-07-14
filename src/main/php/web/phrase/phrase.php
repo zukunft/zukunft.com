@@ -419,6 +419,12 @@ class phrase extends combine_named
      */
     function is_or_can_be(?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
             $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));

@@ -528,6 +528,12 @@ class ref extends sandbox
      */
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
             $used_ref_type_id = $typ_lst->ref_typ->default_id();

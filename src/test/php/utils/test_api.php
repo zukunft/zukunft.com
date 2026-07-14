@@ -565,7 +565,7 @@ class test_api extends test_base
         string       $class,
         array|string $ids = [1, 2],
         string       $id_fld = url_var::ID_LST
-    ): array
+    ): ?array
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
@@ -576,7 +576,18 @@ class test_api extends test_base
             $data = array($id_fld => $ids);
         }
         $ctrl = new rest_call();
-        return json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $actual = json_decode($response, true);
+        // the local deployment must be updated by an external script before the
+        // api tests run; if it is unreachable or returns an http error the
+        // response is not valid json, so report it readably and return null,
+        // which assert_api_compare turns into a single failed test instead of a
+        // TypeError that aborts the whole test suite
+        if ($actual === null) {
+            log_err('api list call to ' . $url . ' returned no valid json: '
+                . substr($response, 0, 200));
+        }
+        return $actual;
     }
 
     /**

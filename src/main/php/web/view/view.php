@@ -474,6 +474,12 @@ class view extends view_exe
      */
     private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst = null): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
         return $typ_lst->msk_typ->selector($form);

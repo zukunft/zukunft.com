@@ -336,6 +336,12 @@ class component extends sandbox_code_id
      */
     function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -404,6 +410,12 @@ class component extends sandbox_code_id
      */
     function style_text(?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $style_name = '';
         if ($typ_lst->msk_sty == null) {
             $this->log_err('msk_sty are empty');
@@ -514,6 +526,12 @@ class component extends sandbox_code_id
      */
     function type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -529,6 +547,12 @@ class component extends sandbox_code_id
      */
     function style_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_sty->default_id();
@@ -548,6 +572,12 @@ class component extends sandbox_code_id
      */
     private function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->cmp_typ->selector($form);
     }
 

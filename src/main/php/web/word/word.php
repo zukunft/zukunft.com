@@ -741,6 +741,13 @@ class word extends sandbox_code_id
      */
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list,
+        // like dsp_type_selector above which reads $ui_sys->typ_lst_cache directly
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
@@ -1115,6 +1122,11 @@ class word extends sandbox_code_id
         */
         global $ui_sys;
         $usr = $ui_sys->usr;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         // TODO add $id to the parameters
         $result = $typ_lst->vrb->selector($form);
 

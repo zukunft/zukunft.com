@@ -285,6 +285,12 @@ class view_relation extends sandbox_link
      */
     public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->mrl_typ->selector($form, $this->predicate_id);
     }
 

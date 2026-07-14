@@ -12,7 +12,7 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 ### security before go live
 
-findings of the security check on 2026-07-14, ordered by exploitability. Each line is one prompt. The blockers are unauthenticated and verified against the code, fix them before any public exposure. The root cause of most of them is that authorization, csrf and output encoding are enforced per call site instead of at a choke point (the html path has partial guards, the api path has almost none, the model save/del enforces neither centrally), so prefer a central fix in frontend::url_to_action, in the sandbox save/del and in the html_base render helpers over scattered checks.
+findings of the security check on 2026-07-14, ordered by exploitability. 
 
 BLOCKER: GET /api/user?id= (or ?name= / ?email=) returns the api_json of any user without authentication. api/user/index.php gates only on '$usr->id > 0', which is always true because an anonymous visitor gets an auto created ip user, and cfg/user/user.php::api_json_array (around line 665) includes email, ip_addr, profile_id and the activation_key. This is user enumeration plus account takeover (the activation key feeds the activation flow). Require an admin or the user himself, and never send activation_key or ip_addr over the api. The file header already carries the TODO for it
 
@@ -238,6 +238,8 @@ a pure html frontend tries retries after an increasing time period to get the up
 a js frontend can use subscribe to get the updated cache data
 
 additional the cache can be updated by time or by trigger words without frontend request
+
+separate the api $db_con var from the frontend and backend 
 
 ### word frontend
 
