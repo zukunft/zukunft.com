@@ -123,6 +123,8 @@ class application
         //$sys->typ_lst->load_core($db_con);
         $sys->typ_lst->load($db_con);
 
+        $this->load_system_config();
+
         return $db_con;
     }
 
@@ -164,17 +166,32 @@ class application
         // TODO Prio 3 try to speed up
         $sys->load_type_lists($db_con);
 
-        // load the system configuration, because the api needs to know
-        // e.g. if this pod permits the database changes of a user without login
+        $this->load_system_config();
+
+        return $db_con;
+    }
+
+    /**
+     * load the system configuration to the global config numbers
+     * every api request needs the system configuration, because without it
+     * e.g. the permission check of a user without login (user->is_blocked) cannot be done
+     * and would allow the database changes that this pod does not permit
+     *
+     * @return void
+     */
+    private function load_system_config(): void
+    {
         global $cfg;
+
+        // the system profile must be set explicit, because the default profile of a new user
+        // is the profile of a user without login, which is not permitted to load the configuration
         $usr_sys = new user();
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
         $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
+
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg(null, $usr_sys);
-
-        return $db_con;
     }
 
     function end_api($db_con): void

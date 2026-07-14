@@ -750,15 +750,8 @@ class db_object_seq_id extends db_object
             }
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        } else {
-            $lib = new library();
-            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_NAME => $msg->usr?->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
-            ]);
         }
+        // the reject message for the user is added by can_be_added_by
 
         // TODO Prio 1 review
         /*
@@ -838,7 +831,7 @@ class db_object_seq_id extends db_object
         log_debug('update row ' . $this->dsp_id());
 
         // if the user has the right to change the database row ...
-        if ($this->can_be_changed_by($msg, $db_rec)) {
+        if ($this->can_be_changed_by($msg)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
             $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
@@ -847,15 +840,8 @@ class db_object_seq_id extends db_object
             $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        } else {
-            $lib = new library();
-            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_NAME => $msg->usr?->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
-            ]);
         }
+        // the reject message for the user is added by can_be_changed_by
 
         return $msg->is_ok();
     }
@@ -1573,9 +1559,9 @@ class db_object_seq_id extends db_object
         $class = $lib->class_to_name($this::class);
 
         if ($usr_msg->usr == null) {
-            // the calling function adds the message for the user, e.g. db_add adds NO_UPDATE_PRIVILEGES
             // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
             log_warning('user missing while ' . $action . ' of ' . $class);
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($usr_msg->usr->is_blocked()) {
             // tell the user why the change has been rejected and how to solve it
             $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
@@ -1604,10 +1590,9 @@ class db_object_seq_id extends db_object
      * true if the requesting user is allowed to change this object
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
-     * @param db_object_seq_id|null $db_rec the object that is loaded from the database to project single field changes
      * @return bool true if the is allowed to change the object
      */
-    function can_be_changed_by(user_message $usr_msg, ?db_object_seq_id $db_rec = null): bool
+    function can_be_changed_by(user_message $usr_msg): bool
     {
         return $this->can_be_modified_by($usr_msg, self::ACTION_CHANGE);
     }

@@ -2961,7 +2961,7 @@
     \-- start_api
         \-- application - open the database connection to answer an api request
     \-- end_api
-        \-- application - open the database connection to answer an api request
+        \-- application - load the system configuration to the global config numbers
     \-- start
         \-- application - should be called from all code that can be accessed by an url
     \-- open_db

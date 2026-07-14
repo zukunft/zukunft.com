@@ -110,6 +110,9 @@ class users
     const string TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
 
     // a test user for db write tests
+    // the id of a user without login is created by the pod on the first request,
+    // so this id is only used for the in memory unit tests e.g. of the change permissions
+    const int TEST_USER_ID = 9;
     const string TEST_USER_NAME = 'zukunft.com system write test user';
     const string TEST_USER_NAME_UPDATED = 'zukunft.com system write test user changed';
     const string TEST_USER_LAST_NAME = 'zukunft.com system write test user last name';

@@ -4,7 +4,7 @@
 
 ## high prio
 
-check that if the ip user cannot do database changes the actually prevents all database changes and if not suggest the steps to fix it
+block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 repeat a general security check and list the most urgent things to do before go live
 

@@ -1641,10 +1641,9 @@ class user extends db_id_object_non_sandbox
      * of a user without login needs to be saved even if this pod blocks the data changes of an ip user
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
-     * @param db_object_seq_id|null $db_rec the user as it is in the database before the change
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_be_changed_by(user_message $usr_msg, ?db_object_seq_id $db_rec = null): bool
+    function can_be_changed_by(user_message $usr_msg): bool
     {
         $can_change = false;
 
@@ -2787,7 +2786,7 @@ class user extends db_id_object_non_sandbox
         $msg = new user_message();
         $msg->usr = $usr_req;
 
-        if ($this->can_be_changed_by($msg, $db_usr)) {
+        if ($this->can_be_changed_by($msg)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
