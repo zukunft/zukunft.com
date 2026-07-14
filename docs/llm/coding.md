@@ -147,7 +147,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 
 ## Pre-commit checklist
 
-- Raise the **micro** version with every commit: the fourth part of `CODE_VERSION` (and of `UI_VERSION` if `web/` changed) in `version.txt`, e.g. `0.0.3.0` → `0.0.3.1`, so that every code change is a new program version the update and upgrade scripts can check. → `docs/llm/versions.md`
+- Do **not** raise the micro version yet: raising the fourth part of `CODE_VERSION` / `UI_VERSION` in `version.txt` with every commit starts only after the next production release, which has not happened yet — until then `version.txt` stays unchanged. → `docs/llm/versions.md`
 - Raise the **minor** version (`0.0.3` → `0.0.4`, micro back to `.0`) whenever the json format or the database structure changes, because the minor version is the version of the exports and of the database (`def::PRG_VERSION` = `SYSTEM_MINOR_VERSION`); a raised minor version needs a matching database upgrade script in `db_check`. → `docs/llm/versions.md`
 - `version.txt` is the single source of the program version — never write a version literal anywhere else in the code; the database version at runtime comes from the config table, never from `config.yaml` or the config numbers. → `docs/llm/versions.md`
 - Never change `files::AUTO_UPDATE_TEST_FILES` (`src/test/php/const/files.php`); it must always remain `false` — `true` silently overwrites failing snapshots and masks regressions.

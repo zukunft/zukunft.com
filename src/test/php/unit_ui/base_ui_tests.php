@@ -359,7 +359,6 @@ class base_ui_tests
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $back = '1';
-        $target = '<a href="/http/word_add.php" title="Add test"><img src="/images/button_add.svg" alt="Add test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
         $result = (new button($url, $back))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
@@ -380,13 +379,13 @@ class base_ui_tests
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
-        $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $back))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
-        $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 

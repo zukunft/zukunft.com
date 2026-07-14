@@ -19,6 +19,10 @@ UI_VERSION=0.0.3.0
   fourth part is the build number and changes with **every commit**, so that the update
   and the upgrade scripts can tell one code change from the next. It is shown in the page
   footer and on the server admin page.
+  **Not yet active**: the build number is raised per commit only from the next production
+  release onwards, because only then an update or upgrade script of a running pod needs to
+  tell one code change from the next. Until that release `version.txt` stays unchanged, so
+  do **not** raise the micro version with a commit.
 - **minor version** (three parts, e.g. `0.0.3`): the version of the json format and of the
   database structure. It changes **only** if the json format or the database structure
   changes, and then the micro part starts again at `.0`. A raised minor version needs a

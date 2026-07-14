@@ -27,3 +27,8 @@ RedirectMatch 404 ^/server_admin/
 # from a shell, never over the web (.sh is already blocked above; this hides the
 # whole folder as well). Return 404 so it looks non-existent.
 RedirectMatch 404 ^/script/
+
+# The /http_old folder holds legacy controllers no longer used by the frontend
+# (the modern UI routes through /http/view.php). They are kept for reference
+# only and must never be served. Return 404 so the folder looks non-existent.
+RedirectMatch 404 ^/http_old/

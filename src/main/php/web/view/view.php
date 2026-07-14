@@ -634,19 +634,21 @@ class view extends view_exe
     }
 
     /**
-     * the 'switch' button that sets this view as the default view of the given word
-     * TODO Prio 3 add the back trace url so the user can return after the switch
+     * the 'switch' button that opens the word edit view where this view can be set
+     * as the default view of the given word
+     * TODO Prio 2 preselect this view as the default view of the word and add the back trace url,
+     *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
+     *      (see docs/llm/pending.md)
      *
-     * @param int $wrd_id the id of the word whose default view is set to this view
+     * @param int $wrd_id the id of the word whose default view should be set to this view
      * @return string the html link of the switch button
      */
     function switch_link(int $wrd_id): string
     {
         global $mtr;
         $html = new html_base();
-        $url = rest_ctrl::PATH_FIXED . 'word_edit.php' . url_var::PAR . url_var::ID . url_var::EQ . $wrd_id
-            . url_var::ADD . url_var::VIEW . url_var::EQ . $this->id()
-            . url_var::ADD . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . '1';
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
+            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
         return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
     }
 

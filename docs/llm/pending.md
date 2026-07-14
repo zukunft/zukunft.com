@@ -4,21 +4,31 @@
 
 ## high prio
 
-move the php scripts from /http/ to /http_old/ that are not used any more and exclude /http_old/ from the web access via .htaccess file
+check if config.yaml contains a parameter that prevents ip user from doing database changes and if not, add it
 
-add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
+check that if the ip user cannot do database changes the actually prevents all database changes and if not suggest the steps to fix it
 
-before the program or database upgrade script are started the actual program version should be check and the execution should be rejected if there is no mathing script or no new version
-
-before the database upgrade is executed the program should always be updated first, because the upgrade script is part of the program
-
-if ip and user whitelist configuration are switched off and the server is back to the normal stat copy  the backup /optional/index.html page to the www root to restore the normal frontpage. 
-
-add to the json import a parameter '$no_upd' (no update) that prevents existing object parameters such as the description or the formula expression to be overwritten. Only the fill up of empty fields is allowed. Create a positive and negative test case for this and set the parameter to true for the system json import but leave it to default of false for all other imports. 
+repeat a general security check and list the most urgent things to do before go live
 
 check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
 
-## denial of service test
+### security improvements
+
+add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
+
+### prepare denial-of-service protection
+
+use the cache for read only pages
+
+limit the number of read requests per time unit by the webbrowser and auto switch to ip whitelist mode
+
+count the number of db write requests by user and ip
+
+add to config.yaml the max age for each db_cache_type 
+
+after each write to db_cache check if there are row older than defined in the setting and delete them using a prepared query
+
+### denial of service test
 
 The goal of this block is an end-to-end test that a flood of change requests first blacklists the abusing user and, if the abuse continues from more than one user, automatically raises the pod to user whitelist mode. The current protection is only the manual, file based whitelist in `src/main/php/web/server_guard.php` toggled from `http/server_admin.php` (state in `server_admin/state.json`); the automatic per-user rate limit, the database blacklist and the auto-switch to whitelist mode still have to be wired up. Build the prompts below in order: the first ones add the enforcement and the make-it-testable config knobs, the later ones are the actual DoS test that lowers those knobs, simulates the flood and asserts the reaction.
 
@@ -36,7 +46,7 @@ extend the test with a second user that also sends too many change requests in a
 
 as the final step of the test reset everything to the pre-test state: restore the `max change` daily limits and the `user whitelist auto switch` knob to their remembered default values, clear the two test users from the database blacklist, and switch the user whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle user whitelist` POST action in `http/server_admin.php`), leaving `user_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal change request from a fresh user succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
 
-## distributed denial of service test
+### distributed denial of service test
 
 This block is the IP based sibling of the denial of service test above: instead of one logged in user flooding change requests, many different IP addresses each send too many requests in a short period, and the pod must blacklist each abusing IP and, once more than one IP is abusing, automatically raise the pod to IP whitelist mode. The existing pieces are the IP branch of `src/main/php/web/server_guard.php` (`ip_whitelist_active`, `server_admin/ip_whitelist.txt`, `ip_allowed()` with CIDR matching, `optional/ip_reject.html`), the IP toggle in `http/server_admin.php`, and the initial `ip_blacklist.json` (see `src/main/php/cfg/const/files.php::IP_BLACKLIST_FILE` and the `ip_ranges` test constants). The automatic per-IP request rate limit and the auto-switch to IP whitelist mode still have to be wired up. Build the prompts below in order, same as for the single-user test: enforcement and testable config knobs first, then the actual distributed test.
 
@@ -55,6 +65,12 @@ extend the test with a second, different IP address that also sends too many req
 as the final step reset everything to the pre-test state: restore the per-IP `max requests` limit and the `ip whitelist auto switch` knob to their remembered default values, clear the test IPs from the database IP blacklist, and switch the IP whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle ip whitelist` POST action in `http/server_admin.php`; note that only a full-access admin may switch the IP whitelist off, restricted admins may not), leaving `ip_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal request from a fresh IP succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
 
 ## fine-tuning for next launch
+
+before the program or database upgrade script are started the actual program version should be check and the execution should be rejected if there is no mathing script or no new version
+
+before the database upgrade is executed the program should always be updated first, because the upgrade script is part of the program
+
+if ip and user whitelist configuration are switched off and the server is back to the normal stat copy the backup /optional/index.html page to the www root to restore the normal frontpage.
 
 create release scripts for mayor, main, minor and micro releases, which increase the specific release number and reset the minor release number e.g. main changes from 1.2.3.4 to 1.3.0.0
 
@@ -231,6 +247,32 @@ add the formulas assigned to the parent phrase to the word_default view using al
 add the values as a table where the word ist used to the word_default view using 2/3 of the screen width where often used phrases are column heads and the phrases are shown using a tree view
 
 mainly copy the word default view to the triple default view
+
+### word add view (missing parts of the retired http_old/word_add.php)
+
+the legacy controller http_old/word_add.php has been replaced by the word_add view called via /http/view.php?m=2 (views::WORD_ADD_ID). The plain "create a word" case is fully covered by the new view (it even adds description, plural, default view, share and protection type plus the confirm step), but the following features of the old controller have no equivalent yet. Add them to the new view.
+
+allow the user to link the new word to an existing word while adding it, as the old controller did with the url parameters 'add', 'verb' and 'word': add a verb and a target phrase selector to the word_add form, read them in web/word/word.php::url_mapper via url_var::VERB and url_var::WORD and, after the word has been created, save the corresponding triple. Without this the link parameters are silently dropped
+
+fix the "Add similar word" button in src/main/php/web/word/triple_list.php that already calls url_new(views::WORD_ADD_ID, ...) with 'verb=...&word=...&type=...': it uses the human readable keys instead of the url_var codes (url_var::VERB 'b', url_var::WORD 'w', url_var::TYPE 'y' resp. url_var::PHRASE_TYPE 'py'), so even after the mapper is extended the parameters would not be picked up. The preset of the phrase type via the url is part of this
+
+add the alternative "link an existing word" path of the old controller: a submit without a new name but with an existing word, a verb and a target word must create only the triple and not a new word. Extend web/word/word.php::input_valid with the old combined check "Either enter a name for the new word or select an existing word to link" instead of only the empty name warning of sandbox_named::input_valid
+
+add the duplicate name pre-check of the old controller to web/word/word.php::input_valid: check via the term namespace (word, triple, formula and verb) if the name is already used and show the message of cfg/phrase/term.php::id_used_msg_text on the edit form. At the moment a name collision is only detected by the backend during the save, so the user gets the error only after the confirm step
+
+add the duplicate and reverse link check of the old controller to web/word/triple.php::input_valid (which today only checks that both phrases are set): warn with '... already exists' if the triple exists in the same direction and with 'The reverse of ... already exists. Do you really want to add both sides?' if only the reverse link exists. This is needed for the triple_add view as well, not only for the word_add view
+
+### word edit view (missing parts of the retired http_old/word_edit.php)
+
+the legacy controller http_old/word_edit.php has been replaced by the word_edit view called via /http/view.php?m=3 (views::WORD_EDIT_ID). All fields of the old controller (name, plural, description, phrase type and default view) are part of the new edit form and the save now runs through the confirm step. Its only remaining caller was the 'switch' button of the view box (web/view/view.php::switch_link, used by web/component/execute/ui_list.php::view_tab_box), which called /http/word_edit.php?id=<word>&d=<view>&confirm=1 and wrote the new default view with one click. The button now only opens the word edit form, so the following parts are still missing.
+
+restore the one-click 'switch' of the default view of a word: web/view/view.php::switch_link knows the target view, but /http/view.php?m=3 cannot write it yet. frontend.php::url_to_html already contains the mechanism (rest_ctrl::PAR_VIEW_NEW_ID 'new_id' -> $dbo->save_view($new_view_id) for the EDIT_DEL_MASKS_IDS), but web/sandbox/sandbox_named.php::save_view is an empty stub that returns an ok user_message without writing anything and that does not even accept the view id it is called with. Implement save_view (via the api, the same path as db_object::update) and let switch_link call /http/view.php?m=3&id=<word>&new_id=<view>, or route the switch through the standard confirm flow. Add a test that the default view of the word is really changed in the database after the switch
+
+alternatively (or additionally) preselect the target view when the switch button opens the word edit form. This is not possible at the moment, because frontend.php::url_has_object_values treats any non control var in the url (e.g. url_var::VIEW 'd') as "the url carries the object values", so the word is no longer loaded from the database and the form would be shown with an empty name, description and plural. Either mark a prefilled edit link explicitly (e.g. load from the url only if all fields of the object are given) or merge the url values into the object loaded by id
+
+the 'switch' and 'view' buttons of the view box are also rendered for a triple (ui_list::view_tab_box handles word and triple), but switch_link always uses the word edit mask. Use the edit mask of the object type (views::WORD_EDIT_ID resp. views::TRIPLE_EDIT_ID) so that the switch also works for a triple
+
+the old controller answered an empty name with the hint 'An empty name should never be saved. Please delete the word instead.'; the new flow only shows the generic msg_id::NAME_EMPTY warning of sandbox_named::input_valid. Add the hint to delete the object instead to the empty name warning of an edit view (not of an add view)
 
 ### data load
 
