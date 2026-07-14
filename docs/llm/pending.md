@@ -444,6 +444,24 @@ the legacy controller http_old/error_log.php (show one internal error to the use
 
 fill web/component/execute/system_page.php::error_log() with the real code: it returns only the text 'error_log placeholder' (see the snapshot src/test/resources/web/html/views_by_id/sys_log/65_sys_log_2.html), while web/system/sys_log.php::page_view already creates the page of one error entry and has no caller any more since http_old/error_log.php is retired. Load the sys log entry by the id from the url, show it and add a page test. Take care that a user may only see his own errors and that only an admin sees the errors of all users
 
+### calculate all results (missing parts of the retired http_old/calculate.php)
+
+the legacy controller http_old/calculate.php ('update all formula results', the batch version of the retired formula_test.php) had no caller in the program code. It loaded all formulas in blocks, built the calculation queue per formula and calculated all results, while it streamed the progress in percent to the browser with ob_flush every few seconds (the pause taken from the configured frontend response time). It has no direct replacement: the job views exist (m=82 job_async 'Progress', m=83 job_control 'Process list' and m=84 job_check, views::JOB_ASYNC_ID, JOB_CONTROL_ID and JOB_CHECK_ID), but they show only 'process_progress placeholder' resp. 'process_list placeholder', and shared/types/job_types.php has only the per object triggers (value_update, formula_update, ...), no job that recalculates all results.
+
+add a job type that recalculates all formula results (the queue building of the old controller with result_list::frm_upd_lst and formula::calc can be taken over) and let the admin start it from the job control view (m=83). A long running recalculation must not block a http request, so it must run as an async job, not synchronously as the old controller did
+
+fill the job views with real code: web/component/execute/system_page.php shows only 'process_list placeholder' for the job control view (m=83) and 'process_progress placeholder' for the job async view (m=82), so a running job can neither be seen nor followed. Show the job list with the status of each job and the progress in percent of the running job, which replaces the streaming progress of the old controller, and add a page test
+
+note for the denial of service protection (see the section above): the old controller was a perfect attack target, because it recalculated all formulas of the pod on a simple GET request and checked only that the user id is set, so even an ip user without a login could start it. The new job must be startable only by an admin user, and there must be a test for the negative case
+
+### reload the base configuration (missing parts of the retired http_old/async_process.php)
+
+the legacy controller http_old/async_process.php had no caller in the program code and it did not do what its name and its header say ('display the progress of an asynchronous process'): for an admin user it reloaded the base configuration synchronously in the http request (import_file::import_system_data, the action that the retired http_old/user.php offered as 'Force reloading the base configuration e.g. to check that the units definition are still OK'), it showed the import view (m=76) as the header and printed only 'loading of base configuration started' and 'finished' around the import. The function import_system_data is still used by cfg/db/sql_db.php, so only the frontend action is missing.
+
+add the 'reload the base configuration' action for an admin to http/server_admin.php (where the other admin functions live) or as a job type, with a confirm step, because the import overwrites the system objects. Do not run it synchronously in a http request as the old page did: a long running import belongs to an async job, whose progress is shown in the job async view (m=82), see the calculate all results section above
+
+the mask that the name of the old page promises is the job async view (m=82, views::JOB_ASYNC_ID, 'Progress'), but it shows only 'process_progress placeholder', so the progress of an asynchronous process cannot be followed at all, see the calculate all results section above
+
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
