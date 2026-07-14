@@ -32,3 +32,11 @@ RedirectMatch 404 ^/script/
 # (the modern UI routes through /http/view.php). They are kept for reference
 # only and must never be served. Return 404 so the folder looks non-existent.
 RedirectMatch 404 ^/http_old/
+
+# The install/update flow keeps the docroot a git working tree (for the in-place
+# update-program mechanism). The .git repository itself is moved outside the
+# docroot via --separate-git-dir, but block the whole /.git path here as a second
+# line of defence: the dotfile rule above only matches the last path segment, so
+# it would miss /.git/config, /.git/HEAD, /.git/objects/... Serving those would
+# leak the full source and commit history. Return 404 so the path looks absent.
+RedirectMatch 404 ^/\.git

@@ -63,6 +63,9 @@ const ENV_MYSQL_ADMIN_PASSWORD = 'MYSQL_ADMIN_PASSWORD';
 const ENV_MYSQL_HOST = 'MYSQL_HOST';
 const ENV_MYSQL_PORT = 'MYSQL_PORT';
 const ENV_WWW_ROOT = 'WWW_ROOT';
+// path to the git repository (objects + history); kept outside WWW_ROOT so the
+// clone's .git cannot be downloaded over the web (see script/install.sh)
+const ENV_GIT_DIR = 'ZUKUNFT_GIT_DIR';
 
 // server admin page (http/server_admin.php) settings
 // a comma separated list of IPs / CIDR ranges allowed to reach the server admin page
@@ -138,6 +141,7 @@ const ENV_VARS = [
     ENV_MYSQL_HOST,
     ENV_MYSQL_PORT,
     ENV_WWW_ROOT,
+    ENV_GIT_DIR,
     ENV_SERVER_ADMIN_IP,
     ENV_SERVER_ADMIN_USER,
     ENV_SERVER_ADMIN_PW,
