@@ -2678,10 +2678,22 @@ class sandbox extends db_object_seq_id_user
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
+        // saving to database is always time-consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
+
+        // save is the single entry point for all user data changes (frontend, api and import)
+        // so the permissions of the requesting user are checked here for all write paths
+        $this->set_requesting_user($msg);
+        if ($this->has_id()) {
+            $permitted = $this->can_be_changed_by($msg);
+        } else {
+            $permitted = $this->can_be_added_by($msg);
+        }
+        if (!$permitted) {
+            return false;
+        }
 
         // by default all changes are logged
         if (is_array($sc_par_lst)) {
@@ -2942,6 +2954,13 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
         $msg_txt = '';
+
+        // del is the single entry point for all user data deletions (frontend, api and import)
+        // so the permissions of the requesting user are checked here for all delete paths
+        $this->set_requesting_user($msg);
+        if (!$this->can_be_deleted_by($msg)) {
+            return false;
+        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated

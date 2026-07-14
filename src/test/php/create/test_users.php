@@ -144,6 +144,25 @@ class test_users
     }
 
     /**
+     * a user without login as it is loaded from the database, so with the id set
+     * unlike user_ip the id is set, because the permission checks (e.g. sandbox->save)
+     * use the requesting user of the message only if the user has an id
+     *
+     * @return user a user without login used e.g. to test the database change permissions
+     */
+    function user_ip_loaded(): user
+    {
+        global $sys;
+
+        $usr = new user();
+        $usr->id = users::TEST_USER_ID;
+        $usr->name = users::TEST_USER_NAME;
+        $usr->ip_addr = users::TEST_USER_IP;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY);
+        return $usr;
+    }
+
+    /**
      * @return user a user that can be used for database write testing and that will be removed after testing
      */
     function user_add(): user
