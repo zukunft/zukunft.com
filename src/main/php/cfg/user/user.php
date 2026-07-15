@@ -697,10 +697,13 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        $vars[json_fields::IP_ADDR] = $this->ip_addr;
+        // the ip address and the activation key are never sent over the api:
+        // the activation key feeds the account activation flow (leaking it enables
+        // account takeover) and the ip address is personal data; the endpoint
+        // (api/user/index.php) additionally limits any user record to an admin or
+        // the user himself, so the remaining email is only shown to them
         $vars[json_fields::EMAIL] = $this->email;
 
-        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
         // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);

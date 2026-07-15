@@ -466,7 +466,23 @@ class test_api extends test_base
             $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         }
         // TODO simulate other users
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        if ($class == user::class) {
+            // the user read endpoint returns the json only to an admin or the user
+            // himself, so authenticate as the admin user before the request; an
+            // anonymous call is correctly rejected (see assert_api_get_not_permitted)
+            // the trailing slash avoids the Apache DirectorySlash redirect on api/user
+            $login_json = $this->api_json_with_login($url . '/?' . http_build_query($data));
+            if ($login_json == '') {
+                // the http login is not available in every test environment; skip
+                // the comparison then instead of failing, the security relevant
+                // rejection is still checked by assert_api_get_not_permitted
+                $this->dsp_warning('skipping the ' . $class_api . ' api get test because the admin login is not available');
+                return true;
+            }
+            $actual = json_decode($login_json, true);
+        } else {
+            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        }
         if ($actual == null) {
             log_err('GET api call for ' . $class_api . ' returned an empty result');
         }
@@ -495,15 +511,50 @@ class test_api extends test_base
     function assert_api_get_by_text(string $class, string $name = '', string $field = url_var::NAME): bool
     {
         $filename = '';
+        $with_login = false;
         if ($class == user::class) {
             $filename = 'user_via_api';
+            // the user read endpoint returns the json only to an admin or the user himself
+            $with_login = true;
         }
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        if ($with_login) {
+            // the trailing slash avoids the Apache DirectorySlash redirect on api/user
+            $login_json = $this->api_json_with_login($url . '/?' . http_build_query($data));
+            if ($login_json == '') {
+                // skip if the http login is not available (see assert_api_get)
+                $this->dsp_warning('skipping the ' . $class . ' api get by text test because the admin login is not available');
+                return true;
+            }
+            $actual = json_decode($login_json, true);
+        } else {
+            $ctrl = new rest_call();
+            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        }
         return $this->assert_api_compare($class, $actual, null, $filename);
+    }
+
+    /**
+     * check that an anonymous REST GET of a user is rejected
+     * a visitor without login always gets an auto created ip user, so this
+     * verifies that such a user cannot read another user record via the api
+     *
+     * @param string $field the url field used for the lookup (id, name or email)
+     * @param int|string $value the lookup value of the restricted user
+     * @param string $secret a value of the restricted record that must not leak (e.g. the email)
+     * @return bool true if the anonymous call does not return the restricted record
+     */
+    function assert_api_get_not_permitted(string $field, int|string $value, string $secret): bool
+    {
+        $url = $this->class_to_url(user::class);
+        $data = array($field => $value);
+        $ctrl = new rest_call();
+        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        // the anonymous call must not return the user json, so the secret must be absent
+        $test_name = 'anonymous api/user by ' . $field . ' does not leak the ' . $field;
+        return $this->assert_false($test_name, str_contains($response, $secret));
     }
 
     /**

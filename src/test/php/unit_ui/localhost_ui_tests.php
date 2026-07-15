@@ -80,6 +80,9 @@ class localhost_ui_tests
         // and the word edit view changes data, so the request is blocked before the view is created
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
         $test_name = 'word edit by url is blocked for a user without login';
+        // TODO Prio 1 investigate why this localhost view render takes ~9s; a blocked
+        //      request should be answered well within TIMEOUT_LOCALHOST, so the current
+        //      duration points at a real performance problem in the localhost render path
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . word_names::MATH_ID);
         $sys->times->switch(system_time_type::DEFAULT);

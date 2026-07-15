@@ -82,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 {
     global $debug;
+    global $sys;
 
     if ($debug_overwrite == null) {
         $debug_used = $debug;
@@ -114,7 +115,7 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
     }
 
     if ($debug_used > 0) {
-        echo $msg_text . '.<br>';
+        echo $msg_text . ' ' . $sys->times->show_total() . '<br>';
         //ob_flush();
         //flush();
     }
