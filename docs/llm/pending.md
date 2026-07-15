@@ -6,15 +6,11 @@
 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
-the general security check has been done on 2026-07-14 (five parallel read-only audits: auth/session, injection/file handling, xss/csrf, authorization, secrets/exposure). The result is the '### security before go live' section below, ordered by exploitability. The injection surface (prepared statement layer, no command injection, no path traversal on a live route) and the server admin console and setup.php were found sound. Work off the blockers first; repeat the check after they are fixed
-
 check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
 
 ### security before go live
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
-
-fix the site wide csrf gap: the token check in frontend.php (around line 291) runs only in an 'elseif (!empty($url_arr[SESSION_TOKEN]))', so a request that omits the token is not rejected, and the crud forms do not send the token anyway (only the login and signup forms do). Make the check fail closed - require a valid token for every write of views::CHANGE_MASKS_IDS - and emit the token as a hidden field in every crud form. without it an attacker can csrf a victim into creating or changing an object
 
 close the api authorization bypass: the 'ip user may not change data' control lives only in http/view.php (around line 127, is_blocked on CHANGE_MASKS_IDS); the rest endpoints (api/word/index.php -> sandbox save/del) never call is_blocked, so config_numbers::ip_user_can_change (default false) is ignored on POST / PUT / DELETE /api/word. Enforce the block centrally in the model save/del, not per entry point, and add a negative test that an ip user write via the api is refused
 
