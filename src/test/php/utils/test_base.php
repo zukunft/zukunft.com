@@ -4642,7 +4642,45 @@ class test_base
     function web_page_with_login(string $url_path): string
     {
         $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
 
+    /**
+     * request the api json of a url with an admin login
+     * needed to test the read of access restricted api objects (e.g. a user),
+     * because the endpoint only returns the json to an admin or the user himself
+     *
+     * @param string $api_url the complete api url including the query parameters
+     * @return string the api json of the admin user or an empty string if the login has not been possible
+     */
+    function api_json_with_login(string $api_url): string
+    {
+        $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl($api_url, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
+
+    /**
+     * log in as the admin user of the env file and keep the session cookie
+     * the admin user is used, because on a fresh setup this is the only user
+     * with a password (see sql_db->add_admin_users_from_env)
+     *
+     * @return string the path of the session cookie file, or '' if the login is
+     *                not possible (missing curl or admin credentials); the caller
+     *                must unlink the returned file after use
+     */
+    private function login_admin_cookie(): string
+    {
+        $cookie_file = '';
         if (!function_exists('curl_init')) {
             $this->dsp_warning('the php curl module is missing, so the login tests are skipped');
         } elseif (ADMIN_USER == '' or ADMIN_PW == '') {
@@ -4664,14 +4702,11 @@ class test_base
 
             if ($login_page == '') {
                 $this->dsp_warning('the login of the admin user for the web tests has failed');
-            } else {
-                $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+                unlink($cookie_file);
+                $cookie_file = '';
             }
-
-            unlink($cookie_file);
         }
-
-        return $result;
+        return $cookie_file;
     }
 
     /**
