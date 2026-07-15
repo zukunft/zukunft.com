@@ -286,7 +286,12 @@ class config extends db_object_seq_id
      * @param string $value the value that should be saved in the configuration table
      * @param sql_db $db_con the open database connection that should be used
      */
-    function set(string $code_id, string $value, sql_db $db_con, string $description = ''): bool
+    function set(
+        string $code_id,
+        string $value,
+        sql_db $db_con,
+        string $description = ''
+    ): bool
     {
         global $debug;
 
@@ -334,7 +339,7 @@ class config extends db_object_seq_id
 
         $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
+            $result = $this->set($code_id, $target_value, $db_con, $description);
         }
         return $result;
     }
