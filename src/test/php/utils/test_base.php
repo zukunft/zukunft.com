@@ -141,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -405,6 +406,7 @@ class test_base
     const float TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
     const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
     const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const int TIMEOUT_LIMIT_LOGIN = 1;    // time limit for the admin login curl; kept short because a login that the pod does not accept (e.g. no session support in the test env) should fail fast instead of blocking every dependent test for the full curl timeout
     const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
     const float TIMEOUT_TEST_INIT = 0.7;  // time limit to switch to a new test (maily to reset the timer)
     // TODO Prio 1 reduce!
@@ -1042,6 +1044,7 @@ class test_base
         ?data_object_ui               $cfg = null
     ): bool
     {
+        global $sys;
         $lib = new library();
         $tl = new test_lib();
         $usr_msg_ui = new user_message_ui();
@@ -1060,7 +1063,7 @@ class test_base
         }
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
-        // load the view from the database
+        // load the view from the database (the db layer measures its own read time)
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id);
         if ($msk->id() > 0) {
@@ -1069,7 +1072,12 @@ class test_base
             log_err('view with code id ' . $dsp_code_id . ' not found');
         }
 
-        // create the api message that send to the frontend
+        // build the api message and the ui objects the frontend would receive;
+        // an interleaved db read still counts as db_read because its own switch()
+        // restores this section, so only the mapping time is measured here. the
+        // sections are left with explicit switch() calls (ending in DEFAULT below)
+        // because a nested db read overwrites the single previous-section slot
+        $sys->times->switch(system_time_type::MAP_JSON);
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the related database objects
@@ -1082,12 +1090,12 @@ class test_base
         if ($id != 0) {
             $dbo_dsp->set_from_json($dbo_api_msg, $usr_msg_ui);
         }
-
-        // create the view for the user
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $usr_msg_ui);
+
+        // load the frontend configuration cache if the caller has not provided it
         if ($cfg == null) {
-            global $sys;
+            $sys->times->switch(system_time_type::LOAD_FRONTEND);
             $ui = new frontend('');
             $ui->load_cache();
             $cfg = new data_object_ui();
@@ -1098,7 +1106,10 @@ class test_base
             $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
         }
         // render in test mode so that the result is reproducible without backend calls
+        $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', '', true);
+        // return to the default section for the following tests
+        $sys->times->switch(system_time_type::DEFAULT);
 
         // check if the created view matches the expected view
         return $this->assert_html_body(
@@ -1276,10 +1287,10 @@ class test_base
      * @param string $target
      * @return bool true if the html has no relevant differences
      */
-    function assert_html(string $test_name, string $result, string $target): bool
+    function assert_html(string $test_name, string $result, string $target, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         $lib = new library();
-        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target));
+        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target), $exe_max_time);
     }
 
     /**
@@ -1290,10 +1301,10 @@ class test_base
      * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $file_path): bool
+    function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         $actual = $this->html_page($body);
-        return $this->assert_html_page($test_name, $actual, $file_path);
+        return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
     }
 
     /**
@@ -1304,10 +1315,10 @@ class test_base
      * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_page(string $test_name, string $html, string $file_path): bool
+    function assert_html_page(string $test_name, string $html, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         return $this->assert_file(
-            $test_name, $html, test_paths::RESOURCE . $file_path . test_files::HTML, test_files::HTML);
+            $test_name, $html, test_paths::RESOURCE . $file_path . test_files::HTML, test_files::HTML, '', $exe_max_time);
     }
 
     /**
@@ -1327,7 +1338,8 @@ class test_base
         string $actual,
         string $file_path,
         string $file_type = '',
-        string $session_token = ''
+        string $session_token = '',
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         $expected = $this->path_file($file_path);
@@ -1336,7 +1348,7 @@ class test_base
             $actual = $lib->fix_volatile_in_html($actual, $session_token);
             $expected = $lib->fix_volatile_in_html($expected, $session_token);
         }
-        $result = $this->assert_typed($test_name, $actual, $expected, $file_type);
+        $result = $this->assert_typed($test_name, $actual, $expected, $file_type, $exe_max_time);
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_path_file($file_path, $this->file_content($actual, $file_type));
         }
@@ -1356,7 +1368,8 @@ class test_base
         string $test_name,
         string $actual,
         string $expected,
-        string $file_type
+        string $file_type,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         $lib = new library();
@@ -1370,7 +1383,7 @@ class test_base
             $actual = $lib->trim_json($actual);
             $expected = $lib->trim_json($expected);
         }
-        return $this->assert($test_name, $actual, $expected);
+        return $this->assert($test_name, $actual, $expected, $exe_max_time);
     }
 
     /**
@@ -4642,7 +4655,45 @@ class test_base
     function web_page_with_login(string $url_path): string
     {
         $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
 
+    /**
+     * request the api json of a url with an admin login
+     * needed to test the read of access restricted api objects (e.g. a user),
+     * because the endpoint only returns the json to an admin or the user himself
+     *
+     * @param string $api_url the complete api url including the query parameters
+     * @return string the api json of the admin user or an empty string if the login has not been possible
+     */
+    function api_json_with_login(string $api_url): string
+    {
+        $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl($api_url, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
+
+    /**
+     * log in as the admin user of the env file and keep the session cookie
+     * the admin user is used, because on a fresh setup this is the only user
+     * with a password (see sql_db->add_admin_users_from_env)
+     *
+     * @return string the path of the session cookie file, or '' if the login is
+     *                not possible (missing curl or admin credentials); the caller
+     *                must unlink the returned file after use
+     */
+    private function login_admin_cookie(): string
+    {
+        $cookie_file = '';
         if (!function_exists('curl_init')) {
             $this->dsp_warning('the php curl module is missing, so the login tests are skipped');
         } elseif (ADMIN_USER == '' or ADMIN_PW == '') {
@@ -4660,18 +4711,17 @@ class test_base
                 url_var::USER_PASSWORD => ADMIN_PW,
                 url_var::POST_SUBMIT => 1
             ];
-            $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form);
+            // use the short login timeout: a login that the pod does not accept
+            // should fail fast instead of blocking the test for the full curl limit
+            $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form, self::TIMEOUT_LIMIT_LOGIN);
 
             if ($login_page == '') {
                 $this->dsp_warning('the login of the admin user for the web tests has failed');
-            } else {
-                $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+                unlink($cookie_file);
+                $cookie_file = '';
             }
-
-            unlink($cookie_file);
         }
-
-        return $result;
+        return $cookie_file;
     }
 
     /**
@@ -4680,15 +4730,16 @@ class test_base
      * @param string $url the complete url of the requested page
      * @param string $cookie_file the file to read and write the session cookie
      * @param array $post_form the form fields to post or an empty array for a simple get request
+     * @param int $timeout the max seconds to wait for the response before giving up
      * @return string the html page or an empty string if the page cannot be requested
      */
-    private function web_page_curl(string $url, string $cookie_file, array $post_form = []): string
+    private function web_page_curl(string $url, string $cookie_file, array $post_form = [], int $timeout = self::TIMEOUT_LIMIT_LONG): string
     {
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
         curl_setopt($curl, CURLOPT_COOKIEFILE, $cookie_file);
-        curl_setopt($curl, CURLOPT_TIMEOUT, self::TIMEOUT_LIMIT_LONG);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         if ($post_form != []) {
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($post_form));

@@ -133,6 +133,8 @@ class api_tests
         $t->assert_api_get(user::class, users::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
+        // an anonymous visitor must not be able to read another user via the api
+        $t->assert_api_get_not_permitted(url_var::ID, users::SYSTEM_TEST_ID, users::SYSTEM_TEST_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, url_var::WORD);
         $t->assert_api_get_by_text(word::class, word_names::MATH);
