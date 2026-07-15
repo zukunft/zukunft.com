@@ -46,8 +46,13 @@ add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can b
 
 ### reduce response time
 
-**1. User table flag**
-> Add a boolean field `uses_sandbox` to the user table (PostgreSQL, PHP 8.4+ codebase). Default `false`. Include a migration script. Update the user-loading code path so this field is always part of the existing user row fetch — no additional query. Use a single-exit function with one logic step per line where new logic is added.
+if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit 
+
+include the `uses_sandbox` in the api so that admin user can overwrite the flag using the frontend
+
+set the `uses_sandbox` flag to true if a sandbox row is added and update the user in the database
+
+create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
 
 **2. Cache storage for view-only pages**
 > Design and implement a cache table/store keyed by `view_id` + `object_id`, storing rendered HTML for view-only pages. Include: lookup function (returns cached HTML or null), write/replace function, and a timestamp column for last update. One logic step per line, single-exit functions.

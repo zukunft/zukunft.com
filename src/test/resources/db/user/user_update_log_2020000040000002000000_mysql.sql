@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS user_update_log_202000004000000200000;
-CREATE PROCEDURE user_update_log_202000004000000200000
+DROP PROCEDURE IF EXISTS user_update_log_2020000040000002000000;
+CREATE PROCEDURE user_update_log_2020000040000002000000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_user_name       smallint,
@@ -40,10 +40,10 @@ BEGIN
 
 END;
 
-PREPARE user_update_log_202000004000000200000_call FROM
-    'SELECT user_update_log_202000004000000200000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE user_update_log_2020000040000002000000_call FROM
+    'SELECT user_update_log_2020000040000002000000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT user_update_log_202000004000000200000
+SELECT user_update_log_2020000040000002000000
         (2,
          2,
          211,

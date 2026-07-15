@@ -804,6 +804,7 @@ class test_mappers
             case component_types::ADMIN_FORM_FIELD_USER_NAME;
             case component_types::ADMIN_FORM_FIELD_USER_EMAIL;
             case component_types::ADMIN_FORM_FIELD_USER_PASSWORD;
+            case component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX;
             case component_types::SYSTEM_BODY_SIGNUP;
             case component_types::SYSTEM_BODY_LOGIN;
             case component_types::SYSTEM_BODY_LOGIN_ACTIVATE;
@@ -1195,8 +1196,12 @@ class test_mappers
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled($this->env);
-                $url_array[] = [url_var::NAME, $obj->name()];
-                $url_array[] = [url_var::IP, $obj->ip_addr];
+                // use the field names of the user forms, because e.g. the ip address
+                // is never part of a form url but taken from the request
+                $url_array[] = [url_var::USERNAME, $obj->name()];
+                $url_array[] = [url_var::EMAIL, $obj->email];
+                $url_array[] = [url_var::USER_FIRST_NAME, $obj->first_name];
+                $url_array[] = [url_var::USER_LAST_NAME, $obj->last_name];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();

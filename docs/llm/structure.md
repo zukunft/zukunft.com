@@ -221,7 +221,25 @@ empty verb. And it must do so on *every* branch that falls back to `new verb()`
 (the missing id, the id `0`, and the null value) — each of those empty verbs is
 the same user-relevant problem, so none may be left silent.
 
-## Keep a function shorter than a screen page
+## Whatever happens, avoid an uncaught PHP fatal
+
+The general rule behind all the error-handling rules above: **whatever happens —
+a corrupted database, an outdated schema, bad input, a missing config — an
+uncaught PHP fatal (TypeError, UnhandledMatchError, uncaught exception, call on
+null) is avoided**, because a fatal kills the script before it can do the three
+duties of error handling:
+
+1. write the error to the system log (`sys_log`), so it is not lost,
+2. inform the admin, so the cause gets fixed,
+3. show the user a helpful message instead of a white page.
+
+So guard the value before the call that would fatal on it (e.g. check the
+db-read result for `false` *before* passing it to `row_mapper(?array)` — see
+the DB read result contract in `docs/llm/architecture.md`), catch exceptions at
+the layer boundary and convert them to a `log_err`/`log_fatal` plus a `$msg`
+entry, and give every `match()` a default arm that logs the unexpected case.
+Failing loudly is right — but through the logging and `$msg` channels above,
+never by letting the language kill the process.
 
 A function body should fit on **one screen page** (~50 lines) whenever possible —
 short enough that a reader sees the whole control flow without scrolling. When a

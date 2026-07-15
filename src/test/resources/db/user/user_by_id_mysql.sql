@@ -20,6 +20,7 @@ PREPARE user_by_id FROM
            last_name,
            term_id,
            view_id,
-           source_id
+           source_id,
+         uses_sandbox
       FROM users
      WHERE user_id = ?';

@@ -235,6 +235,7 @@ class user extends db_id_object_non_sandbox
     public ?int $right_level = null;       // can be used to reduce the right level of the profile
     public ?int $status_id = null;         // id of the actual status of the user profiles to reduce temporary the user writes of the profile
     public ?bool $excluded = null;         // to deactivate users that have already a log entry and cannot be deleted any more
+    public bool $uses_sandbox = false;     // true if the user has changed any data, so the pages cannot be served from the standard page cache
 
     // additional info
     public ?DateTime $created = null;
@@ -280,6 +281,24 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * TODO Prio 1 make sure that this is only used before the users are loaded
+     * the virtual system user for program actions before the users are loaded from the database
+     * e.g. for the initial database setup, the database version check or to load the system configuration
+     * the system profile is set explicit, because the default profile of a new user
+     * is the profile of a user without login, which is not permitted to change the database
+     *
+     * @return user the virtual system user with the system profile
+     */
+    static function system(): user
+    {
+        $usr = new user();
+        $usr->id = users::SYSTEM_ID;
+        $usr->name = users::SYSTEM_NAME;
+        $usr->set_profile_id(user_profiles::SYSTEM_ID);
+        return $usr;
+    }
+
+    /**
      * reset the vars of this user
      * used to search for a user with the same name, email or ip address
      * @param bool $keep_user not used here only for compatibility with the parent class
@@ -308,6 +327,7 @@ class user extends db_id_object_non_sandbox
         $this->right_level = null;
         $this->status_id = null;
         $this->excluded = null;
+        $this->uses_sandbox = false;
 
         // additional info
         $this->created = null;
@@ -412,6 +432,10 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
                 $this->excluded = $db_row[fields::FLD_EXCLUDED];
             }
+            // the flag is saved as smallint, so 0, 1 or null (of a not yet upgraded pod) which means false
+            if (array_key_exists(user_db::FLD_USES_SANDBOX, $db_row)) {
+                $this->uses_sandbox = (bool)$db_row[user_db::FLD_USES_SANDBOX];
+            }
 
             if (array_key_exists(user_db::FLD_CREATED, $db_row)) {
                 $this->created = $lib->get_datetime($db_row[user_db::FLD_CREATED], $this->dsp_id());
@@ -492,6 +516,12 @@ class user extends db_id_object_non_sandbox
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (key_exists(json_fields::USES_SANDBOX, $api_json)) {
+            $this->uses_sandbox = (bool)$api_json[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
+        }
 
         if (key_exists(json_fields::TERM_ID, $api_json)) {
             // TODO Prio 1 get term from cache if it is in the cache already
@@ -563,6 +593,12 @@ class user extends db_id_object_non_sandbox
             $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
+        }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (key_exists(json_fields::USES_SANDBOX, $in_ex_json)) {
+            $this->uses_sandbox = (bool)$in_ex_json[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
         }
 
         $this->trm = $map->get_term($in_ex_json, $msg, $dto);
@@ -683,6 +719,7 @@ class user extends db_id_object_non_sandbox
             $vars[json_fields::STATUS] = $this->status_id;
         }
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -1175,14 +1212,24 @@ class user extends db_id_object_non_sandbox
     /**
      * load a user from the database view
      * @param sql_par $qp the query parameters created by the calling function
+     * @param user_message $msg to report a failed query to the requesting user
      * @return int the id of the object found and zero if nothing is found
      */
     protected
-    function load(sql_par $qp): int
+    function load(sql_par $qp, user_message $msg = new user_message()): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
+        // TODO Prio 1 do not call row mapper if not $msg->is_ok()
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged and reported via $msg;
+        // it is mapped like "no user found", because a fatal crash of the row mapper
+        // would hide the fail message (see db read result contract in docs/llm/architecture.md)
+        // and no error is logged here, because logging loads the log user, which could loop back to here
+        if ($db_row === false) {
+            $db_row = null;
+        }
         $this->row_mapper($db_row);
         return $this->id;
     }
@@ -1584,6 +1631,47 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * create human-readable messages of the differences between the user objects
+     * is expected to be similar to the db_fields_changed function
+     * the password and the activation key are excluded,
+     * because these secrets must never be part of a message shown to anyone
+     *
+     * @param user|CombineObject|db_object_seq_id $obj which might be different to this user
+     * @param bool $ex_def if true excluding differences in fields with a default value
+     * @return user_message the human-readable messages of the differences between the user objects
+     */
+    function diff_msg(user|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj);
+        $this->diff_field_msg($msg, user_db::FLD_NAME, $this->name, $obj->name);
+        $this->diff_field_msg($msg, user_db::FLD_IP_ADDR, $this->ip_addr, $obj->ip_addr);
+        $this->diff_field_msg($msg, user_db::FLD_EMAIL, $this->email, $obj->email);
+        $this->diff_field_msg($msg, user_db::FLD_LAST_LOGIN,
+            $this->last_login?->format(DateTimeInterface::ATOM),
+            $obj->last_login?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, user_db::FLD_LAST_LOGOUT,
+            $this->last_logoff?->format(DateTimeInterface::ATOM),
+            $obj->last_logoff?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, user_db::FLD_PROFILE, $this->profile_id, $obj->profile_id);
+        $this->diff_field_msg($msg, fields::FLD_CODE_ID, $this->code_id, $obj->code_id);
+        $this->diff_field_msg($msg, user_db::FLD_TYPE_ID, $this->type_id, $obj->type_id);
+        $this->diff_field_msg($msg, user_db::FLD_LEVEL, $this->right_level, $obj->right_level);
+        $this->diff_field_msg($msg, user_db::FLD_STATUS, $this->status_id, $obj->status_id);
+        $this->diff_field_msg($msg, fields::FLD_EXCLUDED, $this->excluded, $obj->excluded);
+        $this->diff_field_msg($msg, user_db::FLD_USES_SANDBOX, $this->uses_sandbox, $obj->uses_sandbox);
+        $this->diff_field_msg($msg, user_db::FLD_CREATED,
+            $this->created?->format(DateTimeInterface::ATOM),
+            $obj->created?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, fields::FLD_DESCRIPTION, $this->description, $obj->description);
+        $this->diff_field_msg($msg, user_db::FLD_FIRST_NAME, $this->first_name, $obj->first_name);
+        $this->diff_field_msg($msg, user_db::FLD_LAST_NAME, $this->last_name, $obj->last_name);
+        $this->diff_field_msg($msg, user_db::FLD_TERM, $this->trm?->id(), $obj->trm?->id());
+        $this->diff_field_msg($msg, fields::FLD_VIEW, $this->msk?->id(), $obj->msk?->id());
+        $this->diff_field_msg($msg, user_db::FLD_SOURCE, $this->src?->id(), $obj->src?->id());
+        return $msg;
+    }
+
+    /**
      * detects if this object has been changed compared to the given object,
      * excluding changes on internal fields like last_update
      *
@@ -1945,6 +2033,10 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
         $vars[json_fields::STATUS] = $this->status_name();
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        // the default false is not exported to keep the export file minimal
+        if ($this->uses_sandbox) {
+            $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
+        }
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -2054,6 +2146,9 @@ class user extends db_id_object_non_sandbox
         if ($std_obj->excluded !== $this->excluded) {
             $result->excluded = $this->excluded;
         }
+        if ($std_obj->uses_sandbox !== $this->uses_sandbox) {
+            $result->uses_sandbox = $this->uses_sandbox;
+        }
 
         if ($std_obj->created !== $this->created) {
             $result->created = $this->created;
@@ -2144,6 +2239,11 @@ class user extends db_id_object_non_sandbox
         if ($this->excluded === null and $obj->excluded != null) {
             $this->excluded = $obj->excluded;
         }
+        // the flag cannot be null (see docs/llm/constants.md),
+        // so for the fill the default false counts as not yet set
+        if ($this->uses_sandbox === false and $obj->uses_sandbox === true) {
+            $this->uses_sandbox = true;
+        }
 
         if ($this->created === null and $obj->created != null) {
             $this->created = $obj->created;
@@ -2232,6 +2332,12 @@ class user extends db_id_object_non_sandbox
         $result = false;
 
         if ($this->is_profile_valid()) {
+            // the fixed profile id of the virtual system user (user::system) is accepted
+            // without the user profile list, because e.g. the database version check
+            // on the program start runs before the profiles can be loaded from the database
+            if ($this->profile_id == user_profiles::SYSTEM_ID) {
+                $result = true;
+            }
             foreach (user_profiles::CAN_CHANGE as $prf) {
                 if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
                     $result = true;
@@ -3595,6 +3701,21 @@ class user extends db_id_object_non_sandbox
                 source_fields::FLD_NAME,
                 $this->src,
                 $obj->src
+            );
+        }
+        if ($obj->uses_sandbox !== $this->uses_sandbox) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_USES_SANDBOX,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_USES_SANDBOX),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_USES_SANDBOX,
+                $this->uses_sandbox,
+                sql_field_type::BOOL,
+                $obj->uses_sandbox
             );
         }
 

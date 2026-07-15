@@ -252,9 +252,14 @@ class config extends db_object_seq_id
      * including $db_con because this is call also from the start, where the global $db_con is not yet set
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param sql_db $db_con the open database connection that should be used
+     * @param user_message $msg with the user who has requested the value, because a missing entry is created with the default value
      * @return string|null the configuration value that is valid at the moment
      */
-    function get_db(string $code_id, sql_db $db_con): ?string
+    function get_db(
+        string $code_id,
+        sql_db $db_con,
+        user_message $msg = new user_message()
+    ): ?string
     {
         global $debug;
 
@@ -266,13 +271,13 @@ class config extends db_object_seq_id
         $db_row = $db_con->get1($qp);
         if ($db_row == null) {
             // automatically create the config entry
-            $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
+            $this->set($code_id, $this->default_value($code_id), $db_con, $msg, $this->default_description($code_id));
         } else {
             $db_code_id = $db_row[fields::FLD_CODE_ID];
             $db_value = $db_row[fields::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
-                $this->set($code_id, $this->default_value($code_id), $db_con, $this->default_description($code_id));
+                $this->set($code_id, $this->default_value($code_id), $db_con, $msg, $this->default_description($code_id));
             }
         }
 
@@ -285,18 +290,30 @@ class config extends db_object_seq_id
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param string $value the value that should be saved in the configuration table
      * @param sql_db $db_con the open database connection that should be used
+     * @param user_message $msg with the user who has requested the change, e.g. the virtual system user for the database version check
+     * @param string $description text that explains the config value to the user or admin
      */
-    function set(string $code_id, string $value, sql_db $db_con, string $description = ''): bool
+    function set(
+        string $code_id,
+        string $value,
+        sql_db $db_con,
+        user_message $msg,
+        string $description = '',
+        array $sql_types = []
+    ): bool
     {
         global $debug;
 
         // init
-        $msg = new user_message();
         $result = false;
         log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
 
         // by default all changes are logged
-        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        if ($sql_types != []) {
+            $sc_par_lst = new sql_type_list($sql_types);
+        } else {
+            $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        }
 
         // prepare object (to be moved to calling function
         $cfg = new config();
@@ -325,16 +342,23 @@ class config extends db_object_seq_id
      * test if the config value is set to the expected value and if not set it
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param string $target_value the value that should be saved in the configuration table
-     * @param string $description text that explains the config value to the user or admin
      * @param sql_db $db_con the open database connection that should be used
+     * @param user_message $msg with the user who has requested the check e.g. the virtual system user on the program start
+     * @param string $description text that explains the config value to the user or admin
      */
-    function check_cfg(string $code_id, string $target_value, sql_db $db_con, string $description = ''): bool
+    function check_cfg(
+        string $code_id,
+        string $target_value,
+        sql_db $db_con,
+        user_message $msg,
+        string $description = ''
+    ): bool
     {
         $result = false;
 
-        $cfg_value = $this->get_db($code_id, $db_con);
+        $cfg_value = $this->get_db($code_id, $db_con, $msg);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
+            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $msg, $description);
         }
         return $result;
     }

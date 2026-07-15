@@ -264,7 +264,10 @@ class all_unit_write_tests extends all_unit_read_tests
         foreach (def::DB_TABLE_LIST as $table_name) {
             $db_con->drop_table($table_name);
         }
-        $db_con->setup_db();
+        // recreate the database as the virtual system user,
+        // because this is a system call
+        $setup_msg = new user_message(user::system());
+        $db_con->setup_db($setup_msg);
 
         // restore the test user
         $usr = clone $test_usr;

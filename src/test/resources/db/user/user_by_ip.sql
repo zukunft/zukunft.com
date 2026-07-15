@@ -21,6 +21,7 @@ PREPARE user_by_ip (text) AS
          last_name,
          term_id,
          view_id,
-         source_id
+         source_id,
+         uses_sandbox
     FROM users
    WHERE ip_address = $1;

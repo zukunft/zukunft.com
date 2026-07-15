@@ -1,4 +1,4 @@
-PREPARE user_update_202000004000000200000 FROM
+PREPARE user_update_2020000040000002000000 FROM
    ' UPDATE users
         SET user_name       = ?,
             email           = ?,
