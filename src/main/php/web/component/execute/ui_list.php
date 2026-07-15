@@ -682,7 +682,7 @@ class ui_list extends ui_base
     /**
      * show the values related to the given object grouped for a quick overview: the newest time period
      * first, then the phrases used by several values, then the remaining values by impact (see
-     * value_list::list_most_relevant and docs/llm/pending.md)
+     * value_list::list_most_relevant and docs/llm/pending_next_launch.md)
      *
      * @param word|db_object|type_object|null $dbo the object the values are related to
      * @param data_object|null $dto the data cache used to fill the value list until the backend answers

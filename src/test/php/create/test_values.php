@@ -261,7 +261,7 @@ class test_values extends test_objects
     /**
      * a value list to test the "most relevant" value list component: two year groups (2022 newest and
      * 2021, each shared by two values), a phrase group (three values sharing the phrase "ABB") and one
-     * ungrouped value; see value_list::list_most_relevant and docs/llm/pending.md
+     * ungrouped value; see value_list::list_most_relevant and docs/llm/pending_next_launch.md
      * @return value_list with time-grouped, phrase-grouped and ungrouped values
      */
     function value_list_most_relevant(): value_list

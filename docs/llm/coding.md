@@ -36,6 +36,11 @@ Tests run over HTTP, not CLI: `test/test_unit.php` (unit, no DB),
 `test/test.php` (all), `test/test_coding_rules.php` (consistency checks),
 `test/test_horizontal.php`. Single class via `a_selected_test.php` in PHPUnit dir.
 
+**An LLM never runs the predefined test scripts in `/test/*` — especially not
+`test/test.php`.** They need a local deployment (served checkout, database,
+admin session), and deploying is never an LLM task. Write and review tests,
+then ask the developer to run them and report the results.
+
 Branches: `feature/*` → `develop` → `release` → `master`. Commit messages
 reference issues, e.g. `fix auth flow as part of fix #232`.
 
@@ -102,8 +107,10 @@ detail file. Order is by how often they fire, not importance.
 ## Domain & import rules
 
 These fire only when touching domain objects or import JSON. JSON import
-file-format detail and worked examples: `docs/llm/json_structure.md`. Domain
-noun definitions: `docs/llm/architecture.md`.
+file-format detail and worked examples: `docs/llm/json_structure.md` (data:
+words, triples, formulas, sources, values) and `docs/llm/json_views.md`
+(views, components, view-validation). Domain noun definitions:
+`docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`.
@@ -117,7 +124,7 @@ noun definitions: `docs/llm/architecture.md`.
 - Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Qualify a value as specifically as the data allows, globally unique — name the actual entity (`Zurich (canton)`, not bare `canton`); build qualifiers as triples from single words; omit `"share":"public"` (the default).
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
-- A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`.
+- A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
 
@@ -129,6 +136,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
+- Never run the predefined test scripts in `/test/*` (especially `test/test.php`): they need a local deployment, which is never an LLM task; the developer runs them and reports the results. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.
@@ -153,5 +161,4 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Never change `files::AUTO_UPDATE_TEST_FILES` (`src/test/php/const/files.php`); it must always remain `false` — `true` silently overwrites failing snapshots and masks regressions.
 - Never overwrite an existing `src/test/resources/` fixture (HTML/SQL/CSV/JSON) to make a test pass; leave it failing for the existing scripts or a human reviewer to regenerate — the snapshot diff is the reviewer's signal, not yours to silence. You may *add* new resource files.
 - No real secrets anywhere (source, fixtures, config, commit messages). Dummy passwords must be explicitly labelled; remove an accidentally-staged secret before committing, not in a follow-up.
-- Run `test/test_coding_rules.php`; fix what it reports.
-- `test/test.php` must run without error; fix any failure before committing.
+- `test/test_coding_rules.php` and `test/test.php` must run without error before committing — but only the developer runs them (an LLM never runs `/test/*` scripts); ask for the run and fix what it reports.

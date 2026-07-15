@@ -230,7 +230,7 @@ the parts change.
 
 ## Naming conventions
 
-Short variable prefixes (see also `docs/code_guidelines.md`). The canonical,
+Short variable prefixes (see also `docs/llm/coding.md`). The canonical,
 complete registry of these names is the property list in
 `cfg/helper/type_lists.php` — when you add a preloaded type there, add its
 abbreviation here too, and reuse an existing one rather than inventing a new
