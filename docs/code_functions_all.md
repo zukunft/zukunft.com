@@ -5261,6 +5261,7 @@
     \-- fr - section for function fr not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_text - section for function form_text not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_hidden - section for function form_hidden not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- form_session_token - section for function form_session_token not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_end_with_submit - section for function form_end_with_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- button_submit - section for function button_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_submit - section for function form_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
@@ -7444,6 +7445,8 @@
         \-- html_base - @param string $field the name of the form field
     \-- form_hidden
         \-- html_base - add the hidden field
+    \-- form_session_token
+        \-- html_base - the hidden anti-csrf field carrying the session token that the server validates on a submit
     \-- form_end_with_submit
         \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- button_submit

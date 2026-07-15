@@ -31,7 +31,6 @@
 
 namespace Zukunft\ZukunftCom\test\php;
 
-use Random\RandomException;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'db_check.php';
@@ -63,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 
 class test_app
 {
@@ -89,12 +89,10 @@ class test_app
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         session_start();
+        // use a fixed token so the anti-csrf hidden field that every crud form now emits stays
+        // deterministic across runs and the html snapshots remain stable
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-            try {
-                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-            } catch (RandomException $e) {
-                log_err('RandomException ' . $e->getMessage());
-            }
+            $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
         }
 
         /*

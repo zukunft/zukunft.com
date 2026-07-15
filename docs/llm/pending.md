@@ -14,8 +14,6 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
 
-BLOCKER: GET /api/user?id= (or ?name= / ?email=) returns the api_json of any user without authentication. api/user/index.php gates only on '$usr->id > 0', which is always true because an anonymous visitor gets an auto created ip user, and cfg/user/user.php::api_json_array (around line 665) includes email, ip_addr, profile_id and the activation_key. This is user enumeration plus account takeover (the activation key feeds the activation flow). Require an admin or the user himself, and never send activation_key or ip_addr over the api. The file header already carries the TODO for it
-
 fix the site wide csrf gap: the token check in frontend.php (around line 291) runs only in an 'elseif (!empty($url_arr[SESSION_TOKEN]))', so a request that omits the token is not rejected, and the crud forms do not send the token anyway (only the login and signup forms do). Make the check fail closed - require a valid token for every write of views::CHANGE_MASKS_IDS - and emit the token as a hidden field in every crud form. without it an attacker can csrf a victim into creating or changing an object
 
 close the api authorization bypass: the 'ip user may not change data' control lives only in http/view.php (around line 127, is_blocked on CHANGE_MASKS_IDS); the rest endpoints (api/word/index.php -> sandbox save/del) never call is_blocked, so config_numbers::ip_user_can_change (default false) is ignored on POST / PUT / DELETE /api/word. Enforce the block centrally in the model save/del, not per entry point, and add a negative test that an ip user write via the api is refused

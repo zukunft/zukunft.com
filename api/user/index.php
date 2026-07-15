@@ -30,8 +30,6 @@
 
     http://zukunft.com
 
-    TODO add multi level security check to prevent gaining access right
-
 */
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
