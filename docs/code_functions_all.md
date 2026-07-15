@@ -2693,6 +2693,7 @@
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
+    \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
 \-- user_list
@@ -4559,6 +4560,8 @@
     \-- switch
         \-- system_time_list - start the timing of set the user of the error log
     \-- report
+        \-- system_time_list - @return string description of the execution times by category
+    \-- show_total
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section

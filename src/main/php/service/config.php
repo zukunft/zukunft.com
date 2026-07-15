@@ -258,7 +258,7 @@ class config extends db_object_seq_id
     function get_db(
         string $code_id,
         sql_db $db_con,
-        user_message $msg = new user_message()
+        user_message $msg
     ): ?string
     {
         global $debug;
@@ -270,14 +270,18 @@ class config extends db_object_seq_id
         $qp = $this->get_sql($db_con, $code_id);
         $db_row = $db_con->get1($qp);
         if ($db_row == null) {
+            // TODO Prio 1 review
             // automatically create the config entry
+            // and return the created default, because a configuration value should never be empty
             $this->set($code_id, $this->default_value($code_id), $db_con, $msg, $this->default_description($code_id));
+            $db_value = $this->default_value($code_id);
         } else {
             $db_code_id = $db_row[fields::FLD_CODE_ID];
             $db_value = $db_row[fields::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
                 $this->set($code_id, $this->default_value($code_id), $db_con, $msg, $this->default_description($code_id));
+                $db_value = $this->default_value($code_id);
             }
         }
 
@@ -331,8 +335,16 @@ class config extends db_object_seq_id
         } else {
             $cfg_db = new config();
             $cfg_db->row_mapper($db_row);
-            if ($value != $db_row[fields::FLD_VALUE] or $description != $db_row[fields::FLD_DESCRIPTION]) {
-                $result = $this->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
+            // the update is done on the prepared object with the new value,
+            // and the row id from the database, because the update row is selected by the id
+            $cfg->id = $cfg_db->id();
+            // keep the database description if the caller has not given a new one
+            if ($description == '') {
+                $cfg->description = $cfg_db->description;
+            }
+            if ($value != $db_row[fields::FLD_VALUE]
+                or ($description != '' and $description != $db_row[fields::FLD_DESCRIPTION])) {
+                $result = $cfg->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }
         return $result;
@@ -358,7 +370,7 @@ class config extends db_object_seq_id
 
         $cfg_value = $this->get_db($code_id, $db_con, $msg);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $msg, $description);
+            $result = $this->set($code_id, $target_value, $db_con, $msg, $description);
         }
         return $result;
     }

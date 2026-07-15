@@ -45,6 +45,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
+include_once test_paths::UNIT . 'user_tests.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
@@ -60,6 +61,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -67,11 +69,13 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
 use Zukunft\ZukunftCom\test\php\unit\import_tests;
+use Zukunft\ZukunftCom\test\php\unit\user_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\formula_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -133,6 +137,9 @@ class a_selected_test extends test_cleanup
         // prepare for unit testing
         $db_con = $tl->unit_test_db_con();
         $this->usr1 = $tl->users_for_unit_tests();
+        // set the system user like all_unit_tests->set_users does for the full test suite,
+        // because e.g. the delete sql creation tests are done with the system user
+        $this->usr_system = $this->user_system();
         $u_env->init_unit_tests();
 
         /*
@@ -145,6 +152,7 @@ class a_selected_test extends test_cleanup
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
+        new user_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -194,6 +202,13 @@ class a_selected_test extends test_cleanup
             global $sys;
             $ui = new frontend('api based ui tests');
             $ui->load_cache();
+            // the html renderers read the type cache from the global $ui_sys; point it at the just
+            // loaded frontend cache so the render does not depend on a stale cache of the unit tests
+            // (same pattern as url_test_base and /http/view.php)
+            global $ui_sys;
+            $ui_sys = $ui->dto;
+            // an empty frontend config returns the shared defaults e.g. for the date format
+            $ui_sys->cfg = new config_ui();
             //new type_lists_ui_tests()->run($this, $ui);
 
             // check and update the fixed csv files
@@ -274,7 +289,7 @@ class a_selected_test extends test_cleanup
              * user interface
              */
 
-            //new horizontal_ui_tests()->run($this);
+            new horizontal_ui_tests()->run($this, $ui);
 
             /*
              * db write
@@ -284,6 +299,7 @@ class a_selected_test extends test_cleanup
             $this->cleanup_objects_ex_user();
 
             // run the selected db write tests
+            run_system_test($this);
             //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
