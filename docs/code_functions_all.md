@@ -2692,6 +2692,7 @@
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
+    \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
 \-- user_list
@@ -4559,6 +4560,8 @@
         \-- system_time_list - start the timing of set the user of the error log
     \-- report
         \-- system_time_list - @return string description of the execution times by category
+    \-- show_total
+        \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section
 \-- use to apply the time of the parent process for continuous timestamp reporting
@@ -5256,6 +5259,7 @@
     \-- fr - section for function fr not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_text - section for function form_text not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_hidden - section for function form_hidden not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- form_session_token - section for function form_session_token not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_end_with_submit - section for function form_end_with_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- button_submit - section for function button_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_submit - section for function form_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
@@ -7437,6 +7441,8 @@
         \-- html_base - @param string $field the name of the form field
     \-- form_hidden
         \-- html_base - add the hidden field
+    \-- form_session_token
+        \-- html_base - the hidden anti-csrf field carrying the session token that the server validates on a submit
     \-- form_end_with_submit
         \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- button_submit

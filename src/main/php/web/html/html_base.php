@@ -1122,6 +1122,17 @@ class html_base
     }
 
     /**
+     * the hidden anti-csrf field carrying the session token that the server validates on a submit
+     * every crud form (opened via form_start) and the login and signup forms include it so that a
+     * data change without the matching token is rejected (see frontend::request_token_valid)
+     * @return string the html code of the hidden session token field
+     */
+    function form_session_token(): string
+    {
+        return $this->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN] ?? '');
+    }
+
+    /**
      * end a html form with save, cancel and optional delete buttons
      * @param string $submit_name label for the save button; empty uses the default translated label
      * @param string $back the URL or word id to return to after cancelling
@@ -1943,7 +1954,9 @@ class html_base
         $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
         $id = ' ' . self::ID . '="' . $form_name . '"';
 
-        return '<' . self::FORM . $action . $id . '>';
+        // every crud form carries the anti-csrf session token as its first hidden field so the
+        // server can reject a data change that does not carry the matching token (see form_session_token)
+        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token();
     }
 
     /**

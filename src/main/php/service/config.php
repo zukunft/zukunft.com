@@ -320,7 +320,11 @@ class config extends db_object_seq_id
             $cfg_db = new config();
             $cfg_db->row_mapper($db_row);
             if ($value != $db_row[fields::FLD_VALUE] or $description != $db_row[fields::FLD_DESCRIPTION]) {
-                $result = $this->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
+                // update from the object that holds the new value; take the id and name from the
+                // loaded row so the update targets the right entry and keeps the existing name
+                $cfg->id = $cfg_db->id();
+                $cfg->name = $cfg_db->name;
+                $result = $cfg->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }
         return $result;

@@ -288,14 +288,13 @@ class frontend
             } catch (RandomException $e) {
                 log_err('RandomException ' . $e->getMessage());
             }
-        } elseif (!empty($url_arr[url_var::SESSION_TOKEN])) {
-            // TODO Prio 0 add the session token to each frontend form
-            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $url_arr[url_var::SESSION_TOKEN])) {
-                $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
-                log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $url_arr[url_var::SESSION_TOKEN], 'view.php');
-                $session_is_fine = false;
-            }
+        }
+        // a data change (a submit of an add, edit or delete mask) must carry the session token that
+        // every crud form emits as a hidden field; reject it when the token is missing or wrong so
+        // an attacker cannot csrf a victim into creating or changing an object (fail closed)
+        if (!self::request_token_valid($url_arr, $_SESSION[url_var::SESSION_TOKEN] ?? '')) {
+            log_fatal('suspect request for mask ' . ($url_arr[url_var::MASK] ?? 0) . ' with a missing or wrong session token', 'view.php');
+            $session_is_fine = false;
         }
 
         // enforce the file based IP / user whitelist activated on the server admin page;
@@ -335,6 +334,32 @@ class frontend
         } else {
             return new sql_db();
         }
+    }
+
+    /**
+     * decide whether a request may proceed with respect to the anti-csrf session token
+     * a data change (a submit of an add, edit or delete mask) must carry the session token that
+     * every crud form emits as a hidden field; without it an attacker could csrf a victim into
+     * creating or changing an object, so such a request is rejected when the token is missing or
+     * wrong (fail closed); a request that is not a data change but still sends a token (e.g. the
+     * login and signup forms) is rejected only when the sent token does not match
+     *
+     * @param array $url_arr the parameters given with the url for the request
+     * @param string $session_token the anti-csrf token stored in the current session
+     * @return bool true if the request may proceed
+     */
+    static function request_token_valid(array $url_arr, string $session_token): bool
+    {
+        $mask_id = $url_arr[url_var::MASK] ?? 0;
+        $sent_token = $url_arr[url_var::SESSION_TOKEN] ?? '';
+        $is_change_mask = in_array($mask_id, views::CHANGE_MASKS_IDS);
+        $is_submit = isset($url_arr[url_var::POST_SUBMIT]);
+        $token_required = $is_change_mask && $is_submit;
+        $result = true;
+        if ($token_required or $sent_token != '') {
+            $result = $session_token != '' && hash_equals($session_token, $sent_token);
+        }
+        return $result;
     }
 
     /**

@@ -602,7 +602,7 @@ class user extends db_object
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
         $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
@@ -638,7 +638,7 @@ class user extends db_object
         $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
         $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
         $form_str .= $html->p($form_pwr);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
@@ -674,7 +674,7 @@ class user extends db_object
         $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
         $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
         $form_str .= $html->p($form_pwr);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::ACTIVATE_SUBMIT));
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
@@ -699,7 +699,7 @@ class user extends db_object
         $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
         $form_mail .= $html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN);
         $form_str .= $html->p($form_mail);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));
         $cancel_url = $back_url !== '' ? $back_url : api::MAIN_SCRIPT;
