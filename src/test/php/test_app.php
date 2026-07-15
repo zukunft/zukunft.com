@@ -129,6 +129,7 @@ class test_app
     }
 
     /**
+     * TODO Prio 1 add the $msg parameter to return messages to the user
      * open the database connection and load the base cache
      * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
@@ -160,49 +161,54 @@ class test_app
         } else {
             log_debug($code_name . ': db open');
 
-            // check the system setup
+            // check the system setup with the virtual system user
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $usr_msg = $db_chk->db_check($db_con);
-            if (!$usr_msg->is_ok()) {
+            $sys_msg = new user_message(user::system());
+            if (!$db_chk->db_check($db_con, $sys_msg)) {
                 echo '\n';
-                echo $usr_msg->all_message_text();
+                echo $sys_msg->all_message_text();
                 $db_con->close();
                 $db_con = null;
             }
 
-            // create a virtual one-time system user to load the system users
-            $usr_sys = new user();
-            $usr_sys->id = users::SYSTEM_ID;
-            $usr_sys->name = users::SYSTEM_NAME;
+            // skip the start-up loading if the database check has failed and the connection has been closed,
+            // because continuing without a database would end in a fatal crash that hides the fail message
+            if ($db_con != null) {
 
-            // load system configuration
-            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-            $sys->load_cache_type($db_con);
-            // TODO cache the system config json and detect
-            $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg(null, $usr_sys);
-            $mtr = new Translator($cfg->language());
+                // create a virtual one-time system user to load the system users
+                $usr_sys = new user();
+                $usr_sys->id = users::SYSTEM_ID;
+                $usr_sys->name = users::SYSTEM_NAME;
 
-            // preload all types from the database
-            $sys->times->switch(system_time_type::LOAD_TYPES);
-            // the types are general so the system user can be used to load the types
-            $cac = new data_object($usr_sys);
-            // TODO Prio 1 review error and message handling
-            /*
-            if (!$sys->load_type_lists($db_con)) {
-                log_err('Type loading incomplete due to ');
-            }
-            */
-            $sys->load_type_lists($db_con);
+                // load system configuration
+                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+                $sys->load_cache_type($db_con);
+                // TODO cache the system config json and detect
+                $cfg = new config_numbers($usr_sys);
+                $cfg->load_cfg(null, $usr_sys);
+                $mtr = new Translator($cfg->language());
 
-            $log = new change_log($usr_sys);
-            $db_changed = $log->create_log_references($db_con);
-
-            // reload the type list if needed and trigger an update in the frontend
-            // even tough the update of the preloaded list should already be done by the single adds
-            if ($db_changed) {
+                // preload all types from the database
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                // the types are general so the system user can be used to load the types
+                $cac = new data_object($usr_sys);
+                // TODO Prio 1 review error and message handling
+                /*
+                if (!$sys->load_type_lists($db_con)) {
+                    log_err('Type loading incomplete due to ');
+                }
+                */
                 $sys->load_type_lists($db_con);
+
+                $log = new change_log($usr_sys);
+                $db_changed = $log->create_log_references($db_con);
+
+                // reload the type list if needed and trigger an update in the frontend
+                // even tough the update of the preloaded list should already be done by the single adds
+                if ($db_changed) {
+                    $sys->load_type_lists($db_con);
+                }
             }
 
         }

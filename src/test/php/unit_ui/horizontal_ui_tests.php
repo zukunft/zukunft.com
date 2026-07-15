@@ -160,6 +160,22 @@ class horizontal_ui_tests
                 $refilled_obj->ui_msg_code_id_vars = $filled_obj->ui_msg_code_id_vars;
                 $refilled_obj->ui_msg_code_id_exception = $filled_obj->ui_msg_code_id_exception;
             }
+            // TODO Prio 1 remove exception
+            // fill the user fields that no user form transports, because e.g. the ip address
+            // comes from the request and the login times from the login process
+            if ($filled_obj::class == user::class and $refilled_obj::class == user::class) {
+                $refilled_obj->ip_addr = $filled_obj->ip_addr;
+                $refilled_obj->last_login = $filled_obj->last_login;
+                $refilled_obj->last_logoff = $filled_obj->last_logoff;
+                $refilled_obj->right_level = $filled_obj->right_level;
+                // the sandbox usage checkbox is only part of the admin user edit mask
+                $refilled_obj->uses_sandbox = $filled_obj->uses_sandbox;
+                $refilled_obj->created = $filled_obj->created;
+                $refilled_obj->description = $filled_obj->description;
+                $refilled_obj->trm = $filled_obj->trm;
+                $refilled_obj->msk = $filled_obj->msk;
+                $refilled_obj->src = $filled_obj->src;
+            }
             // check the diff
             $diff = $filled_obj->diff_msg($refilled_obj);
             if (!$diff->is_ok()) {

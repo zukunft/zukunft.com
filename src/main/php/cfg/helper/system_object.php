@@ -170,16 +170,18 @@ class system_object
 
     function user_log(): user
     {
-        $usr = $this->sys_usr_lst->get_by_code_id(users::SYSTEM_ID, false);
+        $usr = $this->sys_usr_lst->get_by_code_id(users::SYSTEM_LOG_CODE_ID, false);
         if ($usr == null) {
             $usr = new user();
             $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID);
             if ($usr->has_db_id()) {
                 $this->sys_usr_lst->add($usr);
             } else {
+                // fallback to a virtual log user e.g. if the user load has failed on an outdated database,
+                // because a fatal crash while creating the log user would hide the reason for the log entry
                 $usr->name = users::SYSTEM_LOG_NAME;
                 $usr->code_id = users::SYSTEM_LOG_CODE_ID;
-                $usr->profile_id = $this->typ_lst->usr_pro->get_by_code_id(user_profiles::LOG, false);
+                $usr->profile_id = $this->typ_lst->usr_pro->id(user_profiles::LOG, false);
             }
         }
         return $usr;

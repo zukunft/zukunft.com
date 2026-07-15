@@ -1108,14 +1108,12 @@ class sql_db
         }
 
         // reopen the database connection with the zukunft user and the zukunft database
-        // and try to create the database structure
+        // and try to create the database structure as the virtual system user, because this is a system call
         if (!$this->open()) {
             log_fatal('reopening of the database connection with the zukunft user failed', 'sql_db->setup');
         } else {
-            $usr_msg = $this->setup_db();
-            if ($usr_msg->is_ok()) {
-                $result = true;
-            }
+            $sys_msg = new user_message(user::system());
+            $result = $this->setup_db($sys_msg);
         }
         $sys->times->switch();
 
@@ -1154,16 +1152,17 @@ class sql_db
      * create the database tables and fill it with the essential data
      * TODO remove or secure before moving to PROD
      *
-     * @return user_message true if the database table have been created successful
+     * @param user_message $msg to collect the messages that should be shown to the user
+     *                          with the user who has requested the setup,
+     *                          which is the virtual system user (user::system) for a system call
+     * @return bool true if the database tables have been created successfully
      */
-    function setup_db(): user_message
+    function setup_db(user_message $msg): bool
     {
         global $sys;
         global $db_con;
         global $cac;
         $log_txt = $sys->log_txt;
-
-        $usr_msg = new user_message();
 
         // remove all tables and views remaining from an outdated or incomplete setup
         // to avoid conflicts with the index and constraint creation of the setup script
@@ -1188,24 +1187,22 @@ class sql_db
                 // retry once but try to delete upfront all remaining tables and objects
                 $log_txt->echo_text_log('Run db setup sql script failed due to ' . $sql_msg->all_message_text());
                 $log_txt->echo_text_log('Retry ...');
-                $usr_msg = new user_message();
                 $this->reset_db_core();
                 $sys->times->switch(system_time_type::DB_SETUP);
                 $sql_msg = $this->exe_script($sql);
                 $sys->times->switch();
-                $usr_msg->merge($sql_msg);
             }
             if (!$sql_msg->is_ok()) {
-                $usr_msg->merge($sql_msg);
+                $msg->merge($sql_msg);
             }
         } catch (Exception $e) {
-            $msg = ' creation of the database failed due to ' . $e->getMessage();
-            log_fatal($msg, 'setup_db');
-            $usr_msg->add_message_text($msg);
+            $msg_txt = ' creation of the database failed due to ' . $e->getMessage();
+            log_fatal($msg_txt, 'setup_db');
+            $msg->add_message_text($msg_txt);
         }
 
         // fill the tables with the essential data
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             // because no user yet exists here echo instead of log_echo() is used
             $log_txt->echo_text_log('Create system users');
             $this->reset_config();
@@ -1214,7 +1211,7 @@ class sql_db
             // use the system user for the database updates
             $usr = new user;
             $usr->load_by_id(users::SYSTEM_ID);
-            $usr_msg->usr = $usr;
+            $msg->usr = $usr;
             $sys->usr_req = $usr;
 
             // recreate the code link database rows
@@ -1231,7 +1228,7 @@ class sql_db
             $job = new job($usr);
             $job->set_type(job_types::BASE_IMPORT, $usr);
             $job->priority = job_statuum::PRIO_HIGHEST;
-            $job->save($usr_msg);
+            $job->save($msg);
 
             $import = new import_file();
             $this->import_verbs($usr);
@@ -1243,12 +1240,11 @@ class sql_db
             $import->import_pod_config($usr);
 
             // add the admin users if defined in the env file
-            $this->add_admin_users_from_env($usr_msg, $usr);
+            $this->add_admin_users_from_env($msg, $usr);
 
             $this->db_check_missing_owner();
 
             // TODO Prio 0 review
-            $usr_msg = new user_message($usr);
             $msk_lnk = new term_view($usr);
             $wrd = new word($usr);
             $wrd->set(word_names::MATH_ID, word_names::MATH);
@@ -1262,7 +1258,7 @@ class sql_db
             $msk_lnk->set_view($msk);
             $msk_lnk->description = 'add usage and log of a word';
             $msk_lnk->id = 0;
-            $msk_lnk->save($usr_msg);
+            $msk_lnk->save($msg);
 
             // remove the test dataset for a clean database
             // TODO use the user message object instead of a string
@@ -1281,10 +1277,13 @@ class sql_db
             $usr = new user;
             $usr->get();
 
+            // the consistency check timestamp is always set by the system user
             $cfg = new config();
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
+            $sys_msg = new user_message(user::system());
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this, $sys_msg);
+            $msg->merge($sys_msg);
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**
@@ -1454,8 +1453,10 @@ class sql_db
     function db_fill_code_links(): void
     {
         // first of all set the database version if not yet done
+        // the code links and the database version are always changed by the system user
         $cfg = new config();
-        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
+        $sys_msg = new user_message(user::system());
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg);
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
@@ -1475,8 +1476,10 @@ class sql_db
     function db_log_code_links(): void
     {
         // first of all set the database version if not yet done
+        // the code links and the database version are always changed by the system user
         $cfg = new config();
-        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
+        $sys_msg = new user_message(user::system());
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg);
 
         // get the list of CSV and loop
         foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
@@ -5739,8 +5742,11 @@ class sql_db
      */
     function reset_config(): void
     {
+        // the database version is always set by the system user
         $cfg = new config();
-        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $this);
+        $sys_msg = new user_message(user::system());
+        // do not log db version setting because the db might not be ready to log changes
+        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $this, $sys_msg, '', [sql_type::NO_LOG]);
     }
 
     /**

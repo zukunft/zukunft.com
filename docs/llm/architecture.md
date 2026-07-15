@@ -96,6 +96,19 @@ a formula are both *terms* (not *phrases*, because a formula is not a phrase).
 `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never
 overwrite shared data; user-specific overrides are stored in `*_user` tables.
 
+**Configuration follows the user sandbox**: `config.yaml` is only the seed of
+the system configuration, which lives in the database as normal values on the
+config phrases (`config_numbers`, the global `$cfg`); beside it the low-level
+program `config` table (database version, site name) works even when the rest
+of the database is broken. Configuration values are sandbox values, so **a
+normal user can change configuration values too** — the change creates the
+user's own overlay like any other value change, and only the pod-level keys
+(the admin keywords and triples in `config_numbers`) are admin protected.
+A function that writes a configuration value therefore never assumes who is
+asking (e.g. never hard-wires the system user); it takes the requesting user
+from the caller — via the `user_message` or a `user` parameter — and lets the
+normal permission checks decide.
+
 **Inheritance chain**:
 ```
 db_object → db_object_seq_id → db_object_seq_id_user → sandbox → sandbox_named → sandbox_typed → word/formula/view/...
@@ -106,6 +119,17 @@ db_object → db_object_seq_id → db_object_seq_id_user → sandbox → sandbox
 **DB abstraction**: `sql_db` wraps both PostgreSQL and MySQL. SQL statements are
 built by `sql_creator` using `sql_par` (parameters), `sql_type` (query types),
 and `sql_where` objects — never by string concatenation in business logic.
+
+**DB read result contract**: `sql_db::get1()` (and the `fetch*` functions behind
+it) distinguishes three results on purpose: an **array** is the row found,
+**null / an empty array** means no row matched (the normal "not found"), and
+**`false`** means the query itself failed — e.g. a corrupted database or a
+select against an outdated schema. Never convert the `false` to null inside the
+db layer: it is the signal that lets the calling function show the user a
+helpful error message and log the problem instead of dying with a fatal error.
+A load function therefore guards the `false` case *before* passing the row to
+`row_mapper(?array)` (feeding `false` into the mapper is a TypeError, which is
+exactly the fatal break this contract is meant to prevent).
 
 **API layer**: Backend objects produce JSON via `api_json()` for the frontend.
 Frontend `web/` objects consume these via `api_mapper()`. Import/export JSON uses

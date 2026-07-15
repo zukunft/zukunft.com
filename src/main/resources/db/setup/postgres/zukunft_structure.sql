@@ -450,6 +450,7 @@ CREATE TABLE IF NOT EXISTS users
     view_id            bigint       DEFAULT NULL,
     source_id          bigint       DEFAULT NULL,
     user_status_id     smallint     DEFAULT NULL,
+    uses_sandbox       smallint     DEFAULT NULL,
     created            timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login         timestamp    DEFAULT NULL,
     last_logoff        timestamp    DEFAULT NULL
@@ -476,6 +477,7 @@ COMMENT ON COLUMN users.term_id IS 'the last term that the user had used';
 COMMENT ON COLUMN users.view_id IS 'the last mask that the user has used';
 COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have a default for the next value';
 COMMENT ON COLUMN users.user_status_id IS 'e.g. to exclude inactive users';
+COMMENT ON COLUMN users.uses_sandbox IS 'true if the user has changed any data, so the pages for this user cannot be served from the cache of the standard pages';
 
 -- --------------------------------------------------------
 

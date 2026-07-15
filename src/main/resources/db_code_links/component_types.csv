@@ -207,3 +207,4 @@ component_type_id, type_name, description, code_id
 206, 'formulas of parents', 'list of formulas assigned to the ancestor phrases of a word, grouped per ancestor', 'formulas_of_parents'
 207, 'most relevant values', 'grouped list of the most relevant values related to this word: newest time period first, then the phrases used by several values, then the remaining values by impact', 'values_most_relevant'
 208, 'show name center', 'show the object name big in the center without link or form field', 'system_show_field_name_big'
+209, 'admin form field user uses sandbox', 'checkbox in the admin form so that an admin can switch if the pages for the user must be created from the user sandbox', 'admin_form_field_user_uses_sandbox'

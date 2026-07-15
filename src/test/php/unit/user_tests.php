@@ -36,10 +36,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -129,10 +132,114 @@ class user_tests
         // needs to set the system profile to be able to change the database (e.g. sql_db->load_db_code_link_file)
         $test_name = 'a new user object without profile is an ip user';
         $t->assert_true($test_name, (new user())->is_ip_user());
-        $test_name = 'the system user of the initial database setup is not blocked';
-        $usr_sys = new user();
-        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
-        $t->assert_false($test_name, $usr_sys->is_blocked());
+        $test_name = 'the virtual system user is never an ip user';
+        $t->assert_false($test_name, user::system()->is_ip_user());
+        $test_name = 'the virtual system user of e.g. the initial database setup is not blocked';
+        $t->assert_false($test_name, user::system()->is_blocked());
+
+        // the database version check on the program start runs before
+        // the user profiles can be loaded from the database,
+        // so the virtual system user must be able to change data with an empty profile list
+        global $sys;
+        $usr_ip_loaded = $t_usr->user_ip_loaded();
+        $usr_pro_loaded = $sys->typ_lst->usr_pro;
+        $sys->typ_lst->usr_pro = new user_profile_list();
+        $test_name = 'the virtual system user can change data before the user profiles are loaded';
+        $t->assert_true($test_name, user::system()->is_unique());
+        $test_name = 'a user with the ip profile cannot change data before the user profiles are loaded';
+        $t->assert_false($test_name, $usr_ip_loaded->is_unique());
+        $sys->typ_lst->usr_pro = $usr_pro_loaded;
+
+
+        $t->subheader($ts . 'sandbox usage');
+
+        // the sandbox usage flag is part of every user row fetch,
+        // so that the request routing can serve cached pages without an additional query
+        $test_name = 'the sandbox usage flag is always part of the user row fetch';
+        $t->assert_true($test_name, in_array(user_db::FLD_USES_SANDBOX, user_db::FLD_NAMES));
+        $test_name = 'a user with sandbox changes is mapped to use the sandbox';
+        $usr = new user();
+        $usr->row_mapper($t_usr->to_db_row($t_usr->sandbox_user()));
+        $t->assert_true($test_name, $usr->uses_sandbox);
+        $test_name = 'a user without sandbox changes is mapped to not use the sandbox';
+        $usr = new user();
+        $usr->row_mapper($t_usr->to_db_row($t_usr->non_sandbox_user()));
+        $t->assert_false($test_name, $usr->uses_sandbox);
+        $test_name = 'a user row of a not yet upgraded pod does not use the sandbox';
+        $usr = new user();
+        $db_row = $t_usr->to_db_row($t_usr->sandbox_user());
+        unset($db_row[user_db::FLD_USES_SANDBOX]);
+        $usr->row_mapper($db_row);
+        $t->assert_false($test_name, $usr->uses_sandbox);
+
+        // the flag is part of the api json, so that an admin can switch it via the frontend
+        $test_name = 'the sandbox usage flag reaches the frontend via the api json';
+        $api_json = json_decode($t_usr->sandbox_user()->api_json(), true);
+        $t->assert_true($test_name, $api_json[json_fields::USES_SANDBOX]);
+        $test_name = 'the sandbox usage flag is mapped from the api json';
+        $usr = new user();
+        $usr_msg = new user_message($t->usr_admin);
+        $usr->api_mapper([json_fields::USES_SANDBOX => 1], $usr_msg);
+        $t->assert_true($test_name, $usr->uses_sandbox);
+        $test_name = 'an api json without the flag maps to not use the sandbox';
+        $usr = new user();
+        $usr->api_mapper([], $usr_msg);
+        $t->assert_false($test_name, $usr->uses_sandbox);
+
+        // fill takes the flag from the given object, because false also means not yet set
+        $test_name = 'fill sets the sandbox usage from the given user';
+        $usr = new user();
+        $usr->fill($t_usr->sandbox_user(), $t->usr_admin);
+        $t->assert_true($test_name, $usr->uses_sandbox);
+        $test_name = 'fill does not unset the sandbox usage';
+        $usr = $t_usr->sandbox_user();
+        $usr->fill($t_usr->non_sandbox_user(), $t->usr_admin);
+        $t->assert_true($test_name, $usr->uses_sandbox);
+
+        // a changed flag is detected as a difference e.g. to select the fields to save
+        $test_name = 'a changed sandbox usage is detected as a diff';
+        $usr_msg = new user_message($t->usr_admin);
+        $t->assert_false($test_name, $t_usr->sandbox_user()->no_diff($t_usr->non_sandbox_user(), $usr_msg));
+        $test_name = 'an unchanged sandbox usage is no diff';
+        $t->assert_true($test_name, $t_usr->sandbox_user()->no_diff($t_usr->sandbox_user(), $usr_msg));
+
+        // the flag can be moved to another pod via im- and export
+        $test_name = 'the sandbox usage flag is mapped from an import json';
+        $usr = new user();
+        $usr_msg = new user_message($t->usr_admin);
+        $usr->import_mapper([json_fields::USES_SANDBOX => true], $usr_msg);
+        $t->assert_true($test_name, $usr->uses_sandbox);
+        $test_name = 'an import json without the flag maps to not use the sandbox';
+        $usr = new user();
+        $usr->import_mapper([], $usr_msg);
+        $t->assert_false($test_name, $usr->uses_sandbox);
+        $test_name = 'the sandbox usage flag is part of the export json';
+        $t->assert_true($test_name, $t_usr->sandbox_user()->export_json()[json_fields::USES_SANDBOX] ?? false);
+        $test_name = 'the default false is not exported';
+        $t->assert_false(
+            $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json()));
+
+
+        $t->subheader($ts . 'diff message');
+
+        // the diff message tells a human which fields differ e.g. to explain a rejected update
+        $test_name = 'equal users have no diff message';
+        $usr_msg = $t_usr->sandbox_user()->diff_msg($t_usr->sandbox_user());
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $test_name = 'the diff message names the changed field';
+        $usr_msg = $t_usr->sandbox_user()->diff_msg($t_usr->non_sandbox_user());
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), user_db::FLD_USES_SANDBOX);
+        $test_name = 'the diff message contains the email change';
+        $usr_chg = $t_usr->sandbox_user();
+        $usr_chg->email = users::TEST_USER_MAIL_UPDATED;
+        $usr_msg = $usr_chg->diff_msg($t_usr->sandbox_user());
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), users::TEST_USER_MAIL_UPDATED);
+        $test_name = 'a changed password is never part of the diff message';
+        $usr_chg = $t_usr->sandbox_user();
+        $usr_chg->set_password_hash(users::TEST_USER_PASSWORD_FIX_HASH);
+        $usr_msg = $usr_chg->diff_msg($t_usr->sandbox_user());
+        $t->assert_false($test_name, str_contains(
+            $usr_msg->all_message_text(), users::TEST_USER_PASSWORD_FIX_HASH));
 
     }
 

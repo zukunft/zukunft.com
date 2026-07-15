@@ -1560,7 +1560,7 @@ class db_object_seq_id extends db_object
 
         if ($usr_msg->usr == null) {
             // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
-            log_warning('user missing while ' . $action . ' of ' . $class);
+            log_err('user missing while ' . $action . ' of ' . $class);
             $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($usr_msg->usr->is_blocked()) {
             // tell the user why the change has been rejected and how to solve it

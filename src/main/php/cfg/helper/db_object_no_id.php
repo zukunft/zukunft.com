@@ -323,6 +323,7 @@ class db_object_no_id
     }
 
     /**
+     * TODO Prio 1 add a $msg parameter
      * load one database row e.g. group (where the id might be a string) from the database
      * @param sql_par $qp the query parameters created by the calling function
      * @return bool false if no database row has been found
@@ -333,6 +334,13 @@ class db_object_no_id
         global $db_con;
 
         $db_row = $db_con->get1($qp);
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged;
+        // it is mapped like "no row found", because a fatal crash of the row mapper
+        // would hide the reason (see db read result contract in docs/llm/architecture.md)
+        if ($db_row === false) {
+            $db_row = null;
+        }
         return $this->row_mapper($db_row);
     }
 

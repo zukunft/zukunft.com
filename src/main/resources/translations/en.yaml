@@ -142,6 +142,7 @@ messages:
   form_field_username: "Username"
   form_field_user_email: "Email"
   form_field_user_password: "Password"
+  form_field_user_uses_sandbox: "Create the pages from the user sandbox"
   form_field_first_name: "First name"
   form_field_last_name: "Last name"
   form_field_name: "Name"

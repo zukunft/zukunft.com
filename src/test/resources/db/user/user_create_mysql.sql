@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS users
     view_id            bigint       DEFAULT NULL COMMENT 'the last mask that the user has used',
     source_id          bigint       DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
     user_status_id     smallint     DEFAULT NULL COMMENT 'e.g. to exclude inactive users',
+    uses_sandbox       smallint     DEFAULT NULL COMMENT 'true if the user has changed any data,so the pages for this user cannot be served from the cache of the standard pages',
     created            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login         timestamp    DEFAULT NULL,
     last_logoff        timestamp    DEFAULT NULL,

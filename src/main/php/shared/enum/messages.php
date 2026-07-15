@@ -2000,6 +2000,7 @@ enum messages: string
     case FORM_FIELD_USERNAME = 'form_field_username';
     case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
     case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
+    case FORM_FIELD_USER_USES_SANDBOX = 'form_field_user_uses_sandbox';
     case FORM_FIELD_USER_FIRST_NAME = 'form_field_first_name';
     case FORM_FIELD_USER_LAST_NAME = 'form_field_last_name';
     case FORM_SELECT_USER_PROFILE = 'user profile';

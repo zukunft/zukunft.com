@@ -1011,6 +1011,7 @@ class sandbox extends db_object_seq_id_user
     */
 
     /**
+     * TODO Prio 1 add the $msg parameter to be able to report errors to the user
      * load one database row e.g. word, triple, formula, view or component from the database.
      * for values and result the db key might be an 512-bit id or even a string
      * so for values and results the load_non_int_db_key function is used instead of this load function
@@ -1023,6 +1024,13 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
 
         $db_row = $db_con->get1($qp);
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged;
+        // it is mapped like "no row found", because a fatal crash of the row mapper
+        // would hide the reason (see db read result contract in docs/llm/architecture.md)
+        if ($db_row === false) {
+            $db_row = null;
+        }
         $this->row_mapper_sandbox($db_row);
         return $this->id();
     }
@@ -1051,6 +1059,12 @@ class sandbox extends db_object_seq_id_user
             $qp = $this->load_sql_standard($id, $sc);
 
             $db_row = $db_con->get1($qp, $msg);
+            // TODO Prio 2 call the row mapper only if $msg
+            // a failed query is reported via $msg by the db layer and mapped like "no row found",
+            // because a fatal crash of the row mapper would hide the fail message
+            if ($db_row === false) {
+                $db_row = null;
+            }
             if (!$this->row_mapper_sandbox(
                 $db_row, true, false)) {
                 $lib = new library();
@@ -1086,6 +1100,12 @@ class sandbox extends db_object_seq_id_user
             $qp = $this->load_sql_user_changes($sc);
 
             $db_row = $db_con->get1($qp, $msg);
+            // a failed query is reported via $msg by the db layer and mapped like "no row found",
+            // because a fatal crash of the row mapper would hide the fail message
+            // TODO Prio 1 check why the row_mapper is called if $db_row is false
+            if ($db_row === false) {
+                $db_row = null;
+            }
             if (!$this->row_mapper_sandbox(
                 $db_row, true, false)) {
                 $lib = new library();

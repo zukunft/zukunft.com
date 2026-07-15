@@ -210,6 +210,7 @@ class url_var
     const string USERNAME = 'un';
     const string USER_PROFILE = 'up';
     const string URL = 'ur';
+    const string USER_USES_SANDBOX = 'us'; // checkbox if the pages for the user must be created from the user sandbox
     const string USER_TYPE = 'ut';
     const string USAGE = 'uu'; // the usage value a form field
     const string USER_PASSWORD = 'uw';

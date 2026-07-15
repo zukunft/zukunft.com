@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION user_insert_log_101000005000001100000
+CREATE OR REPLACE FUNCTION user_insert_log_1010000050000011000000
       (_user_name                text,
        _user_id                  bigint,
        _change_action_id         smallint,
@@ -47,12 +47,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE user_insert_log_101000005000001100000_call
+PREPARE user_insert_log_1010000050000011000000_call
     (text, bigint, smallint, smallint, smallint, text, smallint, text, smallint, smallint, timestamp, smallint, text) AS
-SELECT user_insert_log_101000005000001100000
+SELECT user_insert_log_1010000050000011000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
 
-SELECT user_insert_log_101000005000001100000
+SELECT user_insert_log_1010000050000011000000
         ('zukunft.com system test'::text,
          2::bigint,
          1::smallint,

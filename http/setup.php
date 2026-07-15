@@ -30,6 +30,7 @@ if (getenv(ENVIRONMENT) == ENV_DEV) {
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 /*
 
@@ -60,10 +61,11 @@ if ($usr->id() > 0) {
         $db_chk = new db_check();
 
         // with the check the tables will be created and the system data will be loaded
+        // the check is requested by the admin user, so the changes are done in his name
         // TODO compare with test_recreate.php
-        $usr_msg = $db_chk->db_check($db_con);
-        if (!$usr_msg->is_ok()) {
-            echo $usr_msg->all_message_text();
+        $msg = new user_message($usr);
+        if (!$db_chk->db_check($db_con, $msg)) {
+            echo $msg->all_message_text();
         }
 
         log_debug("setup ... done.");

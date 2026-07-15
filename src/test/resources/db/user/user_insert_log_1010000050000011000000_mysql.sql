@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS user_insert_log_101000005000001100000;
-CREATE PROCEDURE user_insert_log_101000005000001100000
+DROP PROCEDURE IF EXISTS user_insert_log_1010000050000011000000;
+CREATE PROCEDURE user_insert_log_1010000050000011000000
     (_user_name                text,
      _user_id                  bigint,
      _change_action_id         smallint,
@@ -45,10 +45,10 @@ BEGIN
 
 END;
 
-PREPARE user_insert_log_101000005000001100000_call FROM
-    'SELECT user_insert_log_101000005000001100000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE user_insert_log_1010000050000011000000_call FROM
+    'SELECT user_insert_log_1010000050000011000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT user_insert_log_101000005000001100000
+SELECT user_insert_log_1010000050000011000000
         ('zukunft.com system test',
          2,
          1,
