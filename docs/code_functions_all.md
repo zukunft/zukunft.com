@@ -284,6 +284,7 @@
     \-- log_upd - section for function log_upd is expected to be log in /user/user.php
     \-- exclude_from_standard - section for function exclude_from_standard not yet defined that it should be info in /user/user.php
     \-- check_preserved - section for function check_preserved not yet defined that it should be info in /user/user.php
+    \-- set_uses_sandbox - section for function set_uses_sandbox is expected to be set and get in /user/user.php
     \-- get_similar - section for function get_similar is expected to be save in /user/user.php
     \-- is_similar - section for function is_similar is expected to be info in /user/user.php
     \-- db_insert - section for function db_insert not yet defined that it should be add in /user/user.php

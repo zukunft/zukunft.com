@@ -172,6 +172,20 @@ class user_tests
         $usr->row_mapper($db_row);
         $t->assert_false($test_name, $usr->uses_sandbox);
 
+        // adding a sandbox row switches the user to the sandbox usage (see sandbox->add_usr_cfg);
+        // without a database id the flag is only changed in memory e.g. for this unit test
+        $test_name = 'adding a sandbox row switches the user to sandbox usage';
+        $usr = new user();
+        $usr_msg = new user_message($t->usr_admin);
+        $usr->set_uses_sandbox($usr_msg);
+        $t->assert_true($test_name, $usr->uses_sandbox);
+        $test_name = 'switching to sandbox usage reports no problem';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $test_name = 'a user already using the sandbox is not saved again';
+        $usr = $t_usr->sandbox_user();
+        $usr->set_uses_sandbox($usr_msg);
+        $t->assert_true($test_name, $usr->uses_sandbox and $usr_msg->is_ok());
+
         // the flag is part of the api json, so that an admin can switch it via the frontend
         $test_name = 'the sandbox usage flag reaches the frontend via the api json';
         $api_json = json_decode($t_usr->sandbox_user()->api_json(), true);

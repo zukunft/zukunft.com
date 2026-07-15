@@ -45,7 +45,9 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -74,6 +76,32 @@ class user_write_tests
         $t->subheader($ts . 'add');
         $usr = $t_usr->user_ip();
         $t->assert_write($usr, $usr->unique_value(), $usr->key_field());
+
+        // check that switching a user to sandbox usage is actually written to the database
+        $t->subheader($ts . 'sandbox usage');
+
+        // use a test user that exists in the database
+        $usr_db = new user();
+        $usr_db->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
+
+        // make sure the starting point is "not yet using the sandbox"
+        if ($usr_db->uses_sandbox) {
+            $usr_db->uses_sandbox = false;
+            $usr_db->save_user($usr_msg, $t->usr1);
+        }
+
+        // switch the user to sandbox usage which should store the flag in the database
+        $usr_db->set_uses_sandbox($usr_msg);
+
+        // reload the user by id to check that the flag has really been written to the database
+        $usr_reload = new user();
+        $usr_reload->load_by_id($usr_db->id());
+        $test_name = 'switching a user to sandbox usage is stored in the database';
+        $t->assert_true($test_name, $usr_reload->uses_sandbox);
+
+        // cleanup: reset the flag so the shared test user starts without sandbox usage again
+        $usr_reload->uses_sandbox = false;
+        $usr_reload->save_user($usr_msg, $t->usr1);
 
         /*
 

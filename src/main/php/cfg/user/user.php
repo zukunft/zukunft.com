@@ -2669,6 +2669,26 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * remember that the user has changed data, so the pages for this user must be
+     * created from the user sandbox and cannot be served from the standard page cache
+     * the flag is written to the database only on the change from false to true;
+     * switching it back off is done by an admin via the gui or the sandbox usage check job
+     *
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    function set_uses_sandbox(user_message $msg): void
+    {
+        if (!$this->uses_sandbox) {
+            $this->uses_sandbox = true;
+            // a user object without a database id cannot be updated e.g. during unit tests
+            if ($this->id() > 0) {
+                $this->save_user($msg, $this);
+            }
+        }
+    }
+
+    /**
      * add or update a user in the database
      *
      * @param user|null $usr_req the user who has request the user adding or update
