@@ -281,6 +281,9 @@ class frontend
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         $session_is_fine = true;
+        // reject a session id that the server did not issue, so an attacker cannot plant one
+        // (defense in depth for the session fixation fix; must be set before session_start)
+        ini_set('session.use_strict_mode', '1');
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -1066,6 +1069,9 @@ class frontend
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
                         session_start();
+                        // regenerate the session id on this authentication transition so a planted
+                        // session id cannot become authenticated (session fixation), matching login
+                        session_regenerate_id(true);
                         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                             try {
                                 $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -1156,6 +1162,9 @@ class frontend
                             $usr_by_id->load_by_id($usr_id);
                             if ($usr_by_id->has_db_id()) {
                                 session_start();
+                                // regenerate the session id on this authentication transition so a
+                                // planted session id cannot become authenticated (session fixation)
+                                session_regenerate_id(true);
                                 if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                                     try {
                                         $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));

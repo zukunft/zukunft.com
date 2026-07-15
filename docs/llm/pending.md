@@ -12,10 +12,6 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
 
-fix the reflected xss on the search pattern: url_var::PATTERN flows unescaped through shared/library.php::msg_var_replace (around line 1313, plain str_replace) into html_base::text_h2, so /http/view.php?m=67&pattern=<script>... executes. Escape the pattern before it reaches the html (the stored xss escape helper html_base::esc can be reused here)
-
-fix the session fixation on signup and activation: only cfg/user/user.php::login regenerates the session id, the signup (frontend.php around line 1038) and the activation (around line 1128) auto login paths do not, and session.use_strict_mode is not set, so a planted session id becomes authenticated. Call session_regenerate_id(true) on every authentication transition
-
 remove the profile_id privilege escalation: cfg/user/user.php::api_mapper (around line 480) copies profile_id straight from the request json without a can_set_profile check (the safe setter set_profile enforces it but is only used on the import path), and the update gate lets a user change his own record, so a user could set his own record to the admin profile. Route the api path through set_profile / add the can_set_profile check before the save, with a negative test
 
 add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
