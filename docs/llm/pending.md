@@ -12,8 +12,6 @@ check why in src/test/resources/web/html/views_by_object/triple/triple_default_t
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
 
-close the api authorization bypass: the 'ip user may not change data' control lives only in http/view.php (around line 127, is_blocked on CHANGE_MASKS_IDS); the rest endpoints (api/word/index.php -> sandbox save/del) never call is_blocked, so config_numbers::ip_user_can_change (default false) is ignored on POST / PUT / DELETE /api/word. Enforce the block centrally in the model save/del, not per entry point, and add a negative test that an ip user write via the api is refused
-
 fix the reflected xss on the search pattern: url_var::PATTERN flows unescaped through shared/library.php::msg_var_replace (around line 1313, plain str_replace) into html_base::text_h2, so /http/view.php?m=67&pattern=<script>... executes. Escape the pattern before it reaches the html (the stored xss escape helper html_base::esc can be reused here)
 
 fix the session fixation on signup and activation: only cfg/user/user.php::login regenerates the session id, the signup (frontend.php around line 1038) and the activation (around line 1128) auto login paths do not, and session.use_strict_mode is not set, so a planted session id becomes authenticated. Call session_regenerate_id(true) on every authentication transition

@@ -105,6 +105,21 @@ class permission_tests
         $test_name = 'the ip user is told why the del has been rejected';
         $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $blocked_txt);
 
+        // a value is a multi-user object (sandbox_multi branch), so verify the block is enforced
+        // there as well and not only in the sandbox branch that the word above covers
+        $val = $t_val->value();
+        $test_name = 'the save of a value requested by an ip user is blocked';
+        $usr_msg = new user_message($usr_ip);
+        $t->assert_false($test_name, $val->save($usr_msg));
+        $test_name = 'the ip user is told why the value save has been rejected';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $blocked_txt);
+
+        $test_name = 'the del of a value requested by an ip user is blocked';
+        $usr_msg = new user_message($usr_ip);
+        $t->assert_false($test_name, $val->del($usr_msg));
+        $test_name = 'the ip user is told why the value del has been rejected';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $blocked_txt);
+
 
         $t->subheader($ts . 'user with login');
 
