@@ -647,7 +647,7 @@ class view extends view_exe
      * as the default view of the given word
      * TODO Prio 2 preselect this view as the default view of the word and add the back trace url,
      *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
-     *      (see docs/llm/pending.md)
+     *      (see docs/llm/pending_next_launch.md)
      *
      * @param int $wrd_id the id of the word whose default view should be set to this view
      * @return string the html link of the switch button
