@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION user_update_log_202000004000000200000
+CREATE OR REPLACE FUNCTION user_update_log_2020000040000002000000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_user_name       smallint,
@@ -41,12 +41,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE user_update_log_202000004000000200000_call
+PREPARE user_update_log_2020000040000002000000_call
     (bigint, smallint, smallint, text, text, smallint, text, text, smallint, text, smallint, text, smallint, smallint, text, text) AS
-SELECT user_update_log_202000004000000200000
+SELECT user_update_log_2020000040000002000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
 
-SELECT user_update_log_202000004000000200000
+SELECT user_update_log_2020000040000002000000
         (2::bigint,
          2::smallint,
          211::smallint,

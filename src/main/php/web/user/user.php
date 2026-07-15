@@ -121,6 +121,7 @@ class user extends db_object
     public ?int $right_level = null;      // can be used to reduce the right level of the profile
     public ?int $status_id = null;        // id of the actual status of the user profiles to reduce temporary the user writes of the profile
     public ?bool $excluded = null;        // only use for admin so that they can deactivate users
+    public bool $uses_sandbox = false;    // true if the user has changed any data, so the pages cannot be served from the standard page cache
 
     // additional info
     public ?DateTime $created = null;
@@ -168,6 +169,7 @@ class user extends db_object
         $this->right_level = null;
         $this->status_id = null;
         $this->excluded = null;
+        $this->uses_sandbox = false;
 
         // additional info
         $this->created = null;
@@ -215,6 +217,12 @@ class user extends db_object
                 if ($url_array[url_var::USER_LAST_NAME] != null) {
                     $this->last_name = $url_array[url_var::USER_LAST_NAME];
                 }
+            }
+            // an unchecked checkbox is not part of the form post,
+            // so the flag is false if it is missing in a post of the admin user edit form
+            // and it stays unchanged for all other posts e.g. the user settings
+            if (($url_array[url_var::MASK] ?? 0) == views::USER_ADMIN_EDIT_ID) {
+                $this->uses_sandbox = array_key_exists(url_var::USER_USES_SANDBOX, $url_array);
             }
         }
         return $usr_msg;
@@ -307,6 +315,12 @@ class user extends db_object
             $this->excluded = $json_array[json_fields::EXCLUDED];
         } else {
             $this->excluded = null;
+        }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (array_key_exists(json_fields::USES_SANDBOX, $json_array)) {
+            $this->uses_sandbox = (bool)$json_array[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
         }
 
         if (array_key_exists(json_fields::CREATED, $json_array)) {
@@ -559,6 +573,7 @@ class user extends db_object
             $vars[json_fields::STATUS] = $this->status_id;
         }
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;

@@ -154,6 +154,31 @@ on rename/translation. The `code_id` is the stable identity that survives
 migrations, renames, and pod-to-pod import/export, because the import resolver
 matches by code_id alone.
 
+## Boolean db fields are nullable smallint — null reads as false
+
+A boolean database field is defined with `sql_field_type::BOOL` (which maps to
+`smallint` for both PostgreSQL and MySQL) and **`sql_field_default::NULL`** —
+never `ZERO` or `NOT_NULL`. A missing or null value reads as false, so a
+database upgrade can add the column without rewriting the existing rows, and
+the row mapper casts with `(bool)` (null, `0` and `'0'` all become false). The
+sandbox field `excluded` is the pattern; `users.uses_sandbox` follows it.
+
+- **Right** (`user_db::FLD_LST_ALL`):
+```php
+[self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::NULL, '', '', self::FLD_USES_SANDBOX_COM],
+```
+- **Wrong** — the only field of the table with a non-NULL default breaks the
+  convention and the upgrade path:
+```php
+[self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::ZERO, '', '', self::FLD_USES_SANDBOX_COM],
+```
+
+Side effect to know for the change log: if the matching object property
+defaults to `false` (e.g. `public bool $uses_sandbox = false`) instead of
+`?bool = null` (like `excluded`), the old value is **not null** even on an
+insert, so the generated insert-log SQL includes the old value
+(`_uses_sandbox_old`) — the insert-log test fixtures must match that.
+
 ## config.yaml keys are at most two space-separated words
 
 Every key in `src/main/resources/config.yaml` imports as a **word** (one token)

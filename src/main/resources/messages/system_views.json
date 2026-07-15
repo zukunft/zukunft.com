@@ -860,6 +860,13 @@
       "ui_msg_code_id": "form_field_user_password"
     },
     {
+      "name": "admin form field user uses sandbox",
+      "description": "checkbox so that an admin can switch if the pages for the user must be created from the user sandbox",
+      "type": "admin_form_field_user_uses_sandbox",
+      "code_id": "form_field_user_uses_sandbox",
+      "ui_msg_code_id": "form_field_user_uses_sandbox"
+    },
+    {
       "name": "admin form field language symbol",
       "description": "form field for admin users only to add or change the language name",
       "type": "admin_form_field_language_symbol",
@@ -5635,22 +5642,26 @@
         },
         {
           "position": "7",
-          "name": "system formatter row right"
+          "name": "admin form field user uses sandbox"
         },
         {
           "position": "8",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "9",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "10",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "11",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "12",
           "name": "system form end"
         }
       ]

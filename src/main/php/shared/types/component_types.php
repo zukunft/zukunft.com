@@ -274,6 +274,8 @@ class component_types
     const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 168;
     const string ADMIN_FORM_FIELD_USER_PASSWORD = "admin_form_field_user_password";
     const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 170;
+    const string ADMIN_FORM_FIELD_USER_USES_SANDBOX = "admin_form_field_user_uses_sandbox";
+    const int ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID = 209;
     const string ADMIN_FORM_FIELD_LANGUAGE_SYMBOL = "admin_form_field_language_symbol";
     const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 179;
     const string FIELD_LANGUAGE_SYMBOL = "field_language_symbol";
@@ -665,6 +667,7 @@ class component_types
         self::ADMIN_FORM_FIELD_USER_NAME,
         self::ADMIN_FORM_FIELD_USER_EMAIL,
         self::ADMIN_FORM_FIELD_USER_PASSWORD,
+        self::ADMIN_FORM_FIELD_USER_USES_SANDBOX,
         self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL,
         self::FIELD_LANGUAGE_SYMBOL,
         self::SYSTEM_ADMIN_URL_DELAY,
@@ -844,6 +847,7 @@ class component_types
         [self::ADMIN_FORM_FIELD_USER_NAME, self::ADMIN_FORM_FIELD_USER_NAME_ID],
         [self::ADMIN_FORM_FIELD_USER_EMAIL, self::ADMIN_FORM_FIELD_USER_EMAIL_ID],
         [self::ADMIN_FORM_FIELD_USER_PASSWORD, self::ADMIN_FORM_FIELD_USER_PASSWORD_ID],
+        [self::ADMIN_FORM_FIELD_USER_USES_SANDBOX, self::ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID],
         [self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL, self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID],
         [self::FIELD_LANGUAGE_SYMBOL, self::FIELD_LANGUAGE_SYMBOL_ID],
         [self::SYSTEM_ADMIN_URL_DELAY, self::SYSTEM_ADMIN_URL_DELAY_ID],

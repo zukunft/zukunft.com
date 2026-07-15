@@ -118,6 +118,7 @@ class users
     const string TEST_USER_LAST_NAME = 'zukunft.com system write test user last name';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
     const string TEST_USER_MAIL = 'test@zukunft.com';
+    const string TEST_USER_MAIL_UPDATED = 'test.updated@zukunft.com';
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
     const string TEST_USER_PASSWORD = 'password123';

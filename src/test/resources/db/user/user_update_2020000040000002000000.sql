@@ -1,4 +1,4 @@
-PREPARE user_update_202000004000000200000 (text, text, text, text, bigint) AS
+PREPARE user_update_2020000040000002000000 (text, text, text, text, bigint) AS
     UPDATE users
        SET user_name       = $1,
            email           = $2,

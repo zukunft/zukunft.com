@@ -395,43 +395,48 @@ class frontend
         } else {
             log_debug($code_name . ': db open');
 
-            // check the system setup
+            // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $usr_msg = $db_chk->db_check($db_con);
-            if (!$usr_msg->is_ok()) {
+            $sys_msg = new backend_user_message(user_backend::system());
+            if (!$db_chk->db_check($db_con, $sys_msg)) {
                 echo '\n';
-                echo $usr_msg->all_message_text();
+                echo $sys_msg->all_message_text();
                 $db_con->close();
                 $db_con = null;
             }
 
-            // create a virtual one-time system user to load the system users
-            $usr_sys = new user_backend();
-            $usr_sys->id = users::SYSTEM_ID;
-            $usr_sys->name = users::SYSTEM_NAME;
+            // skip the start-up loading if the database check has failed and the connection has been closed,
+            // because continuing without a database would end in a fatal crash that hides the fail message
+            if ($db_con != null) {
 
-            // load system configuration
-            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-            $sys->load_cache_type($db_con);
-            // TODO cache the system config json and detect
-            $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg(null, $usr_sys);
-            $mtr = new Translator($cfg->language());
+                // create a virtual one-time system user to load the system users
+                $usr_sys = new user_backend();
+                $usr_sys->id = users::SYSTEM_ID;
+                $usr_sys->name = users::SYSTEM_NAME;
 
-            // preload all types from the database
-            $sys->times->switch(system_time_type::LOAD_TYPES);
-            // the types are general so the system user can be used to load the types
-            $cac = new data_object_backend($usr_sys);
-            $sys->load_type_lists($db_con);
+                // load system configuration
+                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+                $sys->load_cache_type($db_con);
+                // TODO cache the system config json and detect
+                $cfg = new config_numbers($usr_sys);
+                $cfg->load_cfg(null, $usr_sys);
+                $mtr = new Translator($cfg->language());
 
-            $log = new change_log($usr_sys);
-            $db_changed = $log->create_log_references($db_con);
-
-            // reload the type list if needed and trigger an update in the frontend
-            // even tough the update of the preloaded list should already be done by the single adds
-            if ($db_changed) {
+                // preload all types from the database
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                // the types are general so the system user can be used to load the types
+                $cac = new data_object_backend($usr_sys);
                 $sys->load_type_lists($db_con);
+
+                $log = new change_log($usr_sys);
+                $db_changed = $log->create_log_references($db_con);
+
+                // reload the type list if needed and trigger an update in the frontend
+                // even tough the update of the preloaded list should already be done by the single adds
+                if ($db_changed) {
+                    $sys->load_type_lists($db_con);
+                }
             }
 
         }

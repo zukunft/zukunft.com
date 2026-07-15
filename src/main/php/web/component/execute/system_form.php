@@ -481,6 +481,20 @@ class system_form extends component
     }
 
     /**
+     * @return string the html code so that an admin user can switch if the pages
+     *                for the user must be created from the user sandbox
+     */
+    function admin_form_user_uses_sandbox(user|db_object $dbo): string
+    {
+        global $mtr;
+        $html = new html_base();
+        return $html->dsp_form_fld_checkbox(
+            url_var::USER_USES_SANDBOX,
+            $dbo->uses_sandbox,
+            $mtr->txt(msg_id::FORM_FIELD_USER_USES_SANDBOX));
+    }
+
+    /**
      * @return string the html code so that an admin can overwrite the language symbol
      */
     function admin_form_language_symbol(language|db_object $dbo): string

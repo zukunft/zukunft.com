@@ -296,6 +296,7 @@ class component_exe extends component
             component_types::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
             component_types::ADMIN_FORM_FIELD_USER_EMAIL => $form->admin_form_user_email($dbo),
             component_types::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
+            component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX => $form->admin_form_user_uses_sandbox($dbo),
             component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
             component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
             component_types::SYSTEM_ADMIN_URL_DELAY => $page->admin_url_delay(),

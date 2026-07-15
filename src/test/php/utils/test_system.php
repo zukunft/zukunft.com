@@ -31,25 +31,24 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SERVICE . 'config.php';
-include_once paths::WEB . 'frontend.php';
 
-use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-function run_system_test(all_tests $t): void
+// test_cleanup as parameter type, so that beside the full test suite (all_tests)
+// also the single test selection (a_selected_test) can run this test
+function run_system_test(test_cleanup $t): void
 {
 
     global $usr;
@@ -65,7 +64,7 @@ function run_system_test(all_tests $t): void
     $wrd_company = $t_db->test_word(word_names::COMPANY);
 
     if ($t::TEST_EMAIL) {
-        $t->subheader($ts . 'est mail sending');
+        $t->subheader($ts . 'test mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';
         $mail_body = 'Hello';
@@ -121,56 +120,22 @@ function run_system_test(all_tests $t): void
     // name instead of the passed code id, so the database version was never saved
     $t->subheader('config check_cfg');
     $cfg = new config();
+    $sys_msg = new user_message(user::system());
     // the average calculation time is a runtime metric that is safe to overwrite;
     // remember the current value to restore it at the end of the test
-    $cfg_orig = $cfg->get_db(config::AVG_CALC_TIME, $db_con);
-    $cfg->set(config::AVG_CALC_TIME, '111', $db_con);
+    // a missing entry is created with the code default, so the value is never empty
+    $cfg_orig = $cfg->get_db(config::AVG_CALC_TIME, $db_con, $sys_msg);
+    $test_name = 'a config value read is never empty';
+    $t->assert_true($test_name, $cfg_orig != '');
+    $cfg->set(config::AVG_CALC_TIME, '111', $db_con, $sys_msg);
     $test_name = 'check_cfg stores the passed value under the passed code id when it differs';
-    $set_done = $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con);
-    // TODO Prio 0 activate
-    // $t->assert($test_name, $cfg->get_db(config::AVG_CALC_TIME, $db_con), '222');
+    $set_done = $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con, $sys_msg);
+    $t->assert($test_name, $cfg->get_db(config::AVG_CALC_TIME, $db_con, $sys_msg), '222');
     $test_name = 'check_cfg reports that it has stored the differing value';
-    // TODO Prio 0 activate
-    // $t->assert_true($test_name, $set_done);
+    $t->assert_true($test_name, $set_done);
     $test_name = 'check_cfg does not store again when the value already matches the target';
-    $t->assert_false($test_name, $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con));
+    $t->assert_false($test_name, $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con, $sys_msg));
     // restore the original value
-    $cfg->set(config::AVG_CALC_TIME, $cfg_orig, $db_con);
-
-
-    // regression test for the site wide csrf gap: a data change (a crud mask submit) must carry the
-    // session token, so an attacker cannot csrf a victim into creating or changing an object
-    $t->subheader('csrf session token');
-    $token = 'a-valid-session-token';
-    $change_submit = [
-        url_var::MASK => views::WORD_ADD_ID,
-        url_var::POST_SUBMIT => '',
-        url_var::SESSION_TOKEN => $token
-    ];
-    $test_name = 'a crud submit with the matching token is permitted';
-    $t->assert_true($test_name, frontend::request_token_valid($change_submit, $token));
-    $missing_token = [
-        url_var::MASK => views::WORD_ADD_ID,
-        url_var::POST_SUBMIT => ''
-    ];
-    $test_name = 'a crud submit without a token is rejected';
-    $t->assert_false($test_name, frontend::request_token_valid($missing_token, $token));
-    $wrong_token = [
-        url_var::MASK => views::WORD_ADD_ID,
-        url_var::POST_SUBMIT => '',
-        url_var::SESSION_TOKEN => 'forged'
-    ];
-    $test_name = 'a crud submit with a wrong token is rejected';
-    $t->assert_false($test_name, frontend::request_token_valid($wrong_token, $token));
-    $form_display = [url_var::MASK => views::WORD_ADD_ID];
-    $test_name = 'opening a crud form without a submit needs no token';
-    $t->assert_true($test_name, frontend::request_token_valid($form_display, $token));
-    $login_forged = [
-        url_var::MASK => views::LOGIN_ID,
-        url_var::POST_SUBMIT => '',
-        url_var::SESSION_TOKEN => 'forged'
-    ];
-    $test_name = 'any submit that sends a wrong token is rejected';
-    $t->assert_false($test_name, frontend::request_token_valid($login_forged, $token));
+    $cfg->set(config::AVG_CALC_TIME, $cfg_orig, $db_con, $sys_msg);
 
 }

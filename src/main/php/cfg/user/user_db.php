@@ -148,6 +148,8 @@ class user_db extends db_object_seq_id
     const string FLD_SOURCE = 'source_id';
     const string FLD_STATUS_COM = 'e.g. to exclude inactive users';
     const string FLD_STATUS = 'user_status_id';
+    const string FLD_USES_SANDBOX_COM = 'true if the user has changed any data, so the pages for this user cannot be served from the cache of the standard pages';
+    const string FLD_USES_SANDBOX = 'uses_sandbox';
     const string FLD_CREATED = 'created';
     const string FLD_LAST_LOGIN = 'last_login';
     const string FLD_LAST_LOGOUT = 'last_logoff';
@@ -184,6 +186,7 @@ class user_db extends db_object_seq_id
         self::FLD_TERM,
         fields::FLD_VIEW,
         self::FLD_SOURCE,
+        self::FLD_USES_SANDBOX,
 
         // TODO to be added
         //self::FLD_EMAIL_STATUS,
@@ -236,6 +239,7 @@ class user_db extends db_object_seq_id
         [fields::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
         [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
         [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', user_status::class, self::FLD_STATUS_COM],
+        [self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::NULL, '', '', self::FLD_USES_SANDBOX_COM],
         [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],
         [self::FLD_LAST_LOGIN, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
         [self::FLD_LAST_LOGOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],

@@ -781,7 +781,8 @@ class change_log extends db_object_seq_id_user
             if (!$tbl->has_db_id()) {
                 $tbl->name = $table_name;
                 $tbl->code_id = $table_name;
-                $tbl->save($msg);
+                // do not try to log the adding of a table because the can lead to an endless loop
+                $tbl->save($msg, [sql_type::NO_LOG]);
             }
         }
         if ($tbl->id > 0) {
@@ -818,7 +819,8 @@ class change_log extends db_object_seq_id_user
             $fld->tbl_id = $tbl_id;
             $fld->name = $field_name;
             $fld->code_id = $tbl_id . $field_name;
-            $fld->save($msg);
+            // do not try to log the adding of a field because the can lead to an endless loop
+            $fld->save($msg, [sql_type::NO_LOG]);
         }
         if ($fld->id > 0) {
             $this->field_id = $fld->id;
@@ -839,13 +841,15 @@ class change_log extends db_object_seq_id_user
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $act = new change_action();
         $act->load_by_name($action_name);
+        $action_id = $act->id();
 
         // add new action name if needed
-        if ($act->id() <= 0) {
+        if ($action_id <= 0) {
             $act = new change_action();
             $act->name = $action_name;
             $act->code_id = $action_name;
-            $act->save($msg);
+            // do not try to log the adding of a change action because the can lead to an endless loop
+            $act->save($msg, [sql_type::NO_LOG]);
             $action_id = $act->id;
         }
         if ($action_id > 0) {

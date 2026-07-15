@@ -52,14 +52,17 @@ detail file. Order is by how often they fire, not importance.
 ### Structure & style
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
+- Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`
 - Never fail silently: a function carrying a `user_message $msg` that rejects or aborts must record the reason on `$msg` (a `msg_id` that renders to real text) and let it propagate to the UI — never return a failure with `$msg` unchanged, empty, or hidden by an `is_ok()` gate. → `docs/llm/structure.md`
 - A helper that can produce a *user-actionable* error takes a `user_message $msg` parameter (thread it from the callers) so it can return the specific problem and its solution; reserve `log_err` (no `$msg`) for internal inconsistencies the user cannot fix. E.g. `triple::verb_from_api_json`. → `docs/llm/structure.md`
+- A db read returns `false` only when the query itself failed (e.g. corrupted or outdated database) — distinct from null = no row; the load caller guards the `false` before `row_mapper()` to show a helpful message, and the db layer never converts it to null. → `docs/llm/architecture.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
+- Boolean db fields are `sql_field_type::BOOL` with `sql_field_default::NULL` (null reads as false, like `excluded`); never `ZERO` or `NOT_NULL`. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
@@ -95,6 +98,7 @@ detail file. Order is by how often they fire, not importance.
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
+- Configuration values are sandbox values that a normal user can change too (only pod-level keys are admin protected) — a config write takes the requesting user from the caller, never assumes e.g. the system user. → `docs/llm/architecture.md`
 - `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
 - Every list rendered on a frontend page is sorted by a deterministic key (impact, name, id, …) before output, so the HTML order never depends on API/DB row order and snapshot tests stay stable. → `docs/llm/frontend.md`
 - An HTML input's `name` is the url var (the submitted key the url mapper reads); the human label goes in `id` / `<label for>`, never in `name`. → `docs/llm/frontend.md`

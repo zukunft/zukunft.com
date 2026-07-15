@@ -379,6 +379,8 @@ class json_fields
     const string LAST_LOGIN = 'last_login';
     const string LAST_LOGOFF = 'last_logoff';
     const string CREATED = 'created';
+    // true if the user has changed any data, so the pages cannot be served from the standard page cache
+    const string USES_SANDBOX = 'uses_sandbox';
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';
