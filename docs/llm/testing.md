@@ -83,6 +83,22 @@ future run.
   row a cleanup missed, or a `/tmp/probe.php` that opens the DB to inspect a
   table.
 
+## An LLM never runs the `/test/*` scripts — the developer does
+
+The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,
+`test_coding_rules.php`, `test_horizontal.php`, `reset_db.php`, ... — are
+**never executed by an LLM**, neither via the CLI nor over HTTP. Running them
+needs a local deployment (a served checkout, a populated database, an admin
+session), and deploying is never an LLM task; `test.php` also *writes* to the
+database, so a run against a half-deployed checkout leaves state no application
+path can produce.
+
+The LLM's job ends with the code: write the tests, review them, lint the
+changed files (`php -l` is fine — it executes nothing). Then ask the developer
+to run the suite and report the results, and fix what the report shows. If a
+run seems to "work" from the LLM environment, that is not permission — it means
+the environment accidentally reaches a deployment it should not touch.
+
 ## Test object creation
 
 All objects used in tests come from a factory function in

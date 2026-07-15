@@ -308,7 +308,7 @@ class value_list extends ListBase
      * - then a group per phrase that is used by more than the configured minimum of values, the groups
      *   ordered by the aggregated impact of their values
      * - last the remaining values sorted by impact descending (with the usual limit and "... more" tail)
-     * see docs/llm/pending.md for the feature description
+     * see docs/llm/pending_next_launch.md for the feature description
      *
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
      * @param string $back the last view to suggest the best follow-up view
