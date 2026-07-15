@@ -34,10 +34,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SERVICE . 'config.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -47,6 +49,7 @@ function run_system_test(all_tests $t): void
 {
 
     global $usr;
+    global $db_con;
 
     $t_db = new test_db_load($t);
 
@@ -108,5 +111,24 @@ function run_system_test(all_tests $t): void
     $result = $usr_lst->name_lst();
     $target = users::TEST_NAME;
     $t->dsp_contains(', user_list->load_active', $target, $result);
+
+
+    // regression test for the config->check_cfg bug that stored a hardcoded site
+    // name instead of the passed code id, so the database version was never saved
+    $t->subheader('config check_cfg');
+    $cfg = new config();
+    // the average calculation time is a runtime metric that is safe to overwrite;
+    // remember the current value to restore it at the end of the test
+    $cfg_orig = $cfg->get_db(config::AVG_CALC_TIME, $db_con);
+    $cfg->set(config::AVG_CALC_TIME, '111', $db_con);
+    $test_name = 'check_cfg stores the passed value under the passed code id when it differs';
+    $set_done = $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con);
+    $t->assert($test_name, $cfg->get_db(config::AVG_CALC_TIME, $db_con), '222');
+    $test_name = 'check_cfg reports that it has stored the differing value';
+    $t->assert_true($test_name, $set_done);
+    $test_name = 'check_cfg does not store again when the value already matches the target';
+    $t->assert_false($test_name, $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con));
+    // restore the original value
+    $cfg->set(config::AVG_CALC_TIME, $cfg_orig, $db_con);
 
 }
