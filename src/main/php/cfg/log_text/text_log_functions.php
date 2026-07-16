@@ -115,7 +115,8 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
     }
 
     if ($debug_used > 0) {
-        echo $msg_text . ' ' . $sys->times->show_total() . '<br>';
+        // escape the (possibly request-derived) message before echoing it into the html response (xss)
+        echo htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->times->show_total() . '<br>';
         //ob_flush();
         //flush();
     }
@@ -244,7 +245,8 @@ function log_fatal_db(
     string $trace = '',
     ?user  $calling_usr = null): string
 {
-    echo 'FATAL ERROR! ' . $msg_text;
+    // escape the (possibly request-derived) message before echoing it into the html response (xss)
+    echo 'FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES);
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
@@ -280,7 +282,8 @@ function log_fatal(string $msg_text,
                    ?user  $calling_usr = null): string
 {
     $time = new DateTime()->format('c');
-    echo $time . ': FATAL ERROR! ' . $msg_text . "\n";
+    // escape the browser echo (xss); the file log below keeps the raw text for the admin
+    echo $time . ': FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES) . "\n";
     $STDERR = fopen('error.log', 'a');
     fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
     $write_with_more_info = false;
@@ -312,6 +315,23 @@ function log_fatal(string $msg_text,
             . 'by user ' . $usr_txt . "\n");
     }
     return $msg_text;
+}
+
+/**
+ * build the html shown to the user for a critical internal error with the (possibly request
+ * derived) message and function name html-escaped, so a crafted value - e.g. a url mask that
+ * reaches log_err('view ' . $view . ' not found') - cannot inject script into the error
+ * response (reflected xss); the escaping lives here at the output sink so every caller is covered
+ *
+ * @param string $msg_text the short error message that may contain request input
+ * @param string $function_name the originating function name
+ * @return string the escaped html line for the error response
+ */
+function critical_error_html(string $msg_text, string $function_name): string
+{
+    return "Zukunft.com has detected a critical internal error: <br><br>"
+        . htmlspecialchars($msg_text, ENT_QUOTES) . " by "
+        . htmlspecialchars($function_name, ENT_QUOTES) . ".<br><br>";
 }
 
 /**
@@ -416,7 +436,7 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
+                echo critical_error_html($msg_text, $function_name);
                 if ($sys_log->id > 0) {
                     $html = new html_base();
                     $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID

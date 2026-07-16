@@ -152,6 +152,20 @@ class user_tests
         $sys->typ_lst->usr_pro = $usr_pro_loaded;
 
 
+        $t->subheader($ts . 'data user permission');
+
+        // an api request may pass a data user id (url_var::USER) to load another user's data, but a
+        // normal or ip user must not use it to read a foreign user's private data (idor); only an
+        // admin or the system user may switch, otherwise the session user's own data is loaded
+        $usr_attacker = new user();
+        $usr_attacker->id = users::TEST_USER_ID;
+        $usr_attacker->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
+        $test_name = 'a normal user cannot load the system user via the data user parameter';
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID)->id(), users::TEST_USER_ID);
+        $test_name = 'the data user parameter is ignored for the session user own id';
+        $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID)->id(), users::TEST_USER_ID);
+
+
         $t->subheader($ts . 'sandbox usage');
 
         // the sandbox usage flag is part of every user row fetch,

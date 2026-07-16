@@ -1098,20 +1098,24 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * select the user whose data an api request should load: the session user ($this) by
-     * default, or the user given by id in the request when an (admin) caller wants to see
-     * another user's data (the frontend sandbox load sends the data user as url_var::USER)
-     * TODO check that the session user is permitted to see the requested user's data
+     * select the user whose data an api request should load: the session user ($this) by default,
+     * or the user given by id in the request when the session user is permitted to see another
+     * user's data. only an admin (or the internal system user) may load a different user; for a
+     * normal or ip user the requested id is ignored and the session user's own data is loaded, so
+     * the request cannot use the user parameter to read another user's private data (idor)
      * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
-     * @return user the session user, or the loaded requested user when a valid id is given
+     * @return user the session user, or the loaded requested user when the caller is permitted
      */
     function data_user(int $req_usr_id): user
     {
         $result = $this;
-        // only switch to the requested data user if it differs from the session user; the session
-        // user is already fully loaded (via get()), so reloading it by id here would drop that setup
-        // and the object would load less than the session user can actually see
-        if ($req_usr_id > 0 and $req_usr_id != $this->id) {
+        // only switch to the requested data user if it differs from the session user (the session
+        // user is already fully loaded via get(), so reloading it by id would drop that setup) and
+        // only when the session user may see another user's data (an admin or the system user); a
+        // normal or ip user requesting a foreign id keeps the session user, blocking the idor
+        if ($req_usr_id > 0
+            and $req_usr_id != $this->id
+            and ($this->is_admin() or $this->is_system())) {
             $req_usr = new user();
             $req_usr->load_by_id($req_usr_id);
             if ($req_usr->id > 0) {
