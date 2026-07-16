@@ -281,9 +281,9 @@ class frontend
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         $session_is_fine = true;
-        // reject a session id that the server did not issue, so an attacker cannot plant one
-        // (defense in depth for the session fixation fix; must be set before session_start)
-        ini_set('session.use_strict_mode', '1');
+        // harden the session cookie and transport before the session starts (httponly/secure/
+        // samesite, use_strict_mode and hsts on tls) so the id cannot be stolen, sniffed or planted
+        self::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -341,11 +341,12 @@ class frontend
 
     /**
      * decide whether a request may proceed with respect to the anti-csrf session token
-     * a data change (a submit of an add, edit or delete mask) must carry the session token that
-     * every crud form emits as a hidden field; without it an attacker could csrf a victim into
-     * creating or changing an object, so such a request is rejected when the token is missing or
-     * wrong (fail closed); a request that is not a data change but still sends a token (e.g. the
-     * login and signup forms) is rejected only when the sent token does not match
+     * view.php triggers a state change (url_to_action) only for a form submit (the post submit
+     * marker) or a get action mask, so every form submit - a crud change but also a login, signup,
+     * import or paste - must carry the session token that the form emits as a hidden field; without
+     * it an attacker could csrf a victim into an action, so any submit with a missing or wrong token
+     * is rejected (fail closed). a plain get navigation carries no submit marker and needs no token;
+     * a non-submit that still sends a token is rejected only when the sent token does not match
      *
      * @param array $url_arr the parameters given with the url for the request
      * @param string $session_token the anti-csrf token stored in the current session
@@ -353,16 +354,66 @@ class frontend
      */
     static function request_token_valid(array $url_arr, string $session_token): bool
     {
-        $mask_id = $url_arr[url_var::MASK] ?? 0;
         $sent_token = $url_arr[url_var::SESSION_TOKEN] ?? '';
-        $is_change_mask = in_array($mask_id, views::CHANGE_MASKS_IDS);
-        $is_submit = isset($url_arr[url_var::POST_SUBMIT]);
-        $token_required = $is_change_mask && $is_submit;
+        // the post submit marker is present exactly when the request will trigger an action, so it
+        // is the fail-closed trigger for the token check - not the (narrower) crud mask set
+        $token_required = isset($url_arr[url_var::POST_SUBMIT]);
         $result = true;
         if ($token_required or $sent_token != '') {
             $result = $session_token != '' && hash_equals($session_token, $sent_token);
         }
         return $result;
+    }
+
+    /**
+     * harden the session cookie and the transport before the session is started: the cookie is set
+     * http-only (not readable by javascript, so an xss cannot steal it), secure when the request
+     * uses tls (not sent over plain http, so it cannot be sniffed) and same-site lax (not sent on a
+     * cross-site request, a second layer against csrf); use_strict_mode rejects a planted id, and on
+     * a tls request the hsts header pins the browser to https so a later downgrade is refused.
+     * $_SERVER is read here because this is the request/session bootstrap - the same place
+     * server_guard reads the remote address - not deep in the business logic
+     */
+    private static function harden_session(): void
+    {
+        $https_flag = $_SERVER['HTTPS'] ?? '';
+        $is_https = ($https_flag !== '' && $https_flag !== 'off')
+            || ($_SERVER['SERVER_PORT'] ?? '') === '443'
+            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+        // must be set before session_start so the flags apply to the issued cookie
+        ini_set('session.use_strict_mode', '1');
+        session_set_cookie_params([
+            'httponly' => true,
+            'secure' => $is_https,
+            'samesite' => 'Lax',
+        ]);
+        // pin future requests to https for a year (only meaningful, and only sent, over tls)
+        if ($is_https && !headers_sent()) {
+            header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+        }
+    }
+
+    /**
+     * central authorization for the admin only masks (views::ADMIN_MASK_IDS, e.g. the admin main and
+     * the complete system view): only an admin (or the higher system user) may render or act on them,
+     * so the dispatch refuses the request once here instead of relying on scattered per renderer
+     * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
+     *
+     * @param int|string $view_id the resolved view id (or code id) of the request
+     * @param user_ui|null $usr the session user requesting the view (null for an anonymous request)
+     * @param user_message $usr_msg to tell the user why the admin mask is not shown
+     * @return bool true if the request is for an admin mask that the user may not access
+     */
+    private function admin_mask_denied(int|string $view_id, ?user_ui $usr, user_message $usr_msg): bool
+    {
+        $denied = false;
+        if (in_array($view_id, views::ADMIN_MASK_IDS)) {
+            if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
+                $usr_msg->add(msg_id::ADMIN_MASK_DENIED, []);
+                $denied = true;
+            }
+        }
+        return $denied;
     }
 
     /**
@@ -460,6 +511,8 @@ class frontend
 
         // resume session (based on cookies)
         // TODO review session start and end calls
+        // harden the session cookie and transport before the session starts (see harden_session)
+        self::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -662,6 +715,12 @@ class frontend
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
+        // central admin mask authorization: refuse to act on an admin only view for a non-admin user
+        // and send them to the start view, so an admin action cannot be triggered without the rights
+        if ($this->admin_mask_denied($view, $usr, $usr_msg)) {
+            return [url_var::MASK => views::START_ID];
+        }
+
         // an unconfirmed change to a sandbox object is first shown in the confirm change view
         // so the user can check the impact before it is written to the database; the change
         // fields stay in the url so the confirm view can show the pending change
@@ -804,6 +863,14 @@ class frontend
                 $view_id = $msk->id();
                 $view_code_id = $view;
             }
+        }
+
+        // central admin mask authorization: an admin only view is shown to no one but an admin (or
+        // system) user, so a non-admin request is sent to the start view with a message instead of
+        // rendering the admin page (which would otherwise leak the admin content to anyone)
+        if ($this->admin_mask_denied($view_id, $usr, $usr_msg)) {
+            $view_id = views::START_ID;
+            $view_code_id = views::START_CODE;
         }
 
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
@@ -1140,11 +1207,9 @@ class frontend
             } else {
                 $usr = new user_backend();
                 $usr->load_by_id($usr_id);
-                $db_key = $usr->activation_key ?? '';
-                $db_timeout = $usr->activation_timeout;
-                $db_now = $usr->db_now;
 
-                if ($db_key === $post_key && $db_timeout !== null && $db_timeout > $db_now) {
+                // compare the stored key hash with the hash of the posted key in constant time
+                if ($usr->activation_key_valid($post_key)) {
                     if (empty($pw)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
                     if (empty($pw_re)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
@@ -1190,7 +1255,9 @@ class frontend
                         $usr_msg->merge($msg_activate_ui);
                     }
                 } else {
-                    if ($db_key !== '') {
+                    // a still valid key that did not match is a wrong key; otherwise it is absent
+                    // or timed out, so the user is asked to request a new reset link
+                    if ($usr->has_active_activation_key()) {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
                     } else {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
@@ -1283,34 +1350,27 @@ class frontend
         $usr_mail = $url_array[url_var::EMAIL_HUMAN] ?? '';
         $db_usr = new user_backend();
         $key = '';
-        $sent = false;
 
         if ($do_it) {
+            // only a matching account gets a reset mail, but the user is told the same either way
+            // (see the neutral message below), so the reset never reveals whether the account exists
             if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
                 $key_ok = true;
                 try {
                     $key = bin2hex(random_bytes(10));
                 } catch (RandomException $e) {
                     log_err('RandomException in action_login_reset: ' . $e->getMessage());
-                    $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_KEY_GEN));
                     $key_ok = false;
                 }
                 if ($key_ok) {
-                    $timeout = new DateTime();
-                    try {
-                        $timeout->modify('+1 day');
-                    } catch (Exception $e) {
-                        log_err('DateTime modify failed in action_login_reset: ' . $e->getMessage());
-                    }
-                    $db_usr->activation_key = $key;
-                    $db_usr->activation_timeout = $timeout;
+                    // store only the sha256 hash of the key with a short validity; the cleartext
+                    // $key is never persisted and is sent to the user by email below
+                    $db_usr->set_activation_key($key);
                     $reset_msg = new backend_user_message();
                     $db_usr->save($reset_msg);
-                    $msg_reset_ui = new user_message();
-                    $msg_reset_ui->api_mapper($reset_msg->api_array());
-                    $usr_msg->merge($msg_reset_ui);
-
-                    if ($usr_msg->is_ok()) {
+                    // a save failure is logged, not shown, so the response stays identical for an
+                    // existing and a non-existing account (do not merge it into the user message)
+                    if ($reset_msg->is_ok()) {
                         $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
                             . url_var::PAR . url_var::ID . url_var::EQ . $db_usr->id
                             . '&' . url_var::POST_KEY . url_var::EQ . $key;
@@ -1320,21 +1380,18 @@ class frontend
                             . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . $activate_url . "\n\n"
                             . $this->mail_txt(msg_id::RESET_MAIL_IGNORE);
                         mail($db_usr->email, $mail_subject, $mail_body, users::mail_header());
-                        $sent = true;
+                    } else {
+                        log_err('password reset save failed: ' . $reset_msg->all_message_text());
                     }
                 }
-            } else {
-                $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_NOT_FOUND));
             }
+            // the same neutral confirmation for a found and a not-found account (user enumeration)
+            $usr_msg->add_message($mtr->txt(msg_id::RESET_MAIL_SENT));
         }
 
-        if ($sent) {
-            $next_url = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => $db_usr->id];
-        } else {
-            $next_url = $url_array;
-            unset($next_url[url_var::POST_SUBMIT]);
-        }
-        return $next_url;
+        // the same next page in both cases; a real account received the reset link (with its id and
+        // key) by email, so the redirect carries no user id, which would leak that the account exists
+        return [url_var::MASK => views::LOGIN_ID];
     }
 
     /**

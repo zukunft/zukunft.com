@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -112,6 +113,18 @@ class user_tests
         $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file, $t->usr_admin);
 
+        // the activation key is the account activation secret, so it must never be serialized:
+        // a user with the key set keeps it on the backend object but neither the export json nor
+        // the api json may contain it, otherwise an export, backup or api read leaks a working key
+        $usr_key = $t_usr->user_filled($t);
+        $test_name = 'the activation key stays available on the backend object';
+        $t->assert_true($test_name, $usr_key->activation_key == users::TEST_USER_ACTIVATION_KEY);
+        $test_name = 'the export json does not leak the activation key';
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json()));
+        $test_name = 'the api json does not leak the activation key';
+        $usr_key_api = json_decode($usr_key->api_json(), true);
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key_api));
+
 
         $t->subheader($ts . 'change permission');
 
@@ -150,6 +163,20 @@ class user_tests
         $test_name = 'a user with the ip profile cannot change data before the user profiles are loaded';
         $t->assert_false($test_name, $usr_ip_loaded->is_unique());
         $sys->typ_lst->usr_pro = $usr_pro_loaded;
+
+
+        $t->subheader($ts . 'data user permission');
+
+        // an api request may pass a data user id (url_var::USER) to load another user's data, but a
+        // normal or ip user must not use it to read a foreign user's private data (idor); only an
+        // admin or the system user may switch, otherwise the session user's own data is loaded
+        $usr_attacker = new user();
+        $usr_attacker->id = users::TEST_USER_ID;
+        $usr_attacker->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
+        $test_name = 'a normal user cannot load the system user via the data user parameter';
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID)->id(), users::TEST_USER_ID);
+        $test_name = 'the data user parameter is ignored for the session user own id';
+        $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID)->id(), users::TEST_USER_ID);
 
 
         $t->subheader($ts . 'sandbox usage');
@@ -261,6 +288,32 @@ class user_tests
         $test_name = 'the default false is not exported';
         $t->assert_false(
             $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json()));
+
+
+        $t->subheader($ts . 'activation key at rest');
+
+        // a password reset / activation key is stored only as a sha256 hash with a short validity,
+        // so a database read cannot recover a working key; the cleartext is compared via hash_equals
+        $key = users::TEST_USER_ACTIVATION_KEY;
+        $usr_key = new user();
+        $usr_key->set_activation_key($key);
+        $usr_key->db_now = new DateTime();
+        $test_name = 'the stored key is the sha256 hash, not the cleartext';
+        $t->assert($test_name, $usr_key->activation_key, hash('sha256', $key));
+        $test_name = 'the cleartext key itself is never stored';
+        $t->assert_false($test_name, $usr_key->activation_key == $key);
+        $test_name = 'the correct key is accepted while valid';
+        $t->assert_true($test_name, $usr_key->activation_key_valid($key));
+        $test_name = 'a wrong key is rejected';
+        $t->assert_false($test_name, $usr_key->activation_key_valid('000000'));
+        // move the validity end into the past to check that an expired key is refused
+        $timeout = new DateTime();
+        $timeout->modify('-1 hour');
+        $usr_key->activation_timeout = $timeout;
+        $test_name = 'an expired key is no longer reported as active';
+        $t->assert_false($test_name, $usr_key->has_active_activation_key());
+        $test_name = 'the correct key is rejected once expired';
+        $t->assert_false($test_name, $usr_key->activation_key_valid($key));
 
 
         $t->subheader($ts . 'diff message');
