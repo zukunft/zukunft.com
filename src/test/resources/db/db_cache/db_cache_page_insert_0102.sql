@@ -1,0 +1,1 @@
+PREPARE db_cache_page_insert_0102 (text, timestamp) AS INSERT INTO db_cache_pages (url,last_update)  VALUES ( $1,$2 ) RETURNING db_cache_page_id; 

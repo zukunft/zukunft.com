@@ -60,6 +60,7 @@ include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_HELPER . 'db_cache_status.php';
 include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
@@ -196,6 +197,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -386,6 +388,7 @@ class sql_db
         db_cache_status::class,
         db_cache_type::class,
         db_cache::class,
+        db_cache_page::class,
         job_status::class,
         job_type::class,
         job_time::class,
@@ -509,6 +512,7 @@ class sql_db
         sys_log_status::class,
         sys_log_function::class,
         db_cache::class,
+        db_cache_page::class,
         db_cache_status::class,
         db_cache_type::class,
         share_type::class,

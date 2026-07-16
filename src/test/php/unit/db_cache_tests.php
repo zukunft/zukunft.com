@@ -39,6 +39,7 @@ include_once paths::SHARED_TYPES . 'db_cache_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -65,12 +66,23 @@ class db_cache_tests
         $t->assert_sql_index_create($cac);
         $t->assert_sql_foreign_key_create($cac);
 
+        // the cached html pages table has no foreign keys,
+        // so only the table and index creation are checked
+        $t->subheader($ts . 'pages sql setup');
+        $cac_page = new db_cache_page();
+        $t->assert_sql_table_create($cac_page);
+        $t->assert_sql_index_create($cac_page);
+
 
         $t->subheader($ts . 'sql read');
 
         // sql to load one batch db_cache
         $cac = new db_cache($usr);
         $t->assert_sql_by_id($sc, $cac);
+
+        // sql to load one cached html page by id
+        $cac_page = new db_cache_page();
+        $t->assert_sql_by_id($sc, $cac_page);
 
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
@@ -85,11 +97,23 @@ class db_cache_tests
         $t->assert_sql_update($sc, $cac, $db_cache_db);
         $t->assert_sql_delete($sc, $cac);
 
+        $t->subheader($ts . 'pages sql write');
+        $cac_page = $t_db_cache->db_cache_page();
+        // like db_cache the cached html pages are never logged and never expected to be deleted
+        $t->assert_sql_insert($sc, $cac_page);
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $cac_page_db = $cac_page->clone_reset();
+        $t->assert_sql_update($sc, $cac_page, $cac_page_db);
+        $t->assert_sql_delete($sc, $cac_page);
+
         $t->subheader($ts . 'api');
 
         $t_db_cache = new test_db_caches($t);
         $cac = $t_db_cache->db_cache();
         $t->assert_api($cac);
+
+        $cac_page = $t_db_cache->db_cache_page();
+        $t->assert_api($cac_page);
 
     }
 

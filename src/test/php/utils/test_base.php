@@ -1449,18 +1449,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_create';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_table($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_table($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_table($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_table($sc, $class)) && $result;
         }
         return $result;
     }
@@ -1477,18 +1476,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_index';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_index($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_index($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_index($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_index($sc, $class)) && $result;
         }
         return $result;
     }
@@ -1505,18 +1503,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_foreign_key';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_foreign_key($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_foreign_key($sc, $class)) && $result;
         }
         return $result;
     }
@@ -2607,6 +2604,30 @@ class test_base
     {
         $lib = new library();
         return $this->assert($name, $lib->trim_sql($created), $lib->trim_sql($expected));
+    }
+
+    /**
+     * compare the created SQL statement with the expected statement from the test resource file
+     * and create or update the expected file with the created statement
+     * if the comparison fails and test_files::AUTO_UPDATE_TEST_FILES is set
+     * (single place that may overwrite an expected SQL file, similar to assert_file for html)
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect that selects the expected file
+     * @param string $created the created SQL statement that should be checked
+     * @return bool true if the created SQL statement matches the expected statement
+     */
+    function assert_sql_and_update(string $name, string $dialect, string $created): bool
+    {
+        $expected_sql = $this->assert_sql_expected($name, $dialect);
+        $result = $this->assert_sql($name, $created, $expected_sql);
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            // format the created sql the same way as the existing test resource files
+            // and write it to the resource path (assert_sql_file_path is relative to it)
+            $lib = new library();
+            $this->update_file($this->assert_sql_file_path($name, $dialect), $lib->sql_format($created));
+        }
+        return $result;
     }
 
     /**
