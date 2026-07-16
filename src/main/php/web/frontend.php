@@ -366,6 +366,29 @@ class frontend
     }
 
     /**
+     * central authorization for the admin only masks (views::ADMIN_MASK_IDS, e.g. the admin main and
+     * the complete system view): only an admin (or the higher system user) may render or act on them,
+     * so the dispatch refuses the request once here instead of relying on scattered per renderer
+     * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
+     *
+     * @param int|string $view_id the resolved view id (or code id) of the request
+     * @param user_ui|null $usr the session user requesting the view (null for an anonymous request)
+     * @param user_message $usr_msg to tell the user why the admin mask is not shown
+     * @return bool true if the request is for an admin mask that the user may not access
+     */
+    private function admin_mask_denied(int|string $view_id, ?user_ui $usr, user_message $usr_msg): bool
+    {
+        $denied = false;
+        if (in_array($view_id, views::ADMIN_MASK_IDS)) {
+            if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
+                $usr_msg->add(msg_id::ADMIN_MASK_DENIED, []);
+                $denied = true;
+            }
+        }
+        return $denied;
+    }
+
+    /**
      * TODO Prio 1 to be deprecated and use the api only for the frontend
      * open the database connection and load the base cache
      * @param string $code_name the place that is displayed to the user e.g. add word
@@ -662,6 +685,12 @@ class frontend
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
+        // central admin mask authorization: refuse to act on an admin only view for a non-admin user
+        // and send them to the start view, so an admin action cannot be triggered without the rights
+        if ($this->admin_mask_denied($view, $usr, $usr_msg)) {
+            return [url_var::MASK => views::START_ID];
+        }
+
         // an unconfirmed change to a sandbox object is first shown in the confirm change view
         // so the user can check the impact before it is written to the database; the change
         // fields stay in the url so the confirm view can show the pending change
@@ -804,6 +833,14 @@ class frontend
                 $view_id = $msk->id();
                 $view_code_id = $view;
             }
+        }
+
+        // central admin mask authorization: an admin only view is shown to no one but an admin (or
+        // system) user, so a non-admin request is sent to the start view with a message instead of
+        // rendering the admin page (which would otherwise leak the admin content to anyone)
+        if ($this->admin_mask_denied($view_id, $usr, $usr_msg)) {
+            $view_id = views::START_ID;
+            $view_code_id = views::START_CODE;
         }
 
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)

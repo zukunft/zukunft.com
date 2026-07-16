@@ -311,6 +311,35 @@ class system_view_ui_tests
         $test_name = 'add view does not stamp the url id onto the new object';
         $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
 
+        // the admin only masks (views::ADMIN_MASK_IDS) must be authorized centrally so the admin
+        // content is not rendered to just anyone (see frontend::admin_mask_denied)
+        $t->subheader($ts . 'admin mask authorization');
+        $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+
+        // negative: an anonymous user is sent to the start view with a permission message and never
+        // sees the admin content
+        $anon_msg = new user_message();
+        $anon_html = $ui->url_to_html($admin_url, null, $anon_msg, $ui->dto);
+        $test_name = 'the admin main view is not rendered for an anonymous user';
+        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin');
+        $test_name = 'the anonymous user is told that the admin view needs an administrator';
+        $t->assert_text_contains($test_name, $anon_html, msg_id::ADMIN_MASK_DENIED->value);
+
+        // positive: an admin (here the system user, see admin_mask_denied) may render the admin view
+        $adm_msg = new user_message();
+        $adm_html = $ui->url_to_html($admin_url, $usr_sys_ui, $adm_msg, $ui->dto);
+        $test_name = 'the admin main view is rendered for a system user';
+        $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
+
+        // negative: url_to_action refuses an admin mask action for a non-admin user and returns the
+        // start view instead of acting on it (a fresh frontend user has the ip-only profile)
+        $act_msg = new user_message();
+        $act_backend = clone $t->usr1;
+        $act_usr = new user_ui();
+        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_usr, $act_msg, $ui->dto, false);
+        $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
+        $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
+
         // loop over the system views
         $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
 
@@ -347,7 +376,13 @@ class system_view_ui_tests
                 }
                 $url_part = parse_url($url);
                 parse_str($url_part["query"], $url_array);
-                if (in_array($id, views::TEST_LOGIN_VIEW_IDS)) {
+                // an admin mask is now rendered only for an admin or system user (see
+                // frontend::admin_mask_denied), so render it as the system user like the login views
+                // that also need a session; the other views keep rendering as an anonymous user.
+                // because of this the admin mask snapshots show the logged-in user menu (logout)
+                // instead of the anonymous login/signup menu
+                if (in_array($id, views::TEST_LOGIN_VIEW_IDS)
+                    or in_array($id, views::ADMIN_MASK_IDS)) {
                     $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto);
                 } else {
                     $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto);

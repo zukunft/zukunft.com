@@ -1431,6 +1431,7 @@ enum messages: string
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '
         . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case ADMIN_MASK_DENIED = 'this view is only available for an administrator';
     case USER_CANNOT_DEL = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be deleted because otherwise log entries would be lost';

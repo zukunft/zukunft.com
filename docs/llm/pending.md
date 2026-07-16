@@ -8,9 +8,7 @@ block also the views that change data but are not an add, edit or del view for a
 
 ### security before go live
 
-findings of the security check on 2026-07-14, ordered by exploitability. 
-
-add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
+findings of the security check on 2026-07-14, ordered by exploitability.
 
 
 
