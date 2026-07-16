@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-07-15T20:20:48+00:00",
+    "timestamp": "2026-07-16T23:01:16+00:00",
     "body": {
         "user_profiles": [
             {
@@ -1064,6 +1064,12 @@
                 "code_id": "db_caches",
                 "description": "",
                 "id": 122
+            },
+            {
+                "name": "db_cache_pages",
+                "code_id": "db_cache_pages",
+                "description": "",
+                "id": 123
             }
         ],
         "change_field_list": [
@@ -6412,6 +6418,30 @@
                 "code_id": "1uses_sandbox",
                 "description": "",
                 "id": 891
+            },
+            {
+                "name": "123db_cache_page_id",
+                "code_id": "123db_cache_page_id",
+                "description": "",
+                "id": 892
+            },
+            {
+                "name": "123url",
+                "code_id": "123url",
+                "description": "",
+                "id": 893
+            },
+            {
+                "name": "123html_page",
+                "code_id": "123html_page",
+                "description": "",
+                "id": 894
+            },
+            {
+                "name": "123last_update",
+                "code_id": "123last_update",
+                "description": "",
+                "id": 895
             }
         ],
         "db_cache_types": [
