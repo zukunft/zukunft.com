@@ -1,0 +1,1 @@
+PREPARE db_cache_page_delete (bigint) AS DELETE FROM db_cache_pages WHERE db_cache_page_id = $1; 

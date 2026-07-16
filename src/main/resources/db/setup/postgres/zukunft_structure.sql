@@ -230,6 +230,25 @@ COMMENT ON COLUMN db_caches.last_update IS 'timestamp of the last update of the 
 -- --------------------------------------------------------
 
 --
+-- table structure cached html pages of view-only requests keyed by the url for faster response times
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_pages
+(
+    db_cache_page_id BIGSERIAL PRIMARY KEY,
+    url              text NOT NULL,
+    html_page        text DEFAULT NULL,
+    last_update      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);
+
+COMMENT ON TABLE db_cache_pages IS 'cached html pages of view-only requests keyed by the url for faster response times';
+COMMENT ON COLUMN db_cache_pages.db_cache_page_id IS 'the internal unique primary index';
+COMMENT ON COLUMN db_cache_pages.url IS 'the request url that the cached html page belongs to';
+COMMENT ON COLUMN db_cache_pages.html_page IS 'the pre-rendered html page returned for the url';
+COMMENT ON COLUMN db_cache_pages.last_update IS 'timestamp of the last rendering of the cached html page';
+
+-- --------------------------------------------------------
+
+--
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
@@ -5555,6 +5574,15 @@ CREATE INDEX db_caches_type_idx   ON db_caches (type_id);
 CREATE INDEX db_caches_user_idx            ON db_caches (user_id);
 CREATE INDEX db_caches_status_idx ON db_caches (status_id);
 CREATE INDEX db_caches_last_update_idx     ON db_caches (last_update);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_pages
+--
+
+CREATE INDEX db_cache_pages_url_idx ON db_cache_pages (url);
+CREATE INDEX db_cache_pages_last_update_idx ON db_cache_pages (last_update);
 
 -- --------------------------------------------------------
 

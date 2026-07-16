@@ -534,8 +534,264 @@ class library
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
                 . "   '" . substr($fields, 4) . "\n"
                 . $this->sql_format_select_tail($prt[3]) . "';";
+        } elseif (preg_match('/^(-- -+ )?(?:-- -- .+? -- |CREATE (?:UNIQUE )?INDEX |CREATE TABLE |ALTER TABLE )/', $sql)) {
+            $result = $this->sql_format_setup($sql);
         }
         return $result;
+    }
+
+    /**
+     * format a table setup script the same way the existing setup sql test resource
+     * files are formatted, i.e. a create table, index or foreign key / constraint
+     * script (one or several statements with the matching header comment blocks):
+     * a header comment block, for a CREATE TABLE one column per line with the names
+     * aligned (and for the mariadb dialect the types and null clause aligned as well)
+     * and for an ALTER TABLE with several clauses one clause per line.
+     *
+     * the formatting only rearranges whitespace and never changes any token, so
+     * a formatted script is always equal to the input once trim_sql is applied;
+     * as a safety net the raw input is returned unchanged if the round trip fails
+     *
+     * @param string $sql a generated table setup script e.g. on a single line
+     * @return string the formatted setup script or the unchanged input
+     */
+    private function sql_format_setup(string $sql): string
+    {
+        $input = $this->trim($sql);
+        $is_mysql = stripos($input, 'ENGINE = InnoDB') !== false
+            || stripos($input, 'AUTO_INCREMENT') !== false;
+
+        $result = '';
+        $prev_kind = '';
+        foreach ($this->sql_split($input, ';') as $st) {
+            if ($st == '') {
+                continue;
+            }
+            $piece = $this->sql_format_setup_stmt($st, $is_mysql) . ';';
+            $kind = $this->sql_format_setup_kind($piece);
+            // a header prefixed statement always starts a new table section
+            $starts_group = str_starts_with($piece, '--');
+            if ($result == '') {
+                $result = $piece;
+            } elseif ($starts_group) {
+                $result .= "\n\n" . $piece;
+            } elseif ($kind == 'comment' and $prev_kind == 'comment') {
+                // consecutive comments stay together
+                $result .= "\n" . $piece;
+            } elseif ($kind == 'index' and $prev_kind == 'index') {
+                // consecutive CREATE INDEX statements stay together
+                $result .= "\n" . $piece;
+            } else {
+                $result .= "\n\n" . $piece;
+            }
+            $prev_kind = $kind;
+        }
+        $result .= "\n";
+
+        // safety net: never change any token; keep the raw input if the reformat does not match
+        // the input under the same normalization that the sql asserts use (trim_sql),
+        // which e.g. ignores the spaces around brackets that only differ due to the formatting
+        if ($this->trim_sql($result) != $this->trim_sql($sql)) {
+            return $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * format one top level statement of a table setup script
+     * i.e. split off the leading separator and '-- ... --' header comment, handle
+     * the mariadb auto increment block, the CREATE TABLE and the ALTER TABLE clauses
+     *
+     * @param string $st one top level statement without the trailing ';'
+     * @param bool $is_mysql true to align the statement for the mariadb dialect
+     * @return string the formatted statement
+     */
+    private function sql_format_setup_stmt(string $st, bool $is_mysql): string
+    {
+        $prefix = '';
+        // a real separator line has many dashes; the '-- ... --' header has only two
+        if (preg_match('/^(-- -{4,}) (.*)$/s', $st, $m)) {
+            $prefix = $m[1] . "\n\n";
+            $st = trim($m[2]);
+        }
+        // the auto increment block must be checked before the general header
+        if (preg_match('/^-- -- AUTO_INCREMENT for table (\S+) -- ALTER TABLE (\S+) (MODIFY .+)$/s', $st, $m)) {
+            return $prefix . "--\n-- AUTO_INCREMENT for table " . $m[1] . "\n--\n"
+                . 'ALTER TABLE ' . $m[2] . "\n    " . trim($m[3]);
+        }
+        // the general '-- -- <header> -- <body>' block e.g. 'table structure ...',
+        // 'indexes for table ...' or 'constraints for table ...'
+        if (preg_match('/^-- -- (.+?) -- (.*)$/s', $st, $m)) {
+            $prefix .= "--\n-- " . trim($m[1]) . "\n--\n\n";
+            $st = trim($m[2]);
+        }
+        if (preg_match('/^CREATE TABLE /', $st)) {
+            return $prefix . $this->sql_format_create_table($st, $is_mysql);
+        }
+        // an ALTER TABLE with several comma separated clauses gets one clause per line
+        if (preg_match('/^ALTER TABLE (\S+) (.+)$/s', $st, $m)) {
+            $clauses = $this->sql_split($m[2], ',');
+            if (count($clauses) > 1) {
+                return $prefix . 'ALTER TABLE ' . $m[1] . "\n    " . implode(",\n    ", $clauses);
+            }
+            return $prefix . 'ALTER TABLE ' . $m[1] . ' ' . $m[2];
+        }
+        // COMMENT ON ..., a single CREATE INDEX and any other statement is kept on one line
+        return $prefix . $st;
+    }
+
+    /**
+     * format a single CREATE TABLE statement with one column per line and the names
+     * (and for mariadb the types and null clause) aligned in columns
+     *
+     * @param string $create the CREATE TABLE statement without the trailing ';'
+     * @param bool $is_mysql true to align the statement for the mariadb dialect
+     * @return string the formatted CREATE TABLE statement
+     */
+    private function sql_format_create_table(string $create, bool $is_mysql): string
+    {
+        if (!preg_match('/^CREATE TABLE (IF NOT EXISTS )?(\S+) \((.*)$/s', $create, $m)) {
+            return $create;
+        }
+        $if_not_exists = $m[1] ?? '';
+        $table = $m[2];
+        $rest = $m[3];
+
+        // find the matching closing bracket of the column list
+        $depth = 1;
+        $in_quote = false;
+        $len = strlen($rest);
+        $cut = -1;
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $rest[$i];
+            if ($ch == "'") {
+                $in_quote = !$in_quote;
+            } elseif (!$in_quote) {
+                if ($ch == '(') {
+                    $depth++;
+                } elseif ($ch == ')') {
+                    $depth--;
+                    if ($depth == 0) {
+                        $cut = $i;
+                        break;
+                    }
+                }
+            }
+        }
+        if ($cut < 0) {
+            return $create;
+        }
+        $cols_str = trim(substr($rest, 0, $cut));
+        $tbl_tail = trim(substr($rest, $cut + 1)); // mariadb: ENGINE ... CHARSET ... COMMENT '...'
+
+        // split the field definitions from the table constraints e.g. the PRIMARY KEY
+        $defs = [];
+        $constraints = [];
+        foreach ($this->sql_split($cols_str, ',') as $c) {
+            if ($c == '') {
+                continue;
+            }
+            if (preg_match('/^(PRIMARY KEY|UNIQUE|KEY|CONSTRAINT|INDEX|FOREIGN KEY)\b/i', $c)) {
+                $constraints[] = $c;
+            } else {
+                $defs[] = $c;
+            }
+        }
+
+        // measure the column widths for the alignment
+        $name_w = 0;
+        $type_w = 0;
+        $null_w = 0;
+        $parsed = [];
+        foreach ($defs as $c) {
+            $sp = strpos($c, ' ');
+            $name = $sp === false ? $c : substr($c, 0, $sp);
+            $def = $sp === false ? '' : trim(substr($c, $sp + 1));
+            $parsed[] = [$name, $def];
+            $name_w = max($name_w, strlen($name));
+            if ($is_mysql) {
+                $sp2 = strpos($def, ' ');
+                $type = $sp2 === false ? $def : substr($def, 0, $sp2);
+                $after = $sp2 === false ? '' : trim(substr($def, $sp2 + 1));
+                $type_w = max($type_w, strlen($type));
+                if (str_starts_with($after, 'NOT NULL')) {
+                    $null_w = max($null_w, 8);
+                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                    $null_w = max($null_w, 12);
+                }
+            }
+        }
+
+        // build the aligned column lines
+        $lines = [];
+        foreach ($parsed as [$name, $def]) {
+            if ($is_mysql) {
+                $sp = strpos($def, ' ');
+                $type = $sp === false ? $def : substr($def, 0, $sp);
+                $after = $sp === false ? '' : trim(substr($def, $sp + 1));
+                $null_clause = '';
+                $rem = $after;
+                if (str_starts_with($after, 'NOT NULL')) {
+                    $null_clause = 'NOT NULL';
+                    $rem = trim(substr($after, 8));
+                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                    $null_clause = 'DEFAULT NULL';
+                    $rem = trim(substr($after, 12));
+                }
+                if ($null_clause != '') {
+                    $body = str_pad($type, $type_w) . ' '
+                        . str_pad($null_clause, $null_w, ' ', STR_PAD_LEFT)
+                        . ($rem != '' ? ' ' . $rem : '');
+                } else {
+                    $body = str_pad($type, $type_w) . ($after != '' ? ' ' . $after : '');
+                }
+            } else {
+                $body = $def;
+            }
+            $lines[] = '    ' . str_pad($name, $name_w) . ' ' . rtrim($body);
+        }
+        foreach ($constraints as $c) {
+            $lines[] = '    ' . $c;
+        }
+
+        $out = 'CREATE TABLE ' . $if_not_exists . $table . "\n(\n";
+        if ($is_mysql) {
+            $out .= implode(",\n", $lines) . "\n)";
+            if ($tbl_tail != '') {
+                if (preg_match("/^ENGINE = (\S+) DEFAULT CHARSET = (\S+) COMMENT ('.*')$/s", $tbl_tail, $em)) {
+                    $out .= "\n    ENGINE = " . $em[1] . "\n    DEFAULT CHARSET = " . $em[2]
+                        . "\n    COMMENT " . $em[3];
+                } else {
+                    $out .= ' ' . $tbl_tail;
+                }
+            }
+        } else {
+            $out .= implode(",\n", $lines) . ')';
+        }
+        return $out;
+    }
+
+    /**
+     * classify a formatted statement to decide the blank lines between the statements
+     *
+     * @param string $piece a formatted top level statement
+     * @return string the kind of the statement e.g. 'create', 'comment' or 'other'
+     */
+    private function sql_format_setup_kind(string $piece): string
+    {
+        if (str_contains($piece, 'CREATE TABLE')) {
+            return 'create';
+        }
+        if (str_starts_with(ltrim($piece), 'COMMENT ON')) {
+            return 'comment';
+        }
+        if (str_contains($piece, 'CREATE INDEX')) {
+            return 'index';
+        }
+        if (str_contains($piece, 'AUTO_INCREMENT for table')) {
+            return 'autoinc';
+        }
+        return 'other';
     }
 
     /**

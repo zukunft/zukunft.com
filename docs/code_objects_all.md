@@ -122,6 +122,7 @@ the object structure is:
 │   └── db_object
 │       └── db_object_seq_id
 │           ├── group_link - only for fast selection of the phrase group assigned to one triple
+│           ├── db_cache_page - the cached html pages of view-only requests keyed by the url
 │           ├── db_id_object_non_sandbox
 │           │   └── user - $usr - a person who uses zukunft.com
 │           ├── db_object_seq_id_user

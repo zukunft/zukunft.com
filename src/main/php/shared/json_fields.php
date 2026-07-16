@@ -105,6 +105,9 @@ class json_fields
     // the external link of a source or a reference
     const string URL = 'url';
 
+    // the pre-rendered html page of a cached view-only request
+    const string HTML_PAGE = 'html_page';
+
     // the order number e.g. of the component within the view
     // is needed in the json because the json format does not support ordered lists by definition
     const string POSITION = 'position';

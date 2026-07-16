@@ -121,3 +121,4 @@ change_table_id, change_table_name, description, code_id
 120,'db_cache_statuum',,'db_cache_statuum'
 121,'db_cache_types',,'db_cache_types'
 122,'db_caches',,'db_caches'
+123,'db_cache_pages',,'db_cache_pages'

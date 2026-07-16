@@ -43,6 +43,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_page.php';
 //include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_cache_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
@@ -149,6 +150,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -591,6 +593,7 @@ class def
     const array CLASSES_NO_LOG = [
         job::class,
         db_cache::class,
+        db_cache_page::class,
     ];
 
     // list of classes that use a database table but where the changes do not need to be logged
@@ -644,6 +647,7 @@ class def
         'db_cache_statuum',
         'db_cache_types',
         'db_caches',
+        'db_cache_pages',
         'user_official_types',
         'ip_ranges',
         'sessions',
