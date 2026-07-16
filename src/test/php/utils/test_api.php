@@ -79,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -844,6 +845,51 @@ class test_api extends test_base
 
         $dbo->load_by_name($dbo->name());
         return $this->assert($test_name, $dbo->id(), 0);
+    }
+
+    /**
+     * check that a data change via the api is refused for a user without login
+     * the ip user change block is enforced centrally in the model save/del (sandbox->save/del),
+     * so it must also stop a write through the api controller, not only in the http/view.php frontend
+     *
+     * @param string $class the class name of the object to test e.g. word
+     * @param user $usr the requesting user, expected to be a blocked ip user
+     * @param test_cleanup $t the test object that includes the test results collected until now
+     * @return bool true if the add and the delete are both refused with the blocking message
+     */
+    function assert_api_write_blocked_for_ip_user(
+        string       $class,
+        user         $usr,
+        test_cleanup $t
+    ): bool
+    {
+        global $mtr;
+        $lib = new library();
+        $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
+        $class_name = $lib->class_to_name($class);
+        $blocked_txt = $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER);
+
+        $dbo = $t_map->class_to_add_filled_object($class);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+
+        // simulate the api post (add) call and capture the echoed rejection
+        ob_start();
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, '');
+        $post_response = ob_get_clean();
+        $test_name = 'the api post of a ' . $class_name . ' by an ip user is refused';
+        $post_blocked = $this->assert_text_contains($test_name, $post_response, $blocked_txt);
+
+        // simulate the api delete call and capture the echoed rejection
+        ob_start();
+        $ctrl->delete($dbo_ui->id(), $dbo, $usr, '');
+        $del_response = ob_get_clean();
+        $test_name = 'the api delete of a ' . $class_name . ' by an ip user is refused';
+        $del_blocked = $this->assert_text_contains($test_name, $del_response, $blocked_txt);
+
+        return $post_blocked and $del_blocked;
     }
 
 

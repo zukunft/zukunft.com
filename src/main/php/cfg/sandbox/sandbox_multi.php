@@ -2735,6 +2735,28 @@ class sandbox_multi extends db_object_multi_user
         return $usr_msg->is_ok();
     }
 
+    /**
+     * central ip user change block for the multi-user object branch (values), matching the
+     * sandbox::save/del guard so a data change without login is refused on every write path
+     * (frontend, api and import), not only per entry point; the requesting user is taken from
+     * the message or, if not set, from the object owner (like sandbox::set_requesting_user)
+     *
+     * @param user_message $msg the user who has requested the change; the reject reason is added here
+     * @return bool true if the change is blocked and the caller must abort the save or delete
+     */
+    protected function change_blocked(user_message $msg): bool
+    {
+        if ($msg->usr == null or $msg->usr->id() <= 0) {
+            $msg->usr = $this->get_user();
+        }
+        $blocked = false;
+        if ($msg->usr != null and $msg->usr->is_blocked()) {
+            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $blocked = true;
+        }
+        return $blocked;
+    }
+
     /*
      * save
      * TODO review and combine with value and result save functions

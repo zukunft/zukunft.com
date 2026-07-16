@@ -215,11 +215,14 @@ class value_list extends ListBase
     function sort_by_impact(): void
     {
         $lst = $this->lst();
-        // impact first, then number, then the value (group) id so that values with the
-        // same impact and number keep a deterministic order independent of the db/api row order
+        // impact first, then number, then the group name so that values with the same impact and
+        // number keep a deterministic order that does not depend on the value (group) id: a value's
+        // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
+        // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
+        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
         usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
-            ?: $a->id() <=> $b->id());
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $this->set_lst($lst);
     }
 
