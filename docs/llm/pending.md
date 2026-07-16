@@ -6,17 +6,11 @@
 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
-check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
-
 ### security before go live
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
 
-remove the profile_id privilege escalation: cfg/user/user.php::api_mapper (around line 480) copies profile_id straight from the request json without a can_set_profile check (the safe setter set_profile enforces it but is only used on the import path), and the update gate lets a user change his own record, so a user could set his own record to the admin profile. Route the api path through set_profile / add the can_set_profile check before the save, with a negative test
-
 add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
-
-fix the idor on ownerless objects: cfg/sandbox/sandbox.php::can_change (around line 1596) returns true when owner_id <= 0, so any shared or seed object whose owner was never set is writable by every user including the anonymous ip user, and the change hits the standard row seen by all users. Every non IP user can take catch the ownership of ownerless object but not IP users
 
 
 

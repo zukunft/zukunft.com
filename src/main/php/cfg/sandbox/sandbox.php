@@ -1625,8 +1625,15 @@ class sandbox extends db_object_seq_id_user
                 }
             }
             if ($this->owner_id() <= 0) {
-                log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
-                // TODO Prio 3 get best owner and set it
+                // an ownerless object (shared or seed data) is the standard row seen by all users,
+                // so only a logged-in user may take it over; an anonymous ip user must not change
+                // the shared row (idor) - its change is routed to a user specific overlay instead
+                if ($this->get_user()->is_ip_user()) {
+                    $can_change = false;
+                } else {
+                    log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
+                    // TODO Prio 3 get best owner and set it
+                }
             }
         }
 

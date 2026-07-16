@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once test_paths::CREATE . 'test_users.php';
@@ -42,6 +43,7 @@ include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -119,6 +121,24 @@ class permission_tests
         $t->assert_false($test_name, $val->del($usr_msg));
         $test_name = 'the ip user is told why the value del has been rejected';
         $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $blocked_txt);
+
+
+        $t->subheader($ts . 'ownerless object');
+
+        // an object whose owner was never set (shared or seed data) is the standard row seen by
+        // all users; an ip user must not change that shared row, so can_change is false
+        $wrd_ip = new word($usr_ip);
+        $wrd_ip->set_owner_id(0);
+        $test_name = 'an ip user cannot change an ownerless object';
+        $usr_msg = new user_message($usr_ip);
+        $t->assert_false($test_name, $wrd_ip->can_change($usr_msg));
+
+        // a logged-in user may take over an ownerless object and change the standard row
+        $wrd_admin = new word($t->usr_admin);
+        $wrd_admin->set_owner_id(0);
+        $test_name = 'a logged-in user can change an ownerless object';
+        $usr_msg = new user_message($t->usr_admin);
+        $t->assert_true($test_name, $wrd_admin->can_change($usr_msg));
 
 
         $t->subheader($ts . 'user with login');

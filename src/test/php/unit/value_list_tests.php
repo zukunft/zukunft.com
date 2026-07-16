@@ -109,6 +109,18 @@ class value_list_tests
         $test_name = 'sort by number descending puts the lower value last when the impact is equal';
         $t->assert($test_name, $num_lst->lst()[1]->number(), 2);
 
+        // two values with the same impact and number are sorted by the group name, not by the
+        // volatile group id (packed from the seed-assigned word ids), so the order is stable across
+        // test database rebuilds; "city" is added first but "Zurich" must sort ahead of it by name
+        $tie_lst = new value_list($usr);
+        $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 5));
+        $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 5));
+        $tie_lst->sort();
+        $test_name = 'sort breaks an impact and number tie by the group name';
+        $t->assert($test_name, $tie_lst->lst()[0]->name(), word_names::ZH);
+        $test_name = 'the tie break keeps the later group name last';
+        $t->assert($test_name, $tie_lst->lst()[1]->name(), word_names::CITY);
+
         $test_name = 'sort of an empty value list keeps it empty';
         $empty_lst = new value_list($usr);
         $empty_lst->sort();

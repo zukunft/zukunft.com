@@ -186,6 +186,34 @@ class user_tests
         $usr->api_mapper([], $usr_msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
 
+
+        $t->subheader($ts . 'profile privilege escalation');
+
+        // the profile is a critical field that must not be trusted from the request json; api_mapper
+        // maps it faithfully (a round trip must preserve the real profile) and the escalation is
+        // refused before the database write in enforce_profile_privilege (called by save_user)
+        $admin_profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
+        $test_name = 'api_mapper maps the requested profile faithfully';
+        $usr = new user();
+        $usr_msg = new user_message($t->usr_normal);
+        $usr->api_mapper([json_fields::PROFILE_ID => $admin_profile_id], $usr_msg);
+        $t->assert($test_name, $usr->profile_id, $admin_profile_id);
+
+        // a normal user cannot raise a user record from the normal to the admin profile
+        $test_name = 'a normal user cannot set the admin profile';
+        $allowed = $usr->enforce_profile_privilege(
+            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $allowed, user_profiles::NORMAL_ID);
+        $test_name = 'the profile escalation attempt is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'cannot be updated due to missing privileges');
+
+        // an admin may legitimately set the admin profile
+        $test_name = 'an admin can set the admin profile';
+        $usr_msg = new user_message($t->usr_admin);
+        $allowed = $usr->enforce_profile_privilege(
+            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_admin, $usr_msg);
+        $t->assert($test_name, $allowed, $admin_profile_id);
+
         // fill takes the flag from the given object, because false also means not yet set
         $test_name = 'fill sets the sandbox usage from the given user';
         $usr = new user();

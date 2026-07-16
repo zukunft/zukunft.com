@@ -267,6 +267,7 @@
     \-- can_be_changed_by - section for function can_be_changed_by not yet defined that it should be owner and access in /user/user.php
     \-- can_change - section for function can_change is expected to be sandbox in /user/user.php
     \-- can_set_profile - section for function can_set_profile not yet defined that it should be owner and access in /user/user.php
+    \-- enforce_profile_privilege - section for function enforce_profile_privilege not yet defined that it should be owner and access in /user/user.php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be owner and access in /user/user.php
     \-- can_set_code_id - section for function can_set_code_id not yet defined that it should be owner and access in /user/user.php
     \-- can_set_ui_msg_id - section for function can_set_ui_msg_id not yet defined that it should be owner and access in /user/user.php
