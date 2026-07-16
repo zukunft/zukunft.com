@@ -99,6 +99,7 @@ class user_tests
         $test_usr_list = new user_list($usr_test);
         // TODO include all value tables
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
+        $this->assert_sql_count_user_rows($t, $db_con, $test_usr_list);
 
 
         $t->subheader($ts . 'api');
@@ -371,6 +372,28 @@ class user_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_count_changes($db_con->sql_creator());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the SQL statements to count all sandbox rows one user has
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_list $usr_lst the user list object that creates the query
+     */
+    private function assert_sql_count_user_rows(test_cleanup $t, sql_db $db_con, user_list $usr_lst): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_lst->load_sql_count_user_rows($db_con->sql_creator(), users::SYSTEM_TEST_ID);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_lst->load_sql_count_user_rows($db_con->sql_creator(), users::SYSTEM_TEST_ID);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

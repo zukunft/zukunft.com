@@ -510,8 +510,8 @@ class library
             . 'SELECT (\S+) \((.+)\);$/';
         $pg_update = '/^PREPARE (\S+) \((.+?)\) AS (UPDATE .+);$/';
         $my_update = "/^PREPARE (\S+) FROM '(UPDATE .+)';$/";
-        $pg_select = '/^PREPARE (\S+) \((.+?)\) AS SELECT (.+) FROM (.+);$/';
-        $my_select = "/^PREPARE (\S+) FROM 'SELECT (.+) FROM (.+)';$/";
+        $pg_select = '/^PREPARE (\S+)(?: \((.+?)\))? AS SELECT (.+?) FROM (.+);$/';
+        $my_select = "/^PREPARE (\S+) FROM 'SELECT (.+?) FROM (.+)';$/";
         if (preg_match($pg_function, $sql, $prt)) {
             $result = $this->sql_format_function($prt);
         } elseif (preg_match($my_procedure, $sql, $prt)) {
@@ -523,7 +523,9 @@ class library
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
                 . $this->sql_format_update_quoted($prt[2]);
         } elseif (preg_match($pg_select, $sql, $prt)) {
-            $result = 'PREPARE ' . $prt[1] . ' (' . implode(', ', $this->sql_split($prt[2])) . ") AS\n"
+            // the parameter list is optional e.g. the count queries prepare without a parameter
+            $params = ($prt[2] ?? '') != '' ? ' (' . implode(', ', $this->sql_split($prt[2])) . ')' : '';
+            $result = 'PREPARE ' . $prt[1] . $params . " AS\n"
                 . $this->sql_format_select_fields($this->sql_split($prt[3])) . "\n"
                 . $this->sql_format_select_tail($prt[4]) . ';';
         } elseif (preg_match($my_select, $sql, $prt)) {
@@ -915,6 +917,10 @@ class library
      */
     private function sql_format_select_tail(string $tail): string
     {
+        // a join on a sub query (e.g. the user change count) is formatted separately
+        if (str_contains($tail, ' LEFT JOIN (')) {
+            return $this->sql_format_count_tail($tail);
+        }
         if (!preg_match('/^(\S+( \S+)?)( LEFT JOIN (\S+( \S+)?) ON (.+?))?( WHERE (.+))?$/', $tail, $prt)) {
             return '          FROM ' . $tail;
         }
@@ -933,6 +939,83 @@ class library
             $result .= "\n" . '         WHERE ' . $prt[8];
         }
         return $result;
+    }
+
+    /**
+     * format the from, left join sub query, where and order part of a user change count select
+     * the sub query counts the user sandbox rows per table and sums them up per user, so the
+     * union of the per-table counts is shown one table per line below the wrapping sub query
+     *
+     * @param string $tail the part of the query after the outer FROM keyword
+     * @return string the formatted from, join sub query, where and order lines
+     */
+    private function sql_format_count_tail(string $tail): string
+    {
+        // split off the outer table and the joined sub query
+        $join_pos = strpos($tail, ' LEFT JOIN (');
+        $outer_tbl = substr($tail, 0, $join_pos);
+        [$sub, $rest] = $this->sql_paren_split(substr($tail, $join_pos + strlen(' LEFT JOIN ')));
+        // the outer alias, the on condition and the optional where and order by follow the sub query
+        preg_match('/^ (\S+) ON (.+?)( WHERE (.+?))?( ORDER BY (.+))?$/', $rest, $prt);
+        $out_alias = $prt[1];
+        $on = $prt[2];
+        $where = $prt[4] ?? '';
+        $order = $prt[6] ?? '';
+        // split the wrapping sum sub query into its select part and the counted union
+        $from_pos = strpos($sub, ' FROM ( ');
+        $sum = substr($sub, strlen('SELECT '), $from_pos - strlen('SELECT '));
+        [$union, $sub_rest] = $this->sql_paren_split(substr($sub, $from_pos + strlen(' FROM ')));
+        preg_match('/^ (\S+) GROUP BY (.+)$/', $sub_rest, $sub_prt);
+        $sub_alias = $sub_prt[1];
+        $sub_group = $sub_prt[2];
+        // one line per counted user table
+        $branches = explode(' UNION ', $union);
+        $last = count($branches) - 1;
+        $result = '          FROM ' . $outer_tbl;
+        $result .= "\n" . '     LEFT JOIN ( SELECT ' . $sum;
+        foreach ($branches as $i => $branch) {
+            $prefix = $i == 0 ? '                   FROM ( ' : '                    UNION ';
+            $suffix = $i == $last ? ' ) ' . $sub_alias : '';
+            $result .= "\n" . $prefix . $branch . $suffix;
+        }
+        $result .= "\n" . '               GROUP BY ' . $sub_group . ' ) ' . $out_alias;
+        $result .= "\n" . '            ON ' . $on;
+        if ($where != '') {
+            $result .= "\n" . '         WHERE ' . $where;
+        }
+        if ($order != '') {
+            $result .= "\n" . '      ORDER BY ' . $order;
+        }
+        return $result;
+    }
+
+    /**
+     * split a string that starts with a '(' into the content of the first balanced
+     * parenthesis pair and the remaining string after the matching ')'
+     *
+     * @param string $sql the string that starts with an opening parenthesis
+     * @return array the trimmed inner content and the remaining string after the closing parenthesis
+     */
+    private function sql_paren_split(string $sql): array
+    {
+        $depth = 0;
+        $end = -1;
+        $len = strlen($sql);
+        for ($i = 0; $i < $len; $i++) {
+            if ($end < 0) {
+                if ($sql[$i] == '(') {
+                    $depth++;
+                } elseif ($sql[$i] == ')') {
+                    $depth--;
+                    if ($depth == 0) {
+                        $end = $i;
+                    }
+                }
+            }
+        }
+        $inside = trim(substr($sql, 1, $end - 1));
+        $rest = substr($sql, $end + 1);
+        return [$inside, $rest];
     }
 
     /**

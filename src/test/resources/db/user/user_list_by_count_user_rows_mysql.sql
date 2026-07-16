@@ -1,5 +1,5 @@
-PREPARE user_list_by_count_changes AS
-    SELECT     s.user_id,
+PREPARE user_list_by_count_user_rows FROM
+   'SELECT     s.user_id,
                s.user_name,
                s.code_id,
                s.ip_address,
@@ -29,5 +29,4 @@ PREPARE user_list_by_count_changes AS
                     UNION SELECT user_id, COUNT (*) AS changes FROM user_component_links GROUP BY user_id ) g
                GROUP BY user_id ) l
             ON s.user_id = l.user_id
-         WHERE l.changes IS NOT NULL
-      ORDER BY l.changes DESC;
+         WHERE s.user_id = ?';

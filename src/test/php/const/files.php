@@ -204,6 +204,10 @@ class files
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
 
     const array TEST_DATA_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,

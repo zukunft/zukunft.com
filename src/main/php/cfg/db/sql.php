@@ -66,6 +66,9 @@ class sql
     // condition
     const string WHERE = 'WHERE';
 
+    // grouping
+    const string GROUP_BY = 'GROUP BY';
+
     // sorting
     const string ORDER_BY = 'ORDER BY';
     const string ORDER_ASC = 'ASC';
@@ -89,6 +92,7 @@ class sql
     const string FUNCTION_RETURN_INT_MYSQL = '';
     const string FUNCTION_NO_RETURN = 'RETURNS void AS';
     const string FUNCTION_COUNT = 'COUNT';
+    const string FUNCTION_SUM = 'SUM';
     const string FUNCTION_NO_RETURN_MYSQL = '';
     const string RETURNING = 'RETURNING';
     const string RETURN = 'RETURN';

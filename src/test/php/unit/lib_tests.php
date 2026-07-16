@@ -114,6 +114,14 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT, $t);
         $test_name = 'sql_format select MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_MYSQL, $t);
+        $test_name = 'sql_format select count';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT, $t);
+        $test_name = 'sql_format select count MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_MYSQL, $t);
+        $test_name = 'sql_format select count by user';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER, $t);
+        $test_name = 'sql_format select count by user MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER_MYSQL, $t);
 
         // test trim of an JSON string to the relevant part
         // to make two JSON strings more comparable
