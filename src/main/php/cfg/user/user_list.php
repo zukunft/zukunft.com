@@ -246,6 +246,25 @@ class user_list
     }
 
     /**
+     * count the user sandbox rows the given user has across all user_* overlay tables
+     * e.g. to check if the uses_sandbox flag can be switched off after a row has been removed
+     *
+     * @param sql_db $db_con the database connection used to count the rows
+     * @param int $user_id the id of the user whose sandbox rows should be counted
+     * @return int the number of user sandbox rows the user has, zero if none is left
+     */
+    function count_user_rows(sql_db $db_con, int $user_id): int
+    {
+        $qp = $this->load_sql_count_user_rows($db_con->sql_creator(), $user_id);
+        $db_row = $db_con->get1($qp);
+        $count = 0;
+        if (is_array($db_row)) {
+            $count = (int)($db_row[self::FLD_CHANGES] ?? 0);
+        }
+        return $count;
+    }
+
+    /**
      * count the sandbox rows a user has per user across all user_* overlay tables
      * the tables are taken from the def::SANDBOX_CLASSES list of classes that use the
      * user sandbox, so a new sandbox table is included automatically once it is added

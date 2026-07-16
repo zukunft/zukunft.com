@@ -99,9 +99,14 @@ class user_write_tests
         $test_name = 'switching a user to sandbox usage is stored in the database';
         $t->assert_true($test_name, $usr_reload->uses_sandbox);
 
-        // cleanup: reset the flag so the shared test user starts without sandbox usage again
-        $usr_reload->uses_sandbox = false;
-        $usr_reload->save_user($usr_msg, $t->usr1);
+        // the test partner has no user sandbox rows, so counting and rechecking
+        // switches the flag off again and stores it in the database
+        global $db_con;
+        $usr_reload->check_sandbox_usage($db_con, $usr_msg);
+        $usr_check = new user();
+        $usr_check->load_by_id($usr_db->id());
+        $test_name = 'a user without any sandbox rows is switched off the sandbox usage again';
+        $t->assert_false($test_name, $usr_check->uses_sandbox);
 
         /*
 

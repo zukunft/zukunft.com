@@ -1686,6 +1686,9 @@ class sandbox extends db_object_seq_id_user
         if ($msg == '') {
             $this->usr_cfg_id = null;
             $result = true;
+            // after removing the user sandbox row switch off the sandbox usage
+            // of the user if no user sandbox row is left
+            $this->get_user()->check_sandbox_usage($db_con, $usr_msg);
         } else {
             log_err($action . $msg_failed . ' because ' . $msg);
         }
