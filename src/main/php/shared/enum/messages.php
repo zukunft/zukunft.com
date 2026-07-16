@@ -1431,6 +1431,7 @@ enum messages: string
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '
         . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case ADMIN_MASK_DENIED = 'this view is only available for an administrator';
     case USER_CANNOT_DEL = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be deleted because otherwise log entries would be lost';
@@ -1833,6 +1834,9 @@ enum messages: string
     case RESET_SUBMIT = 'reset_submit';
     case RESET_PROMPT = 'reset_prompt';
     case RESET_ERR_NOT_FOUND = 'reset_err_not_found';
+    // neutral confirmation shown whether or not the account exists, so the reset does not reveal
+    // which usernames or emails are registered (user enumeration)
+    case RESET_MAIL_SENT = 'If an account exists for the given name or email, a password reset link has been sent. Please check your inbox.';
     case RESET_ERR_KEY_GEN = 'reset_err_key_gen';
     case RESET_MAIL_SUBJECT = 'reset_mail_subject';
     case RESET_MAIL_HELLO = 'reset_mail_hello';

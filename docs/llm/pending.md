@@ -8,19 +8,15 @@ block also the views that change data but are not an add, edit or del view for a
 
 ### security before go live
 
-findings of the security check on 2026-07-14, ordered by exploitability. 
+findings of the security check ordered by exploitability.
 
-add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
+review the remaining defense in depth items: add 'Options -Indexes' to .htaccess (no directory listing guard today), move the src/ tree out of the docroot so the internal php is not web addressable, stop echoing the internal function and file name in the critical error message to the user (text_log_functions.php around line 418), and do not write the session token to the fatal log on a mismatch (frontend.php around line 296)
 
-
+reduce the login and reset user enumeration: cfg/user/user.php::login (around line 817) returns a different message for an unknown user than for a wrong password and skips the bcrypt computation for an unknown user (a timing oracle), and the reset flow (frontend.php around line 1288) confirms which emails are registered. Use a generic message for both cases and always run a password_verify against a dummy hash. Also store the reset key hashed, shorten its one day validity and compare it with hash_equals instead of '==='
 
 get the cleartext login passwords out of the deployed .env: .env lines 60-73 hold real plaintext ADMIN_PW / USER_PW etc. and script/install.sh line 241 copies .env into $WWW_ROOT. Verified good: .env is gitignored and never committed and .env.example is sanitised, so this is a deployment issue not a repo leak. Hash the login passwords at setup and store .env outside the docroot
 
 harden the session cookie and the transport: there is no session_set_cookie_params / ini_set for cookie_httponly, cookie_secure, cookie_samesite or use_strict_mode anywhere (every session_start inherits the php.ini defaults), and there is no https redirect and no HSTS. Set the cookie flags before session_start and enforce tls at the web server. This amplifies the xss, csrf and fixation findings above
-
-reduce the login and reset user enumeration: cfg/user/user.php::login (around line 817) returns a different message for an unknown user than for a wrong password and skips the bcrypt computation for an unknown user (a timing oracle), and the reset flow (frontend.php around line 1288) confirms which emails are registered. Use a generic message for both cases and always run a password_verify against a dummy hash. Also store the reset key hashed, shorten its one day validity and compare it with hash_equals instead of '==='
-
-review the remaining defense in depth items: add 'Options -Indexes' to .htaccess (no directory listing guard today), move the src/ tree out of the docroot so the internal php is not web addressable, stop echoing the internal function and file name in the critical error message to the user (text_log_functions.php around line 418), and do not write the session token to the fatal log on a mismatch (frontend.php around line 296)
 
 ### security improvements
 
