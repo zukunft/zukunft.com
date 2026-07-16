@@ -2077,7 +2077,9 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::IP_ADDR] = $this->ip_addr;
         $vars[json_fields::EMAIL] = $this->email;
 
-        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
+        // the activation key is intentionally not exported: it is the account activation secret,
+        // so leaking it in an export or backup file would enable an account takeover; the key stays
+        // backend only (like in api_json_array), a re-imported account simply re-requests activation
         // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);

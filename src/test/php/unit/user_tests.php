@@ -112,6 +112,18 @@ class user_tests
         $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file, $t->usr_admin);
 
+        // the activation key is the account activation secret, so it must never be serialized:
+        // a user with the key set keeps it on the backend object but neither the export json nor
+        // the api json may contain it, otherwise an export, backup or api read leaks a working key
+        $usr_key = $t_usr->user_filled($t);
+        $test_name = 'the activation key stays available on the backend object';
+        $t->assert_true($test_name, $usr_key->activation_key == users::TEST_USER_ACTIVATION_KEY);
+        $test_name = 'the export json does not leak the activation key';
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json()));
+        $test_name = 'the api json does not leak the activation key';
+        $usr_key_api = json_decode($usr_key->api_json(), true);
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key_api));
+
 
         $t->subheader($ts . 'change permission');
 
