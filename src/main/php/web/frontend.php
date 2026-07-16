@@ -1207,11 +1207,9 @@ class frontend
             } else {
                 $usr = new user_backend();
                 $usr->load_by_id($usr_id);
-                $db_key = $usr->activation_key ?? '';
-                $db_timeout = $usr->activation_timeout;
-                $db_now = $usr->db_now;
 
-                if ($db_key === $post_key && $db_timeout !== null && $db_timeout > $db_now) {
+                // compare the stored key hash with the hash of the posted key in constant time
+                if ($usr->activation_key_valid($post_key)) {
                     if (empty($pw)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
                     if (empty($pw_re)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
@@ -1257,7 +1255,9 @@ class frontend
                         $usr_msg->merge($msg_activate_ui);
                     }
                 } else {
-                    if ($db_key !== '') {
+                    // a still valid key that did not match is a wrong key; otherwise it is absent
+                    // or timed out, so the user is asked to request a new reset link
+                    if ($usr->has_active_activation_key()) {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
                     } else {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
@@ -1363,14 +1363,9 @@ class frontend
                     $key_ok = false;
                 }
                 if ($key_ok) {
-                    $timeout = new DateTime();
-                    try {
-                        $timeout->modify('+1 day');
-                    } catch (Exception $e) {
-                        log_err('DateTime modify failed in action_login_reset: ' . $e->getMessage());
-                    }
-                    $db_usr->activation_key = $key;
-                    $db_usr->activation_timeout = $timeout;
+                    // store only the sha256 hash of the key with a short validity; the cleartext
+                    // $key is never persisted and is sent to the user by email below
+                    $db_usr->set_activation_key($key);
                     $reset_msg = new backend_user_message();
                     $db_usr->save($reset_msg);
                     // a save failure is logged, not shown, so the response stays identical for an

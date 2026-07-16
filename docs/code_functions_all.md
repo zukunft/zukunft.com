@@ -232,6 +232,8 @@
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user.php
     \-- api_json_array_core - section for function api_json_array_core not yet defined that it should be api in /user/user.php
     \-- log_object - section for function log_object is expected to be log in /user/user.php
+    \-- has_active_activation_key - section for function has_active_activation_key not yet defined that it should be set and get in /user/user.php
+    \-- activation_key_valid - section for function activation_key_valid not yet defined that it should be set and get in /user/user.php
     \-- login - section for function login not yet defined that it should be set and get in /user/user.php
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- name_or_null - section for function name_or_null not yet defined that it should be set and get in /user/user.php

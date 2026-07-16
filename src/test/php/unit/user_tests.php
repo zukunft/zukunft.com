@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -287,6 +288,32 @@ class user_tests
         $test_name = 'the default false is not exported';
         $t->assert_false(
             $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json()));
+
+
+        $t->subheader($ts . 'activation key at rest');
+
+        // a password reset / activation key is stored only as a sha256 hash with a short validity,
+        // so a database read cannot recover a working key; the cleartext is compared via hash_equals
+        $key = users::TEST_USER_ACTIVATION_KEY;
+        $usr_key = new user();
+        $usr_key->set_activation_key($key);
+        $usr_key->db_now = new DateTime();
+        $test_name = 'the stored key is the sha256 hash, not the cleartext';
+        $t->assert($test_name, $usr_key->activation_key, hash('sha256', $key));
+        $test_name = 'the cleartext key itself is never stored';
+        $t->assert_false($test_name, $usr_key->activation_key == $key);
+        $test_name = 'the correct key is accepted while valid';
+        $t->assert_true($test_name, $usr_key->activation_key_valid($key));
+        $test_name = 'a wrong key is rejected';
+        $t->assert_false($test_name, $usr_key->activation_key_valid('000000'));
+        // move the validity end into the past to check that an expired key is refused
+        $timeout = new DateTime();
+        $timeout->modify('-1 hour');
+        $usr_key->activation_timeout = $timeout;
+        $test_name = 'an expired key is no longer reported as active';
+        $t->assert_false($test_name, $usr_key->has_active_activation_key());
+        $test_name = 'the correct key is rejected once expired';
+        $t->assert_false($test_name, $usr_key->activation_key_valid($key));
 
 
         $t->subheader($ts . 'diff message');

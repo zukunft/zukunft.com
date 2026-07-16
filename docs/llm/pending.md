@@ -10,8 +10,6 @@ block also the views that change data but are not an add, edit or del view for a
 
 findings of the security check ordered by exploitability.
 
-hash the reset and activation key at rest: on signup and on password reset the cleartext key is stored in the user row and mailed as is, so a database read exposes a working key. Store hash('sha256', $key), keep the cleartext only in the mail, compare the incoming key with hash_equals against the stored hash, and shorten the one day validity. This needs the signup and activation flow changed together and the affected user fixtures regenerated
-
 review the remaining defense in depth items: add 'Options -Indexes' to .htaccess (no directory listing guard today), move the src/ tree out of the docroot so the internal php is not web addressable, stop echoing the internal function and file name in the critical error message to the user (text_log_functions.php around line 418), and do not write the session token to the fatal log on a mismatch (frontend.php around line 296)
 
 reduce the login and reset user enumeration: cfg/user/user.php::login (around line 817) returns a different message for an unknown user than for a wrong password and skips the bcrypt computation for an unknown user (a timing oracle), and the reset flow (frontend.php around line 1288) confirms which emails are registered. Use a generic message for both cases and always run a password_verify against a dummy hash. Also store the reset key hashed, shorten its one day validity and compare it with hash_equals instead of '==='
