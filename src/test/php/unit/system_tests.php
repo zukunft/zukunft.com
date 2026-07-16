@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -264,6 +265,7 @@ class system_tests
 
         $t->subheader($ts . 'def');
         $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));
+        $t->assert_true('a link with a user overlay table is a sandbox class', $lib->class_is_sandbox(component_link::class));
         $t->assert_false('user is not a sandbox class', $lib->class_is_sandbox(user::class));
         $t->assert('a class maps to its db table const', def::class_to_table(word::class), change_tables::WORD);
         $t->assert('a result class maps to its db table const', def::class_to_table(result::class), change_tables::RESULT);

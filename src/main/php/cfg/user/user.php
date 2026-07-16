@@ -102,6 +102,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -2708,6 +2709,48 @@ class user extends db_id_object_non_sandbox
     /*
      * save
      */
+
+    /**
+     * remember that the user has changed data, so the pages for this user must be
+     * created from the user sandbox and cannot be served from the standard page cache
+     * the flag is written to the database only on the change from false to true;
+     * switching it back off is done by an admin via the gui or the sandbox usage check job
+     *
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    function set_uses_sandbox(user_message $msg): void
+    {
+        if (!$this->uses_sandbox) {
+            $this->uses_sandbox = true;
+            // a user object without a database id cannot be updated e.g. during unit tests
+            if ($this->id() > 0) {
+                $this->save_user($msg, $this);
+            }
+        }
+    }
+
+    /**
+     * switch off the sandbox usage of the user if no user sandbox row is left
+     * called after a user sandbox row has been removed as the counterpart of set_uses_sandbox
+     *
+     * @param sql_db $db_con the database connection used to count the remaining sandbox rows
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    function check_sandbox_usage(sql_db $db_con, user_message $msg): void
+    {
+        if ($this->uses_sandbox) {
+            $usr_lst = new user_list($this);
+            if ($usr_lst->count_user_rows($db_con, $this->id()) == 0) {
+                $this->uses_sandbox = false;
+                // a user object without a database id cannot be updated e.g. during unit tests
+                if ($this->id() > 0) {
+                    $this->save_user($msg, $this);
+                }
+            }
+        }
+    }
 
     /**
      * add or update a user in the database

@@ -41,8 +41,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
-include_once paths::MODEL_HELPER . 'db_object.php';
-include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -63,20 +62,12 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source;
-use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -208,63 +199,19 @@ class user_list
         return $qp;
     }
 
-    private function load_sql_count_changes_dbo(db_object|db_object_multi $dbo): string
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($dbo::class);
-        $sql = 'SELECT ' . user_db::FLD_ID . ',';
-        $id_fields = $dbo->id_field();
-        if (is_array($id_fields)) {
-            $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
-        } else {
-            $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
-        }
-        $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
-        $sql .= ' GROUP BY ' . user_db::FLD_ID;
-        return $sql;
-    }
-
     /**
-     * TODO add the time, text and geo and prime and big value tables
-     * @return string
-     */
-    private function load_sql_count_all_changes(): string
-    {
-        $usr = new user(); // dummy user because the user is not relevant for counting
-        $sql = $this->load_sql_count_changes_dbo(new word($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($usr));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($usr));
-        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($usr));
-        /* TODO activate if a class name can be used to create a class instance
-        foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
-            $sql_count .= $this->load_sql_count_changes($class);
-        }
-        */
-        return $sql;
-    }
-
-    private function load_sql_count_sum_changes(): string
-    {
-        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user_db::FLD_ID . ',';
-        $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
-        $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() . ') ' . sql_db::GRP_TBL;
-        $sql .= ' GROUP BY ' . user_db::FLD_ID;
-        return $sql;
-    }
-
-    /**
-     * create an SQL statement to retrieve users that have changed something
+     * create an SQL statement to retrieve all users that have changed something,
+     * each with the total number of sandbox rows, ordered by the most active first
+     * i.e. this answers "who has changed the most" and returns a list of users
+     * the row count is the same one used by load_sql_count_user_rows, only the
+     * where and order differ: here all users with at least one change are kept
      *
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_count_changes(sql_creator $sc): sql_par
     {
-        $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
+        $sub_sql = '(' . $this->load_sql_count_sum($this->load_sql_count_all_rows()) . ')';
         $qp = $this->load_sql($sc, 'count_changes');
         $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user_db::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL, sql_db::LNK_TBL);
@@ -273,6 +220,101 @@ class user_list
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to count all sandbox rows one given user has,
+     * i.e. this answers "does this user still have any sandbox rows" for a single user
+     * a count of zero means the uses_sandbox flag can be switched off again
+     * the row count is the same one used by load_sql_count_changes, only the
+     * where and order differ: here the result is limited to the passed user id
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $user_id the id of the user whose sandbox rows should be counted
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_count_user_rows(sql_creator $sc, int $user_id): sql_par
+    {
+        $sub_sql = '(' . $this->load_sql_count_sum($this->load_sql_count_all_rows()) . ')';
+        $qp = $this->load_sql($sc, 'count_user_rows');
+        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user_db::FLD_ID);
+        $sc->add_where(user_db::FLD_ID, $user_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * count the user sandbox rows the given user has across all user_* overlay tables
+     * e.g. to check if the uses_sandbox flag can be switched off after a row has been removed
+     *
+     * @param sql_db $db_con the database connection used to count the rows
+     * @param int $user_id the id of the user whose sandbox rows should be counted
+     * @return int the number of user sandbox rows the user has, zero if none is left
+     */
+    function count_user_rows(sql_db $db_con, int $user_id): int
+    {
+        $qp = $this->load_sql_count_user_rows($db_con->sql_creator(), $user_id);
+        $db_row = $db_con->get1($qp);
+        $count = 0;
+        if (is_array($db_row)) {
+            $count = (int)($db_row[self::FLD_CHANGES] ?? 0);
+        }
+        return $count;
+    }
+
+    /**
+     * count the sandbox rows a user has per user across all user_* overlay tables
+     * the tables are taken from the def::SANDBOX_CLASSES list of classes that use the
+     * user sandbox, so a new sandbox table is included automatically once it is added
+     * there (unlike DB_TABLE_CLASSES_DESC_DEPENDING, which also holds the non-sandbox
+     * type tables and only marks the user overlay for the truncate order)
+     * TODO add the prime, big and geo sub-tables of the value and result overlays
+     *
+     * @return string the union of the per-table user row counts across all user_* tables
+     */
+    private function load_sql_count_all_rows(): string
+    {
+        $sql_lst = [];
+        foreach (def::SANDBOX_CLASSES as $class) {
+            $sql_lst[] = $this->load_sql_count_rows($class);
+        }
+        $sql = implode(' ' . sql::UNION . ' ', $sql_lst);
+        return $sql;
+    }
+
+    /**
+     * count the sandbox rows of one user_* overlay table per user
+     * uses COUNT(*) so only the table name is needed and no object must be created
+     *
+     * @param string $class the class of a sandbox object with a user overlay table
+     * @return string the SQL to count the sandbox rows per user of one user_* table
+     */
+    private function load_sql_count_rows(string $class): string
+    {
+        $tbl = sql_db::TBL_USER_PREFIX . library::class_to_name($class) . sql_db::TABLE_EXTENSION;
+        $sql = sql::SELECT . ' ' . user_db::FLD_ID . ',';
+        $sql .= ' ' . sql::FUNCTION_COUNT . ' (*) ' . sql::AS . ' ' . self::FLD_CHANGES;
+        $sql .= ' ' . sql::FROM . ' ' . $tbl;
+        $sql .= ' ' . sql::GROUP_BY . ' ' . user_db::FLD_ID;
+        return $sql;
+    }
+
+    /**
+     * wrap the per-table union of user row counts into one sum per user
+     * shared by load_sql_count_changes and load_sql_count_user_rows
+     *
+     * @param string $count_all_sql the union of the per-table user row counts
+     * @return string the SQL that sums the row counts per user
+     */
+    private function load_sql_count_sum(string $count_all_sql): string
+    {
+        $sql = sql::SELECT . ' ' . sql_db::GRP_TBL . '.' . user_db::FLD_ID . ',';
+        $sql .= ' ' . sql::FUNCTION_SUM . ' (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') ' . sql::AS . ' ' . self::FLD_CHANGES;
+        $sql .= ' ' . sql::FROM . ' ( ' . $count_all_sql . ') ' . sql_db::GRP_TBL;
+        $sql .= ' ' . sql::GROUP_BY . ' ' . user_db::FLD_ID;
+        return $sql;
     }
 
     /**

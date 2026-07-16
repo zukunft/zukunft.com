@@ -536,18 +536,22 @@ class def
         user_status::class,
     ];
 
-    // list of classes that use the user sandbox
+    // list of classes that use the user sandbox, i.e. that have a user_* overlay table
     const array SANDBOX_CLASSES = [
         word::class,
         triple::class,
         source::class,
         ref::class,
+        group::class,
         value::class,
         formula::class,
+        formula_link::class,
         result::class,
         view::class,
+        view_relation::class,
+        term_view::class,
         component::class,
-        view_relation::class
+        component_link::class
     ];
 
     // list of classes that have n:m object links e.g. view has components linked

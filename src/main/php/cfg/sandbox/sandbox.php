@@ -1693,6 +1693,9 @@ class sandbox extends db_object_seq_id_user
         if ($msg == '') {
             $this->usr_cfg_id = null;
             $result = true;
+            // after removing the user sandbox row switch off the sandbox usage
+            // of the user if no user sandbox row is left
+            $this->get_user()->check_sandbox_usage($db_con, $usr_msg);
         } else {
             log_err($action . $msg_failed . ' because ' . $msg);
         }
@@ -1768,6 +1771,13 @@ class sandbox extends db_object_seq_id_user
                     $result = false;
                 } else {
                     $this->usr_cfg_id = $log_id;
+                    // remember that the user now has sandbox rows, so the pages for this user
+                    // must be created from the user sandbox and not from the standard page cache
+                    $this->get_user()->set_uses_sandbox($usr_msg);
+                    if (!$usr_msg->is_ok()) {
+                        log_err('setting the sandbox usage of ' . $this->get_user()->dsp_id()
+                            . ' failed due to ' . $usr_msg->all_message_text());
+                    }
                 }
             }
         }
@@ -2143,7 +2153,11 @@ class sandbox extends db_object_seq_id_user
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
-                    $db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true);
+                    if ($db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true)) {
+                        // remember that the user now has sandbox rows, so the pages for this user
+                        // must be created from the user sandbox and not from the standard page cache
+                        $this->get_user()->set_uses_sandbox($usr_msg);
+                    }
                 }
             }
         }

@@ -30,10 +30,6 @@ add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can b
 
 if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit 
 
-include the `uses_sandbox` in the api so that admin user can overwrite the flag using the frontend
-
-set the `uses_sandbox` flag to true if a sandbox row is added and update the user in the database
-
 create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
 
 **2. Cache storage for view-only pages**

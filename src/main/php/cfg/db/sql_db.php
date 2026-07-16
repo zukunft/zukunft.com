@@ -586,10 +586,6 @@ class sql_db
         db_cache::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
-    const array CLASSES_WITH_USER_CHANGES = [
-        word::class,
-        triple::class
-    ];
 
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
