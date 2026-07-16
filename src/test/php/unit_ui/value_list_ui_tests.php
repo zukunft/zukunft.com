@@ -118,6 +118,11 @@ class value_list_ui_tests
         $impact_lst->sort_by_impact();
         $test_name = 'the value of the phrase with the highest impact is first';
         $t->assert_text_order($test_name, $impact_lst->list(), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
+        // two values with the same impact and number must not be ordered by the volatile group id
+        // (packed from the seed-assigned word ids), but by the stable group name, so the rendered
+        // order stays the same across test database rebuilds ("Zurich" sorts before "city")
+        $test_name = 'a number tie is broken by the group name for a stable order';
+        $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list(), word_names::ZH, word_names::CITY);
         $test_name = 'sort by impact of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list(), '');
 

@@ -6,27 +6,11 @@
 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
-the general security check has been done on 2026-07-14 (five parallel read-only audits: auth/session, injection/file handling, xss/csrf, authorization, secrets/exposure). The result is the '### security before go live' section below, ordered by exploitability. The injection surface (prepared statement layer, no command injection, no path traversal on a live route) and the server admin console and setup.php were found sound. Work off the blockers first; repeat the check after they are fixed
-
-check why in src/test/resources/web/html/views_by_object/triple/triple_default_triple_99.html the change log entry changes from '26-12-2022 18:23 zukunft.com system added "Zurich (canton)"' to '26-12-2022 18:23 zukunft.com system added "1"' and back. Or try to avoid that just the id is saved in the log if possible
-
 ### security before go live
 
 findings of the security check on 2026-07-14, ordered by exploitability. 
 
-fix the site wide csrf gap: the token check in frontend.php (around line 291) runs only in an 'elseif (!empty($url_arr[SESSION_TOKEN]))', so a request that omits the token is not rejected, and the crud forms do not send the token anyway (only the login and signup forms do). Make the check fail closed - require a valid token for every write of views::CHANGE_MASKS_IDS - and emit the token as a hidden field in every crud form. without it an attacker can csrf a victim into creating or changing an object
-
-close the api authorization bypass: the 'ip user may not change data' control lives only in http/view.php (around line 127, is_blocked on CHANGE_MASKS_IDS); the rest endpoints (api/word/index.php -> sandbox save/del) never call is_blocked, so config_numbers::ip_user_can_change (default false) is ignored on POST / PUT / DELETE /api/word. Enforce the block centrally in the model save/del, not per entry point, and add a negative test that an ip user write via the api is refused
-
-fix the reflected xss on the search pattern: url_var::PATTERN flows unescaped through shared/library.php::msg_var_replace (around line 1313, plain str_replace) into html_base::text_h2, so /http/view.php?m=67&pattern=<script>... executes. Escape the pattern before it reaches the html (the stored xss escape helper html_base::esc can be reused here)
-
-fix the session fixation on signup and activation: only cfg/user/user.php::login regenerates the session id, the signup (frontend.php around line 1038) and the activation (around line 1128) auto login paths do not, and session.use_strict_mode is not set, so a planted session id becomes authenticated. Call session_regenerate_id(true) on every authentication transition
-
-remove the profile_id privilege escalation: cfg/user/user.php::api_mapper (around line 480) copies profile_id straight from the request json without a can_set_profile check (the safe setter set_profile enforces it but is only used on the import path), and the update gate lets a user change his own record, so a user could set his own record to the admin profile. Route the api path through set_profile / add the can_set_profile check before the save, with a negative test
-
 add the central admin mask authorization: views::ADMIN_MASK_IDS is 'admin only' by documentation only, nothing in frontend::url_to_action / url_to_html checks is_admin before rendering or acting on an admin mask (e.g. m=85 admin main, m=87 complete), the enforcement is left to a few scattered per renderer checks. Add one is_admin gate in the dispatch for the admin masks
-
-fix the idor on ownerless objects: cfg/sandbox/sandbox.php::can_change (around line 1596) returns true when owner_id <= 0, so any shared or seed object whose owner was never set is writable by every user including the anonymous ip user, and the change hits the standard row seen by all users. Every non IP user can take catch the ownership of ownerless object but not IP users
 
 
 

@@ -501,6 +501,9 @@ class user extends db_id_object_non_sandbox
         // map the api specific fields e.g. the json fields using the database id
         // TODO Prio 1 check that the api, url and import mapper just map the fields
         //             and the permission check of critical fields is done before the database save
+        // the mapper only maps the field faithfully (a round trip must preserve the real profile);
+        // the profile is a critical field that must not be trusted from the request, so the
+        // privilege check is done in save_user via enforce_profile_privilege before the db write
         if (key_exists(json_fields::PROFILE_ID, $api_json)) {
             $this->profile_id = $api_json[json_fields::PROFILE_ID];
         } else {
@@ -1840,6 +1843,44 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * enforce that only a privileged requester may change a user profile so the profile mapped from an
+     * (untrusted) api request cannot raise a user to a higher profile; a request that keeps the current
+     * profile is always allowed, a change to a higher profile that the requester may not set is refused
+     * and reported instead of passing silently. the check stays out of api_mapper (which must map the
+     * field faithfully for a round trip) and is done here before the database write (see save_user)
+     *
+     * @param int $req_profile_id the profile id requested for this user (e.g. mapped from the api json)
+     * @param int|null $cur_profile_id the profile id currently stored, or null when a new user is added
+     * @param user $usr_req the user requesting the change whose privileges decide the outcome
+     * @param user_message $msg to report a refused escalation to the user
+     * @return int the profile id that may actually be written: the requested one if allowed, otherwise
+     *             the current (or the normal profile for a new user)
+     */
+    function enforce_profile_privilege(
+        int          $req_profile_id,
+        ?int         $cur_profile_id,
+        user         $usr_req,
+        user_message $msg
+    ): int
+    {
+        // a new user starts from the normal profile, an existing user from its stored profile
+        $cur_profile_id = $cur_profile_id ?? user_profiles::NORMAL_ID;
+        // keeping the current profile is never an escalation, so allow it without a privilege check
+        if ($req_profile_id == $cur_profile_id) {
+            return $req_profile_id;
+        }
+        if ($usr_req->can_set_profile($req_profile_id)) {
+            return $req_profile_id;
+        }
+        // refuse the change and tell the user why instead of silently ignoring the escalation attempt
+        $msg->add(msg_id::USER_NO_UPDATE_PRIVILEGES, [
+            msg_id::VAR_USER_NAME => $this->name() ?? '',
+            msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile() ?? ''
+        ]);
+        return $cur_profile_id;
+    }
+
+    /**
      * check if the user is allowed to set the type
      *
      * @return bool true if the code id of the object can be changes
@@ -2728,6 +2769,11 @@ class user extends db_id_object_non_sandbox
         if ($msg->is_ok()) {
             if ($this->id == 0) {
 
+                // the profile is a critical field, so a new user may only get a higher profile if the
+                // requester is privileged; an unprivileged request falls back to the normal profile
+                $this->profile_id = $this->enforce_profile_privilege(
+                    $this->profile_id, null, $usr_req, $msg);
+
                 // create a user if no similar user has been found
                 $msg->merge($this->db_insert($db_con, $usr_req));
 
@@ -2744,6 +2790,10 @@ class user extends db_id_object_non_sandbox
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
+                    // the profile is a critical field, so only a privileged requester may raise it;
+                    // an unprivileged profile change is refused and reset to the stored profile
+                    $this->profile_id = $this->enforce_profile_privilege(
+                        $this->profile_id, $db_rec->profile_id, $usr_req, $msg);
                     if (!$this->is_same($db_rec, $msg)) {
                         $msg->merge($this->db_update_user($db_con, $db_rec, $usr_req));
                     }

@@ -267,6 +267,7 @@
     \-- can_be_changed_by - section for function can_be_changed_by not yet defined that it should be owner and access in /user/user.php
     \-- can_change - section for function can_change is expected to be sandbox in /user/user.php
     \-- can_set_profile - section for function can_set_profile not yet defined that it should be owner and access in /user/user.php
+    \-- enforce_profile_privilege - section for function enforce_profile_privilege not yet defined that it should be owner and access in /user/user.php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be owner and access in /user/user.php
     \-- can_set_code_id - section for function can_set_code_id not yet defined that it should be owner and access in /user/user.php
     \-- can_set_ui_msg_id - section for function can_set_ui_msg_id not yet defined that it should be owner and access in /user/user.php
@@ -2799,6 +2800,7 @@
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /value/value_base.php
     \-- add - section for function add not yet defined that it should be Select functions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- del - section for function del is expected to be del in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbox_multi, import_mapper should be before row_mapper_sandbox_multi of __construct,reset,row_mapper_sandbox_multi,api_mapper,import_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,row_mapper_typ_obj,import_mapper,load_dummy,default_id,row_mapper_sandbox_multi,order of section construct and map has difference at api_mapper should be before row_mapper_sandbox_multi, import_mapper should be before row_mapper_sandbox_multi of __construct,reset,row_mapper_sandbox_multi,api_mapper,import_mapper does not match __construct,reset,clone_all,row_mapper_sandbox,api_mapper,row_mapper,row_mapper_typ_obj,import_mapper,load_dummy,default_id,row_mapper_sandbox_multi
 \-- value_geo
     \-- delta - section for function delta is expected to be del in /value/value_geo.php

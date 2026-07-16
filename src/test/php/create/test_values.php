@@ -510,6 +510,22 @@ class test_values extends test_objects
         return $tl->list_to_ui($this->value_list_zh_impact(), [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * two values with the same (zero) impact and the same number but assigned to phrases with a
+     * different name ("Zurich" and "city"), so that the deterministic tie break by the group name
+     * can be tested independent of the volatile phrase group id (see value_list::sort_by_impact)
+     * @return value_list_ui the ui value list with the two number-tie values
+     */
+    function value_list_number_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase()], values::SAMPLE_FLOAT));
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
     function value_list_math_ui(): value_list_ui
     {
         $tl = new test_lib();

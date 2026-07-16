@@ -2187,6 +2187,11 @@ class value_base extends sandbox_value
         global $db_con;
         global $mtr;
 
+        // a value is user data, so a user without login may only change it if this pod permits it
+        if ($this->change_blocked($msg)) {
+            return false;
+        }
+
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
         $msg_fail = $mtr->txt(msg_id::FAILED);
@@ -2264,6 +2269,22 @@ class value_base extends sandbox_value
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * delete a value, but only if the requesting user is permitted to change data in this pod
+     * so a user without login is refused here as well as in save (see sandbox_multi::change_blocked)
+     *
+     * @param user_message $msg the user who has requested the deletion and to collect the reject reason
+     * @param bool $must_exist true if the value is expected to still exist in the database
+     * @return bool true if the value has been deleted or excluded
+     */
+    function del(user_message $msg, bool $must_exist = true): bool
+    {
+        if ($this->change_blocked($msg)) {
+            return false;
+        }
+        return parent::del($msg, $must_exist);
     }
 
 
