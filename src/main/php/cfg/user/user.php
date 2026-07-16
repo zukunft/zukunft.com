@@ -208,6 +208,10 @@ class user extends db_id_object_non_sandbox
     // password policy limits; bcrypt silently truncates at 72 bytes
     const int PW_MIN_LEN = 8;
     const int PW_MAX_LEN = 72;
+    // a valid bcrypt hash of a throwaway value, used only to spend the same time on password_verify
+    // when the user is unknown so the login response time does not reveal whether the user exists
+    // (timing oracle); this is a fixed DUMMY value and never a real credential (dummy password hash)
+    const string DUMMY_PW_HASH = '$2y$12$T.r5tNIZREaD85ZADeSzPOqlOtPMlEC1SON1Swutq6YFCaVos8ib2';
 
 
     /*
@@ -851,16 +855,20 @@ class user extends db_id_object_non_sandbox
      *
      * @param string $usr_name username or email as typed by the user
      * @param string $pw raw password as typed by the user
-     * @param user_message $msg populated with PASSWORD_WRONG or USER_NAME_NOT_FOUND on failure
+     * @param user_message $msg populated with a single generic PASSWORD_WRONG message on any failure
      * @return bool true if login succeeded and session has been initialised
      */
     function login(string $usr_name, string $pw, user_message $msg): bool
     {
         $this->load_by_name($usr_name);
-        if (!$this->has_db_id()) {
-            $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
-        }
-        if (!password_verify($pw, $this->get_password())) {
+        // always run a bcrypt verify - against a fixed dummy hash when the user is unknown - so the
+        // response time does not reveal whether the user exists (timing oracle); the result is stored
+        // first so the '||' below cannot short-circuit the verify away for an unknown user
+        $pw_hash = $this->get_password() ?? self::DUMMY_PW_HASH;
+        $pw_ok = password_verify($pw, $pw_hash);
+        // report the same generic message for an unknown user and for a wrong password, so the login
+        // does not confirm which usernames or emails exist (user enumeration)
+        if (!$this->has_db_id() || !$pw_ok) {
             $msg->add(msg_id::PASSWORD_WRONG, []);
         }
         if ($msg->is_ok()) {

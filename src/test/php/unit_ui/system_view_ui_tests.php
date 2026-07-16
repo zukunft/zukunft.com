@@ -144,6 +144,35 @@ class system_view_ui_tests
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
+        // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
+        // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)
+        $t->subheader($ts . 'anti-csrf token');
+        $token = test_const::DUMMY_SESSION_TOKEN;
+
+        $submit_ok = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $test_name = 'a crud submit with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($submit_ok, $token));
+
+        $submit_no_token = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => ''];
+        $test_name = 'a crud submit without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($submit_no_token, $token));
+
+        $login_submit = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => ''];
+        $test_name = 'a login submit without a token is rejected (previously fail-open)';
+        $t->assert_false($test_name, frontend::request_token_valid($login_submit, $token));
+
+        $login_ok = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $test_name = 'a login submit with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($login_ok, $token));
+
+        $submit_wrong = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
+        $test_name = 'a submit with a wrong token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($submit_wrong, $token));
+
+        $get_nav = [url_var::MASK => views::WORD_ID, url_var::ID => 1];
+        $test_name = 'a plain get navigation without a token is allowed';
+        $t->assert_true($test_name, frontend::request_token_valid($get_nav, $token));
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();
@@ -258,8 +287,9 @@ class system_view_ui_tests
         $test_name = 'activate page with key mismatch notification matches snapshot';
         $t->assert_html_page($test_name, $activate_html, $file_path);
 
-        // test that the activate page shown after a successful password reset email renders correctly
-        // (action_login_reset redirects to LOGIN_ACTIVATE_ID on success, passing the user id)
+        // test that the activate page reached from the reset email link renders correctly; the reset
+        // itself returns the login page with a neutral message (see action_login_reset), the real
+        // activate link with the user id and key is delivered by email
         $t->subheader($ts . 'login reset');
 
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];

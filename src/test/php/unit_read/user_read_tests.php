@@ -38,9 +38,11 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -90,6 +92,20 @@ class user_read_tests
         $t->assert_true($test_name, $session->data_user($session->id()) === $session);
 
         // TODO test type and view
+
+
+        $t->subheader($ts . 'login does not leak which users exist');
+
+        // an unknown-user login must fail with the same generic message as a wrong password (not a
+        // "user not found"), so the login does not confirm which usernames or emails are registered
+        $login_msg = new user_message();
+        $unknown = new user();
+        $test_name = 'login of an unknown user fails';
+        $t->assert_false($test_name, $unknown->login('no such user 8f3a2b', 'irrelevant-pw', $login_msg));
+        $test_name = 'login of an unknown user does not reveal that the user is unknown';
+        $t->assert_text_not_contains($test_name, $login_msg->all_message_text(), 'no user with the username');
+        $test_name = 'login of an unknown user returns the generic wrong-credentials message';
+        $t->assert_text_contains($test_name, $login_msg->all_message_text(), msg_id::PASSWORD_WRONG->value);
 
 
         $t->subheader($ts . 'profile');
