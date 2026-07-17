@@ -1,6 +1,5 @@
 PREPARE db_cache_page_by_id FROM
    'SELECT     db_cache_page_id,
-               db_cache_page_name,
                `url`,
                html_page,
                last_update
