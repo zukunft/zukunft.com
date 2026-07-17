@@ -86,11 +86,15 @@ class sys_log_tests
         // html-escaped or a crafted value (e.g. a url mask reaching log_err) could inject script into
         // the error response (reflected xss); see text_log_functions.php::critical_error_html
         $xss_payload = '<script>alert(1)</script>';
-        $err_html = \critical_error_html($xss_payload, 'test_function');
+        $err_html = \critical_error_html($xss_payload);
         $test_name = 'the critical error html escapes an injected script tag';
         $t->assert_text_contains($test_name, $err_html, htmlspecialchars($xss_payload, ENT_QUOTES));
         $test_name = 'the critical error html does not echo the raw script tag';
         $t->assert_text_not_contains($test_name, $err_html, $xss_payload);
+        // the internal function / file name is not disclosed to the user (information disclosure);
+        // it stays in the sys_log for the admin, so the user-facing html has no 'by <function>' part
+        $test_name = 'the critical error html does not disclose an internal function or file name';
+        $t->assert_text_not_contains($test_name, $err_html, ' by ');
 
         $t->subheader($ts . 'system sql setup');
         $log = new sys_log();

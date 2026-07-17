@@ -1,3 +1,16 @@
+# Never list a directory that has no index file, so the source tree cannot be
+# browsed if a folder is requested directly (no directory listing guard by default)
+Options -Indexes
+
+# The /src tree holds the internal application php and the test code; the only web
+# entry points are /http and /api, and the browser only fetches the css and images
+# under /src/main/resources. Block the internal php and the whole test tree from
+# direct web access so they can neither be executed nor their source disclosed, while
+# leaving the style/image resources reachable. Fully moving /src out of the docroot
+# (so it is unreachable even if apache ignores this file) stays a deployment task.
+RedirectMatch 404 ^/src/main/php/
+RedirectMatch 404 ^/src/test/
+
 # Block direct access to log files anywhere
 <FilesMatch "\.log$">
     Require all denied
