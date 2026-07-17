@@ -7,6 +7,20 @@
 
     $ui is the suggested var name
 
+    The main sections of this object are
+    - api const:         const for the backend api link
+    - vars:              the variables of this frontend object
+    - construct and map: set the vars of this frontend object to the initial value
+    - set and get:       to capsule the vars from unexpected changes
+    - session:           start and end a frontend session e.g. incl. the user login
+    - user:              get the user of this frontend session
+    - execute:           forward a user action to the backend and create the url of the next page
+    - view:              create the html code for a view
+    - cached page:       serve view-only pages from the cached html pages to reduce the response time
+    - log:               forward the log messages to the backend
+    - api:               get json messages from the backend
+    - internal:          helper functions e.g. to map a view id to the main frontend object
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -1046,6 +1060,33 @@ class frontend
      */
 
     /**
+     * the fast path of the request routing that serves an already cached html page
+     * before the heavy frontend setup (loading the user views, the type cache and the
+     * frontend config) so that a user without own data changes gets a view-only page
+     * with only the system config, the user and this cached page read from the database
+     *
+     * returns null if the page is not (yet) cached or must not be served from the cache,
+     * so the caller does the full setup and renders the page live
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @return string|null the cached html page or null if the page cannot be served from the cache
+     */
+    function cached_page_or_null(array $url_array, user_backend $usr): ?string
+    {
+        $result = null;
+        // only a user without own data changes may get the standard cached page
+        if (!$usr->uses_sandbox) {
+            $url_key = $this->url_cache_key($url_array);
+            if ($url_key != '') {
+                $cac_page = new db_cache_page();
+                $result = $cac_page->html_by_url($url_key);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * create the html code for the given url and use the cached html pages
      * of the view-only requests to reduce the response time
      *
@@ -1150,6 +1191,9 @@ class frontend
 
     /**
      * remember the rendered html page for the next request of the same url
+     * the cache row is written as the system user because filling the cache is
+     * a system action that must also work for an ip user who cannot change data
+     * (public so that the db write test can check exactly this permission case)
      * a failure is only logged because the user already has the rendered page
      *
      * @param db_cache_page $cac_page the cache page object used to check the cache
@@ -1158,14 +1202,14 @@ class frontend
      * @param user_backend $usr the session user who has requested the page
      * @return void
      */
-    private function save_html_page(
+    function save_html_page(
         db_cache_page $cac_page,
         string        $url_key,
         string        $html,
         user_backend  $usr
     ): void
     {
-        $save_msg = new backend_user_message($usr);
+        $save_msg = new backend_user_message(user_backend::system());
         $cac_page->save_html($url_key, $html, $save_msg);
         if (!$save_msg->is_ok()) {
             log_warning('caching the html page for ' . $url_key

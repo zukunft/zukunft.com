@@ -5154,8 +5154,10 @@
     \-- get_user - section for function get_user is expected to be set and get in /frontend.php
     \-- url_to_action - section for function url_to_action not yet defined that it should be execute in /frontend.php
     \-- url_to_html - section for function url_to_html not yet defined that it should be view in /frontend.php
+    \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in /frontend.php
     \-- url_to_html_cached - section for function url_to_html_cached not yet defined that it should be cached page in /frontend.php
     \-- url_cache_key - section for function url_cache_key not yet defined that it should be cached page in /frontend.php
+    \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /frontend.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.php
@@ -7313,10 +7315,14 @@
     \-- url_to_html
         \-- frontend - create the HTML code based on the given url
 \-- cached page
+    \-- cached_page_or_null
+        \-- frontend - the fast path of the request routing that serves an already cached html page
     \-- url_to_html_cached
         \-- frontend - create the html code for the given url and use the cached html pages
     \-- url_cache_key
         \-- frontend - the canonical cache key of a view-only page request
+    \-- save_html_page
+        \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
         \-- frontend - react to a user action such as pressing the save button on an edit form:
     \-- show_view

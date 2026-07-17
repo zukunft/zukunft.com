@@ -37,10 +37,14 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::WEB . 'frontend.php';
+include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class db_cache_page_write_tests
@@ -49,6 +53,7 @@ class db_cache_page_write_tests
     // test values for the cached html page write tests
     const string TV_URL = 'http://zukunft.com/test_cache_page';
     const string TV_URL_UNKNOWN = 'http://zukunft.com/test_cache_page_unknown';
+    const string TV_URL_IP_USER = 'http://zukunft.com/test_cache_page_ip_user';
     const string TV_HTML = '<html lang="en"><body>cache test</body></html>';
     const string TV_HTML_RENEWED = '<html lang="en"><body>cache test renewed</body></html>';
 
@@ -90,6 +95,16 @@ class db_cache_page_write_tests
         // the last rendering time is remembered
         $test_name = 'the last update timestamp of the cached html page is set';
         $t->assert_true($test_name, $cac_check->last_update != null);
+
+        // simulate the request of a user without database change permission (e.g. an ip user):
+        // filling the html page cache is a system action, so the cache row must be written
+        // even if the requesting user is not allowed to change any data
+        $t_usr = new test_users($t);
+        $ip_usr = $t_usr->user_ip_loaded();
+        $ui = new frontend('db_cache_page_write_tests');
+        $ui->save_html_page(new db_cache_page(), self::TV_URL_IP_USER, self::TV_HTML, $ip_usr);
+        $test_name = 'the html page cache is filled even if the requesting user cannot change data';
+        $t->assert($test_name, $cac_check->html_by_url(self::TV_URL_IP_USER), self::TV_HTML);
 
     }
 
