@@ -62,6 +62,7 @@ messages:
   user_system_errors: "Offene Probleme, die Sie betreffen"
   user_system_errors_none: "Es ist kein offenes Problem mit Ihnen verknüpft."
   change_blocked_for_ip_user: "Dieser Pod erlaubt keine Änderungen ohne Anmeldung. Bitte melden Sie sich an, um Daten zu erfassen oder zu ändern."
+  change_blocked_cross_origin: "Diese Änderungsanfrage wurde blockiert, weil sie nicht von dieser Website stammt. Bitte versuchen Sie es erneut aus der zukunft.com-Anwendung."
   phrase_has: "hat"
   phrase_alias: "Alias"
   phrase_aliases: "Aliasse"

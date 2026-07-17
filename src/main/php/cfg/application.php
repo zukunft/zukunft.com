@@ -49,6 +49,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -105,7 +107,11 @@ class application
         $sys = new system_object($code_name);
         $sys->times->switch(system_time_type::INIT);
 
-        // resume session (based on cookies)
+        // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
+        // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
+        // issued, then enforce the file based IP / user whitelist (the only dos protection)
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -114,6 +120,8 @@ class application
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
 
         // link to database
         $db_con = new sql_db;
@@ -153,7 +161,11 @@ class application
         log_debug($code_name . ' ..');
         $sys = new system_object($code_name);
 
-        // resume session (based on cookies)
+        // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
+        // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
+        // issued, then enforce the file based IP / user whitelist (the only dos protection)
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -162,6 +174,8 @@ class application
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
 
         // link to database
         $db_con = new sql_db;

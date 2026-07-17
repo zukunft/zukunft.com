@@ -2,16 +2,19 @@
 
 /*
 
-    web/server_guard.php - enforce the file based IP / user whitelist
-    --------------------
+    cfg/helper/server_guard.php - enforce the tls, session and file based IP / user whitelist guards
+    ---------------------------
 
-    Called early from frontend->start(). If the server admin page has activated
-    a whitelist (server_admin/state.json), this rejects requests that are not on
-    the list by sending the matching offline page from /optional and stopping.
+    Called early from the backend api bootstrap (application->start_api) and from the html frontend
+    bootstrap (frontend->start). It upgrades a plain-http request to https, hardens the session cookie,
+    rejects a cross-origin api write (csrf) and, if the server admin page has activated a whitelist
+    (server_admin/state.json), rejects requests that are not on the list by sending the matching
+    offline page from /optional and stopping.
 
-    It is deliberately self-contained (only the session and a few files, no
-    database), so it still works while the database is offline and it adds
-    almost no overhead when no whitelist is active.
+    It is deliberately self-contained (only the session and a few files, no database), so it still
+    works while the database is offline and it adds almost no overhead when no whitelist is active.
+    It lives in the backend (cfg/helper) so the api entry point does not depend on the web frontend;
+    the frontend, which already depends on the backend, uses it from here.
 
       - IP whitelist active   -> only IPs / CIDRs in server_admin/ip_whitelist.txt
                                  may connect, others get optional/ip_reject.html
@@ -44,7 +47,7 @@
 
 */
 
-namespace Zukunft\ZukunftCom\main\php\web;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -118,6 +121,123 @@ class server_guard
         }
         $list = self::read_list(ROOT_PATH . 'server_admin' . DIRECTORY_SEPARATOR . 'user_whitelist.txt');
         return !self::user_allowed($usr_id, $usr_name, $list);
+    }
+
+    /**
+     * true if the current request reaches this pod over https, directly or via a tls terminating
+     * proxy; $_SERVER is read here because this is the request bootstrap, like enforce() above
+     * @return bool true if the request scheme is https
+     */
+    public static function request_is_https(): bool
+    {
+        $https_flag = $_SERVER['HTTPS'] ?? '';
+        $result = ($https_flag !== '' && $https_flag !== 'off')
+            || ($_SERVER['SERVER_PORT'] ?? '') === '443'
+            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+        return $result;
+    }
+
+    /**
+     * true if the given deployment environment must serve every request over https: the prod and
+     * test pods enforce tls, the dev pod stays on plain http so the local docker setup keeps working
+     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV)
+     * @return bool true for the prod and test environment, false for dev or an unknown value
+     */
+    public static function tls_required(string $env): bool
+    {
+        $result = $env === ENV_PROD || $env === ENV_UA;
+        return $result;
+    }
+
+    /**
+     * in the prod and test environment redirect a plain-http request to the same url over https so
+     * the session cookie is never sent in the clear; the dev environment is intentionally left on
+     * plain http so the local docker setup keeps working. must run before session_start (so no
+     * cookie is sent yet) and before harden_session so the upgrade happens on the first hop.
+     * $_SERVER is read here because this is the request bootstrap, like harden_session
+     * @return void
+     */
+    public static function enforce_tls(): void
+    {
+        $env = getenv(ENVIRONMENT) ?: '';
+        if (self::tls_required($env) && !self::request_is_https() && !headers_sent()) {
+            $host = $_SERVER['HTTP_HOST'] ?? '';
+            $uri = $_SERVER['REQUEST_URI'] ?? '';
+            header('Location: https://' . $host . $uri, true, 301);
+            exit;
+        }
+    }
+
+    /**
+     * harden the session cookie before the session is started: the cookie is set http-only (not
+     * readable by javascript, so an xss cannot steal it), secure when the request uses tls (not
+     * sent over plain http, so it cannot be sniffed) and same-site lax (not sent on a cross-site
+     * request, a second layer against csrf); use_strict_mode rejects a planted id, and on a tls
+     * request the hsts header pins the browser to https so a later downgrade is refused.
+     * $_SERVER is read here (via request_is_https) because this is the request/session bootstrap -
+     * the same place enforce() reads the remote address - not deep in the business logic
+     */
+    public static function harden_session(): void
+    {
+        $is_https = self::request_is_https();
+        // must be set before session_start so the flags apply to the issued cookie
+        ini_set('session.use_strict_mode', '1');
+        session_set_cookie_params([
+            'httponly' => true,
+            'secure' => $is_https,
+            'samesite' => 'Lax',
+        ]);
+        // pin future requests to https for a year (only meaningful, and only sent, over tls)
+        if ($is_https && !headers_sent()) {
+            header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+        }
+    }
+
+    /**
+     * true if a state changing api request (post / put / delete) may proceed with respect to csrf:
+     * a browser always sends an Origin (or at least a Referer) on a cross-origin write, so a request
+     * whose Origin/Referer host does not match the request Host is rejected. a server-to-server call
+     * carries no browser cookie and sends neither header, so it is allowed. $_SERVER is read here
+     * because this is the request boundary, like enforce_tls / enforce
+     * @return bool true if the write request is same-origin (or a non-browser call)
+     */
+    public static function same_origin(): bool
+    {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        return self::origin_allowed($origin, $referer, $host);
+    }
+
+    /**
+     * pure same-origin decision for a state changing request: allowed unless an Origin (preferred,
+     * else a Referer) is present and its host does not match the request Host (fail open only when
+     * the browser sends no origin hint at all, e.g. a server-to-server call)
+     * @param string $origin the request Origin header value ('' if absent)
+     * @param string $referer the request Referer header value, used only when no Origin is sent
+     * @param string $host the request Host header value to match the origin against
+     * @return bool true if the request may change data
+     */
+    public static function origin_allowed(string $origin, string $referer, string $host): bool
+    {
+        $result = true;
+        if ($origin !== '') {
+            $result = self::url_host($origin) === $host;
+        } elseif ($referer !== '') {
+            $result = self::url_host($referer) === $host;
+        }
+        return $result;
+    }
+
+    /** the host[:port] part of a url, e.g. 'https://example.com:8080/x' -> 'example.com:8080' */
+    private static function url_host(string $url): string
+    {
+        $host = parse_url($url, PHP_URL_HOST) ?? '';
+        $port = parse_url($url, PHP_URL_PORT);
+        if ($host !== '' && $port !== null) {
+            $host .= ':' . $port;
+        }
+        return $host;
     }
 
     /** log a warning if an active IP whitelist is empty (which locks everyone out) */

@@ -106,6 +106,7 @@ messages:
   user_system_errors: "Open issues related to you"
   user_system_errors_none: "No open issue is related to you."
   change_blocked_for_ip_user: "This pod does not allow changes without a login. Please log in to add or change data."
+  change_blocked_cross_origin: "This change request was blocked because it did not originate from this site. Please retry from the zukunft.com application."
   phrase_has: "has"
   phrase_alias: "alias"
   phrase_aliases: "aliases"

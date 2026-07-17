@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\api;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -46,6 +47,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -236,20 +238,29 @@ class controller
     }
 
     /**
-     * true if the requesting user is permitted to change data in this pod
-     * this is the same check as in the model (sandbox->save and sandbox->del),
-     * but done before the api json is mapped, so that a user without login
-     * gets a clear rejection instead of a change that fails later
+     * true if the current write request (post / put / delete) may proceed, guarding both against a
+     * cross-site request (csrf) and against a user who is not permitted to change data in this pod:
+     * the origin check fails closed for a forged cross-origin browser request; the is_blocked check
+     * is the same as in the model (sandbox->save and sandbox->del) but done before the api json is
+     * mapped, so a user without login gets a clear rejection instead of a change that fails later
      *
      * @param user $usr the session user who has started the request
      * @param string $msg the message text collected until now
-     * @return bool false if a user without login has requested a change that this pod does not permit
+     * @return bool false if the write is a suspected csrf or the user may not change data in this pod
      */
     private function change_permitted(user $usr, string $msg): bool
     {
         $permitted = true;
 
-        if ($usr->is_blocked()) {
+        // reject a cross-site write before touching the database: a browser sends an Origin (or a
+        // Referer) whose host must match this pod's host, so a forged request from another site is
+        // stopped; a same-origin call or a non-browser server-to-server call (no such header) passes
+        if (!server_guard::same_origin()) {
+            $permitted = false;
+            $usr_msg = new user_message($usr);
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $this->not_permitted($msg . $usr_msg->all_message_text());
+        } elseif ($usr->is_blocked()) {
             $permitted = false;
             // tell the user why the change has been rejected and how to solve it
             $usr_msg = new user_message($usr);

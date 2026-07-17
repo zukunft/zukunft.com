@@ -49,9 +49,6 @@ include_once paths::SHARED . 'url_var.php';
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
-// server admin whitelist enforcement (file based IP / user whitelist)
-include_once html_paths::WEB . 'server_guard.php';
-
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -134,6 +131,8 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+// server admin whitelist, tls and session hardening (file based IP / user whitelist)
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
@@ -146,6 +145,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
@@ -283,8 +283,8 @@ class frontend
         $session_is_fine = true;
         // in prod/test upgrade a plain-http request to https first, then harden the session cookie
         // (httponly/secure/samesite, use_strict_mode and hsts on tls) before the session starts
-        self::enforce_tls();
-        self::harden_session();
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -364,76 +364,6 @@ class frontend
             $result = $session_token != '' && hash_equals($session_token, $sent_token);
         }
         return $result;
-    }
-
-    /**
-     * true if the current request reaches this pod over https, directly or via a tls terminating
-     * proxy; $_SERVER is read here because this is the request bootstrap, like server_guard
-     * @return bool true if the request scheme is https
-     */
-    private static function request_is_https(): bool
-    {
-        $https_flag = $_SERVER['HTTPS'] ?? '';
-        $result = ($https_flag !== '' && $https_flag !== 'off')
-            || ($_SERVER['SERVER_PORT'] ?? '') === '443'
-            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
-        return $result;
-    }
-
-    /**
-     * true if the given deployment environment must serve every request over https: the prod and
-     * test pods enforce tls, the dev pod stays on plain http so the local docker setup keeps working
-     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV)
-     * @return bool true for the prod and test environment, false for dev or an unknown value
-     */
-    static function tls_required(string $env): bool
-    {
-        $result = $env === ENV_PROD || $env === ENV_UA;
-        return $result;
-    }
-
-    /**
-     * in the prod and test environment redirect a plain-http request to the same url over https so
-     * the session cookie is never sent in the clear; the dev environment is intentionally left on
-     * plain http so the local docker setup keeps working. must run before session_start (so no
-     * cookie is sent yet) and before harden_session so the upgrade happens on the first hop.
-     * $_SERVER is read here because this is the request bootstrap, like harden_session
-     * @return void
-     */
-    private static function enforce_tls(): void
-    {
-        $env = getenv(ENVIRONMENT) ?: '';
-        if (self::tls_required($env) && !self::request_is_https() && !headers_sent()) {
-            $host = $_SERVER['HTTP_HOST'] ?? '';
-            $uri = $_SERVER['REQUEST_URI'] ?? '';
-            header('Location: https://' . $host . $uri, true, 301);
-            exit;
-        }
-    }
-
-    /**
-     * harden the session cookie before the session is started: the cookie is set http-only (not
-     * readable by javascript, so an xss cannot steal it), secure when the request uses tls (not
-     * sent over plain http, so it cannot be sniffed) and same-site lax (not sent on a cross-site
-     * request, a second layer against csrf); use_strict_mode rejects a planted id, and on a tls
-     * request the hsts header pins the browser to https so a later downgrade is refused.
-     * $_SERVER is read here because this is the request/session bootstrap - the same place
-     * server_guard reads the remote address - not deep in the business logic
-     */
-    private static function harden_session(): void
-    {
-        $is_https = self::request_is_https();
-        // must be set before session_start so the flags apply to the issued cookie
-        ini_set('session.use_strict_mode', '1');
-        session_set_cookie_params([
-            'httponly' => true,
-            'secure' => $is_https,
-            'samesite' => 'Lax',
-        ]);
-        // pin future requests to https for a year (only meaningful, and only sent, over tls)
-        if ($is_https && !headers_sent()) {
-            header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-        }
     }
 
     /**
@@ -555,8 +485,8 @@ class frontend
         // resume session (based on cookies)
         // TODO review session start and end calls
         // enforce tls (prod/test) then harden the session cookie before the session starts
-        self::enforce_tls();
-        self::harden_session();
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
