@@ -217,8 +217,14 @@ const SQL_DB_USER_DEFAULT = 'zukunft';
 const SQL_DB_PASSWD_FALLBACK = 'change_me';
 const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
 
-// temp solution to force reading the .env file
-$env = file(ROOT_PATH . ENV_FILE);
+// read the environment file: prefer a copy one level above the web root so the secrets are not
+// inside the docroot (and cannot be served even if the web server ever ignores the .htaccess
+// rules); fall back to the web root for the dev / docker setup that keeps .env in the repo root
+$env_path = ROOT_PATH . '..' . DIRECTORY_SEPARATOR . ENV_FILE;
+if (!file_exists($env_path)) {
+    $env_path = ROOT_PATH . ENV_FILE;
+}
+$env = file($env_path);
 foreach ($env as $line) {
     if (!str_starts_with($line, '#') and trim($line) != '') {
         if (str_contains($line, '#')) {

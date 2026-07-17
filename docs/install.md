@@ -50,6 +50,44 @@ To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wik
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
    (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
 
+Environment file (.env) location
+--------------------------------
+
+The `.env` file holds the deployment secrets (database credentials, the initial login passwords,
+the server-admin hashes). `src/main/php/cfg/const/env.php` looks for it in two places, in order:
+
+1. one level **above** the web root: `<ROOT_PATH>/../.env`
+2. the web root itself (fallback): `<ROOT_PATH>/.env`
+
+`ROOT_PATH` is `__DIR__ . '/../'` from each entry point (`http/const.php`, `test/test_const.php`, …),
+so it always resolves to the docroot / repo root with a trailing slash.
+
+On a real **test / prod** server `script/install.sh` copies `.env` to the parent
+(`${WWW_ROOT%/}/../.env`), so the secrets sit outside the web-served tree and cannot be downloaded
+even if the web server ever ignores `.htaccess`; being outside the git working tree the file also
+survives the git-based program update. `install.sh` additionally blanks the one-time login
+passwords (`ADMIN_PW`, `CO_ADMIN_PW`, `USER_PW`, `CO_USER_PW`) in that `.env` right after the
+initial users have been created (they are stored bcrypt-hashed in the database); the database
+connection passwords are kept because the app needs them.
+
+For **dev / docker** no parent `.env` is created, so the fallback applies and `.env` stays in the
+repo / docroot. Example resolution:
+
+| Context | ROOT_PATH | parent checked first | actually used |
+|---|---|---|---|
+| CLI / IDE / tests (run from the repo) | `/home/timon/PhpstormProjects/zukunft.com/` | `/home/timon/PhpstormProjects/.env` (missing) | `/home/timon/PhpstormProjects/zukunft.com/.env` |
+| HTTP served by Apache from `/var/www/html` | `/var/www/html/` | `/var/www/.env` (missing) | `/var/www/html/.env` |
+| test / prod after `install.sh` (docroot `/var/www/html`) | `/var/www/html/` | `/var/www/.env` (present) | `/var/www/.env` |
+
+Note: the repo `.env` and a served copy (e.g. `/var/www/html/.env`) are separate files and can drift.
+To make dev also use a parent-dir `.env`, place one at the parent path (e.g.
+`/home/timon/PhpstormProjects/.env`) and it takes precedence over the docroot copy.
+
+The program-update script `script/update.sh` (run by the server-admin page to pull new code) reads
+`SOURCE_REPO_URL` and `BRANCH` from the `.env` using the **same** parent-first, docroot-fallback
+lookup, so it keeps working after `.env` has moved above the web root. Any other reader of `.env`
+must use the same order; do not hard-code `<web root>/.env`.
+
 Docker Installation
 -------------------
 

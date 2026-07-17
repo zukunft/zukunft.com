@@ -319,19 +319,21 @@ function log_fatal(string $msg_text,
 
 /**
  * build the html shown to the user for a critical internal error with the (possibly request
- * derived) message and function name html-escaped, so a crafted value - e.g. a url mask that
- * reaches log_err('view ' . $view . ' not found') - cannot inject script into the error
- * response (reflected xss); the escaping lives here at the output sink so every caller is covered
+ * derived) message html-escaped, so a crafted value - e.g. a url mask that reaches
+ * log_err('view ' . $view . ' not found') - cannot inject script into the error response
+ * (reflected xss); the escaping lives here at the output sink so every caller is covered. the
+ * internal function / file name is not shown to the user, it is only recorded in the sys_log
  *
  * @param string $msg_text the short error message that may contain request input
- * @param string $function_name the originating function name
  * @return string the escaped html line for the error response
  */
-function critical_error_html(string $msg_text, string $function_name): string
+function critical_error_html(string $msg_text): string
 {
+    // the internal function and file name are deliberately not shown to the user (information
+    // disclosure); they are still recorded in the sys_log for the admin. the message text is
+    // html-escaped so a request-derived value cannot inject script into the response (reflected xss)
     return "Zukunft.com has detected a critical internal error: <br><br>"
-        . htmlspecialchars($msg_text, ENT_QUOTES) . " by "
-        . htmlspecialchars($function_name, ENT_QUOTES) . ".<br><br>";
+        . htmlspecialchars($msg_text, ENT_QUOTES) . ".<br><br>";
 }
 
 /**
@@ -436,7 +438,7 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                echo critical_error_html($msg_text, $function_name);
+                echo critical_error_html($msg_text);
                 if ($sys_log->id > 0) {
                     $html = new html_base();
                     $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID
@@ -452,7 +454,8 @@ function log_msg(string  $msg_text,
                     $msk = new view($usr);
                     $msk_ui = new view_ui($msk->api_json());
                     $result .= $msk_ui->dsp_navbar_simple();
-                    $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+                    // like the critical path: escape the message and do not disclose the function name
+                    $result .= htmlspecialchars($msg_text, ENT_QUOTES) . ".<br><br>";
                 }
             }
         }

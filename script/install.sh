@@ -245,8 +245,10 @@ downloadZukunft() {
     # while "git -C $WWW_ROOT pull|checkout" (used by the update-program flow)
     # still works
     git clone -b "$BRANCH" --separate-git-dir="$ZUKUNFT_GIT_DIR" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
-    # copy the .env file to the webserver
-    cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
+    # copy the .env with the secrets to one level above the web root, not into it, so it can never
+    # be served even if the web server ever ignores the .htaccess rules; env.php reads it from there
+    # (see env.php). being outside the git working tree it also survives the git-based program update
+    cp "$CURRENT_DIR/zukunft.com/.env" "${WWW_ROOT%/}/../.env"
 
 }
 
@@ -259,6 +261,11 @@ installZukunft() {
     # create the zukunft.com database tables
     # TODO remove or deactivate the reset_db.php script in prod after successful install
     php "$WWW_ROOT/test/reset_db.php"
+
+    # the initial users now exist in the database with a bcrypt-hashed password, so the cleartext
+    # login passwords in the deployed .env are no longer needed; blank them so that reading the .env
+    # cannot recover a working login. the db connection passwords are kept - the app needs them
+    sed -i -E 's/^(ADMIN_PW|CO_ADMIN_PW|USER_PW|CO_USER_PW)=.*/\1=/' "${WWW_ROOT%/}/../.env"
 
     # TODO check result and create warning if it does not end with
     # TODO fix the errors on the first run that are caused e.g. by the missing db rows
