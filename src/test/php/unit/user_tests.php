@@ -316,6 +316,21 @@ class user_tests
         $t->assert_false($test_name, $usr_key->activation_key_valid($key));
 
 
+        $t->subheader($ts . 'activation key expiry without db_now');
+
+        // a loaded user never has db_now set (it is not among the queried fields), so the expiry check
+        // must fall back to the real now; otherwise an expired reset link stays a permanent takeover token
+        $usr_load = new user();
+        $usr_load->set_activation_key($key);
+        $test_name = 'a fresh key is active even when db_now is not set';
+        $t->assert_true($test_name, $usr_load->has_active_activation_key());
+        $expired = new DateTime();
+        $expired->modify('-1 hour');
+        $usr_load->activation_timeout = $expired;
+        $test_name = 'an expired key is inactive even when db_now is not set';
+        $t->assert_false($test_name, $usr_load->has_active_activation_key());
+
+
         $t->subheader($ts . 'diff message');
 
         // the diff message tells a human which fields differ e.g. to explain a rejected update

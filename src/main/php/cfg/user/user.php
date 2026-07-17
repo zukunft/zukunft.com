@@ -881,8 +881,9 @@ class user extends db_id_object_non_sandbox
      */
     function has_active_activation_key(): bool
     {
+        $now = $this->db_now ?? new DateTime();
         $stored = $this->activation_key ?? '';
-        $unexpired = $this->activation_timeout !== null && $this->activation_timeout > $this->db_now;
+        $unexpired = $this->activation_timeout !== null && $this->activation_timeout > $now;
         $result = $stored !== '' && $unexpired;
         return $result;
     }

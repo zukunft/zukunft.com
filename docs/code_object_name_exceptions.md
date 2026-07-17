@@ -24,7 +24,7 @@ source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_usr2, $src_usr2_r
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $term, $trm_back, $trm_by_obj_id, $trp, $vrb, $wrd
 triple: $bare_trp_ui, $db_trp, $dbo, $dbo_ui, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_by_id, $trp_del, $trp_in, $trp_ins, $trp_old, $trp_problem, $trp_sec, $trp_ui, $trp_usr, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
-user: $act_usr, $check_usr, $db_usr, $dbo, $dbo_ui, $existing, $init_usr, $local_usr, $new_usr, $obj, $owner, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_usr, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_db, $usr_key, $usr_reload, $usr_req, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
+user: $act_usr, $check_usr, $db_usr, $dbo, $dbo_ui, $existing, $init_usr, $local_usr, $new_usr, $obj, $owner, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_usr, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_req, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
@@ -38,7 +38,7 @@ word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd,
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $sys_log_timestamp, $target, $time, $timeout
+DateTime: $actual_time, $expired, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $sys_log_timestamp, $target, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
