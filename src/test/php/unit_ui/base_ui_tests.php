@@ -65,6 +65,8 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -399,6 +401,25 @@ class base_ui_tests
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);
+
+        $t->subheader($ts . 'xss escaping');
+        // a user-settable name is escaped at the display sink so a crafted name cannot inject script
+        // into the page shown to other users incl. an admin (stored xss); ui_base and system_form
+        // route the display names / descriptions through html_base::esc (element-text context)
+        $xss = '<script>alert(1)</script>';
+        $xss_esc = htmlspecialchars($xss, ENT_NOQUOTES);
+        $wrd_xss = new word();
+        $wrd_xss->name = $xss;
+        $base = new ui_base();
+        $form = new system_form();
+        $test_name = 'ui_base->phrase_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $base->phrase_name($wrd_xss), $xss_esc);
+        $test_name = 'ui_base->phrase_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $base->phrase_name($wrd_xss), $xss);
+        $test_name = 'system_form->show_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $form->show_name($wrd_xss), $xss_esc);
+        $test_name = 'system_form->show_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $form->show_name($wrd_xss), $xss);
 
         $t->subheader($ts . 'back url');
 

@@ -35,11 +35,13 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_object.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -52,7 +54,7 @@ class ui_base
      */
     function phrase_name(db_object|combine_named $phr): string
     {
-        return $phr->name();
+        return $this->esc($phr->name());
     }
 
     /**
@@ -61,7 +63,7 @@ class ui_base
      */
     function verb_name(?db_object $dbo = null): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -70,7 +72,7 @@ class ui_base
      */
     function triple_name(?db_object $dbo = null): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -79,7 +81,7 @@ class ui_base
      */
     function value_name(?db_object $dbo = null): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -88,7 +90,7 @@ class ui_base
      */
     function group_name(?db_object $dbo = null): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -151,7 +153,20 @@ class ui_base
         } elseif ($dbo instanceof type_object) {
             $result = $dbo->name;
         }
-        return $result;
+        return $this->esc($result);
+    }
+
+    /**
+     * escape a user-settable string (a name, description or reference field) so it is shown
+     * literally and cannot inject html into the page (stored xss); element-text context, because
+     * these outputs are concatenated into the page body by component_exe, not into an attribute
+     * @param string|null $text the raw user text
+     * @return string the text safe to place between html tags
+     */
+    private function esc(?string $text): string
+    {
+        $html = new html_base();
+        return $html->esc($text);
     }
 
     /**
@@ -160,7 +175,7 @@ class ui_base
      */
     function table(?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        return 'values related to ' . $dbo->name() . ' ';
+        return 'values related to ' . $this->esc($dbo->name()) . ' ';
     }
 
     /**

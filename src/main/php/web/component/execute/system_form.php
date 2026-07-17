@@ -160,7 +160,7 @@ class system_form extends component
     ): string
     {
         // for a named object the page title is simply its name shown big
-        return $this->subtitle($dbo, $dbo->name(), $max);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max);
     }
 
     /**
@@ -189,7 +189,7 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->subtitle($dbo, $dbo->name(), $max, $from_verb_to);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to);
     }
 
     /**
@@ -225,7 +225,7 @@ class system_form extends component
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value
-        $heading_content = $dbo->name();
+        $heading_content = $this->esc($dbo->name());
         if ($dbo::class == value::class) {
             $heading_content = $dbo->name_link();
         }
@@ -513,7 +513,7 @@ class system_form extends component
     function show_language_symbol(language|db_object $dbo): string
     {
         // TODO Prio 0 add system to web language
-        return $dbo->name;
+        return $this->esc($dbo->name);
     }
 
 
@@ -558,7 +558,20 @@ class system_form extends component
             log_warning('code id ' . $code_id . ' not yet defined in show_name');
             $result = $dbo->name();
         }
-        return $result;
+        return $this->esc($result);
+    }
+
+    /**
+     * escape a user-settable string (a name, description or reference field) so it is shown
+     * literally and cannot inject html into the page (stored xss); element-text context, because
+     * these show_* outputs are concatenated into the page body by component_exe, not into an attribute
+     * @param string|null $text the raw user text
+     * @return string the text safe to place between html tags
+     */
+    private function esc(?string $text): string
+    {
+        $html = new html_base();
+        return $html->esc($text);
     }
 
     /**
@@ -567,7 +580,7 @@ class system_form extends component
      */
     function show_description(db_object|type_object $dbo): string
     {
-        return $dbo->get_description();
+        return $this->esc($dbo->get_description());
     }
 
     /**
@@ -576,7 +589,7 @@ class system_form extends component
      */
     function show_plural(word|db_object $dbo): string
     {
-        return $dbo->plural ?? '';
+        return $this->esc($dbo->plural ?? '');
     }
 
     /**
@@ -590,7 +603,7 @@ class system_form extends component
         $result = '';
         $type_id = $dbo->type_id();
         if ($type_id !== null) {
-            $result = $ui_sys->typ_lst_cache->phr_typ->name($type_id);
+            $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
         }
         return $result;
     }
@@ -601,7 +614,7 @@ class system_form extends component
      */
     function show_ref_type(ref|db_object $dbo): string
     {
-        return $dbo->type_name();
+        return $this->esc($dbo->type_name());
     }
 
     /**
@@ -611,7 +624,7 @@ class system_form extends component
     function show_ref_key(ref|db_object $dbo): string
     {
         // a new reference of an add form has no external key yet
-        return $dbo->external_key() ?? '';
+        return $this->esc($dbo->external_key() ?? '');
     }
 
     /**
@@ -624,7 +637,7 @@ class system_form extends component
         if ($src_txt == null) {
             $src_txt = '';
         }
-        return $src_txt;
+        return $this->esc($src_txt);
     }
 
     /**
@@ -634,7 +647,7 @@ class system_form extends component
     function show_ref_url(ref|db_object $dbo): string
     {
         // a new reference of an add form has no url yet
-        return $dbo->url() ?? '';
+        return $this->esc($dbo->url() ?? '');
     }
 
     /**
@@ -644,7 +657,7 @@ class system_form extends component
      */
     function show_usage(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -653,7 +666,7 @@ class system_form extends component
      */
     function show_parent_view(view_relation|db_object $dbo): string|null
     {
-        return $dbo->parent()?->name();
+        return $this->esc($dbo->parent()?->name());
     }
 
     /**
@@ -662,7 +675,7 @@ class system_form extends component
      */
     function show_child_view(view_relation|db_object $dbo): string|null
     {
-        return $dbo->child()?->name();
+        return $this->esc($dbo->child()?->name());
     }
 
     /**
@@ -671,7 +684,7 @@ class system_form extends component
      */
     function show_relation_type(view_relation|db_object $dbo): string|null
     {
-        return $dbo->relation_type()?->name();
+        return $this->esc($dbo->relation_type()?->name());
     }
 
     /**
@@ -690,7 +703,7 @@ class system_form extends component
      */
     function result(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -700,7 +713,7 @@ class system_form extends component
      */
     function used_as_text(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -710,7 +723,7 @@ class system_form extends component
      */
     function used_as_text_link(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
