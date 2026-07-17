@@ -47,6 +47,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_page.php';
 //include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
@@ -112,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -219,6 +221,7 @@ class sql_creator
         sys_log::class,
         job::class,
         db_cache::class,
+        db_cache_page::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
 

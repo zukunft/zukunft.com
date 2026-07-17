@@ -588,6 +588,7 @@ class sql_db
         sys_log::class,
         job::class,
         db_cache::class,
+        db_cache_page::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
 

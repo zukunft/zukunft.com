@@ -338,6 +338,7 @@ include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'sys_log_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'db_cache_page_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';

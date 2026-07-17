@@ -135,13 +135,15 @@ if ($db_con->is_open()) {
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
         $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
-        if ($is_post_action || $is_get_action) {
+        $is_action = ($is_post_action or $is_get_action);
+        if ($is_action) {
             $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
         }
 
         // show the result to the user
+        // and use the cached html pages for view-only requests to reduce the response time
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $web_txt .= $ui->url_to_html($url_array, $usr_ui, $msg, $ui->dto);
+        $web_txt .= $ui->url_to_html_cached($url_array, $usr, $usr_ui, $msg, $is_action, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);
     }
 

@@ -106,6 +106,29 @@ class base_ui_tests
         $ts = 'unit ui html base ';
         $t->header($ts);
 
+        $t->subheader($ts . 'cached page routing');
+
+        // a view-only request is cached by the canonical view and object key
+        $ui = new frontend();
+        $test_name = 'a view-only request is cached by the view and object key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the language is part of the cache key if set
+        $test_name = 'the language is part of the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::LANGUAGE => 'de'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2&' . url_var::LANGUAGE . '=de');
+
+        // a request of a view that changes data is never cached
+        $test_name = 'a change mask request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ADD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // a request with a form submission is never cached
+        $test_name = 'a post request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
         $t->subheader($ts . 'tab box');
 
         // the tab box switches via the url fragment with pure css (:target) and no javascript: the

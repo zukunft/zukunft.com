@@ -91,7 +91,7 @@ config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
 data_object: $cac, $cfg, $dto, $dto_base_ui, $dto_ui, $res_cfg
 db_cache: $cac, $db_cache
-db_cache_page: $cac_page, $db_cache_page
+db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
 db_cache_type: $dbc_typ, $typ
 db_check: $db_chk
@@ -220,7 +220,7 @@ unit_env: $u_env
 url_mapper: $url_map
 user_list: $result, $system_users, $test_usr_list, $usr_lst
 user_log_display: $log, $log_ui
-user_message: $act_msg, $activate_msg, $adm_msg, $anon_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $map_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $setup_msg, $signup_msg, $sim_msg, $sim_name_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg
+user_message: $act_msg, $activate_msg, $adm_msg, $anon_msg, $db_msg, $err_msg, $fail_msg, $fld_msg, $frm_usr_msg, $import_result, $ins_usr_msg, $job_msg, $login_msg, $logoff_msg, $logout_msg, $lst_usr_msg, $map_msg, $msg, $msg_2, $msg_activate_ui, $msg_login_ui, $msg_logoff_ui, $msg_signup_ui, $msg_sys, $msg_ui, $ok_msg, $ref_usr_msg, $reset_msg, $result, $save_msg, $setup_msg, $signup_msg, $sim_msg, $sim_name_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $ui_msg, $upd_usr_msg, $usr_msg, $usr_msg2, $usr_msg_calc, $usr_msg_del, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg
 user_official_type: $usr_idt
 user_profile: $usr_prf
 user_request: $req
