@@ -173,6 +173,18 @@ class system_view_ui_tests
         $test_name = 'a plain get navigation without a token is allowed';
         $t->assert_true($test_name, frontend::request_token_valid($get_nav, $token));
 
+        // tls is enforced (plain http redirected to https) in the prod and test environment so the
+        // session cookie is never sent in the clear, but not in dev so the local http docker works
+        $t->subheader($ts . 'tls enforcement');
+        $test_name = 'the prod environment enforces tls';
+        $t->assert_true($test_name, frontend::tls_required(ENV_PROD));
+        $test_name = 'the test environment enforces tls';
+        $t->assert_true($test_name, frontend::tls_required(ENV_UA));
+        $test_name = 'the dev environment does not enforce tls';
+        $t->assert_false($test_name, frontend::tls_required(ENV_DEV));
+        $test_name = 'an unknown environment does not enforce tls';
+        $t->assert_false($test_name, frontend::tls_required(''));
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();

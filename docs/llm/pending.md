@@ -16,8 +16,6 @@ reduce the login and reset user enumeration: cfg/user/user.php::login (around li
 
 get the cleartext login passwords out of the deployed .env: .env lines 60-73 hold real plaintext ADMIN_PW / USER_PW etc. and script/install.sh line 241 copies .env into $WWW_ROOT. Verified good: .env is gitignored and never committed and .env.example is sanitised, so this is a deployment issue not a repo leak. Hash the login passwords at setup and store .env outside the docroot
 
-harden the session cookie and the transport: there is no session_set_cookie_params / ini_set for cookie_httponly, cookie_secure, cookie_samesite or use_strict_mode anywhere (every session_start inherits the php.ini defaults), and there is no https redirect and no HSTS. Set the cookie flags before session_start and enforce tls at the web server. This amplifies the xss, csrf and fixation findings above
-
 ### security improvements
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
