@@ -71,6 +71,11 @@ class api
     const string LOGOUT_FORWARD = DIRECTORY_SEPARATOR . 'logout';
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
+    // flag added at the end of a cached html page to tell the frontend
+    // that a user specific refresh of the page is prepared in the background
+    // and the frontend should poll for the updated page
+    const string PAGE_REFRESH_FLAG = '<!-- page refresh coming -->';
+
 
     /*
      * JSON
