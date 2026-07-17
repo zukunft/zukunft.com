@@ -11,6 +11,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# the deployed .env is kept one level above the web root (see env.php / install.sh); fall back to
+# the web root for a dev checkout that keeps .env in the repo root
+ENV_FILE="$ROOT/../.env"
+[[ -f "$ENV_FILE" ]] || ENV_FILE="$ROOT/.env"
+
 die() { echo "ERROR: $*" >&2; exit 1; }
 
 # Defaults
@@ -23,9 +28,9 @@ SOURCE_BRANCH="master"
 # get the value of a key from the .env file (empty if the file or the key is missing)
 env_value() {
     local key="$1" val=""
-    [[ -f "$ROOT/.env" ]] || return 0
+    [[ -f "$ENV_FILE" ]] || return 0
     # keep the '|| true' - grep exits 1 if the key is missing, which pipefail would turn into an abort
-    val="$(grep -E "^[[:space:]]*$key[[:space:]]*=" "$ROOT/.env" | tail -n1 | cut -d= -f2- || true)"
+    val="$(grep -E "^[[:space:]]*$key[[:space:]]*=" "$ENV_FILE" | tail -n1 | cut -d= -f2- || true)"
     val="${val%%#*}"                             # drop any inline comment
     echo "$val" | tr -d '"'\''[:space:]'         # strip quotes and whitespace
 }
