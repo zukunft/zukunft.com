@@ -41,6 +41,15 @@ zukunft.com:
           validate:
             type: "names"
             tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
+        page:
+          tooltip-comment: "the cache of the rendered html pages of view-only requests stored in the db_cache_pages table"
+          limit:
+            time:
+              days: 30
+              tooltip-comment: "a cached html page older than this is recreated on the next request to prevent stale pages"
+            storage size:
+              MB: 500
+              tooltip-comment: "if the total size of the cached html pages reaches this limit the oldest pages are removed"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
