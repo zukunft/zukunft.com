@@ -197,6 +197,7 @@ class words
     const string NETWORK = 'network';
     const string NUMBER = 'number';
     const int NUMBER_ID = 201;
+    const string PAGE = 'page';
     const string PCT = 'percent';
     const int PCT_ID = 161;
     const string PEERS = 'peers';
