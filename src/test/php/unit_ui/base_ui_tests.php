@@ -131,6 +131,25 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // a process step of 0 (no action started) does not change a view-only page, so it is ignored
+        // and the request still hits the same cache key as the bare view (e.g. view.php?m=1&z=0)
+        $test_name = 'a show step (z=0) is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_BASE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the anti-csrf token is per session and does not change a view-only page, so it too is
+        // ignored and the request still hits the same cache key (e.g. view.php?m=1&z=0&token=...)
+        $test_name = 'the anti-csrf token is ignored for the cache key';
+        $url_array = [
+            url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::STEP => url_var::STEP_BASE, url_var::SESSION_TOKEN => 'abc'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // a non-zero process step is an action step, so the request is rendered live and not cached
+        $test_name = 'a non-zero step request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
         $t->subheader($ts . 'tab box');
 
         // the tab box switches via the url fragment with pure css (:target) and no javascript: the

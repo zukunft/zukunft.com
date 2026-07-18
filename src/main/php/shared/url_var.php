@@ -281,6 +281,13 @@ class url_var
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
+    const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
+    const int DEBUG_LEVEL_POD_READS = 2; // the second debug level is to show data calls from other zukunft.com pods
+    const int DEBUG_LEVEL_POD_PUSH = 3; // the third debug level is to show push messages to other zukunft.com pods
+    const int DEBUG_LEVEL_SERVICE_CALLS = 4; // the fourth debug level is to show calls of internal services like an R-project server
+    const int DEBUG_LEVEL_DB_WRITE = 5; // the fifth debug level is to show write actions to the database
+    const int DEBUG_LEVEL_DB_READ = 6; // the sixth debug level is to show read actions from the database
+    const int DEBUG_LEVEL_COMPLEX_FUNCTION = 7; // the seventh debug level is to show potential long lasting function calls e.g. due to a potential endless loop
 
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)

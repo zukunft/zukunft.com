@@ -4,8 +4,6 @@
 
 ## high prio
 
-make http://localhost/http/view.php?m=1&z=0 and the same with token also to qualify for the db_cache_page 
-
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 ### security before go live

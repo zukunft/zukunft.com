@@ -1027,10 +1027,26 @@ class frontend
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
-                $result = $cac_page->html_by_url($url_key);
+                $cached_html = $cac_page->html_by_url($url_key);
+                if ($cached_html !== null) {
+                    // fill in the reading user's own anti-csrf token so the shared page does not
+                    // carry the token of whoever first rendered and cached it (see request_token_valid)
+                    $result = db_cache_page::restore_session_token($cached_html, self::session_token());
+                }
             }
         }
         return $result;
+    }
+
+    /**
+     * the anti-csrf token of the current session, read from the session here (the request/session
+     * boundary, like html_base::form_session_token) so a cached html page can be personalised with
+     * the reading user's token instead of the token of whoever first rendered and cached the page
+     * @return string the current session token or '' if none is set yet
+     */
+    private static function session_token(): string
+    {
+        return $_SESSION[url_var::SESSION_TOKEN] ?? '';
     }
 
     /**
@@ -1067,11 +1083,15 @@ class frontend
         if (!$is_action) {
             $url_key = $this->url_cache_key($url_array);
         }
-        // get the last cached html page for the url
+        // get the last cached html page for the url and fill in the reading user's own anti-csrf
+        // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
         $cac_page = new db_cache_page();
         $cached_html = null;
         if ($url_key != '') {
             $cached_html = $cac_page->html_by_url($url_key);
+            if ($cached_html !== null) {
+                $cached_html = db_cache_page::restore_session_token($cached_html, self::session_token());
+            }
         }
         // route the request based on the user sandbox usage and the cache state
         if ($url_key == '') {
@@ -1110,10 +1130,14 @@ class frontend
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
-        // a request with more than the view, object and language is not cached
+        // a request with more than the view, object and language is not cached; the anti-csrf token
+        // is per session and a process step of 0 (no action started) does not change a view-only
+        // page, so both are allowed without preventing the cache and are not part of the cache key
         $is_view_only = true;
-        foreach (array_keys($url_array) as $url_key) {
-            if (!in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE])) {
+        foreach ($url_array as $url_key => $url_val) {
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN]);
+            $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
+            if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;
             }
         }
@@ -1156,6 +1180,9 @@ class frontend
         user_backend  $usr
     ): void
     {
+        // store the page with the session token replaced by a placeholder so the shared cache does
+        // not carry this session's anti-csrf token to another session (see restore_session_token)
+        $html = db_cache_page::strip_session_token($html, self::session_token());
         $save_msg = new backend_user_message(user_backend::system());
         $cac_page->save_html($url_key, $html, $save_msg);
         if (!$save_msg->is_ok()) {
