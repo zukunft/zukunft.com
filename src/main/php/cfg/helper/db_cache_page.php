@@ -111,6 +111,10 @@ class db_cache_page extends db_object_seq_id
         [fields::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_LAST_UPDATE_COM],
     );
 
+    // marker stored in place of the per-session anti-csrf token in a cached page so the page can be
+    // shared across sessions; swapped for the reading user's token on read (see restore_session_token)
+    const string SESSION_TOKEN_PLACEHOLDER = '{{session_token}}';
+
 
     /*
      * object vars
@@ -197,6 +201,44 @@ class db_cache_page extends db_object_seq_id
             $result = $this->html_page;
         }
         return $result;
+    }
+
+
+    /*
+     * session token
+     */
+
+    /**
+     * replace the given session token in a rendered page with a placeholder before it is cached, so
+     * a page shared across sessions does not carry the rendering session's anti-csrf token (in the
+     * logout link href and the crud form hidden field) to another session; the plain str_replace
+     * covers every occurrence, unlike a tag-specific rewrite. restored per request via restore_session_token
+     *
+     * @param string $html the rendered html page that should be cached
+     * @param string $token the session token of the user who rendered the page
+     * @return string the html with the session token replaced by the placeholder
+     */
+    static function strip_session_token(string $html, string $token): string
+    {
+        $result = $html;
+        if ($token != '') {
+            $result = str_replace($token, self::SESSION_TOKEN_PLACEHOLDER, $html);
+        }
+        return $result;
+    }
+
+    /**
+     * replace the placeholder in a cached page with the current session token, so the served page
+     * carries the reading user's own anti-csrf token and a logout or crud submit is not rejected as
+     * a cross-session request (see frontend::request_token_valid); the inverse of strip_session_token
+     *
+     * @param string $html the cached html page read from the database
+     * @param string $token the session token of the user the page is served to
+     * @return string the html with the current session token filled in
+     */
+    static function restore_session_token(string $html, string $token): string
+    {
+        return str_replace(self::SESSION_TOKEN_PLACEHOLDER, $token, $html);
     }
 
 

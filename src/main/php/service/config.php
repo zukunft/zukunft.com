@@ -243,7 +243,7 @@ class config extends db_object_seq_id
 
         // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
 
-        log_debug('"' . $code_id . '": ' . $db_value, $debug - 1);
+        log_debug('"' . $code_id . '": ' . $db_value);
         return $db_value;
     }
 
@@ -285,7 +285,7 @@ class config extends db_object_seq_id
             }
         }
 
-        log_debug('"' . $code_id . '": ' . $db_value, $debug - 1);
+        log_debug('"' . $code_id . '": ' . $db_value);
         return $db_value;
     }
 
@@ -310,7 +310,7 @@ class config extends db_object_seq_id
 
         // init
         $result = false;
-        log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
+        log_debug('"' . $code_id . '" to ' . $value);
 
         // by default all changes are logged
         if ($sql_types != []) {

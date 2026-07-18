@@ -65,6 +65,8 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -128,6 +130,31 @@ class base_ui_tests
         $test_name = 'a post request is not cached';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // a process step of 0 (no action started) does not change a view-only page, so it is ignored
+        // and the request still hits the same cache key as the bare view (e.g. view.php?m=1&z=0)
+        $test_name = 'a show step (z=0) is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_BASE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the anti-csrf token is per session and does not change a view-only page, so it too is
+        // ignored and the request still hits the same cache key (e.g. view.php?m=1&z=0&token=...)
+        $test_name = 'the anti-csrf token is ignored for the cache key';
+        $url_array = [
+            url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::STEP => url_var::STEP_BASE, url_var::SESSION_TOKEN => 'abc'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // a non-zero process step is an action step, so the request is rendered live and not cached
+        $test_name = 'a non-zero step request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // the debug level only controls out-of-band debug output, not the cached html, so it is
+        // ignored and ?m=2&debug=5 takes the same cached path as ?m=2 (same cache key)
+        $test_name = 'the debug level is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::DEBUG => 5];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
         $t->subheader($ts . 'tab box');
 
@@ -422,6 +449,25 @@ class base_ui_tests
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);
+
+        $t->subheader($ts . 'xss escaping');
+        // a user-settable name is escaped at the display sink so a crafted name cannot inject script
+        // into the page shown to other users incl. an admin (stored xss); ui_base and system_form
+        // route the display names / descriptions through html_base::esc (element-text context)
+        $xss = '<script>alert(1)</script>';
+        $xss_esc = htmlspecialchars($xss, ENT_NOQUOTES);
+        $wrd_xss = new word();
+        $wrd_xss->name = $xss;
+        $base = new ui_base();
+        $form = new system_form();
+        $test_name = 'ui_base->phrase_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $base->phrase_name($wrd_xss), $xss_esc);
+        $test_name = 'ui_base->phrase_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $base->phrase_name($wrd_xss), $xss);
+        $test_name = 'system_form->show_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $form->show_name($wrd_xss), $xss_esc);
+        $test_name = 'system_form->show_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $form->show_name($wrd_xss), $xss);
 
         $t->subheader($ts . 'back url');
 

@@ -98,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -173,17 +174,59 @@ class system_view_ui_tests
         $test_name = 'a plain get navigation without a token is allowed';
         $t->assert_true($test_name, frontend::request_token_valid($get_nav, $token));
 
+        // a get action mask (logout, error_update) triggers url_to_action on a plain get, so it must
+        // carry the token too - samesite=lax still sends the cookie on a top-level cross-site get
+        $logout_no_token = [url_var::MASK => views::LOGOUT_ID];
+        $test_name = 'a logout get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($logout_no_token, $token));
+
+        $logout_ok = [url_var::MASK => views::LOGOUT_ID, url_var::SESSION_TOKEN => $token];
+        $test_name = 'a logout get with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($logout_ok, $token));
+
+        $error_update_no_token = [url_var::MASK => views::ERROR_UPDATE_ID, url_var::ID => 1];
+        $test_name = 'an error_update get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($error_update_no_token, $token));
+
+        // request_triggers_action is the single predicate shared by the view.php dispatch and the
+        // token gate, so an action can never be dispatched without a token having been required
+        $test_name = 'a get action mask is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($logout_no_token));
+        $test_name = 'a form submit is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($submit_no_token));
+        $test_name = 'a plain get navigation is not an action';
+        $t->assert_false($test_name, frontend::request_triggers_action($get_nav));
+
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
-        // session cookie is never sent in the clear, but not in dev so the local http docker works
+        // session cookie is never sent in the clear, but not in dev so the local http docker works;
+        // the api entry (application::start_api) and the html frontend share this via server_guard
         $t->subheader($ts . 'tls enforcement');
         $test_name = 'the prod environment enforces tls';
-        $t->assert_true($test_name, frontend::tls_required(ENV_PROD));
+        $t->assert_true($test_name, server_guard::tls_required(ENV_PROD));
         $test_name = 'the test environment enforces tls';
-        $t->assert_true($test_name, frontend::tls_required(ENV_UA));
+        $t->assert_true($test_name, server_guard::tls_required(ENV_UA));
         $test_name = 'the dev environment does not enforce tls';
-        $t->assert_false($test_name, frontend::tls_required(ENV_DEV));
+        $t->assert_false($test_name, server_guard::tls_required(ENV_DEV));
         $test_name = 'an unknown environment does not enforce tls';
-        $t->assert_false($test_name, frontend::tls_required(''));
+        $t->assert_false($test_name, server_guard::tls_required(''));
+
+        // the api write endpoints (post/put/delete) reject a cross-site request (csrf): a browser
+        // sends an Origin/Referer whose host must match this pod's host; a call without any origin
+        // hint (server-to-server) is allowed because it carries no ambient session cookie
+        $t->subheader($ts . 'api write same-origin');
+        $host = 'zukunft.com';
+        $test_name = 'a same-origin write is allowed';
+        $t->assert_true($test_name, server_guard::origin_allowed('https://zukunft.com', '', $host));
+        $test_name = 'a cross-origin write is rejected';
+        $t->assert_false($test_name, server_guard::origin_allowed('https://evil.example', '', $host));
+        $test_name = 'a cross-origin write is rejected by its referer when no origin is sent';
+        $t->assert_false($test_name, server_guard::origin_allowed('', 'https://evil.example/x', $host));
+        $test_name = 'a same-origin referer is allowed when no origin is sent';
+        $t->assert_true($test_name, server_guard::origin_allowed('', 'https://zukunft.com/x', $host));
+        $test_name = 'a call without an origin or referer is allowed (server-to-server)';
+        $t->assert_true($test_name, server_guard::origin_allowed('', '', $host));
+        $test_name = 'a same host on a non-standard port is allowed';
+        $t->assert_true($test_name, server_guard::origin_allowed('http://localhost:8080', '', 'localhost:8080'));
 
         // test the notification component standalone
         $t->subheader($ts . 'notification');

@@ -18,7 +18,7 @@ others may be introduced.
 | `$mtr`    | frontend | Message translation — created **once** in `http/view.php`; language priority: (1) `url_var::LANGUAGE` URL param, (2) session var, (3) user config (`$cfg`), (4) default |
 | `$t`      | tests    | Base test object (assert + cleanup helpers)                                                                                                                             |
 | `$t_sys`  | tests    | Error counting and execution times for tests                                                                                                                            |
-| `$debug`  | any      | Activates additional logging levels                                                                                                                                     |
+| `$debug`  | any      | Per-request debug level from the `debug` URL param; activates additional logging (dev only) — see `docs/llm/debugging.md`                                               |
 
 Code in the wrong scope must not read these globals — frontend renderers
 (`src/main/php/web/**`) may not touch `$sys`/`$db_con`/`$cfg`/`$cac`; backend

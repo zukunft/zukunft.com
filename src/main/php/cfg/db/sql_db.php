@@ -175,6 +175,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
@@ -302,6 +303,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Exception;
@@ -1528,7 +1530,7 @@ class sql_db
         $row = 1;
         // TODO ignore empty rows
         // TODO ignore comma within text e.g. allow 'one, two and three'
-        log_debug('load "' . $table_name . '"', $debug - 6);
+        log_debug('load "' . $table_name . '"');
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
@@ -2517,7 +2519,7 @@ class sql_db
             $this->table = $this->get_table_name($type);
             $this->table .= $ext;
         }
-        log_debug('to "' . $this->table . '"', $debug - 20);
+        log_debug('to "' . $this->table . '"');
     }
 
     function get_id_field_name(string $class): string
@@ -2669,7 +2671,7 @@ class sql_db
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug('to "' . $result . '"', $debug - 20);
+        log_debug('to "' . $result . '"');
         return $result;
     }
 
@@ -2681,7 +2683,7 @@ class sql_db
         $type = $lib->class_to_name($this->class);
 
         $result = $this->get_name_field($type);
-        log_debug('to "' . $result . '"', $debug - 20);
+        log_debug('to "' . $result . '"');
         $this->name_field = $result;
     }
 
@@ -3005,7 +3007,7 @@ class sql_db
         global $sys;
 
         $lib = new library();
-        log_debug('"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
+        log_debug('"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name . '" for  user ' . $this->usr_id);
 
         // sql db selector
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3097,7 +3099,7 @@ class sql_db
             if ($sql_name == '') {
                 // TODO switch to error when all SQL statements are named
                 //log_warning('Name for SQL statement ' . $sql . ' is missing');
-                log_debug('Name for SQL statement ' . $sql . ' is missing', $debug - 5);
+                log_debug('Name for SQL statement ' . $sql . ' is missing');
             }
 
             // remove query formatting
@@ -3373,6 +3375,8 @@ class sql_db
         $sys->times->switch(system_time_type::DB_READ);
 
         if ($sql <> "") {
+            // show every db read from '&debug=6' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
+            log_debug($sql, url_var::DEBUG_LEVEL_DB_READ);
             if ($this->db_type == sql_db::POSTGRES) {
                 if ($this->postgres_link == null) {
                     log_warning('Database connection lost', 'sql_db->fetch');
@@ -4578,7 +4582,7 @@ class sql_db
     function missing_owner(): array
     {
         global $debug;
-        log_debug("sql_db->missing_owner (" . $this->class . ")", $debug - 4);
+        log_debug("sql_db->missing_owner (" . $this->class . ")");
         $qp = $this->missing_owner_sql();
         return $this->get($qp);
     }
@@ -4653,8 +4657,11 @@ class sql_db
     ): bool
     {
         global $sys;
+        global $debug;
 
         $sys->times->switch(system_time_type::DB_WRITE);
+        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
+        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4711,6 +4718,8 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
+        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
+        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
         $err_msg = 'Update of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4748,6 +4757,8 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
+        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
+        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
         $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
@@ -4863,7 +4874,7 @@ class sql_db
                 $result = strval($result);
             }
         }
-        log_debug("done (" . $result . ")", $debug - 25);
+        log_debug("done (" . $result . ")");
 
         return $result;
     }

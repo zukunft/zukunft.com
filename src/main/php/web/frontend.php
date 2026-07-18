@@ -63,9 +63,6 @@ include_once paths::SHARED . 'url_var.php';
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
-// server admin whitelist enforcement (file based IP / user whitelist)
-include_once html_paths::WEB . 'server_guard.php';
-
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -148,6 +145,8 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+// server admin whitelist, tls and session hardening (file based IP / user whitelist)
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -164,6 +163,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\job as job_backend;
@@ -303,8 +303,8 @@ class frontend
         $session_is_fine = true;
         // in prod/test upgrade a plain-http request to https first, then harden the session cookie
         // (httponly/secure/samesite, use_strict_mode and hsts on tls) before the session starts
-        self::enforce_tls();
-        self::harden_session();
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -361,13 +361,32 @@ class frontend
     }
 
     /**
+     * true if the request will trigger a state change through url_to_action, i.e. it is either a
+     * form submit (the post submit marker, e.g. a crud change, login, signup, import or paste) or a
+     * get action mask (views::GET_ACTION_IDS: logout and error_update, which act on a plain get).
+     * this is the single decision shared by the dispatch in view.php and the anti-csrf token gate
+     * below, so the two can never drift apart and leave an action reachable without a token
+     *
+     * @param array $url_arr the parameters given with the url for the request
+     * @return bool true if the request triggers an action (and therefore must carry the session token)
+     */
+    static function request_triggers_action(array $url_arr): bool
+    {
+        $is_post_action = isset($url_arr[url_var::POST_SUBMIT]);
+        $is_get_action = in_array($url_arr[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
+        $result = $is_post_action || $is_get_action;
+        return $result;
+    }
+
+    /**
      * decide whether a request may proceed with respect to the anti-csrf session token
-     * view.php triggers a state change (url_to_action) only for a form submit (the post submit
-     * marker) or a get action mask, so every form submit - a crud change but also a login, signup,
-     * import or paste - must carry the session token that the form emits as a hidden field; without
-     * it an attacker could csrf a victim into an action, so any submit with a missing or wrong token
-     * is rejected (fail closed). a plain get navigation carries no submit marker and needs no token;
-     * a non-submit that still sends a token is rejected only when the sent token does not match
+     * every request that triggers an action (see request_triggers_action) - a crud change, a login,
+     * signup, import or paste submit, but also a get action mask like logout or error_update - must
+     * carry the session token that the form emits as a hidden field or the action link appends as a
+     * url param; without it an attacker could csrf a victim into an action, so a missing or wrong
+     * token is rejected (fail closed). samesite=lax still sends the cookie on a top-level cross-site
+     * get, so the get actions need the token too. a plain get navigation triggers no action and needs
+     * no token; a non-action request that still sends a token is rejected only when it does not match
      *
      * @param array $url_arr the parameters given with the url for the request
      * @param string $session_token the anti-csrf token stored in the current session
@@ -376,84 +395,12 @@ class frontend
     static function request_token_valid(array $url_arr, string $session_token): bool
     {
         $sent_token = $url_arr[url_var::SESSION_TOKEN] ?? '';
-        // the post submit marker is present exactly when the request will trigger an action, so it
-        // is the fail-closed trigger for the token check - not the (narrower) crud mask set
-        $token_required = isset($url_arr[url_var::POST_SUBMIT]);
+        $token_required = self::request_triggers_action($url_arr);
         $result = true;
         if ($token_required or $sent_token != '') {
             $result = $session_token != '' && hash_equals($session_token, $sent_token);
         }
         return $result;
-    }
-
-    /**
-     * true if the current request reaches this pod over https, directly or via a tls terminating
-     * proxy; $_SERVER is read here because this is the request bootstrap, like server_guard
-     * @return bool true if the request scheme is https
-     */
-    private static function request_is_https(): bool
-    {
-        $https_flag = $_SERVER['HTTPS'] ?? '';
-        $result = ($https_flag !== '' && $https_flag !== 'off')
-            || ($_SERVER['SERVER_PORT'] ?? '') === '443'
-            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
-        return $result;
-    }
-
-    /**
-     * true if the given deployment environment must serve every request over https: the prod and
-     * test pods enforce tls, the dev pod stays on plain http so the local docker setup keeps working
-     * @param string $env the deployment level from the environment file (ENV_PROD, ENV_UA or ENV_DEV)
-     * @return bool true for the prod and test environment, false for dev or an unknown value
-     */
-    static function tls_required(string $env): bool
-    {
-        $result = $env === ENV_PROD || $env === ENV_UA;
-        return $result;
-    }
-
-    /**
-     * in the prod and test environment redirect a plain-http request to the same url over https so
-     * the session cookie is never sent in the clear; the dev environment is intentionally left on
-     * plain http so the local docker setup keeps working. must run before session_start (so no
-     * cookie is sent yet) and before harden_session so the upgrade happens on the first hop.
-     * $_SERVER is read here because this is the request bootstrap, like harden_session
-     * @return void
-     */
-    private static function enforce_tls(): void
-    {
-        $env = getenv(ENVIRONMENT) ?: '';
-        if (self::tls_required($env) && !self::request_is_https() && !headers_sent()) {
-            $host = $_SERVER['HTTP_HOST'] ?? '';
-            $uri = $_SERVER['REQUEST_URI'] ?? '';
-            header('Location: https://' . $host . $uri, true, 301);
-            exit;
-        }
-    }
-
-    /**
-     * harden the session cookie before the session is started: the cookie is set http-only (not
-     * readable by javascript, so an xss cannot steal it), secure when the request uses tls (not
-     * sent over plain http, so it cannot be sniffed) and same-site lax (not sent on a cross-site
-     * request, a second layer against csrf); use_strict_mode rejects a planted id, and on a tls
-     * request the hsts header pins the browser to https so a later downgrade is refused.
-     * $_SERVER is read here because this is the request/session bootstrap - the same place
-     * server_guard reads the remote address - not deep in the business logic
-     */
-    private static function harden_session(): void
-    {
-        $is_https = self::request_is_https();
-        // must be set before session_start so the flags apply to the issued cookie
-        ini_set('session.use_strict_mode', '1');
-        session_set_cookie_params([
-            'httponly' => true,
-            'secure' => $is_https,
-            'samesite' => 'Lax',
-        ]);
-        // pin future requests to https for a year (only meaningful, and only sent, over tls)
-        if ($is_https && !headers_sent()) {
-            header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-        }
     }
 
     /**
@@ -575,8 +522,8 @@ class frontend
         // resume session (based on cookies)
         // TODO review session start and end calls
         // enforce tls (prod/test) then harden the session cookie before the session starts
-        self::enforce_tls();
-        self::harden_session();
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -1080,10 +1027,26 @@ class frontend
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
-                $result = $cac_page->html_by_url($url_key);
+                $cached_html = $cac_page->html_by_url($url_key);
+                if ($cached_html !== null) {
+                    // fill in the reading user's own anti-csrf token so the shared page does not
+                    // carry the token of whoever first rendered and cached it (see request_token_valid)
+                    $result = db_cache_page::restore_session_token($cached_html, self::session_token());
+                }
             }
         }
         return $result;
+    }
+
+    /**
+     * the anti-csrf token of the current session, read from the session here (the request/session
+     * boundary, like html_base::form_session_token) so a cached html page can be personalised with
+     * the reading user's token instead of the token of whoever first rendered and cached the page
+     * @return string the current session token or '' if none is set yet
+     */
+    private static function session_token(): string
+    {
+        return $_SESSION[url_var::SESSION_TOKEN] ?? '';
     }
 
     /**
@@ -1120,11 +1083,15 @@ class frontend
         if (!$is_action) {
             $url_key = $this->url_cache_key($url_array);
         }
-        // get the last cached html page for the url
+        // get the last cached html page for the url and fill in the reading user's own anti-csrf
+        // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
         $cac_page = new db_cache_page();
         $cached_html = null;
         if ($url_key != '') {
             $cached_html = $cac_page->html_by_url($url_key);
+            if ($cached_html !== null) {
+                $cached_html = db_cache_page::restore_session_token($cached_html, self::session_token());
+            }
         }
         // route the request based on the user sandbox usage and the cache state
         if ($url_key == '') {
@@ -1163,10 +1130,16 @@ class frontend
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
-        // a request with more than the view, object and language is not cached
+        // a request with more than the view, object and language is not cached; the anti-csrf token
+        // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
+        // never part of the rendered html), and a process step of 0 (no action started) does not
+        // change a view-only page, so all three are allowed without preventing the cache and are not
+        // part of the cache key - so e.g. ?m=2&debug=5 takes the same cached path as ?m=2
         $is_view_only = true;
-        foreach (array_keys($url_array) as $url_key) {
-            if (!in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE])) {
+        foreach ($url_array as $url_key => $url_val) {
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN, url_var::DEBUG]);
+            $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
+            if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;
             }
         }
@@ -1209,6 +1182,9 @@ class frontend
         user_backend  $usr
     ): void
     {
+        // store the page with the session token replaced by a placeholder so the shared cache does
+        // not carry this session's anti-csrf token to another session (see restore_session_token)
+        $html = db_cache_page::strip_session_token($html, self::session_token());
         $save_msg = new backend_user_message(user_backend::system());
         $cac_page->save_html($url_key, $html, $save_msg);
         if (!$save_msg->is_ok()) {

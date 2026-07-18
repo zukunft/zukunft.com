@@ -45,6 +45,7 @@ the object structure is:
 │   └── value_ts_data - for a single time series value data entry
 ├── id_list - a base object for a list of database IDs
 ├── object_mapper - $map - a library class to collect the backend object mappings
+├── server_guard - enforce the tls, session and file based IP / user whitelist guards
 ├── system_object - $sys - a header object for the system data cache and execution time tracking
 ├── type_lists - helper class to combine all preloaded types in one class for the API
 ├── convert_wikipedia_table - convert a wikipedia table to a
@@ -419,7 +420,6 @@ the object structure is:
 ├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
-├── server_guardUi - enforce the file based IP / user whitelist
 ├── back_traceUi - list of links that the user has called in the past
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── type_listUi

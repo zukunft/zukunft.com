@@ -115,6 +115,35 @@ class db_cache_tests
         $cac_page = $t_db_cache->db_cache_page();
         $t->assert_api($cac_page);
 
+
+        $t->subheader($ts . 'session token swap');
+
+        // a cached page must not carry the rendering session's anti-csrf token to another session:
+        // on save the token is replaced by a placeholder, on read the reading user's token is filled
+        // in - covering both the crud form hidden field and the logout / error_update link href
+        $token = 'aaaa1111';
+        $page =
+            '<a href="view.php?m=64&token=' . $token . '">logout</a>'
+            . '<input name="token" value="' . $token . '">';
+        $stored = db_cache_page::strip_session_token($page, $token);
+        $test_name = 'the session token is removed from the stored page';
+        $t->assert_false($test_name, str_contains($stored, $token));
+        $test_name = 'the stored page keeps the token placeholder for both the link and the form';
+        $t->assert($test_name, substr_count($stored, db_cache_page::SESSION_TOKEN_PLACEHOLDER), 2);
+
+        $other = 'bbbb2222';
+        $served = db_cache_page::restore_session_token($stored, $other);
+        $test_name = 'the reading session token is filled in on read';
+        $t->assert($test_name, $served,
+            '<a href="view.php?m=64&token=' . $other . '">logout</a>'
+            . '<input name="token" value="' . $other . '">');
+        $test_name = 'the rendering session token is not served to another session';
+        $t->assert_false($test_name, str_contains($served, $token));
+
+        // an empty session token must not corrupt the page (str_replace of '' would be destructive)
+        $test_name = 'an empty token leaves the page unchanged on save';
+        $t->assert($test_name, db_cache_page::strip_session_token($page, ''), $page);
+
     }
 
 }

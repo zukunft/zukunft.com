@@ -4,7 +4,27 @@
 
 ## high prio
 
+see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page
+
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
+
+### security before go live
+
+findings of the security check on 2026-07-17, ordered by exploitability.
+
+fix the docker deployment exposure: docker-compose.yaml bind-mounts the whole repo into the docroot (so .env with the real db password, .git and the /src tree all live inside the web root) and docker/apache-config.conf sets 'Options Indexes' with 'AllowOverride All', so only the root .htaccess prevents listing and download. also adminer is published on :8081 reachable with the db login whose compose default is zukunft/zukunft. mount .env one level above the docroot (like the debian install), set 'Options -Indexes' in the base vhost, bind adminer to 127.0.0.1 and drop it from any shared/prod compose, and never default the db password
+
+close the allow-by-default file exposure in .htaccess: composer.json / composer.lock, the stale package.xml, and every *.json / *.csv / *.ini under src/main/resources and cache/ are web-fetchable because only .sh/.sql/.yaml/.yml/.md/.log and dotfiles are blocked. todays files hold no secret but the model is fragile - a future secret dropped as .json/.ini would be silently served. switch to an allow-list (serve only the image and style extensions) or move src/main/resources and cache out of the docroot; at minimum deny composer.json/lock and .xml and delete package.xml
+
+gate raising the protection level by privilege: sandbox::check_protection_change (cfg/sandbox/sandbox.php around line 1345) only refuses a protection REDUCTION, so a normal user can set admin / full protection on their own objects via the mapped protection_id (sandbox::api_mapper around line 408), and on a new object (post, no db_obj) there is no check at all - a user can self-lock objects so only an admin can touch them. also gate the target protection level by requester privilege (only admin / system may assign admin / full) for both the increase and the new-object case
+
+escape the href in html_base::ref (web/html/html_base.php around line 494): ref() escapes the title but emits href="' . $url . '"' and the link text raw. internal callers pass safe int-built urls today, but any caller passing a user-supplied source / reference url yields attribute-context injection or a javascript: uri. htmlspecialchars($url, ENT_QUOTES) on the href, whitelist the scheme, and escape the link text unless the caller guarantees it
+
+throttle the sys_log write amplification (dos): text_log_functions.php::log_msg inserts a sys_log row per distinct error and the dedup at around line 415 is per-request only, so a flood of distinct malformed requests grows sys_log unbounded and turns each request into one or two db writes. cap or rate-limit the sys_log inserts per time window (part of the planned rate limiter)
+
+pin the sudoers command and tidy the setup gate (defense in depth): the rule created in script/install.sh (around line 303) is 'www-data ALL=(root) NOPASSWD: $ADMIN_SCRIPT' with no argument restriction, so any code-exec as www-data escalates to root through server_admin.sh; pin the exact allowed sub-commands (update-program, upgrade-database). also http/setup.php is gated only by getenv('ZUKUNFT_ALLOW_SETUP')=='1' which is fail-closed today, but install.sh never blanks it and the code comment wrongly claims it is unset after install - add it to the post-setup blanking and fix the comment
+
+reduce the signup username enumeration: action_signup (web/frontend.php around line 1153) returns a distinct SIGNUP_ERR_NAME_EXISTS when the name is taken, which lets an attacker probe which usernames exist - inconsistent with the neutral reset flow. keep the hint only if the ux needs it, otherwise use a generic message and/or rate limit; at least accept it as a conscious trade-off
 
 ### security improvements
 
@@ -33,7 +53,7 @@ create a job that checks for some users (the number of users to check should be 
 
 Fill the gap: Compare with the actual spec for your existing "auto user and IP whitelist fallback" mechanism, so prompt 7's fallback description is a placeholder — you'll want to fill that in from your existing plan before comparing.
 
-
+add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
 
 
 ### prepare denial-of-service protection

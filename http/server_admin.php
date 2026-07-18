@@ -53,7 +53,6 @@ const STATE_FILE = ADMIN_DIR . 'state.json';
 const USER_WL_FILE = ADMIN_DIR . 'user_whitelist.txt';
 const IP_WL_FILE = ADMIN_DIR . 'ip_whitelist.txt';
 const ADMIN_SCRIPT = ROOT . 'script' . DIRECTORY_SEPARATOR . 'server_admin.sh';
-const ENV_FILE = ROOT . '.env';
 // the program version is part of the release, so it is not in .env but in the version file
 const VERSION_FILE = ROOT . 'version.txt';
 
@@ -341,7 +340,14 @@ function pod_subtitle(string $pod_name, string $pod_url): string
 session_name('zu_srv_admin');
 session_start();
 
-$env = read_env(ENV_FILE);
+// prefer the .env copy one level above the docroot (out of the web root) so the secrets cannot be
+// served even if the web server ever ignores the .htaccess rules; fall back to the docroot copy for
+// the dev / docker setup that keeps .env in the repo root - same resolution as cfg/const/env.php
+$env_file = ROOT . '..' . DIRECTORY_SEPARATOR . '.env';
+if (!is_readable($env_file)) {
+    $env_file = ROOT . '.env';
+}
+$env = read_env($env_file);
 // the program version is not in .env but in the version file, because it is part of the release
 $version = read_env(VERSION_FILE);
 $admins = read_admins($env);

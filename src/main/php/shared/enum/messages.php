@@ -1858,6 +1858,8 @@ enum messages: string
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
     // shown if a user without login tries to change data, but the pod does not permit that
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
+    // shown if an api write is rejected because it comes from a different origin (suspected csrf)
+    case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';

@@ -141,12 +141,16 @@ if ($db_con->is_open()) {
             }
 
             // execute the user request and POST-Redirect-GET to prevent re-submission on reload
+            // the same predicate gates the anti-csrf token check in frontend::request_token_valid, so an
+            // action is never dispatched here without a token having been required at session start
             $sys->times->switch(system_time_type::URL_TO_ACTION);
             $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
             $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
             $is_action = ($is_post_action or $is_get_action);
             if ($is_action) {
-                $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
+                if (frontend::request_triggers_action($url_array)) {
+                    $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
+                }
             }
 
             // show the result to the user
