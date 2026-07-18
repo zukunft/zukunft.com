@@ -177,7 +177,7 @@ class ref_list extends type_list
         $usr = $sys?->usr_req;
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'ref list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $ref = new ref($usr);
@@ -218,7 +218,7 @@ class ref_list extends type_list
         $sc->add_where(ref::FLD_FROM, $phr_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'ref list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $ref_obj = new ref($this->get_user());

@@ -130,7 +130,7 @@ class api_message
             // read as the virtual system user, because a missing site name entry
             // is created with the default value, which is a system action
             $sys_msg = new user_message(user::system());
-            $site_name = $cfg->get_db(config::SITE_NAME, $db_con, $sys_msg);
+            $site_name = $cfg->get_db(config::SITE_NAME, $db_con, $sys_msg, 'get pod name');
             // TODO remove this fallback case
             if ($site_name == '') {
                 $site_name = POD_NAME;

@@ -534,7 +534,7 @@ class type_list extends ListOfIdNamedCodeObjects
     {
         $this->set_lst([]);
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, library::class_to_name($class) . ' type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];

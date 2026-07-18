@@ -125,7 +125,7 @@ class figure_list extends sandbox_list
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class);
         } else {
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'figure list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {

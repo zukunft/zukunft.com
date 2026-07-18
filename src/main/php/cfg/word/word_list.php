@@ -440,7 +440,7 @@ class word_list extends sandbox_list_named
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'word list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $wrd = new word($this->get_user());
@@ -474,7 +474,7 @@ class word_list extends sandbox_list_named
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
             $db_con->usr_id = $this->get_user()->id;
-            $db_wrd_lst = $db_con->get($qp);
+            $db_wrd_lst = $db_con->get($qp, 'word list');
             if ($db_wrd_lst) {
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {

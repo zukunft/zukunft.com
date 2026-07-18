@@ -63,6 +63,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -79,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
 class db_cache_page extends db_object_seq_id
@@ -195,6 +197,8 @@ class db_cache_page extends db_object_seq_id
      */
     function html_by_url(string $url): ?string
     {
+        // show the cache read from '&debug=6' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
+        log_debug('read page from cache', url_var::DEBUG_LEVEL_DB_READ);
         $result = null;
         $id = $this->load_by_url($url);
         if ($id > 0) {

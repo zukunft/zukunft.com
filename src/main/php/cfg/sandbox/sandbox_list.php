@@ -287,7 +287,7 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
-            $db_lst = $db_con->get($qp);
+            $db_lst = $db_con->get($qp, 'sandbox list');
             $result = $this->rows_mapper($db_lst);
         }
         return $result;
@@ -318,7 +318,7 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
-            $db_lst = $db_con->get($qp);
+            $db_lst = $db_con->get($qp, 'sandbox list');
             $result = $this->rows_mapper($db_lst);
         }
         return $usr_msg->is_ok();

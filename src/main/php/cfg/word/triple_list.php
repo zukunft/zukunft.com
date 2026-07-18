@@ -231,7 +231,7 @@ class triple_list extends sandbox_list_named
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $this->reset();
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'triple list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $db_trp = new triple($this->get_user());

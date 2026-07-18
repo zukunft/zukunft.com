@@ -253,12 +253,14 @@ class config extends db_object_seq_id
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param sql_db $db_con the open database connection that should be used
      * @param user_message $msg with the user who has requested the value, because a missing entry is created with the default value
+     * @param string $debug_txt a readable description of this read shown at &debug=6; defaults to 'get config <code_id>'
      * @return string|null the configuration value that is valid at the moment
      */
     function get_db(
-        string $code_id,
-        sql_db $db_con,
-        user_message $msg
+        string       $code_id,
+        sql_db       $db_con,
+        user_message $msg,
+        string       $debug_txt = ''
     ): ?string
     {
         global $debug;
@@ -268,7 +270,8 @@ class config extends db_object_seq_id
 
         // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
         $qp = $this->get_sql($db_con, $code_id);
-        $db_row = $db_con->get1($qp);
+        // trace the read at '&debug=6' with a readable text instead of the raw sql
+        $db_row = $db_con->get1($qp, $msg, $debug_txt != '' ? $debug_txt : 'get config ' . $code_id);
         if ($db_row == null) {
             // TODO Prio 1 review
             // automatically create the config entry
@@ -296,14 +299,17 @@ class config extends db_object_seq_id
      * @param sql_db $db_con the open database connection that should be used
      * @param user_message $msg with the user who has requested the change, e.g. the virtual system user for the database version check
      * @param string $description text that explains the config value to the user or admin
+     * @param array $sql_types the sql types that should be used for the write e.g. to suppress the change log
+     * @param string $debug_txt a readable description of this read shown at &debug=6; defaults to 'check config <code_id>'
      */
     function set(
-        string $code_id,
-        string $value,
-        sql_db $db_con,
+        string       $code_id,
+        string       $value,
+        sql_db       $db_con,
         user_message $msg,
-        string $description = '',
-        array $sql_types = []
+        string       $description = '',
+        array        $sql_types = [],
+        string       $debug_txt = ''
     ): bool
     {
         global $debug;
@@ -328,7 +334,8 @@ class config extends db_object_seq_id
 
         // check the database entry
         $qp = $this->get_sql($db_con, $code_id);
-        $db_row = $db_con->get1($qp);
+        // trace the read at '&debug=6' with a readable text instead of the raw sql
+        $db_row = $db_con->get1($qp, $msg, $debug_txt != '' ? $debug_txt : 'check config ' . $code_id);
 
         if ($db_row == null) {
             // automatically add the config entry
@@ -360,20 +367,23 @@ class config extends db_object_seq_id
      * @param sql_db $db_con the open database connection that should be used
      * @param user_message $msg with the user who has requested the check e.g. the virtual system user on the program start
      * @param string $description text that explains the config value to the user or admin
+     * @param string $debug_txt the text that should be shown in the debug message
+     * @return bool false if the config is not fine
      */
     function check_cfg(
-        string $code_id,
-        string $target_value,
-        sql_db $db_con,
+        string       $code_id,
+        string       $target_value,
+        sql_db       $db_con,
         user_message $msg,
-        string $description = ''
+        string       $description = '',
+        string       $debug_txt = ''
     ): bool
     {
         $result = false;
 
-        $cfg_value = $this->get_db($code_id, $db_con, $msg);
+        $cfg_value = $this->get_db($code_id, $db_con, $msg, $debug_txt);
         if ($cfg_value != $target_value) {
-            $result = $this->set($code_id, $target_value, $db_con, $msg, $description);
+            $result = $this->set($code_id, $target_value, $db_con, $msg, $description, [], $debug_txt);
         }
         return $result;
     }

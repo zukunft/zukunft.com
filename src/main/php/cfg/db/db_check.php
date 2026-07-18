@@ -130,10 +130,11 @@ class db_check
         }
 
         $cfg = new config();
-        $cfg->check_cfg(config::SITE_NAME, POD_NAME, $db_con, $msg);
+        $cfg->check_cfg(config::SITE_NAME, POD_NAME,
+            $db_con, $msg, '', 'check pod name in config');
 
         // get the db version and start the upgrade process if needed
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version == '') {
             $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con, $msg);
         } elseif ($db_version != def::PRG_VERSION) {
@@ -148,7 +149,7 @@ class db_check
                 $msg->add_message_text($diff_txt);
             }
         } else {
-            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg);
+            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg, 'get last consistency check');
             // run a database consistency check once every 24h if the database is the least busy
             $last_check = strtotime($last_consistency_check);
             $check_limit = strtotime("now -1 day");
@@ -457,7 +458,7 @@ class db_check
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
@@ -491,7 +492,7 @@ class db_check
     {
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }

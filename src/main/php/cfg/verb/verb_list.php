@@ -193,7 +193,7 @@ class verb_list extends type_list
             if ($qp->name != '') {
                 $vrb_lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
                 $vrb_id_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
-                $db_vrb_lst = $db_con->get($qp);
+                $db_vrb_lst = $db_con->get($qp, 'verb list');
                 if ($db_vrb_lst != null) {
                     foreach ($db_vrb_lst as $db_vrb) {
                         if (!in_array($db_vrb[verb_db::FLD_ID], $vrb_id_lst)) {
@@ -226,7 +226,7 @@ class verb_list extends type_list
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'verb list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();

@@ -859,7 +859,7 @@ class phrase_list extends sandbox_list_named
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
             $db_con->usr_id = $this->get_user()->id;
-            $db_phr_lst = $db_con->get($qp);
+            $db_phr_lst = $db_con->get($qp, 'phrase list');
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
