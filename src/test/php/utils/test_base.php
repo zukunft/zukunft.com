@@ -539,7 +539,21 @@ class test_base
             $msg .= $this->duration_text($since_start);
             $log_txt->echo_log($msg);
         }
-        $this->section_start_time = $new_start_time;
+        $this->section_start($new_start_time);
+    }
+
+    /**
+     * start a new measurement section: the section timer and the measured times per category are
+     * restarted together, so that a timeout report shows only the times of the reported section
+     *
+     * @param float $start_time the start time of the new section
+     * @return void
+     */
+    private function section_start(float $start_time): void
+    {
+        global $sys;
+        $this->section_start_time = $start_time;
+        $sys->times->reset_section();
     }
 
     private function time_msg(
@@ -4617,7 +4631,7 @@ class test_base
         flush();
 
         $this->total_tests++;
-        $this->section_start_time = $new_start_time;
+        $this->section_start($new_start_time);
 
         return $test_result;
     }

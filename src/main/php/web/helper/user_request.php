@@ -66,6 +66,8 @@ class user_request
     public data_object $dto;
     // false to skip the database execution e.g. for unit testing
     public bool $do_it;
+    // true to render a reproducible page e.g. by using just one phrase instead of a backend call
+    public bool $test_mode;
 
 
     /*
@@ -78,13 +80,15 @@ class user_request
      * @param user_message $usr_msg the message buffer enriched with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading
      * @param bool $do_it false to skip the database execution e.g. for unit testing
+     * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      */
     function __construct(
         user_backend $usr_backend,
         user_ui      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object(),
-        bool         $do_it = true
+        bool         $do_it = true,
+        bool         $test_mode = false
     )
     {
         $this->usr_backend = $usr_backend;
@@ -92,6 +96,7 @@ class user_request
         $this->usr_msg = $usr_msg;
         $this->dto = $dto;
         $this->do_it = $do_it;
+        $this->test_mode = $test_mode;
     }
 
 }

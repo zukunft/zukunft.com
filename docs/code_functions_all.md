@@ -2704,6 +2704,7 @@
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
     \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/system_time_list.php
+    \-- reset_section - section for function reset_section not yet defined that it should be interface in /system/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
 \-- user_list
     \-- lst - section for function lst not yet defined that it should be set and get in /user/user_list.php
@@ -3411,7 +3412,7 @@
         \-- sandbox_value_list - add one value to the value list, but only if it is not yet part of the list
         \-- ip_range_list - add an ip range to the list
         \-- job_list - add another job to the list, but only if needed
-        \-- system_time_list - @return string description of the execution times by category of the last section
+        \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
     \-- 10
         \-- phrase_list - diff as a function, because the array_diff does not seem to work for an object list
     \-- remove
@@ -4596,6 +4597,8 @@
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section
+    \-- reset_section
+        \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - 

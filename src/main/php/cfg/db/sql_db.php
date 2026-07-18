@@ -850,7 +850,9 @@ class sql_db
      */
     function open(string $db_name = SQL_DB_NAME): bool
     {
-        log_debug();
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('open database ' . $db_name, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
@@ -1063,7 +1065,8 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-        log_debug("done");
+        // the counterpart of the open message at url_var::DEBUG_LEVEL_MAIN_STEP
+        log_debug('database closed', url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**
@@ -2986,7 +2989,7 @@ class sql_db
      * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param string $sql_call_name
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @param string $debug_txt a short description of this statement shown at its named db level (&debug=5 for writes, &debug=6 for reads); empty means the statement is not traced
+     * @param string $debug_txt a short description of this statement shown at its named db level (&debug=6 for writes, &debug=7 for reads); empty means the statement is not traced
      * @return \PgSql\Result|mysqli_result|null the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
@@ -3007,8 +3010,8 @@ class sql_db
         global $sys;
         global $debug;
 
-        // trace the caller description at its named db level, so '&debug=5' shows all writes and
-        // '&debug=6' all reads; the raw sql itself is only shown in the depth range from '&debug=10'
+        // trace the caller description at its named db level, so '&debug=6' shows all writes and
+        // '&debug=7' all reads; the raw sql itself is only shown in the depth range from '&debug=11'
         // upward (above the last named level), so the named levels stay readable
         // TODO Prio 2 create a library function named sql_is_select() with unit tests and use it here
         if ($debug_txt != '') {
@@ -3375,7 +3378,7 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param bool $fetch_all if true, all database rows are returned at once
-     * @param string $debug_txt a short description of this read shown at &debug=6 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false with one or all database records or false if something went wrong
      */
     private function fetch(
@@ -3393,7 +3396,7 @@ class sql_db
         $sys->times->switch(system_time_type::DB_READ);
 
         if ($sql <> "") {
-            // the read is traced by exe at url_var::DEBUG_LEVEL_DB_READ (from '&debug=6' upward)
+            // the read is traced by exe at url_var::DEBUG_LEVEL_DB_READ (from '&debug=7' upward)
             if ($this->db_type == sql_db::POSTGRES) {
                 if ($this->postgres_link == null) {
                     log_warning('Database connection lost', 'sql_db->fetch');
@@ -3458,7 +3461,7 @@ class sql_db
      * @param user_message $usr_msg to enrich with the messages that should be shown to the user
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values used for the precompiled SQL statement
-     * @param string $debug_txt a short description of this read shown at &debug=6 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      */
     private function fetch_first(
         string       $sql,
@@ -3511,7 +3514,7 @@ class sql_db
      * returns all values of an SQL query in an array
      *
      * @param sql_par $qp the sql statement to get the db rows
-     * @param string $debug_txt a short description of this read shown at &debug=6 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false the database rows or an empty array
      */
     function get(sql_par $qp, string $debug_txt = ''): array|false
@@ -4707,7 +4710,7 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=5' upward) using this description
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name,
@@ -4765,7 +4768,7 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=5' upward) using this description
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $err_msg = 'Update of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name,
@@ -4804,7 +4807,7 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=5' upward) using this description
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {

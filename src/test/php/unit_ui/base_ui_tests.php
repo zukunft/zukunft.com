@@ -151,10 +151,33 @@ class base_ui_tests
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
         // the debug level only controls out-of-band debug output, not the cached html, so it is
-        // ignored and ?m=2&debug=5 takes the same cached path as ?m=2 (same cache key)
+        // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
         $test_name = 'the debug level is ignored for the cache key';
-        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::DEBUG => 5];
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::DEBUG => url_var::DEBUG_LEVEL_DB_READ];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // 'nc=1' switches the html page cache off, so the page is rendered live and the
+        // result is not written to the cache (e.g. view.php?m=1&id=2&nc=1)
+        $test_name = 'nc=1 bypasses the cache read and write';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::NO_CACHE => url_var::NO_CACHE_ON];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // any other value keeps the cache on, so the request hits the same cache key as the bare url
+        $test_name = 'nc=0 keeps the cache on';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::NO_CACHE => '0'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the human-readable 'nocache' is mapped to the short 'nc' before the cache key is created,
+        // so view.php?mask_id=word&id=2&nocache=1 bypasses the cache just like the short url
+        $test_name = 'nocache is mapped to the short nc';
+        $url_map = new url_mapper();
+        $url_msg = new user_message();
+        $url_array = [url_var::MASK_HUMAN => views::WORD, url_var::ID => 2,
+            url_var::NO_CACHE_HUMAN => url_var::NO_CACHE_ON];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
+        $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
 
         $t->subheader($ts . 'tab box');
 

@@ -197,7 +197,7 @@ class db_cache_page extends db_object_seq_id
      */
     function html_by_url(string $url): ?string
     {
-        // show the cache read from '&debug=6' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
+        // show the cache read from '&debug=7' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
         log_debug('read page from cache', url_var::DEBUG_LEVEL_DB_READ);
         $result = null;
         $id = $this->load_by_url($url);

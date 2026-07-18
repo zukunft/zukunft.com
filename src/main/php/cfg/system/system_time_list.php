@@ -151,8 +151,19 @@ class system_time_list
         if ($unmeasured_relevant) {
             $time_report .= 'unmeasured ' . round($expected - $total, 4);
         }
-        $this->section_lst = [];
         return $time_report;
+    }
+
+    /**
+     * start a new measurement section, so that the section report shows only the times of the
+     * next section; called whenever the caller restarts its section timer, because a report that
+     * still contains the times of the previous sections would show more time than the section took
+     *
+     * @return void
+     */
+    function reset_section(): void
+    {
+        $this->section_lst = [];
     }
 
 

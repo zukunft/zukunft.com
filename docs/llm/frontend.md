@@ -124,6 +124,37 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+## `frontend.php` boots the html frontend, `application.php` the api backend
+
+The target is a frontend and a backend that are complete and independent of each
+other and talk only over the API (see `architecture.md`). The request bootstrap is
+therefore split in two, and each side uses only its own:
+
+- `web/frontend.php` — the **pure html php frontend**: `http/view.php`,
+  `http/about.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+- `cfg/application.php` — the **backend**, i.e. the api calls: the `api/**`
+  scripts call `application::start_api()` / `start_api_core()` / `end_api()`.
+
+Never call `application::start()` from a `web/` entry point, and never call
+`frontend::start()` from an api script.
+
+Because both bootstrap a request they **overlap today** — session start and
+hardening, TLS enforcement, the session token, opening the database and the
+timing switches exist in both files. That overlap is the cost of the unfinished
+split (it disappears once the frontend stops opening a database), not a signal to
+merge the two.
+
+Watch out when changing the request lifecycle: the two classes have same-named
+methods with **different signatures** —
+
+```php
+application::start(string $code_name, bool $echo_env = false, bool $restart = false)
+frontend::start(string $code_name, Message $msg = new Message(), array $url_arr = [])
+```
+
+so a new guard, debug message or timing switch added to one silently misses the
+other. Until the split is done, apply such a change to **both**.
+
 ## Paired HTML tags go through an `html_base` function that uses a tag const
 
 Any element that has an opening **and** closing tag (`<form>…</form>`,

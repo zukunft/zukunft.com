@@ -86,12 +86,12 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, word_names::MATH);
 
         $test_name = 'add request via url without name should return a missing error message';
@@ -99,7 +99,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_ADD_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         // TODO Prio 1 activate
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
@@ -109,12 +109,12 @@ class word_url_tests extends url_test_base
         // the user presses the save button of the add form, which adds the named submit marker;
         // without the marker the same url just renders the add form with the given values
         $url_arr[url_var::POST_SUBMIT] = '';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD));
 
         // a create or delete request is executed by url_to_action (not url_to_html, which only
         // renders), so use the combined execute and render call and check the database result
-        $req = new user_request($t->usr1, $usr_ui, $usr_msg, $ui->dto, true);
+        $req = new user_request($t->usr1, $usr_ui, $usr_msg, $ui->dto, true, true);
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
@@ -143,7 +143,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
-        $form = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $form = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"');
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::DESCRIPTION . '"');
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::PLURAL . '"');
@@ -173,7 +173,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::VIEW] = '0';
         $url_arr[url_var::SHARE] = '1';
         $url_arr[url_var::PROTECTION] = '1';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $save_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $save_msg, $ui->dto, true);
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_MAP_MISSING));
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_KEY_MISSING));
         $t->assert_text_contains($test_name, $result, word_names::MATH);
@@ -186,7 +186,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK_POD] = views::WORD_EDIT;
         $url_arr[url_var::ID] = word_names::MATH_ID;
-        $ui->url_to_html($url_arr, $usr_ui, $err_msg, $ui->dto);
+        $ui->url_to_html($url_arr, $usr_ui, $err_msg, $ui->dto, true);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_KEY_MISSING));
 
 
@@ -208,7 +208,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false);
+        $req = new user_request($usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -256,7 +256,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, 'def');
 
 

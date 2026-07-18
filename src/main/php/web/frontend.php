@@ -296,6 +296,9 @@ class frontend
     {
         global $sys;
         $sys->script = $code_name;
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // TODO Prio 2 check if cookies are actually needed
@@ -565,7 +568,9 @@ class frontend
     {
         global $sys;
         if ($start_time != 0) {
-            $sys->times->add($start_time - $this->start_time, 'script loading');
+            // the time from the first line of the calling script until this frontend object has been
+            // created, i.e. the includes and the const setup that no other section measures
+            $sys->times->add($this->start_time - $start_time, system_time_type::SCRIPT_LOADING);
             $duration = microtime(true) - $start_time;
         } else {
             $duration = microtime(true) - $this->start_time;
@@ -578,8 +583,10 @@ class frontend
         // Free result test
         //mysqli_free_result($result);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
+
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         if (SYS_LOG_URL != '') {
             return $this->log_info('end ' . $this->code_name);
@@ -809,13 +816,15 @@ class frontend
      * @param user_ui|null $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
         user_ui|null      $usr,
         user_message $usr_msg,
-        data_object  $dto = new data_object()
+        data_object  $dto = new data_object(),
+        bool         $test_mode = false
     ): string
     {
         $lib = new library();
@@ -950,7 +959,7 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', false, $url_array);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
@@ -1134,14 +1143,22 @@ class frontend
         // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
         // never part of the rendered html), and a process step of 0 (no action started) does not
         // change a view-only page, so all three are allowed without preventing the cache and are not
-        // part of the cache key - so e.g. ?m=2&debug=5 takes the same cached path as ?m=2
+        // part of the cache key - so e.g. ?m=2&debug=6 takes the same cached path as ?m=2
+        // the same applies to the cache switch itself, which is checked below instead
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
-            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN, url_var::DEBUG]);
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+                url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;
             }
+        }
+        // 'nc=1' (or 'nocache=1' in the human-readable url) switches the cache off for this request:
+        // an empty cache key makes the caller render the page live and skip the cache write, so an
+        // admin can compare the live page with the cached one without emptying the cache table
+        if (($url_array[url_var::NO_CACHE] ?? '') == url_var::NO_CACHE_ON) {
+            $is_view_only = false;
         }
         // a request that shows a change or process step view is not cached
         if (in_array($mask_id, views::CHANGE_MASKS_IDS)) {
@@ -1233,8 +1250,18 @@ class frontend
         user_request $req
     ): string
     {
+        global $sys;
+
+        // measure the action and the rendering separately, so a slow request shows which of the two
+        // is slow; an interleaved db read or write still counts as db_read / db_write because its
+        // own switch() restores this section
+        $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
-        return $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto);
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $result = $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto, $req->test_mode);
+        // return to the default section for whatever the caller does next
+        $sys->times->switch(system_time_type::DEFAULT);
+        return $result;
     }
 
     function show_view(int $id): string

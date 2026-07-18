@@ -72,12 +72,12 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 /**
  * for internal functions debugging
  * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
- * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=5) or, for the deeper
+ * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=6) or, for the deeper
  * call-graph tracing, the depth level a caller wants to become visible at
  * TODO focus debug on time consuming function calls e.g. all database accesses
  *
  * @param string $msg_text debug information additional to the class and function
- * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=10, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=5 upward
+ * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=11, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=6 upward
  * @return string the final output text
  */
 function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
@@ -87,8 +87,8 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 
     // the second parameter is the minimum debug level at which the message is shown; without it the
     // message is a deep call-graph trace shown only above the last named level (so from
-    // &debug=10 upward, DEBUG_LEVEL_MAX_FIXED + 1), while a named level like DEBUG_LEVEL_DB_WRITE
-    // shows the message already from &debug=5 upward (the named levels are in url_var)
+    // &debug=11 upward, DEBUG_LEVEL_MAX_FIXED + 1), while a named level like DEBUG_LEVEL_DB_WRITE
+    // shows the message already from &debug=6 upward (the named levels are in url_var)
     $min_level = $debug_overwrite ?? (url_var::DEBUG_LEVEL_MAX_FIXED + 1);
 
     // extract the relevant part from backtrace

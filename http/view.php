@@ -161,8 +161,8 @@ if ($db_con->is_open()) {
         }
     }
 
-    // close the database
-    $app->end($db_con, false);
+    // close the database and measure the script loading time before the frontend has been created
+    $app->end($db_con, $start_time);
 } else {
     $web_txt .= 'database connection lost';
 }

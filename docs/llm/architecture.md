@@ -135,6 +135,36 @@ exactly the fatal break this contract is meant to prevent).
 Frontend `web/` objects consume these via `api_mapper()`. Import/export JSON uses
 names (never DB IDs) for portability between pods.
 
+**Frontend and backend are two independent apps**: the target architecture is a
+frontend and a backend that are complete and independent of each other, talking
+only over the API. The frontend renders pages and never reaches into the backend
+except through an api call; the backend answers api calls and knows nothing about
+html. Each must be deployable, startable and testable on its own — the frontend
+must be able to render against a *remote* backend pod, and the backend must be
+able to serve a different frontend (e.g. the planned JS app) without a change.
+
+This splits the request bootstrap in two, and the split is deliberate:
+
+| | `web/frontend.php` | `cfg/application.php` |
+|---|---|---|
+| serves | the pure html php frontend | the backend, i.e. the api calls |
+| entry points | `http/view.php`, `about.php`, `setup.php` | `api/**` scripts |
+| lifecycle | `frontend::start()` / `frontend::end()` | `application::start()` / `start_api()` / `end()` |
+
+Use `frontend.php` **only** from the html frontend and `application.php` **only**
+from the backend api. Because both bootstrap a request, they overlap today —
+session start and hardening, TLS enforcement, the session token, opening the
+database and the timing switches exist in both, and `frontend.php` still has the
+deprecated direct-DB bootstrap that the API is meant to replace. Treat that
+overlap as the cost of the not-yet-finished split, not as a reason to merge them:
+the duplication disappears when the frontend no longer opens a database at all.
+
+The practical trap: the two classes have **same-named methods with different
+signatures** (`start()` takes `(code_name, echo_env, restart)` in `application`
+but `(code_name, msg, url_arr)` in `frontend`). Anything added to one silently
+misses the other, so a change to the request lifecycle — a new guard, a debug
+message, a timing switch — must be applied to both until the split is complete.
+
 **Path constants**: All file paths are class constants in
 `src/main/php/cfg/const/paths.php` (backend) and
 `src/main/php/web/const/paths.php` (frontend). `ROOT_PATH` is set in

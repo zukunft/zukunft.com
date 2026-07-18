@@ -253,7 +253,7 @@ class config extends db_object_seq_id
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param sql_db $db_con the open database connection that should be used
      * @param user_message $msg with the user who has requested the value, because a missing entry is created with the default value
-     * @param string $debug_txt a readable description of this read shown at &debug=6; defaults to 'get config <code_id>'
+     * @param string $debug_txt a readable description of this read shown at &debug=7; defaults to 'get config <code_id>'
      * @return string|null the configuration value that is valid at the moment
      */
     function get_db(
@@ -270,7 +270,7 @@ class config extends db_object_seq_id
 
         // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
         $qp = $this->get_sql($db_con, $code_id);
-        // trace the read at '&debug=6' with a readable text instead of the raw sql
+        // trace the read at '&debug=7' with a readable text instead of the raw sql
         $db_row = $db_con->get1($qp, $msg, $debug_txt != '' ? $debug_txt : 'get config ' . $code_id);
         if ($db_row == null) {
             // TODO Prio 1 review
@@ -300,7 +300,7 @@ class config extends db_object_seq_id
      * @param user_message $msg with the user who has requested the change, e.g. the virtual system user for the database version check
      * @param string $description text that explains the config value to the user or admin
      * @param array $sql_types the sql types that should be used for the write e.g. to suppress the change log
-     * @param string $debug_txt a readable description of this read shown at &debug=6; defaults to 'check config <code_id>'
+     * @param string $debug_txt a readable description of this read shown at &debug=7; defaults to 'check config <code_id>'
      */
     function set(
         string       $code_id,
@@ -334,7 +334,7 @@ class config extends db_object_seq_id
 
         // check the database entry
         $qp = $this->get_sql($db_con, $code_id);
-        // trace the read at '&debug=6' with a readable text instead of the raw sql
+        // trace the read at '&debug=7' with a readable text instead of the raw sql
         $db_row = $db_con->get1($qp, $msg, $debug_txt != '' ? $debug_txt : 'check config ' . $code_id);
 
         if ($db_row == null) {
