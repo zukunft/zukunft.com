@@ -100,49 +100,65 @@ if ($db_con->is_open()) {
     // at minimum the IP address is used as the user id, so id() > 0 is always true for real requests
     if ($usr->id() > 0) {
 
-        // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
-        $usr->load_usr_data();
-
-        $usr_ui = new user_ui();
-        $usr_ui->set_from_json($usr->api_json(), $msg);
-        // store the requesting user on the message so the write path (e.g. sandbox::check_preserved)
-        // knows who is changing the data when the confirm button posts the change (see the TODO above)
-        $msg->usr = $usr_ui;
-
         $ui = new frontend('view');
-        $ui->load_cache();
 
-        // publish the loaded ui cache to the allowed global so renderers
-        // (e.g. phrase_list::category_subtitle) can read the verb type cache
-        $ui_sys = $ui->dto;
+        // fast path: serve an already cached view-only page before the heavy frontend setup
+        // so that a user without own data changes gets the page with only three database reads
+        // (the system config, the user incl. the uses_sandbox flag and this cached page)
+        $cached_page = $ui->cached_page_or_null($url_array, $usr);
+        if ($cached_page !== null) {
+            $web_txt .= $cached_page;
+        } else {
 
-        // load the user-specific frontend configuration onto the ui cache
-        // TODO Prio 1 load the config from cache if nothing has been changed
-        $ui_sys->cfg = new config();
-        $ui_sys->cfg->load($sys);
+            // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
+            $usr->load_usr_data();
 
-        // block an add, edit or del request of a user without login before any change is done
-        // if this pod does not permit the changes of an ip user
-        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
-        $mask_id = $url_array[url_var::MASK] ?? 0;
-        if (in_array($mask_id, views::CHANGE_MASKS_IDS) and $usr->is_blocked()) {
-            log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
-            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
-            $url_array = [url_var::MASK => views::START_ID];
+            $usr_ui = new user_ui();
+            $usr_ui->set_from_json($usr->api_json(), $msg);
+            // store the requesting user on the message so the write path (e.g. sandbox::check_preserved)
+            // knows who is changing the data when the confirm button posts the change (see the TODO above)
+            $msg->usr = $usr_ui;
+
+            $ui->load_cache();
+
+            // publish the loaded ui cache to the allowed global so renderers
+            // (e.g. phrase_list::category_subtitle) can read the verb type cache
+            $ui_sys = $ui->dto;
+
+            // load the user-specific frontend configuration onto the ui cache
+            // TODO Prio 1 load the config from cache if nothing has been changed
+            $ui_sys->cfg = new config();
+            $ui_sys->cfg->load($sys);
+
+            // block an add, edit or del request of a user without login before any change is done
+            // if this pod does not permit the changes of an ip user
+            // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+            $mask_id = $url_array[url_var::MASK] ?? 0;
+            if (in_array($mask_id, views::CHANGE_MASKS_IDS) and $usr->is_blocked()) {
+                log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
+                $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+                $url_array = [url_var::MASK => views::START_ID];
+            }
+
+            // execute the user request and POST-Redirect-GET to prevent re-submission on reload
+            // the same predicate gates the anti-csrf token check in frontend::request_token_valid, so an
+            // action is never dispatched here without a token having been required at session start
+            $sys->times->switch(system_time_type::URL_TO_ACTION);
+            $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
+            $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
+            $is_action = ($is_post_action or $is_get_action);
+            if ($is_action) {
+                if (frontend::request_triggers_action($url_array)) {
+                    $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
+                }
+            }
+
+            // show the result to the user
+            // and use the cached html pages for view-only requests to reduce the response time
+            $sys->times->switch(system_time_type::URL_TO_HTML);
+            $web_txt .= $ui->url_to_html_cached($url_array, $usr, $usr_ui, $msg, $is_action, $ui->dto);
+            $sys->times->switch(system_time_type::CLOSE);
         }
-
-        // execute the user request and POST-Redirect-GET to prevent re-submission on reload;
-        // the same predicate gates the anti-csrf token check in frontend::request_token_valid, so an
-        // action is never dispatched here without a token having been required at session start
-        $sys->times->switch(system_time_type::URL_TO_ACTION);
-        if (frontend::request_triggers_action($url_array)) {
-            $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
-        }
-
-        // show the result to the user
-        $sys->times->switch(system_time_type::URL_TO_HTML);
-        $web_txt .= $ui->url_to_html($url_array, $usr_ui, $msg, $ui->dto);
-        $sys->times->switch(system_time_type::CLOSE);
     }
 
     // close the database

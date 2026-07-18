@@ -23,3 +23,4 @@ job_type_id, type_name, description, code_id
 22, 'import source', 'import all references of a source', 'import_source'
 23, 'import reference', 'import a single references', 'import_ref'
 24, 'export', 'export data to an api or file', 'export'
+25, 'refresh page', 'render the html page of a view-only request again and update the cached page', 'page_refresh'

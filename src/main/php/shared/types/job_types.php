@@ -53,5 +53,6 @@ class job_types
     const string FORMULA_UNLINK = "formula_unlink";
     const string BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
     const int BASE_IMPORT_ID = 11;
+    const string PAGE_REFRESH = "page_refresh"; // render the html page of a view-only request again and update the cached page
 
 }

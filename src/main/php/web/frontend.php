@@ -7,6 +7,20 @@
 
     $ui is the suggested var name
 
+    The main sections of this object are
+    - api const:         const for the backend api link
+    - vars:              the variables of this frontend object
+    - construct and map: set the vars of this frontend object to the initial value
+    - set and get:       to capsule the vars from unexpected changes
+    - session:           start and end a frontend session e.g. incl. the user login
+    - user:              get the user of this frontend session
+    - execute:           forward a user action to the backend and create the url of the next page
+    - view:              create the html code for a view
+    - cached page:       serve view-only pages from the cached html pages to reduce the response time
+    - log:               forward the log messages to the backend
+    - api:               get json messages from the backend
+    - internal:          helper functions e.g. to map a view id to the main frontend object
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -133,11 +147,14 @@ include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
 include_once paths::MODEL_HELPER . 'server_guard.php';
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 // cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
@@ -145,9 +162,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\job as job_backend;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
@@ -199,6 +218,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 // test group (alphabetic by FQN)
@@ -979,6 +999,193 @@ class frontend
         }
 
         return $result;
+    }
+
+
+    /*
+     * cached page
+     */
+
+    /**
+     * the fast path of the request routing that serves an already cached html page
+     * before the heavy frontend setup (loading the user views, the type cache and the
+     * frontend config) so that a user without own data changes gets a view-only page
+     * with only the system config, the user and this cached page read from the database
+     *
+     * returns null if the page is not (yet) cached or must not be served from the cache,
+     * so the caller does the full setup and renders the page live
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @return string|null the cached html page or null if the page cannot be served from the cache
+     */
+    function cached_page_or_null(array $url_array, user_backend $usr): ?string
+    {
+        $result = null;
+        // only a user without own data changes may get the standard cached page
+        if (!$usr->uses_sandbox) {
+            $url_key = $this->url_cache_key($url_array);
+            if ($url_key != '') {
+                $cac_page = new db_cache_page();
+                $result = $cac_page->html_by_url($url_key);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the html code for the given url and use the cached html pages
+     * of the view-only requests to reduce the response time
+     *
+     * - a request that changes data is always rendered live
+     * - for a user without own data changes (uses_sandbox is false)
+     *   the cached html page is served if available and created if it is missing
+     * - for a user with own data changes (uses_sandbox is true)
+     *   the cached html page is served immediately with a refresh flag
+     *   and the rendering of the user specific page is requested as a backend job
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @param user_ui|null $usr_ui the session user frontend object who has requested the view
+     * @param user_message $usr_msg to enrich with potential errors
+     * @param bool $is_action true if the request has changed data so the result must be rendered live
+     * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @return string the html code to show the page to the user
+     */
+    function url_to_html_cached(
+        array        $url_array,
+        user_backend $usr,
+        user_ui|null $usr_ui,
+        user_message $usr_msg,
+        bool         $is_action = false,
+        data_object  $dto = new data_object()
+    ): string
+    {
+        $result = '';
+        // an action request is always rendered live because the data has just been changed
+        $url_key = '';
+        if (!$is_action) {
+            $url_key = $this->url_cache_key($url_array);
+        }
+        // get the last cached html page for the url
+        $cac_page = new db_cache_page();
+        $cached_html = null;
+        if ($url_key != '') {
+            $cached_html = $cac_page->html_by_url($url_key);
+        }
+        // route the request based on the user sandbox usage and the cache state
+        if ($url_key == '') {
+            $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+        } elseif (!$usr->uses_sandbox) {
+            if ($cached_html !== null) {
+                $result = $cached_html;
+            } else {
+                // remember the rendered page for the next request of any user without sandbox data
+                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+                $this->save_html_page($cac_page, $url_key, $result, $usr);
+            }
+        } else {
+            if ($cached_html !== null) {
+                // serve the standard page immediately and request the user specific rendering
+                $result = $cached_html . api::PAGE_REFRESH_FLAG;
+                $this->request_page_refresh($cac_page, $usr);
+            } else {
+                // no cached page yet, so render the user specific page live
+                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the canonical cache key of a view-only page request
+     * e.g. 'm=1&id=2' for the word view of the word zurich
+     *
+     * @param array $url_array the parsed url as an array
+     * @return string the cache key or an empty string if the request must not be cached
+     */
+    function url_cache_key(array $url_array): string
+    {
+        $result = '';
+        $mask_id = $url_array[url_var::MASK] ?? 0;
+        $obj_id = $url_array[url_var::ID] ?? 0;
+        $lan = $url_array[url_var::LANGUAGE] ?? '';
+        // a request with more than the view, object and language is not cached
+        $is_view_only = true;
+        foreach (array_keys($url_array) as $url_key) {
+            if (!in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE])) {
+                $is_view_only = false;
+            }
+        }
+        // a request that shows a change or process step view is not cached
+        if (in_array($mask_id, views::CHANGE_MASKS_IDS)) {
+            $is_view_only = false;
+        }
+        if (in_array($mask_id, views::PROCESS_STEP_MASKS_IDS)) {
+            $is_view_only = false;
+        }
+        if (in_array($mask_id, views::GET_ACTION_IDS)) {
+            $is_view_only = false;
+        }
+        if ($is_view_only) {
+            $result = url_var::MASK . url_var::EQ . $mask_id . url_var::ADD_ID . $obj_id;
+            if ($lan != '') {
+                $result .= url_var::ADD . url_var::LANGUAGE . url_var::EQ . $lan;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * remember the rendered html page for the next request of the same url
+     * the cache row is written as the system user because filling the cache is
+     * a system action that must also work for an ip user who cannot change data
+     * (public so that the db write test can check exactly this permission case)
+     * a failure is only logged because the user already has the rendered page
+     *
+     * @param db_cache_page $cac_page the cache page object used to check the cache
+     * @param string $url_key the canonical cache key of the request
+     * @param string $html the rendered html page that should be cached
+     * @param user_backend $usr the session user who has requested the page
+     * @return void
+     */
+    function save_html_page(
+        db_cache_page $cac_page,
+        string        $url_key,
+        string        $html,
+        user_backend  $usr
+    ): void
+    {
+        $save_msg = new backend_user_message(user_backend::system());
+        $cac_page->save_html($url_key, $html, $save_msg);
+        if (!$save_msg->is_ok()) {
+            log_warning('caching the html page for ' . $url_key
+                . ' failed because ' . $save_msg->get_message());
+        }
+    }
+
+    /**
+     * request the background rendering of the user specific html page
+     * a failure is only logged because the user already has the standard page
+     *
+     * @param db_cache_page $cac_page the cached page that should be rendered again
+     * @param user_backend $usr the session user for whom the page should be rendered
+     * @return void
+     */
+    private function request_page_refresh(
+        db_cache_page $cac_page,
+        user_backend  $usr
+    ): void
+    {
+        $job = new job_backend($usr);
+        $job->set_type(job_types::PAGE_REFRESH, $usr);
+        $job->row_id = $cac_page->id();
+        $job_msg = new backend_user_message($usr);
+        $job->save($job_msg);
+        if (!$job_msg->is_ok()) {
+            log_warning('page refresh job for ' . $cac_page->dsp_id()
+                . ' failed because ' . $job_msg->get_message());
+        }
     }
 
     /**

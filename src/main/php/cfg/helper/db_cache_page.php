@@ -10,6 +10,7 @@
     - object vars:       the variables of this cached page object
     - construct and map: set the vars of this object to the initial value or based on a db row
     - load:              database access object (DAO) functions
+    - save:              add or replace a cached html page
     - api:               create an api array for the frontend
     - sql write fields:  field list for writing to the database
     - sql fields:        helper for the sql field names
@@ -180,6 +181,46 @@ class db_cache_page extends db_object_seq_id
         $this->reset();
         $qp = $this->load_sql_by_url($db_con->sql_creator(), $url);
         return $this->load($qp);
+    }
+
+    /**
+     * get the cached html page for the given url
+     *
+     * @param string $url the request url of the cached html page
+     * @return string|null the cached html page or null if the url is not (yet) cached
+     */
+    function html_by_url(string $url): ?string
+    {
+        $result = null;
+        $id = $this->load_by_url($url);
+        if ($id > 0) {
+            $result = $this->html_page;
+        }
+        return $result;
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * add or replace the cached html page for the given url
+     * and remember the rendering time in the last update timestamp
+     *
+     * @param string $url the request url that the cached html page belongs to
+     * @param string $html the rendered html page that should be cached
+     * @param user_message $msg to collect the problem messages for the requesting user
+     * @return bool true if the cached html page has been saved
+     */
+    function save_html(string $url, string $html, user_message $msg): bool
+    {
+        $this->load_by_url($url);
+        $this->url = $url;
+        $this->html_page = $html;
+        $this->last_update = new DateTime();
+        $this->save($msg);
+        return $msg->is_ok();
     }
 
 

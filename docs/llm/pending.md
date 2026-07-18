@@ -34,12 +34,6 @@ if no prepared cached page is found, repeat the previous page with a 'processing
 
 create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
 
-**2. Cache storage for view-only pages**
-> Design and implement a cache table/store keyed by `view_id` + `object_id`, storing rendered HTML for view-only pages. Include: lookup function (returns cached HTML or null), write/replace function, and a timestamp column for last update. One logic step per line, single-exit functions.
-
-**3. Request routing logic**
-> Implement the request handler logic: after loading the user row (with `uses_sandbox`), if `uses_sandbox` is false, serve the cached HTML for the current view+object directly if present; if absent, generate and cache it synchronously. If `uses_sandbox` is true, serve the last cached version immediately (if present) with a "refresh coming" flag in the response, and enqueue a backend job to regenerate the sandboxed version. Single-exit function, one step per line.
-
 **4. Backend job: sandbox page generation**
 > Implement a backend job (queue-based) that regenerates the sandboxed HTML for a given user+view+object. On completion, write the result to the cache store keyed appropriately for that user's sandbox context, and mark it available for the frontend to fetch on next poll. Include a check to avoid enqueuing a duplicate job if one is already in flight for the same key.
 

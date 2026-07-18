@@ -4,7 +4,7 @@
     "user_id": 13,
     "user": "::1",
     "version": "0.0.3",
-    "timestamp": "2026-07-16T23:01:18+00:00",
+    "timestamp": "2026-07-17T12:37:23+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6664,6 +6664,12 @@
                 "code_id": "export",
                 "description": "export data to an api or file",
                 "id": 24
+            },
+            {
+                "name": "refresh page",
+                "code_id": "page_refresh",
+                "description": "render the html page of a view-only request again and update the cached page",
+                "id": 25
             }
         ],
         "job_statuum": [

@@ -1399,11 +1399,14 @@ class db_object_seq_id extends db_object
         // add the child object specific fields and values
         if ($sc_par_lst->is_insert()) {
             $qp->sql = $sc->create_sql_insert($fvt_lst);
+            $qp->par = $fvt_lst->db_values();
         } else {
             $qp->sql = $sc->create_sql_update(
                 $this->id_field(), $this->id(), $fvt_lst);
+            // use the sql creator parameters because create_sql_update
+            // has added the where id at the end of the parameter list
+            $qp->par = $sc->get_par();
         }
-        $qp->par = $fvt_lst->db_values();
 
         return $qp;
     }
