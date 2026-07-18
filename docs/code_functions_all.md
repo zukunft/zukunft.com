@@ -5263,6 +5263,7 @@
     \-- back_url_part - section for function back_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- pre_url_part - section for function pre_url_part not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_with_back - section for function url_with_back not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
+    \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
@@ -7419,6 +7420,8 @@
         \-- html_base - Build a URL parameter string with each editable field prefixed with url_var::PRE ('8'),
     \-- url_with_back
         \-- html_base - Build the additional URL parameters for an array, each key prefixed with the given prefix char.
+    \-- url_with_token
+        \-- html_base - append the anti-csrf session token to a get action link (logout, error_update) so that the
     \-- url_api
         \-- html_base - build a url for link a zukunft.com element
     \-- url_ex

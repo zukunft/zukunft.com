@@ -404,7 +404,8 @@ class html_base
             $result .= $this->list_item($usr_label) . "\n";
         }
         if ($usr_name !== null) {
-            $url_logout = $this->url_with_back(api::LOGOUT_SCRIPT, $url_array);
+            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
+            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
             $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
@@ -736,6 +737,21 @@ class html_base
                 return $url . '?' . $par_ext;
             }
         }
+    }
+
+    /**
+     * append the anti-csrf session token to a get action link (logout, error_update) so that the
+     * server (frontend::request_token_valid) can reject a top-level cross-site get that would
+     * otherwise trigger the action; the token is read from the session here, the same place
+     * form_session_token reads it for the crud post forms
+     * @param string $url the action url e.g. 'view.php?m=64'
+     * @return string the url with the session token param appended
+     */
+    function url_with_token(string $url): string
+    {
+        $token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
+        $sep = str_contains($url, '?') ? '&' : '?';
+        return $url . $sep . url_var::SESSION_TOKEN . '=' . rawurlencode($token);
     }
 
     /**

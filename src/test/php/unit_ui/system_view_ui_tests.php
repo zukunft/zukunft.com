@@ -174,6 +174,29 @@ class system_view_ui_tests
         $test_name = 'a plain get navigation without a token is allowed';
         $t->assert_true($test_name, frontend::request_token_valid($get_nav, $token));
 
+        // a get action mask (logout, error_update) triggers url_to_action on a plain get, so it must
+        // carry the token too - samesite=lax still sends the cookie on a top-level cross-site get
+        $logout_no_token = [url_var::MASK => views::LOGOUT_ID];
+        $test_name = 'a logout get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($logout_no_token, $token));
+
+        $logout_ok = [url_var::MASK => views::LOGOUT_ID, url_var::SESSION_TOKEN => $token];
+        $test_name = 'a logout get with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($logout_ok, $token));
+
+        $error_update_no_token = [url_var::MASK => views::ERROR_UPDATE_ID, url_var::ID => 1];
+        $test_name = 'an error_update get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($error_update_no_token, $token));
+
+        // request_triggers_action is the single predicate shared by the view.php dispatch and the
+        // token gate, so an action can never be dispatched without a token having been required
+        $test_name = 'a get action mask is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($logout_no_token));
+        $test_name = 'a form submit is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($submit_no_token));
+        $test_name = 'a plain get navigation is not an action';
+        $t->assert_false($test_name, frontend::request_triggers_action($get_nav));
+
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;
         // the api entry (application::start_api) and the html frontend share this via server_guard
