@@ -383,6 +383,20 @@ class type_lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool false if the load is incomplete
      */
+    function load_log_if_empty(sql_db $db_con): bool
+    {
+        if ($this->cng_act->is_empty()) {
+            return $this->load_log($db_con);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * reload the cache used for logging the changes
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool false if the load is incomplete
+     */
     function load_log(sql_db $db_con): bool
     {
         $result = $this->cng_act->load($db_con);

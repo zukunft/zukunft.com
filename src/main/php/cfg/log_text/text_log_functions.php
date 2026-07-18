@@ -91,28 +91,26 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
     // shows the message already from &debug=5 upward (the named levels are in url_var)
     $min_level = $debug_overwrite ?? (url_var::DEBUG_LEVEL_MAX_FIXED + 1);
 
-    // add the standard prefix
-    if ($msg_text != '') {
-        $msg_text = ': ' . $msg_text;
-    }
-
-    // get the last script before this script
-    $backtrace = debug_backtrace();
-    if (array_key_exists(1, $backtrace)) {
-        $last = $backtrace[1];
-    } else {
-        $last = $backtrace[0];
-    }
-
     // extract the relevant part from backtrace
-    if ($last != null) {
-        if (array_key_exists('class', $last)) {
-            $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+    if ($msg_text == '') {
+
+        // get the last script before this script
+        $backtrace = debug_backtrace();
+        if (array_key_exists(1, $backtrace)) {
+            $last = $backtrace[1];
+        } else {
+            $last = $backtrace[0];
+        }
+
+        if ($last != null) {
+            if (array_key_exists('class', $last)) {
+                $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+            } else {
+                $msg_text = $last['function'] . $msg_text;
+            }
         } else {
             $msg_text = $last['function'] . $msg_text;
         }
-    } else {
-        $msg_text = $last['function'] . $msg_text;
     }
 
     if ($debug >= $min_level) {

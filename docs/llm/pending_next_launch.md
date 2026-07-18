@@ -515,6 +515,8 @@ after each step src/main/php/web must stay free of `new sql_db` / `new sql_creat
 
 ### general
 
+create the user_message $msg object once at the start of each script and use this parameter in every function that might create a message that is relevant for the calling user
+
 check where in the frontend a parameter / configuration values is used that is not yet taken from the config.yaml / user_configuration and at least mark it with a TODO Prio 1
 
 create a script that updates all caches e.g. src/test/resources/api/type_lists/type_lists.json and src/test/resources/api/ui_config/ui_config.json after a change of any parameter in src/main/resources/db_code_links 

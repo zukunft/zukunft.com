@@ -307,6 +307,7 @@ class config extends db_object_seq_id
     ): bool
     {
         global $debug;
+        global $sys;
 
         // init
         $result = false;
@@ -331,6 +332,7 @@ class config extends db_object_seq_id
 
         if ($db_row == null) {
             // automatically add the config entry
+            $sys->typ_lst->load_log_if_empty($db_con);
             $result = $cfg->db_add($msg, $db_con, $sc_par_lst);
         } else {
             $cfg_db = new config();
@@ -344,6 +346,7 @@ class config extends db_object_seq_id
             }
             if ($value != $db_row[fields::FLD_VALUE]
                 or ($description != '' and $description != $db_row[fields::FLD_DESCRIPTION])) {
+                $sys->typ_lst->load_log_if_empty($db_con);
                 $result = $cfg->db_update_row($cfg_db, $msg, $db_con, $sc_par_lst);
             }
         }

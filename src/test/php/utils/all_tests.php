@@ -211,7 +211,7 @@ class all_tests extends all_unit_write_tests
             // database reset is switched off here for better detection of leftovers
             // it can be started via reset_db
             if ($this->db_reset_allowed() and $sys->errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
-                $this->run_db_recreate();
+                $this->run_db_recreate($usr_msg);
             }
 
             // html page creation based on the url

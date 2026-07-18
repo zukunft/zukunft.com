@@ -113,9 +113,11 @@ class db_check
         $lib = new library();
 
         // check if essential config table exists and if not setup the database
+        // because it is assumed that the database structure has not yet been created
+        // TODO Prio 0 in prod and test environment do this only is setup flag is on
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
-        if (!$db_con->has_table($main_tbl_name)) {
+        if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
             $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
             $db_con->setup_db($msg);
@@ -126,11 +128,6 @@ class db_check
                 $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
             }
         }
-
-        // preload the types used for the change log and the user profiles,
-        // because the config checks below may write config values with a change log entry
-        // before the type lists are loaded by the start-up process
-        $sys->typ_lst->load_log($db_con);
 
         $cfg = new config();
         $cfg->check_cfg(config::SITE_NAME, POD_NAME, $db_con, $msg);
