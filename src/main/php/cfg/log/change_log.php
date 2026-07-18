@@ -419,9 +419,9 @@ class change_log extends db_object_seq_id_user
     {
         global $debug;
         try {
-            log_debug('Convert ' . $time_str . ' to time', $debug - 12);
+            log_debug('Convert ' . $time_str . ' to time');
             $this->set_time((new DateTime($time_str)));
-            log_debug('Converted ' . $time_str . ' to time', $debug - 12);
+            log_debug('Converted ' . $time_str . ' to time');
         } catch (Exception $e) {
             log_err('Cannot convert ' . $time_str . ' to time');
         }

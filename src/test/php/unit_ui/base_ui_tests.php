@@ -150,6 +150,12 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // the debug level only controls out-of-band debug output, not the cached html, so it is
+        // ignored and ?m=2&debug=5 takes the same cached path as ?m=2 (same cache key)
+        $test_name = 'the debug level is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::DEBUG => 5];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
         $t->subheader($ts . 'tab box');
 
         // the tab box switches via the url fragment with pure css (:target) and no javascript: the

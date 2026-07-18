@@ -288,6 +288,7 @@ class url_var
     const int DEBUG_LEVEL_DB_WRITE = 5; // the fifth debug level is to show write actions to the database
     const int DEBUG_LEVEL_DB_READ = 6; // the sixth debug level is to show read actions from the database
     const int DEBUG_LEVEL_COMPLEX_FUNCTION = 7; // the seventh debug level is to show potential long lasting function calls e.g. due to a potential endless loop
+    const int DEBUG_LEVEL_MAX_FIXED = 9; // the max number of predefined debug level and the staring of the depth debug levels
 
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)

@@ -5053,7 +5053,7 @@ class sql_creator
             $this->table .= $ext;
         }
         $this->table = $this->fix_table_name($this->table);
-        log_debug('to "' . $this->table . '"', $debug - 20);
+        log_debug('to "' . $this->table . '"');
     }
 
     /**
@@ -5361,7 +5361,7 @@ class sql_creator
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug('to "' . $result . '"', $debug - 20);
+        log_debug('to "' . $result . '"');
         return $result;
     }
 

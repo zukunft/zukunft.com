@@ -4,6 +4,8 @@
 
 ## high prio
 
+see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page
+
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 ### security before go live

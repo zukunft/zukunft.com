@@ -71,12 +71,13 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
  * for internal functions debugging
- * each complex function should call this at the beginning with the parameters and with -1 at the end with the result
- * called function should use $debug-1
+ * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
+ * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=5) or, for the deeper
+ * call-graph tracing, the depth level a caller wants to become visible at
  * TODO focus debug on time consuming function calls e.g. all database accesses
  *
  * @param string $msg_text debug information additional to the class and function
- * @param int|null $debug_overwrite used to force the output
+ * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=10, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=5 upward
  * @return string the final output text
  */
 function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
@@ -84,11 +85,11 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
     global $debug;
     global $sys;
 
-    if ($debug_overwrite == null) {
-        $debug_used = $debug;
-    } else {
-        $debug_used = $debug_overwrite;
-    }
+    // the second parameter is the minimum debug level at which the message is shown; without it the
+    // message is a deep call-graph trace shown only above the last named level (so from
+    // &debug=10 upward, DEBUG_LEVEL_MAX_FIXED + 1), while a named level like DEBUG_LEVEL_DB_WRITE
+    // shows the message already from &debug=5 upward (the named levels are in url_var)
+    $min_level = $debug_overwrite ?? (url_var::DEBUG_LEVEL_MAX_FIXED + 1);
 
     // add the standard prefix
     if ($msg_text != '') {
@@ -114,7 +115,7 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
         $msg_text = $last['function'] . $msg_text;
     }
 
-    if ($debug_used > 0) {
+    if ($debug >= $min_level) {
         // escape the (possibly request-derived) message before echoing it into the html response (xss)
         echo htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->times->show_total() . '<br>';
         //ob_flush();

@@ -1131,11 +1131,13 @@ class frontend
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
         // a request with more than the view, object and language is not cached; the anti-csrf token
-        // is per session and a process step of 0 (no action started) does not change a view-only
-        // page, so both are allowed without preventing the cache and are not part of the cache key
+        // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
+        // never part of the rendered html), and a process step of 0 (no action started) does not
+        // change a view-only page, so all three are allowed without preventing the cache and are not
+        // part of the cache key - so e.g. ?m=2&debug=5 takes the same cached path as ?m=2
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
-            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN]);
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN, url_var::DEBUG]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;

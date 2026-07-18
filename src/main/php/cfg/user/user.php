@@ -486,7 +486,7 @@ class user extends db_id_object_non_sandbox
             $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
 
             $result = true;
-            log_debug($this->name, $debug - 25);
+            log_debug($this->name);
         }
         return $result;
     }
@@ -1515,7 +1515,7 @@ class user extends db_id_object_non_sandbox
     function ip_check(string $ip_addr): string
     {
         global $debug;
-        log_debug(' (' . $ip_addr . ')', $debug - 12);
+        log_debug(' (' . $ip_addr . ')');
 
         $ip_lst = new ip_range_list();
         $ip_lst->load();
@@ -1575,7 +1575,7 @@ class user extends db_id_object_non_sandbox
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug('by given ip addr ' . $this->ip_addr, $debug - 1);
+            log_debug('by given ip addr ' . $this->ip_addr);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
