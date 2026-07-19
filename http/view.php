@@ -102,11 +102,24 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
 
+        // block a data changing request of a user without login before any change is done
+        // if this pod does not permit the changes of an ip user
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // beside add, edit and del this covers e.g. the import, paste, undo and job views;
+        // checked before the page cache probe, so that the blocked request is answered
+        // with the cached start page and the message is added to it (see cached_page_or_null)
+        $mask_id = $url_array[url_var::MASK] ?? 0;
+        if (in_array($mask_id, views::IP_BLOCKED_MASKS_IDS) and $usr->is_blocked()) {
+            log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
+            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $url_array = [url_var::MASK => views::START_ID];
+        }
+
         // fast path: serve an already cached view-only page before the heavy frontend setup
         // so that a user without own data changes gets the page with a few database reads only
         // (the cached types json, the system config, the user incl. the uses_sandbox flag
-        // and this cached page)
-        $cached_page = $ui->cached_page_or_null($url_array, $usr);
+        // and this cached page); the message of this request is added to the cached page
+        $cached_page = $ui->cached_page_or_null($url_array, $usr, $msg);
         if ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
@@ -130,16 +143,6 @@ if ($db_con->is_open()) {
             // TODO Prio 1 load the config from cache if nothing has been changed
             $ui_sys->cfg = new config();
             $ui_sys->cfg->load($sys);
-
-            // block an add, edit or del request of a user without login before any change is done
-            // if this pod does not permit the changes of an ip user
-            // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
-            $mask_id = $url_array[url_var::MASK] ?? 0;
-            if (in_array($mask_id, views::CHANGE_MASKS_IDS) and $usr->is_blocked()) {
-                log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
-                $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
-                $url_array = [url_var::MASK => views::START_ID];
-            }
 
             // execute the user request and POST-Redirect-GET to prevent re-submission on reload
             // the same predicate gates the anti-csrf token check in frontend::request_token_valid, so an

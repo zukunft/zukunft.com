@@ -42,8 +42,12 @@ include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
@@ -58,8 +62,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -77,6 +85,13 @@ class config_numbers extends value_list
     /*
      * object vars
      */
+
+    // fast lookup rows from the cached config json to read config values without
+    // building all value and phrase objects on every request (see set_cache_json);
+    // each row contains the flipped phrase names, the raw value and the text flag
+    private array $lookup_rows = [];
+    // the cached config json to build the complete value objects only on demand
+    private ?array $cache_json = null;
 
     // the db cache types used to cache the config values, one cache entry per type and user
     const array CACHE_TYPES = [
@@ -251,6 +266,81 @@ class config_numbers extends value_list
         return $num;
     }
 
+    /**
+     * get the first config value that is assigned to all given phrase names
+     * from the fast lookup rows of the cached config json if available (see set_cache_json)
+     * or from the loaded value objects e.g. after a fresh database load
+     *
+     * @param array $names the phrase names to select the config value
+     * @return value_base|null the matching config value or null if no value matches
+     */
+    function get_by_names(array $names): ?value_base
+    {
+        $result = null;
+        if ($this->lookup_rows == []) {
+            $result = parent::get_by_names($names);
+        } else {
+            foreach ($this->lookup_rows as $lookup_row) {
+                if ($result == null) {
+                    $match = true;
+                    foreach ($names as $name) {
+                        if (!array_key_exists($name, $lookup_row[0])) {
+                            $match = false;
+                        }
+                    }
+                    if ($match) {
+                        $result = $this->lookup_value($lookup_row[1], $lookup_row[2]);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * use the cached config json for the value lookups of this request (see get_by_names),
+     * which is much faster than building all value and phrase objects upfront;
+     * the complete objects are only built on demand (see fill_from_cache_json)
+     *
+     * @param array $api_json the cached config json as created by cache_array
+     * @return bool true if at least one config lookup row has been found
+     */
+    function set_cache_json(array $api_json): bool
+    {
+        $this->cache_json = $api_json;
+        $this->lookup_rows = [];
+        foreach ($api_json as $api_row) {
+            $names = [];
+            foreach ($api_row[json_fields::PHRASES] ?? [] as $phr_row) {
+                if (array_key_exists(json_fields::NAME, $phr_row)) {
+                    $names[$phr_row[json_fields::NAME]] = true;
+                }
+            }
+            $is_text = array_key_exists(json_fields::TEXT_VALUE, $api_row);
+            $raw_value = $api_row[json_fields::NUMBER] ?? $api_row[json_fields::TEXT_VALUE] ?? null;
+            if ($names != [] and $raw_value !== null) {
+                $this->lookup_rows[] = [$names, $raw_value, $is_text];
+            }
+        }
+        return $this->lookup_rows != [];
+    }
+
+    /**
+     * @param float|string $raw_value the config value from the cached json
+     * @param bool $is_text true if the cached json contains a text value
+     * @return value_base a config value object with just the value set for the get_by callers
+     */
+    private function lookup_value(float|string $raw_value, bool $is_text): value_base
+    {
+        if ($is_text) {
+            $val = new value_text($this->get_user());
+            $val->set_value($raw_value);
+        } else {
+            $val = new value($this->get_user(), (float)$raw_value);
+        }
+        return $val;
+    }
+
 
     /*
      * load
@@ -310,7 +400,7 @@ class config_numbers extends value_list
             }
             if ($usr_msg->is_ok()) {
                 $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
-                $this->write_cache($typ, $usr, $snap_time, $usr_msg, $phr);
+                $this->write_cache($typ, $usr, $snap_time, $phr);
             }
         }
         return $usr_msg;
@@ -353,11 +443,26 @@ class config_numbers extends value_list
         $cac = $this->cache_entry($typ, $usr);
         if ($cac != null) {
             if (!$cac->is_outdated()) {
-                $this->api_mapper($cac->data, $usr_msg);
-                $result = true;
+                if (is_array($cac->data)) {
+                    $result = $this->set_cache_json($cac->data);
+                }
             }
         }
         return $result;
+    }
+
+    /**
+     * build the complete config value objects from the cached json
+     * needed only if more than the value lookup is used e.g. for the config api message
+     *
+     * @param user_message $usr_msg to report the problems of the json mapping
+     * @return void
+     */
+    function fill_from_cache_json(user_message $usr_msg): void
+    {
+        if ($this->cache_json !== null and $this->is_empty()) {
+            $this->api_mapper($this->cache_json, $usr_msg);
+        }
     }
 
     private function read_file_cache(
@@ -371,8 +476,7 @@ class config_numbers extends value_list
             $json = file_get_contents($this->cache_file($usr, $phr));
             $array = json_decode($json, true);
             if (is_array($array)) {
-                $this->api_mapper($array, $usr_msg);
-                $result = true;
+                $result = $this->set_cache_json($array);
             } else {
                 log_err('config json seems to have a problem ' . $json);
             }
@@ -386,7 +490,6 @@ class config_numbers extends value_list
      * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
      * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
      * @param DateTime $snap_time the time of the config snap, so never the time of this write
-     * @param user_message $usr_msg to report why the config values could not be cached
      * @param phrase|null $phr to select either the user or frontend configuration values
      * @return void
      */
@@ -394,13 +497,12 @@ class config_numbers extends value_list
         db_cache_type|type_object $typ,
         user                      $usr,
         DateTime                  $snap_time,
-        user_message              $usr_msg,
         ?phrase                   $phr = null
     ): void
     {
         if ($this->cache_allowed_by_pod($typ->code_id)) {
             if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-                $this->write_db_cache($typ, $usr, $snap_time, $usr_msg);
+                $this->write_db_cache($typ, $usr, $snap_time);
             } else {
                 $this->write_file_cache($usr, $phr);
             }
@@ -430,8 +532,7 @@ class config_numbers extends value_list
     private function write_db_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
-        DateTime                  $snap_time,
-        user_message              $usr_msg
+        DateTime                  $snap_time
     ): void
     {
         $cac = $this->cache_entry($typ, $usr);
@@ -439,10 +540,19 @@ class config_numbers extends value_list
             // the entry of this type and user is loaded upfront, so that it is updated and not added a second time
             $cac->type_id = $typ->id;
             $cac->data = $this->cache_array();
+            // the cache entry belongs to the user of the config values,
+            // but the row is written as the system user because filling the cache is a system
+            // action that must also work for an ip user who cannot change data
+            // (like the html page cache, see frontend::save_html_page)
             $cac->usr = $usr;
             $cac->status_id = db_cache_statuum::CLEAN_ID;
             $cac->last_update = $snap_time;
-            $cac->save($usr_msg);
+            $save_msg = new user_message(user::system());
+            if (!$cac->save($save_msg)) {
+                // a failure is only logged because the user already has the config values
+                log_warning('caching the config for ' . $usr->dsp_id()
+                    . ' failed because ' . $save_msg->all_message_text());
+            }
         }
     }
 

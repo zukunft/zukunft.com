@@ -99,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -131,6 +132,18 @@ class system_view_ui_tests
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
+
+        $t->subheader($ts . 'user message placeholder');
+        // every page footer carries an invisible placeholder, so that a text replace
+        // can add a user message to a html page loaded from the page cache
+        $html = new html_base();
+        $test_name = 'the page footer contains the user message placeholder exactly once';
+        $t->assert($test_name, substr_count($html->footer(), api::USER_MSG_PLACEHOLDER), 1);
+        $test_name = 'the about page footer also contains the user message placeholder';
+        $t->assert_text_contains($test_name, $html->footer(true), api::USER_MSG_PLACEHOLDER);
+        $test_name = 'the placeholder is an invisible html comment';
+        $t->assert_true($test_name, str_starts_with(api::USER_MSG_PLACEHOLDER, '<!--')
+            and str_ends_with(api::USER_MSG_PLACEHOLDER, '-->'));
         $t->usr1 = $t_usr->user_sys_test();
         $usr_msg = new user_message();
         $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
@@ -196,6 +209,27 @@ class system_view_ui_tests
         $t->assert_true($test_name, frontend::request_triggers_action($submit_no_token));
         $test_name = 'a plain get navigation is not an action';
         $t->assert_false($test_name, frontend::request_triggers_action($get_nav));
+
+        // the data changing masks are blocked for an ip user if the pod does not permit changes,
+        // but the login, signup and export masks must always stay open for an ip user
+        $test_name = 'the import view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::IMPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the undo view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::UNDO_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the paste table view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::PASTE_TABLE_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the job view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::JOB_ASYNC_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the word add view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::WORD_ADD_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the login view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::LOGIN_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the signup view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::SIGNUP_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the export view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::EXPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the start view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
 
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;

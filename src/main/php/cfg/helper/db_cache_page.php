@@ -61,6 +61,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -243,6 +245,44 @@ class db_cache_page extends db_object_seq_id
     static function restore_session_token(string $html, string $token): string
     {
         return str_replace(self::SESSION_TOKEN_PLACEHOLDER, $token, $html);
+    }
+
+    /**
+     * remove the user message from a rendered page before writing the page to the cache,
+     * because a message belongs to one request and must never be repeated to another user;
+     * only the notification directly before the user message placeholder is removed,
+     * so an alert that is part of the page content is never touched;
+     * the reverse of add_user_msg
+     *
+     * @param string $html the rendered html page that should be cached
+     * @return string the html without the user message of the rendering request
+     */
+    static function strip_user_msg(string $html): string
+    {
+        $pattern = '#<div class="[^"]*' . api::USER_MSG_CLASS . '[^"]*">.*?</div>\s*'
+            . '(?=' . preg_quote(api::USER_MSG_PLACEHOLDER, '#') . ')#s';
+        return preg_replace($pattern, '', $html);
+    }
+
+    /**
+     * add a user message of the current request to a page loaded from the cache
+     * by replacing the invisible placeholder before the footer;
+     * the placeholder is kept, so that a message can be added to the same page again
+     *
+     * @param string $html the cached html page read from the database
+     * @param string $msg_html the rendered notification of the current request or an empty string
+     * @return string the html with the user message of the current request
+     */
+    static function add_user_msg(string $html, string $msg_html): string
+    {
+        $result = $html;
+        if ($msg_html != '') {
+            $result = str_replace(
+                api::USER_MSG_PLACEHOLDER,
+                $msg_html . api::USER_MSG_PLACEHOLDER,
+                $html);
+        }
+        return $result;
     }
 
 

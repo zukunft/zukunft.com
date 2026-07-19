@@ -95,6 +95,9 @@ if ($db_con->is_open()) {
         } else {
             $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }
+        // the api message needs the complete value objects,
+        // so build them from the cached json if the load has used the cache
+        $cfg_lst->fill_from_cache_json($msg);
         if (!$msg->is_ok()) {
             $msg->add_id(msg_id::CONFIG_NOT_LOADED);
         } else {

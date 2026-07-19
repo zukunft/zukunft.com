@@ -4738,23 +4738,42 @@ class test_base
             // the session cookie of the login is needed for the request of the page
             $cookie_file = tempnam(sys_get_temp_dir(), self::COOKIE_FILE_PREFIX);
 
-            // after the login the start view is requested, because showing the login view again
-            // would reset the logged flag of the session
-            $login_url = THIS_URL . api::LOGIN_SCRIPT
-                . url_var::ADD . url_var::BACK . url_var::MASK . url_var::EQ . views::START_ID;
-            $login_form = [
-                url_var::USERNAME => ADMIN_USER,
-                url_var::USER_PASSWORD => ADMIN_PW,
-                url_var::POST_SUBMIT => 1
-            ];
-            // use the short login timeout: a login that the pod does not accept
-            // should fail fast instead of blocking the test for the full curl limit
-            $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form, self::TIMEOUT_LIMIT_LOGIN);
-
-            if ($login_page == '') {
-                $this->dsp_warning('the login of the admin user for the web tests has failed');
+            // like a real browser first load the login form, which starts the session and creates
+            // the anti-csrf token that must be sent back with the login post,
+            // because a login post without the token is rejected (see frontend::request_token_valid)
+            $form_page = $this->web_page_curl(
+                THIS_URL . api::LOGIN_SCRIPT, $cookie_file, [], self::TIMEOUT_LIMIT_LOGIN);
+            $token = '';
+            if (preg_match('/name="' . url_var::SESSION_TOKEN . '" value="([0-9a-f]+)"/', $form_page, $matches)) {
+                $token = $matches[1];
+            }
+            if ($token == '') {
+                $this->dsp_warning('the login form for the web tests has no session token');
                 unlink($cookie_file);
                 $cookie_file = '';
+            } else {
+
+                // after the login the start view is requested, because showing the login view again
+                // would reset the logged flag of the session
+                $login_url = THIS_URL . api::LOGIN_SCRIPT
+                    . url_var::ADD . url_var::BACK . url_var::MASK . url_var::EQ . views::START_ID;
+                $login_form = [
+                    url_var::USERNAME => ADMIN_USER,
+                    url_var::USER_PASSWORD => ADMIN_PW,
+                    url_var::SESSION_TOKEN => $token,
+                    url_var::POST_SUBMIT => 1
+                ];
+                // use the short login timeout: a login that the pod does not accept
+                // should fail fast instead of blocking the test for the full curl limit
+                $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form, self::TIMEOUT_LIMIT_LOGIN);
+
+                // a rejected login shows the login form again, so the username field is the fail signal
+                if ($login_page == ''
+                    or str_contains($login_page, 'name="' . url_var::USERNAME_HUMAN . '"')) {
+                    $this->dsp_warning('the login of the admin user for the web tests has failed');
+                    unlink($cookie_file);
+                    $cookie_file = '';
+                }
             }
         }
         return $cookie_file;

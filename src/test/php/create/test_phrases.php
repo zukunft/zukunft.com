@@ -843,8 +843,10 @@ class test_phrases
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
+        $id = test_words::CONFIG_KEY_ID_OFFSET;
         foreach ($names as $name) {
-            $lst->add_by_name_direct($t_wrd->word_config_key($name)->phrase());
+            $lst->add_by_name_direct($t_wrd->word_config_key($name, $id)->phrase());
+            $id++;
         }
         return $lst;
     }

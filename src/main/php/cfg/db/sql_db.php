@@ -5881,43 +5881,49 @@ class sql_db
      */
     function add_admin_users_from_env(user_message $msg, user $usr): bool
     {
-        $sys_msg = clone $msg;
-        $sys_msg->usr = $usr;
-
-        if (ADMIN_USER != '' and ADMIN_PW != '' and ADMIN_MAIL != '') {
-            $usr = new user(ADMIN_USER, ADMIN_MAIL);
-            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
-            $usr->set_password(ADMIN_PW, $msg);
-            if ($msg->is_ok()) {
-                $usr->save($sys_msg);
-            };
-        }
-        if (CO_ADMIN_USER != '' and CO_ADMIN_PW != '' and CO_ADMIN_MAIL != '') {
-            $usr = new user(CO_ADMIN_USER, CO_ADMIN_MAIL);
-            $usr->set_password(CO_ADMIN_PW, $msg);
-            $usr->set_profile(user_profiles::ADMIN, $sys_msg);
-            if ($msg->is_ok()) {
-                $usr->save($sys_msg);
-            };
-        }
-        if (USER_NAME != '' and USER_PW != '' and USER_MAIL != '') {
-            $usr = new user(USER_NAME, USER_MAIL);
-            $usr->set_password(USER_PW, $msg);
-            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
-            if ($msg->is_ok()) {
-                $usr->save($sys_msg);
-            };
-        }
-        if (CO_USER_NAME != '' and CO_USER_PW != '' and CO_USER_MAIL != '') {
-            $usr = new user(CO_USER_NAME, CO_USER_MAIL);
-            $usr->set_password(CO_USER_PW, $msg);
-            $usr->set_profile(user_profiles::EMAIL, $sys_msg);
-            if ($msg->is_ok()) {
-                $usr->save($sys_msg);
-            };
-        }
+        $this->add_user_from_env(ADMIN_USER, ADMIN_MAIL, ADMIN_PW, user_profiles::ADMIN, $msg, $usr);
+        $this->add_user_from_env(CO_ADMIN_USER, CO_ADMIN_MAIL, CO_ADMIN_PW, user_profiles::ADMIN, $msg, $usr);
+        $this->add_user_from_env(USER_NAME, USER_MAIL, USER_PW, user_profiles::EMAIL, $msg, $usr);
+        $this->add_user_from_env(CO_USER_NAME, CO_USER_MAIL, CO_USER_PW, user_profiles::EMAIL, $msg, $usr);
 
         return $msg->is_ok();
+    }
+
+    /**
+     * add one user from the env file settings if the settings are complete
+     * a failure is logged, because a missing env user is detected late otherwise
+     * e.g. by a failing admin login of the automatic tests
+     *
+     * @param string $name the username from the env file
+     * @param string $mail the email from the env file
+     * @param string $pw the password from the env file
+     * @param string $profile the code id of the user profile e.g. admin
+     * @param user_message $msg to report a rejected password to the setup admin
+     * @param user $req_usr the user who is requesting the adding of the env users
+     * @return void
+     */
+    private function add_user_from_env(
+        string       $name,
+        string       $mail,
+        string       $pw,
+        string       $profile,
+        user_message $msg,
+        user         $req_usr
+    ): void
+    {
+        if ($name != '' and $pw != '' and $mail != '') {
+            $sys_msg = clone $msg;
+            $sys_msg->usr = $req_usr;
+            $usr = new user($name, $mail);
+            $usr->set_profile($profile, $sys_msg);
+            $usr->set_password($pw, $msg);
+            if ($msg->is_ok()) {
+                if (!$usr->save($sys_msg)) {
+                    log_warning('adding the user ' . $name . ' from the env file failed because '
+                        . $sys_msg->all_message_text());
+                }
+            }
+        }
     }
 
     function import_verbs(user $usr): bool
