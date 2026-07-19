@@ -10,8 +10,6 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 findings of the security check on 2026-07-17, ordered by exploitability.
 
-gate raising the protection level by privilege: sandbox::check_protection_change (cfg/sandbox/sandbox.php around line 1345) only refuses a protection REDUCTION, so a normal user can set admin / full protection on their own objects via the mapped protection_id (sandbox::api_mapper around line 408), and on a new object (post, no db_obj) there is no check at all - a user can self-lock objects so only an admin can touch them. also gate the target protection level by requester privilege (only admin / system may assign admin / full) for both the increase and the new-object case
-
 escape the href in html_base::ref (web/html/html_base.php around line 494): ref() escapes the title but emits href="' . $url . '"' and the link text raw. internal callers pass safe int-built urls today, but any caller passing a user-supplied source / reference url yields attribute-context injection or a javascript: uri. htmlspecialchars($url, ENT_QUOTES) on the href, whitelist the scheme, and escape the link text unless the caller guarantees it
 
 throttle the sys_log write amplification (dos): text_log_functions.php::log_msg inserts a sys_log row per distinct error and the dedup at around line 415 is per-request only, so a flood of distinct malformed requests grows sys_log unbounded and turns each request into one or two db writes. cap or rate-limit the sys_log inserts per time window (part of the planned rate limiter)

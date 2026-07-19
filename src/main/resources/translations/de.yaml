@@ -69,6 +69,7 @@ messages:
   phrase_symbol: "Symbol"
   phrase_symbols: "Symbole"
   protection_reduce_denied: "Nur ein Admin kann den Schutz von z$VarObjName$z von z$VarProtect$z auf z$VarProtectCheck$z reduzieren."
+  protection_raise_denied: "Nur ein Admin kann den Schutz von z$VarObjName$z auf z$VarProtectCheck$z setzen, deshalb bleibt der Schutz z$VarProtect$z."
   about_sponsored_by: "wird unterstützt von"
   about_main_idea: "Eine der Hauptideen ist die Verwendung von"
   about_once_implemented: "Wenn implementiert, könnte es möglich sein"

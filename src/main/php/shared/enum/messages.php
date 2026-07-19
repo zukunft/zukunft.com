@@ -1871,6 +1871,9 @@ enum messages: string
     // if a non admin user tries to reduce the protection level of an object
     case PROTECTION_REDUCE_DENIED = 'protection_reduce_denied';
 
+    // if a non admin user tries to set the admin protection (or higher) on an object
+    case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
+
 
     /*
      * form fields

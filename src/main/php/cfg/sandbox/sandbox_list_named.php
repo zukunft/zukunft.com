@@ -974,6 +974,11 @@ class sandbox_list_named extends sandbox_list
         $imp->step_start(msg_id::CHECK, $class, count($db_names));
         $add_lst = clone $this;
         $add_lst = $add_lst->filter_by_name($db_names);
+        // make sure that only an admin user sets the admin protection also on new objects,
+        // because this mass insert does not use the single object save
+        foreach ($add_lst->lst() as $sbx) {
+            $sbx->check_protection_change(null, $sbx->get_user(), $usr_msg);
+        }
         $imp->step_end(count($db_names));
 
         if (!$add_lst->is_empty()) {
