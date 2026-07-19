@@ -34,10 +34,11 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use DateTime;
-use Exception;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_type.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -77,9 +78,12 @@ class config_numbers extends value_list
      * object vars
      */
 
-    // remember the time of the last refresh to reduced the number of database accesses
-    private ?DateTime $last_update = null;
-
+    // the db cache types used to cache the config values, one cache entry per type and user
+    const array CACHE_TYPES = [
+        db_cache_types::SYSTEM_CONFIG,
+        db_cache_types::FRONTEND_CONFIG,
+        db_cache_types::USER_CONFIG,
+    ];
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
@@ -245,6 +249,10 @@ class config_numbers extends value_list
     {
         global $sys;
 
+        // the config values are user specific, so a user is always needed
+        if ($usr == null) {
+            $usr = $this->get_user();
+        }
         // TODO Prio 2 review fallback type
         if ($typ == null) {
             $typ = $sys->typ_lst->cac_typ->get_by_code_id(db_cache_types::SYSTEM_CONFIG);
@@ -259,138 +267,41 @@ class config_numbers extends value_list
         $usr_msg = new user_message($usr);
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
         if (!$this->read_cache($typ, $usr, $usr_msg, $phr)) {
-            if (!$this->is_cache_valid($typ, $usr, $phr)) {
-                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $phr_sys_cfg = new phrase($usr);
-                $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
-                // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-                $this->load_by_phr($phr_sys_cfg);
-                // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
-                if ($phr != null) {
-                    // TODO Prio 1 activate
-                    //$this->filter_by_phrase($phr);
-                    log_debug('filter by phrase');
-                }
-                if (!$this->is_empty()) {
-                    log_debug($this->count() . ' config values loaded');
-                    $this->load_phrases();
-                } else {
-                    log_warning('no config values loaded');
-                    $usr_msg->add_id(msg_id::CONFIG_EMPTY);
-                }
-                if ($usr_msg->is_ok()) {
-                    $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
-                    $this->write_cache($typ, $usr, $phr);
-                }
+            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $phr_sys_cfg = new phrase($usr);
+            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
+            // the snap time is taken before the read, so that a change during the read is never cached as included
+            $snap_time = new DateTime();
+            // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
+            $this->load_by_phr($phr_sys_cfg);
+            // all config values are sent to the frontend, also the values of the other config parts
+            // and their phrases, because the additional context is expected to be useful
+            // and the complete config is expected to stay small
+            // (see docs/llm/architecture.md if the config gets too big)
+            if (!$this->is_empty()) {
+                log_debug($this->count() . ' config values loaded');
+                $this->load_phrases();
             } else {
-                log_err('cannot read cache, but seems to be valid, which should never be the case');
+                log_warning('no config values loaded');
+                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            }
+            if ($usr_msg->is_ok()) {
+                $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
+                $this->write_cache($typ, $usr, $snap_time, $usr_msg, $phr);
             }
         }
         return $usr_msg;
     }
 
-    private function is_cache_valid(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): bool
-    {
-        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            return $this->is_db_cache_valid($typ, $usr, $phr);
-        } else {
-            return $this->is_file_cache_valid($typ, $usr, $phr);
-        }
-    }
-
-    private function is_db_cache_valid(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): bool
-    {
-        $cac_time = $this->last_update;
-        if ($cac_time === null) {
-            return false;
-        } else {
-            // TODO Prio 1 use a trigger to set the time but refresh at least once a day
-            $cfg_time = new DateTime;
-            try {
-                $cfg_time->modify(CACHE_MAX_AGE);
-            } catch (Exception $e) {
-                echo 'Error: ' . $e->getMessage();
-            }
-            if ($cfg_time < $cac_time) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    private function is_file_cache_valid(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): bool
-    {
-        $file_path = $this->cache_file($usr, $phr);
-        if (file_exists($file_path)) {
-            $cac_time = filemtime($file_path);
-            $cfg_time = filemtime(files::SYSTEM_CONFIG);
-            if ($cfg_time < $cac_time) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    private function write_cache(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): void
-    {
-        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            $this->write_db_cache($typ, $usr, $phr);
-        } else {
-            $this->write_file_cache($typ, $usr, $phr);
-        }
-    }
-
-    private function write_db_cache(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): void
-    {
-        $cac = new db_cache($usr);
-        $cac->type_id = $typ->id;
-        $cac->data = $this->api_json_array(new api_type_list([api_types::PHRASE_NAMES]));
-        $cac->usr = $usr;
-        $cac->status_id = db_cache_statuum::CLEAN_ID;
-        $cac->last_update = $this->last_update;
-        if ($cac->last_update === null) {
-            $cac->last_update = new DateTime();
-        }
-        $msg = new user_message($usr);
-        $cac->save($msg);
-    }
-
-    private function write_file_cache(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        ?phrase                   $phr = null
-    ): void
-    {
-        $file_name = $this->cache_file($usr, $phr);
-        $array = $this->cache_array();
-        $json = json_encode($array);
-        file_put_contents($file_name, $json);
-    }
-
+    /**
+     * read the config part of the given user from the cache
+     *
+     * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
+     * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param phrase|null $phr to select either the user or frontend configuration values
+     * @return bool true if this list has been filled with the cached config values
+     */
     private function read_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
@@ -399,58 +310,135 @@ class config_numbers extends value_list
     ): bool
     {
         if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            return $this->read_db_cache($typ, $usr, $usr_msg, $phr);
+            return $this->read_db_cache($typ, $usr, $usr_msg);
         } else {
-            return $this->read_file_cache($typ, $usr, $usr_msg, $phr);
+            return $this->read_file_cache($usr, $usr_msg, $phr);
         }
     }
 
     private function read_db_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
-        user_message              $usr_msg,
-        ?phrase                   $phr = null
+        user_message              $usr_msg
     ): bool
     {
-        $cac = new db_cache($usr);
-        if ($typ?->code_id == db_cache_types::SYSTEM_CONFIG) {
-            $cac->load_by_type(db_cache_types::SYSTEM_CONFIG);
-        } elseif ($typ?->code_id == db_cache_types::FRONTEND_CONFIG) {
-            $cac->load_by_type(db_cache_types::FRONTEND_CONFIG);
-        } elseif ($typ?->code_id == db_cache_types::USER_CONFIG) {
-            $cac->load_by_type(db_cache_types::USER_CONFIG);
-        } else {
-            log_err('unknown cache type ' . $phr->name());
+        $result = false;
+        $cac = $this->cache_entry($typ, $usr);
+        if ($cac != null) {
+            if (!$cac->is_outdated()) {
+                $this->api_mapper($cac->data, $usr_msg);
+                $result = true;
+            }
         }
-        if ($cac->data !== null) {
-            $this->api_mapper($cac->data, $usr_msg);
-            return true;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     private function read_file_cache(
-        db_cache_type|type_object $typ,
-        user                      $usr,
-        user_message              $usr_msg,
-        ?phrase                   $phr = null
+        user         $usr,
+        user_message $usr_msg,
+        ?phrase      $phr = null
     ): bool
     {
-        $file_name = $this->cache_file($usr, $phr);
-        $json = file_get_contents($file_name);
-        if ($json !== false) {
+        $result = false;
+        if ($this->is_file_cache_valid($usr, $phr)) {
+            $json = file_get_contents($this->cache_file($usr, $phr));
             $array = json_decode($json, true);
             if (is_array($array)) {
                 $this->api_mapper($array, $usr_msg);
-                return true;
+                $result = true;
             } else {
                 log_err('config json seems to have a problem ' . $json);
-                return false;
             }
-        } else {
-            return false;
         }
+        return $result;
+    }
+
+    /**
+     * write the config part of the given user to the cache
+     *
+     * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
+     * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
+     * @param DateTime $snap_time the time of the config snap, so never the time of this write
+     * @param user_message $usr_msg to report why the config values could not be cached
+     * @param phrase|null $phr to select either the user or frontend configuration values
+     * @return void
+     */
+    private function write_cache(
+        db_cache_type|type_object $typ,
+        user                      $usr,
+        DateTime                  $snap_time,
+        user_message              $usr_msg,
+        ?phrase                   $phr = null
+    ): void
+    {
+        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+            $this->write_db_cache($typ, $usr, $snap_time, $usr_msg);
+        } else {
+            $this->write_file_cache($usr, $phr);
+        }
+    }
+
+    private function write_db_cache(
+        db_cache_type|type_object $typ,
+        user                      $usr,
+        DateTime                  $snap_time,
+        user_message              $usr_msg
+    ): void
+    {
+        $cac = $this->cache_entry($typ, $usr);
+        if ($cac != null) {
+            // the entry of this type and user is loaded upfront, so that it is updated and not added a second time
+            $cac->type_id = $typ->id;
+            $cac->data = $this->cache_array();
+            $cac->usr = $usr;
+            $cac->status_id = db_cache_statuum::CLEAN_ID;
+            $cac->last_update = $snap_time;
+            $cac->save($usr_msg);
+        }
+    }
+
+    private function write_file_cache(user $usr, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $array = $this->cache_array();
+        $json = json_encode($array);
+        file_put_contents($file_name, $json);
+    }
+
+    /**
+     * get the database cache entry of the given config part for the given user
+     * with an empty entry if the config part has not yet been cached
+     *
+     * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
+     * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
+     * @return db_cache|null the cache entry of this config part and user
+     *                       or null if the config part is not expected to be cached
+     */
+    private function cache_entry(
+        db_cache_type|type_object $typ,
+        user                      $usr
+    ): ?db_cache
+    {
+        $cac = null;
+        if (!in_array($typ->code_id, self::CACHE_TYPES)) {
+            log_err('unknown config cache type ' . $typ->code_id);
+        } else {
+            $cac = new db_cache($usr);
+            $cac->load_by_type_and_user($typ->code_id);
+        }
+        return $cac;
+    }
+
+    private function is_file_cache_valid(user $usr, ?phrase $phr = null): bool
+    {
+        $result = false;
+        $file_path = $this->cache_file($usr, $phr);
+        if (file_exists($file_path)) {
+            $cac_time = filemtime($file_path);
+            $cfg_time = filemtime(files::SYSTEM_CONFIG);
+            $result = $cfg_time < $cac_time;
+        }
+        return $result;
     }
 
     private function cache_file(user $usr, ?phrase $phr = null): string

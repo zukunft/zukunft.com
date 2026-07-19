@@ -38,7 +38,7 @@ word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd,
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $expired, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $sys_log_timestamp, $target, $time, $timeout
+DateTime: $actual_time, $cut_time, $expired, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $snap_time, $sys_log_timestamp, $target, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
