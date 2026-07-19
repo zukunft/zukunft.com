@@ -4,6 +4,8 @@
 
 ## high prio
 
+Add an invisible short but unique placeholder to all html footers for the user message so that text replace can be used to add a message to a cached html page without message
+
 do not write html pages to the cache that contain a message to the user. remove the message from the page before writing it to the cache. And on the other side add new messages to the page loaded from cache if needed 
 
 see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page
@@ -11,6 +13,8 @@ see /docs/llm/coding.md and make sure that back pages with a message like 'This 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
+
+add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
 
 ### security before go live
 

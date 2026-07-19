@@ -770,14 +770,19 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    // the first dummy database id of the system configuration keywords for unit testing
+    // a dummy id is needed, because a phrase without an id triggers a database reload on serialization
+    const CONFIG_KEY_ID_OFFSET = 900;
+
     /**
      * @param string $name a system configuration phrase name const e.g. words::CACHE
+     * @param int $id the dummy database id of the keyword, because unit tests never load from the database
      * @return word a system configuration keyword for unit testing
      */
-    function word_config_key(string $name): word
+    function word_config_key(string $name, int $id): word
     {
         $wrd = new word($this->env->usr1);
-        $wrd->set_name($name);
+        $wrd->set($id, $name);
         return $wrd;
     }
 

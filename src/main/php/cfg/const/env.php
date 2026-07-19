@@ -227,13 +227,16 @@ if (!file_exists($env_path)) {
 $env = file($env_path);
 foreach ($env as $line) {
     if (!str_starts_with($line, '#') and trim($line) != '') {
+        // everything from the # is a comment, also directly after the value,
+        // so a secret value like a password can never contain the # char
         if (str_contains($line, '#')) {
             $line = substr($line, 0, strpos($line, '#'));
         }
         if (str_contains($line, "\n")) {
             $line = substr($line, 0, strpos($line, "\n"));
         }
-        $parts = explode('=', $line);
+        // split only on the first = so that a secret value may contain the = char
+        $parts = explode('=', $line, 2);
         if (count($parts) != 2) {
             log_err('unexpected line format in ' . $line);
         } else {

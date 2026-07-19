@@ -40,6 +40,11 @@ include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -49,6 +54,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -114,6 +124,41 @@ class config_tests
         $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::TYPES));
         $test_name = 'an unknown cache switch is reported and the cache is not used';
         $t->assert_false($test_name, $t_val->config_empty()->cache_allowed('unexpected_cache_type'));
+
+        $t->subheader($ts . 'cached json lookup');
+
+        // the config lookup uses the flat rows of the cached json
+        // without building the value and phrase objects on every request
+        $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::TYPES];
+        $cfg_objects = $t_val->config_cache_switch($names, false);
+        $api_json = $cfg_objects->api_json_array(new api_type_list([api_types::PHRASE_NAMES]));
+        $cfg_cached = $t_val->config_empty();
+        $test_name = 'the cached config json fills the lookup rows';
+        $t->assert_true($test_name, $cfg_cached->set_cache_json($api_json));
+        $test_name = 'the lookup from the cached json returns the same value as from the objects';
+        $t->assert($test_name, $cfg_cached->get_by($names), $cfg_objects->get_by($names));
+        $test_name = 'the cache switch from the cached json matches the object based switch';
+        $t->assert($test_name,
+            $cfg_cached->cache_allowed(db_cache_types::TYPES),
+            $cfg_objects->cache_allowed(db_cache_types::TYPES));
+        $test_name = 'a name not in the cached json returns the fallback';
+        $t->assert($test_name, $cfg_cached->get_by([words::MILLISECOND], 42), 42);
+        $test_name = 'an empty cached json does not fill the lookup rows';
+        $t->assert_false($test_name, $t_val->config_empty()->set_cache_json([]));
+
+        // a text config value e.g. the language code is restored from the cached json
+        $api_json[] = [
+            json_fields::PHRASES => [
+                [json_fields::NAME => words::LANGUAGE],
+                [json_fields::NAME => words::USER],
+                [json_fields::NAME => words::FRONTEND],
+            ],
+            json_fields::TEXT_VALUE => language_codes::SYS,
+        ];
+        $cfg_cached = $t_val->config_empty();
+        $cfg_cached->set_cache_json($api_json);
+        $test_name = 'a text config value is read from the cached json';
+        $t->assert($test_name, $cfg_cached->language(), language_codes::SYS);
 
         // the html page cache (db_cache_pages) has its own pod switch
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
