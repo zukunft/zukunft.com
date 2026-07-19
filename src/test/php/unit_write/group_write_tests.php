@@ -321,7 +321,8 @@ class group_write_tests
             $grp->del($usr_msg);
             $grp->reset();
             $grp->load_by_id($id);
-            $t->assert($test_name, $grp->name(), $grp->name_generated());
+            // the delete and reload above write to and read from the database, so a db timeout is used
+            $t->assert($test_name, $grp->name(), $grp->name_generated(), $t::TIMEOUT_LIMIT_DB);
         }
     }
 

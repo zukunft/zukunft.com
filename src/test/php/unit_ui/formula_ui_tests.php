@@ -117,8 +117,9 @@ class formula_ui_tests
         // "year" carried by the increase formula), never the full phrase list; test_mode true so
         // the assigned list carried by the formula is used without an api reload
         $assigned = $list->phrases_of_formula($frm_increase, null, true);
+        // building the assigned phrases list reads and writes to the database, so a db timeout is used
         $test_name = 'assigned phrases of the increase formula show the assigned "year"';
-        $t->assert_text_contains($test_name, $assigned, words::YEAR_CAP);
+        $t->assert_text_contains($test_name, $assigned, words::YEAR_CAP, $t::TIMEOUT_LIMIT_DB);
         $test_name = 'assigned phrases of the increase formula exclude a not assigned phrase';
         $t->assert_text_not_contains($test_name, $assigned, words::PERCENT);
         $test_page .= $html->text_h2('assigned phrases of the formula increase');

@@ -85,9 +85,10 @@ class view_ui_tests
         $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
         $test_name = 'the side-or-below column is shown before the side-or-last-below column';
         $t->assert_text_order($test_name, $cols_html, components::COL_THIRD_NAME, components::COL_FOURTH_NAME);
+        // rendering the plain view builds the complete component html, so a semi page timeout is used
         $test_name = 'without the side or below position types no minimal width is set';
         $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $ui->dto, '', '', true), 'min-width');
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $ui->dto, '', '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
     }
 
 }

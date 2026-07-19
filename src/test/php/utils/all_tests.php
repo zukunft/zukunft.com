@@ -173,6 +173,11 @@ class all_tests extends all_unit_write_tests
     {
         global $sys;
 
+        // route php notices, warnings and uncaught exceptions (incl. their stack traces) through the
+        // timestamped log writer so that every emitted line starts with a timestamp like the test lines
+        set_error_handler('log_php_error_timestamped');
+        set_exception_handler('log_php_exception_timestamped');
+
         // init
         $sys->errors = 0;
         $t_db = new test_db_load($this);

@@ -251,7 +251,8 @@ class test_cleanup extends test_api
                 $msk->del($usr_msg);
                 $result .= $usr_msg->get_last_message();
                 $target = '';
-                $this->assert('view->del of "' . $dsp_name . '"', $result, $target);
+                // deleting the view writes to the database, so a db timeout is used to avoid a false timeout
+                $this->assert('view->del of "' . $dsp_name . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
             }
         }
 
@@ -433,16 +434,14 @@ class test_cleanup extends test_api
         }
 
         // TODO better use a info system log message
-        $html = new html_base();
-        $html->echo_html($db_con->seq_reset(word::class));
-        //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
-        //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
-        $html->echo_html($db_con->seq_reset(formula::class));
-        $html->echo_html($db_con->seq_reset(formula_link::class));
-        $html->echo_html($db_con->seq_reset(view::class));
-        $html->echo_html($db_con->seq_reset(component::class));
-        $html->echo_html($db_con->seq_reset(component_link::class));
-        $html->echo_html($db_con->seq_reset(source::class));
+        // route through the timestamped writer so every 'Next database id' line starts with a timestamp
+        echo_timestamped($db_con->seq_reset(word::class));
+        echo_timestamped($db_con->seq_reset(formula::class));
+        echo_timestamped($db_con->seq_reset(formula_link::class));
+        echo_timestamped($db_con->seq_reset(view::class));
+        echo_timestamped($db_con->seq_reset(component::class));
+        echo_timestamped($db_con->seq_reset(component_link::class));
+        echo_timestamped($db_con->seq_reset(source::class));
 
         if ($result == '') {
             return true;
@@ -607,8 +606,10 @@ class test_cleanup extends test_api
         }
         $created_html = $this->html_page($body, $title);
         $resource_file = test_paths::RESOURCE . test_paths::HTML . $file_path . test_files::HTML;
+        // the object page snapshot renders a complete html page (the all-component-types page renders every
+        // component type) and compares it against a file, so a long timeout is used to avoid a false timeout
         return $this->assert_file(
-            $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN);
+            $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN, self::TIMEOUT_LIMIT_LONG);
     }
 
     private function html_page(string $body, string $title): string

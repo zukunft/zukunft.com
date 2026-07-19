@@ -201,8 +201,9 @@ class api_tests
 
         $cfg = new config();
         $cfg->load($sys);
+        // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'the default configuration api message must at least contain the pod name';
-        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
+        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME, $t::TIMEOUT_LIMIT_REST);
 
         $cfg_all = new config();
         $cfg_all->load($sys, api::CONFIG_ALL);
@@ -221,8 +222,9 @@ class api_tests
 
         $cfg = new config();
         $cfg->load($sys, api::CONFIG_FRONTEND);
+        // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'at least one frontend configuration value must be loaded via api message';
-        $t->assert_not($test_name, $cfg->count(), 0);
+        $t->assert_not($test_name, $cfg->count(), 0, $t::TIMEOUT_LIMIT_REST);
         $test_name = 'the frontend configuration must at least contain some user number format settings';
         // TODO Prio 2 activate
         // $t->assert($test_name, $cfg->get_by([words::USER, triples::NUMBER_FORMAT]), null);
@@ -238,25 +240,28 @@ class api_tests
 
         $cfg = new config();
         $cfg->load($sys, api::CONFIG_USER);
+        // loading the configuration triggers a REST api call, so a REST timeout is used to avoid a false timeout
         $test_name = 'at least one frontend configuration value must be loaded via api message';
-        $t->assert_not($test_name, $cfg->count(), 0);
+        $t->assert_not($test_name, $cfg->count(), 0, $t::TIMEOUT_LIMIT_REST);
         $test_name = 'the frontend configuration must at least contain some user number format settings';
 
 
         $t->subheader($ts . 'api id and name select');
 
         // load the frontend objects via api call
+        // loading the frontend object via api triggers a REST api call, so a REST timeout is used
         $test_name = 'api id and name call of a word';
         $wrd_zh = new word_ui();
         $wrd_zh->load_by_name(word_names::ZH);
         $wrd_zh->load_by_id($wrd_zh->id());
-        $t->assert($test_name, $wrd_zh->name(), word_names::ZH);
+        $t->assert($test_name, $wrd_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
+        // loading the frontend object via api triggers a REST api call, so a REST timeout is used
         $test_name = 'api id and name call of a phrase';
         $phr_zh = new phrase_ui();
         $phr_zh->load_by_name(word_names::ZH);
         $phr_zh->load_by_id($phr_zh->id());
-        $t->assert($test_name, $phr_zh->name(), word_names::ZH);
+        $t->assert($test_name, $phr_zh->name(), word_names::ZH, $t::TIMEOUT_LIMIT_REST);
 
     }
 

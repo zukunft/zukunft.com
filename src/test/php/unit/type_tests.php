@@ -108,8 +108,10 @@ class type_tests
         $usr_msg = new user_message(user::system());
         $test_name = 'the type lists are filled from the types api json';
         $t->assert_true($test_name, $typ_lst_cached->fill_from_api_json($api_json, $usr_msg));
+        // building and comparing the complete type list api json takes longer than a normal unit
+        // function, so a calculation timeout is used to avoid a false timeout as the type list grows
         $test_name = 'the filled type lists recreate exactly the same types api json';
-        $t->assert($test_name, json_encode($typ_lst_cached->api_json_array()), json_encode($api_json));
+        $t->assert($test_name, json_encode($typ_lst_cached->api_json_array()), json_encode($api_json), $t::TIMEOUT_LIMIT_CALC);
         $test_name = 'a phrase type is selected by code id like after a database load';
         $t->assert($test_name,
             $typ_lst_cached->phr_typ->id(phrase_type_shared::PERCENT),

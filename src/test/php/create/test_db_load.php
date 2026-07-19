@@ -643,7 +643,8 @@ class test_db_load
         // reset the message for each test
         $usr_msg->reset();
         $frm = $this->add_formula($frm_name, $frm_text, $usr_msg);
-        $this->env->assert('formula', $frm->name(), $frm_name);
+        // adding the formula writes to the database, so a db timeout is used to avoid a false timeout
+        $this->env->assert('formula', $frm->name(), $frm_name, $this->env::TIMEOUT_LIMIT_DB);
         return $frm;
     }
 
@@ -1172,7 +1173,8 @@ class test_db_load
             if ($frm_lnk->id() > 0) {
                 $result = $frm_lnk->formula()->name() . ' is linked to ' . $frm_lnk->phrase()->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
-                $this->env->assert('formula_link', $result, $target);
+                // creating and loading the formula link writes to the database, so a db timeout is used
+                $this->env->assert('formula_link', $result, $target, $this->env::TIMEOUT_LIMIT_DB);
             } else {
                 if ($auto_create) {
                     $frm_lnk->set_formula($frm);

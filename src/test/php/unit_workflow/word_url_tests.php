@@ -87,12 +87,14 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
-        $t->assert_text_contains($test_name, $result, word_names::MATH);
+        // the assert follows a complete view render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
-        $t->assert_text_contains($test_name, $result, word_names::MATH);
+        // the assert follows a complete view render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = 'add request via url without name should return a missing error message';
         $url_arr = [];
@@ -110,7 +112,8 @@ class word_url_tests extends url_test_base
         // without the marker the same url just renders the add form with the given values
         $url_arr[url_var::POST_SUBMIT] = '';
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
-        $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD));
+        // the assert follows a complete view render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD), $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // a create or delete request is executed by url_to_action (not url_to_html, which only
         // renders), so use the combined execute and render call and check the database result
@@ -127,7 +130,8 @@ class word_url_tests extends url_test_base
         $ui->execute_and_next($url_arr, $req);
         $wrd_chk = new word($t->usr1);
         $wrd_chk->load_by_name(word_names::TEST_ADD);
-        $t->assert($test_name, $wrd_chk->id(), 0);
+        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
+        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // recreate the word deleted above, because the change and del word workflows below run on it
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
@@ -144,7 +148,8 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $form = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
-        $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"');
+        // the first assert follows a complete edit form render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"', $t::TIMEOUT_LIMIT_PAGE_LONG);
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::DESCRIPTION . '"');
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::PLURAL . '"');
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::MASK . '"');
@@ -176,7 +181,8 @@ class word_url_tests extends url_test_base
         $result = $ui->url_to_html($url_arr, $usr_ui, $save_msg, $ui->dto, true);
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_MAP_MISSING));
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_KEY_MISSING));
-        $t->assert_text_contains($test_name, $result, word_names::MATH);
+        // the render time of the save url above is charged to this assert, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // negative: a pod url that is missing the mandatory mask_id key
         // must still report the missing url key (the error path stays intact)
@@ -212,7 +218,8 @@ class word_url_tests extends url_test_base
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
-        $t->assert_text_contains($test_name, $result, $wrd_ui->name());
+        // the assert follows the confirm change view render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, $wrd_ui->name(), $t::TIMEOUT_LIMIT_PAGE_LONG);
         // the pending change is carried into the confirm view as a url-encoded form/back parameter
         // (the human-readable change preview component is not yet implemented)
         $t->assert_text_contains($test_name, $result, rawurlencode($wrd_ui->get_description()));
@@ -257,7 +264,8 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
-        $t->assert_text_contains($test_name, $result, 'def');
+        // the assert follows the word find view render via url, so a long page timeout is used
+        $t->assert_text_contains($test_name, $result, 'def', $t::TIMEOUT_LIMIT_PAGE_LONG);
 
 
         $t->subheader($ts . 'cleanup');

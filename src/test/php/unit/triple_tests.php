@@ -266,7 +266,8 @@ class triple_tests
         $trp = $t_trp->triple();
         $trp->set_impact(impacts::HIGH);
         $json_ex = $trp->export_json([], false);
-        $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH);
+        // the assert follows the json export above, so a page timeout is used to avoid a false timeout
+        $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH, $t::TIMEOUT_LIMIT_PAGE);
         // re-import the exported json and check that the impact is read back
         $trp_in = new triple($usr_sys);
         $trp_in->import_mapper($json_ex, new user_message($usr_sys), new data_object($usr_sys));
