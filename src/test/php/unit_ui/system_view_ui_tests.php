@@ -210,6 +210,27 @@ class system_view_ui_tests
         $test_name = 'a plain get navigation is not an action';
         $t->assert_false($test_name, frontend::request_triggers_action($get_nav));
 
+        // the data changing masks are blocked for an ip user if the pod does not permit changes,
+        // but the login, signup and export masks must always stay open for an ip user
+        $test_name = 'the import view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::IMPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the undo view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::UNDO_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the paste table view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::PASTE_TABLE_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the job view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::JOB_ASYNC_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the word add view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::WORD_ADD_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the login view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::LOGIN_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the signup view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::SIGNUP_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the export view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::EXPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the start view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
+
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;
         // the api entry (application::start_api) and the html frontend share this via server_guard

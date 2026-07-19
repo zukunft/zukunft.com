@@ -102,13 +102,14 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
 
-        // block an add, edit or del request of a user without login before any change is done
+        // block a data changing request of a user without login before any change is done
         // if this pod does not permit the changes of an ip user
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // beside add, edit and del this covers e.g. the import, paste, undo and job views;
         // checked before the page cache probe, so that the blocked request is answered
         // with the cached start page and the message is added to it (see cached_page_or_null)
         $mask_id = $url_array[url_var::MASK] ?? 0;
-        if (in_array($mask_id, views::CHANGE_MASKS_IDS) and $usr->is_blocked()) {
+        if (in_array($mask_id, views::IP_BLOCKED_MASKS_IDS) and $usr->is_blocked()) {
             log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
             $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
             $url_array = [url_var::MASK => views::START_ID];
