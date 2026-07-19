@@ -10,8 +10,6 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 findings of the security check on 2026-07-17, ordered by exploitability.
 
-reduce the signup username enumeration: action_signup (web/frontend.php around line 1153) returns a distinct SIGNUP_ERR_NAME_EXISTS when the name is taken, which lets an attacker probe which usernames exist - inconsistent with the neutral reset flow. keep the hint only if the ux needs it, otherwise use a generic message and/or rate limit; at least accept it as a conscious trade-off
-
 ### security improvements
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
