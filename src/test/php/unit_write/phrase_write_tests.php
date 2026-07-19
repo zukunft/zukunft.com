@@ -98,7 +98,7 @@ class phrase_write_tests
         $phr_ui = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_ui->dsp_tbl());
         $url = '<td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID
-            . '&' . url_var::ID . '=';
+            . '&amp;' . url_var::ID . '=';
         $target = $lib->trim_html($url . $company_id . '" '
             . html_base::TITLE . '="' . word_names::COMPANY_COM . '">'
             . word_names::COMPANY . '</a></td> ');
@@ -114,7 +114,7 @@ class phrase_write_tests
 
         $phr_ui = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_ui->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '">' . triple_names::COMPANY_ZURICH . '</a></td></tr> ');
+        $target = $lib->trim_html(' <tr> <td><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . VIEWS::TRIPLE_ID . '&amp;id=' . $trp->id() . '">' . triple_names::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas

@@ -171,7 +171,7 @@ class term_list_tests
 
         // positive: the edit link points to the word edit view (views::WORD_EDIT_ID = 3) of the term
         $test_name = 'term_list->links_with_context edit link points to the term edit page';
-        $t->assert($test_name, str_contains($cols_html, 'm=3&id=1'), true);
+        $t->assert($test_name, str_contains($cols_html, 'm=3&amp;id=1'), true);
 
         // negative: an empty term list renders no columns
         $test_name = 'term_list->links_with_context of an empty list is empty';

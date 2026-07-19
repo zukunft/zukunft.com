@@ -309,7 +309,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
         $url = $html->url_new($msk_id, $this->id(), '', $back);
         // escape the user settable name (link body); ref() escapes the
         // description that becomes the title attribute
-        return $html->ref($url, $html->esc($this->name()), $this->get_description(), $style);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
 

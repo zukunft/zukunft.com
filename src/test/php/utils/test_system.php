@@ -102,7 +102,7 @@ function run_system_test(test_cleanup $t): void
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $usr_ui = new user_ui($usr_by_id->api_json());
-    $target = '<a href="/http/view.php?m=74&id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    $target = '<a href="/http/view.php?m=74&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_ui->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 

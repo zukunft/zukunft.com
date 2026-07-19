@@ -359,7 +359,7 @@ class word_tests
         $lnk = triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and "..." for more';
-        $lnk = views::WORD_RELATED_ID . '&id=' . word_names::ZH_ID . '">...</a>';
+        $lnk = views::WORD_RELATED_ID . '&amp;id=' . word_names::ZH_ID . '">...</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... but company is NOT';
         $t->assert_text_not_contains($test_name, $txt, word_names::COMPANY);
@@ -377,7 +377,7 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
         $lnk = '<a href="/http/view.php?m=' . views::TRIPLE_ID
-            . '&id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
+            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -393,7 +393,7 @@ class word_tests
         $test_name = '... and still canton';
         $t->assert_text_contains($test_name, $txt, '>' . word_names::CANTON . '</a>');
         $test_name = '... linking to the canton triple with its description as tooltip';
-        $t->assert_text_contains($test_name, $txt, '&id=' . triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>');
+        $t->assert_text_contains($test_name, $txt, '&amp;id=' . triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>');
         $test_name = '... but city NOT';
         $t->assert_text_not_contains($test_name, $txt, '>' . word_names::CITY . '</a>');
 

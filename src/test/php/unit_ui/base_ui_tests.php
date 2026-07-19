@@ -413,18 +413,18 @@ class base_ui_tests
 
         $t->subheader($ts . 'button tests');
         $test_name = 'a sandbox object e.g. word add button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&amp;back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
         $wrd = new word();
         $t->assert($test_name, $wrd->btn_add('1'), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&amp;id=1&amp;back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&amp;id=1&amp;back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
         $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
         $t->assert($test_name, $frm->btn_del('1'), $target);
@@ -464,7 +464,7 @@ class base_ui_tests
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=-1">no</a>';
+        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=-1">no</a>';
         $result = (new button($url, $back))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 

@@ -440,7 +440,7 @@ class formula extends sandbox_code_id
     {
         $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
         $html = new html_base();
-        return $html->ref($url, $html->esc($this->name()), $this->name());
+        return $html->ref($url, $this->name(), $this->name());
     }
 
 

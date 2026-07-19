@@ -399,7 +399,7 @@ class system_form extends component
         $html = new html_base();
         $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE);
+        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
     }
 
     /**

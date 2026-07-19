@@ -353,15 +353,15 @@ class formula_write_tests
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_ui);
         $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_this->id() . '&back=0">' . word_names::THIS_NAME . '</a>'
-            . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . word_names::PRIOR_NAME . '</a> )'
-            . ' / <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . word_names::PRIOR_NAME . '</a>';
+            . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_this->id() . '&amp;back=0">' . word_names::THIS_NAME . '</a>'
+            . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '&amp;back=0">' . word_names::PRIOR_NAME . '</a> )'
+            . ' / <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '&amp;back=0">' . word_names::PRIOR_NAME . '</a>';
         $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
 
         // ... in HTML format with link
         $frm_increase = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $result = $frm_html->edit_link($back);
-        $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_increase->id() . '&back=0">' . formula_names::SYSTEM_TEST_ADD . '</a>';
+        $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_increase->id() . '&amp;back=0">' . formula_names::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
         // ... the formula result selected by the word and in percent

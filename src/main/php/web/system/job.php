@@ -297,7 +297,7 @@ class job extends db_object
     {
         $html = new html_base();
         $url = $html->url(rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
-        return $html->ref($url, $html->esc($this->name()), $this->get_description(), $style);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
     /**

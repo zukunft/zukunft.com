@@ -144,6 +144,23 @@ class system_view_ui_tests
         $test_name = 'the placeholder is an invisible html comment';
         $t->assert_true($test_name, str_starts_with(api::USER_MSG_PLACEHOLDER, '<!--')
             and str_ends_with(api::USER_MSG_PLACEHOLDER, '-->'));
+
+        $t->subheader($ts . 'link escaping');
+        // a user supplied url e.g. of a source can neither break the href attribute
+        // nor inject a script and the link text is escaped by default
+        $test_name = 'the href attribute of a link is escaped';
+        $t->assert($test_name,
+            $html->ref('https://example.org/?a=1&b="x"', 'a name'),
+            '<a href="https://example.org/?a=1&amp;b=&quot;x&quot;">a name</a>');
+        $test_name = 'the link text is escaped by default';
+        $t->assert_text_contains($test_name,
+            $html->ref('https://example.org/', 'a<b>name'), 'a&lt;b&gt;name');
+        $test_name = 'a javascript url is not linked and only the text is shown';
+        $t->assert($test_name,
+            $html->ref('javascript:alert(1)', 'a name'), 'a name');
+        $test_name = 'a relative url is linked';
+        $t->assert_text_contains($test_name,
+            $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
         $t->usr1 = $t_usr->user_sys_test();
         $usr_msg = new user_message();
         $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
