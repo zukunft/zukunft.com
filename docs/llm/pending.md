@@ -8,7 +8,116 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 ### security before go live
 
-findings of the security check on 2026-07-17, ordered by exploitability.
+findings of the security check on 2026-07-17, ordered by exploitability. all items of that
+round are fixed (fix #334 parts 1-18: .htaccess allow-list, docker exposure, config cache as
+system user, csrf token on action masks, session regeneration, reflected xss escaping,
+html_base::ref href escaping, sudoers pinning + setup gate, signup enumeration trade-off,
+sys_log write throttle, protection-level raise gating for the seq-id branch).
+
+findings of the re-run security check on 2026-07-19, ordered by exploitability. the six reviewed
+surfaces were entry points/routing, auth/session/passwords, injection sinks, frontend xss output,
+access control, and config/secrets/deployment. injection is clean (sql parameterised end to end,
+the single exec sink pinned, no eval/unserialize/xxe). the items below are the confirmed findings,
+each verified against the code (file:line evidence in the description).
+
+[FIXED 2026-07-19] the api debug parameter is not environment-gated (info disclosure, medium):
+api/api_const.php line 36 sets `$debug = $_GET['debug'] ?? 0` directly from the request, while the
+frontend entry points http/const.php and http/setup.php were hardened in fix #334 to stage the
+requested level and honour it only in ENV_DEV. every api endpoint includes api_const.php, so an
+anonymous request such as `GET /api/word/index.php?id=1&debug=11` echoes the live sql, table/column
+names and the internal call graph into the response in production (log_debug echoes when
+`$debug >= min_level`). fixed by mirroring the http/const.php pattern in api_const.php: read
+`$debug_requested`, keep `$debug = 0`, then apply it after init.php loads the env only
+`if (getenv(ENVIRONMENT) == ENV_DEV)`. (found independently by two reviewers.)
+
+[FIXED 2026-07-19] stored xss in several frontend render paths that emit a user-controlled
+name/value without escaping (high). the frontend keeps names raw at the source and escapes per
+render site (e.g. word.php h1 uses esc(), ui_base::dbo_name escapes), so the sites that forget the
+escape were live holes: (a) the page `<title>` - html_base::title() (html_base.php line 2552) wrapped
+the title raw; it is fed the raw object name + view name via view_base::title() and frontend.php line
+969, so a word/view renamed to `</title><script>...</script>` executed in the head for any viewer;
+(b) the related-views tab - ui_list.php line 551 emitted `$msk->name()` raw into a div; (c) formula
+expression and latex - formula.php user_expression() (line 529) escaped only the double quote, and
+the latex path (expression_latex / expression_latex_link) emitted the user latex raw into a span, so
+`<script>`/`<img onerror>` in the expression or latex fields ran on the formula page; (d) text values
+- html_base::span() (line 609) emits its body raw and value.php lines 402/470/485 passed the raw text
+value through it. fixes: title() now esc()s the title; ui_list.php escapes the view name; formula
+user_expression() uses full htmlspecialchars and both latex methods escape the user latex before the
+latex->html transforms (the term-link html stays trusted); web value::value() now escapes its text
+and time branches at source so it returns uniformly display-safe html, and its three ref() callers
+pass name_is_html=true to avoid double-escaping (which also fixes a latent bug where a non-standard
+number span was being escaped by ref). span()/div() were left as generic html containers (they
+receive already-composed markup, so escaping their body would double-escape). two more sinks of the
+same class were found and fixed while verifying: ui_list::children_of_word (the h2/h4 header built
+from the raw verb and phrase name, dsp_text_h2 emits raw) and ui_list::link_list_word (raw
+`$dbo->name()` into the component arm output).
+
+[FIXED 2026-07-19] the part-14 protection-level gating was missing on the value/result branch
+(privilege escalation / self-lock, medium-high). check_protection_change was called only from the
+seq-id branch (sandbox.php lines 2810/2909 and sandbox_list_named.php); the value/result save path -
+value_base::save() (value_base.php line 2183) - never called it, yet protection_id is fully
+user-settable there (sandbox_multi::api_mapper line 428). a normal user could save a value with
+protection set to admin and self-lock a shared value above their own privilege, the exact scenario
+the part-14 fix prevents for words/triples/etc. fixed by adding a parallel check_protection_change to
+sandbox_multi (the value/result branch shares no parent with sandbox, so the protection api is
+duplicated there like protection_type_name() and can_change() already are - the two branches are
+intentionally parallel), and calling it in value_base::save on both the new-object and the update
+path, mirroring the seq-id wiring (warning-only, the save proceeds with the protection limited to
+what the user may set). added a `protection` unit-test block to value_tests.php mirroring the
+word_tests protection tests (normal user cannot reduce, cannot raise to no-change, cannot set admin
+on a new value; admin can; denials reported, admin changes not).
+
+[FIXED 2026-07-19] the sysLogList api returns the full system error log to anyone, including
+anonymous (info disclosure, medium): api/sysLogList/index.php line 67 gated only on `$usr->id > 0`,
+which every anonymous ip-user satisfies, then load_all() forces DSP_ALL and returns every row
+including sys_log_trace (internal code paths), text and description - data the frontend only ever
+exposes to admins. fixed by requiring `$usr->is_admin() or $usr->is_system()` before loading (else a
+'not permitted' message), matching the api/user pattern.
+
+no share-based read enforcement - idor read of another user's private object by id (medium, likely an
+unimplemented feature rather than a regression): share_id (public/personal/group/private) is stored
+and round-tripped but no read path filters on it (no WHERE on FLD_SHARE anywhere in cfg/). the object
+creator owns the standard row, so a value/word/triple created as private is the standard row; another
+user with no overlay gets it verbatim on `load_by_id`, e.g. `GET /api/value/?id=N` iterating ids.
+either add a share-scope predicate to the sandbox load sql (owner-or-public, plus group membership
+for group), or decide and document explicitly that share is display-only and private objects are not
+to be treated as confidential. related lower-severity siblings gated only by `id > 0`: api/job
+(api/job/index.php line 64, load_by_id with no owner filter - reads another user's job metadata) and
+api/changeLogList (api/changeLogList/index.php line 71, returns any object's change history; intended
+for the public graph but combines with this finding to expose private-object history).
+
+[FIXED 2026-07-19] the top-level test/ tree was blocked only by its own nested test/.htaccess, with
+no central backstop (medium, deployment): every other sensitive dir is also blocked in the root
+.htaccess as defense-in-depth (^/vendor/, ^/server_admin/, ^/script/, ^/cache/, ^/http_old/, ^/.git),
+but test/ had no root-level RedirectMatch and most scripts (test.php, test_unit.php, test_workflow.php,
+sync_sql_sequences.php, ...) lacked the `PHP_SAPI !== 'cli'` guard that reset_db.php has. if the
+nested .htaccess were ever not deployed or .htaccess stopped being honoured, `GET /test/test.php`
+would run the full suite and reset the database against a live pod. fixes: added `RedirectMatch 404
+^/test/` to the root .htaccess; added the `PHP_SAPI !== 'cli'` guard (403 + exit) to the remaining
+ten test/*.php entry scripts, including test_const.php which every runner includes as its first step;
+and added a vhost-level `<Directory /var/www/html/test>` deny in docker/apache-config.conf so the
+folder is blocked even if .htaccess is not honoured, mirroring the existing .git backstop.
+
+lower-severity / hardening items: api/auth.php is a broken stub - it reads Basic Auth credentials
+into locals and never uses them, and calls send_auth_request() (line 60) which is defined nowhere, so
+an unauthenticated request without an Authorization header fatals; implement it or remove it. the api
+write path has no anti-csrf check (api/word/index.php / api/controller.php) but is currently
+unreachable dead code because the method-detection uses `in_array(REQUEST_METHOD, $_SERVER)` (should
+be array_key_exists), so every request falls through to GET; close the csrf gap in the same change
+that fixes the method detection and enables writes. .env.example line 53 commits a real admin source
+ip (94.130.31.152) rather than a placeholder - replace with a documentation ip. docker/Dockerfile
+pins php 8.2 while CLAUDE.md and install.sh require 8.4 - align the base image. the main app sets no
+Content-Security-Policy / X-Frame-Options / X-Content-Type-Options headers (small surface since web/
+emits no javascript, but nosniff + frame-ancestors are cheap wins). the bcrypt DUMMY_PW_HASH is
+pinned at cost 12 while real hashes use the runtime default cost - equal on php 8.4 (default 12) but
+diverges on any php where the default is 10, re-opening the timing oracle the dummy prevents; derive
+the dummy from the same cost. save_user() has no general can_change() gate (safe today because no
+write caller passes an attacker-influenced target, latent defense-in-depth). login and the
+password-reset email have no throttle - covered by the planned rate limiter, ensure it also bounds
+the reset endpoint. informational (injection review): sql_par_field_list::par_sql() (line 785) builds
+inline unescaped sql but only into `$qp->call`, the documented never-executed sample string - add a
+guard/comment so it is never routed into exe(); finish deprecating sql_db::sf() in favour of bound
+parameters.
 
 ### security improvements
 

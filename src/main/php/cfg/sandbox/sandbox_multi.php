@@ -1097,6 +1097,64 @@ class sandbox_multi extends db_object_multi_user
         return $sys->typ_lst->ptc_typ->name($this->protection_id);
     }
 
+    /**
+     * make sure that only an admin or system user changes the protection level beyond the user level;
+     * the value/result twin of sandbox::check_protection_change - the two sandbox class branches share
+     * no parent, so the protection api is duplicated here just like protection_type_name() and
+     * can_change() already are. a protection reduction is denied for a normal user and the database
+     * protection level is kept; setting the admin protection (or higher) is also denied for a normal
+     * user - for a change and for a new object - because otherwise a user could self-lock a value so
+     * that only an admin can change it; in both cases the protection is limited and a warning is
+     * added to the given message. the protection ids are in rising order e.g. 1 no protection to 4 no change
+     *
+     * @param sandbox_multi|null $db_obj the object as saved in the database or null for a new object
+     * @param user $usr_req the user who has requested the change
+     * @param user_message $msg to report a denied protection change to the user
+     * @return void because the adjusted protection of this object and the message are the result
+     */
+    function check_protection_change(
+        ?sandbox_multi $db_obj,
+        user           $usr_req,
+        user_message   $msg
+    ): void
+    {
+        global $sys;
+
+        if ($this->protection_id != null) {
+            if (!$usr_req->is_admin() and !$usr_req->is_system()) {
+                $db_protect_id = $db_obj?->protection_id();
+
+                // only an admin or system user may set the admin protection or higher
+                $admin_protect_id = $sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN);
+                $is_raise = ($db_protect_id == null or $this->protection_id > $db_protect_id);
+                if ($this->protection_id >= $admin_protect_id and $is_raise) {
+                    $requested_name = $this->protection_type_name();
+                    if ($db_protect_id != null) {
+                        $this->set_protection_id($db_protect_id);
+                    } else {
+                        // for a new object fall back to the highest level a normal user may set
+                        $this->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::USER));
+                    }
+                    $msg->add_warning_with_vars(msg_id::PROTECTION_RAISE_DENIED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_PROTECT => $this->protection_type_name(),
+                        msg_id::VAR_PROTECT_CHK => $requested_name
+                    ]);
+                }
+
+                // only an admin or system user may reduce the protection level
+                if ($db_protect_id != null and $this->protection_id < $db_protect_id) {
+                    $msg->add_warning_with_vars(msg_id::PROTECTION_REDUCE_DENIED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_PROTECT => $db_obj->protection_type_name(),
+                        msg_id::VAR_PROTECT_CHK => $this->protection_type_name()
+                    ]);
+                    $this->set_protection_id($db_protect_id);
+                }
+            }
+        }
+    }
+
 
     /*
      * info

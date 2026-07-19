@@ -338,9 +338,12 @@ class value extends sandbox_value
                 $result = $html->span($result, styles::STYLE_USER);
             }
         } elseif ($this->text_value() != null) {
-            $result = $this->text_value();
+            // escape the user text value: value() returns display-ready html (the number branch
+            // already returns a span) and the span/name callers emit it without escaping, so an
+            // un-escaped text value would be stored xss
+            $result = $html->esc($this->text_value());
         } elseif ($this->time_value() != null) {
-            $result = $this->time_value();
+            $result = $html->esc($this->time_value());
         } else {
             $result = '';
         }
@@ -358,7 +361,8 @@ class value extends sandbox_value
         $lib = new library();
         $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
         $txt = $this->value();
-        return $html->ref($url, $txt);
+        // value() already returns escaped/safe html, so ref() must not escape it again
+        return $html->ref($url, $txt, '', '', true);
     }
 
     /**
@@ -371,7 +375,8 @@ class value extends sandbox_value
         $html = new html_base();
         $url = $html->url_new(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
         $txt = $this->value();
-        return $html->ref($url, $txt);
+        // value() already returns escaped/safe html, so ref() must not escape it again
+        return $html->ref($url, $txt, '', '', true);
     }
 
     /**
@@ -397,7 +402,8 @@ class value extends sandbox_value
         $name_txt = $phr_lst->name_link_list();
         $val_txt = $this->value();
         if (!$info_phr_lst->is_empty()) {
-            $val_txt = $html->ref($url, $val_txt, $info_phr_lst->name_pur());
+            // value() already returns escaped/safe html, so ref() must not escape it again
+            $val_txt = $html->ref($url, $val_txt, $info_phr_lst->name_pur(), '', true);
         } else {
             $val_txt = $html->span($val_txt, '', $info_phr_lst->name_pur());
         }

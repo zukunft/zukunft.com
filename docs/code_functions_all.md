@@ -2468,6 +2468,7 @@
     \-- share_type_name - section for function share_type_name not yet defined that it should be load types in /sandbox/sandbox_multi.php
     \-- protection_type_code_id - section for function protection_type_code_id not yet defined that it should be load types in /sandbox/sandbox_multi.php
     \-- protection_type_name - section for function protection_type_name not yet defined that it should be load types in /sandbox/sandbox_multi.php
+    \-- check_protection_change - section for function check_protection_change not yet defined that it should be load types in /sandbox/sandbox_multi.php
     \-- load_sql_median_user - section for function load_sql_median_user is expected to be load sql in /sandbox/sandbox_multi.php
     \-- median_user - section for function median_user not yet defined that it should be info in /sandbox/sandbox_multi.php
     \-- is_saved - section for function is_saved is expected to be info in /sandbox/sandbox_multi.php

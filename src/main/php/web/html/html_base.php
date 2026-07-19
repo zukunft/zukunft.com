@@ -2549,7 +2549,9 @@ class html_base
         } else {
             $title = $this->concat_title_text($txt, $pod_name);
         }
-        return '<' . self::TITLE . '>' . $title . '</' . self::TITLE . '>';
+        // escape the title text: it is fed the raw object and view name, so an object renamed to
+        // "</title><script>..." would otherwise break out of the head title and inject script (xss)
+        return '<' . self::TITLE . '>' . $this->esc($title) . '</' . self::TITLE . '>';
     }
 
     /**
