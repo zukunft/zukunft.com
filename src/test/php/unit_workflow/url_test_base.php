@@ -268,8 +268,10 @@ class url_test_base
         $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $url_arr[url_var::ID] ?? 0);
+        // building the human url and json mapping reads from the database and compares against a file,
+        // so a file timeout is used to avoid a false timeout
         $this->t->assert_file($test_name . '_url', $content,
-            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
+            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT, '', $this->t::TIMEOUT_LIMIT_FILE);
     }
 
     /**
@@ -331,8 +333,10 @@ class url_test_base
         $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $this->wf_id);
+        // building the human url and json mapping reads from the database and compares against a file,
+        // so a file timeout is used to avoid a false timeout
         $this->t->assert_file($test_name . '_url', $content,
-            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT);
+            test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT, '', $this->t::TIMEOUT_LIMIT_FILE);
     }
 
     /**

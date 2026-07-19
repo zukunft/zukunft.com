@@ -580,8 +580,9 @@ class test_api extends test_base
         $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
         // the anonymous call must be rejected with the generic 'not permitted'
         // message, so a visitor cannot confirm whether a user exists
+        // the response comes from a real http REST call, so a REST timeout is used to avoid a false timeout
         $test_name = 'anonymous api/user by ' . $field . ' is rejected with not permitted';
-        $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG);
+        $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG, self::TIMEOUT_LIMIT_REST);
         // and the rejection must not return the user json, so the secret must be absent
         $test_name = 'anonymous api/user by ' . $field . ' does not leak the ' . $field;
         $no_leak = $this->assert_false($test_name, str_contains($response, $secret));
@@ -979,7 +980,8 @@ class test_api extends test_base
             $json_actual = json_encode($actual);
             $json_expected = json_encode($expected);
             if ($contains) {
-                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
+                // the actual json comes from a real http REST call, so a REST timeout is used to avoid a false timeout
+                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true, self::TIMEOUT_LIMIT_REST);
             } else {
                 return $this->assert_json($class . ' API GET', $actual, $expected);
             }

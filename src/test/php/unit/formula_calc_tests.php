@@ -105,7 +105,8 @@ class formula_calc_tests
             . $frm_this->id() . '}-{f'
             . $frm_prior->id() . '})/{f'
             . $frm_prior->id() . '})';
-        $t->assert($test_name . ' for ' . $frm->dsp_id(), $result, $target);
+        // building the expression above takes longer than a normal unit function, so a page timeout is used
+        $t->assert($test_name . ' for ' . $frm->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
         $test_name = 'formula increase: test the element group creation';
@@ -228,7 +229,8 @@ class formula_calc_tests
         $frm = $t_frm->formula_city_population();
         $result = $frm->get_ref_text();
         $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . word_names::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . word_names::CITY_ID . '})';
-        $t->assert($test_name, $result, $target);
+        // building the reference text resolves the phrases, so a page timeout is used to avoid a false timeout
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
 
         $t->subheader($ts . 'to_num_new');

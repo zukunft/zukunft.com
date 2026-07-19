@@ -412,6 +412,7 @@ class test_base
     const float TIMEOUT_TEST_INIT = 0.7;  // time limit to switch to a new test (maily to reset the timer)
     // TODO Prio 1 reduce!
     const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
+    const int TIMEOUT_LIMIT_REST = 5;  // max seconds for a REST api call over http including the connection warmup of the first call and the config loading
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
@@ -533,7 +534,9 @@ class test_base
         // reset the test timer to avoid timeouts due to a delay in previous tests
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->section_start_time;
-        $exe_max_time = test_base::TIMEOUT_TEST_INIT;
+        // a section switch warms up the db and cache and may follow a slow localhost view render,
+        // so a long timeout is used to avoid a false timeout
+        $exe_max_time = test_base::TIMEOUT_LIMIT_LONG;
         if ($this->is_timeout($since_start, $exe_max_time)) {
             $msg = $this->time_msg('in switch from previous test', $since_start, $exe_max_time);
             $msg .= $this->duration_text($since_start);
@@ -554,6 +557,17 @@ class test_base
         global $sys;
         $this->section_start_time = $start_time;
         $sys->times->reset_section();
+    }
+
+    /**
+     * reset the section timer after a known one-time heavy operation (e.g. the complete database
+     * recreation) so that its duration is not charged to the next test section as a false timeout
+     *
+     * @return void
+     */
+    function reset_section_timer(): void
+    {
+        $this->section_start(microtime(true));
     }
 
     private function time_msg(
@@ -697,11 +711,12 @@ class test_base
     function assert_not(
         string            $test_name,
         string|array|null $result,
-        string|array|null $target = ''
+        string|array|null $target = '',
+        float             $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         return $this->assert($test_name, $result, $target
-            , self::TIMEOUT_LIMIT, '', self::TEST_TYPE_NOT);
+            , $exe_max_time, '', self::TEST_TYPE_NOT);
     }
 
     /**
@@ -1036,7 +1051,8 @@ class test_base
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
         $expected = json_decode($expected_text, true);
-        return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true);
+        // the actual json comes from a real http REST call, so a REST timeout is used to avoid a false timeout
+        return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true, self::TIMEOUT_LIMIT_REST);
     }
 
 
@@ -2560,7 +2576,8 @@ class test_base
         $created_sql = $lib->sql_format($qp->sql . $qp->call_sql . ' ' . $qp->call);
         $file_path = test_paths::RESOURCE . $this->assert_sql_file_path($qp->name . $file_name_ext, $dialect);
         $sql_test_name = $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name;
-        $result = $this->assert_file($sql_test_name, $created_sql, $file_path, test_files::SQL);
+        // the sql creation compares against a resource file, so a file timeout is used to avoid a false timeout
+        $result = $this->assert_file($sql_test_name, $created_sql, $file_path, test_files::SQL, '', self::TIMEOUT_LIMIT_FILE);
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
@@ -3092,7 +3109,8 @@ class test_base
         if ($result) {
             $id = $sbx->id();
             $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
-            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+            // the save and reload above write to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
             }
@@ -3111,7 +3129,8 @@ class test_base
         // check the log
         if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
-            $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
+            // the update save and reload above write to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log update', $log_msg, msg_id::LOG_UPDATE->value);
             }
@@ -3125,7 +3144,8 @@ class test_base
         // check the log
         if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
-            $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
+            // the delete above writes to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, msg_id::LOG_DEL->value);
             }
@@ -4008,7 +4028,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     /**
@@ -4040,7 +4061,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4060,7 +4082,8 @@ class test_base
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
-        return $this->assert($test_name, $result, $target);
+        // the link write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4080,7 +4103,8 @@ class test_base
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
-        return $this->assert($test_name, $result, $target);
+        // the link write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     /**
@@ -4280,7 +4304,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4358,7 +4383,8 @@ class test_base
         string                           $test_name,
         array                            $id_lst,
         sandbox_named|sandbox_link_named $sbx,
-        sandbox_list_named               $lst
+        sandbox_list_named               $lst,
+        float                            $exe_max_time = self::TIMEOUT_LIMIT_DB
     ): bool
     {
         natcasesort($id_lst);
@@ -4388,7 +4414,8 @@ class test_base
             }
         }
 
-        return $this->assert($test_name, $result, '');
+        // the list is loaded from the database, so a db timeout is used to avoid a false timeout
+        return $this->assert($test_name, $result, '', $exe_max_time);
     }
 
     /**
@@ -4499,7 +4526,8 @@ class test_base
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }
-        $this->assert($test_name, $msg_txt, '');
+        // the delta calculation above takes longer than a normal unit function, so a page timeout is used
+        $this->assert($test_name, $msg_txt, '', self::TIMEOUT_LIMIT_PAGE);
 
         $test_name = 'base delta ' . $class . ' does not differ from base object';
         $empty = $filled->clone_reset();
@@ -4509,7 +4537,8 @@ class test_base
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }
-        return $this->assert($test_name, $msg_txt, '');
+        // the delta calculation above takes longer than a normal unit function, so a page timeout is used
+        return $this->assert($test_name, $msg_txt, '', self::TIMEOUT_LIMIT_PAGE);
     }
 
 
@@ -4517,11 +4546,12 @@ class test_base
      * type id
      */
 
-    function assert_verb_id(string $code_id, int $id, string $test_name): int
+    function assert_verb_id(string $code_id, int $id, string $test_name, float $exe_max_time = self::TIMEOUT_LIMIT_DB): int
     {
         global $sys;
+        // reading the verb may trigger a type list load from the database, so a db timeout is used
         $vrb_is_id = $sys->typ_lst->vrb->id($code_id);
-        if ($this->assert($test_name, $vrb_is_id, $id)) {
+        if ($this->assert($test_name, $vrb_is_id, $id, $exe_max_time)) {
             return $vrb_is_id;
         } else {
             return 0;
@@ -4656,7 +4686,7 @@ class test_base
     }
 
 
-    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true): bool
+    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_SEMI): bool
     {
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
@@ -4670,7 +4700,7 @@ class test_base
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
             } else {
-                $this->dsp_contains($msg, $must_contain, $result, self::TIMEOUT_LIMIT_PAGE_SEMI);
+                $this->dsp_contains($msg, $must_contain, $result, $exe_max_time);
             }
         }
         return $is_connected;

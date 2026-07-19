@@ -366,8 +366,9 @@ class system_view_ui_tests
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
         $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
 
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page with key mismatch shows notification bar';
-        $t->assert_text_contains($test_name, $activate_html, $notification_div);
+        $t->assert_text_contains($test_name, $activate_html, $notification_div, $t::TIMEOUT_LIMIT_PAGE);
 
         $test_name = 'activate page notification contains key mismatch message';
         $t->assert_text_contains($test_name, $activate_html, $mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
@@ -384,8 +385,9 @@ class system_view_ui_tests
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
         $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
 
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
-        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT));
+        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT), $t::TIMEOUT_LIMIT_PAGE);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'reset_email_sent';
         $test_name = 'activate page after reset email matches snapshot';
@@ -425,8 +427,9 @@ class system_view_ui_tests
         $add_part = parse_url($add_url);
         parse_str($add_part['query'], $add_array);
         $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto, true);
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'add view keeps the hidden id field at 0';
-        $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"');
+        $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"', $t::TIMEOUT_LIMIT_PAGE);
         $test_name = 'add view does not stamp the url id onto the new object';
         $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
 
@@ -439,8 +442,9 @@ class system_view_ui_tests
         // sees the admin content
         $anon_msg = new user_message();
         $anon_html = $ui->url_to_html($admin_url, null, $anon_msg, $ui->dto, true);
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'the admin main view is not rendered for an anonymous user';
-        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin');
+        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
         $test_name = 'the anonymous user is told that the admin view needs an administrator';
         $t->assert_text_contains($test_name, $anon_html, msg_id::ADMIN_MASK_DENIED->value);
 

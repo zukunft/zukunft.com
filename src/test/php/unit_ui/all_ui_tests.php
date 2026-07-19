@@ -147,7 +147,8 @@ class all_ui_tests extends all_unit_tests
         $test_name = 'check about page e.g. to check the library';
         $result = file_get_contents(THIS_URL .  'http/about.php');
         $target = 'zukunft.com AG';
-        $t->assert_text_contains($test_name, $result, $target);
+        // the about page is fetched over http on localhost, so a localhost timeout is used
+        $t->assert_text_contains($test_name, $result, $target, $t::TIMEOUT_LOCALHOST);
 
     }
 }

@@ -251,7 +251,8 @@ class test_cleanup extends test_api
                 $msk->del($usr_msg);
                 $result .= $usr_msg->get_last_message();
                 $target = '';
-                $this->assert('view->del of "' . $dsp_name . '"', $result, $target);
+                // deleting the view writes to the database, so a db timeout is used to avoid a false timeout
+                $this->assert('view->del of "' . $dsp_name . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
             }
         }
 
@@ -605,8 +606,10 @@ class test_cleanup extends test_api
         }
         $created_html = $this->html_page($body, $title);
         $resource_file = test_paths::RESOURCE . test_paths::HTML . $file_path . test_files::HTML;
+        // the object page snapshot renders a complete html page (the all-component-types page renders every
+        // component type) and compares it against a file, so a long timeout is used to avoid a false timeout
         return $this->assert_file(
-            $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN);
+            $file_path, $created_html, $resource_file, test_files::HTML, test_const::DUMMY_SESSION_TOKEN, self::TIMEOUT_LIMIT_LONG);
     }
 
     private function html_page(string $body, string $title): string

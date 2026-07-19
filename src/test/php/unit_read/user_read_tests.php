@@ -102,8 +102,9 @@ class user_read_tests
         $unknown = new user();
         $test_name = 'login of an unknown user fails';
         $t->assert_false($test_name, $unknown->login('no such user 8f3a2b', 'irrelevant-pw', $login_msg));
+        // the preceding login verifies the password hash, which is intentionally slow, so a semi page timeout is used
         $test_name = 'login of an unknown user does not reveal that the user is unknown';
-        $t->assert_text_not_contains($test_name, $login_msg->all_message_text(), 'no user with the username');
+        $t->assert_text_not_contains($test_name, $login_msg->all_message_text(), 'no user with the username', $t::TIMEOUT_LIMIT_PAGE_SEMI);
         $test_name = 'login of an unknown user returns the generic wrong-credentials message';
         $t->assert_text_contains($test_name, $login_msg->all_message_text(), msg_id::PASSWORD_WRONG->value);
 

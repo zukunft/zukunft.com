@@ -83,13 +83,15 @@ class coding_rule_tests
 
         $t->subheader($ts . 'class tree');
 
+        // building the class / function tree over the whole source takes clearly longer than a
+        // normal unit function, so a generous timeout is used to avoid a false timeout
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
-        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS);
+        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS, '', '', $t::TIMEOUT_LIMIT_LONG);
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
-        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS);
+        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
 
         $this->php_class_name_check($t);
 
@@ -207,9 +209,11 @@ class coding_rule_tests
      */
     function php_class_name_check(test_cleanup $t): void
     {
+        // scanning the whole source for the name exceptions takes clearly longer than a normal
+        // unit function, so a generous timeout is used to avoid a false timeout
         $test_name = 'check that the object name exceptions doc is updated';
         $md_txt = $this->php_class_name_exceptions();
-        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS);
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**
@@ -663,8 +667,10 @@ class coding_rule_tests
         // one summary assertion per scanned tree so that a clean tree also produces a visible pass
         // (see php_only_allowed_globals_tests for why a silent pass would hide an empty scan);
         // the base path keeps the test name unique across the two calls
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
         $test_name = 'path consts checked in ' . $files_checked . ' files of ' . $base_path;
-        $t->assert_greater($test_name, 0, $files_checked);
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**
@@ -748,8 +754,10 @@ class coding_rule_tests
         // one summary assertion so that a clean tree also produces a visible pass: without it a
         // scanner that reaches no file at all (a wrong base path, an empty dir_to_array) would look
         // exactly like a successful run, because a violation is the only thing that asserts above
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
         $test_name = $rule_msg . ' checked in ' . $files_checked . ' files';
-        $t->assert_greater($test_name, 0, $files_checked);
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**

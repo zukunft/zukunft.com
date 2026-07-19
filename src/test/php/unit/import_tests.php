@@ -74,13 +74,15 @@ class import_tests
         $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
         $dto = $imp->get_data_object_yaml($json_array);
-        $t->assert($test_name, $dto->word_list()->count(), 79);
+        // reading and mapping the yaml sample file takes longer than a normal unit function, so a file timeout is used
+        $t->assert($test_name, $dto->word_list()->count(), 79, $t::TIMEOUT_LIMIT_FILE);
         $test_name = 'YAML import triple count';
         $t->assert($test_name, $dto->triple_list()->count(), 24);
         $test_name = 'YAML import value count';
         $t->assert($test_name, $dto->value_list()->count(), 47);
         $test_name = 'YAML import sql function count';
-        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $usr_msg)->count(), 1);
+        // building the sql insert calls from the imported data takes longer than a normal unit function
+        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $usr_msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
 
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
@@ -110,7 +112,8 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
-        $t->assert($test_name, $dto->value_list()->count(), 4);
+        // reading and mapping the json value file takes longer than a normal unit function, so a file timeout is used
+        $t->assert($test_name, $dto->value_list()->count(), 4, $t::TIMEOUT_LIMIT_FILE);
 
         // the compact "value-list" field shares a context and source for many values that
         // differ only by one phrase and the number; each of the 1653 "values" entries (across
@@ -120,7 +123,8 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_TRAVEL_SCORING_VALUE_LIST);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
-        $t->assert($test_name, $dto->value_list()->count(), 1660);
+        // expanding the 1653 compact value-list entries to single values is import-heavy, so an import timeout is used
+        $t->assert($test_name, $dto->value_list()->count(), 1660, $t::TIMEOUT_LIMIT_IMPORT);
 
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
@@ -148,7 +152,8 @@ class import_tests
             $impacts[] = $dto->triple_list()->get_by_name($trp_name)?->get_impact();
         }
         $test_name = 'JSON import sets a distinct impact for each main stock triple';
-        $t->assert($test_name, count(array_unique($impacts)), 5);
+        // reading and mapping the portfolio json file takes longer than a normal unit function, so a file timeout is used
+        $t->assert($test_name, count(array_unique($impacts)), 5, $t::TIMEOUT_LIMIT_FILE);
         $test_name = '... and no main stock triple is without an impact';
         $t->assert_false($test_name, in_array(null, $impacts));
 
@@ -356,7 +361,8 @@ class import_tests
             test_paths::IMPORT_XBRL,
             'unit_test'
         );
-        $t->assert($test_name, is_dir($folder), true);
+        // unpacking the xbrl zip archive is a file operation, so a file timeout is used to avoid a false timeout
+        $t->assert($test_name, is_dir($folder), true, $t::TIMEOUT_LIMIT_FILE);
 
         $test_name = 'XBRL zip unpacker extracts at least one file';
         $extracted = array_diff(scandir($folder), ['.', '..']);

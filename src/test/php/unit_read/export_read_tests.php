@@ -61,7 +61,8 @@ class export_read_tests
         $xml_exp = new xml($t->usr1);
         $result = $xml_exp->export_by_phrase_list($phr_lst);
         $target = 'Mathematics';
-        $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        // the xml export reads the phrases from the database, so a semi page timeout is used to avoid a false timeout
+        $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         $t->subheader($ts . 'json');
 

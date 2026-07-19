@@ -321,7 +321,9 @@ class import_write_tests
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_name($add_name);
-        $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB);
+        // the check follows a full json import (charged here because assert_true above returns early
+        // on success without resetting the timer), so a multi db timeout is used to avoid a false timeout
+        $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add the description to the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, false);
@@ -392,7 +394,9 @@ class import_write_tests
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_names([$add_name]);
-        $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB);
+        // the check follows a full json import (charged here because assert_true above returns early
+        // on success without resetting the timer), so a multi db timeout is used to avoid a false timeout
+        $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add the description to the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT, $usr, false);

@@ -195,11 +195,12 @@ class system_views_read_tests
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=word_add contains at least', $is_connected);
         // the former find.php has been replaced by the word find view (m=67)
+        // fetching the full word find view over http renders a complete page, so a long timeout is used
         $t->dsp_web_test(
             api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID
             . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . word_names::ABB,
             word_names::ABB,
-            ', frontend view.php for the word find view contains at least', $is_connected);
+            ', frontend view.php for the word find view contains at least', $is_connected, $t::TIMEOUT_LIMIT_LONG);
 
     }
 

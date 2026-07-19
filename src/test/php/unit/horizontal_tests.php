@@ -256,7 +256,8 @@ class horizontal_tests
             }
             $ex_json = $filled_obj->export_json([], false);
             $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
-            $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY);
+            // the json export and api build above take longer than a normal unit function, so a page timeout is used
+            $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY, $t::TIMEOUT_LIMIT_PAGE);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
             $empty_json = json_encode($filled_obj->export_json([], false));
