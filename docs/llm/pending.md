@@ -4,8 +4,6 @@
 
 ## high prio
 
-it seems that calling http://localhost/http/view.php?m=90&id=189&debug=9 does not yet use the type list from cache
-
 do not write html pages to the cache that contain a message to the user. remove the message from the page before writing it to the cache. And on the other side add new messages to the page loaded from cache if needed 
 
 see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page

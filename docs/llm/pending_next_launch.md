@@ -34,6 +34,16 @@ Other user still see the original list, but they can see, that you have done som
 
 So each your has its own "sandbox", that never changes, but can see everything that other users have done.
 
+### start page config
+
+the basic steps to show the start page are
+
+- table with 'global issues'
+- sort global issues by impact which is htp
+- get mayor, main and minor columns linked to 'global issues' via triple
+- the order of the column may differ and is relative e.g. 'per cent is after number'
+- the number of rows to show is taken from the config but can be overwritten
+
 ### fill the screen 
 
 for big screens add more data so that the screen is filled or increase the font size
