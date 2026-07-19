@@ -43,6 +43,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -220,6 +222,25 @@ class figure_list extends sandbox_list
             }
         }
         return $usr_msg->is_ok();
+    }
+
+    /**
+     * drop the figures the requesting user may not read, so a figure list returned by the api never
+     * discloses another user's non-public value/result (see figure::is_readable_by)
+     *
+     * @param user|null $usr the user who has requested to read the list
+     * @return figure_list this list with only the figures readable by the given user
+     */
+    function filter_readable_by(?user $usr): figure_list
+    {
+        $result = array();
+        foreach ($this->lst() as $fig) {
+            if ($fig->is_readable_by($usr)) {
+                $result[] = $fig;
+            }
+        }
+        $this->set_lst($result);
+        return $this;
     }
 
 

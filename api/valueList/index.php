@@ -70,6 +70,9 @@ if ($db_con->is_open()) {
         if ($ids != '') {
             $lst = new value_list($usr);
             $lst->load_by_ids($ids);
+            // drop the values the requesting user may not read, so listing ids cannot disclose
+            // another user's private/personal value (idor); see value::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'formula id is missing';

@@ -60,6 +60,8 @@ use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -328,6 +330,35 @@ class value_tests
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         $test_name = 'the admin protection of the new value is not reported';
         $t->assert($test_name, $usr_msg->all_message_text(), '');
+
+        $t->subheader($ts . 'read access (share)');
+        // a non-public value must not be disclosed to another user loaded by id (idor);
+        // see value::is_readable_by and value_list::filter_readable_by
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+
+        $val_priv = $t_val->value();
+        $val_priv->set_owner_id($t->usr1->id);
+        $val_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private value';
+        $t->assert_true($test_name, $val_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private value';
+        $t->assert_false($test_name, $val_priv->is_readable_by($t->usr2));
+        $test_name = 'an admin may read another user private value';
+        $t->assert_true($test_name, $val_priv->is_readable_by($t->usr_admin));
+
+        $val_pub = $t_val->value();
+        $val_pub->set_owner_id($t->usr1->id);
+        $test_name = 'a public value is readable by another user';
+        $t->assert_true($test_name, $val_pub->is_readable_by($t->usr2));
+
+        // the list filter drops the values another user may not read (allow_duplicates so both
+        // test values are actually listed regardless of their id before filtering)
+        $val_lst_read = new value_list($t->usr2);
+        $val_lst_read->add($val_priv, true);
+        $val_lst_read->add($val_pub, true);
+        $val_lst_read->filter_readable_by($t->usr2);
+        $test_name = 'the readable filter keeps only the public value for another user';
+        $t->assert($test_name, count($val_lst_read->lst()), 1);
 
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);

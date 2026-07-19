@@ -74,17 +74,29 @@ including sys_log_trace (internal code paths), text and description - data the f
 exposes to admins. fixed by requiring `$usr->is_admin() or $usr->is_system()` before loading (else a
 'not permitted' message), matching the api/user pattern.
 
-no share-based read enforcement - idor read of another user's private object by id (medium, likely an
-unimplemented feature rather than a regression): share_id (public/personal/group/private) is stored
-and round-tripped but no read path filters on it (no WHERE on FLD_SHARE anywhere in cfg/). the object
-creator owns the standard row, so a value/word/triple created as private is the standard row; another
-user with no overlay gets it verbatim on `load_by_id`, e.g. `GET /api/value/?id=N` iterating ids.
-either add a share-scope predicate to the sandbox load sql (owner-or-public, plus group membership
-for group), or decide and document explicitly that share is display-only and private objects are not
-to be treated as confidential. related lower-severity siblings gated only by `id > 0`: api/job
-(api/job/index.php line 64, load_by_id with no owner filter - reads another user's job metadata) and
-api/changeLogList (api/changeLogList/index.php line 71, returns any object's change history; intended
-for the public graph but combines with this finding to expose private-object history).
+[FIXED 2026-07-19 for values, results and figures; scoped] no share-based read enforcement - idor
+read of another user's private object by id (medium, an unimplemented feature rather than a
+regression): share_id (public/personal/group/private) is stored and round-tripped but no read path
+filtered on it. the object creator owns the standard row, so a value created as private is the
+standard row; another user with no overlay got it verbatim on `load_by_id`, e.g. `GET
+/api/value/?id=N` iterating ids. fixed for the confidential data - values, results and figures (the
+sandbox_multi branch; share's own doc is "value can be seen and used by everyone", and the app is a
+public word/triple graph so words/triples are shared vocabulary, not private): added
+is_readable_by(user) on sandbox_multi (public/default or owner or admin/system -> readable;
+private/personal/group owned by another normal user -> not readable), inherited by value and result;
+filter_readable_by(user) on sandbox_value_list (shared by value_list and result_list); and
+figure::is_readable_by (delegates to the underlying value/result) + figure_list::filter_readable_by.
+enforced at the untrusted api read boundary: api/value and api/figure (single, neutral 'missing id'
+so existence is not confirmed), api/valueList, api/resultList and api/figureList (list filtered).
+internal flows (save, calculation) are deliberately not gated so cross-user aggregation of public
+data keeps working. unit tests added to value_tests.php (owner/other/admin read, public read, list
+filter) and figure_tests.php (figure delegation). remaining as follow-up: (a) a real user-group
+membership model - the group share is conservatively treated like personal (owner only) until then;
+(b) if words/triples ever need private sharing, mirror is_readable_by on the seq-id sandbox branch.
+related lower-severity siblings gated only by `id > 0`: api/job (api/job/index.php line 64, load_by_id
+with no owner filter - reads another user's job metadata) and api/changeLogList
+(api/changeLogList/index.php line 71, returns any object's change history; intended for the public
+graph but combines with this finding to expose private-object history).
 
 [FIXED 2026-07-19] the top-level test/ tree was blocked only by its own nested test/.htaccess, with
 no central backstop (medium, deployment): every other sensitive dir is also blocked in the root

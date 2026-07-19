@@ -1074,6 +1074,40 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * check if the requesting user may read this user sandbox object (value or result)
+     * a value/result is confidential unless it is shared publicly: only the owner, an admin or a
+     * system user may read a private, personal or group object. the standard row is the owner's,
+     * so a non-public object loaded by id belongs to its owner; without a user-group membership
+     * model yet a group-shared object is treated like personal (owner only) - deny is the safe
+     * direction. used at the api read boundary to close the idor read of another user's non-public
+     * value by iterating the object id; internal flows (save, calculation) are not gated by this.
+     * TODO extend the group case with a real group-membership check once user groups exist
+     *
+     * @param user|null $usr the user who has requested to read this object
+     * @return bool true if the object may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        global $sys;
+
+        $result = false;
+        // an admin or system user may read every object e.g. for the admin data views
+        if ($usr != null and ($usr->is_admin() or $usr->is_system())) {
+            $result = true;
+        } else {
+            // a public object (the default) is readable by everyone
+            $public_id = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
+            if ($this->share_id == null or $this->share_id == $public_id) {
+                $result = true;
+            } elseif ($usr != null and $this->owner_id != null and $this->owner_id == $usr->id) {
+                // only the owner may read their own non-public object
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string the protection type code id based on the database id
      */
     function protection_type_code_id(): string
