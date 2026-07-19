@@ -10,8 +10,6 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 findings of the security check on 2026-07-17, ordered by exploitability.
 
-pin the sudoers command and tidy the setup gate (defense in depth): the rule created in script/install.sh (around line 303) is 'www-data ALL=(root) NOPASSWD: $ADMIN_SCRIPT' with no argument restriction, so any code-exec as www-data escalates to root through server_admin.sh; pin the exact allowed sub-commands (update-program, upgrade-database). also http/setup.php is gated only by getenv('ZUKUNFT_ALLOW_SETUP')=='1' which is fail-closed today, but install.sh never blanks it and the code comment wrongly claims it is unset after install - add it to the post-setup blanking and fix the comment
-
 reduce the signup username enumeration: action_signup (web/frontend.php around line 1153) returns a distinct SIGNUP_ERR_NAME_EXISTS when the name is taken, which lets an attacker probe which usernames exist - inconsistent with the neutral reset flow. keep the hint only if the ux needs it, otherwise use a generic message and/or rate limit; at least accept it as a conscious trade-off
 
 ### security improvements

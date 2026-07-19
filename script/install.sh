@@ -264,8 +264,9 @@ installZukunft() {
 
     # the initial users now exist in the database with a bcrypt-hashed password, so the cleartext
     # login passwords in the deployed .env are no longer needed; blank them so that reading the .env
-    # cannot recover a working login. the db connection passwords are kept - the app needs them
-    sed -i -E 's/^(ADMIN_PW|CO_ADMIN_PW|USER_PW|CO_USER_PW)=.*/\1=/' "${WWW_ROOT%/}/../.env"
+    # cannot recover a working login. the db connection passwords are kept - the app needs them.
+    # ZUKUNFT_ALLOW_SETUP is blanked too so that http/setup.php refuses after the initial setup
+    sed -i -E 's/^(ADMIN_PW|CO_ADMIN_PW|USER_PW|CO_USER_PW|ZUKUNFT_ALLOW_SETUP)=.*/\1=/' "${WWW_ROOT%/}/../.env"
 
     # TODO check result and create warning if it does not end with
     # TODO fix the errors on the first run that are caused e.g. by the missing db rows
@@ -299,11 +300,14 @@ configureServerAdmin() {
     # --system (/etc/gitconfig) not --global, because sudo may keep the caller HOME
     git config --system --add safe.directory "$WWW_ROOT"
 
-    # allow the web server user to run exactly this one script as root without a password
+    # allow the web server user to run exactly the two admin page actions as root without a
+    # password; the sub-commands are pinned so that code-exec as the web user cannot pass other
+    # arguments (e.g. maintenance-on with a crafted page) to escalate further (defense in depth)
     cat > "$SUDOERS_FILE" <<EOF
 # created by zukunft.com install.sh
-# lets the server admin page switch maintenance pages, update the program and upgrade the database
-$WEB_USER ALL=(root) NOPASSWD: $ADMIN_SCRIPT
+# lets the server admin page update the program and upgrade the database;
+# the maintenance page switching happens inside these two pinned commands
+$WEB_USER ALL=(root) NOPASSWD: $ADMIN_SCRIPT update-program, $ADMIN_SCRIPT upgrade-database
 EOF
     chmod 0440 "$SUDOERS_FILE"
 
