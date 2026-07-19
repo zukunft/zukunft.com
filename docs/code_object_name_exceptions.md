@@ -15,7 +15,7 @@ figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_city, $grp_city_pct, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_newer, $job_oldest
-language: $dbo, $dbo_ui, $lan_by_id, $obj, $src, $typ_obj, $type_obj
+language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $rank_phr, $result, $switzerland, $time_phr, $to, $to_add, $to_ui, $trp, $val_phr, $val_time_phr, $wrd, $wrd_by_id, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_new, $ref_obj, $std_rec, $type
@@ -165,7 +165,7 @@ sql_where: $pwh
 sys_log_function: $fnc, $log_fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
 sys_log_level: $log_typ
 sys_log_list: $err_lst, $err_lst_ui, $log_lst, $log_lst_ui, $sys_lst
-sys_log_status: $log_sta, $typ_obj
+sys_log_status: $log_sta
 sys_log_status_list: $lst, $sys_log_status
 system_form: $form, $sfm
 system_page: $page
@@ -205,7 +205,7 @@ text_log: $log_txt
 triple_list: $add_lst, $db_lst, $db_lst_all, $lnk_lst, $lst, $rel_trp_lst, $result, $trp_lst, $trp_lst_ui, $wrd_lst
 trm_ids: $ids, $trm_ids
 type_list: $typ_lst
-type_lists: $frontend_cache, $sys_typ_lst, $typ_lst, $ui_cache
+type_lists: $frontend_cache, $sys_typ_lst, $typ_lst, $typ_lst_all, $typ_lst_cached, $ui_cache
 type_object: $act, $tbl, $typ, $typ_obj, $type, $type_obj
 ui_base: $base
 ui_config: $ui_cfg

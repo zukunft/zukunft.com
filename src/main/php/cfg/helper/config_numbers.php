@@ -85,6 +85,21 @@ class config_numbers extends value_list
         db_cache_types::USER_CONFIG,
     ];
 
+    // the phrase names that select the pod switch for each database cache
+    // (db_cache_types code id => phrase names; see config.yaml "database > cache")
+    const array CACHE_ALLOWED_NAMES = [
+        db_cache_types::SYSTEM_CONFIG => [words::ALLOWED, words::SYSTEM, words::CONFIG, words::CACHE],
+        db_cache_types::TYPES => [words::ALLOWED, words::TYPE, words::CACHE],
+        db_cache_types::USER_CONFIG => [words::ALLOWED, words::USER, words::CONFIG, words::CACHE],
+        db_cache_types::FRONTEND_CONFIG => [words::ALLOWED, words::FRONTEND, words::CONFIG, words::CACHE],
+        db_cache_types::USER_FRONTEND_CONFIG => [words::ALLOWED, triples::USER_FRONTEND, words::CONFIG, words::CACHE],
+        db_cache_types::PAGE_CACHE => [words::ALLOWED, words::DATA, words::PAGE, words::CACHE],
+        db_cache_types::UI_CACHE => [words::ALLOWED, words::PRELOAD, words::CACHE],
+    ];
+
+    // the phrase names that select the pod switch for the html page cache (db_cache_pages table)
+    const array CACHE_PAGES_ALLOWED_NAMES = [words::ALLOWED, words::HTML, words::PAGE, words::CACHE];
+
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
     const array HIDDEN_KEYWORDS = [
@@ -105,11 +120,14 @@ class config_numbers extends value_list
         words::AVERAGE,
         words::BACKEND,
         words::BLOCK,
+        words::CACHE,
         words::CALCULATION,
         words::COLUMNS,
+        words::CONFIG,
         words::CONFIGURATION,
         words::CHANGE,
         words::CREATE,
+        words::DATA,
         words::DATABASE,
         words::DAILY,
         words::DEFAULT,
@@ -122,6 +140,7 @@ class config_numbers extends value_list
         words::FREEZE,
         words::FRONTEND,
         words::FUTURE,
+        words::HTML,
         words::INITIAL,
         words::IMPORT,
         words::INSERT,
@@ -133,8 +152,10 @@ class config_numbers extends value_list
         words::MIN,
         words::NAME,
         words::PERCENT,
+        words::PAGE,
         words::PHRASE,
         words::POD,
+        words::PRELOAD,
         words::PRESELECT,
         words::READ,
         words::RETRY,
@@ -148,6 +169,7 @@ class config_numbers extends value_list
         words::TABLE,
         words::TIME,
         words::TRIPLE,
+        words::TYPE,
         words::UPDATE,
         words::URL,
         words::USER,
@@ -179,6 +201,7 @@ class config_numbers extends value_list
         [words::VALUE, words::TABLE],
         [words::EXPECTED, words::TIME],
         [words::FILE, words::READ],
+        [words::USER, words::FRONTEND],
     ];
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
@@ -309,11 +332,15 @@ class config_numbers extends value_list
         ?phrase                   $phr = null
     ): bool
     {
-        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            return $this->read_db_cache($typ, $usr, $usr_msg);
-        } else {
-            return $this->read_file_cache($usr, $usr_msg, $phr);
+        $result = false;
+        if ($this->cache_allowed_by_pod($typ->code_id)) {
+            if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+                $result = $this->read_db_cache($typ, $usr, $usr_msg);
+            } else {
+                $result = $this->read_file_cache($usr, $usr_msg, $phr);
+            }
         }
+        return $result;
     }
 
     private function read_db_cache(
@@ -371,11 +398,33 @@ class config_numbers extends value_list
         ?phrase                   $phr = null
     ): void
     {
-        if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-            $this->write_db_cache($typ, $usr, $snap_time, $usr_msg);
-        } else {
-            $this->write_file_cache($usr, $phr);
+        if ($this->cache_allowed_by_pod($typ->code_id)) {
+            if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
+                $this->write_db_cache($typ, $usr, $snap_time, $usr_msg);
+            } else {
+                $this->write_file_cache($usr, $phr);
+            }
         }
+    }
+
+    /**
+     * true if the pod settings allow to use the given config cache
+     * this config object itself holds the switches once it is loaded;
+     * an instance that is still empty (e.g. reading its own cache on startup)
+     * asks the already loaded global config and defaults to cache on
+     *
+     * @param string $type_code_id the code id of the db_cache type e.g. "system_config"
+     * @return bool false if this config cache should not be used
+     */
+    private function cache_allowed_by_pod(string $type_code_id): bool
+    {
+        global $cfg;
+
+        $conf = $this;
+        if ($conf->is_empty() and $cfg != null) {
+            $conf = $cfg;
+        }
+        return $conf->cache_allowed($type_code_id);
     }
 
     private function write_db_cache(
@@ -516,6 +565,47 @@ class config_numbers extends value_list
             words::FRONTEND],
             language_codes::SYS
         );
+    }
+
+    /**
+     * the pod setting that decides if the given database cache is used
+     * a pod without the switch uses the cache, so only an explicit false in config.yaml
+     * switches a cache off e.g. to debug with always fresh data
+     * no fallback is given to get_by, because get_by would replace the false of the config value with it
+     * @param string $type_code_id the code id of the db_cache type e.g. "types"
+     * @return bool false if this database cache should not be used
+     */
+    function cache_allowed(string $type_code_id): bool
+    {
+        $result = true;
+        $names = self::CACHE_ALLOWED_NAMES[$type_code_id] ?? [];
+        if ($names == []) {
+            // a warning is enough, because not using the cache is the safe fallback
+            // and a log_err would stop the automatic tests that check exactly this case
+            log_warning('unknown database cache switch ' . $type_code_id);
+            $result = false;
+        } else {
+            $val = $this->get_by_names($names);
+            if ($val !== null) {
+                $result = $val->number() != 0;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the pod setting that decides if the rendered html pages are cached in the db_cache_pages table
+     * a pod without the switch uses the cache, so only an explicit false in config.yaml switches it off
+     * @return bool false if the rendered html pages should not be cached
+     */
+    function page_cache_allowed(): bool
+    {
+        $result = true;
+        $val = $this->get_by_names(self::CACHE_PAGES_ALLOWED_NAMES);
+        if ($val !== null) {
+            $result = $val->number() != 0;
+        }
+        return $result;
     }
 
     /**

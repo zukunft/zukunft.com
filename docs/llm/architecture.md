@@ -161,6 +161,16 @@ it from the single values. Three rules hold for every cache entry:
 - **A cache entry is used only if it is not outdated.** Do not check validity
   only when the read fails — that inverts the logic and serves stale data
   forever.
+- **Every cache has a pod switch.** Each `db_cache_types` row and the
+  `db_cache_pages` table can be switched off in `config.yaml`
+  (`database > cache > ... > allowed`); the phrase names per switch are the
+  `config_numbers::CACHE_ALLOWED_NAMES` / `CACHE_PAGES_ALLOWED_NAMES` consts and
+  `config_numbers::cache_allowed()` / `page_cache_allowed()` answer them. A pod
+  without the switch uses the cache — only an explicit `false` switches it off
+  (e.g. to debug with always fresh data), so the accessors use no `get_by`
+  fallback (it would overwrite the explicit false). A new switch's name set must
+  not be a subset of any other switch's set, because the config lookup is a
+  contains-all match (`value_base::match_all`).
 
 **The config api message contains all config values**: `config_numbers::load_cfg`
 loads the complete config tree and sends it with its phrases, also for the

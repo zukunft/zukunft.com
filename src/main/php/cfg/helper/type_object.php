@@ -213,9 +213,10 @@ class type_object extends db_object_seq_id
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param bool $trusted true if the api_json is from the cache
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
     {
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
@@ -224,8 +225,19 @@ class type_object extends db_object_seq_id
             $this->set_name($api_json[json_fields::NAME]);
         }
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
-            if ($api_json[json_fields::DESCRIPTION] <> '') {
+            // a trusted source e.g. the db cached types json restores also an empty description
+            // so that a cache fill matches a database load exactly
+            if ($trusted or $api_json[json_fields::DESCRIPTION] <> '') {
                 $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+        // the code id links program code to the type, so it is only accepted from a trusted source
+        // e.g. the db cached types json and never from an api message of a frontend
+        if ($trusted) {
+            if (array_key_exists(json_fields::CODE_ID, $api_json)) {
+                if ($api_json[json_fields::CODE_ID] <> '') {
+                    $this->code_id = $api_json[json_fields::CODE_ID];
+                }
             }
         }
         return $usr_msg->is_ok();

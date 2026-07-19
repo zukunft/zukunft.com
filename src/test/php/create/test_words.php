@@ -771,6 +771,17 @@ class test_words extends test_objects
     }
 
     /**
+     * @param string $name a system configuration phrase name const e.g. words::CACHE
+     * @return word a system configuration keyword for unit testing
+     */
+    function word_config_key(string $name): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name($name);
+        return $wrd;
+    }
+
+    /**
      * @return word geo point
      */
     function word_point(): word

@@ -148,6 +148,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
@@ -163,6 +164,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -482,27 +484,33 @@ class frontend
                 $usr_sys->id = users::SYSTEM_ID;
                 $usr_sys->name = users::SYSTEM_NAME;
 
+                // preload all types, with one database read from the cached types json when available
+                // or with one select per type list if the cache is missing or outdated
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                $sys->load_type_lists_cached($db_con);
+
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $sys->load_cache_type($db_con);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg(null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
-                // preload all types from the database
-                $sys->times->switch(system_time_type::LOAD_TYPES);
-                // the types are general so the system user can be used to load the types
+                // honor the pod switch for the types cache, which is only known once the config is loaded
+                $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+
                 $cac = new data_object_backend($usr_sys);
-                $sys->load_type_lists($db_con);
+                if (!$sys->typ_lst->from_cache()) {
+                    // check the change log references only after a fresh type load, because
+                    // they can only be incomplete if the types have changed in the database
+                    $log = new change_log($usr_sys);
+                    $db_changed = $log->create_log_references($db_con);
 
-                $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
-
-                // reload the type list if needed and trigger an update in the frontend
-                // even tough the update of the preloaded list should already be done by the single adds
-                if ($db_changed) {
-                    $sys->load_type_lists($db_con);
+                    // reload the type list if needed and trigger an update in the frontend
+                    // even tough the update of the preloaded list should already be done by the single adds
+                    if ($db_changed) {
+                        $sys->load_type_lists($db_con);
+                    }
                 }
             }
 
@@ -1135,6 +1143,8 @@ class frontend
      */
     function url_cache_key(array $url_array): string
     {
+        global $cfg;
+
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
@@ -1158,6 +1168,11 @@ class frontend
         // an empty cache key makes the caller render the page live and skip the cache write, so an
         // admin can compare the live page with the cached one without emptying the cache table
         if (($url_array[url_var::NO_CACHE] ?? '') == url_var::NO_CACHE_ON) {
+            $is_view_only = false;
+        }
+        // the pod setting from config.yaml switches the html page cache off for all requests;
+        // an empty key covers read and write, because a page is only cached with a non-empty key
+        if (!($cfg?->page_cache_allowed() ?? true)) {
             $is_view_only = false;
         }
         // a request that shows a change or process step view is not cached

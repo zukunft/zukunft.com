@@ -103,8 +103,9 @@ if ($db_con->is_open()) {
         $ui = new frontend('view');
 
         // fast path: serve an already cached view-only page before the heavy frontend setup
-        // so that a user without own data changes gets the page with only three database reads
-        // (the system config, the user incl. the uses_sandbox flag and this cached page)
+        // so that a user without own data changes gets the page with a few database reads only
+        // (the cached types json, the system config, the user incl. the uses_sandbox flag
+        // and this cached page)
         $cached_page = $ui->cached_page_or_null($url_array, $usr);
         if ($cached_page !== null) {
             $web_txt .= $cached_page;

@@ -238,6 +238,26 @@ class verb_list extends type_list
     }
 
     /**
+     * fill this list from the api json rows of the cached types message
+     * the rows are from the own database, so the api_mapper is called as trusted
+     * to restore all verb fields and a verb from the cache behaves exactly like one from the database
+     *
+     * @param array $api_rows the api json rows of the verbs e.g. from the db cached types message
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @return bool true if at least one verb has been added
+     */
+    function fill_from_api_rows(array $api_rows, user_message $usr_msg): bool
+    {
+        $this->set_lst([]);
+        foreach ($api_rows as $api_row) {
+            $vrb = new verb();
+            $vrb->api_mapper($api_row, $usr_msg, true);
+            $this->add_verb($vrb);
+        }
+        return !$this->is_empty();
+    }
+
+    /**
      * adding the verbs used for unit tests to the dummy list
      * TODO use always the verb_api name const
      */

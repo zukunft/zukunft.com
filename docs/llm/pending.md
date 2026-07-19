@@ -8,11 +8,8 @@ see /docs/llm/coding.md and make sure that back pages with a message like 'This 
 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
-add parameters to the config.yaml to switch on and off each row of the db_cache_types plus the db_cache_pages and use the parameter to
 
-if the type list is completely loaded and in config.yaml the parameter for using the cache for 'system types' is true, write the types e.g. as a json string to the cache
-
-if the config parameter for using the cache for 'system types' is true and the type cache is not expired load the type from the cache instead of using a single sql select for each type 
+if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
 
 ### security before go live
 

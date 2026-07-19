@@ -34,8 +34,10 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
@@ -46,6 +48,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
@@ -56,14 +60,20 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -88,7 +98,69 @@ class type_tests
 
         // TODO job_types
 
+        $t->subheader($ts . 'types json cache round trip');
+        // the backend can load all types with one cached json instead of one select per list,
+        // so the api json of the type lists must restore the complete type lists exactly
+        $typ_lst_all = new type_lists();
+        $typ_lst_all->load_dummy();
+        $api_json = $typ_lst_all->api_json_array();
+        $typ_lst_cached = new type_lists();
+        $usr_msg = new user_message(user::system());
+        $test_name = 'the type lists are filled from the types api json';
+        $t->assert_true($test_name, $typ_lst_cached->fill_from_api_json($api_json, $usr_msg));
+        $test_name = 'the filled type lists recreate exactly the same types api json';
+        $t->assert($test_name, json_encode($typ_lst_cached->api_json_array()), json_encode($api_json));
+        $test_name = 'a phrase type is selected by code id like after a database load';
+        $t->assert($test_name,
+            $typ_lst_cached->phr_typ->id(phrase_type_shared::PERCENT),
+            $typ_lst_all->phr_typ->id(phrase_type_shared::PERCENT));
+
+        $test_name = 'an api json without the verbs does not fill the type lists';
+        $api_json_verbless = $api_json;
+        unset($api_json_verbless[json_fields::LIST_VERBS]);
+        $usr_msg = new user_message(user::system());
+        $t->assert_false($test_name, (new type_lists())->fill_from_api_json($api_json_verbless, $usr_msg));
+        $test_name = 'an empty api json does not fill the type lists';
+        $usr_msg = new user_message(user::system());
+        $t->assert_false($test_name, (new type_lists())->fill_from_api_json([], $usr_msg));
+
+        // the code id links program code to the type,
+        // so only a trusted source e.g. the db cached types json is allowed to set it
+        $usr_msg = new user_message(user::system());
+        $typ = new type_object('original_code_id', 'type name', null, 1);
+        $typ->api_mapper([json_fields::CODE_ID => 'changed_code_id'], $usr_msg);
+        $test_name = 'an untrusted api json cannot change the code id of a type';
+        $t->assert($test_name, $typ->get_code_id(), 'original_code_id');
+        $typ->api_mapper([json_fields::CODE_ID => 'cached_code_id'], $usr_msg, true);
+        $test_name = 'a trusted source e.g. the db cached types json sets the code id';
+        $t->assert($test_name, $typ->get_code_id(), 'cached_code_id');
+
+        // the same trust rule applies to the reference base url and the verb usage
+        $usr_msg = new user_message(user::system());
+        $ref_typ = new ref_type('wikipedia', 'wikipedia', null, 1);
+        $ref_typ->api_mapper([json_fields::URL => 'https://untrusted.example/'], $usr_msg);
+        $test_name = 'an untrusted api json cannot change the reference base url';
+        $t->assert_null($test_name, $ref_typ->url);
+        $ref_typ->api_mapper([json_fields::URL => 'https://en.wikipedia.org/wiki/'], $usr_msg, true);
+        $test_name = 'a trusted source e.g. the db cached types json sets the reference base url';
+        $t->assert($test_name, $ref_typ->url, 'https://en.wikipedia.org/wiki/');
+        $usr_msg = new user_message(user::system());
+        $vrb = new verb();
+        $vrb->api_mapper([json_fields::USAGE => 7], $usr_msg);
+        $test_name = 'an untrusted api json cannot change the verb usage';
+        $t->assert_null($test_name, $vrb->usage);
+        $vrb->api_mapper([json_fields::USAGE => 7], $usr_msg, true);
+        $test_name = 'a trusted source e.g. the db cached types json sets the verb usage';
+        $t->assert($test_name, $vrb->usage, 7);
+
         $t->subheader($ts . 'code link csv row mapper');
+        // the statuum csv files are found by the status list class,
+        // because statuum is the latin plural of status (see config_csv_get_file)
+        $usr_sta_lst = new user_status_list();
+        $usr_sta_lst->load_dummy();
+        $test_name = 'the user statuum csv fills the user status dummy list';
+        $t->assert_false($test_name, $usr_sta_lst->is_empty());
+
         // the code link csv loader maps each csv row via the id field name derived from the class,
         // so the derived name must match the csv and table column even for the enum classes
         $test_name = 'id field of the sys log status enum matches the csv and table column';

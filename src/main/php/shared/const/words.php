@@ -137,6 +137,7 @@ class words
     const string CPU = 'CPU';
     const string CREATE = 'create';
     const string DAILY = 'daily';
+    const string DATA = 'data';
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
     const string DAY = 'day';
@@ -163,6 +164,7 @@ class words
     const string HAPPY = 'happy';
     const int HAPPY_ID = 250;
     const string HARDWARE = 'hardware';
+    const string HTML = 'html';
     const string IMPACT = 'impact';
     const string IMPORT = 'import';
     const string INFO = 'info';
@@ -211,6 +213,7 @@ class words
     const string POINTS = 'points';
     const int POINTS_ID = 252;
     const string PREDICTION = 'prediction';
+    const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
     const string RANK = 'rank';
     const string RANKING = 'ranking';

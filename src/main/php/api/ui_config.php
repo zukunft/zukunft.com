@@ -128,11 +128,21 @@ class ui_config
         user|user_ui|null   $usr = null
     ): string
     {
-        $result = $this->read_db_cache($usr);
+        global $cfg;
+
+        // the pod setting that decides if the types api message is cached in the database;
+        // a pod without the switch (or before the config is loaded) uses the cache
+        $use_cache = $cfg?->cache_allowed(db_cache_types::TYPES) ?? true;
+        $result = false;
+        if ($use_cache) {
+            $result = $this->read_db_cache($usr);
+        }
         if ($result === false) {
             $this->reload($usr);
             $result = $this->api_json($typ_lst, $usr);
-            $this->write_db_cache($usr);
+            if ($use_cache) {
+                $this->write_db_cache($usr);
+            }
         }
         return $result;
     }

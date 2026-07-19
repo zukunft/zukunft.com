@@ -836,6 +836,20 @@ class test_phrases
     }
 
     /**
+     * @param array $names the phrase names of a database cache switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @return phrase_list with the phrases to select a database cache switch in the config
+     */
+    function list_cache_switch(array $names): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ($names as $name) {
+            $lst->add_by_name_direct($t_wrd->word_config_key($name)->phrase());
+        }
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with the phrases to select the geolocation of this pod development in the config
      */
     function phrase_list_pod_point(): phrase_list

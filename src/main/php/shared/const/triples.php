@@ -103,6 +103,7 @@ class triples
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';
     const string TOP_LEVEL = 'top level';
+    const string USER_FRONTEND = 'user frontend';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';
     const string WORD_CHANGES = 'word changes';

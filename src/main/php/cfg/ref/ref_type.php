@@ -151,6 +151,21 @@ class ref_type extends type_object
      * api
      */
 
+    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    {
+        parent::api_mapper($api_json, $usr_msg, $trusted);
+
+        // the base url is part of the pod setup, so it is only accepted from a trusted source
+        // e.g. the db cached types json and never from an api message of a frontend
+        if ($trusted) {
+            if (array_key_exists(json_fields::URL, $api_json)) {
+                $this->url = $api_json[json_fields::URL];
+            }
+        }
+
+        return $usr_msg->is_ok();
+    }
+
     /**
      * TODO use parent function for setting the name, ...
      * create an array for the api json creation

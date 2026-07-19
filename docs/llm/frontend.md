@@ -124,6 +124,20 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+The type preload of this bootstrap (and of `application::start_api`) uses the
+**cached types json**: `type_lists::load_cached` fills all type lists with one
+read of the `db_cache` `types` entry — the same api message that
+`ui_config::write_db_cache` stores for the frontend — and only falls back to
+one select per type list when the entry is missing or outdated
+(`db_cache::is_outdated`). The fill goes through `api_mapper(..., trusted: true)`:
+the `$trusted` flag marks json from the own database and also restores the
+fields an api message of a frontend must never change (the `code_id`, the verb
+usage/impact). The pod switch for the types cache is a config value and the
+config loads *after* the types, so the bootstrap calls
+`type_lists::reload_if_cache_denied` once the config is known. A caller that
+needs guaranteed fresh types (e.g. `ui_config::reload`, the test bootstrap)
+keeps using `load_type_lists` / `type_lists::load`.
+
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 
 The target is a frontend and a backend that are complete and independent of each

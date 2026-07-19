@@ -36,16 +36,20 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -92,6 +96,33 @@ class config_tests
         // a missing permission is as restrictive as the default of config.yaml
         $test_name = 'an ip user cannot change data if the permission is missing';
         $t->assert_false($test_name, $t_val->config_empty()->ip_user_can_change());
+
+
+        $t->subheader($ts . 'database cache switches');
+
+        // each database cache can be switched off by a pod setting in config.yaml
+        // and a pod without the switch uses the cache
+        $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::TYPES];
+        $test_name = 'the types cache is used if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->cache_allowed(db_cache_types::TYPES));
+        $test_name = 'the types cache is not used if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::TYPES));
+        $test_name = 'a pod without the switch uses the types cache';
+        $t->assert_true($test_name, $t_val->config_empty()->cache_allowed(db_cache_types::TYPES));
+        $test_name = 'the system config switch does not change the types cache';
+        $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::SYSTEM_CONFIG];
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::TYPES));
+        $test_name = 'an unknown cache switch is reported and the cache is not used';
+        $t->assert_false($test_name, $t_val->config_empty()->cache_allowed('unexpected_cache_type'));
+
+        // the html page cache (db_cache_pages) has its own pod switch
+        $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
+        $test_name = 'the html pages are cached if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->page_cache_allowed());
+        $test_name = 'the html pages are not cached if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->page_cache_allowed());
+        $test_name = 'a pod without the switch caches the html pages';
+        $t->assert_true($test_name, $t_val->config_empty()->page_cache_allowed());
 
     }
 
