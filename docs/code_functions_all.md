@@ -1782,6 +1782,7 @@
     \-- step_main_end - section for function step_main_end not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
     \-- step_start - section for function step_start not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
     \-- step_end - section for function step_end not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
+    \-- calc_total_time - section for function calc_total_time not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
     \-- end - section for function end not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
     \-- get_data_object_yaml - section for function get_data_object_yaml is expected to be set and get in /import/import.php
     \-- yaml_data_object_map_triple - section for function yaml_data_object_map_triple not yet defined that it should be use to apply the time of the parent process for continuous timestamp reporting in /import/import.php
@@ -4663,6 +4664,8 @@
         \-- import - remember how much is done by adding the estimated time done
     \-- step_end
         \-- import - @param int $nbr the number of precessed objects e.g. count(word)
+    \-- calc_total_time
+        \-- import - calc the adjusted expected total execution time
     \-- end
         \-- import - calc the import times and show the result to the user
     \-- get_data_object_yaml

@@ -1007,11 +1007,15 @@ class import
 
     /**
      * calc the adjusted expected total execution time
+     * public so that the time estimation can be unit tested without running a real import
      *
      * @param float $check_time the timestamp of the update
-     * @return float the eta (estimate time of arrival) based total execution time
+     * @param int $processed the number of objects processed in the current step until now
+     * @return float the eta (estimate time of arrival) based total execution time; never below the
+     *               time already elapsed, so the estimate stays positive even if the import is
+     *               bigger than the original estimate
      */
-    private function calc_total_time(float $check_time, int $processed = 0): float
+    function calc_total_time(float $check_time, int $processed = 0): float
     {
         // highlight the original expected time based on the file size
         $original_time_expected = $this->est_time_total;
@@ -1036,7 +1040,19 @@ class import
         $est_time_done = $this->done_time_main_step + $this->done_time_step + $est_step_time_done;
 
         // calc the percentage done base on the original estimates
-        $pct_done = $est_time_done / $original_time_expected;
+        $pct_done = 0;
+        if ($original_time_expected > 0) {
+            $pct_done = $est_time_done / $original_time_expected;
+        }
+        // the percent done cannot be negative or exceed 100% (e.g. if the import is bigger than the
+        // original estimate); without this the remaining time would turn negative and the total
+        // estimate would drop below the elapsed time or even become negative
+        if ($pct_done < 0) {
+            $pct_done = 0;
+        }
+        if ($pct_done > 1) {
+            $pct_done = 1;
+        }
 
         // calc the remaining time in percent
         $pct_remaining = 1 - $pct_done;

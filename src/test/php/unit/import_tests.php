@@ -378,6 +378,59 @@ class import_tests
         }
         $t->assert($test_name, $caught, true);
 
+        $t->subheader($ts . 'time estimate');
+
+        // the estimated total import time must always stay positive and never drop below the time
+        // already elapsed (which would show a negative estimate or a progress above 100%);
+        // the elapsed time is fixed deterministically by setting the start time and passing the
+        // matching check time, so the cases below do not depend on the real execution speed
+        $imp = new import();
+        $imp->est_time_total = 3;
+        $imp->est_time_step = 2.4;
+        $imp->micro_steps = 1000;
+        $base = 1000.0;
+        $imp->set_start_time($base);
+
+        // at the start nothing is processed yet, so the estimate is the full expected time and positive
+        $imp->done_time_main_step = 0;
+        $imp->done_time_step = 0;
+        $est = $imp->calc_total_time($base + 0.001, 0);
+        $test_name = 'import time estimate at the start is positive';
+        $t->assert_true($test_name, $est > 0);
+
+        // half way through the estimate stays positive and at least the elapsed time
+        $imp->done_time_main_step = 0;
+        $imp->done_time_step = 0;
+        $elapsed = 1.5;
+        $est = $imp->calc_total_time($base + $elapsed, 250);
+        $test_name = 'import time estimate while running is positive';
+        $t->assert_true($test_name, $est > 0);
+        $test_name = 'import time estimate while running is not below the elapsed time';
+        $t->assert_true($test_name, $est >= $elapsed);
+
+        // the import is bigger than the original estimate (the case that produced a negative estimate):
+        // more estimated work is done than the 3s budget, so the raw percentage done exceeds 100%
+        $imp->done_time_main_step = 4.0;
+        $imp->done_time_step = 1.0;
+        $elapsed = 2.732;
+        $est = $imp->calc_total_time($base + $elapsed, 1500);
+        $test_name = 'import time estimate stays positive when the import takes longer than expected';
+        $t->assert_true($test_name, $est > 0);
+        $test_name = 'import time estimate is at least the elapsed time when over the estimate';
+        $t->assert_true($test_name, $est >= $elapsed - 0.0001);
+        $pct_done = $elapsed / $est * 100;
+        $test_name = 'import progress percentage does not exceed 100% when over the estimate';
+        $t->assert_true($test_name, $pct_done <= 100.0001);
+
+        // a zero original estimate must not divide by zero and still returns a positive estimate
+        $imp->est_time_total = 0;
+        $imp->done_time_main_step = 0;
+        $imp->done_time_step = 0;
+        $elapsed = 0.5;
+        $est = $imp->calc_total_time($base + $elapsed, 100);
+        $test_name = 'import time estimate handles a zero original estimate';
+        $t->assert_true($test_name, $est > 0);
+
     }
 
 }
