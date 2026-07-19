@@ -238,7 +238,15 @@ class import
 
     private function time_stamp(): string
     {
-        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
+        global $sys;
+        // align the displayed timestamp with the test / script log start so that, when the import is
+        // called from a test run, its lines continue the runtime timestamp of the test instead of
+        // restarting at zero; the internal time counting (progress and estimates) keeps $this->start_time
+        $ref = $this->start_time;
+        if (isset($sys->log_txt)) {
+            $ref = $sys->log_txt->start_time();
+        }
+        return sprintf('%08.4f', microtime(true) - $ref) . ' ';
     }
 
 
