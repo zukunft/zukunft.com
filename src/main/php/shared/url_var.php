@@ -178,6 +178,7 @@ class url_var
     const string REVERSE_PLURAL = 'lx'; // the name of the verb if used the other way round and there are many phrases
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
+    const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string PHRASE = 'p'; // the id or name of one phrase
     const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
@@ -280,15 +281,19 @@ class url_var
     // init
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
+    const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
+    const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
     const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
     const int DEBUG_LEVEL_POD_READS = 2; // the second debug level is to show data calls from other zukunft.com pods
     const int DEBUG_LEVEL_POD_PUSH = 3; // the third debug level is to show push messages to other zukunft.com pods
     const int DEBUG_LEVEL_SERVICE_CALLS = 4; // the fourth debug level is to show calls of internal services like an R-project server
-    const int DEBUG_LEVEL_DB_WRITE = 5; // the fifth debug level is to show write actions to the database
-    const int DEBUG_LEVEL_DB_READ = 6; // the sixth debug level is to show read actions from the database
-    const int DEBUG_LEVEL_COMPLEX_FUNCTION = 7; // the seventh debug level is to show potential long lasting function calls e.g. due to a potential endless loop
-    const int DEBUG_LEVEL_MAX_FIXED = 9; // the max number of predefined debug level and the staring of the depth debug levels
+    const int DEBUG_LEVEL_API_CALL = 5; // the fifth debug level is to show the api calls of the frontend to the backend
+    const int DEBUG_LEVEL_DB_WRITE = 6; // the sixth debug level is to show write actions to the database
+    const int DEBUG_LEVEL_DB_READ = 7; // the seventh debug level is to show read actions from the database
+    const int DEBUG_LEVEL_COMPLEX_FUNCTION = 8; // the eighth debug level is to show potential long lasting function calls e.g. due to a potential endless loop
+    const int DEBUG_LEVEL_MAIN_STEP = 9; // the ninth debug level is to show the main processing steps such as start and end
+    const int DEBUG_LEVEL_MAX_FIXED = 10; // the max number of predefined debug level and the staring of the depth debug levels
 
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
@@ -303,6 +308,7 @@ class url_var
         self::WORDS,
         self::POST_SUBMIT,
         self::DEBUG,
+        self::NO_CACHE,
     ];
 
 
@@ -547,6 +553,7 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::MSG_HUMAN, self::MSG],
+        [self::NO_CACHE_HUMAN, self::NO_CACHE],
 
         // user
         [self::USER_HUMAN, self::USER],

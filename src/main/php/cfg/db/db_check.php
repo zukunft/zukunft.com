@@ -113,9 +113,11 @@ class db_check
         $lib = new library();
 
         // check if essential config table exists and if not setup the database
+        // because it is assumed that the database structure has not yet been created
+        // TODO Prio 0 in prod and test environment do this only is setup flag is on
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
-        if (!$db_con->has_table($main_tbl_name)) {
+        if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
             $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
             $db_con->setup_db($msg);
@@ -127,16 +129,12 @@ class db_check
             }
         }
 
-        // preload the types used for the change log and the user profiles,
-        // because the config checks below may write config values with a change log entry
-        // before the type lists are loaded by the start-up process
-        $sys->typ_lst->load_log($db_con);
-
         $cfg = new config();
-        $cfg->check_cfg(config::SITE_NAME, POD_NAME, $db_con, $msg);
+        $cfg->check_cfg(config::SITE_NAME, POD_NAME,
+            $db_con, $msg, '', 'check pod name in config');
 
         // get the db version and start the upgrade process if needed
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version == '') {
             $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con, $msg);
         } elseif ($db_version != def::PRG_VERSION) {
@@ -151,7 +149,7 @@ class db_check
                 $msg->add_message_text($diff_txt);
             }
         } else {
-            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg);
+            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg, 'get last consistency check');
             // run a database consistency check once every 24h if the database is the least busy
             $last_check = strtotime($last_consistency_check);
             $check_limit = strtotime("now -1 day");
@@ -460,7 +458,7 @@ class db_check
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
@@ -494,7 +492,7 @@ class db_check
     {
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }

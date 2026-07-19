@@ -98,6 +98,16 @@ class test_db_caches
     }
 
     /**
+     * @return db_cache a cache entry that has just been filled and is therefore expected to be used
+     */
+    function db_cache_up_to_date(): db_cache
+    {
+        $db_cache = $this->db_cache_filled();
+        $db_cache->last_update = new DateTime();
+        return $db_cache;
+    }
+
+    /**
      * @return db_cache_page a cached html page entry with some dummy values
      */
     function db_cache_page(): db_cache_page

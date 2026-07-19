@@ -59,6 +59,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -105,6 +107,9 @@ class application
         // init system
         $code_name = 'api/' . $code_name;
         $sys = new system_object($code_name);
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
@@ -131,12 +136,15 @@ class application
         // for the api only English is used
         $mtr = new Translator(language_codes::SYS);
 
-        // preload all types from the database
-        // TODO Prio 2 check if really all types needs to be loaded
-        //$sys->typ_lst->load_core($db_con);
-        $sys->typ_lst->load($db_con);
+        // preload all types, with one database read from the cached types json when available
+        // or with one select per type list if the cache is missing or outdated
+        $sys->typ_lst->load_cached($db_con);
 
         $this->load_system_config();
+
+        // honor the pod switch for the types cache, which is only known once the config is loaded
+        global $cfg;
+        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
@@ -158,8 +166,10 @@ class application
         global $db_con;
 
         $code_name = 'api/' . $code_name;
-        log_debug($code_name . ' ..');
         $sys = new system_object($code_name);
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
         // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
@@ -187,11 +197,15 @@ class application
         global $mtr;
         $mtr = new Translator(language_codes::SYS);
 
-        // preload all types from the database
-        // TODO Prio 3 try to speed up
-        $sys->load_type_lists($db_con);
+        // preload all types, with one database read from the cached types json when available
+        // or with one select per type list if the cache is missing or outdated
+        $sys->load_type_lists_cached($db_con);
 
         $this->load_system_config();
+
+        // honor the pod switch for the types cache, which is only known once the config is loaded
+        global $cfg;
+        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
@@ -221,12 +235,14 @@ class application
 
     function end_api($db_con): void
     {
+        global $sys;
+
         $this->write_time($db_con);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
 
-        log_debug(' ... database link closed');
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**
@@ -248,6 +264,9 @@ class application
         global $sys;
 
         $sys->script = $code_name;
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // TODO Prio 2 check if cookies are actually needed
@@ -378,16 +397,17 @@ class application
 
     function end($db_con, $echo_header = true): void
     {
+        global $sys;
 
         $this->write_time($db_con);
 
         // Free result test
         //mysqli_free_result($result);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
 
-        log_debug(' ... database link closed');
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**

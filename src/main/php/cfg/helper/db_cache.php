@@ -45,8 +45,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use DateTime;
 use DateTimeInterface;
+use Exception;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
@@ -64,6 +66,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
@@ -192,6 +195,44 @@ class db_cache extends db_object_seq_id_user
         $this->type_id = $lst->get_by_code_id($code_id);
     }
 
+    /**
+     * @param array|string|null $data the cache data as json array or as json text
+     * @return string|null the cache data as it is stored in the database
+     */
+    private function data_text(array|string|null $data): ?string
+    {
+        $result = $data;
+        if (is_array($data)) {
+            $result = json_encode($data);
+        }
+        return $result;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if this cache entry has no data or is older than the max cache age
+     *              and therefore needs to be refilled before it can be used
+     */
+    function is_outdated(): bool
+    {
+        // TODO Prio 1 add trigger check
+        $result = true;
+        if ($this->data !== null and $this->last_update !== null) {
+            $lib = new library();
+            $cut_time = new DateTime();
+            try {
+                $cut_time->modify($lib->unquote(CACHE_MAX_AGE));
+                $result = $this->last_update < $cut_time;
+            } catch (Exception $e) {
+                log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
+            }
+        }
+        return $result;
+    }
 
     /*
      * load
@@ -212,17 +253,33 @@ class db_cache extends db_object_seq_id_user
     }
 
     /**
+     * load the cache of the given type for the user of this cache object
+     * used for the caches that differ per user e.g. the config values
+     *
+     * @param string $typ_code_id the code id of the cache type
+     * @return int the id of the data cache entry
+     */
+    function load_by_type_and_user(string $typ_code_id): int
+    {
+        global $sys;
+        $typ_lst = $sys->typ_lst->cac_typ;
+        $id = $typ_lst->id($typ_code_id);
+        return $this->load_by_type_id($id, $this->get_user()->id);
+    }
+
+    /**
      * load the cache of the given type
      *
      * @param int $id the id of the user sandbox object
+     * @param int|null $usr_id if not null the cache of this user, else the first cache of the type
      * @return int the id of the data cache entry
      */
-    function load_by_type_id(int $id): int
+    function load_by_type_id(int $id, ?int $usr_id = null): int
     {
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_type_id($db_con->sql_creator(), $id);
+        $qp = $this->load_sql_by_type_id($db_con->sql_creator(), $id, $usr_id);
         return $this->load($qp);
     }
 
@@ -231,12 +288,25 @@ class db_cache extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the cache type
+     * @param int|null $usr_id if not null select only the cache of this user
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_type_id(sql_creator $sc, int $id): sql_par
+    function load_sql_by_type_id(sql_creator $sc, int $id, ?int $usr_id = null): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        // the query name must match the where fields, because it is the name of the prepared statement
+        if ($usr_id === null) {
+            $qp = $this->load_sql($sc, db_cache_db::FLD_TYPE);
+        } else {
+            $qp = $this->load_sql($sc, db_cache_db::FLD_TYPE . '_' . user_db::FLD_ID);
+        }
         $sc->add_where(db_cache_db::FLD_TYPE, $id);
+        if ($usr_id !== null) {
+            $sc->add_where(user_db::FLD_ID, $usr_id);
+        }
+        // a cache type is not unique in the table, so without the order the returned entry
+        // would be any of the entries written so far, e.g. one from an outdated program version
+        $sc->set_order(fields::FLD_LAST_UPDATE, sql::ORDER_DESC);
+        $sc->set_page(1);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -346,22 +416,17 @@ class db_cache extends db_object_seq_id_user
                 $obj->type_id,
                 $sys->typ_lst->cac_typ);
         }
-        if ($obj->data != $this->data) {
-            if (is_string($this->data)) {
-                $lst->add_field(
-                    db_cache_db::FLD_DATA,
-                    $this->data,
-                    sql_field_type::TEXT,
-                    $obj->data
-                );
-            } else {
-                $lst->add_field(
-                    db_cache_db::FLD_DATA,
-                    json_encode($this->data),
-                    sql_field_type::TEXT,
-                    json_encode($obj->data)
-                );
-            }
+        // the data of a loaded row is an array (row_mapper decodes it) and the data to write
+        // is usually the api message string, so both sides are compared and written as text
+        $data = $this->data_text($this->data);
+        $db_data = $this->data_text($obj->data);
+        if ($db_data != $data) {
+            $lst->add_field(
+                db_cache_db::FLD_DATA,
+                $data,
+                sql_field_type::TEXT,
+                $db_data
+            );
         }
         if ($obj->status_id !== $this->status_id) {
             if ($this->status_id <= 0 or $this->status_id == null) {

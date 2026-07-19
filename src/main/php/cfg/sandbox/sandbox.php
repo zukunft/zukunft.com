@@ -1525,7 +1525,7 @@ class sandbox extends db_object_seq_id_user
         // add object owner
         //$usr_id_lst[] = $this->owner_id();
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
-        $db_usr_lst = $db_con->get($qp);
+        $db_usr_lst = $db_con->get($qp, 'sandbox user list');
         foreach ($db_usr_lst as $db_usr) {
             if ($db_usr[user_db::FLD_ID] > 0) {
                 $usr_id_lst[] = $db_usr[user_db::FLD_ID];

@@ -14,6 +14,8 @@ if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
     exit;
 }
 
+$start_time = microtime(true);
+
 // standard start for all php code that can be called
 // keep the requested url debug level untrusted until the environment is known,
 // then honor it only in dev so sql and the call graph never leak elsewhere
@@ -47,7 +49,7 @@ The steps should be
 
 $app = new frontend();
 global $sys;
-$db_con = $app->start("setup", "center_form");
+$db_con = $app->start("setup");
 
 // load the session user parameters
 $usr = new user;
@@ -70,4 +72,5 @@ if ($usr->id() > 0) {
 
         log_debug("setup ... done.");
     }}
-$app->end($db_con);
+// close the database and measure the script loading time before the frontend has been created
+$app->end($db_con, $start_time);

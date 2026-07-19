@@ -327,7 +327,7 @@ class user_list
     {
         $result = false;
 
-        $db_rows = $db_con->get($qp);
+        $db_rows = $db_con->get($qp, 'user list');
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $usr = new user();

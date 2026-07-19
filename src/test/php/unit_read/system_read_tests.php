@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -41,6 +42,7 @@ include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
@@ -84,6 +86,18 @@ class system_read_tests
         // ... and check if at least the most critical is loaded
         $result = $sys->typ_lst->job_typ->id(job_types::VALUE_UPDATE);
         $t->assert('check batch job ' . job_types::VALUE_UPDATE, $result, 1);
+
+        $t->subheader($ts . 'type list cached load');
+
+        // the type lists load with one read from the cached types json
+        // or if the cache is missing or outdated with one select per type list
+        $typ_lst = new type_lists();
+        $test_name = 'the type lists load from the types cache or fresh from the database';
+        $t->assert_true($test_name, $typ_lst->load_cached($db_con));
+        $test_name = 'the cached or fresh load fills the phrase types';
+        $t->assert_false($test_name, $typ_lst->phr_typ->is_empty());
+        $test_name = 'the cached or fresh load fills the verbs';
+        $t->assert_false($test_name, $typ_lst->vrb->is_empty());
 
         /*
          * SQL database read unit tests

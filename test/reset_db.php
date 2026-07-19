@@ -43,6 +43,7 @@ include_once 'test_const.php';
 include_once TEST_PHP_PATH . 'test_app.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\test_app;
 
@@ -61,8 +62,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
-
 global $db_con;
+
+// init main objects
+$msg = new user_message();
 
 // open database and display header
 $app = new test_app();
@@ -93,7 +96,7 @@ if ($db_con->is_open()) {
                 // run the unit tests and reset the database
                 $t = new all_tests();
                 $t->run_unit($ui);
-                $t->run_db_recreate();
+                $t->run_db_recreate($msg);
 
                 // create the test dataset to check the basic write functions
                 // TODO Prio 3 make sure that all are created by import instead

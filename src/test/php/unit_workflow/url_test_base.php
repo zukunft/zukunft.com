@@ -38,9 +38,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::CONST . 'workflows.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
@@ -124,7 +126,8 @@ class url_test_base
         // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
         $this->usr_msg = new user_message();
         $this->usr_msg->usr = $this->usr_sys;
-        $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it);
+        // render in test mode so that the snapshot is reproducible without backend calls
+        $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it, true);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
@@ -161,10 +164,20 @@ class url_test_base
         $url_arr[url_var::STEP] = workflows::url_step($step);
         // compare the url with the fixed url test files
         $this->assert_url($this->step_path, $step, $url_arr, rest_ctrl::GET);
+        // measure the action and the rendering separately, so a slow step shows which of the two
+        // is slow; an interleaved db read or write still counts as db_read / db_write because its
+        // own switch() restores this section
+        global $sys;
+        $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->ui->url_to_action($url_arr,
             $this->req->usr_backend, $this->req->usr, $this->req->usr_msg,
             $this->req->dto, $this->req->do_it);
-        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg, $this->req->dto);
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        // render in test mode so that the snapshot is reproducible without backend calls
+        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg,
+            $this->req->dto, $this->req->test_mode);
+        // return to the default section for the following assertions
+        $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);
         return $result;
     }

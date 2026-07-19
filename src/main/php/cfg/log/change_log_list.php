@@ -591,7 +591,7 @@ class change_log_list extends list_db_read
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'change log list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);

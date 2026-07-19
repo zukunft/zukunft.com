@@ -173,7 +173,7 @@ class sys_log_list extends list_db_read
         $result = false;
 
         $qp = $this->load_sql($db_con);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'system log list');
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {

@@ -30,10 +30,12 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -72,12 +74,12 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 /**
  * for internal functions debugging
  * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
- * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=5) or, for the deeper
+ * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=6) or, for the deeper
  * call-graph tracing, the depth level a caller wants to become visible at
  * TODO focus debug on time consuming function calls e.g. all database accesses
  *
  * @param string $msg_text debug information additional to the class and function
- * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=10, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=5 upward
+ * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=11, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=6 upward
  * @return string the final output text
  */
 function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
@@ -87,32 +89,30 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 
     // the second parameter is the minimum debug level at which the message is shown; without it the
     // message is a deep call-graph trace shown only above the last named level (so from
-    // &debug=10 upward, DEBUG_LEVEL_MAX_FIXED + 1), while a named level like DEBUG_LEVEL_DB_WRITE
-    // shows the message already from &debug=5 upward (the named levels are in url_var)
+    // &debug=11 upward, DEBUG_LEVEL_MAX_FIXED + 1), while a named level like DEBUG_LEVEL_DB_WRITE
+    // shows the message already from &debug=6 upward (the named levels are in url_var)
     $min_level = $debug_overwrite ?? (url_var::DEBUG_LEVEL_MAX_FIXED + 1);
 
-    // add the standard prefix
-    if ($msg_text != '') {
-        $msg_text = ': ' . $msg_text;
-    }
-
-    // get the last script before this script
-    $backtrace = debug_backtrace();
-    if (array_key_exists(1, $backtrace)) {
-        $last = $backtrace[1];
-    } else {
-        $last = $backtrace[0];
-    }
-
     // extract the relevant part from backtrace
-    if ($last != null) {
-        if (array_key_exists('class', $last)) {
-            $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+    if ($msg_text == '') {
+
+        // get the last script before this script
+        $backtrace = debug_backtrace();
+        if (array_key_exists(1, $backtrace)) {
+            $last = $backtrace[1];
+        } else {
+            $last = $backtrace[0];
+        }
+
+        if ($last != null) {
+            if (array_key_exists('class', $last)) {
+                $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+            } else {
+                $msg_text = $last['function'] . $msg_text;
+            }
         } else {
             $msg_text = $last['function'] . $msg_text;
         }
-    } else {
-        $msg_text = $last['function'] . $msg_text;
     }
 
     if ($debug >= $min_level) {
@@ -285,16 +285,24 @@ function log_fatal(string $msg_text,
     $time = new DateTime()->format('c');
     // escape the browser echo (xss); the file log below keeps the raw text for the admin
     echo $time . ': FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES) . "\n";
-    $STDERR = fopen('error.log', 'a');
-    fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
+    // the file log must work even if the database is broken, but must never kill the response
+    // itself: the fixed root path keeps the log out of the web request working directory and
+    // if the web server user cannot write the file the entry goes to the server log instead
+    $log_file = fopen(files::ERROR_LOG, 'a');
+    if ($log_file === false) {
+        error_log($time . ': FATAL ERROR! ' . $msg_text
+            . ' (and ' . files::ERROR_LOG . ' is not writable)');
+    } else {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text . "\n");
+    }
     $write_with_more_info = false;
     $usr_txt = '';
     if ($calling_usr != null) {
         $usr_txt = $calling_usr->dsp_id();
         $write_with_more_info = true;
     }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text
+    if ($write_with_more_info and $log_file !== false) {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text
             . '", by user "' . $usr_txt . "\n");
     }
     $lib = new library();
@@ -308,12 +316,15 @@ function log_fatal(string $msg_text,
         $trace = (new Exception)->getTraceAsString();
         $write_with_more_info = true;
     }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n"
+    if ($write_with_more_info and $log_file !== false) {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text . "\n"
             . $msg_description . "\n"
             . 'function ' . $function_name . "\n"
             . 'trace ' . "\n" . $trace . "\n"
             . 'by user ' . $usr_txt . "\n");
+    }
+    if ($log_file !== false) {
+        fclose($log_file);
     }
     return $msg_text;
 }

@@ -261,7 +261,7 @@ class system_tests
 
         $t->subheader($ts . 'log');
         $t->assert('default log message', log_debug(), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run');
-        $t->assert('debug log message', log_debug('additional info'), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run: additional info');
+        $t->assert('debug log message', log_debug('additional info'), 'additional info');
 
         $t->subheader($ts . 'def');
         $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));

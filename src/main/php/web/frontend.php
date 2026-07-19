@@ -148,6 +148,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
@@ -163,6 +164,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
@@ -296,6 +298,9 @@ class frontend
     {
         global $sys;
         $sys->script = $code_name;
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // TODO Prio 2 check if cookies are actually needed
@@ -479,27 +484,33 @@ class frontend
                 $usr_sys->id = users::SYSTEM_ID;
                 $usr_sys->name = users::SYSTEM_NAME;
 
+                // preload all types, with one database read from the cached types json when available
+                // or with one select per type list if the cache is missing or outdated
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                $sys->load_type_lists_cached($db_con);
+
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $sys->load_cache_type($db_con);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg(null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
-                // preload all types from the database
-                $sys->times->switch(system_time_type::LOAD_TYPES);
-                // the types are general so the system user can be used to load the types
+                // honor the pod switch for the types cache, which is only known once the config is loaded
+                $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+
                 $cac = new data_object_backend($usr_sys);
-                $sys->load_type_lists($db_con);
+                if (!$sys->typ_lst->from_cache()) {
+                    // check the change log references only after a fresh type load, because
+                    // they can only be incomplete if the types have changed in the database
+                    $log = new change_log($usr_sys);
+                    $db_changed = $log->create_log_references($db_con);
 
-                $log = new change_log($usr_sys);
-                $db_changed = $log->create_log_references($db_con);
-
-                // reload the type list if needed and trigger an update in the frontend
-                // even tough the update of the preloaded list should already be done by the single adds
-                if ($db_changed) {
-                    $sys->load_type_lists($db_con);
+                    // reload the type list if needed and trigger an update in the frontend
+                    // even tough the update of the preloaded list should already be done by the single adds
+                    if ($db_changed) {
+                        $sys->load_type_lists($db_con);
+                    }
                 }
             }
 
@@ -565,7 +576,9 @@ class frontend
     {
         global $sys;
         if ($start_time != 0) {
-            $sys->times->add($start_time - $this->start_time, 'script loading');
+            // the time from the first line of the calling script until this frontend object has been
+            // created, i.e. the includes and the const setup that no other section measures
+            $sys->times->add($this->start_time - $start_time, system_time_type::SCRIPT_LOADING);
             $duration = microtime(true) - $start_time;
         } else {
             $duration = microtime(true) - $this->start_time;
@@ -578,8 +591,10 @@ class frontend
         // Free result test
         //mysqli_free_result($result);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
+
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         if (SYS_LOG_URL != '') {
             return $this->log_info('end ' . $this->code_name);
@@ -809,13 +824,15 @@ class frontend
      * @param user_ui|null $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
         user_ui|null      $usr,
         user_message $usr_msg,
-        data_object  $dto = new data_object()
+        data_object  $dto = new data_object(),
+        bool         $test_mode = false
     ): string
     {
         $lib = new library();
@@ -950,7 +967,7 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', false, $url_array);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
@@ -1126,6 +1143,8 @@ class frontend
      */
     function url_cache_key(array $url_array): string
     {
+        global $cfg;
+
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
@@ -1134,14 +1153,27 @@ class frontend
         // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
         // never part of the rendered html), and a process step of 0 (no action started) does not
         // change a view-only page, so all three are allowed without preventing the cache and are not
-        // part of the cache key - so e.g. ?m=2&debug=5 takes the same cached path as ?m=2
+        // part of the cache key - so e.g. ?m=2&debug=6 takes the same cached path as ?m=2
+        // the same applies to the cache switch itself, which is checked below instead
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
-            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE, url_var::SESSION_TOKEN, url_var::DEBUG]);
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+                url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;
             }
+        }
+        // 'nc=1' (or 'nocache=1' in the human-readable url) switches the cache off for this request:
+        // an empty cache key makes the caller render the page live and skip the cache write, so an
+        // admin can compare the live page with the cached one without emptying the cache table
+        if (($url_array[url_var::NO_CACHE] ?? '') == url_var::NO_CACHE_ON) {
+            $is_view_only = false;
+        }
+        // the pod setting from config.yaml switches the html page cache off for all requests;
+        // an empty key covers read and write, because a page is only cached with a non-empty key
+        if (!($cfg?->page_cache_allowed() ?? true)) {
+            $is_view_only = false;
         }
         // a request that shows a change or process step view is not cached
         if (in_array($mask_id, views::CHANGE_MASKS_IDS)) {
@@ -1233,8 +1265,18 @@ class frontend
         user_request $req
     ): string
     {
+        global $sys;
+
+        // measure the action and the rendering separately, so a slow request shows which of the two
+        // is slow; an interleaved db read or write still counts as db_read / db_write because its
+        // own switch() restores this section
+        $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
-        return $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto);
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $result = $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto, $req->test_mode);
+        // return to the default section for whatever the caller does next
+        $sys->times->switch(system_time_type::DEFAULT);
+        return $result;
     }
 
     function show_view(int $id): string

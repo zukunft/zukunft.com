@@ -237,15 +237,20 @@ class verb extends type_object
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $usr_msg, $trusted);
 
         // TODO add user to request new verbs via api
 
         $this->common_mapper($api_json, $usr_msg);
 
         // the usage and impact var is not expected to be changed via api
+        // but is restored from a trusted source e.g. the db cached types json
+        if ($trusted) {
+            $this->usage = $api_json[json_fields::USAGE] ?? null;
+            $this->impact = $api_json[json_fields::IMPACT] ?? null;
+        }
 
         return $usr_msg->is_ok();
     }

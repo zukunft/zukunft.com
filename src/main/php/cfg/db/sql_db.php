@@ -177,6 +177,7 @@ include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -849,7 +850,9 @@ class sql_db
      */
     function open(string $db_name = SQL_DB_NAME): bool
     {
-        log_debug();
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('open database ' . $db_name, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
@@ -1062,7 +1065,8 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-        log_debug("done");
+        // the counterpart of the open message at url_var::DEBUG_LEVEL_MAIN_STEP
+        log_debug('database closed', url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**
@@ -1172,7 +1176,7 @@ class sql_db
         // dropping the remaining tables never causes a loss of user data
         // because this function is only called if the config table is missing
         // and without the config table the database is unusable anyway
-        $dropped_objects = $this->reset_db_core();
+        $dropped_objects = $this->reset_db_core($msg);
         if ($dropped_objects > 0) {
             $log_txt->echo_text_log('Removed ' . $dropped_objects
                 . ' tables and views of an outdated or incomplete database setup');
@@ -1190,7 +1194,7 @@ class sql_db
                 // retry once but try to delete upfront all remaining tables and objects
                 $log_txt->echo_text_log('Run db setup sql script failed due to ' . $sql_msg->all_message_text());
                 $log_txt->echo_text_log('Retry ...');
-                $this->reset_db_core();
+                $this->reset_db_core($msg);
                 $sys->times->switch(system_time_type::DB_SETUP);
                 $sql_msg = $this->exe_script($sql);
                 $sys->times->switch();
@@ -1304,17 +1308,17 @@ class sql_db
      * used to clean up before a setup and for testing to reset the db after a broken db update script
      * TODO remove or deactivate this before prod deployment
      *
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return int the number of dropped tables
      */
-    function reset_db_core(): int
+    function reset_db_core(user_message $msg = new user_message()): int
     {
         $dropped_objects = 0;
-        $usr_msg = new user_message();
 
         // drop the views first because they can only be dropped with a drop view statement
         $sql = sql::SELECT
             . " table_name FROM information_schema.views WHERE table_schema = 'public';";
-        $view_lst = $this->fetch_all($sql, $usr_msg);
+        $view_lst = $this->fetch_all($sql, $msg);
         if ($view_lst !== false) {
             foreach ($view_lst as $view) {
                 $view_name = $view[0];
@@ -1327,7 +1331,7 @@ class sql_db
         $sql = sql::SELECT
             . " table_name FROM information_schema.tables"
             . " WHERE table_schema = 'public' AND table_type = 'BASE TABLE';";
-        $tbl_lst = $this->fetch_all($sql, $usr_msg);
+        $tbl_lst = $this->fetch_all($sql, $msg);
         if ($tbl_lst !== false) {
             foreach ($tbl_lst as $tbl) {
                 $tbl_name = $tbl[0];
@@ -1498,7 +1502,7 @@ class sql_db
 
     function load_db_code_link_file(
         string $class,
-        array $sc_par_lst_in = []
+        array  $sc_par_lst_in = []
     ): bool
     {
         global $debug;
@@ -2519,7 +2523,6 @@ class sql_db
             $this->table = $this->get_table_name($type);
             $this->table .= $ext;
         }
-        log_debug('to "' . $this->table . '"');
     }
 
     function get_id_field_name(string $class): string
@@ -2671,7 +2674,6 @@ class sql_db
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug('to "' . $result . '"');
         return $result;
     }
 
@@ -2683,7 +2685,6 @@ class sql_db
         $type = $lib->class_to_name($this->class);
 
         $result = $this->get_name_field($type);
-        log_debug('to "' . $result . '"');
         $this->name_field = $result;
     }
 
@@ -2713,7 +2714,8 @@ class sql_db
     {
         $result = '';
         try {
-            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', '', $log_level);
+            // pass $msg so exe traces the statement at its named db level using this description
+            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', '', $log_level, $msg);
             if (!$sql_result) {
                 $result .= $msg . log::MSG_ERR;
             }
@@ -2987,6 +2989,7 @@ class sql_db
      * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param string $sql_call_name
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
+     * @param string $debug_txt a short description of this statement shown at its named db level (&debug=6 for writes, &debug=7 for reads); empty means the statement is not traced
      * @return \PgSql\Result|mysqli_result|null the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
@@ -3000,14 +3003,29 @@ class sql_db
         array  $sql_array = array(),
         string $sql_call = '',
         string $sql_call_name = '',
-        int    $log_level = sys_log_levels::ERROR_ID
+        int    $log_level = sys_log_levels::ERROR_ID,
+        string $debug_txt = ''
     ): \PgSql\Result|mysqli_result|null
     {
-        global $debug;
         global $sys;
+        global $debug;
 
-        $lib = new library();
-        log_debug('"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name . '" for  user ' . $this->usr_id);
+        // trace the caller description at its named db level, so '&debug=6' shows all writes and
+        // '&debug=7' all reads; the raw sql itself is only shown in the depth range from '&debug=11'
+        // upward (above the last named level), so the named levels stay readable
+        // TODO Prio 2 create a library function named sql_is_select() with unit tests and use it here
+        if ($debug_txt != '') {
+            $is_read = str_starts_with(strtoupper(ltrim($sql)), sql::SELECT);
+            $db_level = $is_read ? url_var::DEBUG_LEVEL_DB_READ : url_var::DEBUG_LEVEL_DB_WRITE;
+            log_debug($debug_txt, $db_level);
+        }
+        // build the raw sql text only if it is actually shown, because this is done for every statement
+        if ($debug > url_var::DEBUG_LEVEL_MAX_FIXED) {
+            $lib = new library();
+            $sql_txt = '"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name
+                . '" for user ' . $this->usr_id;
+            log_debug($sql_txt);
+        }
 
         // sql db selector
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3356,9 +3374,11 @@ class sql_db
      * TODO Prio 0 return false in case of an error
      *
      * @param string $sql the sql statement that should be executed
+     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param bool $fetch_all if true, all database rows are returned at once
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false with one or all database records or false if something went wrong
      */
     private function fetch(
@@ -3366,7 +3386,8 @@ class sql_db
         user_message $usr_msg,
         string       $sql_name = '',
         array        $sql_array = array(),
-        bool         $fetch_all = false
+        bool         $fetch_all = false,
+        string       $debug_txt = ''
     ): array|false
     {
         global $sys;
@@ -3375,15 +3396,15 @@ class sql_db
         $sys->times->switch(system_time_type::DB_READ);
 
         if ($sql <> "") {
-            // show every db read from '&debug=6' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
-            log_debug($sql, url_var::DEBUG_LEVEL_DB_READ);
+            // the read is traced by exe at url_var::DEBUG_LEVEL_DB_READ (from '&debug=7' upward)
             if ($this->db_type == sql_db::POSTGRES) {
                 if ($this->postgres_link == null) {
                     log_warning('Database connection lost', 'sql_db->fetch');
                     // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
-                        $exe_result = $this->exe($sql, $sql_name, $sql_array);
+                        $exe_result = $this->exe($sql, $sql_name, $sql_array,
+                            '', '', sys_log_levels::ERROR_ID, $debug_txt);
                         if ($fetch_all) {
                             if ($exe_result) {
                                 while ($sql_row = pg_fetch_array($exe_result)) {
@@ -3409,7 +3430,7 @@ class sql_db
                     // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 } else {
                     try {
-                        $exe_result = $this->exe($sql, $sql_name, $sql_array);
+                        $exe_result = $this->exe($sql, $sql_name, $sql_array, '', '', sys_log_levels::ERROR_ID, $debug_txt);
                         if ($fetch_all) {
                             while ($sql_row = mysqli_fetch_array($exe_result, MYSQLI_BOTH)) {
                                 $result[] = $sql_row;
@@ -3435,22 +3456,36 @@ class sql_db
 
     /**
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
+     *
+     * @param string $sql the sql statement to get the db row
+     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
+     * @param string $sql_name the unique name of the sql statement
+     * @param array $sql_array the values used for the precompiled SQL statement
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      */
     private function fetch_first(
-        string $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+        string       $sql,
+        user_message $usr_msg,
+        string       $sql_name = '',
+        array        $sql_array = array(),
+        string       $debug_txt = ''
     ): array|false|null
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, false, $debug_txt);
     }
 
     /**
      * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
     private function fetch_all(
-        $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+        string       $sql,
+        user_message $usr_msg,
+        string       $sql_name = '',
+        array        $sql_array = array(),
+        string       $debug_txt = ''
     ): array|false
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true, $debug_txt);
     }
 
     private
@@ -3479,13 +3514,14 @@ class sql_db
      * returns all values of an SQL query in an array
      *
      * @param sql_par $qp the sql statement to get the db rows
+     * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false the database rows or an empty array
      */
-    function get(sql_par $qp): array|false
+    function get(sql_par $qp, string $debug_txt = ''): array|false
     {
         $usr_msg = new user_message();
         $this->debug_msg($qp->sql, 'get');
-        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par);
+        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par, $debug_txt);
     }
 
     /**
@@ -3507,9 +3543,15 @@ class sql_db
      * only for internal use where no parameter can be influenced by a user
      *
      * @param string $sql the sql statement to get the db row
+     * @param user_message $usr_msg to enrich the message object with the messages that should be shown to the user
+     * @param string $debug_txt the text that should be shown in the debug message
      * @return array|null the database row or null
      */
-    function get1_internal(string $sql, user_message $usr_msg = new user_message()): ?array
+    function get1_internal(
+        string       $sql,
+        user_message $usr_msg = new user_message(),
+        string       $debug_txt = ''
+    ): ?array
     {
         $this->debug_msg($sql, 'get1');
 
@@ -3523,13 +3565,22 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $usr_msg, '', array());
+        return $this->fetch_first($sql, $usr_msg, '', array(), $debug_txt);
     }
 
     /**
      * get only the first record from the database
+     *
+     * @param sql_par $qp the sql query with the parameters for the call
+     * @param user_message $msg with the user who has requested the value, because a missing entry is created with the default value
+     * @param string $debug_txt the text that should be shown in the debug message
+     * @return array|false|null the data array from the database or false the the access has failed or null if the result is empty
      */
-    function get1(sql_par $qp, user_message $usr_msg = new user_message()): array|false|null
+    function get1(
+        sql_par      $qp,
+        user_message $msg = new user_message(),
+        string       $debug_txt = ''
+    ): array|false|null
     {
         $this->debug_msg($qp->sql, 'get1');
 
@@ -3543,7 +3594,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $usr_msg, $qp->name, $qp->par);
+        return $this->fetch_first($sql, $msg, $qp->name, $qp->par, $debug_txt);
     }
 
     /**
@@ -4657,14 +4708,13 @@ class sql_db
     ): bool
     {
         global $sys;
-        global $debug;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
-        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name,
+                sys_log_levels::ERROR_ID, $description);
             $db_id = 0;
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
@@ -4718,11 +4768,11 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
-        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $err_msg = 'Update of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name,
+                sys_log_levels::ERROR_ID, $description);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
@@ -4757,12 +4807,12 @@ class sql_db
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        // show every db write from '&debug=5' upward (url_var::DEBUG_LEVEL_DB_WRITE) to trace what a request writes
-        log_debug($description . ': ' . $qp->sql, url_var::DEBUG_LEVEL_DB_WRITE);
+        // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
         $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, '',
+                sys_log_levels::ERROR_ID, $description);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
@@ -4975,10 +5025,12 @@ class sql_db
 
     /**
      * check if a table name exists
-     * @param string $table_name
+     * @param string $table_name the name if the table that should be checked
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
+     * @param string $debug_txt text to show in the debug message that descriobe the reason why has_table has been called
      * @return bool true if the table name exists
      */
-    function has_table(string $table_name): bool
+    function has_table(string $table_name, user_message $msg, string $debug_txt = ''): bool
     {
         $result = false;
         $sql_check = 'SELECT' . ' TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE ';
@@ -4992,7 +5044,7 @@ class sql_db
             $result .= $msg;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_internal($sql_check);
+            $sql_result = $this->get1_internal($sql_check, $msg, $debug_txt);
             if ($sql_result) {
                 $result = true;
             }
@@ -5323,9 +5375,10 @@ class sql_db
      *
      * @param string $table_name
      * @param string $to_table_name
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return string an empty string if the renaming has been successful or is not needed
      */
-    function change_table_name(string $table_name, string $to_table_name): string
+    function change_table_name(string $table_name, string $to_table_name, user_message $msg = new user_message()): string
     {
         $result = '';
 
@@ -5333,7 +5386,7 @@ class sql_db
         $to_table_name = $this->get_table_name($to_table_name);
 
         // check if the old table name is still valid
-        if ($this->has_table($table_name)) {
+        if ($this->has_table($table_name, $msg)) {
             $sql = '';
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql = 'ALTER TABLE ' . $this->name_sql_esc($table_name) . ' RENAME TO ' . $this->name_sql_esc($to_table_name) . ';';
@@ -5661,14 +5714,14 @@ class sql_db
         }
     }
 
-    function drop_table(string $table_name): void
+    function drop_table(string $table_name, user_message $msg = new user_message()): void
     {
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
 
         $sys->log_txt->echo_log('DROP TABLE ' . $table_name);
-        if ($this->has_table($table_name)) {
+        if ($this->has_table($table_name, $msg)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
                 $this->exe($sql);

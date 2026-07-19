@@ -67,7 +67,7 @@ class ref_type_list extends type_list
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'ref type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[fields::FLD_CODE_ID]);

@@ -223,9 +223,10 @@ class all_unit_write_tests extends all_unit_read_tests
      * recreate the database to test the database setup script
      * TODO make sure that this can never be called in PROD
      *
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return void
      */
-    function run_db_recreate(): void
+    function run_db_recreate(user_message $msg): void
     {
         global $db_con;
         global $usr;
@@ -241,7 +242,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // check if at least some database tables still exists
         $lib = new library();
         $ip_tbl_name = $lib->class_to_name(ip_range::class);
-        if ($db_con->has_table($ip_tbl_name)) {
+        if ($db_con->has_table($ip_tbl_name, $msg)) {
             $usr->get();
         } else {
             // TODO Prio 2 avoid setting the system user profile directly
@@ -253,7 +254,7 @@ class all_unit_write_tests extends all_unit_read_tests
         $test_usr = clone $usr;
 
         // use the system user for the database updates
-        if ($db_con->has_table($ip_tbl_name)) {
+        if ($db_con->has_table($ip_tbl_name, $msg)) {
             $usr->load_by_id(users::SYSTEM_ID);
         } else {
             // TODO Prio 2 avoid setting the system user profile directly

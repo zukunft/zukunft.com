@@ -131,9 +131,102 @@ A load function therefore guards the `false` case *before* passing the row to
 `row_mapper(?array)` (feeding `false` into the mapper is a TypeError, which is
 exactly the fatal break this contract is meant to prevent).
 
+**Database cache (`db_cache`)**: precollected api json (system config, frontend
+config, user config, system types, …) so that a request does not have to rebuild
+it from the single values. Three rules hold for every cache entry:
+
+- **One entry per cache type and user — unless the content is the same for
+  everybody.** The config values are sandbox values that each user can
+  overwrite, so a config cache entry is only valid for the user it was written
+  for (`db_cache::load_by_type_and_user`). The types and system views are not
+  user specific, so `ui_config` keys its entry by type alone — and it must:
+  `rest_call::api_curl_call` sends **no session**, so every api call arrives as
+  the ip user and a per-user entry would miss on every single call. Before
+  keying a cache by user, check who actually reaches that api script. The other
+  side of the coin: an entry shared by all users must not contain user-specific
+  data — an api message header carrying the writing user's id and name has to be
+  rebuilt per call instead of being cached with the body.
+  A write loads the existing entry of that type (and user) first
+  and updates it — creating a fresh `db_cache` object and calling `save()` adds
+  a *second* row for every request, because `save()` inserts whenever the object
+  has no db id.
+- **`last_update` is the time of the data snap, never the time of the write.**
+  Take the timestamp *before* reading the data that is being cached and store
+  that: a change made while the data is being read is then outside the snap and
+  the next reader refreshes, instead of the cache claiming to contain a change
+  it missed. The same holds when the cache age is compared to a source file
+  (`config_numbers::is_file_cache_valid` compares the cache file mtime with the
+  `config.yaml` mtime). `db_cache::is_outdated()` is the single place that
+  decides whether an entry is still young enough (`CACHE_MAX_AGE`) to be used.
+- **A cache entry is used only if it is not outdated.** Do not check validity
+  only when the read fails — that inverts the logic and serves stale data
+  forever.
+- **Every cache has a pod switch.** Each `db_cache_types` row and the
+  `db_cache_pages` table can be switched off in `config.yaml`
+  (`database > cache > ... > allowed`); the phrase names per switch are the
+  `config_numbers::CACHE_ALLOWED_NAMES` / `CACHE_PAGES_ALLOWED_NAMES` consts and
+  `config_numbers::cache_allowed()` / `page_cache_allowed()` answer them. A pod
+  without the switch uses the cache — only an explicit `false` switches it off
+  (e.g. to debug with always fresh data), so the accessors use no `get_by`
+  fallback (it would overwrite the explicit false). A new switch's name set must
+  not be a subset of any other switch's set, because the config lookup is a
+  contains-all match (`value_base::match_all`).
+
+**The config api message contains all config values**: `config_numbers::load_cfg`
+loads the complete config tree and sends it with its phrases, also for the
+frontend and the user config part; the part only selects the cache entry.
+The extra context is expected to be useful for the frontend and the complete
+config is expected to stay small. `value_list::filter_by_phrase` is ready to
+reduce the message to one config part if the config ever gets too big — it must
+then be called *after* `load_phrases()`, because it matches on the loaded
+`$val->phr_lst`.
+
+**The api type list stays a caller parameter, also where only one list is cached**:
+a cache entry may only be given to a caller that asked for exactly the content
+that was cached, so a cached api endpoint compares the requested type list with
+the cached one and skips read *and* write on any other list rather than serving
+the wrong shape. Keep the list a parameter anyway — it is the switch for the two
+directions such a message is expected to move in: **faster** (drop
+`api_types::HEADER` and the message loses the pod name, class, user id and name,
+version and timestamp — smaller for a frontend that already knows all of it) or
+**safer** (keep the header so every response says which pod, program version and
+user it was created for, which lets the frontend detect a message meant for
+somebody else or for an outdated pod). When a second list becomes worth caching,
+cache it under its own `db_cache` type — never widen the match.
+
 **API layer**: Backend objects produce JSON via `api_json()` for the frontend.
 Frontend `web/` objects consume these via `api_mapper()`. Import/export JSON uses
 names (never DB IDs) for portability between pods.
+
+**Frontend and backend are two independent apps**: the target architecture is a
+frontend and a backend that are complete and independent of each other, talking
+only over the API. The frontend renders pages and never reaches into the backend
+except through an api call; the backend answers api calls and knows nothing about
+html. Each must be deployable, startable and testable on its own — the frontend
+must be able to render against a *remote* backend pod, and the backend must be
+able to serve a different frontend (e.g. the planned JS app) without a change.
+
+This splits the request bootstrap in two, and the split is deliberate:
+
+| | `web/frontend.php` | `cfg/application.php` |
+|---|---|---|
+| serves | the pure html php frontend | the backend, i.e. the api calls |
+| entry points | `http/view.php`, `about.php`, `setup.php` | `api/**` scripts |
+| lifecycle | `frontend::start()` / `frontend::end()` | `application::start()` / `start_api()` / `end()` |
+
+Use `frontend.php` **only** from the html frontend and `application.php` **only**
+from the backend api. Because both bootstrap a request, they overlap today —
+session start and hardening, TLS enforcement, the session token, opening the
+database and the timing switches exist in both, and `frontend.php` still has the
+deprecated direct-DB bootstrap that the API is meant to replace. Treat that
+overlap as the cost of the not-yet-finished split, not as a reason to merge them:
+the duplication disappears when the frontend no longer opens a database at all.
+
+The practical trap: the two classes have **same-named methods with different
+signatures** (`start()` takes `(code_name, echo_env, restart)` in `application`
+but `(code_name, msg, url_arr)` in `frontend`). Anything added to one silently
+misses the other, so a change to the request lifecycle — a new guard, a debug
+message, a timing switch — must be applied to both until the split is complete.
 
 **Path constants**: All file paths are class constants in
 `src/main/php/cfg/const/paths.php` (backend) and

@@ -145,6 +145,17 @@ class system_object
     }
 
     /**
+     * load the type lists from the cached types json with one database read
+     * or with one select per type list if the cache is missing or outdated
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @return bool true if the loading is complete
+     */
+    function load_type_lists_cached(sql_db $db_con): bool
+    {
+        return $this->typ_lst->load_cached($db_con);
+    }
+
+    /**
      * load the cache types and statuum upfront from the database
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
      * @return bool

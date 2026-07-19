@@ -34,12 +34,19 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'db_cache_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -84,6 +91,23 @@ class db_cache_tests
         $cac_page = new db_cache_page();
         $t->assert_sql_by_id($sc, $cac_page);
 
+        // sql to load the cache of one type e.g. the system types that are the same for all users
+        $cac = new db_cache($usr);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID);
+        $t->assert_qp($qp, $sc->db_type);
+
+        // sql to load the cache of one type and user e.g. the config values that each user can overwrite
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $usr->id());
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $usr->id());
+        $t->assert_qp($qp, $sc->db_type);
+
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
         $sys_usr = $t_usr->system_user();
@@ -114,6 +138,49 @@ class db_cache_tests
 
         $cac_page = $t_db_cache->db_cache_page();
         $t->assert_api($cac_page);
+
+
+        $t->subheader($ts . 'update fields');
+
+        // the data of a loaded cache row is a json array (row_mapper decodes it) and the data to
+        // write is the api message text, so both are compared and written as text
+        $cac = $t_db_cache->db_cache_up_to_date();
+        $cac->data = '{"body":{"lists":[4]}}';
+        $cac_db = $t_db_cache->db_cache_up_to_date();
+        $cac_db->data = ['body' => ['lists' => [1]]];
+        $msg = new user_message($usr);
+        $fvt_lst = $cac->db_fields_changed($cac_db, $msg);
+        $test_name = 'the new api message replaces the cached json array';
+        $t->assert($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg)?->value, $cac->data);
+        $test_name = 'the cached json array is the compare value of the update';
+        $t->assert($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg)?->old, json_encode($cac_db->data));
+
+        $cac_db->data = json_decode($cac->data, true);
+        $msg = new user_message($usr);
+        $fvt_lst = $cac->db_fields_changed($cac_db, $msg);
+        $test_name = 'an unchanged api message is not written again';
+        $t->assert_null($test_name, $fvt_lst->get(db_cache_db::FLD_DATA, $msg, true)?->name);
+
+        $t->subheader($ts . 'age');
+
+        // only a cache entry with data and a last update within the max cache age can be used
+        $cac = $t_db_cache->db_cache_up_to_date();
+        $test_name = 'a just filled cache entry is used';
+        $t->assert_false($test_name, $cac->is_outdated());
+
+        $cac = $t_db_cache->db_cache_filled();
+        $test_name = 'a cache entry older than the max cache age is refilled';
+        $t->assert_true($test_name, $cac->is_outdated());
+
+        $cac = $t_db_cache->db_cache_up_to_date();
+        $cac->data = null;
+        $test_name = 'a cache entry without data is refilled';
+        $t->assert_true($test_name, $cac->is_outdated());
+
+        $cac = $t_db_cache->db_cache_up_to_date();
+        $cac->last_update = null;
+        $test_name = 'a cache entry without update time is refilled';
+        $t->assert_true($test_name, $cac->is_outdated());
 
 
         $t->subheader($ts . 'session token swap');

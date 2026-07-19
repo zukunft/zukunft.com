@@ -2067,7 +2067,7 @@ class group extends sandbox_multi
         $db_con->add_par(sql_par_type::INT, $this->id());
         $qp->sql = $db_con->select_by_field(group_fields::FLD_ID);
         $qp->par = $db_con->get_par();
-        $lnk_id_lst = $db_con->get($qp);
+        $lnk_id_lst = $db_con->get($qp, 'group link list');
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];
         }

@@ -251,6 +251,23 @@ class test_values extends test_objects
     }
 
     /**
+     * @param array $names the phrase names of the database cache switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @param bool $allowed true if the cache switch should permit the cache usage
+     * @return config_numbers a pod configuration with the given database cache switch
+     */
+    function config_cache_switch(array $names, bool $allowed): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        $val = new value($this->env->usr1, (float)$allowed, $grp);
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst([$val]);
+        return $cfg;
+    }
+
+    /**
      * @return config_numbers a pod configuration without any config value
      */
     function config_empty(): config_numbers
