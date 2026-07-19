@@ -57,6 +57,9 @@ class files
      * path
      */
 
+    // the text file for fatal errors that must work even if the database is broken
+    const string ERROR_LOG = ROOT_PATH . 'error.log';
+
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
     const string SYSTEM_UNIT_TEST_DATA_PATH = self::MESSAGE_PATH . 'system_unit_test_data' . DIRECTORY_SEPARATOR;

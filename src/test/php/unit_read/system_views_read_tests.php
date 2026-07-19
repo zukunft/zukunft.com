@@ -180,13 +180,20 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
-        // the error update view changes data, so a user without login is blocked before the view is created
+        // the error update view is a get action mask, so a request without the anti-csrf
+        // session token is rejected before any action (see frontend::request_token_valid)
+        $is_connected = $t->dsp_web_test(
+            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::ERROR_UPDATE_ID
+            . url_var::ADD_ID . 1,
+            'suspect request for mask ' . views::ERROR_UPDATE_ID,
+            ', frontend view.php?m=error_update without a token contains at least', $is_connected);
+        // an add view changes data, so a user without login is blocked before the view is created
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
         global $mtr;
         $is_connected = $t->dsp_web_test(
-            api::SCRIPT_PATH_NAME . 'view.php?m=66&id=1',
+            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
-            ', frontend view.php?m=error_update contains at least', $is_connected);
+            ', frontend view.php?m=word_add contains at least', $is_connected);
         // the former find.php has been replaced by the word find view (m=67)
         $t->dsp_web_test(
             api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_FIND_ID

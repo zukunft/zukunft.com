@@ -30,10 +30,12 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -283,16 +285,24 @@ function log_fatal(string $msg_text,
     $time = new DateTime()->format('c');
     // escape the browser echo (xss); the file log below keeps the raw text for the admin
     echo $time . ': FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES) . "\n";
-    $STDERR = fopen('error.log', 'a');
-    fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
+    // the file log must work even if the database is broken, but must never kill the response
+    // itself: the fixed root path keeps the log out of the web request working directory and
+    // if the web server user cannot write the file the entry goes to the server log instead
+    $log_file = fopen(files::ERROR_LOG, 'a');
+    if ($log_file === false) {
+        error_log($time . ': FATAL ERROR! ' . $msg_text
+            . ' (and ' . files::ERROR_LOG . ' is not writable)');
+    } else {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text . "\n");
+    }
     $write_with_more_info = false;
     $usr_txt = '';
     if ($calling_usr != null) {
         $usr_txt = $calling_usr->dsp_id();
         $write_with_more_info = true;
     }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text
+    if ($write_with_more_info and $log_file !== false) {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text
             . '", by user "' . $usr_txt . "\n");
     }
     $lib = new library();
@@ -306,12 +316,15 @@ function log_fatal(string $msg_text,
         $trace = (new Exception)->getTraceAsString();
         $write_with_more_info = true;
     }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n"
+    if ($write_with_more_info and $log_file !== false) {
+        fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text . "\n"
             . $msg_description . "\n"
             . 'function ' . $function_name . "\n"
             . 'trace ' . "\n" . $trace . "\n"
             . 'by user ' . $usr_txt . "\n");
+    }
+    if ($log_file !== false) {
+        fclose($log_file);
     }
     return $msg_text;
 }
