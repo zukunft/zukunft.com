@@ -54,6 +54,15 @@ class text_log
     // additional the message a link to the system log shown
     // so that the user can track when the error is solved
 
+    // cap of the sys_log inserts per time window counted over all requests, so that a flood of
+    // requests each logging a distinct error cannot grow the sys_log table unbounded (dos);
+    // fixed consts and not config values because the config load itself may log
+    const int INSERT_LIMIT = 200;
+    const int INSERT_WINDOW_SEC = 600;
+    // the json field names of the sys_log throttle state file
+    const string THROTTLE_START = 'start';
+    const string THROTTLE_COUNT = 'count';
+
 
     /*
      * object vars
