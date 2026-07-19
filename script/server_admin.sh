@@ -16,7 +16,9 @@
 #
 # The server admin page (http/server_admin.php) calls this via sudo, e.g.
 #   sudo -n /var/www/html/script/server_admin.sh update-program
-# so the web user needs a matching sudoers entry running as the deploy user.
+# so the web user needs a matching sudoers entry running the script as root;
+# install.sh pins that entry to the update-program and upgrade-database
+# sub-commands, so the other sub-commands only run for a shell user.
 #
 # This file is part of zukunft.com - calc with words, GNU AGPL v3.
 

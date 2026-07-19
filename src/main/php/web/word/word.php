@@ -963,11 +963,11 @@ class word extends sandbox_code_id
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
                     $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
-                    $title .= ' (' . $html->ref($url, $html->esc($is_part_of->name())) . ')';
+                    $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
             $url = $this->url_edit();
-            $title .= $html->ref($url, $html->span($html->esc($this->name()), styles::STYLE_GLYPH), 'Rename word');
+            $title .= $html->ref($url, $html->span($html->esc($this->name()), styles::STYLE_GLYPH), 'Rename word', '', true);
             $result .= $html->dsp_text_h1($title);
         }
 

@@ -125,16 +125,16 @@ class formula_calc_tests
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $back = 0;
         $result = $frm_html->dsp_text($back, $trm_lst_ui);
-        $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&id=';
+        $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&amp;id=';
         $target = '"' . words::PERCENT
             . '" = ( <a href="' . $frm_edit_url
-            . $frm_this->id() . '&back=0">'
+            . $frm_this->id() . '&amp;back=0">'
             . word_names::THIS_NAME
             . '</a> - <a href="' . $frm_edit_url
             . $frm_prior->id()
-            . '&back=0">'
+            . '&amp;back=0">'
             . word_names::PRIOR_NAME
-            . '</a> ) / <a href="' . $frm_edit_url . '20&back=0">'
+            . '</a> ) / <a href="' . $frm_edit_url . '20&amp;back=0">'
             . word_names::PRIOR_NAME . '</a>';
         $t->assert($test_name, $result, $target);
 

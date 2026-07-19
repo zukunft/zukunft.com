@@ -49,9 +49,11 @@ To install this version 0.0.3 on a [debian](https://wiki.debian.org/) system do 
    chmod 777 zukunft.com/script/install.sh
    ```
 
-2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+2. Create the `.env` file based on the `.env.example` file and set at least the database
+   password, because for security reasons there is no default password:
    ```bash
-   nano zukunft.com/.env.sample
+   cp zukunft.com/.env.example zukunft.com/.env
+   nano zukunft.com/.env
    ```
 
    ```env
