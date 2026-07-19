@@ -1013,9 +1013,10 @@ class frontend
      *
      * @param array $url_array the parsed url as an array
      * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @param user_message $usr_msg with the messages of this request that are added to the cached page
      * @return string|null the cached html page or null if the page cannot be served from the cache
      */
-    function cached_page_or_null(array $url_array, user_backend $usr): ?string
+    function cached_page_or_null(array $url_array, user_backend $usr, user_message $usr_msg): ?string
     {
         $result = null;
         // only a user without own data changes may get the standard cached page
@@ -1028,6 +1029,9 @@ class frontend
                     // fill in the reading user's own anti-csrf token so the shared page does not
                     // carry the token of whoever first rendered and cached it (see request_token_valid)
                     $result = db_cache_page::restore_session_token($cached_html, self::session_token());
+                    // a cached page never contains a message (see save_html_page), so add the
+                    // message of this request e.g. that a change without login is not allowed
+                    $result = db_cache_page::add_user_msg($result, $this->user_msg_html($usr_msg));
                 }
             }
         }

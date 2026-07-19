@@ -4,8 +4,6 @@
 
 ## high prio
 
-see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page. And if a page with a message should be shown and a cached pages exists, use the cache page and add the user message via string replace
-
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
@@ -37,6 +35,8 @@ add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can b
 ### reduce response time
 
 if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit 
+
+include in the install.sh script the creation of a crontab job 
 
 create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
 
