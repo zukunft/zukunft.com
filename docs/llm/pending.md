@@ -6,13 +6,9 @@
 
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
 
-add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
-
 ### security before go live
 
 findings of the security check on 2026-07-17, ordered by exploitability.
-
-fix the docker deployment exposure: docker-compose.yaml bind-mounts the whole repo into the docroot (so .env with the real db password, .git and the /src tree all live inside the web root) and docker/apache-config.conf sets 'Options Indexes' with 'AllowOverride All', so only the root .htaccess prevents listing and download. also adminer is published on :8081 reachable with the db login whose compose default is zukunft/zukunft. mount .env one level above the docroot (like the debian install), set 'Options -Indexes' in the base vhost, bind adminer to 127.0.0.1 and drop it from any shared/prod compose, and never default the db password
 
 close the allow-by-default file exposure in .htaccess: composer.json / composer.lock, the stale package.xml, and every *.json / *.csv / *.ini under src/main/resources and cache/ are web-fetchable because only .sh/.sql/.yaml/.yml/.md/.log and dotfiles are blocked. todays files hold no secret but the model is fragile - a future secret dropped as .json/.ini would be silently served. switch to an allow-list (serve only the image and style extensions) or move src/main/resources and cache out of the docroot; at minimum deny composer.json/lock and .xml and delete package.xml
 
@@ -161,5 +157,7 @@ extend the test with a second, different IP address that also sends too many req
 as the final step reset everything to the pre-test state: restore the per-IP `max requests` limit and the `ip whitelist auto switch` knob to their remembered default values, clear the test IPs from the database IP blacklist, and switch the IP whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle ip whitelist` POST action in `http/server_admin.php`; note that only a full-access admin may switch the IP whitelist off, restricted admins may not), leaving `ip_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal request from a fresh IP succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
 
 ## fine-tuning for next launch
+
+add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
 
 moved to [pending_next_launch.md](pending_next_launch.md) to keep this file small; see also [pending_fermi_live.md](pending_fermi_live.md)
