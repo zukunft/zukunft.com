@@ -472,7 +472,7 @@ class ref extends sandbox
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';
         // reuse the small inline icon style of the page title edit icon so the refresh icon
         // is shown in a reduced size on the same line as the reference name
-        return $html->ref($url, $icon, $mtr->txt(msg_id::RELOAD), styles::HEADING_ICON_INLINE);
+        return $html->ref($url, $icon, $mtr->txt(msg_id::RELOAD), styles::HEADING_ICON_INLINE, true);
     }
 
 

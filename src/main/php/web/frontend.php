@@ -1402,6 +1402,11 @@ class frontend
             $existing = new user_backend();
             $existing->load_by_name($usr_name);
             if ($existing->has_db_id()) {
+                // the distinct message reveals that the name is taken (user enumeration), unlike
+                // the neutral reset flow (see action_login_reset); a conscious trade-off because
+                // without it the user cannot pick a free name, so signup would be impossible;
+                // the message points a returning user to the password reset instead, and the
+                // planned per-ip request rate limit will bound the probing speed (see pending.md)
                 $usr_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
             }
             if (empty($email)) {

@@ -673,7 +673,7 @@ class view extends view_exe
             $url .= '&word=' . $wrd->id();
         }
         $url .= '&back=' . $back;
-        return $html->ref($url, $html->esc($this->name));
+        return $html->ref($url, $this->name);
     }
 
 }

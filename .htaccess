@@ -11,18 +11,27 @@ Options -Indexes
 RedirectMatch 404 ^/src/main/php/
 RedirectMatch 404 ^/src/test/
 
-# Block direct access to log files anywhere
-<FilesMatch "\.log$">
+# Allow-list for the served file types: deny every file by default, so that e.g. a
+# future secret dropped as .json or .ini can never be silently served; only the
+# php entry points, the static pages and the style, script, font and image files
+# that a browser needs are allowed below (this replaces the fragile deny-list of
+# single blocked extensions that this file used before)
+<FilesMatch ".+">
     Require all denied
 </FilesMatch>
+<FilesMatch "\.(php|html|css|js|map|ico|svg|png|jpe?g|gif|webp|woff2?|ttf|eot)$">
+    Require all granted
+</FilesMatch>
 
-# Block dotfiles (catches .env, .env.example, .gitignore)
+# the static offline fallback pages in the docroot have no file extension,
+# so they are allowed by their exact names
+<FilesMatch "^(login|login_activate|logout|signup|settings|find)$">
+    Require all granted
+</FilesMatch>
+
+# Block dotfiles again after the allow-list, so that e.g. a dotfile ending
+# in .php (like .test.php) can never be served or executed
 <FilesMatch "^\.">
-    Require all denied
-</FilesMatch>
-
-# Block the install/update shell scripts if they ended up in docroot
-<FilesMatch "\.(sh|sql|yaml|yml|md)$">
     Require all denied
 </FilesMatch>
 
@@ -40,6 +49,16 @@ RedirectMatch 404 ^/server_admin/
 # from a shell, never over the web (.sh is already blocked above; this hides the
 # whole folder as well). Return 404 so it looks non-existent.
 RedirectMatch 404 ^/script/
+
+# The /vendor folder holds the composer packages that are only used by the backend
+# php code; direct web access could execute library code out of context, so the
+# whole folder is hidden (composer.json at the root is blocked by the allow-list)
+RedirectMatch 404 ^/vendor/
+
+# The /cache folder holds server side cache files (e.g. the file based config
+# cache) that are never fetched by a browser. Return 404 so the folder looks
+# non-existent even if a cache file gets an allowed file extension.
+RedirectMatch 404 ^/cache/
 
 # The /http_old folder holds legacy controllers no longer used by the frontend
 # (the modern UI routes through /http/view.php). They are kept for reference

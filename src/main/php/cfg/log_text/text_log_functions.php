@@ -430,6 +430,63 @@ function critical_error_html(string $msg_text): string
 }
 
 /**
+ * cross-request throttle for the sys_log inserts: allow at most text_log::INSERT_LIMIT inserts
+ * per text_log::INSERT_WINDOW_SEC counted over all requests in a small json state file, so a
+ * flood of requests each logging a distinct error cannot grow the sys_log table unbounded and
+ * turn every request into database writes (dos); part of the planned rate limiter
+ * a missing or broken state file allows the insert (fail open) because a lost sys_log entry
+ * would hide an error from the admin
+ *
+ * @param int $now the current unix time; a parameter to keep the function unit testable
+ * @param string $state_file the json file with the window start time and the insert count
+ * @param string $note_file the text log where the start of a suppression is noted for the admin
+ * @return bool true if one more sys_log insert is allowed within the current time window
+ */
+function sys_log_insert_allowed(
+    int    $now,
+    string $state_file = files::SYS_LOG_THROTTLE,
+    string $note_file = files::ERROR_LOG): bool
+{
+    // read the state of the current time window and fail open on a missing or broken file
+    $start = $now;
+    $count = 0;
+    if (is_file($state_file)) {
+        $json = file_get_contents($state_file);
+        $state = json_decode($json === false ? '' : $json, true);
+        if (is_int($state[text_log::THROTTLE_START] ?? null)
+            and is_int($state[text_log::THROTTLE_COUNT] ?? null)) {
+            $start = $state[text_log::THROTTLE_START];
+            $count = $state[text_log::THROTTLE_COUNT];
+        }
+    }
+
+    // start a new time window if the previous one has ended
+    if ($now - $start >= text_log::INSERT_WINDOW_SEC) {
+        $start = $now;
+        $count = 0;
+    }
+
+    // count this insert and remember the state for the next request; a concurrent
+    // request may lose one count, which is acceptable for a throttle
+    $count++;
+    $state_json = json_encode([text_log::THROTTLE_START => $start, text_log::THROTTLE_COUNT => $count]);
+    file_put_contents($state_file, $state_json, LOCK_EX);
+
+    // note the start of the suppression once per window in the text error log
+    // so the admin can see that sys_log entries are missing
+    if ($count == text_log::INSERT_LIMIT + 1) {
+        file_put_contents($note_file, date('c', $now)
+            . ': sys_log insert limit of ' . text_log::INSERT_LIMIT
+            . ' per ' . text_log::INSERT_WINDOW_SEC
+            . ' seconds reached; further log entries are suppressed until the window ends' . "\n",
+            FILE_APPEND);
+    }
+
+    $allowed = $count <= text_log::INSERT_LIMIT;
+    return $allowed;
+}
+
+/**
  * write a log message to the database and return the message that should be shown to the user
  * with the link for more details and to trace the resolution process
  * used also for system messages so no debug calls from here to avoid loops
@@ -510,7 +567,11 @@ function log_msg(string  $msg_text,
             $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;
-            if ($msg_log_level > text_log::LOG_LEVEL or $force_log) {
+            // the throttle caps the sys_log inserts over all requests, because the in-memory
+            // dedup above is per request only and a flood of requests each logging a distinct
+            // error would grow the sys_log table unbounded (dos)
+            if (($msg_log_level > text_log::LOG_LEVEL or $force_log)
+                and sys_log_insert_allowed(time())) {
 
                 $fnc = $sys->typ_lst->sys_log_fnc->get_by_name($function_name);
                 if ($fnc == null) {

@@ -7,6 +7,12 @@ services:
       - "${APP_SERVICE_PORT:-8080}:80"
     volumes:
       - ./:/var/www/html
+      # the env file with the secrets is read from one level above the docroot
+      # (see the env file loading in src/main/php/cfg/const/env.php)
+      - ./.env:/var/www/.env:ro
+      # hide the repo copy of the env file inside the docroot, so the secrets
+      # can never be served even if the web server config is broken
+      - /dev/null:/var/www/html/.env:ro
       - ./docker/apache-config.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - db
@@ -15,7 +21,8 @@ services:
       - PGSQL_PORT=${PGSQL_PORT:-5432}
       - PGSQL_DATABASE=${PGSQL_DATABASE:-zukunft}
       - PGSQL_USERNAME=${PGSQL_USERNAME:-zukunft}
-      - PGSQL_PASSWORD=${PGSQL_PASSWORD:-zukunft}
+      # no default password: set PGSQL_PASSWORD in the .env file (see .env.example)
+      - PGSQL_PASSWORD=${PGSQL_PASSWORD:?set PGSQL_PASSWORD in the .env file}
     networks:
       - zukunft_network
 
@@ -25,17 +32,20 @@ services:
     environment:
       POSTGRES_DB: ${PGSQL_DATABASE:-zukunft}
       POSTGRES_USER: ${PGSQL_USERNAME:-zukunft}
-      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-zukunft}
+      # no default password: set PGSQL_PASSWORD in the .env file (see .env.example)
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:?set PGSQL_PASSWORD in the .env file}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
       - zukunft_network
 
+  # adminer is a development helper only: it is bound to localhost, so it is not
+  # reachable from outside; remove this service completely in a shared or prod setup
   adminer:
     image: adminer
     restart: always
     ports:
-      - "${ADMINER_SERVICE_PORT:-8081}:80"
+      - "127.0.0.1:${ADMINER_SERVICE_PORT:-8081}:80"
     environment:
       - ADMINER_DEFAULT_SERVER=db
     depends_on:

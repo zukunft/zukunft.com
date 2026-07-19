@@ -8,7 +8,8 @@
   
 */
 
-// refuse unless explicitly enabled via env var that gets unset after install
+// refuse unless explicitly enabled via the ZUKUNFT_ALLOW_SETUP env var,
+// which install.sh blanks in the deployed .env after the initial setup
 if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
     http_response_code(404);
     exit;

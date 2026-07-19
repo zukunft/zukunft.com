@@ -351,8 +351,10 @@ class url_test_base
     protected function assert_button_url(string $html, int $msk_id, string $test_name): void
     {
         $hit = [];
-        $pattern = '/href="[^"]*[?&]' . url_var::MASK . '=(\d+)&' . url_var::ID
-            . '=(\d+)"[^>]*' . html_base::BS_BTN_CANCEL . '/';
+        $mask_esc = preg_quote(url_var::MASK, '/');
+        $id_esc = preg_quote(url_var::ID, '/');
+        $btn_esc = preg_quote(html_base::BS_BTN_CANCEL, '/');
+        $pattern = '/href="[^"]*[?&]' . $mask_esc . '=(\d+)&amp;' . $id_esc . '=(\d+)"[^>]*' . $btn_esc . '/';
         preg_match($pattern, $html, $hit);
         $btn_target = ($hit[1] ?? '') . workflows::NAME_SEP . ($hit[2] ?? '');
         $exp_target = $msk_id . workflows::NAME_SEP . $this->wf_id;

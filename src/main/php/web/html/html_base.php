@@ -487,27 +487,56 @@ class html_base
 
     // TODO Prio 1 use this everywhere if possible
 
+    // the url schemes that are linked; any other scheme e.g. javascript: is never linked
+    const array LINK_SCHEMES = ['http', 'https'];
+
     /**
      * create the html code for a link
+     * the url and the link text are escaped here at the output sink, so that a user supplied
+     * url e.g. of a source or reference can neither break the href attribute nor add a script,
+     * and only a http, https or relative url is linked (e.g. a javascript: url is never linked)
      *
      * @param string $url the target url
      * @param string $name the text shown to the user for the link e.g. 'global warming' to show the triple global warming
-     * @param string $title
-     * @param string $css_class
-     * @return string
+     * @param string $title the tooltip of the link
+     * @param string $css_class the css class name of the link
+     * @param bool $name_is_html true only if the calling function guarantees that the link text is safe html e.g. an icon
+     * @return string the html code of the link or just the text if the url scheme is not allowed
      */
-    function ref(string $url, string $name, string $title = '', string $css_class = ''): string
+    function ref(string $url, string $name, string $title = '', string $css_class = '', bool $name_is_html = false): string
     {
-        $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
-        if ($title != '' && $title != $name) {
-            $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        if (!$name_is_html) {
+            $name = $this->esc($name);
         }
-        if ($css_class != '') {
-            $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
+        if (!$this->url_scheme_allowed($url)) {
+            // show the text without the link and report the unexpected scheme
+            log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
+            $result = $name;
+        } else {
+            $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
+            if ($title != '' && $title != $name) {
+                $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+            }
+            if ($css_class != '') {
+                $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
+            }
+            $result .= '>';
+            $result .= $name;
+            $result .= '</' . self::A . '>';
         }
-        $result .= '>';
-        $result .= $name;
-        $result .= '</' . self::A . '>';
+        return $result;
+    }
+
+    /**
+     * @param string $url the target url of a link
+     * @return bool true if the url is relative or uses one of the allowed schemes
+     */
+    private function url_scheme_allowed(string $url): bool
+    {
+        $result = true;
+        if (preg_match('/^\s*([a-z][a-z0-9+.\-]*):/i', $url, $matches)) {
+            $result = in_array(strtolower($matches[1]), self::LINK_SCHEMES);
+        }
         return $result;
     }
 
@@ -865,7 +894,7 @@ class html_base
         } else {
             $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_HTML);
         }
-        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
     }
 
     /**
@@ -874,7 +903,7 @@ class html_base
     function logo_big(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_BIG);
-        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
     }
 
     /**
@@ -883,7 +912,7 @@ class html_base
     function logo_flex(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_FLEX);
-        $ref = $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        $ref = $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
         return $this->div($ref, self::CLASS_LOGO_SECTION);
     }
 
@@ -1255,7 +1284,7 @@ class html_base
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
-        $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
+        $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);
 

@@ -59,6 +59,9 @@ class files
 
     // the text file for fatal errors that must work even if the database is broken
     const string ERROR_LOG = ROOT_PATH . 'error.log';
+    // the json state file of the sys_log insert throttle, next to the error log
+    // because the throttle must work even if the database is broken
+    const string SYS_LOG_THROTTLE = ROOT_PATH . 'sys_log_throttle' . self::JSON;
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
