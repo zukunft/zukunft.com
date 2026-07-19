@@ -233,7 +233,7 @@ class controller
 
     function not_permitted(string $msg): void
     {
-        http_response_code(401);
+        $this->set_response_code(401);
         $this->curl_response('', $msg, rest_ctrl::GET);
     }
 
@@ -277,6 +277,22 @@ class controller
      */
 
     /**
+     * set the http response code only if the response headers have not been sent yet
+     * during the test run the log writer may already have emitted output (e.g. a test header),
+     * which sends the headers, so setting the response code afterwards would raise a php warning
+     * (Cannot set response code - headers already sent); this guard matches the header() calls
+     * that are already protected the same way
+     * @param int $code the http response code e.g. 200 or 400
+     * @return void
+     */
+    private function set_response_code(int $code): void
+    {
+        if (!headers_sent()) {
+            http_response_code($code);
+        }
+    }
+
+    /**
      * response to a get request
      *
      * @param string $api_obj the object as a json string that should be returned
@@ -296,7 +312,7 @@ class controller
         if ($msg == '') {
 
             // set response code - 200 OK
-            http_response_code(200);
+            $this->set_response_code(200);
 
             // return e.g. the word object
             echo $api_obj;
@@ -304,7 +320,7 @@ class controller
         } else {
 
             // set response code - 400 Bad Request
-            http_response_code(400);
+            $this->set_response_code(400);
 
             // tell the user no products found
             echo json_encode(
@@ -353,7 +369,7 @@ class controller
 
                     // set response code - 200 OK
                     if (!headers_sent()) {
-                        http_response_code(200);
+                        $this->set_response_code(200);
                     }
                     echo json_encode(
                         array(url_var::ID => $usr_msg->get_row_id())
@@ -362,7 +378,7 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
                     echo json_encode(
                         array(json_fields::MSG => $usr_msg->get_row_id())
@@ -375,7 +391,7 @@ class controller
 
                     // set response code - 200 OK
                     if (!headers_sent()) {
-                        http_response_code(200);
+                        $this->set_response_code(200);
                     }
 
                     // return e.g. the word object
@@ -385,7 +401,7 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
 
                     // tell the user no object found
@@ -408,7 +424,7 @@ class controller
                     if (is_numeric($result)) {
                         // set response code - 200 OK
                         if (!headers_sent()) {
-                            http_response_code(200);
+                            $this->set_response_code(200);
                         }
                         echo json_encode(
                             array(url_var::ID => $result)
@@ -417,7 +433,7 @@ class controller
 
                         // set response code - 400 Bad Request
                         if (!headers_sent()) {
-                            http_response_code(400);
+                            $this->set_response_code(400);
                         }
                         echo json_encode(
                             array(json_fields::MSG => $result)
@@ -434,12 +450,12 @@ class controller
                         if ($usr_msg->is_ok()) {
                             // set response code - 200 OK
                             if (!headers_sent()) {
-                                http_response_code(200);
+                                $this->set_response_code(200);
                             }
                         } else {
                             // set response code - 409 Conflict
                             if (!headers_sent()) {
-                                http_response_code(409);
+                                $this->set_response_code(409);
                             }
 
                             echo json_encode(
@@ -451,12 +467,12 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
                     // set response code - 410 Gone
-                    // http_response_code(410);
+                    // $this->set_response_code(410);
                     // set response code - 403 Forbidden
-                    // http_response_code(403);
+                    // $this->set_response_code(403);
 
                     // tell the user no products found
                     echo json_encode(
@@ -467,7 +483,7 @@ class controller
             default:
                 // set response code - 400 Bad Request
                 if (!headers_sent()) {
-                    http_response_code(400);
+                    $this->set_response_code(400);
                 }
                 break;
         }

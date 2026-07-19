@@ -433,16 +433,14 @@ class test_cleanup extends test_api
         }
 
         // TODO better use a info system log message
-        $html = new html_base();
-        $html->echo_html($db_con->seq_reset(word::class));
-        //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
-        //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
-        $html->echo_html($db_con->seq_reset(formula::class));
-        $html->echo_html($db_con->seq_reset(formula_link::class));
-        $html->echo_html($db_con->seq_reset(view::class));
-        $html->echo_html($db_con->seq_reset(component::class));
-        $html->echo_html($db_con->seq_reset(component_link::class));
-        $html->echo_html($db_con->seq_reset(source::class));
+        // route through the timestamped writer so every 'Next database id' line starts with a timestamp
+        echo_timestamped($db_con->seq_reset(word::class));
+        echo_timestamped($db_con->seq_reset(formula::class));
+        echo_timestamped($db_con->seq_reset(formula_link::class));
+        echo_timestamped($db_con->seq_reset(view::class));
+        echo_timestamped($db_con->seq_reset(component::class));
+        echo_timestamped($db_con->seq_reset(component_link::class));
+        echo_timestamped($db_con->seq_reset(source::class));
 
         if ($result == '') {
             return true;

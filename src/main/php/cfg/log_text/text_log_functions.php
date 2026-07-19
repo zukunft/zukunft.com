@@ -72,6 +72,84 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
+ * write the given text to the standard io with the runtime timestamp in front of every physical line
+ * the single entry point used by the log functions and the test utilities so that every emitted line
+ * starts with a timestamp and no message is glued in front of the next log line;
+ * if the log writer is not yet available (e.g. very early in the bootstrap) the text is echoed as is
+ * @param string $text the message that may contain several physical lines
+ * @return void
+ */
+function echo_timestamped(string $text): void
+{
+    global $sys;
+    // $sys->log_txt is the system log writer that owns the runtime start time and the per line
+    // timestamp; $sys is one of the globals that the cfg layer is allowed to use (unlike $log_txt)
+    if (isset($sys->log_txt)) {
+        $sys->log_txt->echo_lines($text);
+    } else {
+        // fallback if the log writer is not yet available very early in the bootstrap
+        echo $text;
+    }
+}
+
+/**
+ * map a php error level to the label that php uses in its default error output
+ * @param int $errno the php error level e.g. E_WARNING
+ * @return string the human-readable label e.g. 'Warning'
+ */
+function php_error_label(int $errno): string
+{
+    $result = match ($errno) {
+        E_WARNING, E_USER_WARNING => 'Warning',
+        E_NOTICE, E_USER_NOTICE => 'Notice',
+        E_DEPRECATED, E_USER_DEPRECATED => 'Deprecated',
+        E_USER_ERROR => 'Error',
+        default => 'Error',
+    };
+    return $result;
+}
+
+/**
+ * error handler installed during the test run so that php notices, warnings and their stack traces
+ * are written through the timestamped log writer instead of being printed untimestamped by php;
+ * the @ suppression operator and the configured error_reporting level are respected
+ * @param int $errno the php error level
+ * @param string $errstr the php error message
+ * @param string $errfile the file where the error was raised
+ * @param int $errline the line where the error was raised
+ * @return bool true so php does not additionally print the untimestamped version
+ */
+function log_php_error_timestamped(int $errno, string $errstr, string $errfile = '', int $errline = 0): bool
+{
+    $result = false;
+    // respect the @ operator and the error_reporting level; false lets php handle a suppressed error
+    if ((error_reporting() & $errno) != 0) {
+        $text = 'PHP ' . php_error_label($errno) . ': ' . $errstr
+            . ' in ' . $errfile . ' on line ' . $errline . "\n";
+        $text .= 'PHP Stack trace:' . "\n";
+        $text .= new Exception()->getTraceAsString();
+        echo_timestamped($text);
+        $result = true;
+    }
+    return $result;
+}
+
+/**
+ * exception handler installed during the test run so that an uncaught exception and its stack trace
+ * are written through the timestamped log writer with a timestamp on every line
+ * @param Throwable $e the uncaught exception or error
+ * @return void
+ */
+function log_php_exception_timestamped(Throwable $e): void
+{
+    $text = 'PHP Fatal error: Uncaught ' . $e::class . ': ' . $e->getMessage()
+        . ' in ' . $e->getFile() . ' on line ' . $e->getLine() . "\n";
+    $text .= 'PHP Stack trace:' . "\n";
+    $text .= $e->getTraceAsString();
+    echo_timestamped($text);
+}
+
+/**
  * for internal functions debugging
  * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
  * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=6) or, for the deeper
@@ -117,7 +195,9 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 
     if ($debug >= $min_level) {
         // escape the (possibly request-derived) message before echoing it into the html response (xss)
-        echo htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->times->show_total() . '<br>';
+        $out_text = htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->times->show_total() . '<br>';
+        // route the debug output through the timestamped log writer so every line starts with a timestamp
+        echo_timestamped($out_text);
         //ob_flush();
         //flush();
     }
@@ -284,7 +364,8 @@ function log_fatal(string $msg_text,
 {
     $time = new DateTime()->format('c');
     // escape the browser echo (xss); the file log below keeps the raw text for the admin
-    echo $time . ': FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES) . "\n";
+    // route through the timestamped writer so the fatal line also starts with the runtime timestamp
+    echo_timestamped('FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES));
     // the file log must work even if the database is broken, but must never kill the response
     // itself: the fixed root path keeps the log out of the web request working directory and
     // if the web server user cannot write the file the entry goes to the server log instead
@@ -450,14 +531,14 @@ function log_msg(string  $msg_text,
 
             }
             if ($msg_log_level >= text_log::MSG_LEVEL) {
-                echo critical_error_html($msg_text);
+                echo_timestamped(critical_error_html($msg_text));
                 if ($sys_log->id > 0) {
                     $html = new html_base();
                     $url_rel = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::ERROR_LOG_ID
                         . url_var::ADD . url_var::ID . url_var::EQ . $sys_log->id;
                     $url = THIS_URL . $url_rel;
                     $ref = $html->ref($url_rel, $url);
-                    echo 'You can track the solving of the error with this link: ' . $ref . '<br>';
+                    echo_timestamped('You can track the solving of the error with this link: ' . $ref . '<br>');
                 }
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {

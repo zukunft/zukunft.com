@@ -97,7 +97,7 @@ class text_log
     function echo_text_log(string $text): void
     {
         if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $text . "\n";
+            $this->echo_lines($text);
         } else {
             echo $this->time_stamp() . $text . '</p>' . "\n";
         }
@@ -112,11 +112,45 @@ class text_log
     function echo_log(string $text): void
     {
         if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $text . "\n";
+            $this->echo_lines($text);
         } else {
             echo $this->time_stamp() . $text . '</p>' . "\n";
         }
         log_info($text);
+    }
+
+    /**
+     * the single place that writes text to the standard io with the runtime timestamp
+     * in front of every physical line, so that a multi line message (separated by a line
+     * break or a html line break) gets a timestamp on each line and nothing is glued
+     * in front of the next log line
+     * @param string $text the message that may contain several physical lines
+     * @return void
+     */
+    function echo_lines(string $text): void
+    {
+        echo $this->time_stamp_lines($text);
+    }
+
+    /**
+     * put the runtime timestamp in front of every physical line of the given text
+     * a html line break is treated as a physical line boundary too and kept as a marker
+     * @param string $text the message that may contain several physical lines
+     * @return string the timestamped text with a trailing line break for every non-empty line
+     */
+    function time_stamp_lines(string $text): string
+    {
+        $result = '';
+        $prefix = $this->time_stamp();
+        // turn every html line break into a physical line break but keep the marker for the html view
+        $with_breaks = str_replace('<br>', '<br>' . "\n", $text);
+        $lines = explode("\n", $with_breaks);
+        foreach ($lines as $line) {
+            if ($line != '') {
+                $result .= $prefix . $line . "\n";
+            }
+        }
+        return $result;
     }
 
     protected function time_stamp(): string

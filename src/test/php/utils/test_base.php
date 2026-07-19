@@ -4813,9 +4813,9 @@ class test_base
      */
     function dsp_warning(string $msg): void
     {
-        echo $msg;
-        echo '<br>';
-        echo '\n';
+        // route through the timestamped writer so the warning starts with a timestamp
+        // and ends on its own physical line instead of being glued to the next test line
+        echo_timestamped($msg);
     }
 
     /**
