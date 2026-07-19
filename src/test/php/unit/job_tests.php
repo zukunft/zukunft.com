@@ -33,20 +33,25 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_SYSTEM . 'job_list.php';
+include_once paths::MODEL_SYSTEM . 'job_runner.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_runner;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class job_tests
 {
@@ -106,6 +111,40 @@ class job_tests
 
         $job_lst = $t_job->job_list();
         $t->assert_api($job_lst);
+
+
+        $t->subheader($ts . 'due job selection');
+
+        $sys_usr = new test_users($t)->system_user();
+        $job_run = new job_runner($sys_usr);
+        $now = new DateTime(sys_log_tests::TV_TIME_ASSIGNED);
+
+        // new and past-due jobs are returned in descending priority order,
+        // while a not-new job and a future job are filtered out
+        $test_name = 'due jobs are returned in priority order';
+        $jobs = $t_job->job_list_due_mix();
+        $due = $job_run->due_jobs($jobs, $now);
+        $due_ids = array_map(fn(job $due_job) => $due_job->id(), $due);
+        $t->assert($test_name, implode(',', $due_ids), '12,11');
+
+        $test_name = 'a job that is not new is not due';
+        $t->assert_false($test_name, in_array(15, $due_ids));
+
+        $test_name = 'a job scheduled in the future is not yet due';
+        $t->assert_false($test_name, in_array(14, $due_ids));
+
+        // a priority tie is broken by the request time (oldest first)
+        $test_name = 'due jobs with the same priority run oldest first';
+        $jobs = $t_job->job_list_due_same_priority();
+        $due = $job_run->due_jobs($jobs, $now);
+        $due_ids = array_map(fn(job $due_job) => $due_job->id(), $due);
+        $t->assert($test_name, implode(',', $due_ids), '22,21');
+
+        // an empty job list has no due jobs
+        $test_name = 'an empty job list has no due jobs';
+        $empty_lst = new job_list($sys_usr);
+        $due = $job_run->due_jobs($empty_lst, $now);
+        $t->assert_true($test_name, count($due) == 0);
 
     }
 

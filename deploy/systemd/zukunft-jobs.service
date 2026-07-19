@@ -1,0 +1,29 @@
+# zukunft.com backend job dispatcher
+#
+# runs bin/job_runner.php once to execute the due backend jobs (proactive cache
+# refresh sweep and database cleanup); started by zukunft-jobs.timer, not enabled
+# on its own, so this unit has no [Install] section.
+#
+# the User and the paths match the .env defaults (WEB_USER=www-data,
+# WWW_ROOT=/var/www/html); install.sh substitutes them if the .env differs.
+
+[Unit]
+Description=zukunft.com backend job dispatcher (cache refresh sweep and database cleanup)
+Documentation=https://github.com/zukunft/zukunft.com
+# run only once the network and thereby the database is reachable
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+# oneshot so systemd keeps the run active until it finishes and never starts a
+# second overlapping run, which makes a flock unnecessary
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html
+ExecStart=/usr/bin/php /var/www/html/bin/job_runner.php
+
+# basic hardening
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=true

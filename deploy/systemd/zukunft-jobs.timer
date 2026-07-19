@@ -1,0 +1,19 @@
+# zukunft.com backend job dispatcher schedule
+#
+# triggers zukunft-jobs.service once per minute; enable and start this timer
+# (not the service) via install.sh: systemctl enable --now zukunft-jobs.timer
+
+[Unit]
+Description=run the zukunft.com backend job dispatcher every minute
+Documentation=https://github.com/zukunft/zukunft.com
+
+[Timer]
+OnCalendar=minutely
+# spread the start over 10 seconds so several pods do not hit the database at the same instant
+RandomizedDelaySec=10
+# catch up a missed run after a downtime (e.g. a reboot) on the next boot
+Persistent=true
+Unit=zukunft-jobs.service
+
+[Install]
+WantedBy=timers.target

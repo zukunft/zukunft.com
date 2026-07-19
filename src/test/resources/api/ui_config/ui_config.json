@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-07-17T12:37:18+00:00",
+    "timestamp": "2026-07-19T23:10:03+00:00",
     "body": {
         "user_profiles": [
             {
@@ -6670,6 +6670,18 @@
                 "code_id": "page_refresh",
                 "description": "render the html page of a view-only request again and update the cached page",
                 "id": 25
+            },
+            {
+                "name": "refresh cache",
+                "code_id": "cache_refresh",
+                "description": "proactively invalidate the outdated config and type caches so the next request hits a warm cache",
+                "id": 26
+            },
+            {
+                "name": "cleanup database",
+                "code_id": "db_cleanup",
+                "description": "remove the old completed jobs to keep the database small",
+                "id": 27
             }
         ],
         "job_statuum": [
