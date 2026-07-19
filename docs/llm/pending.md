@@ -4,11 +4,7 @@
 
 ## high prio
 
-Add an invisible short but unique placeholder to all html footers for the user message so that text replace can be used to add a message to a cached html page without message
-
-do not write html pages to the cache that contain a message to the user. remove the message from the page before writing it to the cache. And on the other side add new messages to the page loaded from cache if needed 
-
-see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page
+see /docs/llm/coding.md and make sure that back pages with a message like 'This pod does not allow changes without a login. Please log in to add or change data.' or not mixed with the page call without message in the db_cache_page. And if a page with a message should be shown and a cached pages exists, use the cache page and add the user message via string replace
 
 block also the views that change data but are not an add, edit or del view for an ip user if this pod does not permit the changes of an ip user: the import, paste table, undo and job views are in views::PROCESS_STEP_MASKS_IDS, so they are not covered by views::CHANGE_MASKS_IDS and the guard in /http/view.php
 

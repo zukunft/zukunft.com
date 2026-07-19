@@ -76,6 +76,16 @@ class api
     // and the frontend should poll for the updated page
     const string PAGE_REFRESH_FLAG = '<!-- page refresh coming -->';
 
+    // invisible placeholder before the footer of every html page, so that a text replace
+    // can add a user message to a html page loaded from the page cache;
+    // the raw comment cannot be forged by user content, because all content is html escaped
+    const string USER_MSG_PLACEHOLDER = '<!--usr_msg-->';
+
+    // the css class that marks the user message notification of a page, so that the message
+    // can be removed from the page before writing it to the html page cache
+    // (see db_cache_page::strip_user_msg and html_base::CLASS_NOTIFICATION)
+    const string USER_MSG_CLASS = 'notification-bar';
+
 
     /*
      * JSON

@@ -33,11 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'db_cache_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -46,7 +49,9 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -210,6 +215,37 @@ class db_cache_tests
         // an empty session token must not corrupt the page (str_replace of '' would be destructive)
         $test_name = 'an empty token leaves the page unchanged on save';
         $t->assert($test_name, db_cache_page::strip_session_token($page, ''), $page);
+
+
+        $t->subheader($ts . 'user message swap');
+
+        // a user message belongs to one request and must never be cached with the page:
+        // on save the notification before the placeholder is removed and on read
+        // the message of the current request is added at the placeholder
+        $html = new html_base();
+        $msg_html = $html->dsp_notification('please log in');
+        $clean_page = '<main>content</main>' . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $page_with_msg = '<main>content</main>' . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $test_name = 'the user message is removed from the page on save';
+        $t->assert($test_name, db_cache_page::strip_user_msg($page_with_msg), $clean_page);
+        $test_name = 'a page without a message is not changed on save';
+        $t->assert($test_name, db_cache_page::strip_user_msg($clean_page), $clean_page);
+        // an alert that is part of the page content is not the user message of the request
+        $content_alert_page = '<main><div class="' . html_base::CLASS_NOTIFICATION . '">content alert</div></main>'
+            . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $test_name = 'an alert of the page content is not removed on save';
+        $t->assert($test_name, db_cache_page::strip_user_msg($content_alert_page), $content_alert_page);
+
+        $test_name = 'the message of the current request is added to a page loaded from cache';
+        $t->assert($test_name, db_cache_page::add_user_msg($clean_page, $msg_html), $page_with_msg);
+        $test_name = 'the placeholder is kept, so a message can be added to the same page again';
+        $t->assert_text_contains($test_name,
+            db_cache_page::add_user_msg($clean_page, $msg_html), api::USER_MSG_PLACEHOLDER);
+        $test_name = 'without a message the page from the cache is not changed';
+        $t->assert($test_name, db_cache_page::add_user_msg($clean_page, ''), $clean_page);
+        $test_name = 'a save after adding a message restores the clean page';
+        $t->assert($test_name,
+            db_cache_page::strip_user_msg(db_cache_page::add_user_msg($clean_page, $msg_html)), $clean_page);
 
     }
 

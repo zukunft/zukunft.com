@@ -172,7 +172,7 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
-    const string CLASS_NOTIFICATION = 'alert alert-warning notification-bar';
+    const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
     const string CLASS_SUBMIT = 'submit-input';
@@ -247,7 +247,8 @@ class html_base
     {
         $txt = $this->nav($this->about() . ' &middot; ' . $this->privacy());
         $txt .= $this->p($this->foot_text());
-        return $this->foot($txt);
+        // the same invisible user message placeholder as in the standard footer
+        return api::USER_MSG_PLACEHOLDER . $this->foot($txt);
     }
 
     /**
@@ -452,7 +453,10 @@ class html_base
     function footer(bool $no_about = false): string
     {
         global $mtr;
-        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
+        // invisible placeholder so that a text replace can add a user message
+        // to a html page loaded from the page cache (see api::USER_MSG_PLACEHOLDER)
+        $result = api::USER_MSG_PLACEHOLDER . "\n";
+        $result .= '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";

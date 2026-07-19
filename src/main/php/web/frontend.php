@@ -985,28 +985,7 @@ class frontend
                             $logged_in ? $usr->navbar_role() : null);
                     }
                     $result .= $html->main($dsp_text);
-                    if ($usr_msg->has_info()) {
-                        $msg_txt = $usr_msg->get_last_message_translated();
-                        if ($msg_txt === '') {
-                            $msg_txt = $usr_msg->get_last_message();
-                        }
-                        if ($msg_txt === '') {
-                            $msg_txt = $usr_msg->get_last_info();
-                        }
-                        if ($msg_txt !== '') {
-                            if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
-                                $reset_link = $html->ref(
-                                    api::RESET_SCRIPT,
-                                    msg_id::PASSWORD_WRONG->value,
-                                    msg_id::PASSWORD_WRONG_TITLE->value
-                                );
-                                $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
-                                $result .= $html->dsp_notification_html($notification_html);
-                            } else {
-                                $result .= $html->dsp_notification($msg_txt);
-                            }
-                        }
-                    }
+                    $result .= $this->user_msg_html($usr_msg);
                     $result .= $html->footer();
                 }
             }
@@ -1115,7 +1094,9 @@ class frontend
             $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
         } elseif (!$usr->uses_sandbox) {
             if ($cached_html !== null) {
-                $result = $cached_html;
+                // a cached page never contains a message (see save_html_page),
+                // so add the message of this request if there is one
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg));
             } else {
                 // remember the rendered page for the next request of any user without sandbox data
                 $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
@@ -1124,7 +1105,8 @@ class frontend
         } else {
             if ($cached_html !== null) {
                 // serve the standard page immediately and request the user specific rendering
-                $result = $cached_html . api::PAGE_REFRESH_FLAG;
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg))
+                    . api::PAGE_REFRESH_FLAG;
                 $this->request_page_refresh($cac_page, $usr);
             } else {
                 // no cached page yet, so render the user specific page live
@@ -1195,6 +1177,42 @@ class frontend
     }
 
     /**
+     * create the html notification for the user messages of the current request
+     * used to render the message into a live page and to add it to a page loaded from the cache
+     *
+     * @param user_message $usr_msg with the messages collected during the request
+     * @return string the html code of the notification or an empty string if there is no message
+     */
+    private function user_msg_html(user_message $usr_msg): string
+    {
+        $result = '';
+        $html = new html_base();
+        if ($usr_msg->has_info()) {
+            $msg_txt = $usr_msg->get_last_message_translated();
+            if ($msg_txt === '') {
+                $msg_txt = $usr_msg->get_last_message();
+            }
+            if ($msg_txt === '') {
+                $msg_txt = $usr_msg->get_last_info();
+            }
+            if ($msg_txt !== '') {
+                if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
+                    $reset_link = $html->ref(
+                        api::RESET_SCRIPT,
+                        msg_id::PASSWORD_WRONG->value,
+                        msg_id::PASSWORD_WRONG_TITLE->value
+                    );
+                    $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
+                    $result = $html->dsp_notification_html($notification_html);
+                } else {
+                    $result = $html->dsp_notification($msg_txt);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * remember the rendered html page for the next request of the same url
      * the cache row is written as the system user because filling the cache is
      * a system action that must also work for an ip user who cannot change data
@@ -1217,6 +1235,9 @@ class frontend
         // store the page with the session token replaced by a placeholder so the shared cache does
         // not carry this session's anti-csrf token to another session (see restore_session_token)
         $html = db_cache_page::strip_session_token($html, self::session_token());
+        // store the page without the user message, because a message belongs to one request
+        // and must never be repeated to another user (see add_user_msg)
+        $html = db_cache_page::strip_user_msg($html);
         $save_msg = new backend_user_message(user_backend::system());
         $cac_page->save_html($url_key, $html, $save_msg);
         if (!$save_msg->is_ok()) {
