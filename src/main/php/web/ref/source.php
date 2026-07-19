@@ -206,7 +206,9 @@ class source extends sandbox_code_id
      */
     function name_tip(): string
     {
-        return $this->name();
+        // escape the user-settable name: the name_tip base contract returns html-safe output, so a
+        // generic name_tip caller that renders it into a list would otherwise be stored xss
+        return htmlspecialchars($this->name(), ENT_QUOTES);
     }
 
     /**

@@ -1394,6 +1394,15 @@ class frontend
         $signed_up = false;
 
         if ($do_it) {
+            // reject a user name with a path or control character so it can never be used to build
+            // a file path (e.g. the config file cache keys by user id now, but a raw name must also
+            // never travel into a path) or break out of an output context; the check stays a lenient
+            // deny-list so the reserved names (which contain spaces and dots) remain valid
+            if (str_contains($usr_name, '/')
+                or str_contains($usr_name, '\\')
+                or preg_match('/[\x00-\x1f]/', $usr_name) === 1) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
+            }
             // block signup up front if a user whitelist is active and this name is not on it;
             // no account is created and the user is told how to get access (see is_ok() gate below)
             if (server_guard::user_rejected('', $usr_name)) {

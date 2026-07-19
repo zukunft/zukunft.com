@@ -234,6 +234,24 @@ class word_tests
         $test_name = 'the admin protection of the new object is not reported';
         $t->assert($test_name, $usr_msg->all_message_text(), '');
 
+        $t->subheader($ts . 'read access (share)');
+        // a non-public named object must not be disclosed to another user by id (idor);
+        // see sandbox::is_readable_by, enforced at the api/word (and sibling) read endpoints
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+        $wrd_priv = $t_wrd->word();
+        $wrd_priv->set_owner_id($t->usr1->id);
+        $wrd_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private word';
+        $t->assert_true($test_name, $wrd_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private word';
+        $t->assert_false($test_name, $wrd_priv->is_readable_by($t->usr2));
+        $test_name = 'an admin may read another user private word';
+        $t->assert_true($test_name, $wrd_priv->is_readable_by($t->usr_admin));
+        $wrd_pub = $t_wrd->word();
+        $wrd_pub->set_owner_id($t->usr1->id);
+        $test_name = 'a public word is readable by another user';
+        $t->assert_true($test_name, $wrd_pub->is_readable_by($t->usr2));
+
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $wrd);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);

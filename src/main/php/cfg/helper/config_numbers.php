@@ -602,7 +602,12 @@ class config_numbers extends value_list
 
     private function cache_file(user $usr, ?phrase $phr = null): string
     {
-        $file_path = paths::CACHE . files::CACHE_CONFIG . files::SEP . $usr->name();
+        // key the cache file by the integer user id, never by the (unvalidated) user name: a name
+        // is taken verbatim from signup, so a name like "x/../../http/pwn" would otherwise let
+        // write_file_cache() write/read outside cache/ (path traversal) or collide with another
+        // user's cache entry (poisoning); the db cache keys by user_id for the same reason. the
+        // phrase part is always a fixed config phrase const, not user input
+        $file_path = paths::CACHE . files::CACHE_CONFIG . files::SEP . $usr->id();
         if ($phr != null) {
             $file_path .= files::SEP . $phr->name();
         }

@@ -64,10 +64,14 @@ if ($db_con->is_open()) {
         if ($msk_id != '') {
             $lst = new component_list($usr);
             $lst->load_by_view_id($msk_id);
+            // drop the components the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } elseif ($pattern != '') {
             $lst = new component_list($usr);
             $lst->load_names(($pattern));
+            // drop the components the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'view id and pattern missing';

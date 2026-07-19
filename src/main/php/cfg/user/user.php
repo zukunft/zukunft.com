@@ -1899,9 +1899,13 @@ class user extends db_id_object_non_sandbox
             }
             // the admin users can change other users ...
             if ($this->is_admin()) {
-                // ... but not system users
-                // if (!$profile->is_system()) {
-                if (!$profile->is_type(user_profiles::SYSTEM)) {
+                // ... but not to a system-tier profile: test, log AND system all make
+                // user::is_system() true (grants the top privilege level everywhere), so an admin
+                // must not be able to assign any of them - otherwise an admin could self-escalate
+                // to the system tier by setting their own profile to test or log
+                if (!$profile->is_type(user_profiles::SYSTEM)
+                    and !$profile->is_type(user_profiles::TEST)
+                    and !$profile->is_type(user_profiles::LOG)) {
                     $result = true;
                 }
             }
@@ -2539,8 +2543,10 @@ class user extends db_id_object_non_sandbox
             if ($this->ip_addr == 'localhost') {
                 $result = true;
             }
-            return $result;
         }
+        // single return at the end: the previous return sat inside the is_admin() branch, so a
+        // non-admin fell off the end and the : bool return type threw an uncaught TypeError
+        return $result;
     }
 
     /**
