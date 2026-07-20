@@ -64,7 +64,10 @@ the object structure is:
 ├── user_service
 │   └── xml - to im- and export xml files
 ├── ip_range_db - the database const for ip_range tables
+├── job_cache_refresh implements job_exe - $job_refresh - the proactive cache refresh sweep backend job
 ├── job_db - the database const for job tables
+├── job_db_cleanup implements job_exe - $job_clean - the database cleanup backend job
+├── job_runner - $job_run - execute the pending non-interactive backend jobs
 ├── log - the simple log interface object
 ├── sys_log_db - the database const for the system log table
 ├── system_time_list - a list of system error objects

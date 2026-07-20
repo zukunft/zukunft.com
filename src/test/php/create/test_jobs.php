@@ -164,4 +164,84 @@ class test_jobs
         return $job_lst;
     }
 
+    /**
+     * fixture for the job_runner due-job selection: two new jobs with a request time in the past (due)
+     * with a different priority, one new job scheduled in the future (not due) and one already done job
+     * (not due); the status is set to the loaded status id so it matches what due_jobs compares against;
+     * the jobs are appended in a non-sorted order so the caller has to sort by priority
+     *
+     * @return job_list the mixed jobs for the due selection test (ids 11, 12, 14, 15)
+     */
+    function job_list_due_mix(): job_list
+    {
+        global $sys;
+        $t_usr = new test_users($this->env);
+        $sys_usr = $t_usr->system_user();
+        $new_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_NEW);
+        $done_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_DONE);
+        $job_lst = new job_list($sys_usr);
+
+        // new and due, lowest priority
+        $job_low = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job_low->id = 11;
+        $job_low->status_id = $new_id;
+        $job_low->priority = job_statuum::PRIO_LOWEST;
+        $job_lst->add_obj($job_low);
+
+        // done and therefore not due
+        $job_done = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job_done->id = 15;
+        $job_done->status_id = $done_id;
+        $job_done->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_done);
+
+        // new and due, highest priority
+        $job_high = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job_high->id = 12;
+        $job_high->status_id = $new_id;
+        $job_high->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_high);
+
+        // new but scheduled in the future and therefore not yet due
+        $job_future = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME_CLOSED));
+        $job_future->id = 14;
+        $job_future->status_id = $new_id;
+        $job_future->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_future);
+
+        return $job_lst;
+    }
+
+    /**
+     * fixture for the job_runner due-job selection tie-break: two new and due jobs with the same
+     * priority but a different request time, added newest first, so the selection has to break the
+     * priority tie by the request time (oldest first)
+     *
+     * @return job_list two same-priority due jobs for the tie-break test (ids 21, 22)
+     */
+    function job_list_due_same_priority(): job_list
+    {
+        global $sys;
+        $t_usr = new test_users($this->env);
+        $sys_usr = $t_usr->system_user();
+        $new_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_NEW);
+        $job_lst = new job_list($sys_usr);
+
+        // requested later, added first
+        $job_newer = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME_TWO));
+        $job_newer->id = 21;
+        $job_newer->status_id = $new_id;
+        $job_newer->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_newer);
+
+        // requested earlier, added second
+        $job_older = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
+        $job_older->id = 22;
+        $job_older->status_id = $new_id;
+        $job_older->priority = job_statuum::PRIO_HIGHEST;
+        $job_lst->add_obj($job_older);
+
+        return $job_lst;
+    }
+
 }

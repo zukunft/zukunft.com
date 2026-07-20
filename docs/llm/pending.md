@@ -132,60 +132,6 @@ add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can b
 
 ### reduce response time
 
-Add non-interactive backend job execution to zukunft.com using systemd.
-
-Context: read CLAUDE.md and docs/llm/ first. The goal is that periodic
-backend tasks (cache refresh sweeps, database cleanup) run without user
-interaction on a Debian-based server, installed automatically by
-install.sh via systemd service and timer units. Reactive cache updates
-triggered by a user request are out of scope for the scheduler and must
-not be moved into it.
-
-Tasks:
-1. Create a single CLI dispatcher entry point (e.g. bin/job_runner.php)
-   that:
-    - refuses to run via a web request (CLI check),
-    - reads pending jobs from the existing job/batch_job structure (extend
-      the table if needed with: job type, status, priority, scheduled_at,
-      started_at, finished_at, last error message),
-    - executes due jobs in priority order with a per-run time budget,
-    - logs start, end, and errors of each job through the existing logging
-      mechanism, writing to stdout/stderr as well so journald captures it.
-2. Implement two initial job types: proactive cache refresh sweep and
-   database cleanup. Keep each job type in its own class implementing a
-   common job interface.
-3. Add two systemd unit files to the repo (e.g. under deploy/systemd/):
-    - zukunft-jobs.service: Type=oneshot, ExecStart runs the dispatcher
-      with the PHP CLI binary, User= set to the web/app user, a sensible
-      WorkingDirectory, and basic hardening (ProtectSystem=full,
-      PrivateTmp=true, NoNewPrivileges=true);
-    - zukunft-jobs.timer: OnCalendar=minutely, RandomizedDelaySec=10,
-      Persistent=true, Unit=zukunft-jobs.service.
-      Because the service is Type=oneshot, systemd itself prevents
-      overlapping runs; no flock is needed.
-4. Extend install.sh:
-    - copy both unit files to /etc/systemd/system/,
-    - run systemctl daemon-reload,
-    - enable and start zukunft-jobs.timer,
-    - make these steps idempotent so re-running install.sh is safe,
-    - fail with a clear message if systemd is not present (e.g. inside a
-      container) instead of silently skipping,
-    - add the matching disable/remove steps to the uninstall path if one
-      exists.
-5. Document in the README or install docs how to check job status
-   (systemctl status zukunft-jobs.timer, journalctl -u zukunft-jobs).
-6. Add PHPUnit tests for the dispatcher's job selection logic (due vs.
-   not due, priority order, error handling) using the existing test
-   structure.
-
-Coding rules: single-exit functions using a $result variable, one logic
-step per line, follow the existing naming and documentation conventions
-in the codebase. Do not reformat unrelated code.
-
-Before writing code, present a short plan listing the files you will
-create or change, and wait for confirmation.
-
-
 if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit 
 
 include in the install.sh script the creation of a crontab job 

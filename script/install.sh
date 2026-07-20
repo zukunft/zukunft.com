@@ -40,6 +40,7 @@ main() {
         installZukunft
         configureServerAdmin
         testZukunft
+        installBackendJobScheduler
         #testInstallation
     else
         if [[ "$OS" == "docker" ]]; then
@@ -337,6 +338,39 @@ testZukunft() {
 
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
+
+    sleep 3
+}
+
+# install the systemd service and timer that run the backend jobs (cache refresh sweep and
+# database cleanup) once per minute; run after testZukunft so the first job hits a stable database
+installBackendJobScheduler() {
+    echo -e "\n${GREEN}Installing the backend job scheduler ...${NC}"
+
+    # the scheduler needs a booted systemd; fail clearly instead of silently skipping
+    # (e.g. inside a container that has systemctl but no running systemd)
+    if ! command -v systemctl > /dev/null 2>&1 || [ ! -d /run/systemd/system ]; then
+        echo -e "\n${RED}systemd is not available (e.g. inside a container); cannot install the zukunft-jobs timer${NC}"
+        exit 1
+    fi
+
+    WEB_USER="${WEB_USER:-www-data}"
+    UNIT_SRC="$WWW_ROOT/deploy/systemd"
+    UNIT_DST="/etc/systemd/system"
+
+    # copy the units, substituting the web root and the web user of this pod so a non-default
+    # WWW_ROOT / WEB_USER still matches; overwriting an existing unit keeps the step idempotent
+    sed -e "s#/var/www/html#${WWW_ROOT%/}#g" \
+        -e "s#^User=www-data#User=${WEB_USER}#" \
+        -e "s#^Group=www-data#Group=${WEB_USER}#" \
+        "$UNIT_SRC/zukunft-jobs.service" > "$UNIT_DST/zukunft-jobs.service"
+    cp "$UNIT_SRC/zukunft-jobs.timer" "$UNIT_DST/zukunft-jobs.timer"
+
+    # load the new units and enable and start the timer; both commands are safe to repeat
+    systemctl daemon-reload
+    systemctl enable --now zukunft-jobs.timer
+
+    echo -e "${GREEN}zukunft-jobs.timer enabled; check with 'systemctl status zukunft-jobs.timer' and 'journalctl -u zukunft-jobs'${NC}"
 
     sleep 3
 }

@@ -14,7 +14,7 @@ element: $elm_ui
 figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_next, $frm_renamed, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_city, $grp_city_pct, $obj, $phr_grp, $phr_grp_reload, $val_grp
-job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_newer, $job_oldest
+job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $from, $max_phr, $new_phrase, $phr2, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $rank_phr, $result, $switzerland, $time_phr, $to, $to_add, $to_ui, $trp, $val_phr, $val_time_phr, $wrd, $wrd_by_id, $zurich
 protection_type_list: $lst
@@ -38,7 +38,7 @@ word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $htp, $is_wrd,
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $cut_time, $expired, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $snap_time, $sys_log_timestamp, $target, $time, $timeout
+DateTime: $actual_time, $cut_time, $cutoff, $expired, $fix_now, $new_value, $now, $request_time, $request_timestamp, $result, $snap_time, $sys_log_timestamp, $target, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
@@ -120,7 +120,7 @@ import_file: $imf, $import
 import_wikidata: $imp
 ip_range: $ip, $ip_range
 ip_range_list: $db_lst, $ip_lst, $ip_range_lst
-job_list: $job_lst, $result
+job_list: $empty_lst, $job_lst, $jobs, $result
 job_status: $job_sta
 job_time: $job_tim
 job_type: $job_typ
@@ -196,7 +196,7 @@ test_sys_log: $t_slg, $t_sys
 test_terms: $t_trm
 test_triples: $t_trp
 test_types: $t_typ
-test_users: $t_usr
+test_users: $sys_usr, $t_usr
 test_values: $t_val
 test_verbs: $t_vrb, $t_vrp
 test_views: $t_msk

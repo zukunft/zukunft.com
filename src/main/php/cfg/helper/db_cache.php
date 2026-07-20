@@ -335,6 +335,32 @@ class db_cache extends db_object_seq_id_user
 
 
     /*
+     * modify
+     */
+
+    /**
+     * remove this cache entry from the database (used by the cache refresh job to invalidate an outdated entry)
+     * a cache entry is derived data that is regenerated from the database on the next read,
+     * so the delete carries no user history and is done without a change log entry
+     * @param user_message $msg the message that collects the reason if the delete failed
+     * @return bool true if the cache entry has been deleted
+     */
+    function del(user_message $msg): bool
+    {
+        global $db_con;
+        $result = false;
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_delete($sc, $msg);
+        if ($qp !== null) {
+            $del_msg = $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
+            $msg->merge($del_msg);
+            $result = $del_msg->is_ok();
+        }
+        return $result;
+    }
+
+
+    /*
      * api
      */
 

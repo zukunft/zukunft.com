@@ -24,3 +24,5 @@ job_type_id, type_name, description, code_id
 23, 'import reference', 'import a single references', 'import_ref'
 24, 'export', 'export data to an api or file', 'export'
 25, 'refresh page', 'render the html page of a view-only request again and update the cached page', 'page_refresh'
+26, 'refresh cache', 'proactively invalidate the outdated config and type caches so the next request hits a warm cache', 'cache_refresh'
+27, 'cleanup database', 'remove the old completed jobs to keep the database small', 'db_cleanup'
