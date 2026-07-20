@@ -68,6 +68,8 @@ if ($db_con->is_open()) {
         if ($frm_ids != '') {
             $lst = new figure_list($usr);
             $lst->load_by_ids(new fig_ids($frm_ids));
+            // drop the figures the requesting user may not read (idor); see figure::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'formula id is missing';

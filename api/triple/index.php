@@ -83,6 +83,13 @@ if ($db_con->is_open()) {
         }
     }
 
+    // do not disclose another user's private triple loaded by id/name (idor); the same neutral
+    // message as a missing id so the response does not confirm the object exists
+    if ($result != '' and !$trp->is_readable_by($usr)) {
+        $result = '';
+        $msg = 'triple id or name is missing';
+    }
+
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 

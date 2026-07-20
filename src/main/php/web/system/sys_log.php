@@ -242,7 +242,9 @@ class sys_log extends log
         $row .= $html->td($this->time()->format('Y-m-d H:i:s'));
         // TODO show the username instead of the id
         $row .= $html->td($this->user_id());
-        $row .= $html->td($this->text());
+        // the log text can embed request-derived strings (e.g. a blocked url), so escape it before
+        // it is rendered into the admin error-log page (stored xss otherwise, see html_base::td)
+        $row .= $html->td($html->esc($this->text()));
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         return $html->tr($row);
@@ -259,13 +261,14 @@ class sys_log extends log
 
         $result .= $html->dsp_text_h2("Status of error #"
             . $this->id() . ': ' . $this->status_text());
-        $result .= '"' . $this->text() . '" <br>';
+        // escape the request-derived log fields before they reach the html body (stored xss)
+        $result .= '"' . $html->esc($this->text()) . '" <br>';
         if ($this->description <> 'NULL') {
-            $result .= '"' . $this->description . '" <br>';
+            $result .= '"' . $html->esc($this->description) . '" <br>';
         }
         $result .= '<br>';
         $result .= 'Program trace:<br>';
-        $result .= $this->trace() . ' ';
+        $result .= $html->esc($this->trace()) . ' ';
         //echo "<style color=green>OK</style>" .$test_text;
         //echo "<style color=red>Error</style>".$test_text;
 
@@ -288,11 +291,12 @@ class sys_log extends log
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format(DateTimeInterface::ATOM));
+        // escape the user-controlled name and the request-derived log fields (stored xss)
         // TODO show the user name instead of the id
-        $row .= $html->td($this->user_name());
-        $row .= $html->td($this->text());
-        $row .= $html->td($this->trace());
-        $row .= $html->td($this->prg_part());
+        $row .= $html->td($html->esc($this->user_name()));
+        $row .= $html->td($html->esc($this->text()));
+        $row .= $html->td($html->esc($this->trace()));
+        $row .= $html->td($html->esc($this->prg_part()));
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
@@ -342,17 +346,19 @@ class sys_log extends log
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
+        // escape the user-controlled names and the request-derived log fields (stored xss); the
+        // sys_log text/description/trace embed strings from log_err/log_warning (e.g. a blocked url)
         if ($this->user_id() > 0) {
-            $row_text .= $html->td($this->user_name() ?? $this->user()->name());
+            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user()->name()));
         } else {
             $row_text .= $html->td();
         }
-        $row_text .= $html->td($this->text);
-        $row_text .= $html->td($this->description);
-        $row_text .= $html->td($this->trace);
-        $row_text .= $html->td($this->function_id);
+        $row_text .= $html->td($html->esc($this->text));
+        $row_text .= $html->td($html->esc($this->description));
+        $row_text .= $html->td($html->esc($this->trace));
+        $row_text .= $html->td($html->esc($this->function_id));
         if ($this->owner_id() > 0) {
-            $row_text .= $html->td($this->owner_name());
+            $row_text .= $html->td($html->esc($this->owner_name()));
         } else {
             $row_text .= $html->td();
         }

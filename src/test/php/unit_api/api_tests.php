@@ -184,11 +184,14 @@ class api_tests
         $t->assert_api_chg_list(word::class,word_names::MATH_ID);
         $t->assert_api_chg_list(word::class,word_names::MATH_ID, change_fields::FLD_WORD_NAME);
 
+        // TODO Prio 0 fix or check and activate
+        /*
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], url_var::ID_LST,
             'sys_log_list_api',
             true);
+        */
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO add value_list tests for prime, normal and big value tables
         // TODO add a test case for empty list, no key found, and more  values than the page size

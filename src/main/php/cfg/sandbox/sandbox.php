@@ -837,6 +837,40 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * check if the requesting user may read this named sandbox object (word, triple, formula, source,
+     * ref, view, component, ...); the seq-id twin of sandbox_multi::is_readable_by - the two class
+     * branches share no parent, so the read scope is duplicated like share_type_name/can_change are.
+     * a named object is confidential only if it is not shared publicly: a public object (the default)
+     * is readable by everyone, otherwise only the owner, an admin or a system user may read it; a
+     * group-shared object is conservatively treated like personal (owner only) until a user-group
+     * membership model exists. used at the api read boundary to close the idor read of another user's
+     * non-public object by iterating the id; internal flows (save, calculation) are not gated by this.
+     *
+     * @param user|null $usr the user who has requested to read this object
+     * @return bool true if the object may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        global $sys;
+
+        $result = false;
+        // an admin or system user may read every object e.g. for the admin data views
+        if ($usr != null and ($usr->is_admin() or $usr->is_system())) {
+            $result = true;
+        } else {
+            // a public object (the default) is readable by everyone
+            $public_id = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
+            if ($this->share_id == null or $this->share_id == $public_id) {
+                $result = true;
+            } elseif ($usr != null and $this->owner_id != null and $this->owner_id == $usr->id) {
+                // only the owner may read their own non-public object
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string the protection type code id based on the database id or an empty string if no protection is set
      */
     function protection_type_code_id(): string

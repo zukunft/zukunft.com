@@ -1816,6 +1816,7 @@ enum messages: string
     case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
     case SIGNUP_DATA_WARNING = 'signup_data_warning';
     case SIGNUP_ERR_NAME_EXISTS = 'signup_err_name_exists';
+    case SIGNUP_ERR_NAME_INVALID = 'signup_err_name_invalid';
     case SIGNUP_ERR_EMAIL_EMPTY = 'signup_err_email_empty';
     case SIGNUP_ERR_PW_EMPTY = 'signup_err_pw_empty';
     case SIGNUP_ERR_PW_RETYPE_EMPTY = 'signup_err_pw_retype_empty';

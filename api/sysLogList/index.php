@@ -63,8 +63,11 @@ if ($db_con->is_open()) {
 
     $result = ''; // reset the json message string
 
-    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id > 0) {
+    // the system log holds the internal code trace, text and description of every error, so it is
+    // admin-only data; an anonymous visitor always gets an auto created ip user with id > 0, so the
+    // former id > 0 check let anyone read the full log - restrict it to an admin or system user,
+    // matching the frontend that only shows the log to admins (web/system/sys_log.php)
+    if ($usr->is_admin() or $usr->is_system()) {
 
         $lst = new sys_log_list();
         $lst->set_user($usr);
@@ -73,6 +76,8 @@ if ($db_con->is_open()) {
         $lst->size = $size;
         $lst->load_all();
         $result = $lst->api_json([api_types::HEADER], $usr);
+    } else {
+        $msg = 'not permitted';
     }
 
     $ctrl = new controller();

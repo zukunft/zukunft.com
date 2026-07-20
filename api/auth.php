@@ -34,15 +34,8 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL . 'application.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_TYPES . 'api_types.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 
 // open database
 $app = new application();
@@ -50,18 +43,12 @@ $db_con = $app->start_api("auth", "", false);
 
 if ($db_con->is_open()) {
 
-    // load the session user parameters
-    $msg = '';
-    $usr = new user;
-    $msg .= $usr->get();
-
-    // Basic Auth: check credentials
-    if (!isset($_SERVER[rest_ctrl::PHP_AUTH_USER]) || !isset($_SERVER[rest_ctrl::PHP_AUTH_PW])) {
-        send_auth_request();
-    }
-
-    $username = $_SERVER[rest_ctrl::PHP_AUTH_USER];
-    $password = $_SERVER[rest_ctrl::PHP_AUTH_PW];
+    // this basic-auth endpoint is not implemented yet: the previous body read the credentials but
+    // never checked them and called an undefined helper, so any request without an Authorization
+    // header raised a php fatal. return a clean 501 instead until real token auth is added, so the
+    // endpoint can neither be used nor probed (see docs/llm/pending.md)
+    http_response_code(501);
+    echo 'Not implemented';
 
     $app->end_api($db_con);
 }

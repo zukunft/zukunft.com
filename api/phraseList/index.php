@@ -85,6 +85,8 @@ if ($db_con->is_open()) {
         } else {
             $lst->load_like($pattern);
         }
+        // drop the phrases the requester may not read (idor); see phrase::is_readable_by
+        $lst->filter_readable_by($usr);
         $result = $lst->api_json();
     }
 

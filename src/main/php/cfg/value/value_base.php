@@ -2216,6 +2216,8 @@ class value_base extends sandbox_value
         if ($msg->is_ok()) {
             if (!$this->is_saved()) {
 
+                // make sure that only an admin user sets the admin protection also on a new value
+                $this->check_protection_change(null, $this->get_user(), $msg);
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
             } else {
@@ -2255,6 +2257,8 @@ class value_base extends sandbox_value
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($msg->is_ok()) {
+                    // make sure that only an admin user reduces or raises the protection level
+                    $this->check_protection_change($db_rec, $this->get_user(), $msg);
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                 } else {
