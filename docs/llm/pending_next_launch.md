@@ -529,4 +529,69 @@ create the user_message $msg object once at the start of each script and use thi
 
 check where in the frontend a parameter / configuration values is used that is not yet taken from the config.yaml / user_configuration and at least mark it with a TODO Prio 1
 
-create a script that updates all caches e.g. src/test/resources/api/type_lists/type_lists.json and src/test/resources/api/ui_config/ui_config.json after a change of any parameter in src/main/resources/db_code_links 
+create a script that updates all caches e.g. src/test/resources/api/type_lists/type_lists.json and src/test/resources/api/ui_config/ui_config.json after a change of any parameter in src/main/resources/db_code_links
+
+### remaining potential security issues  
+
+add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
+
+the security findings from the 2026-07-17, 2026-07-20 and 2026-07-21 reviews are all fixed (fix #334
+parts 1-23, incl. the read-access gate on every object / list / embedded related list, and the enabled
++ csrf-hardened api write path). the reusable rules distilled from them - output encoding, the api
+  read-access gate, privileged fields via a checked setter, the write-path csrf + method-detection, never
+  build a filesystem path from a user name, env-gated debug, gitignored runtime files - live in
+  docs/code_guidelines.md ("security" section); the concrete once-off fixes stay in the git history.
+
+findings of the re-run security check on 2026-07-22, ordered by exploitability; only critical / high
+issues that are NOT yet solved are listed here (the fixed ones live in code_guidelines.md / git). each
+was verified against the code with file:line evidence.
+
+[FIXED 2026-07-22] stored xss in the condensed change-log render (high, admin compromise; same class
+as the fixed sys_log display xss, on a different code path): change_log_named::entry()
+(web/log/change_log_named.php ~320-337) concatenates the user-controlled usr->name(), old_value and
+new_value into its text with NO escaping; dsp() (:311) is date + entry(), change_log_list::dsp()
+(change_log_list.php:242) concatenates each dsp() raw, and both live render paths emit the result into
+the html body unescaped: the SYSTEM_CHANGE_LOG component (ui_log.php:101 -> component_exe.php:425) and
+the word/triple page "changes" tab (ui_list.php:561 -> tab_box). old_value/new_value are the object
+name field (a word/triple/formula name on add or rename), so creating or renaming a word to
+`<img src=x onerror=...>` stores that string as new_value; when any user - including an admin - opens
+that object's changes tab or the system change-log, the payload executes = persistent xss / session
+theft. the table renderers change_log_named::tr() (:196-197) and change_log_link::tr() (:84-85) were
+correctly esc()'d in the earlier round, but the condensed one-line entry()/dsp() path was missed.
+fixed: change_log_named::entry() now esc()s usr->name(), old_value and new_value (branching still on
+the raw value emptiness, emitting the escaped values), matching tr(); the sort comparator escapes both
+operands so it stays deterministic, and the change_log.html snapshot is unchanged because its test
+values are plain names.
+
+the rest of the surface is clean at critical/high. write path (now enabled for api/word only): all
+three write methods (post/put/delete) go through controller::change_permitted (same-origin +
+X-CSRF-Token + not-blocked) before any db access; put_json trusting the client id is safe because
+sandbox::save routes a non-owner change to a user overlay (never the shared row); the checked
+code_id/profile/protection setters hold and owner_id is not mappable from client json; the 256-bit
+csrf token is compared with hash_equals with no bypass. access control / idor: every read endpoint
+gates with is_readable_by / filter_readable_by (single, list and embedded INCL_RELATED lists),
+sysLogList is admin-gated, api/user is admin-or-self, data_user impersonation is admin/system-only,
+admin masks are centrally gated. injection: sql parameterised via sql_creator, no reachable exec /
+unserialize / dynamic-include / xxe, mail recipient is a loaded address. secrets/config: no committed
+real secret, docker uses env refs, .htaccess default-deny holds.
+
+lower / latent (below the critical bar today, recorded for completeness, NOT counted as unsolved
+critical): (1) [FIXED 2026-07-22] controller::put_json and delete executed the write twice (once in
+the method, once again inside curl_response via put()/$obj->del()); curl_response is now a pure
+response formatter (the put_json / post_json / delete methods already run change_permitted + save/del
+and set $msg/$obj, so curl_response only echoes the row id on success or the message on failure - no
+second map+save or delete). the redundant per-method body re-read and the dead controller::put() /
+post() stubs were removed; the broken POST branch (which returned an empty id via the no-op post())
+now returns the saved object's id like PUT. (2) button::html() (web/html/button.php:113) emits $this->title
+raw into alt="..."; all current callers pass constant/translated titles so it is not reachable with
+user data today (the html_fa() add/edit/del path escapes via ref()); escape the alt as defense in
+depth. (3) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
+legacy display()/result-explain paths that are effectively dead (the live render uses name_link());
+latent stored xss if revived. (4) legacy web-side raw-sql builders (user_display_old.php,
+view_list::selector_page, value::dsp_hist_old/dsp_samples) are all dead/commented - recommend deleting.
+(5) object-level admin/no-change protection is enforced only for changes to the protection field
+itself (check_protection_change), not consulted in the general edit/delete authz - not exploitable
+today (a normal user's edit of an admin-protected system-owned object is routed to their own overlay),
+becomes relevant only when a pod-level config must be read from the system value not the user overlay
+(the pending rate-limiter work); same defense-in-depth character as the save_user() latent item.
+

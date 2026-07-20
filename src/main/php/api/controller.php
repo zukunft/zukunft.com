@@ -434,7 +434,17 @@ class controller
                     echo json_encode(
                         array(url_var::ID => $id)
                     );
+                } elseif ($id > 0) {
+                    // delete() ran with an id but del() failed, e.g. the object is still in use -
+                    // a conflict (409), not a bad request; the object was not re-deleted here
+                    if (!headers_sent()) {
+                        $this->set_response_code(409);
+                    }
+                    echo json_encode(
+                        array(json_fields::MSG => $msg)
+                    );
                 } else {
+                    // no id was given (400 bad request)
                     if (!headers_sent()) {
                         $this->set_response_code(400);
                     }
