@@ -816,6 +816,24 @@ class frontend
      */
 
     /**
+     * the effective view id for a request, defaulting to the start view when neither a view nor an
+     * object is given; used by url_to_html for the rendering and by url_cache_key for the cache key
+     * so both resolve the default landing page the same way
+     *
+     * @param int|string|null $view the requested view id or code id, or an empty value if none is given
+     * @param int|string $id the requested object id, or 0 if none is given
+     * @return int|string|null the requested view if set, otherwise the start view id
+     */
+    private static function default_view_id(int|string|null $view, int|string $id = 0): int|string|null
+    {
+        $result = $view;
+        if (($view == 0 or $view == '' or $view == null or $view == 'null') and $id == 0) {
+            $result = views::START_ID;
+        }
+        return $result;
+    }
+
+    /**
      * create the HTML code based on the given url
      * TODO for the confirm action highlight the changes
      * TODO add the db update via api
@@ -865,10 +883,8 @@ class frontend
         //$api_msg = $this->api_get(type_lists::class);
         //$frontend_cache = new type_lists($api_msg);
 
-        // use default view if nothing is set
-        if (($view == 0 or $view == '' or $view == null or $view == 'null') and $id == 0) {
-            $view = views::START_ID;
-        }
+        // use the default start view if neither a view nor an object is set
+        $view = self::default_view_id($view, $id);
 
         // the view cache must be loaded (via load_cache or load_dummy_cache_from_test_resources) before rendering
         if ($this->dto?->typ_lst_cache == null) {
@@ -1135,6 +1151,10 @@ class frontend
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
+        // a request without a view and without an object shows the default start view, so cache it
+        // under the start view key so the bare landing page (view.php with no mask) and an explicit
+        // start request (view.php?m=1) share the same cached start page
+        $mask_id = self::default_view_id($mask_id, $obj_id);
         // a request with more than the view, object and language is not cached; the anti-csrf token
         // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
         // never part of the rendered html), and a process step of 0 (no action started) does not
@@ -1165,7 +1185,11 @@ class frontend
         if (in_array($mask_id, views::CHANGE_MASKS_IDS)) {
             $is_view_only = false;
         }
-        if (in_array($mask_id, views::PROCESS_STEP_MASKS_IDS)) {
+        // a process step view is not cached, unless it is a login or signup form: the plain form has
+        // no started process step, its per-session token is stripped and restored by db_cache_page and
+        // the submit is a POST action that is never cached (see views::PAGE_CACHE_ALLOWED_MASKS_IDS)
+        if (in_array($mask_id, views::PROCESS_STEP_MASKS_IDS)
+            and !in_array($mask_id, views::PAGE_CACHE_ALLOWED_MASKS_IDS)) {
             $is_view_only = false;
         }
         if (in_array($mask_id, views::GET_ACTION_IDS)) {
