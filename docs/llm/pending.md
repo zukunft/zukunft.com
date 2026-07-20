@@ -16,65 +16,65 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 ### security before go live
 
-the security findings from the 2026-07-17 and 2026-07-20 reviews are all fixed (fix #334 parts 1-22).
-the reusable rules distilled from them - output encoding, the api read-access gate, never build a
-filesystem path from a user name, env-gated debug, gitignored runtime files, single return on a
-permission path - were moved to docs/code_guidelines.md ("security" section); the concrete once-off
-fixes stay in the git history.
+the security findings from the 2026-07-17, 2026-07-20 and 2026-07-21 reviews are all fixed (fix #334
+parts 1-23, incl. the read-access gate on every object / list / embedded related list, and the enabled
++ csrf-hardened api write path). the reusable rules distilled from them - output encoding, the api
+read-access gate, privileged fields via a checked setter, the write-path csrf + method-detection, never
+build a filesystem path from a user name, env-gated debug, gitignored runtime files - live in
+docs/code_guidelines.md ("security" section); the concrete once-off fixes stay in the git history.
 
-findings of the re-run security check on 2026-07-21, ordered by exploitability; only critical / high
+findings of the re-run security check on 2026-07-22, ordered by exploitability; only critical / high
 issues that are NOT yet solved are listed here (the fixed ones live in code_guidelines.md / git). each
 was verified against the code with file:line evidence.
 
-[FIXED 2026-07-21] idor read of private *related* objects on the word / triple / formula pages (high,
-live; a coverage gap in the part-20/22 share-read fix): the fix added filter_readable_by() to
-values_related in word::api_json_array and triple.php, but the sibling lists emitted next to it under
-api_types::INCL_RELATED were still unfiltered - word.php phrases_related, formulas_related,
-parent_formulas_related, references_related, views_related; triple.php formulas_related /
-references_related / views_related; formula.php phrases_related / latex_terms. these lists are loaded
-by the same load_*_related mechanism that returns the owner's standard rows (share_id/owner_id are
-populated), so `GET /api/word?id=<public word>&incl_related=1` (allowed for any anonymous ip user; the
-public word passes the top-level is_readable_by) returned another user's private/personal triple,
-formula or view attached to that word. fixed: filter_readable_by($usr) is now called on every sibling
-related list before api_json_array in word.php, triple.php and formula.php (and on each parent-formula
-group's formulas). references_related uses ref_list which extends type_list (not sandbox_list_named),
-so a filter_readable_by was added to ref_list itself (ref extends sandbox, so it has is_readable_by).
-changes_related is deliberately left unfiltered - it is the change log, a separate low item. a
-read-access unit test for ref::is_readable_by / ref_list::filter_readable_by was added to ref_tests.php.
+[FIXED 2026-07-22] stored xss in the condensed change-log render (high, admin compromise; same class
+as the fixed sys_log display xss, on a different code path): change_log_named::entry()
+(web/log/change_log_named.php ~320-337) concatenates the user-controlled usr->name(), old_value and
+new_value into its text with NO escaping; dsp() (:311) is date + entry(), change_log_list::dsp()
+(change_log_list.php:242) concatenates each dsp() raw, and both live render paths emit the result into
+the html body unescaped: the SYSTEM_CHANGE_LOG component (ui_log.php:101 -> component_exe.php:425) and
+the word/triple page "changes" tab (ui_list.php:561 -> tab_box). old_value/new_value are the object
+name field (a word/triple/formula name on add or rename), so creating or renaming a word to
+`<img src=x onerror=...>` stores that string as new_value; when any user - including an admin - opens
+that object's changes tab or the system change-log, the payload executes = persistent xss / session
+theft. the table renderers change_log_named::tr() (:196-197) and change_log_link::tr() (:84-85) were
+correctly esc()'d in the earlier round, but the condensed one-line entry()/dsp() path was missed.
+fixed: change_log_named::entry() now esc()s usr->name(), old_value and new_value (branching still on
+the raw value emptiness, emitting the escaped values), matching tr(); the sort comparator escapes both
+operands so it stays deterministic, and the change_log.html snapshot is unchanged because its test
+values are plain names.
 
-[FIXED 2026-07-21] the api write path is now enabled and hardened (was previously unreachable dead
-code). three linked fixes, all needed together: (1) method detection - api/word/index.php used
-`in_array(rest_ctrl::REQUEST_METHOD, $_SERVER)` which searched the $_SERVER *values* for the key name,
-so it was always false and every request fell through to the GET debug branch, disabling all writes;
-changed to array_key_exists, and the json body is now read only for a write (a GET has none, so
-request_json() - made robust to return [] on an empty/malformed body - is not called for GET). (2)
-csrf - the write path relied only on server_guard::same_origin() (which fails open when both Origin and
-Referer are absent); added server_guard::csrf_token_valid() (the X-CSRF-Token header must match the
-per-session $_SESSION[SESSION_TOKEN], the same synchronizer token frontend::request_token_valid checks,
-compared with hash_equals) and wired it into controller::change_permitted, so a write now needs a valid
-origin AND a valid token AND a non-blocked user. (3) checked code_id setters - sandbox_code_id::
-api_mapper routed code_id through the unchecked set_code_id_db() guarded only by an always-true null
-check, letting any user plant a system code_id (a load_by_code_id injection into system views / config
-phrases / formula/component behaviour); it now routes through the privilege-checked set_code_id() and
-merges the refusal onto $usr_msg (with a null-user fail-closed guard), matching import_mapper, and
-component::api_mapper does the same for the four ui_msg_* fields via their checked setters. affected
-objects: word, view, source, component, formula (all extend sandbox_code_id; triple does not). unit
-test added to word_tests.php (word::api_mapper refuses code_id for a normal user, reports it, sets it
-for a system user). NOTE: this ENABLES api writes - only api/word has the write dispatch; the write
-path needs an authenticated session with the X-CSRF-Token header, so any api write test must send it,
-and this should be exercised end to end before production. this closes the previously-listed
-"api write path has no anti-csrf check" and "in_array method detection" low-prio items.
+the rest of the surface is clean at critical/high. write path (now enabled for api/word only): all
+three write methods (post/put/delete) go through controller::change_permitted (same-origin +
+X-CSRF-Token + not-blocked) before any db access; put_json trusting the client id is safe because
+sandbox::save routes a non-owner change to a user overlay (never the shared row); the checked
+code_id/profile/protection setters hold and owner_id is not mappable from client json; the 256-bit
+csrf token is compared with hash_equals with no bypass. access control / idor: every read endpoint
+gates with is_readable_by / filter_readable_by (single, list and embedded INCL_RELATED lists),
+sysLogList is admin-gated, api/user is admin-or-self, data_user impersonation is admin/system-only,
+admin masks are centrally gated. injection: sql parameterised via sql_creator, no reachable exec /
+unserialize / dynamic-include / xxe, mail recipient is a loaded address. secrets/config: no committed
+real secret, docker uses env refs, .htaccess default-deny holds.
 
-the remaining review surfaces are clean at critical/high: injection (sql parameterised via sql_creator,
-the one exec pinned with escapeshellarg, no unserialize/xxe/eval/dynamic-include, mail recipient is a
-loaded address), the frontend xss layer (every body sink esc()'d, every attribute sink ENT_QUOTES incl.
-the sys_log page, change-log, job page, view/component editors, notification bar), secrets/config (no
-tracked .env/.key/.bak, no default db password, .htaccess default-deny holds), and the write-side
-authorization model (a non-owner change routes to a user overlay, protection raise gated both branches,
-profile escalation blocked by enforce_profile_privilege, config writes go through the sandbox model,
-import runs under the requesting user). the two write-path items above (code_id, and the previously
-listed csrf gap) hinge on the same dead in_array method detection and must be closed in the one change
-that enables api writes.
+lower / latent (below the critical bar today, recorded for completeness, NOT counted as unsolved
+critical): (1) [FIXED 2026-07-22] controller::put_json and delete executed the write twice (once in
+the method, once again inside curl_response via put()/$obj->del()); curl_response is now a pure
+response formatter (the put_json / post_json / delete methods already run change_permitted + save/del
+and set $msg/$obj, so curl_response only echoes the row id on success or the message on failure - no
+second map+save or delete). the redundant per-method body re-read and the dead controller::put() /
+post() stubs were removed; the broken POST branch (which returned an empty id via the no-op post())
+now returns the saved object's id like PUT. (2) button::html() (web/html/button.php:113) emits $this->title
+raw into alt="..."; all current callers pass constant/translated titles so it is not reachable with
+user data today (the html_fa() add/edit/del path escapes via ref()); escape the alt as defense in
+depth. (3) formula::dsp_text() (web/formula/formula.php:686) emits usr_text raw, reachable only from
+legacy display()/result-explain paths that are effectively dead (the live render uses name_link());
+latent stored xss if revived. (4) legacy web-side raw-sql builders (user_display_old.php,
+view_list::selector_page, value::dsp_hist_old/dsp_samples) are all dead/commented - recommend deleting.
+(5) object-level admin/no-change protection is enforced only for changes to the protection field
+itself (check_protection_change), not consulted in the general edit/delete authz - not exploitable
+today (a normal user's edit of an admin-protected system-owned object is routed to their own overlay),
+becomes relevant only when a pod-level config must be read from the system value not the user overlay
+(the pending rate-limiter work); same defense-in-depth character as the save_user() latent item.
 
 
 ### security improvements

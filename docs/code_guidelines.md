@@ -212,14 +212,37 @@ reappear.
   neutral "missing id" message when not readable, so it never confirms the object exists.
 - the read gate covers three shapes, not only the direct single-object endpoint: the object embedded
   in another object's api response (e.g. related values under `INCL_RELATED`), and the list endpoints
-  via a `filter_readable_by()` on the list.
+  via a `filter_readable_by()` on the list. filter EVERY embedded object list, not just the obvious
+  one - the sibling `INCL_RELATED` lists (phrases, formulas, views, references, ...) leak the same way.
+  a list class that does not extend the sandbox list base (e.g. `ref_list` extends `type_list`) needs
+  its own `filter_readable_by()`.
 - check readability / permission against the session user, never the loaded `data_user` (which may be
   an admin-impersonated target).
 - a privilege-assignment check excludes every profile / role that grants the higher tier, consistent
   with the predicate that reads it: because `user::is_system()` is true for the TEST, LOG and SYSTEM
   profiles, `can_set_profile` must block all three, not only SYSTEM.
+- a privileged field mapped from a client json / import message (`code_id`, `ui_msg_code_id`, profile,
+  `type_id`, share, owner, ...) is set only through a privilege-checked setter (`set_code_id($val,
+  $usr)`, `enforce_profile_privilege`, ...) that refuses and reports the refusal on `$usr_msg` for a
+  non-privileged user - never a raw `set_*_db()` / direct field assignment. the requesting user comes
+  from `$usr_msg->usr` with a null-user fail-closed guard. an "only if the field is empty" guard is
+  NOT a permission check: a newly created (POST) object is always empty, so the guard always passes.
 - enforce disclosure at the untrusted api / frontend boundary; the internal flows (save, calculation,
   import) are deliberately not gated by the read filter so cross-user aggregation of public data works.
+
+### state-changing requests - Cross-Site Request Forgery (CSRF)
+
+- a state-changing api request (post / put / delete) is gated BEFORE any db change by
+  `controller::change_permitted`: a same-origin check AND a per-session synchronizer token AND a
+  not-blocked user. the token is required, not optional - `same_origin()` alone fails open when both
+  the Origin and the Referer header are absent, so the `X-CSRF-Token` header must match
+  `$_SESSION[SESSION_TOKEN]` (issued at login, the same token the html frontend checks), compared with
+  `hash_equals`. an attacker's forged cross-site request cannot read the token nor set the custom header.
+- the http method comes from `array_key_exists(REQUEST_METHOD, $_SERVER)`, never `in_array(...)` -
+  `in_array` searches the $_SERVER *values* while REQUEST_METHOD is a *key*, so it is always false and
+  every request silently falls through to a GET default (which disables all writes).
+- read a request json body only for a write; decode it defensively (return `[]` on an empty or
+  malformed body) so a `: array` return type never fatals on a GET request that carries no body.
 
 ### input & path validation
 

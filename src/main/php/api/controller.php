@@ -48,7 +48,6 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -131,7 +130,7 @@ class controller
         // return either the api json with the id of the created db object e.g. word
         // or the message why the adding has failed
         $ctrl = new controller();
-        $ctrl->curl_response($result, $msg, rest_ctrl::POST);
+        $ctrl->curl_response($result, $msg, rest_ctrl::POST, 0, $dbo);
     }
 
     /**
@@ -362,34 +361,25 @@ class controller
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 
-        // method switch
+        // method switch. put_json / delete have already run change_permitted and saved / deleted the
+        // object before calling this, so here only format the response - never map+save or delete
+        // again (the previous re-execution here was a double write / double delete)
         log_debug($method);
-        $usr_msg = new user_message();
         switch ($method) {
             case rest_ctrl::PUT:
-                // get json object body to put
-                $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-                $request_json = json_decode($request_text, true);
-                $request_body = $this->check_api_msg($request_json);
-
-                // call to backend and return the result
-                if ($this->put($request_body, $obj, $usr_msg)) {
-
-                    // set response code - 200 OK
+                if ($msg == '') {
                     if (!headers_sent()) {
                         $this->set_response_code(200);
                     }
                     echo json_encode(
-                        array(url_var::ID => $usr_msg->get_row_id())
+                        array(url_var::ID => $obj?->id() ?? $id)
                     );
                 } else {
-
-                    // set response code - 400 Bad Request
                     if (!headers_sent()) {
                         $this->set_response_code(400);
                     }
                     echo json_encode(
-                        array(json_fields::MSG => $usr_msg->get_row_id())
+                        array(json_fields::MSG => $msg)
                     );
                 }
                 break;
@@ -419,70 +409,35 @@ class controller
                 }
                 break;
             case rest_ctrl::POST:
-                // return the api json or the error message
+                // post_json has already saved the new object; return its id or the error message
                 if ($msg == '') {
-                    $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-                    $request_json = json_decode($request_text, true);
-                    $request_body = $this->check_api_msg($request_json);
-
-                    // call to backend
-                    $result = $this->post($request_body);
-
-                    // return the result
-                    if (is_numeric($result)) {
-                        // set response code - 200 OK
-                        if (!headers_sent()) {
-                            $this->set_response_code(200);
-                        }
-                        echo json_encode(
-                            array(url_var::ID => $result)
-                        );
-                    } else {
-
-                        // set response code - 400 Bad Request
-                        if (!headers_sent()) {
-                            $this->set_response_code(400);
-                        }
-                        echo json_encode(
-                            array(json_fields::MSG => $result)
-                        );
+                    if (!headers_sent()) {
+                        $this->set_response_code(200);
                     }
-                }
-                break;
-            case rest_ctrl::DELETE:
-                // return the api json or the error message
-                if ($msg == '') {
-
-                    if ($id > 0) {
-                        $obj->del($usr_msg);
-                        if ($usr_msg->is_ok()) {
-                            // set response code - 200 OK
-                            if (!headers_sent()) {
-                                $this->set_response_code(200);
-                            }
-                        } else {
-                            // set response code - 409 Conflict
-                            if (!headers_sent()) {
-                                $this->set_response_code(409);
-                            }
-
-                            echo json_encode(
-                                array(url_var::RESULT => $usr_msg->get_last_message())
-                            );
-                        }
-                    }
+                    echo json_encode(
+                        array(url_var::ID => $obj?->id() ?? $id)
+                    );
                 } else {
-
-                    // set response code - 400 Bad Request
                     if (!headers_sent()) {
                         $this->set_response_code(400);
                     }
-                    // set response code - 410 Gone
-                    // $this->set_response_code(410);
-                    // set response code - 403 Forbidden
-                    // $this->set_response_code(403);
-
-                    // tell the user no products found
+                    echo json_encode(
+                        array(json_fields::MSG => $msg)
+                    );
+                }
+                break;
+            case rest_ctrl::DELETE:
+                if ($msg == '') {
+                    if (!headers_sent()) {
+                        $this->set_response_code(200);
+                    }
+                    echo json_encode(
+                        array(url_var::ID => $id)
+                    );
+                } else {
+                    if (!headers_sent()) {
+                        $this->set_response_code(400);
+                    }
                     echo json_encode(
                         array(json_fields::MSG => $msg)
                     );
@@ -530,23 +485,5 @@ class controller
         }
     }
 
-    function put(array $request, db_object_seq_id|sandbox|null $obj, user_message $usr_msg): bool
-    {
-        global $usr;
-        $obj->api_mapper($request, $usr_msg);
-        if ($usr_msg->is_ok()) {
-            $obj->save($usr_msg);
-        }
-        return $usr_msg->is_ok();
-    }
-
-    function post(array $request): string
-    {
-        // TODO Prio 1 activate
-        //$msg = 'ERROR: post not defined in controller';
-        //log_err($msg);
-        //return $msg;
-        return '';
-    }
 
 }
