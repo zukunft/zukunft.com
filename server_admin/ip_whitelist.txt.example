@@ -1,5 +1,10 @@
 # one allowed IP or CIDR range per line; lines starting with # are ignored
 # only used when the IP whitelist is activated on the server admin page
+# localhost, so the pod can always reach itself
 127.0.0.1
 ::1
+# the IP of the suggested production admin server, so activating the whitelist does not lock the pod out of itself
+94.130.31.152
+# an additional allowed client IP
+77.59.189.1
 # 192.168.0.0/16
