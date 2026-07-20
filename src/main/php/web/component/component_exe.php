@@ -61,6 +61,7 @@ include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -186,10 +188,10 @@ class component_exe extends component
             // system form - components that can only be used for internal system forms
             // general form fields
             component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo),
-            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo),
-            component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo),
-            component_types::TITLE_VALUE_EDIT => $form->title_value($dbo),
+            component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_FORMULA_EDIT => $form->title_formula($dbo, def::LIMIT_RELATED_PER_VERB, $url_array),
+            component_types::TITLE_VALUE_EDIT => $form->title_value($dbo, def::LIMIT_RELATED_PER_VERB, $url_array),
             component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 

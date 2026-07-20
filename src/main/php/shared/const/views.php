@@ -1216,4 +1216,30 @@ class views
         };
     }
 
+    /**
+     * the mask to show the main object of a blocked change mask
+     * e.g. if this pod does not allow an ip user to open the word edit mask
+     *      show the word default view with the blocked message instead (see /http/view.php)
+     *
+     * @param int $msk_id the id of the blocked change mask
+     * @return int the id of the default mask that shows the object
+     *             or the start mask id for masks without an object view e.g. undo or import
+     */
+    function change_to_show_id(int $msk_id): int
+    {
+        return match ($msk_id) {
+            self::WORD_ADD_ID, self::WORD_EDIT_ID, self::WORD_DEL_ID => self::WORD_ID,
+            self::VERB_ADD_ID, self::VERB_EDIT_ID, self::VERB_DEL_ID => self::VERB_ID,
+            self::TRIPLE_ADD_ID, self::TRIPLE_EDIT_ID, self::TRIPLE_DEL_ID => self::TRIPLE_ID,
+            self::SOURCE_ADD_ID, self::SOURCE_EDIT_ID, self::SOURCE_DEL_ID => self::SOURCE_ID,
+            self::REF_ADD_ID, self::REF_EDIT_ID, self::REF_DEL_ID => self::REF_ID,
+            self::VALUE_ADD_ID, self::VALUE_EDIT_ID, self::VALUE_DEL_ID => self::VALUE_DEFAULT_ID,
+            self::FORMULA_ADD_ID, self::FORMULA_EDIT_ID, self::FORMULA_DEL_ID,
+            self::FORMULA_TEST_ID => self::FORMULA_ID,
+            self::RESULT_ADD_ID, self::RESULT_EDIT_ID, self::RESULT_DEL_ID => self::RESULT_ID,
+            self::LANGUAGE_ADD_ID, self::LANGUAGE_EDIT_ID, self::LANGUAGE_DEL_ID => self::LANGUAGE_ID,
+            default => self::START_ID
+        };
+    }
+
 }

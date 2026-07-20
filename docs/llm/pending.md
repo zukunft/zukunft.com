@@ -4,7 +4,7 @@
 
 ## high prio
 
-if on this page http://localhost/http/view.php?m=90&id=322 the edit button is pressed and the user is not permitted to change it, show the same view again with the message
+check that back is in the url a
 
 fix as many TODO Prio 0 as possible
 

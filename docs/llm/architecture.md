@@ -96,6 +96,20 @@ a formula are both *terms* (not *phrases*, because a formula is not a phrase).
 `view`, `component`) extends the `sandbox` hierarchy. Changes by one user never
 overwrite shared data; user-specific overrides are stored in `*_user` tables.
 
+**Admin protection does not block user changes**: an object protected at admin
+level (or higher) can still be changed by a normal user — the change creates
+the user's own sandbox overlay like any other edit. The only thing the admin
+protection protects is the standard object of the owner: a normal user cannot
+take over the ownership (`sandbox::take_ownership`) and cannot raise or reduce
+the protection level (`sandbox::check_protection` in the save path). So never
+show a "can be changed only by an administrator" style message just because an
+object is admin protected: on a display view the user does not want to change
+anything, so the message is irrelevant, and on an edit view it is wrong because
+the user *can* change the object (as a personal overlay). The protection
+messages that are correct to show are the save-path warnings when a normal
+user tries to change the protection level itself (`PROTECTION_RAISE_DENIED`,
+`PROTECTION_REDUCE_DENIED`).
+
 **Configuration follows the user sandbox**: `config.yaml` is only the seed of
 the system configuration, which lives in the database as normal values on the
 config phrases (`config_numbers`, the global `$cfg`); beside it the low-level

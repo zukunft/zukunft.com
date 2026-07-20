@@ -156,11 +156,12 @@ class system_form extends component
      */
     function title_named(
         db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB,
+        array     $url_array = []
     ): string
     {
         // for a named object the page title is simply its name shown big
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, '', $url_array);
     }
 
     /**
@@ -174,7 +175,8 @@ class system_form extends component
      */
     function title_triple(
         triple|db_object $dbo,
-        int              $max = def::LIMIT_RELATED_PER_VERB
+        int              $max = def::LIMIT_RELATED_PER_VERB,
+        array            $url_array = []
     ): string
     {
         // the from/verb/to links move to the subtitle; the title shows the plain triple name
@@ -189,7 +191,7 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to, $url_array);
     }
 
     /**
@@ -203,10 +205,11 @@ class system_form extends component
      */
     function title_formula(
         db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB,
+        array     $url_array = []
     ): string
     {
-        return $this->title_named($dbo, $max);
+        return $this->title_named($dbo, $max, $url_array);
     }
 
     /**
@@ -221,7 +224,8 @@ class system_form extends component
      */
     function title_value(
         db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB
+        int       $max = def::LIMIT_RELATED_PER_VERB,
+        array     $url_array = []
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value
@@ -229,7 +233,7 @@ class system_form extends component
         if ($dbo::class == value::class) {
             $heading_content = $dbo->name_link();
         }
-        return $this->subtitle($dbo, $heading_content, $max);
+        return $this->subtitle($dbo, $heading_content, $max, '', $url_array);
     }
 
     /**
@@ -247,12 +251,13 @@ class system_form extends component
         db_object $dbo,
         string    $heading_content,
         int       $max = def::LIMIT_RELATED_PER_VERB,
-        string    $lead_subtitle = ''
+        string    $lead_subtitle = '',
+        array     $url_array = []
     ): string
     {
         $html = new html_base();
 
-        $lnk = $this->edit_link($dbo);
+        $lnk = $this->edit_link($dbo, $url_array);
 
         // category subtitle is created based on verbs listed in verbs::CATEGORY_VERBS
         $cat = $this->category_subtitle($dbo, $max);
@@ -388,16 +393,20 @@ class system_form extends component
 
     /**
      * create a html link to change an object e.g. a word, value or formula
+     * the url params of the calling page are added with the url_var::BACK ('9') prefix
+     * so the edit mask can return to the calling page e.g. on cancel
+     * or if the pod blocks the change of an ip user (see /http/view.php)
      *
      * @param db_object $dbo any database object that can be changed by the user or an admin
+     * @param array $url_array the url params of the calling page used to create the back params
      * @return string for a link icon to change the object
      */
-    private function edit_link(db_object $dbo): string
+    private function edit_link(db_object $dbo, array $url_array = []): string
     {
         global $mtr;
 
         $html = new html_base();
-        $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
+        $url = $html->url_with_back($html->url_new($dbo::VIEW_EDIT_ID, $dbo->id()), $url_array);
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
         return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
     }

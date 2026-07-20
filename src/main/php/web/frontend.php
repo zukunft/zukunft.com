@@ -941,6 +941,12 @@ class frontend
             }
         }
 
+        // an admin protected object can still be changed by a normal user (the change creates the
+        // user's own sandbox overlay), so the edit view opens without any protection message; only
+        // the ownership takeover and the change of the protection level itself are admin only and
+        // are enforced in the backend save path (see sandbox::check_protection and take_ownership
+        // and "Admin protection does not block user changes" in docs/llm/architecture.md)
+
         // select the view
         // an edit or del mask is the view that the user has requested, so it is never overwritten here
         // and only a view that the user has selected for the object needs to be saved

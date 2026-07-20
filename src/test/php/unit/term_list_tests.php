@@ -32,8 +32,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -43,6 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -172,6 +176,14 @@ class term_list_tests
         // positive: the edit link points to the word edit view (views::WORD_EDIT_ID = 3) of the term
         $test_name = 'term_list->links_with_context edit link points to the term edit page';
         $t->assert($test_name, str_contains($cols_html, 'm=3&amp;id=1'), true);
+
+        // positive: the url params of the calling page are added to the edit link with the
+        // url_var::BACK ('9') prefix so the edit mask can return to the calling page
+        // e.g. if the pod blocks the change of an ip user (see /http/view.php)
+        $test_name = 'term_list->links_with_context edit link carries the back params of the calling page';
+        $back_html = $col_lst->links_with_context([url_var::MASK => views::WORD_FIND_ID, url_var::PATTERN => 'term']);
+        $t->assert($test_name, str_contains($back_html,
+            url_var::BACK . url_var::MASK . '=' . views::WORD_FIND_ID), true);
 
         // negative: an empty term list renders no columns
         $test_name = 'term_list->links_with_context of an empty list is empty';

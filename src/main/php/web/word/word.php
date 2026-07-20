@@ -979,13 +979,18 @@ class word extends sandbox_code_id
      * of the current database field values so that on save only the fields the user
      * actually changed are written and a concurrent change by another user is not
      * overwritten. See docs/llm/state-and-messages.md.
+     * the '9'-prefixed back params point to the word default view so the edit mask
+     * can return to the word e.g. on cancel or if the pod blocks the change of an ip user
      *
-     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&...&8k=USD&8o=...
+     * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&9m=90&9id=1&8k=USD&8o=...
      */
     private function url_edit(): string
     {
         $html = new html_base();
-        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', (string)$this->id());
+        $url = $html->url_with_back(
+            $html->url_new(views::WORD_EDIT_ID, $this->id()),
+            [url_var::MASK => views::WORD_ID, url_var::ID => $this->id()]
+        );
         $pre = $html->pre_url_part([
             url_var::NAME => $this->name(),
             url_var::PLURAL => $this->plural,
