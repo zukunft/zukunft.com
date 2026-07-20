@@ -100,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -303,6 +304,15 @@ class system_view_ui_tests
         $expected_msg = msg_id::PASSWORD_WRONG->value;
         $test_name = 'login page notification contains password wrong message';
         $t->assert_text_contains($test_name, $login_html, $expected_msg);
+
+        // optional: only active when the login password field uses the css-only show-password toggle
+        // (form_input_password) instead of the native type=password field that keeps the browser auto fill
+        //$test_name = 'login page password field can be revealed';
+        //$t->assert_text_contains($test_name, $login_html, html_base::CLASS_SHOW_PASSWORD);
+        //$test_name = 'login page password field is masked by the show-password css class';
+        //$t->assert_text_contains($test_name, $login_html, html_base::CLASS_INPUT . ' ' . html_base::CLASS_PASSWORD);
+        //$test_name = 'login page show-password toggle uses the eye icon';
+        //$t->assert_text_contains($test_name, $login_html, icons::PASSWORD_SHOW);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'login_notification';
         $test_name = 'login page with failed login notification matches snapshot';

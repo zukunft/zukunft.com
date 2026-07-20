@@ -859,6 +859,15 @@ class views
         self::FORMULA_TEST_ID,
     ];
 
+    // process masks whose plain view page (the form before any process step is started) may still be
+    // read from and written to the html page cache; the per-session anti-csrf token is stripped and
+    // restored per request by db_cache_page and the submit is a POST action that is never cached, so
+    // only the static login / signup form is served from the cache (see frontend->url_cache_key)
+    const array PAGE_CACHE_ALLOWED_MASKS_IDS = [
+        self::LOGIN_ID,
+        self::SIGNUP_ID,
+    ];
+
     // system masks that trigger an action via GET (no form submission required)
     const array GET_ACTION_IDS = [
         self::LOGOUT_ID,
