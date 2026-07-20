@@ -228,8 +228,8 @@ installAndConfigurePhp() {
     apt-get install -y php-json
 
     PHP_VERSION=$(php -r 'echo PHP_VERSION;' | cut -d. -f1,2)
-    if [[ "$PHP_VERSION" != "8.2" ]]; then
-        echo -e "${RED}PHP 8.2 is required, found $PHP_VERSION${NC}"
+    if [[ "$PHP_VERSION" != "8.4" ]]; then
+        echo -e "${RED}PHP 8.4 is required, found $PHP_VERSION${NC}"
         exit 1
     fi
     echo -e "Installed PHP: \n$(php --version)"

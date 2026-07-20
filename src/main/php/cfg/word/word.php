@@ -537,6 +537,10 @@ class word extends sandbox_code_id
                         $this->load_values_related();
                     }
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // drop the values the requester may not read so the related-value list
+                        // cannot disclose another user's private/personal value attached to this
+                        // word (idor); see sandbox_multi::is_readable_by, same gate as api/valueList
+                        $this->values_related->filter_readable_by($usr);
                         // INCL_PHRASES so each value carries its group phrases, which the
                         // frontend needs for the value name and to sort the list by impact
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(

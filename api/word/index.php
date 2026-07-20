@@ -118,6 +118,13 @@ if ($db_con->is_open()) {
                 $msg = 'word id or name is missing';
             }
 
+            // do not disclose another user's private word loaded by id/name (idor); the same
+            // neutral message as a missing id so the response does not confirm the word exists
+            if ($result != '' and !$wrd->is_readable_by($usr)) {
+                $result = '';
+                $msg = 'word id or name is missing';
+            }
+
             // return either the api json to fill the frontend object
             // or the message why the api json could not be created
             $ctrl->get_json($result, $msg);

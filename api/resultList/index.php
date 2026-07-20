@@ -70,6 +70,8 @@ if ($db_con->is_open()) {
             $ids = explode(",", $ids);
             $lst = new result_list($usr);
             $lst->load_by_ids($ids);
+            // drop the results the requesting user may not read (idor); see sandbox_multi::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'formula id is missing';

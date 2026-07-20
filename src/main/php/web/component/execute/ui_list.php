@@ -130,8 +130,10 @@ class ui_list extends ui_base
             if (!$children->is_empty()) {
                 $html = new html_base();
                 if ($children->count() == 1) {
-                    // a single child reads as the full statement, e.g. "Euro is a currency"
-                    $header = $children->name_link() . ' ' . $is_vrb->name() . ' ' . $phr->name();
+                    // a single child reads as the full statement, e.g. "Euro is a currency";
+                    // name_link() is already safe html, the verb and phrase names are user input
+                    // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
+                    $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
                 } else {
                     // several children get a header of the word plural and the verb plural,
                     // e.g. "currencies are", followed by the list of the child phrases
@@ -139,7 +141,7 @@ class ui_list extends ui_base
                     if ($plural == null or $plural == '') {
                         $plural = $phr->name();
                     }
-                    $header = $plural . ' ' . $is_vrb->plural_reverse();
+                    $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
                 }
                 // start with a line break and the header as an h4 subtitle, then (for several
                 // children) the linked child phrases
@@ -548,7 +550,9 @@ class ui_list extends ui_base
                 foreach ($dbo->view_lst->lst() as $msk) {
                     $preview = $html->div('view preview', view_styles::COL_SM_12);
                     $buttons = $msk->open_link($dbo->id()) . ' ' . $msk->switch_link($dbo->id());
-                    $views_html .= $html->div($preview . $msk->name() . ' ' . $buttons);
+                    // escape the view name (div emits its body raw and the name is user input); the
+                    // preview and buttons around it are already-built html (stored xss via view name)
+                    $views_html .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
                 }
             }
             // tab 2: the change log of the word, latest first
@@ -572,7 +576,9 @@ class ui_list extends ui_base
     function link_list_word(db_object $dbo, ?data_object $cfg): string
     {
         // TODO review
-        return 'list of phrases related to ' . $dbo->name() . ' ';
+        // escape the object name (user input rendered raw by the component arm; stored xss)
+        $html = new html_base();
+        return 'list of phrases related to ' . $html->esc($dbo->name()) . ' ';
     }
 
     /**

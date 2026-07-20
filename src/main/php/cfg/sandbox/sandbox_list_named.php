@@ -1382,4 +1382,24 @@ class sandbox_list_named extends sandbox_list
         return $result;
     }
 
+    /**
+     * drop the named objects the requesting user may not read, so a list returned by the api never
+     * discloses another user's non-public word/triple/formula/source/ref/view/component
+     * (see sandbox::is_readable_by); used at the api read boundary against id-list enumeration
+     *
+     * @param user|null $usr the user who has requested to read the list
+     * @return sandbox_list_named this list with only the entries readable by the given user
+     */
+    function filter_readable_by(?user $usr): sandbox_list_named
+    {
+        $result = array();
+        foreach ($this->lst() as $sbx_obj) {
+            if ($sbx_obj->is_readable_by($usr)) {
+                $result[] = $sbx_obj;
+            }
+        }
+        $this->set_lst($result);
+        return $this;
+    }
+
 }

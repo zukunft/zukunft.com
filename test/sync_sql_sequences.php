@@ -1,5 +1,10 @@
 <?php
 
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('This script may only be run from the command line.');
+}
+
 include_once 'test_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;

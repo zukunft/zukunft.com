@@ -404,6 +404,26 @@ class phrase extends combine_named
     }
 
     /**
+     * check if the requesting user may read this phrase by delegating to its underlying word or
+     * triple (both carry the sandbox read scope); used at the api read boundary so a phrase cannot
+     * disclose another user's non-public word/triple (see sandbox::is_readable_by)
+     *
+     * @param user|null $usr the user who has requested to read this phrase
+     * @return bool true if the phrase may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        $obj = $this->obj();
+        if ($obj instanceof sandbox) {
+            $result = $obj->is_readable_by($usr);
+        } else {
+            // a phrase not backed by a word or triple is public
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * set the object id based on the given term id
      * must have the same logic as the api and the frontend
      *

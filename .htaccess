@@ -65,6 +65,13 @@ RedirectMatch 404 ^/cache/
 # only and must never be served. Return 404 so the folder looks non-existent.
 RedirectMatch 404 ^/http_old/
 
+# The top-level /test folder holds the CLI test runners (test.php, test_unit.php, ...) and
+# helpers that reset the database. They run only from a shell (each script additionally
+# refuses a non-cli request), never over the web. Block the whole folder as defense-in-depth
+# - matching the /src/test block above - so it can neither be executed nor its source read
+# even if a broken or missing nested .htaccess would otherwise expose it.
+RedirectMatch 404 ^/test/
+
 # The install/update flow keeps the docroot a git working tree (for the in-place
 # update-program mechanism). The .git repository itself is moved outside the
 # docroot via --separate-git-dir, but block the whole /.git path here as a second

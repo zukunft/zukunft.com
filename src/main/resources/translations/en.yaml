@@ -73,6 +73,7 @@ messages:
   signup_alpha_notice: "Please signup for <b>alpha testing</b> of zukunft.com."
   signup_data_warning: "Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates."
   signup_err_name_exists: "User name already exists. Please use another name, or if this is your account, use the password reset."
+  signup_err_name_invalid: "User name contains invalid characters (a slash, backslash or control character is not allowed). Please use another name."
   signup_err_email_empty: "Email can't be empty"
   signup_err_pw_empty: "Password can't be empty"
   signup_err_pw_retype_empty: "You must re-type your password"

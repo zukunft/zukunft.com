@@ -75,6 +75,12 @@ if ($db_con->is_open()) {
             $msg = 'phrase id or name is missing';
         }
 
+        // do not disclose another user's private phrase loaded by id/name (idor); neutral message
+        if ($result != '' and !$phr->is_readable_by($usr)) {
+            $result = '';
+            $msg = 'phrase id or name is missing';
+        }
+
         // add, update or delete the phrase
         $ctrl->get_json($result, $msg);
 

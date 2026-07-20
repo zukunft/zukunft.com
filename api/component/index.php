@@ -77,6 +77,12 @@ if ($db_con->is_open()) {
         }
     }
 
+    // do not disclose another user's private component loaded by id/name (idor); neutral message
+    if ($result != '' and !$cmp->is_readable_by($usr)) {
+        $result = '';
+        $msg = 'component id or name is missing';
+    }
+
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 

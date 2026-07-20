@@ -85,6 +85,12 @@ if ($db_con->is_open()) {
             $msg = 'Cannot load source because id, name and code id is missing';
         }
 
+        // do not disclose another user's private source loaded by id/name/code (idor); neutral message
+        if ($result != '' and !$src->is_readable_by($usr)) {
+            $result = '';
+            $msg = 'Cannot load source because id, name and code id is missing';
+        }
+
         // add, update or delete the source
         $ctrl->get_json($result, $msg);
 

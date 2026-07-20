@@ -427,7 +427,10 @@ class ref extends sandbox
      */
     function name_tip(): string
     {
-        $result = $this->type_name() . ' ' . $this->external_key();
+        // escape the user-controlled external key and the type name: the name_tip base contract
+        // returns html-safe output, so a generic caller rendering it would be stored xss otherwise
+        $result = htmlspecialchars($this->type_name(), ENT_QUOTES) . ' '
+            . htmlspecialchars($this->external_key(), ENT_QUOTES);
         if ($this->last_update != null) {
             $result .= ', last update ' . $this->last_update;
         }

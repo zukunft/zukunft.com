@@ -124,7 +124,8 @@ class language extends type_object
      */
     function name_tip(): string
     {
-        return $this->name();
+        // escape the name: the name_tip base contract returns html-safe output (stored xss)
+        return htmlspecialchars($this->name(), ENT_QUOTES);
     }
 
     /**

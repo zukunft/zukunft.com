@@ -30,6 +30,13 @@
 
 */
 
+// this file is included by every test runner; refuse a direct web request so the test
+// tree can never be executed over http even if the .htaccess rules are not deployed
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('This script may only be run from the command line.');
+}
+
 // add as first step a global debug var to allow also interactive debugging
 // of php script loading by adding &debug=9 to the url
 global $debug;

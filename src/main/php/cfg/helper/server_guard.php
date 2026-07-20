@@ -191,6 +191,15 @@ class server_guard
         if ($is_https && !headers_sent()) {
             header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
         }
+        // baseline security headers for every response (http and https): nosniff stops mime-type
+        // confusion, SAMEORIGIN blocks clickjacking by framing the site cross-origin, and a strict
+        // referrer policy keeps the full url from leaking to third parties. a Content-Security-Policy
+        // is deliberately left out here until the inline styles are audited (see docs/llm/pending.md)
+        if (!headers_sent()) {
+            header('X-Content-Type-Options: nosniff');
+            header('X-Frame-Options: SAMEORIGIN');
+            header('Referrer-Policy: strict-origin-when-cross-origin');
+        }
     }
 
     /**

@@ -526,7 +526,9 @@ class formula extends sandbox_code_id
      */
     function user_expression(): string
     {
-        return str_replace('"', '&quot;', $this->usr_text);
+        // the expression is user input rendered as element text, so escape it fully (the previous
+        // quote-only replacement left "<" / ">" through and allowed stored xss via the expression)
+        return htmlspecialchars($this->usr_text, ENT_QUOTES);
     }
 
     /**
@@ -550,7 +552,9 @@ class formula extends sandbox_code_id
      */
     function expression_latex(): string
     {
-        return $this->latex_html($this->get_latex());
+        // escape the user latex before the latex->html transforms emit it raw into a span; the
+        // math markup ("\frac", "^", "<") survives html-escaping and renders the same (stored xss)
+        return $this->latex_html(htmlspecialchars($this->get_latex(), ENT_QUOTES));
     }
 
     /**
@@ -563,12 +567,16 @@ class formula extends sandbox_code_id
     function expression_latex_link(): string
     {
         $latex = $this->get_latex();
+        // escape the user latex first, so only the trusted term-link html inserted below stays
+        // unescaped in the rendered expression; the term name in the search is escaped to match
+        // the now-escaped latex, name_link() returns the safe anchor html (stored xss via latex)
+        $latex = htmlspecialchars($latex, ENT_QUOTES);
         // link each "\text{<term>}" token to its term, keeping the latex layout; the link incl.
         // the description as tooltip stays inside the \text{} wrapper that latex_to_html unwraps
         if ($this->trm_lst != null) {
             foreach ($this->trm_lst->lst() as $trm) {
                 $latex = str_replace(
-                    '\text{' . $trm->name() . '}',
+                    '\text{' . htmlspecialchars($trm->name(), ENT_QUOTES) . '}',
                     '\text{' . $trm->name_link() . '}',
                     $latex
                 );
