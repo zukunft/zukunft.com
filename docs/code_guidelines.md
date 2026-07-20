@@ -184,4 +184,63 @@ name        - the most useful name of the object for the user
 dsp_id      - the name including the database id for debugging
 
 
+## security
+
+these rules generalise the security defects fixed during the code review (fix #334). follow them
+for every new endpoint, render path, entry point and file access so the same class of bug cannot
+reappear. 
+
+### output encoding (xss)
+
+- every user- or request-controlled string rendered into html is escaped at the sink: body / element
+  text via `html_base::esc()` (ENT_NOQUOTES), a value that goes into an attribute via
+  `htmlspecialchars(..., ENT_QUOTES)`.
+- the generic container helpers (`td`, `th`, `div`, `span`, `sup`, `dsp_text_h1/h2/h3`, ...) emit
+  their body raw; escape the value before passing it in, never rely on the container to escape.
+- a url or `<a>` href goes through `html_base::ref()` (it escapes the href and blocks non-http(s)
+  schemes); never concatenate a raw url into markup.
+- the `<title>`, tooltips, and the error / log / change-log text are output sinks too; escape
+  request- or db-derived content there, not only the visible `<h1>` / field label.
+- a method that overrides an html-returning base method keeps the base's "returns html-safe output"
+  contract - escape the same fields the base escaped (e.g. a `name_tip` override).
+
+### access control and insecure direct object reference (idor)
+
+- an `if ($usr->id > 0)` check is NOT access control: every anonymous request gets an auto-created
+  ip user with `id > 0`. a read endpoint that returns a user-ownable object gates disclosure with
+  `is_readable_by($session_user)` (public share OR owner OR admin/system) and returns the same
+  neutral "missing id" message when not readable, so it never confirms the object exists.
+- the read gate covers three shapes, not only the direct single-object endpoint: the object embedded
+  in another object's api response (e.g. related values under `INCL_RELATED`), and the list endpoints
+  via a `filter_readable_by()` on the list.
+- check readability / permission against the session user, never the loaded `data_user` (which may be
+  an admin-impersonated target).
+- a privilege-assignment check excludes every profile / role that grants the higher tier, consistent
+  with the predicate that reads it: because `user::is_system()` is true for the TEST, LOG and SYSTEM
+  profiles, `can_set_profile` must block all three, not only SYSTEM.
+- enforce disclosure at the untrusted api / frontend boundary; the internal flows (save, calculation,
+  import) are deliberately not gated by the read filter so cross-user aggregation of public data works.
+
+### input & path validation
+
+- never build a filesystem path (cache file, export file, ...) from a user-controlled name; key it by
+  the integer id, or `basename()` / `hash()` the value first (see `config_numbers::cache_file`).
+- validate a user-supplied name / identifier at the entry point with a deny-list for path and control
+  characters (`/`, `\`, `\x00-\x1f`) so it can never travel into a path or break an output context;
+  keep the deny-list lenient so legitimate names (with spaces, dots) stay valid.
+- validate archive entry names before extraction (reject a `../` traversal or an absolute path) to
+  prevent zip-slip.
+- any entry point that honours a `&debug` url parameter keeps `$debug = 0` until the environment is
+  loaded and applies the requested level only in `ENV_DEV`, so sql and the internal call graph are
+  never echoed to a visitor in production - this applies to every bootstrap, api and dev/test harness.
+
+### secrets & hygiene
+
+- runtime files the app writes (logs, file caches, state json) are never committed; add them to
+  `.gitignore` and keep `error.log`, cache and state files untracked.
+- committed example config (`.env.example`) uses labelled dummy secrets and RFC 5737 documentation
+  ips (`203.0.113.0/24`, `198.51.100.0/24`), never a real secret or a real admin ip.
+- a permission-path function with a non-nullable return type has a single return at the end, so a
+  non-matching branch cannot fall off and throw a `TypeError` fatal (a fatal bypasses the
+  sys_log / admin / user error handling).
 

@@ -386,4 +386,24 @@ class ref_list extends type_list
         return $usr_msg->is_ok();
     }
 
+    /**
+     * drop the references the requesting user may not read, so a reference list returned by the api
+     * never discloses another user's non-public reference (ref extends sandbox, see is_readable_by);
+     * ref_list extends type_list, so it does not inherit sandbox_list_named::filter_readable_by
+     *
+     * @param user|null $usr the user who has requested to read the list
+     * @return ref_list this list with only the references readable by the given user
+     */
+    function filter_readable_by(?user $usr): ref_list
+    {
+        $result = array();
+        foreach ($this->lst() as $ref) {
+            if ($ref->is_readable_by($usr)) {
+                $result[] = $ref;
+            }
+        }
+        $this->set_lst($result);
+        return $this;
+    }
+
 }

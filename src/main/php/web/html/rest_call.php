@@ -221,7 +221,10 @@ class rest_call
     function request_json(): array
     {
         $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-        return json_decode($request_text, true);
+        $result = json_decode($request_text, true);
+        // an empty or malformed body decodes to null; return an empty array so the : array return
+        // type never fatals and the caller (a write with no/invalid body) maps nothing
+        return is_array($result) ? $result : [];
     }
 
 }

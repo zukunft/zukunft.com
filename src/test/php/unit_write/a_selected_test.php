@@ -152,7 +152,7 @@ class a_selected_test extends test_cleanup
         //new formula_link_tests()->run($this);
         //new formula_calc_tests()->run($this);
         //new api_tests()->run($this);
-        new user_tests()->run($this);
+        //new user_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -289,7 +289,7 @@ class a_selected_test extends test_cleanup
              * user interface
              */
 
-            new horizontal_ui_tests()->run($this, $ui);
+            //new horizontal_ui_tests()->run($this, $ui);
 
             /*
              * db write
@@ -299,7 +299,7 @@ class a_selected_test extends test_cleanup
             $this->cleanup_objects_ex_user();
 
             // run the selected db write tests
-            run_system_test($this);
+            //run_system_test($this);
             //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
@@ -338,8 +338,9 @@ class a_selected_test extends test_cleanup
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
-            //new api_write_tests()->run($this);
-            new import_write_tests()->run($this);
+            // the only active main test: read each main object type via a REST api get call
+            new api_write_tests()->run($this);
+            //new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             //new wikidata_write_tests()->run($this);
 

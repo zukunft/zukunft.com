@@ -40,7 +40,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -118,6 +120,26 @@ class ref_tests
         $t->subheader($ts . 'base object handling');
         $ref = $t_ref->ref_filled();
         $t->assert_reset($ref);
+
+        $t->subheader($ts . 'read access (share)');
+        // a non-public reference must not be disclosed to another user via a related-reference list
+        // (idor); ref extends sandbox (is_readable_by) and ref_list has its own filter_readable_by
+        global $sys;
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+        $ref_priv = $t_ref->reference();
+        $ref_priv->set_owner_id($t->usr1->id);
+        $ref_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private reference';
+        $t->assert_true($test_name, $ref_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private reference';
+        $t->assert_false($test_name, $ref_priv->is_readable_by($t->usr2));
+        $ref_pub = $t_ref->reference();
+        $ref_pub->set_owner_id($t->usr1->id);
+        $ref_lst = new ref_list($t->usr2);
+        $ref_lst->set_lst([$ref_priv, $ref_pub]);
+        $ref_lst->filter_readable_by($t->usr2);
+        $test_name = 'the readable filter keeps only the public reference for another user';
+        $t->assert($test_name, count($ref_lst->lst()), 1);
 
         $t->subheader($ts . 'api');
         $ref = $t_ref->reference1();

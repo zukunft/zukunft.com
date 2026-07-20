@@ -4,127 +4,78 @@
 
 ## high prio
 
+add another workflow test where another user changes (not the word owner) the description of a word but without the back steps of the existing change word workflow test. it should be tested that the uses_sandbox flag is activated for the user, a user sandbox row ist created and the user sees the changed description whereas the owner still sees his unchanged description
+
+fix as many TODO Prio 0 as possible
+
+create the user_message $msg at the entry point and add it as a parameter to all function that might create a message that needs to be shown to the user
+
+create an admin view with the system errors 
+
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
 
 ### security before go live
 
-findings of the re-run security check on 2026-07-20, ordered by exploitability. six read-only review
-surfaces: an adversarial re-audit of the recent fixes (parts 16-21), auth/session/crypto/csrf,
-injection/files/deserialization/ssrf, xss across the whole web/ render layer, access control/idor
-across all endpoints, and config/cache/dos/business-logic. each finding below was verified against the
-code (file:line evidence in the text). the previously fixed items (parts 1-21) and the already-listed
-"security with low prio" items were excluded. two of these are gaps in the share-read fix itself.
+the security findings from the 2026-07-17 and 2026-07-20 reviews are all fixed (fix #334 parts 1-22).
+the reusable rules distilled from them - output encoding, the api read-access gate, never build a
+filesystem path from a user name, env-gated debug, gitignored runtime files, single return on a
+permission path - were moved to docs/code_guidelines.md ("security" section); the concrete once-off
+fixes stay in the git history.
 
-ALL FIXED 2026-07-20. summary of the fixes (each finding paragraph below is kept for the audit trail):
-- sys_log display xss: web/system/sys_log.php now esc()s text/description/trace/user_name/owner_name
-  in display(), page_view(), display_admin() and get_html() before td()/body concat.
-- word/triple embedded value idor: word.php and triple.php now call values_related->filter_readable_by($usr)
-  before api_json_array under INCL_RELATED.
-- admin->system escalation: user::can_set_profile() now blocks assigning TEST and LOG as well as SYSTEM
-  (all three make user::is_system() true).
-- named-object idor read: added sandbox::is_readable_by (seq-id branch), phrase::is_readable_by and
-  term::is_readable_by (delegating), and sandbox_list_named::filter_readable_by; gated the object
-  endpoints (word/triple/phrase/formula/source/reference/component/view/group) and filtered the list
-  endpoints (wordList/formulaList/viewList/componentList/sourceList/termList/phraseList) with a neutral
-  'missing id' message; group was already covered via sandbox_multi. read-access unit tests added to
-  word_tests.php (owner/other/admin/public).
-- file-cache path traversal / poisoning: config_numbers::cache_file() now keys by the integer user id,
-  not the raw name; plus a signup deny-list (frontend.php action_signup) rejecting a user name with a
-  slash, backslash or control character (new msg_id SIGNUP_ERR_NAME_INVALID + en/de translations).
-- is_admin_local() TypeError: single return at the end (user.php).
-- error.log / test/error.log: git rm --cached + added to .gitignore.
-- name_tip() overrides: source.php, ref.php, language.php now htmlspecialchars the name/external_key.
-- dev debug scripts: src/test/php/dev/test_js.php and test_jquery.php now ENV_DEV-gate the url debug level.
-- zip-slip: import_convert_xbrl.php validates every entry path before extractTo (defense-in-depth).
-the informational/by-design items (api csrf fail-open, reset key in url, broken api/json export param)
-were left as documented.
+findings of the re-run security check on 2026-07-21, ordered by exploitability; only critical / high
+issues that are NOT yet solved are listed here (the fixed ones live in code_guidelines.md / git). each
+was verified against the code with file:line evidence.
 
-stored xss in the system error-log display page (high, admin compromise): web/system/sys_log.php lines
-350-352 (get_html), 245 (display), 262-268 (page_view) and 293-294 (display_admin) pass the raw sys_log
-`text`, `description` and `trace` into html_base::td() / the html body, and td() (html_base.php) emits
-its cell body unescaped. these fields routinely embed user-supplied strings - e.g. html_base::ref()
-calls log_warning('link to "' . $url . '" is blocked ...') with the raw user source/ref url
-(html_base.php ~513), and many log_err/log_warning messages embed object names - so a user who sets a
-source/ref url (or a name) to `"><img src=x onerror=...>` stores a sys_log row whose text carries the
-payload; when an admin opens the error-log page the payload executes in the admin session. this is a
-different code path from the already-fixed backend log_err/critical_error_html echo (that one escapes;
-the frontend sys_log renderer does not). fix: esc() each field before td()/body concat, as
-change_log_named.php and change_log_link.php already do.
+[FIXED 2026-07-21] idor read of private *related* objects on the word / triple / formula pages (high,
+live; a coverage gap in the part-20/22 share-read fix): the fix added filter_readable_by() to
+values_related in word::api_json_array and triple.php, but the sibling lists emitted next to it under
+api_types::INCL_RELATED were still unfiltered - word.php phrases_related, formulas_related,
+parent_formulas_related, references_related, views_related; triple.php formulas_related /
+references_related / views_related; formula.php phrases_related / latex_terms. these lists are loaded
+by the same load_*_related mechanism that returns the owner's standard rows (share_id/owner_id are
+populated), so `GET /api/word?id=<public word>&incl_related=1` (allowed for any anonymous ip user; the
+public word passes the top-level is_readable_by) returned another user's private/personal triple,
+formula or view attached to that word. fixed: filter_readable_by($usr) is now called on every sibling
+related list before api_json_array in word.php, triple.php and formula.php (and on each parent-formula
+group's formulas). references_related uses ref_list which extends type_list (not sandbox_list_named),
+so a filter_readable_by was added to ref_list itself (ref extends sandbox, so it has is_readable_by).
+changes_related is deliberately left unfiltered - it is the change log, a separate low item. a
+read-access unit test for ref::is_readable_by / ref_list::filter_readable_by was added to ref_tests.php.
 
-private value idor still open on the word/triple pages (high; a gap in the part-20 share-read fix):
-the filter_readable_by() gate was applied to the five direct value/result/figure endpoints but not to
-the same values embedded in a word/triple api response under api_types::INCL_RELATED. word.php ~543 and
-triple.php emit values_related->api_json_array(...) with no filter (verified: filter_readable_by is
-called only from the five api controllers, and load_by_phr / load_sql_by_phr_lst_multi add no
-share/owner where). so user A opening a public word that user B attached a private/personal value to
-receives B's value (number, group phrases, share flag) in the `values` array - the same idor closed on
-the direct endpoints, still open on the primary viewing path, no id guessing needed. fix: apply
-filter_readable_by(session_user) to values_related (and the triple's) before api_json_array; check
-against the session user, not the object's get_user().
+[FIXED 2026-07-21] the api write path is now enabled and hardened (was previously unreachable dead
+code). three linked fixes, all needed together: (1) method detection - api/word/index.php used
+`in_array(rest_ctrl::REQUEST_METHOD, $_SERVER)` which searched the $_SERVER *values* for the key name,
+so it was always false and every request fell through to the GET debug branch, disabling all writes;
+changed to array_key_exists, and the json body is now read only for a write (a GET has none, so
+request_json() - made robust to return [] on an empty/malformed body - is not called for GET). (2)
+csrf - the write path relied only on server_guard::same_origin() (which fails open when both Origin and
+Referer are absent); added server_guard::csrf_token_valid() (the X-CSRF-Token header must match the
+per-session $_SESSION[SESSION_TOKEN], the same synchronizer token frontend::request_token_valid checks,
+compared with hash_equals) and wired it into controller::change_permitted, so a write now needs a valid
+origin AND a valid token AND a non-blocked user. (3) checked code_id setters - sandbox_code_id::
+api_mapper routed code_id through the unchecked set_code_id_db() guarded only by an always-true null
+check, letting any user plant a system code_id (a load_by_code_id injection into system views / config
+phrases / formula/component behaviour); it now routes through the privilege-checked set_code_id() and
+merges the refusal onto $usr_msg (with a null-user fail-closed guard), matching import_mapper, and
+component::api_mapper does the same for the four ui_msg_* fields via their checked setters. affected
+objects: word, view, source, component, formula (all extend sandbox_code_id; triple does not). unit
+test added to word_tests.php (word::api_mapper refuses code_id for a normal user, reports it, sets it
+for a system user). NOTE: this ENABLES api writes - only api/word has the write dispatch; the write
+path needs an authenticated session with the X-CSRF-Token header, so any api write test must send it,
+and this should be exercised end to end before production. this closes the previously-listed
+"api write path has no anti-csrf check" and "in_array method detection" low-prio items.
 
-admin can escalate to full system privileges via the TEST/LOG profile (medium-high; admin-tier
-requester, self-escalation): user::is_system() (user.php ~2563-2566) is true for the TEST, LOG *and*
-SYSTEM profiles, but can_set_profile() (user.php ~1902-1906) only forbids an admin from assigning the
-SYSTEM profile - the broader check `// if (!$profile->is_system())` is commented out and replaced by
-the narrower `!$profile->is_type(SYSTEM)`. so an admin may assign TEST or LOG (to themselves via
-can_change, which permits an admin to change their own params); that account then satisfies is_system()
-everywhere - can_change any user incl. real system users, can_set_profile all profiles incl. SYSTEM,
-admin_mask_denied, reserved-name usage - defeating the intended admin↛system boundary. fix: block TEST
-and LOG as well as SYSTEM in can_set_profile (i.e. exclude every profile for which is_system() is true),
-or implement the intended numeric right_level comparison the enforce_profile_privilege TODO describes.
+the remaining review surfaces are clean at critical/high: injection (sql parameterised via sql_creator,
+the one exec pinned with escapeshellarg, no unserialize/xxe/eval/dynamic-include, mail recipient is a
+loaded address), the frontend xss layer (every body sink esc()'d, every attribute sink ENT_QUOTES incl.
+the sys_log page, change-log, job page, view/component editors, notification bar), secrets/config (no
+tracked .env/.key/.bak, no default db password, .htaccess default-deny holds), and the write-side
+authorization model (a non-owner change routes to a user overlay, protection raise gated both branches,
+profile escalation blocked by enforce_profile_privilege, config writes go through the sandbox model,
+import runs under the requesting user). the two write-path items above (code_id, and the previously
+listed csrf gap) hinge on the same dead in_array method detection and must be closed in the one change
+that enables api writes.
 
-idor read of private named sandbox objects by id (medium; same class as the value fix, seq-id branch
-not covered): is_readable_by() exists only on sandbox_multi (value/result) and figure, not on the
-seq-id sandbox branch, so api/word, api/triple, api/phrase, api/formula, api/source, api/reference,
-api/component, api/view, api/group (and the *List endpoints via load_by_ids) do load_by_id ->
-api_json with only the `id > 0` gate that every anonymous ip-user passes. these tables all carry a
-standard-row share_type_id "to restrict the access" but no load path filters on it, so an object a
-user set private/personal is returned in full (name, description, expression, url) to anyone iterating
-ids. severity medium because these graph objects are usually deliberately public; the confidential
-case leaks. fix: add is_readable_by to sandbox/sandbox_named (share public OR owner OR admin/system)
-and gate the object endpoints + filter the list load_by_ids, mirroring the value fix.
-
-path traversal / cache poisoning via an unvalidated username in the file config cache (medium,
-config-gated): config_numbers.php::cache_file() (~605) builds a filesystem path by concatenating
-$usr->name() (paths::CACHE . CACHE_CONFIG . SEP . name . .json) with no sanitisation, and there is NO
-username charset validation anywhere - verified: no preg_match/basename/ctype in user.php and
-frontend.php ~1428 assigns the raw signup username directly. with CACHE=file a user who registers a
-name like `x/../../../var/www/html/http/pwn` makes write_file_cache() write attacker-influenced json
-outside cache/, and a name containing `/` poisons another user's config cache. precondition CACHE=file
-(default and .env.example use CACHE=database, which keys by integer type_id+user_id via bound sql and
-is safe), hence medium. root cause - the missing username charset allow-list at signup - is worth
-fixing regardless of cache mode. fix: derive the cache filename from the integer user_id (as the db
-cache does) or hash()/basename() the name, and add a username charset allow-list at signup.
-
-lower severity: is_admin_local() (user.php ~2535-2544) puts its `return $result;` inside the
-is_admin() branch, so a non-admin falls off the end and the `: bool` return type throws an uncaught
-TypeError (a php fatal on a permission path, e.g. type_object.php ~1087 when a normal user deletes a
-used type) - fails closed by crashing but violates the no-fatal rule; fix: single return at the end or
-`return $this->is_admin() && $this->ip_addr == 'localhost';`. error.log and test/error.log are
-git-tracked runtime log files (currently 0 bytes) that the app appends to (the sys_log throttle note,
-fatal errors) - a future commit could capture logged internal paths / request strings; fix: git rm
---cached and add to .gitignore like the server_admin state files. three name_tip() overrides return
-the raw name instead of the esc()'d base contract - web/ref/source.php ~207, web/ref/ref.php ~428
-(external_key is user input), web/system/language.php ~125 - latent xss: the primary render arms go
-through ui_base::dbo_name() which escapes, but a generic name_tip caller in a list would render raw;
-fix: escape in the overrides or route through the base. two dev-only harnesses set $debug from the
-request ungated - src/test/php/dev/test_js.php ~34 and test_jquery.php ~35 - not deployed (the three
-production bootstraps are correctly ENV_DEV-gated), low; add the same gate for consistency. zip-slip in
-import_convert_xbrl.php ~207 (ZipArchive::extractTo of `..` entry names) is not attacker-reachable
-today (test/cli-only tool, no web upload / $_FILES path exists); validate entry paths if a web import
-is ever added.
-
-informational / by-design (not counted as findings): the api write path's same-origin csrf check
-fails open when both Origin and Referer are absent, but a browser cannot be coerced into omitting both
-on a cross-origin state-changing request (browsers always send Origin on cross-site post; `Origin:
-null` is correctly rejected), so it is not browser-exploitable - it only allows genuine
-server-to-server calls, the documented intent; add a token/Sec-Fetch check if cookie auth is ever added
-to the api. the reset/activation key travels as a url query parameter (frontend.php ~1673) so it can
-land in access logs / history, mitigated by sha256-at-rest, one-time use, 1h expiry, 80-bit entropy and
-the Referrer-Policy header - low, a post-based activation form would avoid it. api/json/index.php ~995
-hard-codes $wrd_id = 1 overriding the request param (a broken export feature, ignores attacker input -
-not a security issue). the DUMMY_PW_HASH cost coupling and the no-login/reset-throttle items remain as
-already listed under "security with low prio".
 
 ### security improvements
 
@@ -216,11 +167,11 @@ moved to [pending_next_launch.md](pending_next_launch.md) to keep this file smal
 
 still open (deliberately skipped as too risky / too large to change safely without a test run):
 Content-Security-Policy is not set - needs an audit of the frontend inline styles first (the other
-headers are in place). the api write path has no anti-csrf check (api/word/index.php /
-api/controller.php) but is currently unreachable dead code because the method-detection uses
-`in_array(REQUEST_METHOD, $_SERVER)` (should be array_key_exists), so every request falls through to
-GET; close the csrf gap in the same change that fixes the method detection and enables writes. the
-bcrypt DUMMY_PW_HASH is pinned at cost 12 while real hashes use the runtime default cost - equal on
+headers are in place). [the api-write anti-csrf gap and the in_array method detection are now FIXED -
+see "security before go live" 2026-07-21; the api write path is enabled with origin + X-CSRF-Token +
+checked code_id setters, but was previously dead code so it needs an end-to-end write test before
+production.] the bcrypt DUMMY_PW_HASH is pinned at cost 12 while real hashes use the runtime default
+cost - equal on
 php 8.4 (default 12) but diverges on any php where the default is 10, re-opening the timing oracle the
 dummy prevents; derive the dummy from the same cost (skipped: touches auth timing, wants a careful
 test). save_user() has no general can_change() gate (safe today because no write caller passes an

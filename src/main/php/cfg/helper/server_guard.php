@@ -219,6 +219,25 @@ class server_guard
     }
 
     /**
+     * true if a state changing api request carries a valid per-session csrf token; this is the
+     * synchronizer-token defense that complements same_origin() and closes its both-headers-absent
+     * fail-open: a cross-site attacker's forged request auto-sends the session cookie but cannot read
+     * the token (same-origin policy) nor set the custom X-CSRF-Token header (it would trigger a cors
+     * preflight the attacker cannot satisfy). the token is the same $_SESSION[SESSION_TOKEN] the html
+     * frontend already checks (see frontend::request_token_valid), issued at login; read here at the
+     * request bootstrap like same_origin, compared with hash_equals. a request without a session token
+     * (no login) fails closed, which is fine because a write needs a logged-in, non-blocked user anyway
+     *
+     * @return bool true if the request X-CSRF-Token header matches the session token
+     */
+    public static function csrf_token_valid(): bool
+    {
+        $sent_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        $session_token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
+        return $session_token !== '' && hash_equals($session_token, $sent_token);
+    }
+
+    /**
      * pure same-origin decision for a state changing request: allowed unless an Origin (preferred,
      * else a Referer) is present and its host does not match the request Host (fail open only when
      * the browser sends no origin hint at all, e.g. a server-to-server call)

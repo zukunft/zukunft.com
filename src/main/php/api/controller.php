@@ -260,6 +260,14 @@ class controller
             $usr_msg = new user_message($usr);
             $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
             $this->not_permitted($msg . $usr_msg->all_message_text());
+        } elseif (!server_guard::csrf_token_valid()) {
+            // require the per-session csrf token in the X-CSRF-Token header (synchronizer token,
+            // closes the same_origin both-headers-absent fail-open); a forged cross-site write
+            // cannot supply it. see server_guard::csrf_token_valid
+            $permitted = false;
+            $usr_msg = new user_message($usr);
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $this->not_permitted($msg . $usr_msg->all_message_text());
         } elseif ($usr->is_blocked()) {
             $permitted = false;
             // tell the user why the change has been rejected and how to solve it

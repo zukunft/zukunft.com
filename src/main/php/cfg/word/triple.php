@@ -792,6 +792,8 @@ class triple extends sandbox_link_named
                         $this->load_formulas_related();
                     }
                     if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // drop the related formulas the requester may not read (idor)
+                        $this->formulas_related->filter_readable_by($usr);
                         // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
                         // their own name, id and impact, which the frontend needs to render
                         // and sort the list by impact, without recursing back into relations
@@ -802,6 +804,8 @@ class triple extends sandbox_link_named
                         $this->load_references_related();
                     }
                     if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        // drop the related references the requester may not read (idor)
+                        $this->references_related->filter_readable_by($usr);
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
                             new api_type_list(), $usr);
                     }
@@ -816,6 +820,8 @@ class triple extends sandbox_link_named
                         $this->load_views_related();
                     }
                     if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        // drop the related views the requester may not read (idor)
+                        $this->views_related->filter_readable_by($usr);
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }
