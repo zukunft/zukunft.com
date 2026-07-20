@@ -273,6 +273,12 @@ class formula_link extends sandbox_link
      */
     public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_id = $this->predicate_id;
         if ($used_id == null) {
             $used_id = $typ_lst->frm_lnk_typ->default_id();

@@ -36,21 +36,25 @@ namespace Zukunft\ZukunftCom\main\php\api;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -100,6 +104,10 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
         $usr_msg = new user_message($usr);
 
@@ -148,8 +156,12 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
 
         $dbo->api_mapper($api_json, $usr_msg);
         $dbo->id = $id;
@@ -190,8 +202,12 @@ class controller
         string           $msg
     ): void
     {
+        if (!$this->change_permitted($usr, $msg)) {
+            return;
+        }
+
         $result = ''; // reset the json message string
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
 
         if ($id > 0) {
             $dbo->load_by_id($id);
@@ -217,14 +233,64 @@ class controller
 
     function not_permitted(string $msg): void
     {
-        http_response_code(401);
+        $this->set_response_code(401);
         $this->curl_response('', $msg, rest_ctrl::GET);
+    }
+
+    /**
+     * true if the current write request (post / put / delete) may proceed, guarding both against a
+     * cross-site request (csrf) and against a user who is not permitted to change data in this pod:
+     * the origin check fails closed for a forged cross-origin browser request; the is_blocked check
+     * is the same as in the model (sandbox->save and sandbox->del) but done before the api json is
+     * mapped, so a user without login gets a clear rejection instead of a change that fails later
+     *
+     * @param user $usr the session user who has started the request
+     * @param string $msg the message text collected until now
+     * @return bool false if the write is a suspected csrf or the user may not change data in this pod
+     */
+    private function change_permitted(user $usr, string $msg): bool
+    {
+        $permitted = true;
+
+        // reject a cross-site write before touching the database: a browser sends an Origin (or a
+        // Referer) whose host must match this pod's host, so a forged request from another site is
+        // stopped; a same-origin call or a non-browser server-to-server call (no such header) passes
+        if (!server_guard::same_origin()) {
+            $permitted = false;
+            $usr_msg = new user_message($usr);
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $this->not_permitted($msg . $usr_msg->all_message_text());
+        } elseif ($usr->is_blocked()) {
+            $permitted = false;
+            // tell the user why the change has been rejected and how to solve it
+            $usr_msg = new user_message($usr);
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $this->not_permitted($msg . $usr_msg->all_message_text());
+        }
+
+        return $permitted;
     }
 
 
     /*
      * internal functions
      */
+
+    /**
+     * set the http response code only if the response headers have not been sent yet
+     * during the test run the log writer may already have emitted output (e.g. a test header),
+     * which sends the headers, so setting the response code afterwards would raise a php warning
+     * (Cannot set response code - headers already sent); this guard matches the header() calls
+     * that are already protected the same way
+     * @param int $code the http response code e.g. 200 or 400
+     * @return void
+     */
+    private function set_response_code(int $code): void
+    {
+        if (!headers_sent()) {
+            http_response_code($code);
+        }
+    }
 
     /**
      * response to a get request
@@ -246,7 +312,7 @@ class controller
         if ($msg == '') {
 
             // set response code - 200 OK
-            http_response_code(200);
+            $this->set_response_code(200);
 
             // return e.g. the word object
             echo $api_obj;
@@ -254,7 +320,7 @@ class controller
         } else {
 
             // set response code - 400 Bad Request
-            http_response_code(400);
+            $this->set_response_code(400);
 
             // tell the user no products found
             echo json_encode(
@@ -303,7 +369,7 @@ class controller
 
                     // set response code - 200 OK
                     if (!headers_sent()) {
-                        http_response_code(200);
+                        $this->set_response_code(200);
                     }
                     echo json_encode(
                         array(url_var::ID => $usr_msg->get_row_id())
@@ -312,7 +378,7 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
                     echo json_encode(
                         array(json_fields::MSG => $usr_msg->get_row_id())
@@ -325,7 +391,7 @@ class controller
 
                     // set response code - 200 OK
                     if (!headers_sent()) {
-                        http_response_code(200);
+                        $this->set_response_code(200);
                     }
 
                     // return e.g. the word object
@@ -335,7 +401,7 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
 
                     // tell the user no object found
@@ -358,7 +424,7 @@ class controller
                     if (is_numeric($result)) {
                         // set response code - 200 OK
                         if (!headers_sent()) {
-                            http_response_code(200);
+                            $this->set_response_code(200);
                         }
                         echo json_encode(
                             array(url_var::ID => $result)
@@ -367,7 +433,7 @@ class controller
 
                         // set response code - 400 Bad Request
                         if (!headers_sent()) {
-                            http_response_code(400);
+                            $this->set_response_code(400);
                         }
                         echo json_encode(
                             array(json_fields::MSG => $result)
@@ -384,12 +450,12 @@ class controller
                         if ($usr_msg->is_ok()) {
                             // set response code - 200 OK
                             if (!headers_sent()) {
-                                http_response_code(200);
+                                $this->set_response_code(200);
                             }
                         } else {
                             // set response code - 409 Conflict
                             if (!headers_sent()) {
-                                http_response_code(409);
+                                $this->set_response_code(409);
                             }
 
                             echo json_encode(
@@ -401,12 +467,12 @@ class controller
 
                     // set response code - 400 Bad Request
                     if (!headers_sent()) {
-                        http_response_code(400);
+                        $this->set_response_code(400);
                     }
                     // set response code - 410 Gone
-                    // http_response_code(410);
+                    // $this->set_response_code(410);
                     // set response code - 403 Forbidden
-                    // http_response_code(403);
+                    // $this->set_response_code(403);
 
                     // tell the user no products found
                     echo json_encode(
@@ -417,7 +483,7 @@ class controller
             default:
                 // set response code - 400 Bad Request
                 if (!headers_sent()) {
-                    http_response_code(400);
+                    $this->set_response_code(400);
                 }
                 break;
         }

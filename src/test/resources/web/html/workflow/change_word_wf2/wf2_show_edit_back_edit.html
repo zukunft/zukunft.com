@@ -35,7 +35,7 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&id=2">
+                                    <a href="/http/view.php?m=view_change&amp;id=2">
                                         alternative
                                     </a>
                                 </li>
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=3&9m=3&9id=999&9z=0">
+                                    <a href="/http/view.php?m=31&amp;id=3&amp;9id=999&amp;9k=System%20Test%20Word&amp;98id=999&amp;98k=System%20Test%20Word&amp;99m=90&amp;99id=999&amp;9m=3&amp;9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9m=3&9id=999&9z=0">
+                                    <a href="/http/view.php?m=30&amp;9id=999&amp;9k=System%20Test%20Word&amp;98id=999&amp;98k=System%20Test%20Word&amp;99m=90&amp;99id=999&amp;9m=3&amp;9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -63,37 +63,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=en">
+                                    <a href="/http/view.php?m=3&amp;q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=en_us">
+                                    <a href="/http/view.php?m=3&amp;q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=de" title="German">
+                                    <a href="/http/view.php?m=3&amp;q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=fr" title="French">
+                                    <a href="/http/view.php?m=3&amp;q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=es" title="Spanish">
+                                    <a href="/http/view.php?m=3&amp;q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=3&amp;q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=3&q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=3&amp;q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -114,12 +114,12 @@
                                     system test zukunft.com system test
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=64&9m=3&9id=999&9z=0">
+                                    <a href="/http/view.php?m=64&amp;9id=999&amp;9k=System%20Test%20Word&amp;98id=999&amp;98k=System%20Test%20Word&amp;99m=90&amp;99id=999&amp;9m=3&amp;9z=0&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                                         logout
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=3&9id=999&9z=0">
+                                    <a href="/settings?9id=999&amp;9k=System%20Test%20Word&amp;98id=999&amp;98k=System%20Test%20Word&amp;99m=90&amp;99id=999&amp;9m=3&amp;9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -134,8 +134,11 @@
                 Change word
             </h4>
             <form action="/http/view.php" id="word_edit">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <input class="form-control" type="hidden" name="m" id="mask" value="3">
                 <input class="form-control" type="hidden" name="id" id="id" value="999">
+                <input type="hidden" name="9m" value="90">
+                <input type="hidden" name="9id" value="999">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -319,16 +322,16 @@
                             <option value="89"  >
                                 base units
                             </option>
-                            <option value="113"  >
+                            <option value="114"  >
                                 company list with main ratios
                             </option>
-                            <option value="112"  >
+                            <option value="113"  >
                                 company sheet
                             </option>
                             <option value="115"  >
                                 complete
                             </option>
-                            <option value="114"  >
+                            <option value="112"  >
                                 country ratios
                             </option>
                             <option value="108"  >
@@ -389,7 +392,7 @@
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">
-                    <a href="/http/view.php?m=90&id=999" class="btn btn-space col-1 btn-outline-secondary">
+                    <a href="/http/view.php?m=90&amp;id=999" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
                     <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
@@ -420,10 +423,10 @@
                     <h5>
                         Changes
                     </h5>
-                    system test change log entry
                 </div>
             </div>
         </main>
+        <!--usr_msg-->
         <footer class="site-footer">
             <p>
                 <a href="/http/about.php">

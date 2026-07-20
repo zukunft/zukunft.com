@@ -135,6 +135,43 @@ class component extends sandbox_code_id
     // TODO move these vars to the frontend component link object
     public int $pos_type_id = position_types::DEFAULT_ID;
     public ?int $style_id = null;
+    public ?int $row_phrase = null;
+    public ?int $col_phrase = null;
+    public ?int $col_sub_phrase = null;
+    public ?int $link_type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this component bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        if (array_key_exists(url_var::STYLE, $url_array)) {
+            $this->style_id = $url_array[url_var::STYLE];
+        }
+        if (array_key_exists(url_var::PHRASE_ROW, $url_array)) {
+            $this->row_phrase = $url_array[url_var::PHRASE_ROW];
+        }
+        if (array_key_exists(url_var::PHRASE_COL, $url_array)) {
+            $this->col_phrase = $url_array[url_var::PHRASE_COL];
+        }
+        if (array_key_exists(url_var::PHRASE_COL_SUB, $url_array)) {
+            $this->col_sub_phrase = $url_array[url_var::PHRASE_COL_SUB];
+        }
+        if (array_key_exists(url_var::LINK_TYPE, $url_array)) {
+            $this->link_type_id = $url_array[url_var::LINK_TYPE];
+        }
+        return $usr_msg;
+    }
 
 
     /*
@@ -202,6 +239,26 @@ class component extends sandbox_code_id
         } else {
             $this->style_id = null;
         }
+        if (array_key_exists(json_fields::PHRASE_ROW, $json_array)) {
+            $this->row_phrase = $json_array[json_fields::PHRASE_ROW];
+        } else {
+            $this->row_phrase = null;
+        }
+        if (array_key_exists(json_fields::PHRASE_COL, $json_array)) {
+            $this->col_phrase = $json_array[json_fields::PHRASE_COL];
+        } else {
+            $this->col_phrase = null;
+        }
+        if (array_key_exists(json_fields::PHRASE_COL_SUB, $json_array)) {
+            $this->col_sub_phrase = $json_array[json_fields::PHRASE_COL_SUB];
+        } else {
+            $this->col_sub_phrase = null;
+        }
+        if (array_key_exists(json_fields::LINK_TYPE, $json_array)) {
+            $this->link_type_id = $json_array[json_fields::LINK_TYPE];
+        } else {
+            $this->link_type_id = null;
+        }
         return $msg->is_ok();
     }
 
@@ -233,6 +290,18 @@ class component extends sandbox_code_id
         }
         if ($this->style_id != 0) {
             $vars[json_fields::STYLE] = $this->style_id;
+        }
+        if ($this->row_phrase != 0) {
+            $vars[json_fields::PHRASE_ROW] = $this->row_phrase;
+        }
+        if ($this->col_phrase != 0) {
+            $vars[json_fields::PHRASE_COL] = $this->col_phrase;
+        }
+        if ($this->col_sub_phrase != 0) {
+            $vars[json_fields::PHRASE_COL_SUB] = $this->col_sub_phrase;
+        }
+        if ($this->link_type_id != 0) {
+            $vars[json_fields::LINK_TYPE] = $this->link_type_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -267,6 +336,12 @@ class component extends sandbox_code_id
      */
     function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -335,6 +410,12 @@ class component extends sandbox_code_id
      */
     function style_text(?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $style_name = '';
         if ($typ_lst->msk_sty == null) {
             $this->log_err('msk_sty are empty');
@@ -445,6 +526,12 @@ class component extends sandbox_code_id
      */
     function type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
@@ -460,6 +547,12 @@ class component extends sandbox_code_id
      */
     function style_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_sty->default_id();
@@ -479,6 +572,12 @@ class component extends sandbox_code_id
      */
     private function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->cmp_typ->selector($form);
     }
 
@@ -518,7 +617,7 @@ class component extends sandbox_code_id
             $header = $html->text_h2('Create a view element');
         } else {
             $script = views::COMPONENT_EDIT;
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         // only the multi-form test page passes a counter; production keeps name="k"
@@ -569,7 +668,7 @@ class component extends sandbox_code_id
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()));
         } else {
             $form_name = views::COMPONENT_EDIT;
-            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit the view element "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ') ');
         }
         $result .= '<div class="row">';
@@ -667,7 +766,7 @@ class component extends sandbox_code_id
         } else {
             $script = views::COMPONENT_EDIT;
             $fld_ext = '';
-            $header = $html->text_h2('Change "' . $this->name . '"');
+            $header = $html->text_h2('Change "' . $html->esc($this->name) . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         $hidden_fields .= $html->form_hidden("back", $back);

@@ -21,6 +21,7 @@ PREPARE user_by_id (bigint) AS
          last_name,
          term_id,
          view_id,
-         source_id
+         source_id,
+         uses_sandbox
     FROM users
    WHERE user_id = $1;

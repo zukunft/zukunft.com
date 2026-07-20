@@ -278,9 +278,9 @@ class view extends view_exe
             $url = api::FIND_SCRIPT;
             $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
-            $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
+            $url = $html->url_new(views::VIEW_EDIT_ID, $this->id());
             $result .= new button($url, $back)->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
-            $url = $html->url(api::DSP_VIEW_ADD);
+            $url = $html->url_new(views::VIEW_ADD_ID);
             $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
@@ -401,7 +401,7 @@ class view extends view_exe
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         } else {
             $script = "view_edit";
-            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for '
+            $result .= $html->dsp_text_h2('Edit view "' . $html->esc($this->name) . '" (used for '
                 . $html->ref_view(views::PHRASE, $wrd->id(), $wrd->name()) . ')');
         }
         $result .= '<div class="row">';
@@ -430,7 +430,8 @@ class view extends view_exe
             $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
-            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
+            $result .= $html->dsp_form_end('', $back,
+                $html->url_new(views::VIEW_DEL_ID, $this->id(), '', $back));
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -473,6 +474,12 @@ class view extends view_exe
      */
     private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst = null): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            $this->log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
         return $typ_lst->msk_typ->selector($form);
@@ -507,18 +514,20 @@ class view extends view_exe
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $url = $html->url_new(views::VIEW_ADD_ID, $this->id(), '', $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
 
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('',
+                    $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
@@ -592,15 +601,15 @@ class view extends view_exe
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();;
-            $view_name = $msk->name();
+            $view_name = $html->esc($msk->name());
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
                 $result .= $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . ' ';
             }
-            $call_edit = rest_ctrl::PATH_FIXED .'view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_edit = $html->url_new(views::VIEW_EDIT_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = rest_ctrl::PATH_FIXED .'view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $call_del = $html->url_new(views::VIEW_DEL_ID, $view_id, '', $back, '', 'word=' . $wrd_id);
             $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }
@@ -634,19 +643,21 @@ class view extends view_exe
     }
 
     /**
-     * the 'switch' button that sets this view as the default view of the given word
-     * TODO Prio 3 add the back trace url so the user can return after the switch
+     * the 'switch' button that opens the word edit view where this view can be set
+     * as the default view of the given word
+     * TODO Prio 2 preselect this view as the default view of the word and add the back trace url,
+     *      so the switch is again a one-click action as it was in the retired http_old/word_edit.php
+     *      (see docs/llm/pending_next_launch.md)
      *
-     * @param int $wrd_id the id of the word whose default view is set to this view
+     * @param int $wrd_id the id of the word whose default view should be set to this view
      * @return string the html link of the switch button
      */
     function switch_link(int $wrd_id): string
     {
         global $mtr;
         $html = new html_base();
-        $url = rest_ctrl::PATH_FIXED . 'word_edit.php' . url_var::PAR . url_var::ID . url_var::EQ . $wrd_id
-            . url_var::ADD . url_var::VIEW . url_var::EQ . $this->id()
-            . url_var::ADD . url_var::STEP_CONFIRM_HUMAN . url_var::EQ . '1';
+        $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
+            . url_var::ADD . url_var::ID . url_var::EQ . $wrd_id;
         return $html->ref($url, $mtr->txt(msg_id::BUTTON_VIEW_SWITCH));
     }
 

@@ -160,15 +160,7 @@
       "description": "the high end of an estimated range."
     },
     {
-      "name": "USD",
-      "description": "the United States dollar.",
-      "type": "measure",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "USD"
     },
     {
       "name": "Eurocent",

@@ -121,6 +121,7 @@ class user extends db_object
     public ?int $right_level = null;      // can be used to reduce the right level of the profile
     public ?int $status_id = null;        // id of the actual status of the user profiles to reduce temporary the user writes of the profile
     public ?bool $excluded = null;        // only use for admin so that they can deactivate users
+    public bool $uses_sandbox = false;    // true if the user has changed any data, so the pages cannot be served from the standard page cache
 
     // additional info
     public ?DateTime $created = null;
@@ -168,6 +169,7 @@ class user extends db_object
         $this->right_level = null;
         $this->status_id = null;
         $this->excluded = null;
+        $this->uses_sandbox = false;
 
         // additional info
         $this->created = null;
@@ -215,6 +217,12 @@ class user extends db_object
                 if ($url_array[url_var::USER_LAST_NAME] != null) {
                     $this->last_name = $url_array[url_var::USER_LAST_NAME];
                 }
+            }
+            // an unchecked checkbox is not part of the form post,
+            // so the flag is false if it is missing in a post of the admin user edit form
+            // and it stays unchanged for all other posts e.g. the user settings
+            if (($url_array[url_var::MASK] ?? 0) == views::USER_ADMIN_EDIT_ID) {
+                $this->uses_sandbox = array_key_exists(url_var::USER_USES_SANDBOX, $url_array);
             }
         }
         return $usr_msg;
@@ -307,6 +315,12 @@ class user extends db_object
             $this->excluded = $json_array[json_fields::EXCLUDED];
         } else {
             $this->excluded = null;
+        }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (array_key_exists(json_fields::USES_SANDBOX, $json_array)) {
+            $this->uses_sandbox = (bool)$json_array[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
         }
 
         if (array_key_exists(json_fields::CREATED, $json_array)) {
@@ -559,6 +573,7 @@ class user extends db_object
             $vars[json_fields::STATUS] = $this->status_id;
         }
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -602,7 +617,7 @@ class user extends db_object
         $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
         $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
         $or_signup = $mtr->txt(msg_id::OR) . ' ' . $html->ref(api::SIGNUP_SCRIPT, $mtr->txt(msg_id::SIGNUP));
@@ -638,7 +653,7 @@ class user extends db_object
         $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
         $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
         $form_str .= $html->p($form_pwr);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
@@ -674,7 +689,7 @@ class user extends db_object
         $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
         $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
         $form_str .= $html->p($form_pwr);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::ACTIVATE_SUBMIT));
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $form_str);
@@ -699,7 +714,7 @@ class user extends db_object
         $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
         $form_mail .= $html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN);
         $form_str .= $html->p($form_mail);
-        $form_str .= $html->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN]);
+        $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));
         $cancel_url = $back_url !== '' ? $back_url : api::MAIN_SCRIPT;
@@ -722,7 +737,7 @@ class user extends db_object
 
         if ($this->id > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
-            $header = $html->text_h2('User "' . $this->name . '"');
+            $header = $html->text_h2('User "' . $html->esc($this->name) . '"');
             $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
             $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);

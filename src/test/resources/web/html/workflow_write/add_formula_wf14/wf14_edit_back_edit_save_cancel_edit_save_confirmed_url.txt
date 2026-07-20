@@ -1,0 +1,18 @@
+GET
+http://localhost/http/view.php?k=System+Test+Formula&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&o=System+Test+Formula+Description&s=1&sp=1&id=0&9m=97&m=54&z=2&submit=
+/http/view.php?k=System+Test+Formula&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&o=System+Test+Formula+Description&s=1&sp=1&id=0&9m=97&m=54&z=2&submit=
+/http/view.php?name=System+Test+Formula&formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&description=System+Test+Formula+Description&share=1&protection=1&id=0&9mask_id=formula_default&mask_id=confirm_add&step=confirmed&
+{
+    "name": "System Test Formula",
+    "formula_text": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+    "description": "System Test Formula Description",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "type": "",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "formula_default"
+    }
+}

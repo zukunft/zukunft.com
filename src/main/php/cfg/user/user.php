@@ -102,6 +102,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -207,6 +208,13 @@ class user extends db_id_object_non_sandbox
     // password policy limits; bcrypt silently truncates at 72 bytes
     const int PW_MIN_LEN = 8;
     const int PW_MAX_LEN = 72;
+    // a valid bcrypt hash of a throwaway value, used only to spend the same time on password_verify
+    // when the user is unknown so the login response time does not reveal whether the user exists
+    // (timing oracle); this is a fixed DUMMY value and never a real credential (dummy password hash)
+    const string DUMMY_PW_HASH = '$2y$12$T.r5tNIZREaD85ZADeSzPOqlOtPMlEC1SON1Swutq6YFCaVos8ib2';
+    // how long a password reset / activation key stays valid; kept short so a leaked or brute
+    // forced key is only usable for a small window (DateTime::modify format)
+    const string ACTIVATION_KEY_VALIDITY = '+1 hour';
 
 
     /*
@@ -235,6 +243,7 @@ class user extends db_id_object_non_sandbox
     public ?int $right_level = null;       // can be used to reduce the right level of the profile
     public ?int $status_id = null;         // id of the actual status of the user profiles to reduce temporary the user writes of the profile
     public ?bool $excluded = null;         // to deactivate users that have already a log entry and cannot be deleted any more
+    public bool $uses_sandbox = false;     // true if the user has changed any data, so the pages cannot be served from the standard page cache
 
     // additional info
     public ?DateTime $created = null;
@@ -280,6 +289,24 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * TODO Prio 1 make sure that this is only used before the users are loaded
+     * the virtual system user for program actions before the users are loaded from the database
+     * e.g. for the initial database setup, the database version check or to load the system configuration
+     * the system profile is set explicit, because the default profile of a new user
+     * is the profile of a user without login, which is not permitted to change the database
+     *
+     * @return user the virtual system user with the system profile
+     */
+    static function system(): user
+    {
+        $usr = new user();
+        $usr->id = users::SYSTEM_ID;
+        $usr->name = users::SYSTEM_NAME;
+        $usr->set_profile_id(user_profiles::SYSTEM_ID);
+        return $usr;
+    }
+
+    /**
      * reset the vars of this user
      * used to search for a user with the same name, email or ip address
      * @param bool $keep_user not used here only for compatibility with the parent class
@@ -308,6 +335,7 @@ class user extends db_id_object_non_sandbox
         $this->right_level = null;
         $this->status_id = null;
         $this->excluded = null;
+        $this->uses_sandbox = false;
 
         // additional info
         $this->created = null;
@@ -412,6 +440,10 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
                 $this->excluded = $db_row[fields::FLD_EXCLUDED];
             }
+            // the flag is saved as smallint, so 0, 1 or null (of a not yet upgraded pod) which means false
+            if (array_key_exists(user_db::FLD_USES_SANDBOX, $db_row)) {
+                $this->uses_sandbox = (bool)$db_row[user_db::FLD_USES_SANDBOX];
+            }
 
             if (array_key_exists(user_db::FLD_CREATED, $db_row)) {
                 $this->created = $lib->get_datetime($db_row[user_db::FLD_CREATED], $this->dsp_id());
@@ -454,7 +486,7 @@ class user extends db_id_object_non_sandbox
             $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
 
             $result = true;
-            log_debug($this->name, $debug - 25);
+            log_debug($this->name);
         }
         return $result;
     }
@@ -477,6 +509,9 @@ class user extends db_id_object_non_sandbox
         // map the api specific fields e.g. the json fields using the database id
         // TODO Prio 1 check that the api, url and import mapper just map the fields
         //             and the permission check of critical fields is done before the database save
+        // the mapper only maps the field faithfully (a round trip must preserve the real profile);
+        // the profile is a critical field that must not be trusted from the request, so the
+        // privilege check is done in save_user via enforce_profile_privilege before the db write
         if (key_exists(json_fields::PROFILE_ID, $api_json)) {
             $this->profile_id = $api_json[json_fields::PROFILE_ID];
         } else {
@@ -491,6 +526,12 @@ class user extends db_id_object_non_sandbox
             $this->status_id = $api_json[json_fields::STATUS_ID];
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
+        }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (key_exists(json_fields::USES_SANDBOX, $api_json)) {
+            $this->uses_sandbox = (bool)$api_json[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
         }
 
         if (key_exists(json_fields::TERM_ID, $api_json)) {
@@ -563,6 +604,12 @@ class user extends db_id_object_non_sandbox
             $this->status_id = $sys->typ_lst->usr_sta->id($in_ex_json[json_fields::STATUS]);
         } else {
             $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
+        }
+        // a missing flag reads as false like a null db value (see docs/llm/constants.md)
+        if (key_exists(json_fields::USES_SANDBOX, $in_ex_json)) {
+            $this->uses_sandbox = (bool)$in_ex_json[json_fields::USES_SANDBOX];
+        } else {
+            $this->uses_sandbox = false;
         }
 
         $this->trm = $map->get_term($in_ex_json, $msg, $dto);
@@ -661,10 +708,13 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        $vars[json_fields::IP_ADDR] = $this->ip_addr;
+        // the ip address and the activation key are never sent over the api:
+        // the activation key feeds the account activation flow (leaking it enables
+        // account takeover) and the ip address is personal data; the endpoint
+        // (api/user/index.php) additionally limits any user record to an admin or
+        // the user himself, so the remaining email is only shown to them
         $vars[json_fields::EMAIL] = $this->email;
 
-        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
         // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
@@ -683,6 +733,7 @@ class user extends db_id_object_non_sandbox
             $vars[json_fields::STATUS] = $this->status_id;
         }
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -803,20 +854,75 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * store a one-time password reset / activation key as a sha256 hash with a short validity
+     * so that a database read cannot recover a working key; the cleartext key is only sent to the
+     * user by email and never persisted, and the caller compares it later via activation_key_valid
+     *
+     * @param string $key the cleartext key generated by the caller and mailed to the user
+     * @return void
+     */
+    function set_activation_key(string $key): void
+    {
+        $this->activation_key = hash('sha256', $key);
+        $timeout = new DateTime();
+        try {
+            $timeout->modify(self::ACTIVATION_KEY_VALIDITY);
+        } catch (Exception $e) {
+            log_err('activation key timeout calculation failed: ' . $e->getMessage());
+        }
+        $this->activation_timeout = $timeout;
+    }
+
+    /**
+     * true while a reset / activation key is set and its validity has not yet passed, independent
+     * of the key value; used to tell an expired (or absent) key apart from a wrong key
+     *
+     * @return bool true if a key is stored and the activation timeout is still in the future
+     */
+    function has_active_activation_key(): bool
+    {
+        $now = $this->db_now ?? new DateTime();
+        $stored = $this->activation_key ?? '';
+        $unexpired = $this->activation_timeout !== null && $this->activation_timeout > $now;
+        $result = $stored !== '' && $unexpired;
+        return $result;
+    }
+
+    /**
+     * true if the given cleartext key matches the stored key hash and is still valid; the compare
+     * uses hash_equals so the stored hash cannot be guessed byte by byte from the response time
+     *
+     * @param string $key the cleartext key as received from the activation link or the form
+     * @return bool true if the key hash matches and the activation timeout has not passed
+     */
+    function activation_key_valid(string $key): bool
+    {
+        $result = false;
+        if ($this->has_active_activation_key()) {
+            $result = hash_equals($this->activation_key, hash('sha256', $key));
+        }
+        return $result;
+    }
+
+    /**
      * verify credentials, set up the session on success
      *
      * @param string $usr_name username or email as typed by the user
      * @param string $pw raw password as typed by the user
-     * @param user_message $msg populated with PASSWORD_WRONG or USER_NAME_NOT_FOUND on failure
+     * @param user_message $msg populated with a single generic PASSWORD_WRONG message on any failure
      * @return bool true if login succeeded and session has been initialised
      */
     function login(string $usr_name, string $pw, user_message $msg): bool
     {
         $this->load_by_name($usr_name);
-        if (!$this->has_db_id()) {
-            $msg->add(msg_id::USER_NAME_NOT_FOUND, [msg_id::VAR_USER_NAME => $usr_name]);
-        }
-        if (!password_verify($pw, $this->get_password())) {
+        // always run a bcrypt verify - against a fixed dummy hash when the user is unknown - so the
+        // response time does not reveal whether the user exists (timing oracle); the result is stored
+        // first so the '||' below cannot short-circuit the verify away for an unknown user
+        $pw_hash = $this->get_password() ?? self::DUMMY_PW_HASH;
+        $pw_ok = password_verify($pw, $pw_hash);
+        // report the same generic message for an unknown user and for a wrong password, so the login
+        // does not confirm which usernames or emails exist (user enumeration)
+        if (!$this->has_db_id() || !$pw_ok) {
             $msg->add(msg_id::PASSWORD_WRONG, []);
         }
         if ($msg->is_ok()) {
@@ -1054,20 +1160,24 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * select the user whose data an api request should load: the session user ($this) by
-     * default, or the user given by id in the request when an (admin) caller wants to see
-     * another user's data (the frontend sandbox load sends the data user as url_var::USER)
-     * TODO check that the session user is permitted to see the requested user's data
+     * select the user whose data an api request should load: the session user ($this) by default,
+     * or the user given by id in the request when the session user is permitted to see another
+     * user's data. only an admin (or the internal system user) may load a different user; for a
+     * normal or ip user the requested id is ignored and the session user's own data is loaded, so
+     * the request cannot use the user parameter to read another user's private data (idor)
      * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
-     * @return user the session user, or the loaded requested user when a valid id is given
+     * @return user the session user, or the loaded requested user when the caller is permitted
      */
     function data_user(int $req_usr_id): user
     {
         $result = $this;
-        // only switch to the requested data user if it differs from the session user; the session
-        // user is already fully loaded (via get()), so reloading it by id here would drop that setup
-        // and the object would load less than the session user can actually see
-        if ($req_usr_id > 0 and $req_usr_id != $this->id) {
+        // only switch to the requested data user if it differs from the session user (the session
+        // user is already fully loaded via get(), so reloading it by id would drop that setup) and
+        // only when the session user may see another user's data (an admin or the system user); a
+        // normal or ip user requesting a foreign id keeps the session user, blocking the idor
+        if ($req_usr_id > 0
+            and $req_usr_id != $this->id
+            and ($this->is_admin() or $this->is_system())) {
             $req_usr = new user();
             $req_usr->load_by_id($req_usr_id);
             if ($req_usr->id > 0) {
@@ -1175,14 +1285,24 @@ class user extends db_id_object_non_sandbox
     /**
      * load a user from the database view
      * @param sql_par $qp the query parameters created by the calling function
+     * @param user_message $msg to report a failed query to the requesting user
      * @return int the id of the object found and zero if nothing is found
      */
     protected
-    function load(sql_par $qp): int
+    function load(sql_par $qp, user_message $msg = new user_message()): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
+        // TODO Prio 1 do not call row mapper if not $msg->is_ok()
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged and reported via $msg;
+        // it is mapped like "no user found", because a fatal crash of the row mapper
+        // would hide the fail message (see db read result contract in docs/llm/architecture.md)
+        // and no error is logged here, because logging loads the log user, which could loop back to here
+        if ($db_row === false) {
+            $db_row = null;
+        }
         $this->row_mapper($db_row);
         return $this->id;
     }
@@ -1395,7 +1515,7 @@ class user extends db_id_object_non_sandbox
     function ip_check(string $ip_addr): string
     {
         global $debug;
-        log_debug(' (' . $ip_addr . ')', $debug - 12);
+        log_debug(' (' . $ip_addr . ')');
 
         $ip_lst = new ip_range_list();
         $ip_lst->load();
@@ -1408,16 +1528,28 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * set the ip of the
-     * @return string the ip address of the active user
+     * @return bool true if the code runs on the command line (install, cron or the
+     *              unit tests), where the passwordless system admin ip fallback is
+     *              allowed; false for any web request, because a real HTTP request
+     *              always runs under a web SAPI and never reports 'cli'
+     */
+    private function is_cli(): bool
+    {
+        return PHP_SAPI == 'cli';
+    }
+
+    /**
+     * set the ip address of the active user from the request
      */
     private function get_ip(): void
     {
         if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
             $this->ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
         }
-        // TODO Prio 1 switch this off!!
-        if ($this->ip_addr == null) {
+        // only the command line (install / cron / unit tests) may fall back to the
+        // passwordless system admin ip; a web request without REMOTE_ADDR must never
+        // become the ip admin, so its ip stays empty and it is treated as anonymous
+        if ($this->ip_addr == null and $this->is_cli()) {
             $this->ip_addr = users::SYSTEM_ADMIN_IP;
         }
     }
@@ -1443,7 +1575,7 @@ class user extends db_id_object_non_sandbox
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug('by given ip addr ' . $this->ip_addr, $debug - 1);
+            log_debug('by given ip addr ' . $this->ip_addr);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
@@ -1463,19 +1595,29 @@ class user extends db_id_object_non_sandbox
         if ($this->id <= 0 and $result == '') {
             // else use the IP address (for testing don't overwrite any testing ip)
             log_debug('load by ip addr ' . $this->ip_addr);
-            $this->load_by_ip($this->ip_addr);
+            $req_ip = $this->ip_addr;
+            $this->load_by_ip($req_ip);
+            // ip equality must never authenticate a privileged account over the web:
+            // a real admin logs in via a session (checked above), so the reserved
+            // system or admin user matched here by ip alone would be a passwordless
+            // grant. only the command line (install / unit tests) may run as the ip
+            // admin; over the web drop the account and continue as an anonymous ip user
+            if ($this->id > 0 and !$this->is_cli()
+                and ($this->id == users::SYSTEM_ID or $this->id == users::SYSTEM_ADMIN_ID)) {
+                log_warning('ip based system access blocked for ip ' . $req_ip);
+                $this->reset();
+                $this->ip_addr = $req_ip;
+            }
             if ($this->id <= 0) {
                 // use the ip address as the username and add the user
                 $this->name = $this->ip_addr;
 
-                // allow to fill the database only if a local user has logged in
-                if ($this->name == users::SYSTEM_ADMIN_IP) {
-
-                    // create the main system user upfront direct from the code
-                    // but only if needed and allowed which is only the case directly after the database structure creation
-                    // TODO switch this fallback off because it should anyway never be called
+                // create the main system user upfront directly from the code, but only
+                // on the command line right after the database structure creation; a web
+                // request must never bootstrap the passwordless admin, so it only adds
+                // an anonymous ip user
+                if ($this->name == users::SYSTEM_ADMIN_IP and $this->is_cli()) {
                     $this->create_system_user($usr_msg);
-
                 } else {
                     $this->save_user($usr_msg);
                 }
@@ -1562,6 +1704,47 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * create human-readable messages of the differences between the user objects
+     * is expected to be similar to the db_fields_changed function
+     * the password and the activation key are excluded,
+     * because these secrets must never be part of a message shown to anyone
+     *
+     * @param user|CombineObject|db_object_seq_id $obj which might be different to this user
+     * @param bool $ex_def if true excluding differences in fields with a default value
+     * @return user_message the human-readable messages of the differences between the user objects
+     */
+    function diff_msg(user|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj);
+        $this->diff_field_msg($msg, user_db::FLD_NAME, $this->name, $obj->name);
+        $this->diff_field_msg($msg, user_db::FLD_IP_ADDR, $this->ip_addr, $obj->ip_addr);
+        $this->diff_field_msg($msg, user_db::FLD_EMAIL, $this->email, $obj->email);
+        $this->diff_field_msg($msg, user_db::FLD_LAST_LOGIN,
+            $this->last_login?->format(DateTimeInterface::ATOM),
+            $obj->last_login?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, user_db::FLD_LAST_LOGOUT,
+            $this->last_logoff?->format(DateTimeInterface::ATOM),
+            $obj->last_logoff?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, user_db::FLD_PROFILE, $this->profile_id, $obj->profile_id);
+        $this->diff_field_msg($msg, fields::FLD_CODE_ID, $this->code_id, $obj->code_id);
+        $this->diff_field_msg($msg, user_db::FLD_TYPE_ID, $this->type_id, $obj->type_id);
+        $this->diff_field_msg($msg, user_db::FLD_LEVEL, $this->right_level, $obj->right_level);
+        $this->diff_field_msg($msg, user_db::FLD_STATUS, $this->status_id, $obj->status_id);
+        $this->diff_field_msg($msg, fields::FLD_EXCLUDED, $this->excluded, $obj->excluded);
+        $this->diff_field_msg($msg, user_db::FLD_USES_SANDBOX, $this->uses_sandbox, $obj->uses_sandbox);
+        $this->diff_field_msg($msg, user_db::FLD_CREATED,
+            $this->created?->format(DateTimeInterface::ATOM),
+            $obj->created?->format(DateTimeInterface::ATOM));
+        $this->diff_field_msg($msg, fields::FLD_DESCRIPTION, $this->description, $obj->description);
+        $this->diff_field_msg($msg, user_db::FLD_FIRST_NAME, $this->first_name, $obj->first_name);
+        $this->diff_field_msg($msg, user_db::FLD_LAST_NAME, $this->last_name, $obj->last_name);
+        $this->diff_field_msg($msg, user_db::FLD_TERM, $this->trm?->id(), $obj->trm?->id());
+        $this->diff_field_msg($msg, fields::FLD_VIEW, $this->msk?->id(), $obj->msk?->id());
+        $this->diff_field_msg($msg, user_db::FLD_SOURCE, $this->src?->id(), $obj->src?->id());
+        return $msg;
+    }
+
+    /**
      * detects if this object has been changed compared to the given object,
      * excluding changes on internal fields like last_update
      *
@@ -1637,12 +1820,13 @@ class user extends db_id_object_non_sandbox
 
     /**
      * true if the login user is in general allowed to change anything in this user
+     * a user is never blocked from changing its own row, because e.g. the last login
+     * of a user without login needs to be saved even if this pod blocks the data changes of an ip user
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
-     * @param user|db_object_seq_id $db_rec the user as it is in the database before the change
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_be_changed_by(user_message $usr_msg, user|db_object_seq_id $db_rec): bool
+    function can_be_changed_by(user_message $usr_msg): bool
     {
         $can_change = false;
 
@@ -1715,14 +1899,56 @@ class user extends db_id_object_non_sandbox
             }
             // the admin users can change other users ...
             if ($this->is_admin()) {
-                // ... but not system users
-                // if (!$profile->is_system()) {
-                if (!$profile->is_type(user_profiles::SYSTEM)) {
+                // ... but not to a system-tier profile: test, log AND system all make
+                // user::is_system() true (grants the top privilege level everywhere), so an admin
+                // must not be able to assign any of them - otherwise an admin could self-escalate
+                // to the system tier by setting their own profile to test or log
+                if (!$profile->is_type(user_profiles::SYSTEM)
+                    and !$profile->is_type(user_profiles::TEST)
+                    and !$profile->is_type(user_profiles::LOG)) {
                     $result = true;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * enforce that only a privileged requester may change a user profile so the profile mapped from an
+     * (untrusted) api request cannot raise a user to a higher profile; a request that keeps the current
+     * profile is always allowed, a change to a higher profile that the requester may not set is refused
+     * and reported instead of passing silently. the check stays out of api_mapper (which must map the
+     * field faithfully for a round trip) and is done here before the database write (see save_user)
+     *
+     * @param int $req_profile_id the profile id requested for this user (e.g. mapped from the api json)
+     * @param int|null $cur_profile_id the profile id currently stored, or null when a new user is added
+     * @param user $usr_req the user requesting the change whose privileges decide the outcome
+     * @param user_message $msg to report a refused escalation to the user
+     * @return int the profile id that may actually be written: the requested one if allowed, otherwise
+     *             the current (or the normal profile for a new user)
+     */
+    function enforce_profile_privilege(
+        int          $req_profile_id,
+        ?int         $cur_profile_id,
+        user         $usr_req,
+        user_message $msg
+    ): int
+    {
+        // a new user starts from the normal profile, an existing user from its stored profile
+        $cur_profile_id = $cur_profile_id ?? user_profiles::NORMAL_ID;
+        // keeping the current profile is never an escalation, so allow it without a privilege check
+        if ($req_profile_id == $cur_profile_id) {
+            return $req_profile_id;
+        }
+        if ($usr_req->can_set_profile($req_profile_id)) {
+            return $req_profile_id;
+        }
+        // refuse the change and tell the user why instead of silently ignoring the escalation attempt
+        $msg->add(msg_id::USER_NO_UPDATE_PRIVILEGES, [
+            msg_id::VAR_USER_NAME => $this->name() ?? '',
+            msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile() ?? ''
+        ]);
+        return $cur_profile_id;
     }
 
     /**
@@ -1909,7 +2135,9 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::IP_ADDR] = $this->ip_addr;
         $vars[json_fields::EMAIL] = $this->email;
 
-        $vars[json_fields::ACTIVATION_KEY] = $this->activation_key;
+        // the activation key is intentionally not exported: it is the account activation secret,
+        // so leaking it in an export or backup file would enable an account takeover; the key stays
+        // backend only (like in api_json_array), a re-imported account simply re-requests activation
         // TODO Prio 0 make sure that all DateTime to json use the DateTimeInterface::ATOM and the '?' for null
         $vars[json_fields::ACTIVATION_TIMEOUT] = $this->activation_timeout?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DB_NOW] = $this->db_now?->format(DateTimeInterface::ATOM);
@@ -1922,6 +2150,10 @@ class user extends db_id_object_non_sandbox
         $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
         $vars[json_fields::STATUS] = $this->status_name();
         $vars[json_fields::EXCLUDED] = $this->excluded;
+        // the default false is not exported to keep the export file minimal
+        if ($this->uses_sandbox) {
+            $vars[json_fields::USES_SANDBOX] = $this->uses_sandbox;
+        }
 
         $vars[json_fields::CREATED] = $this->created?->format(DateTimeInterface::ATOM);
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -2031,6 +2263,9 @@ class user extends db_id_object_non_sandbox
         if ($std_obj->excluded !== $this->excluded) {
             $result->excluded = $this->excluded;
         }
+        if ($std_obj->uses_sandbox !== $this->uses_sandbox) {
+            $result->uses_sandbox = $this->uses_sandbox;
+        }
 
         if ($std_obj->created !== $this->created) {
             $result->created = $this->created;
@@ -2121,6 +2356,11 @@ class user extends db_id_object_non_sandbox
         if ($this->excluded === null and $obj->excluded != null) {
             $this->excluded = $obj->excluded;
         }
+        // the flag cannot be null (see docs/llm/constants.md),
+        // so for the fill the default false counts as not yet set
+        if ($this->uses_sandbox === false and $obj->uses_sandbox === true) {
+            $this->uses_sandbox = true;
+        }
 
         if ($this->created === null and $obj->created != null) {
             $this->created = $obj->created;
@@ -2209,6 +2449,12 @@ class user extends db_id_object_non_sandbox
         $result = false;
 
         if ($this->is_profile_valid()) {
+            // the fixed profile id of the virtual system user (user::system) is accepted
+            // without the user profile list, because e.g. the database version check
+            // on the program start runs before the profiles can be loaded from the database
+            if ($this->profile_id == user_profiles::SYSTEM_ID) {
+                $result = true;
+            }
             foreach (user_profiles::CAN_CHANGE as $prf) {
                 if ($this->profile_id == $sys->typ_lst->usr_pro->id($prf)) {
                     $result = true;
@@ -2219,12 +2465,38 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * @returns bool true if the user is known only by the ip of the request, so has no login
+     */
+    function is_ip_user(): bool
+    {
+        global $sys;
+        $result = false;
+
+        // the profile list is still empty while the code links are created on the initial setup
+        // and this is checked for every database row added, so the missing profile is not logged here
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY, false)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user is not allowed to do any changes
      */
     function is_blocked(): bool
     {
+        global $cfg;
         $result = false;
-        return false;
+
+        // a user without login can change data only if the pod admin permits it
+        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // during the initial setup the config is not yet loaded, so no user is blocked
+        if ($cfg != null and $this->is_ip_user()) {
+            $result = !$cfg->ip_user_can_change();
+        }
+        return $result;
     }
 
     /**
@@ -2271,8 +2543,10 @@ class user extends db_id_object_non_sandbox
             if ($this->ip_addr == 'localhost') {
                 $result = true;
             }
-            return $result;
         }
+        // single return at the end: the previous return sat inside the is_admin() branch, so a
+        // non-admin fell off the end and the : bool return type threw an uncaught TypeError
+        return $result;
     }
 
     /**
@@ -2511,6 +2785,48 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
+     * remember that the user has changed data, so the pages for this user must be
+     * created from the user sandbox and cannot be served from the standard page cache
+     * the flag is written to the database only on the change from false to true;
+     * switching it back off is done by an admin via the gui or the sandbox usage check job
+     *
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    function set_uses_sandbox(user_message $msg): void
+    {
+        if (!$this->uses_sandbox) {
+            $this->uses_sandbox = true;
+            // a user object without a database id cannot be updated e.g. during unit tests
+            if ($this->id() > 0) {
+                $this->save_user($msg, $this);
+            }
+        }
+    }
+
+    /**
+     * switch off the sandbox usage of the user if no user sandbox row is left
+     * called after a user sandbox row has been removed as the counterpart of set_uses_sandbox
+     *
+     * @param sql_db $db_con the database connection used to count the remaining sandbox rows
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    function check_sandbox_usage(sql_db $db_con, user_message $msg): void
+    {
+        if ($this->uses_sandbox) {
+            $usr_lst = new user_list($this);
+            if ($usr_lst->count_user_rows($db_con, $this->id()) == 0) {
+                $this->uses_sandbox = false;
+                // a user object without a database id cannot be updated e.g. during unit tests
+                if ($this->id() > 0) {
+                    $this->save_user($msg, $this);
+                }
+            }
+        }
+    }
+
+    /**
      * add or update a user in the database
      *
      * @param user|null $usr_req the user who has request the user adding or update
@@ -2570,6 +2886,11 @@ class user extends db_id_object_non_sandbox
         if ($msg->is_ok()) {
             if ($this->id == 0) {
 
+                // the profile is a critical field, so a new user may only get a higher profile if the
+                // requester is privileged; an unprivileged request falls back to the normal profile
+                $this->profile_id = $this->enforce_profile_privilege(
+                    $this->profile_id, null, $usr_req, $msg);
+
                 // create a user if no similar user has been found
                 $msg->merge($this->db_insert($db_con, $usr_req));
 
@@ -2586,6 +2907,10 @@ class user extends db_id_object_non_sandbox
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
+                    // the profile is a critical field, so only a privileged requester may raise it;
+                    // an unprivileged profile change is refused and reset to the stored profile
+                    $this->profile_id = $this->enforce_profile_privilege(
+                        $this->profile_id, $db_rec->profile_id, $usr_req, $msg);
                     if (!$this->is_same($db_rec, $msg)) {
                         $msg->merge($this->db_update_user($db_con, $db_rec, $usr_req));
                     }
@@ -2759,7 +3084,7 @@ class user extends db_id_object_non_sandbox
         $msg = new user_message();
         $msg->usr = $usr_req;
 
-        if ($this->can_be_changed_by($msg, $db_usr)) {
+        if ($this->can_be_changed_by($msg)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
@@ -3546,6 +3871,21 @@ class user extends db_id_object_non_sandbox
                 source_fields::FLD_NAME,
                 $this->src,
                 $obj->src
+            );
+        }
+        if ($obj->uses_sandbox !== $this->uses_sandbox) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_USES_SANDBOX,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_USES_SANDBOX),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_USES_SANDBOX,
+                $this->uses_sandbox,
+                sql_field_type::BOOL,
+                $obj->uses_sandbox
             );
         }
 

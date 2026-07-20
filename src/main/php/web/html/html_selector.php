@@ -68,9 +68,9 @@ class html_selector
         }
 
         if ($this->selected == 0) {
-            if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<option data-value="0" selected>' . $this->dummy_text . '</option>';
-            } else {
+            // a datalist gets no dummy entry, because the datalist options are suggested input
+            // values and the 'please select' text must never be posted as an object name
+            if ($this->type != self::TYPE_DATALIST) {
                 $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
             }
         }
@@ -84,7 +84,14 @@ class html_selector
                 // the option text is a user-controlled name, so escape it before output
                 $option_text = htmlspecialchars($value, ENT_QUOTES);
                 if ($this->type == self::TYPE_DATALIST) {
-                    $result .= '<option data-value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
+                    // the option value is the visible name, because a datalist input shows and
+                    // posts its value, so the user always sees the name and the server resolves
+                    // the posted name to the id (see web/word/triple::set_phrase_by_id); the id is
+                    // kept as data attribute for a future javascript based frontend; a datalist
+                    // option cannot be preselected, the prefill is done via the value of the text
+                    // input (see start_selector)
+                    $result .= '<option ' . html_names::VALUE . '="' . $option_text . '"'
+                        . ' ' . html_names::DATA_VALUE . '="' . $key . '"></option>';
                 } else {
                     $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
                 }

@@ -89,7 +89,8 @@ function run_word_display_test(all_tests $t): void
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
     $link_types_ui = new verb_list_ui($link_types->api_json());
     $result = $wrd_ZH_ui->dsp_graph($direction, $link_types_ui, 0);
-    $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target);
+    // loading the link types and rendering the graph reads from the database, so a semi page timeout is used
+    $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);

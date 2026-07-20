@@ -1,0 +1,401 @@
+#!/bin/bash
+
+# ------------------------------------------
+# zukunft.com pod install script
+# for direct installation on a debian system
+# ------------------------------------------
+
+# Color variables
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+NC="\033[0m"
+
+
+# ------------------------------------------
+##  START Main
+# ------------------------------------------
+main() {
+    rootCheck
+
+    # Set current directory
+    CURRENT_DIR=$(pwd)
+
+    cd zukunft.com || exit
+
+    displayIntro
+    parseArguments "$@"
+    initEnvironment
+    readVar
+
+    checkEnv
+    checkOs
+    checkDb
+
+    if [[ "$OS" == "debian" ]]; then
+        updateDebian
+        installAndConfigurePostgresql
+        installAndConfigureApache
+        installAndConfigurePhp
+        downloadZukunft
+        installZukunft
+        configureServerAdmin
+        testZukunft
+        installBackendJobScheduler
+        #testInstallation
+    else
+        if [[ "$OS" == "docker" ]]; then
+            installZukunftInDocker
+            #testInstallation
+        fi
+    fi
+
+}
+# ------------------------------------------
+# END Main
+# ------------------------------------------
+
+
+# ------------------------------------------
+# START Utilities
+# ------------------------------------------
+
+# Check if the script is run as root or user with superuser privilege
+rootCheck() {
+    ROOT_UID=0
+
+    if [ "$UID" -ne "$ROOT_UID" ]; then
+        echo "Sorry must be in root to run this script"
+        exit 65
+    fi
+}
+
+displayIntro() {
+    clear > "$(tty)"
+
+    # Initial prompt
+    echo -e "${GREEN}ZUKUNFT INSTALLER${NC}"
+    printf "\n"
+    echo "This script will install a debian based LAPP stack and a zukunft.com pod"
+    printf "\n"
+    echo "and it will recreated the zukunft database if it exists"
+    printf "\n\n"
+    read -rp "Press enter to continue or CTRL+C to exit and keep the database named zukunft"
+}
+
+# Parse arguments
+parseArguments() {
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            --os=*) OS="${1#*=}" ;;
+            --os) OS="$2"; shift ;;
+            *) echo "Updating with default environment";;
+        esac
+        shift
+    done
+}
+
+initEnvironment() {
+    # TODO modify to environment base on the given parameters e.g. -docker
+    echo -e "\n${GREEN}Create environment...${NC}"
+    if [ ! -f .env ]; then
+        if [ -f .env.example ]; then
+            cp .env.example .env
+            echo -e "\n${GREEN}Environment created ...${NC}"
+        else
+            echo -e "\n${RED}Sample environment .env.example file does not exist.${NC}"
+        fi
+    else
+        echo -e "\n${GREEN}Environment already exists.${NC}"
+    fi
+    sleep 3
+}
+
+readVar() {
+    set -o allexport; source .env; set +o allexport
+    # fallback for an older .env that predates the separate git dir: keep the git
+    # repository next to, but outside, the web root so /.git/* stays unreachable
+    ZUKUNFT_GIT_DIR="${ZUKUNFT_GIT_DIR:-${WWW_ROOT%/}.git}"
+}
+
+checkEnv() {
+    # reject unexpected environments
+    if [[ "$ENV" == "prod" ]]; then
+        echo -e "${GREEN}install a production instance of zukunft.com${NC}"
+        if [[ "$BRANCH" != "master" ]]; then
+            echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+        fi
+    else
+        if [[ "$ENV" == "test" ]]; then
+            echo -e "${GREEN}install a zukunft.com for user acceptance testing${NC}"
+            if [[ "$BRANCH" != "release" ]]; then
+               echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+            fi
+        else
+            if [[ "$ENV" == "dev" ]]; then
+                echo -e "${GREEN}install a zukunft.com for development${NC}"
+                if [[ "$BRANCH" != "develop" ]]; then
+                    echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+                fi
+            else
+                echo -e "\n${RED}environment $ENV not yet supported by zukunft.com${NC}"
+            fi
+        fi
+    fi
+}
+
+checkOs() {
+    # reject unexpected operating systems
+    if [[ "$OS" == "debian" ]]; then
+        echo -e "${GREEN}install on debian${NC}"
+    else
+        if [[ "$OS" == "docker" ]]; then
+            echo -e "${GREEN}install using docker${NC}"
+        else
+            echo -e "\n${RED}install for $OS not yet possible.${NC}"
+        fi
+    fi
+}
+
+checkDb() {
+    # reject unexpected operating systems
+    if [[ "$DB" == "postgres" ]]; then
+        echo -e "${GREEN}using postgres database${NC}"
+    else
+        if [[ "$DB" == "mysql" ]]; then
+        echo -e "${GREEN}using mysql database${NC}"
+        else
+            echo -e "\n${RED}database $DB not yet possible.${NC}"
+        fi
+    fi
+}
+
+# TODO add other linux distributions such as Fedora
+updateDebian() {
+    echo -e "\n${GREEN}Updating debian...${NC}"
+
+    # Update Debian
+    apt-get update && apt-get upgrade
+
+    # make sure that git is installed
+    apt-get install -y git
+}
+
+installAndConfigurePostgresql() {
+    echo -e "\n${GREEN}Installing postgres ...${NC}"
+
+    # Install postgres
+    # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
+    apt-get install -y postgresql postgresql-contrib
+
+    # Initialize database
+    # TODO if no password is given just create on and write it to the .env secrets
+    # TODO use the generated or give db password in the php code
+    # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
+    # TODO secure the standard postgres user name after install
+    # create the user
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
+    # drop any old database with the same name
+    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE $PGSQL_DATABASE"
+    # create the database
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
+    # TODO if the database existed change the owner of the tables or drop all tables
+
+    echo -e "Installed postgres: \n$(psql --version)"
+
+    sleep 3
+}
+
+# TODO add a nginx based installation
+installAndConfigureApache() {
+    echo -e "\n${GREEN}Installing Apache...${NC}"
+
+    # Install Apache
+    apt-get install -y apache2
+
+    systemctl enable apache2
+    systemctl start apache2
+}
+
+installAndConfigurePhp() {
+    echo -e "\n${GREEN}Installing PHP ...${NC}"
+
+    # Install PHP
+    apt-get install -y php
+    apt-get install -y php-pgsql
+    apt-get install -y php-yaml
+    apt-get install -y php-curl
+    apt-get install -y php-xml
+    apt-get install -y php-json
+
+    PHP_VERSION=$(php -r 'echo PHP_VERSION;' | cut -d. -f1,2)
+    if [[ "$PHP_VERSION" != "8.4" ]]; then
+        echo -e "${RED}PHP 8.4 is required, found $PHP_VERSION${NC}"
+        exit 1
+    fi
+    echo -e "Installed PHP: \n$(php --version)"
+    sleep 3
+}
+
+downloadZukunft() {
+    echo -e "\n${GREEN}Download selected zukunft.com branch ...${NC}"
+
+    # switch later to something like git://git.zukunft.com/zukunft.git
+    # keep the git repository (objects + full history) OUT of the web root: with
+    # --separate-git-dir the working tree stays at $WWW_ROOT but .git becomes a
+    # one-line file pointing at $ZUKUNFT_GIT_DIR, so /.git/* cannot be downloaded
+    # while "git -C $WWW_ROOT pull|checkout" (used by the update-program flow)
+    # still works
+    git clone -b "$BRANCH" --separate-git-dir="$ZUKUNFT_GIT_DIR" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    # copy the .env with the secrets to one level above the web root, not into it, so it can never
+    # be served even if the web server ever ignores the .htaccess rules; env.php reads it from there
+    # (see env.php). being outside the git working tree it also survives the git-based program update
+    cp "$CURRENT_DIR/zukunft.com/.env" "${WWW_ROOT%/}/../.env"
+
+}
+
+installZukunft() {
+    echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
+
+    # force to reread to www root ?
+    systemctl restart apache2
+
+    # create the zukunft.com database tables
+    # TODO remove or deactivate the reset_db.php script in prod after successful install
+    php "$WWW_ROOT/test/reset_db.php"
+
+    # the initial users now exist in the database with a bcrypt-hashed password, so the cleartext
+    # login passwords in the deployed .env are no longer needed; blank them so that reading the .env
+    # cannot recover a working login. the db connection passwords are kept - the app needs them.
+    # ZUKUNFT_ALLOW_SETUP is blanked too so that http/setup.php refuses after the initial setup
+    sed -i -E 's/^(ADMIN_PW|CO_ADMIN_PW|USER_PW|CO_USER_PW|ZUKUNFT_ALLOW_SETUP)=.*/\1=/' "${WWW_ROOT%/}/../.env"
+
+    # TODO check result and create warning if it does not end with
+    # TODO fix the errors on the first run that are caused e.g. by the missing db rows
+    #      0 test errors
+    #      0 internal errors
+
+    cd "$CURRENT_DIR" || exit
+
+    # TODO maybe remove to git clone in the local folder to avoid confusion
+    #      this maybe depending on the update and upgrade process
+    #      e.g. if this is done via git clone to the webserver folder
+    #      and how the .env file can be kept
+    rm -rf zukunft.com
+
+    sleep 3
+}
+
+configureServerAdmin() {
+    echo -e "\n${GREEN}Configuring the server admin page ...${NC}"
+
+    WEB_USER="${WEB_USER:-www-data}"
+    ADMIN_SCRIPT="$WWW_ROOT/script/server_admin.sh"
+    UPDATE_SCRIPT="$WWW_ROOT/script/update.sh"
+    SUDOERS_FILE="/etc/sudoers.d/zukunft-server-admin"
+
+    # the admin page starts these scripts, so both need the execute bit
+    chmod +x "$ADMIN_SCRIPT" "$UPDATE_SCRIPT"
+
+    # the admin page runs the update as root, but the web root belongs to another user,
+    # so without this git would reject the repo with "detected dubious ownership"
+    # --system (/etc/gitconfig) not --global, because sudo may keep the caller HOME
+    git config --system --add safe.directory "$WWW_ROOT"
+
+    # allow the web server user to run exactly the two admin page actions as root without a
+    # password; the sub-commands are pinned so that code-exec as the web user cannot pass other
+    # arguments (e.g. maintenance-on with a crafted page) to escalate further (defense in depth)
+    cat > "$SUDOERS_FILE" <<EOF
+# created by zukunft.com install.sh
+# lets the server admin page update the program and upgrade the database;
+# the maintenance page switching happens inside these two pinned commands
+$WEB_USER ALL=(root) NOPASSWD: $ADMIN_SCRIPT update-program, $ADMIN_SCRIPT upgrade-database
+EOF
+    chmod 0440 "$SUDOERS_FILE"
+
+    # a broken drop-in would block sudo for everyone, so never keep one
+    if visudo -cf "$SUDOERS_FILE"; then
+        echo -e "${GREEN}$WEB_USER may now run $ADMIN_SCRIPT as root${NC}"
+    else
+        rm -f "$SUDOERS_FILE"
+        echo -e "\n${RED}invalid sudo rule removed again: $SUDOERS_FILE${NC}"
+    fi
+
+    sleep 3
+}
+
+testZukunft() {
+    echo -e "\n${GREEN}Test zukunft.com ...${NC}"
+
+    # test the zukunft.com
+    php "$WWW_ROOT/test/test.php"
+
+    # TODO remove the test again the zukunft.com by fixing the errors in the first run
+    php "$WWW_ROOT/test/test.php"
+
+    # TODO check result and create warning if it does not end with
+    #      0 test errors
+    #      0 internal errors
+
+    # TODO if ENV is prod, remove the test script to avoid database reset by mistake
+    # TODO if ENV is release add und use a script to clone the database from prod
+
+    sleep 3
+}
+
+# install the systemd service and timer that run the backend jobs (cache refresh sweep and
+# database cleanup) once per minute; run after testZukunft so the first job hits a stable database
+installBackendJobScheduler() {
+    echo -e "\n${GREEN}Installing the backend job scheduler ...${NC}"
+
+    # the scheduler needs a booted systemd; fail clearly instead of silently skipping
+    # (e.g. inside a container that has systemctl but no running systemd)
+    if ! command -v systemctl > /dev/null 2>&1 || [ ! -d /run/systemd/system ]; then
+        echo -e "\n${RED}systemd is not available (e.g. inside a container); cannot install the zukunft-jobs timer${NC}"
+        exit 1
+    fi
+
+    WEB_USER="${WEB_USER:-www-data}"
+    UNIT_SRC="$WWW_ROOT/deploy/systemd"
+    UNIT_DST="/etc/systemd/system"
+
+    # copy the units, substituting the web root and the web user of this pod so a non-default
+    # WWW_ROOT / WEB_USER still matches; overwriting an existing unit keeps the step idempotent
+    sed -e "s#/var/www/html#${WWW_ROOT%/}#g" \
+        -e "s#^User=www-data#User=${WEB_USER}#" \
+        -e "s#^Group=www-data#Group=${WEB_USER}#" \
+        "$UNIT_SRC/zukunft-jobs.service" > "$UNIT_DST/zukunft-jobs.service"
+    cp "$UNIT_SRC/zukunft-jobs.timer" "$UNIT_DST/zukunft-jobs.timer"
+
+    # load the new units and enable and start the timer; both commands are safe to repeat
+    systemctl daemon-reload
+    systemctl enable --now zukunft-jobs.timer
+
+    echo -e "${GREEN}zukunft-jobs.timer enabled; check with 'systemctl status zukunft-jobs.timer' and 'journalctl -u zukunft-jobs'${NC}"
+
+    sleep 3
+}
+
+installZukunftInDocker() {
+    echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
+
+    # switch later to something like git://git.zukunft.com/zukunft.git
+    # keep .git out of the web root, see downloadZukunft above
+    git clone -b "$BRANCH" --separate-git-dir="$ZUKUNFT_GIT_DIR" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+
+    cd "$WWW_ROOT" || exit
+
+    echo -e "\n${GREEN}Building docker images ...${NC}"
+
+    docker compose up -d --build
+
+    echo -e "\n${GREEN}Resetting database ...${NC}"
+
+    docker compose exec app php test/reset_db.php
+
+}
+
+# ------------------------------------------
+# END Utilities
+# ------------------------------------------
+
+main "$@"; exit

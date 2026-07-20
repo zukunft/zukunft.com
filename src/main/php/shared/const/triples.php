@@ -53,6 +53,7 @@ class triples
     const string BY_IP_ADDRESS = 'by ip-address';
     const string BY_LOCATION = 'by location';
     const string CHECK_PERIOD = 'check period';
+    const string DATABASE_CHANGE = 'database change';
     const string DECREASE_DAYS = 'decrease days';
     const string EMAIL_SERVER = 'email server';
     const string EXPECTED_TIME = 'expected time';
@@ -102,6 +103,7 @@ class triples
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';
     const string TOP_LEVEL = 'top level';
+    const string USER_FRONTEND = 'user frontend';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';
     const string WORD_CHANGES = 'word changes';

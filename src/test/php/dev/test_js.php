@@ -31,10 +31,16 @@
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 
-$debug = $_GET['debug'] ?? 0;
+// keep the requested debug level untrusted until the environment is known: honoring it outside
+// the dev environment would echo sql and the call graph to any visitor (see http/const.php)
+$debug_requested = $_GET['debug'] ?? 0;
+$debug = 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
+if (getenv(ENVIRONMENT) == ENV_DEV) {
+    $debug = $debug_requested;
+}
 
 $app = new application();
 $db_con = $app->start("start test.php");

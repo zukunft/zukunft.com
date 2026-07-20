@@ -36,6 +36,11 @@ Tests run over HTTP, not CLI: `test/test_unit.php` (unit, no DB),
 `test/test.php` (all), `test/test_coding_rules.php` (consistency checks),
 `test/test_horizontal.php`. Single class via `a_selected_test.php` in PHPUnit dir.
 
+**An LLM never runs the predefined test scripts in `/test/*` — especially not
+`test/test.php`.** They need a local deployment (served checkout, database,
+admin session), and deploying is never an LLM task. Write and review tests,
+then ask the developer to run them and report the results.
+
 Branches: `feature/*` → `develop` → `release` → `master`. Commit messages
 reference issues, e.g. `fix auth flow as part of fix #232`.
 
@@ -47,12 +52,19 @@ detail file. Order is by how often they fire, not importance.
 ### Structure & style
 - One `return` per function, at the end, into a named variable; no `break` / `continue` in loops; top-of-function guard clauses excepted. → `docs/llm/structure.md`
 - An unexpected fall-through branch calls `log_err(...)` before the default; a normal-empty one does not. → `docs/llm/structure.md`
+- Whatever happens (corrupted db, bad input, missing config), an uncaught PHP fatal is avoided — guard the value before the call that would fatal and catch exceptions at the layer boundary — because a fatal prevents the three duties of error handling: sys_log entry, admin info, user message. → `docs/llm/structure.md`
+- Never fail silently: a function carrying a `user_message $msg` that rejects or aborts must record the reason on `$msg` (a `msg_id` that renders to real text) and let it propagate to the UI — never return a failure with `$msg` unchanged, empty, or hidden by an `is_ok()` gate. → `docs/llm/structure.md`
+- A helper that can produce a *user-actionable* error takes a `user_message $msg` parameter (thread it from the callers) so it can return the specific problem and its solution; reserve `log_err` (no `$msg`) for internal inconsistencies the user cannot fix. E.g. `triple::verb_from_api_json`. → `docs/llm/structure.md`
+- A cache entry's `last_update` is the time of the data snap (taken *before* reading the data), never the time of the cache write; a cache is keyed by type *and* user unless it is provably the same for everybody, and it is used only if `is_outdated()` says no. → `docs/llm/architecture.md`
+- A db read returns `false` only when the query itself failed (e.g. corrupted or outdated database) — distinct from null = no row; the load caller guards the `false` before `row_mapper()` to show a helpful message, and the db layer never converts it to null. → `docs/llm/architecture.md`
 - Function bodies fit on one screen page (~50 lines); extract named helpers (`save_results`, `save_components`) when an orchestrator outgrows that. → `docs/llm/structure.md`
 - Validate inside the called function (a top-of-function guard clause), never at the call site, so the call stays short and the check lives in one place for every caller. → `docs/llm/structure.md`
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
+- SQL keywords in hand-built queries use the `sql::*` consts (`sql::SELECT`, `sql::FROM`, `sql::GROUP_BY`, `sql::FUNCTION_COUNT`, …), never inline `'SELECT'` / `'GROUP BY'` strings, so a `sql::CONST` search instantly finds every generator using a feature (scoping a change or test); add the const to `cfg/db/sql.php` if one is missing. → `docs/llm/constants.md`
 - Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
+- Boolean db fields are `sql_field_type::BOOL` with `sql_field_default::NULL` (null reads as false, like `excluded`); never `ZERO` or `NOT_NULL`. → `docs/llm/constants.md`
 - Icons come from `web/const/icons.php` constants, never inline `fas fa-*` strings. → `docs/llm/constants.md`
 - Filesystem paths are consts in a `paths.php` (cfg / web / test), composed from existing path consts; never inline a directory string. → `docs/llm/constants.md`
 - Files order `use`/`include_once` in three blocks (path-`use` → `include_once` → class-`use`, alphabetic). → `docs/llm/file-layout.md`
@@ -88,7 +100,9 @@ detail file. Order is by how often they fire, not importance.
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
+- Configuration values are sandbox values that a normal user can change too (only pod-level keys are admin protected) — a config write takes the requesting user from the caller, never assumes e.g. the system user. → `docs/llm/architecture.md`
 - `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
+- Frontend and backend are two independent apps talking only over the API: `web/frontend.php` boots the html frontend (`http/view.php`, …), `cfg/application.php` boots the backend api scripts; never cross them. They overlap today (session, tls, db open, timing) and their same-named `start()` methods have different signatures, so a change to the request lifecycle goes into **both** until the split is done. → `docs/llm/frontend.md`
 - Every list rendered on a frontend page is sorted by a deterministic key (impact, name, id, …) before output, so the HTML order never depends on API/DB row order and snapshot tests stay stable. → `docs/llm/frontend.md`
 - An HTML input's `name` is the url var (the submitted key the url mapper reads); the human label goes in `id` / `<label for>`, never in `name`. → `docs/llm/frontend.md`
 - Any paired tag (`<form>…</form>`, `<div>…</div>`, …) is emitted by an `html_base` function that builds both tags from a tag const; never inline a raw open/close tag at the call site. → `docs/llm/frontend.md`
@@ -100,8 +114,10 @@ detail file. Order is by how often they fire, not importance.
 ## Domain & import rules
 
 These fire only when touching domain objects or import JSON. JSON import
-file-format detail and worked examples: `docs/llm/json_structure.md`. Domain
-noun definitions: `docs/llm/architecture.md`.
+file-format detail and worked examples: `docs/llm/json_structure.md` (data:
+words, triples, formulas, sources, values) and `docs/llm/json_views.md`
+(views, components, view-validation). Domain noun definitions:
+`docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`.
@@ -115,7 +131,7 @@ noun definitions: `docs/llm/architecture.md`.
 - Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Qualify a value as specifically as the data allows, globally unique — name the actual entity (`Zurich (canton)`, not bare `canton`); build qualifiers as triples from single words; omit `"share":"public"` (the default).
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
-- A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`.
+- A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
 
@@ -127,6 +143,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
+- Never run the predefined test scripts in `/test/*` (especially `test/test.php`): they need a local deployment, which is never an LLM task; the developer runs them and reports the results. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.
@@ -145,8 +162,10 @@ Detail and worked examples: `docs/llm/testing.md`.
 
 ## Pre-commit checklist
 
+- Do **not** raise the micro version yet: raising the fourth part of `CODE_VERSION` / `UI_VERSION` in `version.txt` with every commit starts only after the next production release, which has not happened yet — until then `version.txt` stays unchanged. → `docs/llm/versions.md`
+- Raise the **minor** version (`0.0.3` → `0.0.4`, micro back to `.0`) whenever the json format or the database structure changes, because the minor version is the version of the exports and of the database (`def::PRG_VERSION` = `SYSTEM_MINOR_VERSION`); a raised minor version needs a matching database upgrade script in `db_check`. → `docs/llm/versions.md`
+- `version.txt` is the single source of the program version — never write a version literal anywhere else in the code; the database version at runtime comes from the config table, never from `config.yaml` or the config numbers. → `docs/llm/versions.md`
 - Never change `files::AUTO_UPDATE_TEST_FILES` (`src/test/php/const/files.php`); it must always remain `false` — `true` silently overwrites failing snapshots and masks regressions.
 - Never overwrite an existing `src/test/resources/` fixture (HTML/SQL/CSV/JSON) to make a test pass; leave it failing for the existing scripts or a human reviewer to regenerate — the snapshot diff is the reviewer's signal, not yours to silence. You may *add* new resource files.
 - No real secrets anywhere (source, fixtures, config, commit messages). Dummy passwords must be explicitly labelled; remove an accidentally-staged secret before committing, not in a follow-up.
-- Run `test/test_coding_rules.php`; fix what it reports.
-- `test/test.php` must run without error; fix any failure before committing.
+- `test/test_coding_rules.php` and `test/test.php` must run without error before committing — but only the developer runs them (an LLM never runs `/test/*` scripts); ask for the run and fix what it reports.

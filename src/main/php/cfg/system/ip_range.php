@@ -52,6 +52,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -599,6 +601,24 @@ class ip_range extends db_object_seq_id
     /*
      * sql helper
      */
+
+    /**
+     * create human-readable messages of the differences between the ip range objects
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param ip_range|CombineObject|db_object_seq_id $obj which might be different to this ip range
+     * @param bool $ex_def if true excluding differences in fields with a default value
+     * @return user_message the human-readable messages of the differences between the ip range objects
+     */
+    function diff_msg(ip_range|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj);
+        $this->diff_field_msg($msg, ip_range_db::FLD_FROM, $this->from, $obj->from);
+        $this->diff_field_msg($msg, ip_range_db::FLD_TO, $this->to, $obj->to);
+        $this->diff_field_msg($msg, ip_range_db::FLD_REASON, $this->reason, $obj->reason);
+        $this->diff_field_msg($msg, ip_range_db::FLD_ACTIVE, $this->active, $obj->active);
+        return $msg;
+    }
 
     /**
      * check if the named object in the database needs to be updated

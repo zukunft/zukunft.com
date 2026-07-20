@@ -316,6 +316,11 @@ class component_link extends sandbox_link
     {
         parent::api_mapper($api_json, $usr_msg);
 
+        // TODO Prio 2 get from dto cache if possible
+        if (array_key_exists(json_fields::VIEW_ID, $api_json)) {
+            $this->set_view(new view($this->get_user()));
+            $this->get_view()->id = $api_json[json_fields::VIEW_ID];
+        }
         if (array_key_exists(json_fields::COMPONENT_ID, $api_json)) {
             $this->set_component(new component($this->get_user()));
             $this->get_component()->id = $api_json[json_fields::COMPONENT_ID];

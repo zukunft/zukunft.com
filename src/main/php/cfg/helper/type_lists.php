@@ -40,6 +40,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
 include_once paths::MODEL_HELPER . 'db_cache_status_list.php';
 include_once paths::MODEL_HELPER . 'db_cache_type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
@@ -80,12 +81,14 @@ include_once paths::MODEL_LOG . 'change_table_list.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_USER . 'user_type_list.php';
 include_once paths::MODEL_USER . 'user_status_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
@@ -111,6 +114,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
@@ -121,6 +125,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class type_lists
@@ -178,6 +183,46 @@ class type_lists
     public component_link_type_list $cmp_lnk_typ;
     public position_type_list $pos_typ;
     public view_relation_type_list $mrl_typ;
+
+    // true if the lists have been filled from the cached types json (see load_cached)
+    private bool $from_cache = false;
+
+    // all type lists with their api json field (json field of the api message => list var)
+    // used to create the api message, to fill the lists from the cached types json
+    // and to load the dummy lists for the unit tests, so the three can never drift apart
+    const array API_LISTS = [
+        json_fields::LIST_USER_PROFILES => 'usr_pro',
+        json_fields::LIST_USER_TYPES => 'usr_typ',
+        json_fields::LIST_USER_STATUUS => 'usr_sta',
+        json_fields::LIST_SYS_LOG_FUNCTIONS => 'sys_log_fnc',
+        json_fields::LIST_SYS_LOG_LEVELS => 'sys_log_lvl',
+        json_fields::LIST_SYS_LOG_STATUUS => 'sys_log_sta',
+        json_fields::LIST_CHANGE_LOG_ACTIONS => 'cng_act',
+        json_fields::LIST_CHANGE_LOG_TABLES => 'cng_tbl',
+        json_fields::LIST_CHANGE_LOG_FIELDS => 'cng_fld',
+        json_fields::LIST_DB_CACHE_TYPES => 'cac_typ',
+        json_fields::LIST_DB_CACHE_STATUUS => 'cac_sta',
+        json_fields::LIST_JOB_TYPES => 'job_typ',
+        json_fields::LIST_JOB_STATUUS => 'job_sta',
+        json_fields::LIST_LANGUAGES => 'lan',
+        json_fields::LIST_LANGUAGE_FORMS => 'lan_for',
+        json_fields::LIST_SHARE_TYPES => 'shr_typ',
+        json_fields::LIST_PROTECTION_TYPES => 'ptc_typ',
+        json_fields::LIST_VERBS => 'vrb',
+        json_fields::LIST_PHRASE_TYPES => 'phr_typ',
+        json_fields::LIST_REF_TYPES => 'ref_typ',
+        json_fields::LIST_SOURCE_TYPES => 'src_typ',
+        json_fields::LIST_FORMULA_TYPES => 'frm_typ',
+        json_fields::LIST_FORMULA_LINK_TYPES => 'frm_lnk_typ',
+        json_fields::LIST_ELEMENT_TYPES => 'elm_typ',
+        json_fields::LIST_VIEW_TYPES => 'msk_typ',
+        json_fields::LIST_VIEW_STYLES => 'msk_sty',
+        json_fields::LIST_VIEW_LINK_TYPES => 'msk_lnk_typ',
+        json_fields::LIST_COMPONENT_TYPES => 'cmp_typ',
+        json_fields::LIST_COMPONENT_LINK_TYPES => 'cmp_lnk_typ',
+        json_fields::LIST_COMPONENT_POSITION_TYPES => 'pos_typ',
+        json_fields::LIST_VIEW_RELATION_TYPES => 'mrl_typ',
+    ];
 
 
     /*
@@ -242,6 +287,90 @@ class type_lists
 
     // TODO Prio 0 use the dto object and cache the type data
     /**
+     * load the type lists from the cached types json with one database read
+     * or if the cache is missing or outdated with one select per type list
+     * the pod switch for the types cache can only be checked after the config is loaded,
+     * so the caller is expected to call reload_if_cache_denied once the config is known
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool true if the loading is complete
+     */
+    function load_cached(sql_db $db_con): bool
+    {
+        $this->from_cache = $this->load_from_types_cache();
+        if ($this->from_cache) {
+            $result = true;
+        } else {
+            $result = $this->load($db_con);
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the type lists have been filled from the cached types json
+     */
+    function from_cache(): bool
+    {
+        return $this->from_cache;
+    }
+
+    /**
+     * reload the type lists from the database if the pod switch denies the types cache
+     * called by the bootstrap after the config load, because the switch is a config value
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param bool $allowed the pod switch for the types cache e.g. via config_numbers::cache_allowed
+     * @return void
+     */
+    function reload_if_cache_denied(sql_db $db_con, bool $allowed): void
+    {
+        if (!$allowed and $this->from_cache) {
+            $this->from_cache = false;
+            $this->load($db_con);
+        }
+    }
+
+    /**
+     * fill the type lists from the db cached types api message with one database read
+     * the message is written by ui_config::write_db_cache on a frontend types api call
+     * @return bool true if all type lists have been filled from the cache
+     */
+    private function load_from_types_cache(): bool
+    {
+        $result = false;
+        // the fixed type id is used, because the db_cache type list itself is not yet loaded
+        $cac = new db_cache(user::system());
+        $cac->load_by_type_id(db_cache_types::TYPES_ID);
+        if (!$cac->is_outdated()) {
+            if (is_array($cac->data)) {
+                $api_json = $cac->data[json_fields::BODY] ?? $cac->data;
+                $usr_msg = new user_message(user::system());
+                $result = $this->fill_from_api_json($api_json, $usr_msg);
+                if (!$usr_msg->is_ok()) {
+                    log_warning('cached types json rejected: ' . $usr_msg->all_message_text());
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * fill all type lists from the api json of the cached types message
+     * @param array $api_json the body of the types api message with one entry per type list
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @return bool true if all type lists have been filled
+     */
+    function fill_from_api_json(array $api_json, user_message $usr_msg): bool
+    {
+        $result = true;
+        foreach (self::API_LISTS as $json_key => $lst_var) {
+            if ($result) {
+                $result = $this->$lst_var->fill_from_api_rows($api_json[$json_key] ?? [], $usr_msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * load the type objects once from the database because they are expected to change very rarely
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool true if the loading is complete
@@ -271,10 +400,7 @@ class type_lists
 
         // cache
         if ($result) {
-            $result = $this->cac_typ->load($db_con);
-        }
-        if ($result) {
-            $result = $this->cac_sta->load($db_con);
+            $result = $this->load_cache($db_con);
         }
 
         // language and system jobs
@@ -383,6 +509,20 @@ class type_lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool false if the load is incomplete
      */
+    function load_log_if_empty(sql_db $db_con): bool
+    {
+        if ($this->cng_act->is_empty()) {
+            return $this->load_log($db_con);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * reload the cache used for logging the changes
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool false if the load is incomplete
+     */
     function load_log(sql_db $db_con): bool
     {
         $result = $this->cng_act->load($db_con);
@@ -471,46 +611,9 @@ class type_lists
 
         log_debug();
         $vars = [];
-
-        $vars[json_fields::LIST_USER_PROFILES] = $this->usr_pro->api_json_array();
-        $vars[json_fields::LIST_USER_TYPES] = $this->usr_typ->api_json_array();
-        $vars[json_fields::LIST_USER_STATUUS] = $this->usr_sta->api_json_array();
-
-        $vars[json_fields::LIST_SYS_LOG_FUNCTIONS] = $this->sys_log_fnc->api_json_array();
-        $vars[json_fields::LIST_SYS_LOG_LEVELS] = $this->sys_log_lvl->api_json_array();
-        $vars[json_fields::LIST_SYS_LOG_STATUUS] = $this->sys_log_sta->api_json_array();
-
-        $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $this->cng_act->api_json_array();
-        $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $this->cng_tbl->api_json_array();
-        $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
-
-        $vars[json_fields::LIST_DB_CACHE_TYPES] = $this->cac_typ->api_json_array();
-        $vars[json_fields::LIST_DB_CACHE_STATUUS] = $this->cac_sta->api_json_array();
-
-        $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
-        $vars[json_fields::LIST_JOB_STATUUS] = $this->job_sta->api_json_array();
-        $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
-        $vars[json_fields::LIST_LANGUAGE_FORMS] = $this->lan_for->api_json_array();
-
-        $vars[json_fields::LIST_SHARE_TYPES] = $this->shr_typ->api_json_array();
-        $vars[json_fields::LIST_PROTECTION_TYPES] = $this->ptc_typ->api_json_array();
-
-        $vars[json_fields::LIST_VERBS] = $this->vrb->api_json_array();
-        $vars[json_fields::LIST_PHRASE_TYPES] = $this->phr_typ->api_json_array();
-        $vars[json_fields::LIST_REF_TYPES] = $this->ref_typ->api_json_array();
-        $vars[json_fields::LIST_SOURCE_TYPES] = $this->src_typ->api_json_array();
-        $vars[json_fields::LIST_FORMULA_TYPES] = $this->frm_typ->api_json_array();
-        $vars[json_fields::LIST_FORMULA_LINK_TYPES] = $this->frm_lnk_typ->api_json_array();
-        $vars[json_fields::LIST_ELEMENT_TYPES] = $this->elm_typ->api_json_array();
-
-        $vars[json_fields::LIST_VIEW_TYPES] = $this->msk_typ->api_json_array();
-        $vars[json_fields::LIST_VIEW_STYLES] = $this->msk_sty->api_json_array();
-        $vars[json_fields::LIST_VIEW_LINK_TYPES] = $this->msk_lnk_typ->api_json_array();
-        $vars[json_fields::LIST_COMPONENT_TYPES] = $this->cmp_typ->api_json_array();
-        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $this->cmp_lnk_typ->api_json_array();
-        $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $this->pos_typ->api_json_array();
-        $vars[json_fields::LIST_VIEW_RELATION_TYPES] = $this->mrl_typ->api_json_array();
-
+        foreach (self::API_LISTS as $json_key => $lst_var) {
+            $vars[$json_key] = $this->$lst_var->api_json_array();
+        }
         return $vars;
     }
 
@@ -521,53 +624,10 @@ class type_lists
 
     function load_dummy(): void
     {
-        // system users
-        $this->usr_pro->load_dummy();
-        $this->usr_typ->load_dummy();
-        $this->usr_sta->load_dummy();
+        foreach (self::API_LISTS as $lst_var) {
+            $this->$lst_var->load_dummy();
+        }
         $this->system_users->load_dummy();
-
-        // system log
-        $this->sys_log_fnc->load_dummy();
-        $this->sys_log_lvl->load_dummy();
-        $this->sys_log_sta->load_dummy();
-
-        // change log
-        $this->cng_act->load_dummy();
-        $this->cng_tbl->load_dummy();
-        $this->cng_fld->load_dummy();
-
-        // cache
-        $this->cac_typ->load_dummy();
-        $this->cac_sta->load_dummy();
-
-        // language and system jobs
-        $this->job_typ->load_dummy();
-        $this->job_sta->load_dummy();
-        $this->lan->load_dummy();
-        $this->lan_for->load_dummy();
-
-        // sandbox
-        $this->shr_typ->load_dummy();
-        $this->ptc_typ->load_dummy();
-
-        // word, number and formula types
-        $this->vrb->load_dummy();
-        $this->phr_typ->load_dummy();
-        $this->ref_typ->load_dummy();
-        $this->src_typ->load_dummy();
-        $this->frm_typ->load_dummy();
-        $this->frm_lnk_typ->load_dummy();
-        $this->elm_typ->load_dummy();
-
-        // view
-        $this->msk_typ->load_dummy();
-        $this->msk_sty->load_dummy();
-        $this->msk_lnk_typ->load_dummy();
-        $this->cmp_typ->load_dummy();
-        $this->cmp_lnk_typ->load_dummy();
-        $this->pos_typ->load_dummy();
-        $this->mrl_typ->load_dummy();
     }
 
 }

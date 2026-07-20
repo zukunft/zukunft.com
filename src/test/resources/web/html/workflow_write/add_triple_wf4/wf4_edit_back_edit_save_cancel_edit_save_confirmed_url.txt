@@ -1,0 +1,21 @@
+GET
+http://localhost/http/view.php?pf=999&b=3&pt=997&k=System+Test+Triple&o=System+Test+Triple+Description&s=1&sp=1&id=0&uu=0&ui=0&9m=92&m=54&z=2&submit=
+/http/view.php?pf=999&b=3&pt=997&k=System+Test+Triple&o=System+Test+Triple+Description&s=1&sp=1&id=0&uu=0&ui=0&9m=92&m=54&z=2&submit=
+/http/view.php?from_id=999&verb_id=3&to_id=997&name=System+Test+Triple&description=System+Test+Triple+Description&share=1&protection=1&id=0&usage=0&impact=0&9mask_id=triple_default&mask_id=confirm_add&step=confirmed&
+{
+    "from_id": "999",
+    "verb_id": "3",
+    "to_id": "997",
+    "name": "System Test Triple",
+    "description": "System Test Triple Description",
+    "share": "1",
+    "protection": "1",
+    "id": "0",
+    "usage": "0",
+    "impact": "0",
+    "mask_id": "confirm_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "triple_default"
+    }
+}

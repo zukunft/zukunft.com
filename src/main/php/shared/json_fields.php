@@ -105,6 +105,9 @@ class json_fields
     // the external link of a source or a reference
     const string URL = 'url';
 
+    // the pre-rendered html page of a cached view-only request
+    const string HTML_PAGE = 'html_page';
+
     // the order number e.g. of the component within the view
     // is needed in the json because the json format does not support ordered lists by definition
     const string POSITION = 'position';
@@ -231,6 +234,7 @@ class json_fields
     const string TRACE = 'trace'; // what has lead to the issue
     const string FUNCTION_ID = 'function_id'; // id of a code part that has caused an issue
     const string SOLVER = 'solver'; // the developer which wants to fix the problem
+    const string SOLVER_NAME = 'solver_name'; // the name of the developer which wants to fix the problem
 
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
@@ -239,6 +243,8 @@ class json_fields
     const string PHRASE_ROW = 'word_row';
     // the phrase to select the column name of a view component
     const string PHRASE_COL = 'word_col';
+    const string PHRASE_COL_SUB = 'word_col_sub';
+    const string LINK_TYPE = 'link_type';
 
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
@@ -376,6 +382,8 @@ class json_fields
     const string LAST_LOGIN = 'last_login';
     const string LAST_LOGOFF = 'last_logoff';
     const string CREATED = 'created';
+    // true if the user has changed any data, so the pages cannot be served from the standard page cache
+    const string USES_SANDBOX = 'uses_sandbox';
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';
@@ -409,6 +417,7 @@ class json_fields
     const string RESULT = 'result'; // the expected result of a check formula e.g. of the XBRL summation-item validation
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string PARENT_FORMULAS = 'parent_formulas'; // formulas of the ancestor phrases, grouped per ancestor
     const string RESULTS = 'results';
     const string FORMULA_LINKS = 'formula_links';
     // TODO Prio 2 cleanup and use fields with *_id only for API messages and move const to this section

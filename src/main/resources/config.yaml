@@ -5,8 +5,7 @@ zukunft.com:
     source-name: "config.yaml"
     source-description: "internal system configuration yaml file"
     database:
-      version: 0.0.3
-      tooltip-comment: "the version of the database of the master pod"
+      tooltip-comment: "the database settings of the master pod; the database version is in the config table, the program version in version.txt"
       retry:
         start delay:
           sec: 1
@@ -35,13 +34,55 @@ zukunft.com:
               days: 100
               tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
       cache:
+        tooltip-comment: "the database caches to reduce the response time; each cache can be switched off e.g. to debug with always fresh data; a pod without a switch uses the cache"
         config:
+          system:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the json of the system configuration is not cached in the database (db_cache type system_config)"
+          user:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the json of the user overwrites of the system configuration is not cached in the database (db_cache type user_config)"
+          frontend:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the frontend part of the system configuration is not cached in the database (db_cache type ui_config)"
+          user frontend:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the frontend part of the user configuration is not cached in the database (db_cache type user_ui_config)"
           limit:
             days: 150
             tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues due to potential refresh bugs"
           validate:
             type: "names"
             tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
+        type:
+          allowed:
+            sys-conf-value: true
+            tooltip-comment: "if false the json message with the system types and views is not cached in the database (db_cache type types)"
+        preload:
+          allowed:
+            sys-conf-value: true
+            tooltip-comment: "if false the most often used data objects of a user are not cached in the database (db_cache type ui_cache)"
+        page:
+          tooltip-comment: "the cache of the rendered html pages of view-only requests stored in the db_cache_pages table"
+          html:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the rendered html pages of view-only requests are not cached (db_cache_pages table)"
+          data:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the data objects used for one page are not cached in the database (db_cache type page_cache)"
+          limit:
+            time:
+              days: 30
+              tooltip-comment: "a cached html page older than this is recreated on the next request to prevent stale pages"
+            storage size:
+              MB: 500
+              tooltip-comment: "if the total size of the cached html pages reaches this limit the oldest pages are removed"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
@@ -419,9 +460,6 @@ zukunft.com:
     pod:
       url: "zukunft.com"
       tooltip-comment: "the url name of this pod"
-      database:
-        version: 0.0.3
-        tooltip-comment: "the version of the database of this pod"
       phrase distribution:
         top level:
           pods: 16380
@@ -435,6 +473,11 @@ zukunft.com:
           not trusted: "hw-i.ru"
         country:
           trusted: "Switzerland"
+        database change:
+          ip user:
+            allowed:
+              sys-conf-value: false
+              tooltip-comment: "if false a user without login (an ip user) cannot change any data in the database; if true an ip user can change data up to the max change daily limit of the ip user"
       launch: 2026-06-07
       point:
         sys-conf-value: "50.478517691532666, 12.33581966347697"

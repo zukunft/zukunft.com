@@ -1,0 +1,189 @@
+{
+  "pod": "zukunft.com",
+  "version": "0.0.3",
+  "time": "2026-07-11",
+  "selection": [
+    "cbam",
+    "carbon leakage",
+    "climate club"
+  ],
+  "description": "Why a carbon border adjustment mechanism (CBAM) is a prerequisite for effective climate policy: diverging national interests, carbon leakage evidence, and the climate club mechanism. Draft to be validated against json_structure.md.",
+  "words": [
+    {
+      "name": "cbam",
+      "description": "carbon border adjustment mechanism: levy on embedded emissions of imports"
+    },
+    {
+      "name": "carbon leakage",
+      "description": "policy-induced shift of emissions to regions with weaker carbon regulation"
+    },
+    {
+      "name": "carbon leakage rate",
+      "description": "share of avoided emissions that reappear outside the regulated region"
+    },
+    {
+      "name": "climate club",
+      "description": "coalition with internal carbon price and trade penalties on non-participants (Nordhaus)"
+    },
+    {
+      "name": "free riding",
+      "description": "benefiting from others' emission reductions without bearing abatement costs"
+    },
+    {
+      "name": "global public good",
+      "description": "good with local costs and globally distributed benefits"
+    },
+    {
+      "name": "carbon price coverage",
+      "description": "share of global GHG emissions subject to a direct carbon price"
+    },
+    {
+      "name": "average carbon price",
+      "description": "average price of implemented direct carbon pricing instruments"
+    },
+    {
+      "name": "production gap",
+      "description": "excess of planned fossil fuel production over Paris-consistent pathways"
+    },
+    {
+      "name": "without border adjustment",
+      "description": "scenario qualifier: no CBAM in place"
+    },
+    {
+      "name": "with border adjustment",
+      "description": "scenario qualifier: CBAM in place"
+    },
+    {
+      "name": "2030"
+    },
+    {
+      "name": "2025"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "USD per ton CO2-eq"
+    },
+    {
+      "name": "measured value"
+    },
+    {
+      "name": "assumed value"
+    }
+  ],
+  "triples": [
+    {
+      "from": "climate protection",
+      "verb": "is a",
+      "to": "global public good"
+    },
+    {
+      "from": "global public good",
+      "verb": "causes",
+      "to": "free riding"
+    },
+    {
+      "from": "carbon leakage",
+      "verb": "reduces",
+      "to": "climate policy effectiveness"
+    },
+    {
+      "from": "cbam",
+      "verb": "reduces",
+      "to": "carbon leakage"
+    },
+    {
+      "from": "cbam",
+      "verb": "enables",
+      "to": "climate club"
+    },
+    {
+      "from": "climate club",
+      "verb": "reduces",
+      "to": "free riding"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Nordhaus 2015",
+      "description": "Nordhaus, W. (2015): Climate Clubs: Overcoming Free-Riding in International Climate Policy. American Economic Review 105(4), 1339-1370. Finding: without sanctions on non-participants no stable coalition beyond minimal abatement; small trade penalties enable large stable coalitions with high abatement.",
+      "url": "https://doi.org/10.1257/aer.15000001"
+    },
+    {
+      "name": "Branger Quirion 2014b",
+      "description": "Branger, F. & Quirion, P. (2014): Would Border Carbon Adjustments Prevent Carbon Leakage and Heavy Industry Competitiveness Losses? Ecological Economics 99, 29-39. Meta-analysis of 25 studies, 310 estimates.",
+      "url": "https://doi.org/10.1016/j.ecolecon.2013.12.010"
+    },
+    {
+      "name": "Branger Quirion 2014a",
+      "description": "Branger, F. & Quirion, P. (2014): Climate Policy and the Carbon Haven Effect. WIREs Climate Change 5(1), 53-71.",
+      "url": "https://doi.org/10.1002/wcc.245"
+    },
+    {
+      "name": "SEI et al. 2023",
+      "description": "SEI, Climate Analytics, E3G, IISD, UNEP (2023): The Production Gap Report 2023. Governments plan ~110% more fossil fuel production in 2030 than consistent with 1.5 C; none of 20 profiled producer countries committed to 1.5 C-aligned production cuts.",
+      "url": "https://doi.org/10.51414/sei2023.050"
+    },
+    {
+      "name": "World Bank 2025",
+      "description": "World Bank (2025): State and Trends of Carbon Pricing 2025. ~28% of global GHG emissions covered by a direct carbon price; average implemented price ~USD 19 per ton.",
+      "url": "https://www.worldbank.org/en/publication/state-and-trends-of-carbon-pricing"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "carbon leakage rate",
+        "without border adjustment",
+        "percent",
+        "measured value"
+      ],
+      "number": "14",
+      "source": "Branger Quirion 2014b",
+      "description": "mean of model estimates; typical range 5-25"
+    },
+    {
+      "words": [
+        "carbon leakage rate",
+        "with border adjustment",
+        "percent",
+        "measured value"
+      ],
+      "number": "6",
+      "source": "Branger Quirion 2014b",
+      "description": "mean of model estimates; typical range -5 to 15"
+    },
+    {
+      "words": [
+        "carbon price coverage",
+        "2025",
+        "percent",
+        "measured value"
+      ],
+      "number": "28",
+      "source": "World Bank 2025"
+    },
+    {
+      "words": [
+        "average carbon price",
+        "2025",
+        "USD per ton CO2-eq",
+        "measured value"
+      ],
+      "number": "19",
+      "source": "World Bank 2025"
+    },
+    {
+      "words": [
+        "production gap",
+        "2030",
+        "percent",
+        "measured value"
+      ],
+      "number": "110",
+      "source": "SEI et al. 2023",
+      "description": "planned fossil fuel production above 1.5 C-consistent level; 69 above 2 C-consistent level"
+    }
+  ]
+}

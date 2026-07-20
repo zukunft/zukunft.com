@@ -35,7 +35,7 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&id=2">
+                                    <a href="/http/view.php?m=view_change&amp;id=2">
                                         alternative
                                     </a>
                                 </li>
@@ -45,12 +45,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=31&id=55&9m=55&9a=r&9id=0&9z=0">
+                                    <a href="/http/view.php?m=31&amp;id=55&amp;9m=55&amp;9a=r&amp;9id=0&amp;9z=0">
                                         change view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=30&9m=55&9a=r&9id=0&9z=0">
+                                    <a href="/http/view.php?m=30&amp;9m=55&amp;9a=r&amp;9id=0&amp;9z=0">
                                         add view
                                     </a>
                                 </li>
@@ -63,37 +63,37 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=en">
+                                    <a href="/http/view.php?m=55&amp;q=en">
                                         English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=en_us">
+                                    <a href="/http/view.php?m=55&amp;q=en_us">
                                         US English
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=de" title="German">
+                                    <a href="/http/view.php?m=55&amp;q=de" title="German">
                                         Deutsch
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=fr" title="French">
+                                    <a href="/http/view.php?m=55&amp;q=fr" title="French">
                                         Français
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=es" title="Spanish">
+                                    <a href="/http/view.php?m=55&amp;q=es" title="Spanish">
                                         Español
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=zh" title="Chinese">
+                                    <a href="/http/view.php?m=55&amp;q=zh" title="Chinese">
                                         漢語
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=55&q=ar" title="Arabic">
+                                    <a href="/http/view.php?m=55&amp;q=ar" title="Arabic">
                                         العربية
                                     </a>
                                 </li>
@@ -111,17 +111,17 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=61&9m=55&9a=r&9id=0&9z=0">
+                                    <a href="/http/view.php?m=61&amp;9m=55&amp;9a=r&amp;9id=0&amp;9z=0">
                                         Log in
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=60&9m=55&9a=r&9id=0&9z=0">
+                                    <a href="/http/view.php?m=60&amp;9m=55&amp;9a=r&amp;9id=0&amp;9z=0">
                                         Signup
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/settings?9m=55&9a=r&9id=0&9z=0">
+                                    <a href="/settings?9m=55&amp;9a=r&amp;9id=0&amp;9z=0">
                                         Settings
                                     </a>
                                 </li>
@@ -132,16 +132,15 @@
             </div>
         </nav>
         <main class="main-container">
-            <div class="heading-line">
-                <h4 class="heading-inline">
-                    update word
-                </h4>
-            </div>
+            <h4>
+                update word
+            </h4>
             <form action="/http/view.php" id="confirm_update">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <input class="form-control" type="hidden" name="m" id="mask" value="55">
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="2">
-                <div class="row col-md-12">
+                <div class="row col-md-12 justify-content-center">
                     <input type="hidden" name="a" value="r">
                 </div>
                 <br>
@@ -155,6 +154,7 @@
                 </div>
             </form>
         </main>
+        <!--usr_msg-->
         <footer class="site-footer">
             <p>
                 <a href="/http/about.php">

@@ -83,13 +83,15 @@ class coding_rule_tests
 
         $t->subheader($ts . 'class tree');
 
+        // building the class / function tree over the whole source takes clearly longer than a
+        // normal unit function, so a generous timeout is used to avoid a false timeout
         $test_name = 'check that the docs with all objects is updated';
         $md_txt = $this->php_class_tree();
-        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS);
+        $obj_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_OBJECTS, '', '', $t::TIMEOUT_LIMIT_LONG);
 
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
-        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS);
+        $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
 
         $this->php_class_name_check($t);
 
@@ -207,9 +209,11 @@ class coding_rule_tests
      */
     function php_class_name_check(test_cleanup $t): void
     {
+        // scanning the whole source for the name exceptions takes clearly longer than a normal
+        // unit function, so a generous timeout is used to avoid a false timeout
         $test_name = 'check that the object name exceptions doc is updated';
         $md_txt = $this->php_class_name_exceptions();
-        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS);
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_NAME_EXCEPTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**
@@ -523,7 +527,8 @@ class coding_rule_tests
      * docs/llm/state-and-messages.md
      *
      * each violation produces one failing assertion identifying the file, line
-     * and offending name; a clean tree produces no assertions
+     * and offending name; a clean tree produces the summary assertion only, which
+     * checks that at least one file has been scanned
      *
      * positive (test fires when it should): a line like "global $sys;" inside
      *     web/ flags the rule violation
@@ -560,7 +565,8 @@ class coding_rule_tests
      * silently return the fallback instead of the user setting
      *
      * each violation produces one failing assertion identifying the file and line;
-     * a clean tree produces no assertions
+     * a clean tree produces the summary assertion only, which checks that at least
+     * one file has been scanned
      *
      * positive (test fires when it should): a line like "$cfg = new config();"
      *     inside web/ flags the rule violation
@@ -575,16 +581,23 @@ class coding_rule_tests
         $lib = new library();
         $file_array = $lib->dir_to_array(paths::WEB);
         $code_files = $lib->array_to_path($file_array);
+        $files_checked = 0;
         foreach ($code_files as $code_file) {
+            $files_checked++;
             $ctrl_code = file(paths::WEB . $code_file);
             foreach ($ctrl_code as $line_idx => $line) {
                 if (str_contains($line, 'new config(')) {
                     $test_name = 'web/ must read the user config from $ui_sys->cfg'
                         . ' but found new config() in ' . $code_file . ':' . ($line_idx + 1);
-                    $t->assert($test_name, '', $line);
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
                 }
             }
         }
+        // one summary assertion so that a clean tree also produces a visible pass (see
+        // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
+        $test_name = 'web/ config from cache checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked);
     }
 
     /**
@@ -594,7 +607,8 @@ class coding_rule_tests
      * inline, so a string literal ending in '/' next to a *paths:: const is the flagged violation
      *
      * each violation produces one failing assertion identifying the file and line;
-     * a clean tree produces no assertions
+     * a clean tree produces the summary assertion only, which checks that at least
+     * one file has been scanned
      *
      * positive (test fires when it should): "test_paths::HTML . 'workflow/'" flags the rule violation
      * negative (test tolerates good code): "paths::DB . 'sql_db.php'" (a leaf file name) passes, and
@@ -628,10 +642,12 @@ class coding_rule_tests
     {
         $lib = new library();
         $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        $files_checked = 0;
         foreach ($code_files as $code_file) {
             if (str_ends_with(str_replace('\\', '/', $code_file), 'const/paths.php')) {
                 continue;
             }
+            $files_checked++;
             $ctrl_code = file($base_path . $code_file);
             foreach ($ctrl_code as $line_idx => $line) {
                 // skip comment lines so a docblock that cites the anti-pattern is not flagged
@@ -643,10 +659,18 @@ class coding_rule_tests
                 if (preg_match($pattern, $line)) {
                     $test_name = 'a directory must be a paths.php const, not an inline string,'
                         . ' but found one in ' . $code_file . ':' . ($line_idx + 1);
-                    $t->assert($test_name, '', trim($line));
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
                 }
             }
         }
+        // one summary assertion per scanned tree so that a clean tree also produces a visible pass
+        // (see php_only_allowed_globals_tests for why a silent pass would hide an empty scan);
+        // the base path keeps the test name unique across the two calls
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'path consts checked in ' . $files_checked . ' files of ' . $base_path;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**
@@ -655,7 +679,8 @@ class coding_rule_tests
      * allowed by docs/llm/state-and-messages.md
      *
      * each violation produces one failing assertion identifying the file, line
-     * and offending name; a clean tree produces no assertions
+     * and offending name; a clean tree produces the summary assertion only, which
+     * checks that at least one file has been scanned
      *
      * positive (test fires when it should): a line like "global $usr;" inside
      *     cfg/ flags the rule violation
@@ -681,7 +706,9 @@ class coding_rule_tests
      * under $base_path declares a PHP global whose name is not in $allowed
      *
      * each violation produces one failing assertion identifying the file, line and
-     * offending name; a clean tree produces no assertions
+     * offending name; a clean tree produces the summary assertion only, which checks
+     * that at least one file has been scanned, because otherwise a scanner that reads
+     * no file would be indistinguishable from a tree without any violation
      *
      * @param test_cleanup $t the test harness used for the assertion
      * @param string $base_path the source dir to scan e.g. paths::WEB or paths::MODEL
@@ -702,10 +729,12 @@ class coding_rule_tests
         $lib = new library();
         $file_array = $lib->dir_to_array($base_path);
         $code_files = $lib->array_to_path($file_array);
+        $files_checked = 0;
         foreach ($code_files as $code_file) {
             if (in_array(ltrim($code_file, '/\\'), $exclude, true)) {
                 continue;
             }
+            $files_checked++;
             $ctrl_code = file($base_path . $code_file);
             foreach ($ctrl_code as $line_idx => $line) {
                 if (preg_match_all('/global\s+\$([a-zA-Z_][a-zA-Z0-9_]*)/', $line, $matches)) {
@@ -714,12 +743,21 @@ class coding_rule_tests
                             $test_name = $rule_msg
                                 . ' but found $' . $name
                                 . ' in ' . $code_file . ':' . ($line_idx + 1);
-                            $t->assert($test_name, '', $name);
+                            // the offending name is the actual result and no global is the target,
+                            // so the failure reports 'actual: sys, expected: ' and not the other way round
+                            $t->assert($test_name, $name);
                         }
                     }
                 }
             }
         }
+        // one summary assertion so that a clean tree also produces a visible pass: without it a
+        // scanner that reaches no file at all (a wrong base path, an empty dir_to_array) would look
+        // exactly like a successful run, because a violation is the only thing that asserts above
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = $rule_msg . ' checked in ' . $files_checked . ' files';
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**

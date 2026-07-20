@@ -287,7 +287,7 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
-            $db_lst = $db_con->get($qp);
+            $db_lst = $db_con->get($qp, 'sandbox list');
             $result = $this->rows_mapper($db_lst);
         }
         return $result;
@@ -318,7 +318,7 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
-            $db_lst = $db_con->get($qp);
+            $db_lst = $db_con->get($qp, 'sandbox list');
             $result = $this->rows_mapper($db_lst);
         }
         return $usr_msg->is_ok();
@@ -383,7 +383,15 @@ class sandbox_list extends list_db_write
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_lst = $db_con_used->get($qp);
-            $result = $this->rows_mapper($db_lst, $load_all);
+            // get() returns false only when the sql query itself failed (an empty
+            // result is []), so guard it here: log the failed load and report
+            // 'nothing loaded' instead of passing false into rows_mapper(?array),
+            // which would abort the whole request with a TypeError
+            if ($db_lst === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
+                $result = $this->rows_mapper($db_lst, $load_all);
+            }
         }
         return $result;
     }

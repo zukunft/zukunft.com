@@ -1,14 +1,13 @@
 GET
-http://localhost/http/view.php?m=2&k=System+Test+Word&o=test+description+added+to+the+word+via+import&lp=&d=0&s=1&sp=1&z=1&submit=
-/http/view.php?m=2&k=System+Test+Word&o=test+description+added+to+the+word+via+import&lp=&d=0&s=1&sp=1&z=1&submit=
-/http/view.php?mask_id=word_add&name=System+Test+Word&description=test+description+added+to+the+word+via+import&view_id=0&share=1&protection=1&step=confirm&
+http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=2&z=1&submit=
+/http/view.php?id=0&9m=1&k=System+Test+Word&m=2&z=1&submit=
+/http/view.php?id=0&9mask_id=entry_view&name=System+Test+Word&mask_id=word_add&step=confirm&
 {
-    "mask_id": "word_add",
+    "id": "0",
     "name": "System Test Word",
-    "description": "test description added to the word via import",
-    "plural": "",
-    "view_id": "0",
-    "share": "1",
-    "protection": "1",
-    "step": "confirm"
+    "mask_id": "word_add",
+    "step": "confirm",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
 }

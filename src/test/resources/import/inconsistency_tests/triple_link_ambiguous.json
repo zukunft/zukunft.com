@@ -1,0 +1,32 @@
+{
+  "version": "0.0.3",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "two triples that share the same from/verb/to link but carry different names"
+  ],
+  "words": [
+    {
+      "name": "elevation",
+      "description": "height above mean sea level"
+    },
+    {
+      "name": "rank",
+      "description": "position in an ordered list"
+    }
+  ],
+  "triples": [
+    {
+      "name": "highest elevation of Zurich (canton)",
+      "from": "elevation",
+      "verb": "kind of",
+      "to": "rank"
+    },
+    {
+      "name": "lowest elevation of Zurich (canton)",
+      "from": "elevation",
+      "verb": "kind of",
+      "to": "rank"
+    }
+  ]
+}

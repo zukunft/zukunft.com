@@ -189,8 +189,12 @@ class change_log_named extends change_log
 
         $time_text = date_format($this->change_time, $ui_sys->cfg->date_time_format());
         if (!$user_changes) {
-            $time_text .= ' by ' . $this->usr->name;
+            $time_text .= ' by ' . $html->esc($this->usr->name);
         }
+        // the old and new value are user settable (e.g. a word name or a
+        // description), so escape them before they reach the history table
+        $txt_old = $html->esc($txt_old);
+        $txt_new = $html->esc($txt_new);
         $html_text .= $html->td($time_text);
         if ($condensed) {
             $html_text .= $html->td($txt_fld . ': ' . $txt_new);
@@ -300,13 +304,23 @@ class change_log_named extends change_log
     public function dsp(bool $test_mode = false): string
     {
         global $ui_sys;
-        global $mtr;
-        $result = '';
 
         // in test mode use a fixed change time so the change log snapshots do not
         // change with the moment the test data happened to be created
         $time = $test_mode ? new DateTime(self::TEST_TIME) : $this->change_time;
-        $result .= date_format($time, $ui_sys->cfg->date_time_format()) . ' ';
+        return date_format($time, $ui_sys->cfg->date_time_format()) . ' ' . $this->entry();
+    }
+
+    /**
+     * the human-readable text of this change without the change time, also used to sort changes
+     * of the same time deterministically (see change_log_list::sort_by_time_and_entry)
+     * @return string the change entry text e.g. 'zukunft.com system test added "Zurich"'
+     */
+    function entry(): string
+    {
+        global $mtr;
+        $result = '';
+
         if ($this->usr != null) {
             if ($this->usr->name() <> '') {
                 $result .= $this->usr->name() . ' ';
@@ -316,10 +330,10 @@ class change_log_named extends change_log
             if ($this->new_value <> '') {
                 $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
             } else {
-                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';;
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';
             }
         } else {
-            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';;
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';
         }
         return $result;
     }

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once test_paths::CREATE . 'test_users.php';
@@ -43,6 +44,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -93,6 +95,38 @@ class test_db_caches
         $db_cache->status_id = db_cache_statuum::CLEAN_ID;
         $db_cache->last_update = new DateTime(sys_log_tests::TV_TIME);
         return $db_cache;
+    }
+
+    /**
+     * @return db_cache a cache entry that has just been filled and is therefore expected to be used
+     */
+    function db_cache_up_to_date(): db_cache
+    {
+        $db_cache = $this->db_cache_filled();
+        $db_cache->last_update = new DateTime();
+        return $db_cache;
+    }
+
+    /**
+     * @return db_cache_page a cached html page entry with some dummy values
+     */
+    function db_cache_page(): db_cache_page
+    {
+        $db_cache_page = new db_cache_page();
+        $db_cache_page->id = 1;
+        $db_cache_page->url = 'http://zukunft.com/';
+        return $db_cache_page;
+    }
+
+    /**
+     * @return db_cache_page a cached html page entry with all fields set
+     */
+    function db_cache_page_filled(): db_cache_page
+    {
+        $db_cache_page = $this->db_cache_page();
+        $db_cache_page->html_page = '<html><body>zukunft.com</body></html>';
+        $db_cache_page->last_update = new DateTime(sys_log_tests::TV_TIME);
+        return $db_cache_page;
     }
 
 }

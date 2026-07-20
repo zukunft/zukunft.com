@@ -1,0 +1,24 @@
+{
+  "version": "0.0.3",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "re-declares the same from/verb/to link with a different name to rename the original triple"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple renamed",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To"
+    }
+  ]
+}

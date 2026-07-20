@@ -204,6 +204,21 @@ class import_convert_xbrl
         if ($code !== true) {
             throw new RuntimeException("cannot open XBRL zip $zip_path (ZipArchive code $code)");
         }
+        // guard against zip-slip before extracting: reject any entry whose name would escape the
+        // target folder (a "../" traversal or an absolute path). the converter is a cli/test tool
+        // today with no web upload path, so this is defense-in-depth for a possible future importer
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->getNameIndex($i);
+            if ($entry === false
+                or str_starts_with($entry, '/')
+                or str_starts_with($entry, '\\')
+                or str_contains($entry, '../')
+                or str_contains($entry, '..\\')
+                or preg_match('#^[A-Za-z]:#', $entry) === 1) {
+                $zip->close();
+                throw new RuntimeException("unsafe entry in XBRL zip $zip_path: $entry");
+            }
+        }
         $extracted = $zip->extractTo($folder);
         $zip->close();
         if (!$extracted) {

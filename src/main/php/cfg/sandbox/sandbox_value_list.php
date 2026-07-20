@@ -707,6 +707,27 @@ class sandbox_value_list extends sandbox_list
         return $result;
     }
 
+    /**
+     * drop the values or results the requesting user may not read, so a list returned by the api
+     * never discloses another user's non-public value/result (see sandbox_multi::is_readable_by);
+     * the standard row of a private/personal value belongs to its owner, so without this filter a
+     * user could read it by listing the id. shared by value_list and result_list
+     *
+     * @param user|null $usr the user who has requested to read the list
+     * @return sandbox_value_list this list with only the entries readable by the given user
+     */
+    function filter_readable_by(?user $usr): sandbox_value_list
+    {
+        $result = array();
+        foreach ($this->lst() as $val) {
+            if ($val->is_readable_by($usr)) {
+                $result[] = $val;
+            }
+        }
+        $this->set_lst($result);
+        return $this;
+    }
+
 }
 
 

@@ -89,6 +89,17 @@ class term_list_ui_tests
         $test_page .= 'terms matching the pattern with the highest impact first<br>';
         $test_page .= $page->body_search([url_var::PATTERN => 'impact'], $search_lst) . '<br>';
 
+        // the search pattern is user input reflected into the search result title
+        // (system_page::search_title), so it must be html-escaped to prevent a reflected xss
+        $search_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => 'impact']);
+        $test_name = 'the search result title shows the pattern';
+        $t->assert_text_contains($test_name, $search_title, 'impact');
+        $xss_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => '<script>alert(1)</script>']);
+        $test_name = 'the search result title escapes a script tag in the pattern';
+        $t->assert_text_contains($test_name, $xss_title, '&lt;script&gt;');
+        $test_name = 'the search result title does not contain a raw script tag';
+        $t->assert_false($test_name, str_contains($xss_title, '<script>'));
+
         $t->html_page_test($test_page, 'term_list', 'term_list', $t);
     }
 

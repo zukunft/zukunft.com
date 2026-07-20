@@ -79,6 +79,8 @@ class sys_log extends log
     // TODO use a simple user object instead of the id
     // the user or user group who is supposed to fix the issue
     public ?int $solver_id = null;
+    // the solver name transported in the api message so the frontend needs no db lookup to show it
+    public ?string $solver_name = null;
     public ?int $status_id = null;
 
 
@@ -135,6 +137,9 @@ class sys_log extends log
             }
         } else {
             $this->set_solver_id(0);
+        }
+        if (array_key_exists(json_fields::SOLVER_NAME, $json_array)) {
+            $this->solver_name = $json_array[json_fields::SOLVER_NAME];
         }
         if (array_key_exists(json_fields::STATUS, $json_array)) {
             $this->status_id = $json_array[json_fields::STATUS];
@@ -211,6 +216,9 @@ class sys_log extends log
         if ($this->solver_id > 0) {
             $vars[json_fields::SOLVER] = $this->solver_id;
         }
+        if ($this->solver_name != null && $this->solver_name != '') {
+            $vars[json_fields::SOLVER_NAME] = $this->solver_name;
+        }
         $vars[json_fields::STATUS] = $this->status();
         return $vars;
     }
@@ -234,7 +242,9 @@ class sys_log extends log
         $row .= $html->td($this->time()->format('Y-m-d H:i:s'));
         // TODO show the username instead of the id
         $row .= $html->td($this->user_id());
-        $row .= $html->td($this->text());
+        // the log text can embed request-derived strings (e.g. a blocked url), so escape it before
+        // it is rendered into the admin error-log page (stored xss otherwise, see html_base::td)
+        $row .= $html->td($html->esc($this->text()));
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         return $html->tr($row);
@@ -251,13 +261,14 @@ class sys_log extends log
 
         $result .= $html->dsp_text_h2("Status of error #"
             . $this->id() . ': ' . $this->status_text());
-        $result .= '"' . $this->text() . '" <br>';
+        // escape the request-derived log fields before they reach the html body (stored xss)
+        $result .= '"' . $html->esc($this->text()) . '" <br>';
         if ($this->description <> 'NULL') {
-            $result .= '"' . $this->description . '" <br>';
+            $result .= '"' . $html->esc($this->description) . '" <br>';
         }
         $result .= '<br>';
         $result .= 'Program trace:<br>';
-        $result .= $this->trace() . ' ';
+        $result .= $html->esc($this->trace()) . ' ';
         //echo "<style color=green>OK</style>" .$test_text;
         //echo "<style color=red>Error</style>".$test_text;
 
@@ -280,16 +291,18 @@ class sys_log extends log
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format(DateTimeInterface::ATOM));
+        // escape the user-controlled name and the request-derived log fields (stored xss)
         // TODO show the user name instead of the id
-        $row .= $html->td($this->user_name());
-        $row .= $html->td($this->text());
-        $row .= $html->td($this->trace());
-        $row .= $html->td($this->prg_part());
+        $row .= $html->td($html->esc($this->user_name()));
+        $row .= $html->td($html->esc($this->text()));
+        $row .= $html->td($html->esc($this->trace()));
+        $row .= $html->td($html->esc($this->prg_part()));
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
             $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
-            $url = $html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status);
+            // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
+            $url = $html->url_with_token($html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
         }
         return $html->tr($row);
@@ -333,17 +346,19 @@ class sys_log extends log
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
+        // escape the user-controlled names and the request-derived log fields (stored xss); the
+        // sys_log text/description/trace embed strings from log_err/log_warning (e.g. a blocked url)
         if ($this->user_id() > 0) {
-            $row_text .= $html->td($this->user()->name());
+            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user()->name()));
         } else {
             $row_text .= $html->td();
         }
-        $row_text .= $html->td($this->text);
-        $row_text .= $html->td($this->description);
-        $row_text .= $html->td($this->trace);
-        $row_text .= $html->td($this->function_id);
+        $row_text .= $html->td($html->esc($this->text));
+        $row_text .= $html->td($html->esc($this->description));
+        $row_text .= $html->td($html->esc($this->trace));
+        $row_text .= $html->td($html->esc($this->function_id));
         if ($this->owner_id() > 0) {
-            $row_text .= $html->td($this->owner()->name());
+            $row_text .= $html->td($html->esc($this->owner_name()));
         } else {
             $row_text .= $html->td();
         }
@@ -351,7 +366,8 @@ class sys_log extends log
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
-                $url = $html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status);
+                // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
+                $url = $html->url_with_token($html->url_new(views::ERROR_UPDATE_ID, $this->id, '', $back, '', $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
             }
         }
@@ -371,6 +387,15 @@ class sys_log extends log
         $usr = new user();
         $usr->load_by_id($this->owner_id());
         return $usr;
+    }
+
+    /** the owner (solver) name to show; the name from the api message, else a db lookup by id */
+    function owner_name(): string
+    {
+        if ($this->solver_name !== null && $this->solver_name !== '') {
+            return $this->solver_name;
+        }
+        return $this->owner()->name();
     }
 
     // TODO review

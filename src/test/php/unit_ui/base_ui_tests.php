@@ -65,6 +65,8 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -105,6 +107,77 @@ class base_ui_tests
         // start the test section (ts)
         $ts = 'unit ui html base ';
         $t->header($ts);
+
+        $t->subheader($ts . 'cached page routing');
+
+        // a view-only request is cached by the canonical view and object key
+        $ui = new frontend();
+        $test_name = 'a view-only request is cached by the view and object key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the language is part of the cache key if set
+        $test_name = 'the language is part of the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::LANGUAGE => 'de'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2&' . url_var::LANGUAGE . '=de');
+
+        // a request of a view that changes data is never cached
+        $test_name = 'a change mask request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ADD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // a request with a form submission is never cached
+        $test_name = 'a post request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // a process step of 0 (no action started) does not change a view-only page, so it is ignored
+        // and the request still hits the same cache key as the bare view (e.g. view.php?m=1&z=0)
+        $test_name = 'a show step (z=0) is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_BASE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the anti-csrf token is per session and does not change a view-only page, so it too is
+        // ignored and the request still hits the same cache key (e.g. view.php?m=1&z=0&token=...)
+        $test_name = 'the anti-csrf token is ignored for the cache key';
+        $url_array = [
+            url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::STEP => url_var::STEP_BASE, url_var::SESSION_TOKEN => 'abc'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // a non-zero process step is an action step, so the request is rendered live and not cached
+        $test_name = 'a non-zero step request is not cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // the debug level only controls out-of-band debug output, not the cached html, so it is
+        // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
+        $test_name = 'the debug level is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::DEBUG => url_var::DEBUG_LEVEL_DB_READ];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // 'nc=1' switches the html page cache off, so the page is rendered live and the
+        // result is not written to the cache (e.g. view.php?m=1&id=2&nc=1)
+        $test_name = 'nc=1 bypasses the cache read and write';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::NO_CACHE => url_var::NO_CACHE_ON];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // any other value keeps the cache on, so the request hits the same cache key as the bare url
+        $test_name = 'nc=0 keeps the cache on';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::NO_CACHE => '0'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the human-readable 'nocache' is mapped to the short 'nc' before the cache key is created,
+        // so view.php?mask_id=word&id=2&nocache=1 bypasses the cache just like the short url
+        $test_name = 'nocache is mapped to the short nc';
+        $url_map = new url_mapper();
+        $url_msg = new user_message();
+        $url_array = [url_var::MASK_HUMAN => views::WORD, url_var::ID => 2,
+            url_var::NO_CACHE_HUMAN => url_var::NO_CACHE_ON];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
+        $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
 
         $t->subheader($ts . 'tab box');
 
@@ -340,18 +413,18 @@ class base_ui_tests
 
         $t->subheader($ts . 'button tests');
         $test_name = 'a sandbox object e.g. word add button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=word_add&amp;back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
         $wrd = new word();
         $t->assert($test_name, $wrd->btn_add('1'), $target);
 
         $test_name = 'a sandbox object e.g. source change button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&amp;id=1&amp;back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&amp;id=1&amp;back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
         $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
         $t->assert($test_name, $frm->btn_del('1'), $target);
@@ -359,7 +432,6 @@ class base_ui_tests
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $back = '1';
-        $target = '<a href="/http/word_add.php" title="Add test"><img src="/images/button_add.svg" alt="Add test"></a>';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
         $result = (new button($url, $back))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
@@ -380,19 +452,19 @@ class base_ui_tests
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
-        $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $back))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
-        $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 
         $url = $html->url_new(views::WORD_ADD_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&confirm=-1">no</a>';
+        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=-1">no</a>';
         $result = (new button($url, $back))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
@@ -400,6 +472,25 @@ class base_ui_tests
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->assert(", btn_back", $result, $target);
+
+        $t->subheader($ts . 'xss escaping');
+        // a user-settable name is escaped at the display sink so a crafted name cannot inject script
+        // into the page shown to other users incl. an admin (stored xss); ui_base and system_form
+        // route the display names / descriptions through html_base::esc (element-text context)
+        $xss = '<script>alert(1)</script>';
+        $xss_esc = htmlspecialchars($xss, ENT_NOQUOTES);
+        $wrd_xss = new word();
+        $wrd_xss->name = $xss;
+        $base = new ui_base();
+        $form = new system_form();
+        $test_name = 'ui_base->phrase_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $base->phrase_name($wrd_xss), $xss_esc);
+        $test_name = 'ui_base->phrase_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $base->phrase_name($wrd_xss), $xss);
+        $test_name = 'system_form->show_name escapes an injected script tag';
+        $t->assert_text_contains($test_name, $form->show_name($wrd_xss), $xss_esc);
+        $test_name = 'system_form->show_name does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $form->show_name($wrd_xss), $xss);
 
         $t->subheader($ts . 'back url');
 

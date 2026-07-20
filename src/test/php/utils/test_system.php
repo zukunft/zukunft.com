@@ -31,22 +31,28 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SERVICE . 'config.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-function run_system_test(all_tests $t): void
+// test_cleanup as parameter type, so that beside the full test suite (all_tests)
+// also the single test selection (a_selected_test) can run this test
+function run_system_test(test_cleanup $t): void
 {
 
     global $usr;
+    global $db_con;
 
     $t_db = new test_db_load($t);
 
@@ -58,7 +64,7 @@ function run_system_test(all_tests $t): void
     $wrd_company = $t_db->test_word(word_names::COMPANY);
 
     if ($t::TEST_EMAIL) {
-        $t->subheader($ts . 'est mail sending');
+        $t->subheader($ts . 'test mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';
         $mail_body = 'Hello';
@@ -96,7 +102,7 @@ function run_system_test(all_tests $t): void
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $usr_ui = new user_ui($usr_by_id->api_json());
-    $target = '<a href="/http/view.php?m=74&id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    $target = '<a href="/http/view.php?m=74&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_ui->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 
@@ -108,5 +114,28 @@ function run_system_test(all_tests $t): void
     $result = $usr_lst->name_lst();
     $target = users::TEST_NAME;
     $t->dsp_contains(', user_list->load_active', $target, $result);
+
+
+    // regression test for the config->check_cfg bug that stored a hardcoded site
+    // name instead of the passed code id, so the database version was never saved
+    $t->subheader('config check_cfg');
+    $cfg = new config();
+    $sys_msg = new user_message(user::system());
+    // the average calculation time is a runtime metric that is safe to overwrite;
+    // remember the current value to restore it at the end of the test
+    // a missing entry is created with the code default, so the value is never empty
+    $cfg_orig = $cfg->get_db(config::AVG_CALC_TIME, $db_con, $sys_msg);
+    $test_name = 'a config value read is never empty';
+    $t->assert_true($test_name, $cfg_orig != '');
+    $cfg->set(config::AVG_CALC_TIME, '111', $db_con, $sys_msg);
+    $test_name = 'check_cfg stores the passed value under the passed code id when it differs';
+    $set_done = $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con, $sys_msg);
+    $t->assert($test_name, $cfg->get_db(config::AVG_CALC_TIME, $db_con, $sys_msg), '222');
+    $test_name = 'check_cfg reports that it has stored the differing value';
+    $t->assert_true($test_name, $set_done);
+    $test_name = 'check_cfg does not store again when the value already matches the target';
+    $t->assert_false($test_name, $cfg->check_cfg(config::AVG_CALC_TIME, '222', $db_con, $sys_msg));
+    // restore the original value
+    $cfg->set(config::AVG_CALC_TIME, $cfg_orig, $db_con, $sys_msg);
 
 }

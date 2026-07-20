@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -45,6 +46,7 @@ include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -59,30 +61,19 @@ class test_users
 {
 
     /*
-     * init
-     */
-
-    // use the global test environment only used for cleanup, so in many cases just null
-    private ?test_cleanup $env;
-
-    function __construct(?test_cleanup $env = null)
-    {
-        $this->env = $env;
-    }
-
-
-    /*
      * cleanup
      */
 
     /**
      * delete any remaining test words for a clean test start
+     * @param string $ts the name of the test section e.g. word db read tests
+     * @param test_cleanup $t the test object with some base test functions
      */
-    function cleanup(string $ts): void
+    function cleanup(string $ts, test_cleanup $t): void
     {
-        $this->env->subheader($ts . 'cleanup');
+        $t->subheader($ts . 'cleanup');
         foreach (users::TEST_USERS as $usr_name) {
-            $this->env->write_named_cleanup_user($usr_name, $this->env->usr_system);
+            $t->write_named_cleanup_user($usr_name, $t->usr_system);
         }
     }
 
@@ -90,6 +81,45 @@ class test_users
     /*
      * unit
      */
+
+    /**
+     * @return user a user that has changed data, so the pages must be created from the user sandbox
+     */
+    function sandbox_user(): user
+    {
+        $usr = $this->user_ip_loaded();
+        $usr->uses_sandbox = true;
+        return $usr;
+    }
+
+    /**
+     * @return user a user without any data changes, so the cached standard pages can be served
+     */
+    function non_sandbox_user(): user
+    {
+        $usr = $this->user_ip_loaded();
+        $usr->uses_sandbox = false;
+        return $usr;
+    }
+
+    /**
+     * convert a user object to a database row array as the sql load functions return it
+     * with only the fields that user->row_mapper always expects
+     * used to test the mapping of single fields e.g. the sandbox usage flag
+     *
+     * @param user $usr the user object that should be converted
+     * @return array the user database row e.g. for the row_mapper unit tests
+     */
+    function to_db_row(user $usr): array
+    {
+        return [
+            user_db::FLD_ID => $usr->id(),
+            user_db::FLD_NAME => $usr->name,
+            user_db::FLD_IP_ADDR => $usr->ip_addr,
+            user_db::FLD_EMAIL => $usr->email,
+            user_db::FLD_USES_SANDBOX => (int)$usr->uses_sandbox
+        ];
+    }
 
     /**
      * @return user a user used for unit testing with has only the ip set
@@ -104,15 +134,17 @@ class test_users
 
     /**
      * TODO Prio 1 fill up all used vars
+     * a backend user object with all fields set
+     * @param test_cleanup $t the test object with some base test functions
      * @return user used for unit testing with all vars set
      */
-    function user_filled(): user
+    function user_filled(test_cleanup $t): user
     {
         global $sys;
 
-        $t_trm = new test_terms($this->env);
-        $t_msk = new test_views($this->env);
-        $t_src = new test_sources($this->env);
+        $t_trm = new test_terms($t);
+        $t_msk = new test_views($t);
+        $t_src = new test_sources($t);
 
         $usr = new user();
         $usr->name = users::TEST_USER_NAME;
@@ -139,6 +171,7 @@ class test_users
         $usr->right_level = user_profiles::NORMAL_LEVEL;
         $usr->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
         $usr->excluded = true;
+        $usr->uses_sandbox = true;
 
         $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         $usr->description = users::TEST_USER_COM;
@@ -149,6 +182,28 @@ class test_users
         $usr->msk = $t_msk->view();
         $usr->src = $t_src->source_reserved();
 
+        return $usr;
+    }
+
+    /**
+     * a user without login as it is loaded from the database, so with the id set
+     * unlike user_ip the id is set, because the permission checks (e.g. sandbox->save)
+     * use the requesting user of the message only if the user has an id
+     *
+     * @return user a user without login used e.g. to test the database change permissions
+     */
+    function user_ip_loaded(): user
+    {
+        global $sys;
+
+        $usr = new user();
+        $usr->id = users::TEST_USER_ID;
+        $usr->name = users::TEST_USER_NAME;
+        $usr->ip_addr = users::TEST_USER_IP;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY);
+        // a user row loaded from the database always has the created time
+        // and without it every db_fields_changed compare would report a created diff
+        $usr->created = new DateTime(users::TEST_USER_LOGIN_TIME);
         return $usr;
     }
 
@@ -167,7 +222,7 @@ class test_users
     /**
      * @return user a user used for unit testing with the test profile
      */
-    function user_sys_test(): user
+    static function user_sys_test(): user
     {
         global $sys;
 

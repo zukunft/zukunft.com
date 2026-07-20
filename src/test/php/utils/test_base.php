@@ -141,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -337,6 +338,7 @@ include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'sys_log_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'db_cache_page_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
@@ -405,12 +407,17 @@ class test_base
     const float TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
     const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
     const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const int TIMEOUT_LIMIT_LOGIN = 1;    // time limit for the admin login curl; kept short because a login that the pod does not accept (e.g. no session support in the test env) should fail fast instead of blocking every dependent test for the full curl timeout
     const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
     const float TIMEOUT_TEST_INIT = 0.7;  // time limit to switch to a new test (maily to reset the timer)
     // TODO Prio 1 reduce!
     const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
+    const int TIMEOUT_LIMIT_REST = 5;  // max seconds for a REST api call over http including the connection warmup of the first call and the config loading
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+
+    // prefix of the temp file that keeps the session cookie of a web test with a login
+    const string COOKIE_FILE_PREFIX = 'zukunft_test_session_';
 
 
     public user $usr1; // the main user for testing
@@ -527,13 +534,40 @@ class test_base
         // reset the test timer to avoid timeouts due to a delay in previous tests
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->section_start_time;
-        $exe_max_time = test_base::TIMEOUT_TEST_INIT;
+        // a section switch warms up the db and cache and may follow a slow localhost view render,
+        // so a long timeout is used to avoid a false timeout
+        $exe_max_time = test_base::TIMEOUT_LIMIT_LONG;
         if ($this->is_timeout($since_start, $exe_max_time)) {
             $msg = $this->time_msg('in switch from previous test', $since_start, $exe_max_time);
             $msg .= $this->duration_text($since_start);
             $log_txt->echo_log($msg);
         }
-        $this->section_start_time = $new_start_time;
+        $this->section_start($new_start_time);
+    }
+
+    /**
+     * start a new measurement section: the section timer and the measured times per category are
+     * restarted together, so that a timeout report shows only the times of the reported section
+     *
+     * @param float $start_time the start time of the new section
+     * @return void
+     */
+    private function section_start(float $start_time): void
+    {
+        global $sys;
+        $this->section_start_time = $start_time;
+        $sys->times->reset_section();
+    }
+
+    /**
+     * reset the section timer after a known one-time heavy operation (e.g. the complete database
+     * recreation) so that its duration is not charged to the next test section as a false timeout
+     *
+     * @return void
+     */
+    function reset_section_timer(): void
+    {
+        $this->section_start(microtime(true));
     }
 
     private function time_msg(
@@ -677,11 +711,12 @@ class test_base
     function assert_not(
         string            $test_name,
         string|array|null $result,
-        string|array|null $target = ''
+        string|array|null $target = '',
+        float             $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         return $this->assert($test_name, $result, $target
-            , self::TIMEOUT_LIMIT, '', self::TEST_TYPE_NOT);
+            , $exe_max_time, '', self::TEST_TYPE_NOT);
     }
 
     /**
@@ -1016,7 +1051,8 @@ class test_base
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
         $expected = json_decode($expected_text, true);
-        return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true);
+        // the actual json comes from a real http REST call, so a REST timeout is used to avoid a false timeout
+        return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true, self::TIMEOUT_LIMIT_REST);
     }
 
 
@@ -1039,6 +1075,7 @@ class test_base
         ?data_object_ui               $cfg = null
     ): bool
     {
+        global $sys;
         $lib = new library();
         $tl = new test_lib();
         $usr_msg_ui = new user_message_ui();
@@ -1057,7 +1094,7 @@ class test_base
         }
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
-        // load the view from the database
+        // load the view from the database (the db layer measures its own read time)
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id);
         if ($msk->id() > 0) {
@@ -1066,7 +1103,12 @@ class test_base
             log_err('view with code id ' . $dsp_code_id . ' not found');
         }
 
-        // create the api message that send to the frontend
+        // build the api message and the ui objects the frontend would receive;
+        // an interleaved db read still counts as db_read because its own switch()
+        // restores this section, so only the mapping time is measured here. the
+        // sections are left with explicit switch() calls (ending in DEFAULT below)
+        // because a nested db read overwrites the single previous-section slot
+        $sys->times->switch(system_time_type::MAP_JSON);
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the related database objects
@@ -1079,12 +1121,12 @@ class test_base
         if ($id != 0) {
             $dbo_dsp->set_from_json($dbo_api_msg, $usr_msg_ui);
         }
-
-        // create the view for the user
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $usr_msg_ui);
+
+        // load the frontend configuration cache if the caller has not provided it
         if ($cfg == null) {
-            global $sys;
+            $sys->times->switch(system_time_type::LOAD_FRONTEND);
             $ui = new frontend('');
             $ui->load_cache();
             $cfg = new data_object_ui();
@@ -1095,7 +1137,10 @@ class test_base
             $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
         }
         // render in test mode so that the result is reproducible without backend calls
+        $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', '', true);
+        // return to the default section for the following tests
+        $sys->times->switch(system_time_type::DEFAULT);
 
         // check if the created view matches the expected view
         return $this->assert_html_body(
@@ -1273,10 +1318,10 @@ class test_base
      * @param string $target
      * @return bool true if the html has no relevant differences
      */
-    function assert_html(string $test_name, string $result, string $target): bool
+    function assert_html(string $test_name, string $result, string $target, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         $lib = new library();
-        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target));
+        return $this->assert($test_name, $lib->trim_html($result), $lib->trim_html($target), $exe_max_time);
     }
 
     /**
@@ -1287,10 +1332,10 @@ class test_base
      * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $file_path): bool
+    function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         $actual = $this->html_page($body);
-        return $this->assert_html_page($test_name, $actual, $file_path);
+        return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
     }
 
     /**
@@ -1301,10 +1346,10 @@ class test_base
      * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_page(string $test_name, string $html, string $file_path): bool
+    function assert_html_page(string $test_name, string $html, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
         return $this->assert_file(
-            $test_name, $html, test_paths::RESOURCE . $file_path . test_files::HTML, test_files::HTML);
+            $test_name, $html, test_paths::RESOURCE . $file_path . test_files::HTML, test_files::HTML, '', $exe_max_time);
     }
 
     /**
@@ -1324,7 +1369,8 @@ class test_base
         string $actual,
         string $file_path,
         string $file_type = '',
-        string $session_token = ''
+        string $session_token = '',
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         $expected = $this->path_file($file_path);
@@ -1333,7 +1379,7 @@ class test_base
             $actual = $lib->fix_volatile_in_html($actual, $session_token);
             $expected = $lib->fix_volatile_in_html($expected, $session_token);
         }
-        $result = $this->assert_typed($test_name, $actual, $expected, $file_type);
+        $result = $this->assert_typed($test_name, $actual, $expected, $file_type, $exe_max_time);
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $this->update_path_file($file_path, $this->file_content($actual, $file_type));
         }
@@ -1353,7 +1399,8 @@ class test_base
         string $test_name,
         string $actual,
         string $expected,
-        string $file_type
+        string $file_type,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         $lib = new library();
@@ -1367,7 +1414,7 @@ class test_base
             $actual = $lib->trim_json($actual);
             $expected = $lib->trim_json($expected);
         }
-        return $this->assert($test_name, $actual, $expected);
+        return $this->assert($test_name, $actual, $expected, $exe_max_time);
     }
 
     /**
@@ -1433,18 +1480,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_create';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_table($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_table($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_table($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_table($sc, $class)) && $result;
         }
         return $result;
     }
@@ -1461,18 +1507,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_index';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_index($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_index($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_index($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_index($sc, $class)) && $result;
         }
         return $result;
     }
@@ -1489,18 +1534,17 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
+        // and create or update the expected sql file if the check fails and auto update is switched on
         $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_foreign_key';
-        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-        $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
-        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_foreign_key($sc, $class));
 
         // ... and check the MySQL query syntax
-        if ($result) {
+        // (also when the Postgres check failed but auto update is on, so that a missing
+        //  MySQL file is created even if the Postgres file is missing as well)
+        if ($result or test_files::AUTO_UPDATE_TEST_FILES) {
             $sc->reset(sql_db::MYSQL);
-            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
-            $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
-            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+            $result = $this->assert_sql_and_update($name, $sc->db_type, $usr_obj->sql_foreign_key($sc, $class)) && $result;
         }
         return $result;
     }
@@ -2532,7 +2576,8 @@ class test_base
         $created_sql = $lib->sql_format($qp->sql . $qp->call_sql . ' ' . $qp->call);
         $file_path = test_paths::RESOURCE . $this->assert_sql_file_path($qp->name . $file_name_ext, $dialect);
         $sql_test_name = $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name;
-        $result = $this->assert_file($sql_test_name, $created_sql, $file_path, test_files::SQL);
+        // the sql creation compares against a resource file, so a file timeout is used to avoid a false timeout
+        $result = $this->assert_file($sql_test_name, $created_sql, $file_path, test_files::SQL, '', self::TIMEOUT_LIMIT_FILE);
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
@@ -2591,6 +2636,30 @@ class test_base
     {
         $lib = new library();
         return $this->assert($name, $lib->trim_sql($created), $lib->trim_sql($expected));
+    }
+
+    /**
+     * compare the created SQL statement with the expected statement from the test resource file
+     * and create or update the expected file with the created statement
+     * if the comparison fails and test_files::AUTO_UPDATE_TEST_FILES is set
+     * (single place that may overwrite an expected SQL file, similar to assert_file for html)
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect that selects the expected file
+     * @param string $created the created SQL statement that should be checked
+     * @return bool true if the created SQL statement matches the expected statement
+     */
+    function assert_sql_and_update(string $name, string $dialect, string $created): bool
+    {
+        $expected_sql = $this->assert_sql_expected($name, $dialect);
+        $result = $this->assert_sql($name, $created, $expected_sql);
+        if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
+            // format the created sql the same way as the existing test resource files
+            // and write it to the resource path (assert_sql_file_path is relative to it)
+            $lib = new library();
+            $this->update_file($this->assert_sql_file_path($name, $dialect), $lib->sql_format($created));
+        }
+        return $result;
     }
 
     /**
@@ -3040,7 +3109,8 @@ class test_base
         if ($result) {
             $id = $sbx->id();
             $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
-            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+            // the save and reload above write to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
             }
@@ -3059,7 +3129,8 @@ class test_base
         // check the log
         if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
-            $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
+            // the update save and reload above write to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log update', $log_msg, msg_id::LOG_UPDATE->value);
             }
@@ -3073,7 +3144,8 @@ class test_base
         // check the log
         if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
-            $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
+            // the delete above writes to the database, so a db timeout is used to avoid a false timeout
+            $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
                 $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, msg_id::LOG_DEL->value);
             }
@@ -3956,7 +4028,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     /**
@@ -3988,7 +4061,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4008,7 +4082,8 @@ class test_base
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
-        return $this->assert($test_name, $result, $target);
+        // the link write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4028,7 +4103,8 @@ class test_base
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
-        return $this->assert($test_name, $result, $target);
+        // the link write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     /**
@@ -4228,7 +4304,8 @@ class test_base
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
+        // the object write and its change log read above hit the database, so a db timeout is used
+        return $this->assert($test_name, $result, $target, self::TIMEOUT_LIMIT_DB);
     }
 
     private
@@ -4306,7 +4383,8 @@ class test_base
         string                           $test_name,
         array                            $id_lst,
         sandbox_named|sandbox_link_named $sbx,
-        sandbox_list_named               $lst
+        sandbox_list_named               $lst,
+        float                            $exe_max_time = self::TIMEOUT_LIMIT_DB
     ): bool
     {
         natcasesort($id_lst);
@@ -4336,7 +4414,8 @@ class test_base
             }
         }
 
-        return $this->assert($test_name, $result, '');
+        // the list is loaded from the database, so a db timeout is used to avoid a false timeout
+        return $this->assert($test_name, $result, '', $exe_max_time);
     }
 
     /**
@@ -4447,7 +4526,8 @@ class test_base
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }
-        $this->assert($test_name, $msg_txt, '');
+        // the delta calculation above takes longer than a normal unit function, so a page timeout is used
+        $this->assert($test_name, $msg_txt, '', self::TIMEOUT_LIMIT_PAGE);
 
         $test_name = 'base delta ' . $class . ' does not differ from base object';
         $empty = $filled->clone_reset();
@@ -4457,7 +4537,8 @@ class test_base
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }
-        return $this->assert($test_name, $msg_txt, '');
+        // the delta calculation above takes longer than a normal unit function, so a page timeout is used
+        return $this->assert($test_name, $msg_txt, '', self::TIMEOUT_LIMIT_PAGE);
     }
 
 
@@ -4465,11 +4546,12 @@ class test_base
      * type id
      */
 
-    function assert_verb_id(string $code_id, int $id, string $test_name): int
+    function assert_verb_id(string $code_id, int $id, string $test_name, float $exe_max_time = self::TIMEOUT_LIMIT_DB): int
     {
         global $sys;
+        // reading the verb may trigger a type list load from the database, so a db timeout is used
         $vrb_is_id = $sys->typ_lst->vrb->id($code_id);
-        if ($this->assert($test_name, $vrb_is_id, $id)) {
+        if ($this->assert($test_name, $vrb_is_id, $id, $exe_max_time)) {
             return $vrb_is_id;
         } else {
             return 0;
@@ -4579,7 +4661,7 @@ class test_base
         flush();
 
         $this->total_tests++;
-        $this->section_start_time = $new_start_time;
+        $this->section_start($new_start_time);
 
         return $test_result;
     }
@@ -4604,7 +4686,7 @@ class test_base
     }
 
 
-    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true): bool
+    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_SEMI): bool
     {
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
@@ -4618,10 +4700,142 @@ class test_base
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
             } else {
-                $this->dsp_contains($msg, $must_contain, $result, self::TIMEOUT_LIMIT_PAGE_SEMI);
+                $this->dsp_contains($msg, $must_contain, $result, $exe_max_time);
             }
         }
         return $is_connected;
+    }
+
+    /**
+     * request a page of this pod with a login
+     * needed to test the add, edit and del views, because these views change data
+     * and a user without login is blocked if the pod does not permit the changes of an ip user
+     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     *
+     * the admin user of the env file is used, because on a fresh setup
+     * this is the only user with a password (see sql_db->add_admin_users_from_env)
+     *
+     * @param string $url_path the url path of the requested page e.g. 'http/view.php?m=3&id=1'
+     * @return string the html page of a user with a login or an empty string if the login has not been possible
+     */
+    function web_page_with_login(string $url_path): string
+    {
+        $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl(THIS_URL . $url_path, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
+
+    /**
+     * request the api json of a url with an admin login
+     * needed to test the read of access restricted api objects (e.g. a user),
+     * because the endpoint only returns the json to an admin or the user himself
+     *
+     * @param string $api_url the complete api url including the query parameters
+     * @return string the api json of the admin user or an empty string if the login has not been possible
+     */
+    function api_json_with_login(string $api_url): string
+    {
+        $result = '';
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            $result = $this->web_page_curl($api_url, $cookie_file);
+            unlink($cookie_file);
+        }
+        return $result;
+    }
+
+    /**
+     * log in as the admin user of the env file and keep the session cookie
+     * the admin user is used, because on a fresh setup this is the only user
+     * with a password (see sql_db->add_admin_users_from_env)
+     *
+     * @return string the path of the session cookie file, or '' if the login is
+     *                not possible (missing curl or admin credentials); the caller
+     *                must unlink the returned file after use
+     */
+    private function login_admin_cookie(): string
+    {
+        $cookie_file = '';
+        if (!function_exists('curl_init')) {
+            $this->dsp_warning('the php curl module is missing, so the login tests are skipped');
+        } elseif (ADMIN_USER == '' or ADMIN_PW == '') {
+            $this->dsp_warning('the admin user is missing in the env file, so the login tests are skipped');
+        } else {
+            // the session cookie of the login is needed for the request of the page
+            $cookie_file = tempnam(sys_get_temp_dir(), self::COOKIE_FILE_PREFIX);
+
+            // like a real browser first load the login form, which starts the session and creates
+            // the anti-csrf token that must be sent back with the login post,
+            // because a login post without the token is rejected (see frontend::request_token_valid)
+            $form_page = $this->web_page_curl(
+                THIS_URL . api::LOGIN_SCRIPT, $cookie_file, [], self::TIMEOUT_LIMIT_LOGIN);
+            $token = '';
+            if (preg_match('/name="' . url_var::SESSION_TOKEN . '" value="([0-9a-f]+)"/', $form_page, $matches)) {
+                $token = $matches[1];
+            }
+            if ($token == '') {
+                $this->dsp_warning('the login form for the web tests has no session token');
+                unlink($cookie_file);
+                $cookie_file = '';
+            } else {
+
+                // after the login the start view is requested, because showing the login view again
+                // would reset the logged flag of the session
+                $login_url = THIS_URL . api::LOGIN_SCRIPT
+                    . url_var::ADD . url_var::BACK . url_var::MASK . url_var::EQ . views::START_ID;
+                $login_form = [
+                    url_var::USERNAME => ADMIN_USER,
+                    url_var::USER_PASSWORD => ADMIN_PW,
+                    url_var::SESSION_TOKEN => $token,
+                    url_var::POST_SUBMIT => 1
+                ];
+                // use the short login timeout: a login that the pod does not accept
+                // should fail fast instead of blocking the test for the full curl limit
+                $login_page = $this->web_page_curl($login_url, $cookie_file, $login_form, self::TIMEOUT_LIMIT_LOGIN);
+
+                // a rejected login shows the login form again, so the username field is the fail signal
+                if ($login_page == ''
+                    or str_contains($login_page, 'name="' . url_var::USERNAME_HUMAN . '"')) {
+                    $this->dsp_warning('the login of the admin user for the web tests has failed');
+                    unlink($cookie_file);
+                    $cookie_file = '';
+                }
+            }
+        }
+        return $cookie_file;
+    }
+
+    /**
+     * request one page of this pod and keep the session cookie for the next request
+     *
+     * @param string $url the complete url of the requested page
+     * @param string $cookie_file the file to read and write the session cookie
+     * @param array $post_form the form fields to post or an empty array for a simple get request
+     * @param int $timeout the max seconds to wait for the response before giving up
+     * @return string the html page or an empty string if the page cannot be requested
+     */
+    private function web_page_curl(string $url, string $cookie_file, array $post_form = [], int $timeout = self::TIMEOUT_LIMIT_LONG): string
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        if ($post_form != []) {
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($post_form));
+        }
+        $page = curl_exec($curl);
+        if ($page === false) {
+            $this->dsp_warning('requesting ' . $url . ' failed due to ' . curl_error($curl));
+            $page = '';
+        }
+        curl_close($curl);
+        return $page;
     }
 
     /**
@@ -4629,9 +4843,9 @@ class test_base
      */
     function dsp_warning(string $msg): void
     {
-        echo $msg;
-        echo '<br>';
-        echo '\n';
+        // route through the timestamped writer so the warning starts with a timestamp
+        // and ends on its own physical line instead of being glued to the next test line
+        echo_timestamped($msg);
     }
 
     /**
@@ -5018,7 +5232,9 @@ function zu_test_time_setup(test_cleanup $t): string
     $result = '';
     $this_year = intval(date('Y'));
     $prev_year = '';
-    $test_years = intval($cfg->get_db(config::TEST_YEARS, $db_con));
+    // a missing test years entry is created with the default value by the system user
+    $sys_msg = new user_message(user::system());
+    $test_years = intval($cfg->get_db(config::TEST_YEARS, $db_con, $sys_msg));
     if ($test_years == '') {
         log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
     } else {

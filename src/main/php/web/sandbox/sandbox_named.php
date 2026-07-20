@@ -234,6 +234,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
         $url_array = parent::to_url_array();
         $url_array[url_var::NAME] = $this->name();
         $url_array[url_var::DESCRIPTION] = $this->get_description();
+        if ($this->usage > 0) {
+            $url_array[url_var::USAGE] = $this->usage;
+        }
         return $url_array;
     }
 
@@ -289,7 +292,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     function name_tip(): string
     {
         $html = new html_base();
-        return $html->span($this->name(), '', $this->get_description());
+        // escape the user settable name so it cannot inject markup; the
+        // description goes into the title attribute, which span() escapes
+        return $html->span($html->esc($this->name()), '', $this->get_description());
     }
 
     /**
@@ -302,6 +307,8 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
+        // escape the user settable name (link body); ref() escapes the
+        // description that becomes the title attribute
         return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
@@ -310,6 +317,13 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * save
      */
 
+    /**
+     * TODO Prio 1 save the view that the user has selected for this object via the api
+     * this is still a stub that saves nothing, so the view selection of the user is lost
+     * the caller (frontend->url_to_html) even sends the new view id, which is ignored here
+     * the backend counterpart is e.g. word::save_view(int $view_id)
+     * @return user_message the message to the user if the view cannot be saved
+     */
     function save_view(): user_message
     {
         return new user_message();

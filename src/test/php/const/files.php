@@ -125,6 +125,11 @@ class files
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
     CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
+    CONST string IMPORT_TRIPLE_LINK_AMBIGUOUS = test_paths::IMPORT_INCONSISTENCY . 'triple_link_ambiguous';
+    CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
+    CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
+    CONST string IMPORT_NO_UPDATE_CHANGED = test_paths::IMPORT . 'no_update_changed';
     CONST string IMPORT_UPDATE_EXT = '_update';
     CONST string IMPORT_UNDO_EXT = '_undo';
 
@@ -199,6 +204,12 @@ class files
     CONST string SQL_FORMAT_TEST_UPDATE_MYSQL = 'word_update_0022004000002_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT = 'word_by_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_MYSQL = 'word_by_id_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
+    CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
+    CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
 
     const array TEST_DATA_FILES = [
         self::IMPORT_POPULISM_FERMI_ESTIMATE,

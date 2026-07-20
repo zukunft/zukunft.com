@@ -15,6 +15,29 @@ When a constant from another class cannot yet be referenced (missing `use` or
 include chain), add a `// TODO: replace literal with ConstClass::CONST_NAME`
 comment so the gap is tracked.
 
+## SQL keywords come from the `sql` consts, never inline strings
+
+Every SQL keyword in a hand-built query string uses the matching `sql::*`
+constant — `sql::SELECT`, `sql::FROM`, `sql::WHERE`, `sql::GROUP_BY`,
+`sql::AS`, `sql::UNION`, `sql::FUNCTION_COUNT`, `sql::FUNCTION_SUM`, … — never a
+literal `'SELECT'` / `'GROUP BY'` / `'COUNT'`. If a keyword has no const yet, add
+it to `cfg/db/sql.php` first, then reference it.
+
+The reason is auditability: a query is spread across many string fragments, so
+there is no reliable text search for "every query that groups" or "every place a
+`COUNT` is generated". A `sql::CONST` search is exact and fast — it finds every
+generator that uses a feature, which is how you scope a change or a test to the
+queries it actually affects. An inline `'GROUP BY'` is invisible to that search
+and drifts (spacing, casing, `GROUP  BY`) across copies.
+
+- **Wrong**: `$sql = 'SELECT ' . $fld . ' FROM ' . $tbl . ' GROUP BY ' . $fld;`
+- **Right**: `$sql = sql::SELECT . ' ' . $fld . ' ' . sql::FROM . ' ' . $tbl . ' ' . sql::GROUP_BY . ' ' . $fld;`
+
+This is the general "no magic literals" rule applied to SQL; prefer the
+`sql_creator` API where it already builds the clause for you, and drop to
+const-built strings only for the parts it does not cover (e.g. a `UNION` of
+per-table counts).
+
 ## Definitional data lives in a const, not inlined in a function
 
 A fixed set, list or map that *defines* behaviour — which profiles may do
@@ -153,6 +176,31 @@ name. Both drift per pod — the id when seeded under a different version, the n
 on rename/translation. The `code_id` is the stable identity that survives
 migrations, renames, and pod-to-pod import/export, because the import resolver
 matches by code_id alone.
+
+## Boolean db fields are nullable smallint — null reads as false
+
+A boolean database field is defined with `sql_field_type::BOOL` (which maps to
+`smallint` for both PostgreSQL and MySQL) and **`sql_field_default::NULL`** —
+never `ZERO` or `NOT_NULL`. A missing or null value reads as false, so a
+database upgrade can add the column without rewriting the existing rows, and
+the row mapper casts with `(bool)` (null, `0` and `'0'` all become false). The
+sandbox field `excluded` is the pattern; `users.uses_sandbox` follows it.
+
+- **Right** (`user_db::FLD_LST_ALL`):
+```php
+[self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::NULL, '', '', self::FLD_USES_SANDBOX_COM],
+```
+- **Wrong** — the only field of the table with a non-NULL default breaks the
+  convention and the upgrade path:
+```php
+[self::FLD_USES_SANDBOX, sql_field_type::BOOL, sql_field_default::ZERO, '', '', self::FLD_USES_SANDBOX_COM],
+```
+
+Side effect to know for the change log: if the matching object property
+defaults to `false` (e.g. `public bool $uses_sandbox = false`) instead of
+`?bool = null` (like `excluded`), the old value is **not null** even on an
+insert, so the generated insert-log SQL includes the old value
+(`_uses_sandbox_old`) — the insert-log test fixtures must match that.
 
 ## config.yaml keys are at most two space-separated words
 

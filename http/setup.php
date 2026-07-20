@@ -8,22 +8,32 @@
   
 */
 
-// refuse unless explicitly enabled via env var that gets unset after install
+// refuse unless explicitly enabled via the ZUKUNFT_ALLOW_SETUP env var,
+// which install.sh blanks in the deployed .env after the initial setup
 if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
     http_response_code(404);
     exit;
 }
 
+$start_time = microtime(true);
+
 // standard start for all php code that can be called
+// keep the requested url debug level untrusted until the environment is known,
+// then honor it only in dev so sql and the call graph never leak elsewhere
 global $debug;
-$debug = $_GET['debug'] ?? 0;
+$debug_requested = $_GET['debug'] ?? 0;
+$debug = 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
+if (getenv(ENVIRONMENT) == ENV_DEV) {
+    $debug = $debug_requested;
+}
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 /*
 
@@ -40,7 +50,7 @@ The steps should be
 
 $app = new frontend();
 global $sys;
-$db_con = $app->start("setup", "center_form");
+$db_con = $app->start("setup");
 
 // load the session user parameters
 $usr = new user;
@@ -54,12 +64,14 @@ if ($usr->id() > 0) {
         $db_chk = new db_check();
 
         // with the check the tables will be created and the system data will be loaded
+        // the check is requested by the admin user, so the changes are done in his name
         // TODO compare with test_recreate.php
-        $usr_msg = $db_chk->db_check($db_con);
-        if (!$usr_msg->is_ok()) {
-            echo $usr_msg->all_message_text();
+        $msg = new user_message($usr);
+        if (!$db_chk->db_check($db_con, $msg)) {
+            echo $msg->all_message_text();
         }
 
         log_debug("setup ... done.");
     }}
-$app->end($db_con);
+// close the database and measure the script loading time before the frontend has been created
+$app->end($db_con, $start_time);

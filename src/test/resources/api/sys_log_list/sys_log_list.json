@@ -8,22 +8,25 @@
     {
       "id": 1,
       "user_id": 3,
-      "text": "the log text that describes the problem for the user or system admin",
-      "status": 1,
+      "user": "zukunft.com system test",
       "function_id": 3,
       "trace": "the technical trace back description for debugging",
-      "type_id": 3
+      "type_id": 3,
+      "text": "the log text that describes the problem for the user or system admin",
+      "status": 1
     },
     {
       "id": 2,
       "user_id": 3,
-      "text": "the log 2 text that describes the problem for the user or system admin",
-      "status": 3,
+      "user": "zukunft.com system test",
       "function_id": 5,
       "trace": "the technical trace 2 back description for debugging",
       "type_id": 5,
+      "text": "the log 2 text that describes the problem for the user or system admin",
       "description": "the error has been replicated and the fix will be deployed",
-      "solver": 1
+      "solver": 1,
+      "solver_name": "zukunft.com system",
+      "status": 3
     }
   ]
 }

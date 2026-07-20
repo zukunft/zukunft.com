@@ -246,7 +246,7 @@ class type_list
         return $result;
     }
 
-    function name(int $id): string
+    function name(?int $id): string
     {
         $result = '';
         $type = $this->get($id);
@@ -257,11 +257,14 @@ class type_list
     }
 
     /**
-     * pick a type from the preloaded object list
-     * @param int $id the database id of the expected type
-     * @return verb|ref_type|type_object|null the type object
+     * pick a type from the preloaded object list;
+     * a null or zero id means the type is simply not (yet) set, e.g. in an add form, which is a
+     * normal case and therefore not reported as an error, whereas an unknown positive id points
+     * to an inconsistency between the request and the preloaded type list and is logged below
+     * @param int|null $id the database id of the expected type or null if the type is not set
+     * @return verb|ref_type|type_object|null the type object or null if the type is not set
      */
-    function get(int $id): verb|ref_type|type_object|null
+    function get(?int $id): verb|ref_type|type_object|null
     {
         $result = null;
         if (count($this->hash) != count($this->lst)) {

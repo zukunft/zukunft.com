@@ -130,8 +130,10 @@ class ui_list extends ui_base
             if (!$children->is_empty()) {
                 $html = new html_base();
                 if ($children->count() == 1) {
-                    // a single child reads as the full statement, e.g. "Euro is a currency"
-                    $header = $children->name_link() . ' ' . $is_vrb->name() . ' ' . $phr->name();
+                    // a single child reads as the full statement, e.g. "Euro is a currency";
+                    // name_link() is already safe html, the verb and phrase names are user input
+                    // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
+                    $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
                 } else {
                     // several children get a header of the word plural and the verb plural,
                     // e.g. "currencies are", followed by the list of the child phrases
@@ -139,7 +141,7 @@ class ui_list extends ui_base
                     if ($plural == null or $plural == '') {
                         $plural = $phr->name();
                     }
-                    $header = $plural . ' ' . $is_vrb->plural_reverse();
+                    $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
                 }
                 // start with a line break and the header as an h4 subtitle, then (for several
                 // children) the linked child phrases
@@ -315,28 +317,37 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for a list of words or triples linked to the given formula in order of impact
-     * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "canton of Zurich"
-     * @param data_object|null $cac the cached list of phrases for initial display without backend call
-     * @return string the html code to start a new form and display the tile
+     * HTML for the list of words and triples assigned to the given formula in order of impact
+     * @param formula|db_object $frm the formula whose assigned phrases should be shown
+     * @param data_object|null $cac the cached formula links and phrases for a display without a backend call
+     * @param bool $test_mode true to skip the api load and use only the passed cache for a reproducible result
+     * @return string the html code with the linked names of the assigned phrases
      */
-    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null): string
+    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null, bool $test_mode = false): string
     {
         global $ui_sys;
 
         $page = new system_page();
-
         $result = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
-        $lnk_lst = $cac?->frm_lnk_lst;
-        // TODO Prio 2 decide if and when a reloading via api is done
-        if ($lnk_lst == null) {
-            $lnk_lst = new formula_link_list();
-            $lnk_lst->load_by_formula_id($frm->id());
-        }
-        $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
-        if ($phr_lst->is_empty()) {
+
+        // a formula loaded for its page carries its assigned phrases directly (like a word's
+        // related formulas), so use that list; otherwise fall back to the formula link cache or,
+        // outside the unit tests, an api load - never the full phrase list, which is not the
+        // assignment of this formula
+        if ($frm::class == formula::class and $frm->phr_lst != null) {
+            $phr_lst = $frm->phr_lst;
+        } else {
+            $lnk_lst = $cac?->frm_lnk_lst;
             $phr_lst = new phrase_list();
-            $phr_lst->load_by_formula($frm);
+            // the default cache is an empty list, so an empty cache triggers the backend call
+            if ($lnk_lst != null and !$lnk_lst->is_empty()) {
+                $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
+            } elseif (!$test_mode) {
+                // TODO Prio 2 decide if and when a reloading via api is done
+                $lnk_lst = new formula_link_list();
+                $lnk_lst->load_by_formula_id($frm->id());
+                $phr_lst = $lnk_lst->get_phrase_list($cac?->phr_lst ?? new phrase_list());
+            }
         }
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
@@ -394,6 +405,34 @@ class ui_list extends ui_base
             }
         } else {
             log_err($dbo::class . ' is not expected to be a selection for formulas');
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
+     * small 'assigned to <ancestor>' subheading (the ancestor name links to its word page and shows a
+     * tooltip) followed by the ancestor's formulas; empty if the word has no ancestor formulas. the
+     * groups come from the word's parent_formulas, filled from the INCL_RELATED api message
+     *
+     * @param db_object $dbo the word whose ancestor formulas are shown
+     * @return string the html code of the ancestor formula groups, e.g. below the direct formulas
+     */
+    function formulas_of_parents(db_object $dbo): string
+    {
+        global $mtr;
+        $result = '';
+        if ($dbo::class == word::class and $dbo->parent_formulas != null) {
+            $html = new html_base();
+            foreach ($dbo->parent_formulas as $grp) {
+                $frm = $grp['formulas'];
+                if ($frm != null and !$frm->is_empty()) {
+                    // the ancestor name_link already carries the description as the title (tooltip)
+                    $head = $mtr->txt(msg_id::ASSIGNED_TO) . ' ' . $grp['phrase']->name_link();
+                    $result .= $html->text_h3($head);
+                    $result .= $frm->name_link();
+                }
+            }
         }
         return $result;
     }
@@ -511,7 +550,9 @@ class ui_list extends ui_base
                 foreach ($dbo->view_lst->lst() as $msk) {
                     $preview = $html->div('view preview', view_styles::COL_SM_12);
                     $buttons = $msk->open_link($dbo->id()) . ' ' . $msk->switch_link($dbo->id());
-                    $views_html .= $html->div($preview . $msk->name() . ' ' . $buttons);
+                    // escape the view name (div emits its body raw and the name is user input); the
+                    // preview and buttons around it are already-built html (stored xss via view name)
+                    $views_html .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
                 }
             }
             // tab 2: the change log of the word, latest first
@@ -535,7 +576,9 @@ class ui_list extends ui_base
     function link_list_word(db_object $dbo, ?data_object $cfg): string
     {
         // TODO review
-        return 'list of phrases related to ' . $dbo->name() . ' ';
+        // escape the object name (user input rendered raw by the component arm; stored xss)
+        $html = new html_base();
+        return 'list of phrases related to ' . $html->esc($dbo->name()) . ' ';
     }
 
     /**
@@ -643,6 +686,28 @@ class ui_list extends ui_base
     }
 
     /**
+     * show the values related to the given object grouped for a quick overview: the newest time period
+     * first, then the phrases used by several values, then the remaining values by impact (see
+     * value_list::list_most_relevant and docs/llm/pending_next_launch.md)
+     *
+     * @param word|db_object|type_object|null $dbo the object the values are related to
+     * @param data_object|null $dto the data cache used to fill the value list until the backend answers
+     * @param int|null $style_id the optional list column style
+     * @return string the html code to show the grouped list of values
+     */
+    function values_most_relevant(
+        word|db_object|type_object|null $dbo,
+        ?data_object                    $dto = null,
+        ?int                            $style_id = null
+    ): string
+    {
+        $val_lst = $this->value_related_list($dbo, $dto);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $this->value_list($val_lst, $phr_lst, $style_id, true);
+    }
+
+    /**
      * the values shown by values_by_word: a word loaded with its related values carries them
      * directly (e.g. the default word view), otherwise they are taken from the data cache
      *
@@ -738,7 +803,8 @@ class ui_list extends ui_base
     private function value_list(
         value_list  $val_lst,
         phrase_list $phr_lst,
-        ?int        $style_id = null
+        ?int        $style_id = null,
+        bool        $most_relevant = false
     ): string
     {
         global $ui_sys;
@@ -747,12 +813,17 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
+        // the "most relevant" component groups the values, the plain one just sorts them by impact
+        if ($most_relevant) {
+            $result = $val_lst->list_most_relevant($phr_lst, '', $style_txt);
+        } else {
+            $result = $val_lst->list($phr_lst, '', $style_txt);
+        }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
         // auto row, so without this block the bare inline phrases land directly
         // in the flex-column main container and every phrase is pushed onto its
         // own line
-        $result = $val_lst->list($phr_lst, '', $style_txt);
         if ($result != '') {
             $result = $html->div($result, view_styles::COL_SM_12);
         }

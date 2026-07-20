@@ -559,7 +559,7 @@ class term extends combine_named
         $html = new html_base();
         $url = $html->url_new($this->edit_view_id(), $this->obj_id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT));
+        return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT), '', true);
     }
 
     /**

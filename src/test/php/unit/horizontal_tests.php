@@ -199,7 +199,14 @@ class horizontal_tests
                 $api_json_ui = json_encode($t->json_remove_component_fields(json_decode($api_json_ui, true)));
             }
             $check_obj->set_from_api($ui_json, $usr_msg);
-            $diff = $check_obj->diff_msg($filled_obj);
+            // build the reference object from the api the backend actually sends
+            // (without the unidirectional and the combined child fields) because the
+            // diff_msg also covers fields that are only used for the database import
+            // and are not part of the frontend api
+            $api_obj = $filled_obj->clone_all();
+            $api_obj->reset(true);
+            $api_obj->set_from_api($api_json_ui, new user_message($t->usr1));
+            $diff = $check_obj->diff_msg($api_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());
             } else {
@@ -249,7 +256,8 @@ class horizontal_tests
             }
             $ex_json = $filled_obj->export_json([], false);
             $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
-            $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY);
+            // the json export and api build above take longer than a normal unit function, so a page timeout is used
+            $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY, $t::TIMEOUT_LIMIT_PAGE);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
             $empty_json = json_encode($filled_obj->export_json([], false));

@@ -171,6 +171,7 @@ class word_ui_tests
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
         $test_page .= $html->text_h2('values related to ' . $wrd_zh->name());
         $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $dto) . '<br>';
+        $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $dto) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $t);
 
         $t->subheader($ts . 'related phrases');
@@ -288,6 +289,10 @@ class word_ui_tests
 
         $test_name = 'word->input_valid allows an empty name when the word is deleted';
         $t->assert_true($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
+
+        $test_name = 'a used word cannot be deleted';
+        $wrd_empty->load_by_id_with_related($wrd_empty->id());
+        $t->assert_false($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
 
         $test_name = 'word->input_valid allows an empty name when the word is excluded';
         $wrd_excluded = new word($t_wrd->word()->api_json());

@@ -30,6 +30,13 @@
 
 */
 
+// this file is included by every test runner; refuse a direct web request so the test
+// tree can never be executed over http even if the .htaccess rules are not deployed
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('This script may only be run from the command line.');
+}
+
 // add as first step a global debug var to allow also interactive debugging
 // of php script loading by adding &debug=9 to the url
 global $debug;
@@ -39,6 +46,10 @@ $debug = $_GET['debug'] ?? 0;
 // offset of a timezone-less db timestamp) are deterministic regardless of the
 // host's php.ini date.timezone setting
 date_default_timezone_set('UTC');
+
+// tell the code below (e.g. SYSTEM_PAGE_VERSION in env.php) that this is a test run
+// so that the pages show the minor version and a micro release does not change all html test files
+const SYSTEM_TEST_RUN = true;
 
 // set the path const for the initial backend and frontend settings
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;

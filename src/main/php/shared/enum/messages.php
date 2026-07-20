@@ -104,6 +104,8 @@ enum messages: string
     const string VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
     const string VAR_NAME_CHK = 'VarObjNameCheck';
+    // the database field name of a sandbox object used to report a field difference
+    const string VAR_FIELD_NAME = 'VarFieldName';
     // the description of a sandbox object using dsp_id()
     const string VAR_SANDBOX_NAME = 'VarSandboxName';
     // the name of a word
@@ -181,6 +183,9 @@ enum messages: string
     // the exclusion status of the compare sandbox object
     const string VAR_EXCLUDE_CHK = 'VarExcludeCheck';
 
+    const string VAR_IMPACT = 'VarImpact';
+    // the exclusion status of the compare sandbox object
+    const string VAR_IMPACT_CHK = 'VarImpactCheck';
     const string VAR_JSON_TEXT = 'VarJsonText';
     const string VAR_SOURCE_NAME = 'VarSourceName';
     const string VAR_FORMULA_NAME = 'VarFormulaName';
@@ -210,6 +215,10 @@ enum messages: string
     const string VAR_VERB_NAME = 'VarVerbName';
     const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
+
+    // internal error
+    // TODO Prio 2 use this to inform users about all internal errors
+    const string VAR_LOG_LINK = 'VarLogLink';
 
     // technical database vars
     const string VAR_SQL = 'VarObjSQL';
@@ -274,6 +283,24 @@ enum messages: string
         . ' "'
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
+    case DIFF_DESCRIPTION = 'description is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_LANGUAGE_FORM = 'plural is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
     case DIFF_USER = 'user is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
         . '" instead of "'
@@ -318,6 +345,28 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_IMPACT = 'impact is "'
+        . self::VAR_START . self::VAR_IMPACT . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_IMPACT_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    // generic field difference used by the diff_msg of the sandbox objects
+    // to report a change of a field that has no dedicated message
+    case DIFF_FIELD = ''
+        . self::VAR_START . self::VAR_FIELD_NAME . self::VAR_END
+        . ' is "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
     case DIFF_EXCLUSION = 'exclusion is "'
         . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
@@ -386,6 +435,9 @@ enum messages: string
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
 
+    case INTERNAL = 'an internal system error has occurred that you can track with this link: '
+        . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' in database for '
@@ -410,6 +462,17 @@ enum messages: string
     case NAME_EMPTY = 'the name of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' must not be empty';
+    case DELETE_IN_USE = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" cannot be deleted because it is still in use';
+    case TRIPLE_PHRASES_MISSING = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' cannot be added without a from and a to phrase';
+    case PHRASE_NAME_NOT_FOUND = 'no word or triple found with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
     case TYPE_CHANGE_NOT_ALLOWED = 'changing the type of the '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' is not allowed for your user profile';
@@ -431,6 +494,14 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case IMPORT_TRIPLE_LINK_AMBIGUOUS = 'the from/verb/to link "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is used by two triples with different names, "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" and "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '"; a from/verb/to link must be unique within an import file, so give one of them an '
+        . 'intermediate building-block triple to make its link unique';
     case IMPORT_NOT_SAVED = 'import of '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' '
@@ -995,9 +1066,13 @@ enum messages: string
     case NULL_VALUE_NOT_SAVED = 'null value for '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' not saved';
-    case CANNOT_SAVE_ZERO_ID = 'cannot save '
+    case CANNOT_SAVE_ZERO_ID = 'cannot save the value '
         . self::VAR_START . self::VAR_ID . self::VAR_END
-        . ' because id is zero';
+        . ' because the phrase(s) '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . ' are not defined in the import file, so they have no database id and the '
+        . 'value phrase group id stays zero; define every phrase used by the value '
+        . 'as a word or triple in the same file';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
     case VALUE_REFERENCE_LOG_REF_FAILED = 'adding the value reference in the system log failed';
     case SHARE_TYPE_NOT_EXPECTED = 'share type "'
@@ -1234,6 +1309,7 @@ enum messages: string
         . ' for '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
+    // TODO Prio 3 review: combine with VERB_MISSING_IMPORT ?
     case VERB_MISSING = 'verb '
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . ' for '
@@ -1355,6 +1431,7 @@ enum messages: string
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '
         . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case ADMIN_MASK_DENIED = 'this view is only available for an administrator';
     case USER_CANNOT_DEL = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be deleted because otherwise log entries would be lost';
@@ -1739,11 +1816,13 @@ enum messages: string
     case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
     case SIGNUP_DATA_WARNING = 'signup_data_warning';
     case SIGNUP_ERR_NAME_EXISTS = 'signup_err_name_exists';
+    case SIGNUP_ERR_NAME_INVALID = 'signup_err_name_invalid';
     case SIGNUP_ERR_EMAIL_EMPTY = 'signup_err_email_empty';
     case SIGNUP_ERR_PW_EMPTY = 'signup_err_pw_empty';
     case SIGNUP_ERR_PW_RETYPE_EMPTY = 'signup_err_pw_retype_empty';
     case SIGNUP_ERR_PW_MISMATCH = 'signup_err_pw_mismatch';
     case SIGNUP_ERR_FAILED = 'signup_err_failed';
+    case SIGNUP_ERR_WHITELIST = 'signup_err_whitelist';
     case SYSTEM_TITLE_LOGIN = 'system_title_login';
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
     case ACTIVATE_SUBMIT = 'activate_submit';
@@ -1756,6 +1835,9 @@ enum messages: string
     case RESET_SUBMIT = 'reset_submit';
     case RESET_PROMPT = 'reset_prompt';
     case RESET_ERR_NOT_FOUND = 'reset_err_not_found';
+    // neutral confirmation shown whether or not the account exists, so the reset does not reveal
+    // which usernames or emails are registered (user enumeration)
+    case RESET_MAIL_SENT = 'If an account exists for the given name or email, a password reset link has been sent. Please check your inbox.';
     case RESET_ERR_KEY_GEN = 'reset_err_key_gen';
     case RESET_MAIL_SUBJECT = 'reset_mail_subject';
     case RESET_MAIL_HELLO = 'reset_mail_hello';
@@ -1775,6 +1857,10 @@ enum messages: string
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
     case USER_SYSTEM_ERRORS = 'user_system_errors';
     case USER_SYSTEM_ERRORS_NONE = 'user_system_errors_none';
+    // shown if a user without login tries to change data, but the pod does not permit that
+    case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
+    // shown if an api write is rejected because it comes from a different origin (suspected csrf)
+    case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
 
     // related phrase lines on the default word page e.g. 'has aliases: $, U.S. dollar'
     case PHRASE_HAS = 'phrase_has';
@@ -1785,6 +1871,9 @@ enum messages: string
 
     // if a non admin user tries to reduce the protection level of an object
     case PROTECTION_REDUCE_DENIED = 'protection_reduce_denied';
+
+    // if a non admin user tries to set the admin protection (or higher) on an object
+    case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
 
 
     /*
@@ -1921,6 +2010,7 @@ enum messages: string
     case FORM_FIELD_USERNAME = 'form_field_username';
     case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
     case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
+    case FORM_FIELD_USER_USES_SANDBOX = 'form_field_user_uses_sandbox';
     case FORM_FIELD_USER_FIRST_NAME = 'form_field_first_name';
     case FORM_FIELD_USER_LAST_NAME = 'form_field_last_name';
     case FORM_SELECT_USER_PROFILE = 'user profile';
@@ -1942,8 +2032,8 @@ enum messages: string
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';
-    case SYSTEM_POPUP_TITLE_UPDATE = 'system_popup_title_update';
-    case SYSTEM_POPUP_TITLE_DELETE = 'system_popup_title_delete';
+    case SYSTEM_TITLE_OBJECT_NAMED_UPDATE = 'system_title_named_object_update';
+    case SYSTEM_TITLE_OBJECT_NAMED_DELETE = 'system_title_named_object_delete';
     case SELECT_VIEW = 'select_view';
 
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
@@ -2013,6 +2103,7 @@ enum messages: string
     // language elements to create a text
     case FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
     case OF = ' of ';   // e.g. to indicate which word would be deleted
+    case ASSIGNED_TO = 'assigned to'; // subheadline for the formulas of an ancestor phrase
 
     case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
     case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';

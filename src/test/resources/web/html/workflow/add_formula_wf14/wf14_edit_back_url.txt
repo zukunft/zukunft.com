@@ -1,0 +1,7 @@
+GET
+http://localhost/http/view.php?z=0
+/http/view.php?z=0
+/http/view.php?step=no&
+{
+    "step": "no"
+}

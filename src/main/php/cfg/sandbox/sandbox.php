@@ -674,11 +674,12 @@ class sandbox extends db_object_seq_id_user
      * is expected to be similar to the needs_db_update function
      *
      * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj which might be different to this sandbox object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj): user_message
+    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         $lib = new library();
         if ($this->owner_id() != $obj->owner_id() and $obj->owner_id() != null) {
             $msg->add(msg_id::DIFF_OWNER, [
@@ -833,6 +834,40 @@ class sandbox extends db_object_seq_id_user
 
         global $sys;
         return $sys->typ_lst->shr_typ->name($this->share_id);
+    }
+
+    /**
+     * check if the requesting user may read this named sandbox object (word, triple, formula, source,
+     * ref, view, component, ...); the seq-id twin of sandbox_multi::is_readable_by - the two class
+     * branches share no parent, so the read scope is duplicated like share_type_name/can_change are.
+     * a named object is confidential only if it is not shared publicly: a public object (the default)
+     * is readable by everyone, otherwise only the owner, an admin or a system user may read it; a
+     * group-shared object is conservatively treated like personal (owner only) until a user-group
+     * membership model exists. used at the api read boundary to close the idor read of another user's
+     * non-public object by iterating the id; internal flows (save, calculation) are not gated by this.
+     *
+     * @param user|null $usr the user who has requested to read this object
+     * @return bool true if the object may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        global $sys;
+
+        $result = false;
+        // an admin or system user may read every object e.g. for the admin data views
+        if ($usr != null and ($usr->is_admin() or $usr->is_system())) {
+            $result = true;
+        } else {
+            // a public object (the default) is readable by everyone
+            $public_id = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
+            if ($this->share_id == null or $this->share_id == $public_id) {
+                $result = true;
+            } elseif ($usr != null and $this->owner_id != null and $this->owner_id == $usr->id) {
+                // only the owner may read their own non-public object
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1010,6 +1045,7 @@ class sandbox extends db_object_seq_id_user
     */
 
     /**
+     * TODO Prio 1 add the $msg parameter to be able to report errors to the user
      * load one database row e.g. word, triple, formula, view or component from the database.
      * for values and result the db key might be an 512-bit id or even a string
      * so for values and results the load_non_int_db_key function is used instead of this load function
@@ -1022,6 +1058,13 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
 
         $db_row = $db_con->get1($qp);
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged;
+        // it is mapped like "no row found", because a fatal crash of the row mapper
+        // would hide the reason (see db read result contract in docs/llm/architecture.md)
+        if ($db_row === false) {
+            $db_row = null;
+        }
         $this->row_mapper_sandbox($db_row);
         return $this->id();
     }
@@ -1050,6 +1093,12 @@ class sandbox extends db_object_seq_id_user
             $qp = $this->load_sql_standard($id, $sc);
 
             $db_row = $db_con->get1($qp, $msg);
+            // TODO Prio 2 call the row mapper only if $msg
+            // a failed query is reported via $msg by the db layer and mapped like "no row found",
+            // because a fatal crash of the row mapper would hide the fail message
+            if ($db_row === false) {
+                $db_row = null;
+            }
             if (!$this->row_mapper_sandbox(
                 $db_row, true, false)) {
                 $lib = new library();
@@ -1085,6 +1134,12 @@ class sandbox extends db_object_seq_id_user
             $qp = $this->load_sql_user_changes($sc);
 
             $db_row = $db_con->get1($qp, $msg);
+            // a failed query is reported via $msg by the db layer and mapped like "no row found",
+            // because a fatal crash of the row mapper would hide the fail message
+            // TODO Prio 1 check why the row_mapper is called if $db_row is false
+            if ($db_row === false) {
+                $db_row = null;
+            }
             if (!$this->row_mapper_sandbox(
                 $db_row, true, false)) {
                 $lib = new library();
@@ -1311,31 +1366,57 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * make sure that only an admin or system user reduces the protection level
-     * if a non admin user requests the reduction the database protection level is kept
+     * make sure that only an admin or system user changes the protection level beyond the user level:
+     * a protection reduction is denied for a normal user and the database protection level is kept;
+     * setting the admin protection (or higher) is also denied for a normal user - for a change
+     * and for a new object - because otherwise a user could self-lock an object
+     * so that only an admin can change it; in both cases the protection is limited
      * and a warning is added to the given message
-     * the protection ids are expected to be in rising order e.g. 1 no protection to 3 admin protection
+     * the protection ids are expected to be in rising order e.g. 1 no protection to 4 no change
      *
-     * @param sandbox|CombineObject|IdObject $db_obj the object as it is saved in the database
+     * @param sandbox|CombineObject|IdObject|null $db_obj the object as it is saved in the database or null for a new object
      * @param user $usr_req the user who has requested the change
-     * @param user_message $msg to report a denied protection reduction to the user
+     * @param user_message $msg to report a denied protection change to the user
      * @return void because the adjusted protection of this object and the message are the result
      */
     function check_protection_change(
-        CombineObject|sandbox|IdObject $db_obj,
-        user                           $usr_req,
-        user_message                   $msg
+        CombineObject|sandbox|IdObject|null $db_obj,
+        user                                $usr_req,
+        user_message                        $msg
     ): void
     {
-        if ($this->protection_id != null and $db_obj->protection_id() != null) {
-            if ($this->protection_id < $db_obj->protection_id()) {
-                if (!$usr_req->is_admin() and !$usr_req->is_system()) {
+        global $sys;
+
+        if ($this->protection_id != null) {
+            if (!$usr_req->is_admin() and !$usr_req->is_system()) {
+                $db_protect_id = $db_obj?->protection_id();
+
+                // only an admin or system user may set the admin protection or higher
+                $admin_protect_id = $sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN);
+                $is_raise = ($db_protect_id == null or $this->protection_id > $db_protect_id);
+                if ($this->protection_id >= $admin_protect_id and $is_raise) {
+                    $requested_name = $this->protection_type_name();
+                    if ($db_protect_id != null) {
+                        $this->set_protection_id($db_protect_id);
+                    } else {
+                        // for a new object fall back to the highest level a normal user may set
+                        $this->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::USER));
+                    }
+                    $msg->add_warning_with_vars(msg_id::PROTECTION_RAISE_DENIED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_PROTECT => $this->protection_type_name(),
+                        msg_id::VAR_PROTECT_CHK => $requested_name
+                    ]);
+                }
+
+                // only an admin or system user may reduce the protection level
+                if ($db_protect_id != null and $this->protection_id < $db_protect_id) {
                     $msg->add_warning_with_vars(msg_id::PROTECTION_REDUCE_DENIED, [
                         msg_id::VAR_NAME => $this->name(),
                         msg_id::VAR_PROTECT => $db_obj->protection_type_name(),
                         msg_id::VAR_PROTECT_CHK => $this->protection_type_name()
                     ]);
-                    $this->set_protection_id($db_obj->protection_id());
+                    $this->set_protection_id($db_protect_id);
                 }
             }
         }
@@ -1504,7 +1585,7 @@ class sandbox extends db_object_seq_id_user
         // add object owner
         //$usr_id_lst[] = $this->owner_id();
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
-        $db_usr_lst = $db_con->get($qp);
+        $db_usr_lst = $db_con->get($qp, 'sandbox user list');
         foreach ($db_usr_lst as $db_usr) {
             if ($db_usr[user_db::FLD_ID] > 0) {
                 $usr_id_lst[] = $db_usr[user_db::FLD_ID];
@@ -1604,8 +1685,15 @@ class sandbox extends db_object_seq_id_user
                 }
             }
             if ($this->owner_id() <= 0) {
-                log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
-                // TODO Prio 3 get best owner and set it
+                // an ownerless object (shared or seed data) is the standard row seen by all users,
+                // so only a logged-in user may take it over; an anonymous ip user must not change
+                // the shared row (idor) - its change is routed to a user specific overlay instead
+                if ($this->get_user()->is_ip_user()) {
+                    $can_change = false;
+                } else {
+                    log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
+                    // TODO Prio 3 get best owner and set it
+                }
             }
         }
 
@@ -1665,6 +1753,9 @@ class sandbox extends db_object_seq_id_user
         if ($msg == '') {
             $this->usr_cfg_id = null;
             $result = true;
+            // after removing the user sandbox row switch off the sandbox usage
+            // of the user if no user sandbox row is left
+            $this->get_user()->check_sandbox_usage($db_con, $usr_msg);
         } else {
             log_err($action . $msg_failed . ' because ' . $msg);
         }
@@ -1740,6 +1831,13 @@ class sandbox extends db_object_seq_id_user
                     $result = false;
                 } else {
                     $this->usr_cfg_id = $log_id;
+                    // remember that the user now has sandbox rows, so the pages for this user
+                    // must be created from the user sandbox and not from the standard page cache
+                    $this->get_user()->set_uses_sandbox($usr_msg);
+                    if (!$usr_msg->is_ok()) {
+                        log_err('setting the sandbox usage of ' . $this->get_user()->dsp_id()
+                            . ' failed due to ' . $usr_msg->all_message_text());
+                    }
                 }
             }
         }
@@ -2115,7 +2213,11 @@ class sandbox extends db_object_seq_id_user
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
-                    $db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true);
+                    if ($db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true)) {
+                        // remember that the user now has sandbox rows, so the pages for this user
+                        // must be created from the user sandbox and not from the standard page cache
+                        $this->get_user()->set_uses_sandbox($usr_msg);
+                    }
                 }
             }
         }
@@ -2677,10 +2779,22 @@ class sandbox extends db_object_seq_id_user
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
-        // saving to database is always time consuming so a log entry might help to detect duplicate save calls
+        // saving to database is always time-consuming so a log entry might help to detect duplicate save calls
         log_debug($this->dsp_id());
 
         global $db_con;
+
+        // save is the single entry point for all user data changes (frontend, api and import)
+        // so the permissions of the requesting user are checked here for all write paths
+        $this->set_requesting_user($msg);
+        if ($this->has_id()) {
+            $permitted = $this->can_be_changed_by($msg);
+        } else {
+            $permitted = $this->can_be_added_by($msg);
+        }
+        if (!$permitted) {
+            return false;
+        }
 
         // by default all changes are logged
         if (is_array($sc_par_lst)) {
@@ -2723,6 +2837,11 @@ class sandbox extends db_object_seq_id_user
                 if ($this->is_formula_word($sim, $msg)) {
                     $is_formula_link = true;
                 }
+            }
+
+            // make sure that only an admin user sets the admin protection also on a new object
+            if (!$this->has_id()) {
+                $this->check_protection_change(null, $this->get_user(), $msg);
             }
 
             // create a new object if nothing similar has been found
@@ -2941,6 +3060,13 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
         $msg_txt = '';
+
+        // del is the single entry point for all user data deletions (frontend, api and import)
+        // so the permissions of the requesting user are checked here for all delete paths
+        $this->set_requesting_user($msg);
+        if (!$this->can_be_deleted_by($msg)) {
+            return false;
+        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated

@@ -74,18 +74,21 @@ class change_log_link extends change_log_named
         // time and user
         $html_text .= $html->td(date_format($this->change_time, $ui_sys->cfg->date_time_format()));
         if ($this->usr != null) {
-            $html_text .= $html->td($this->usr->name());
+            $html_text .= $html->td($html->esc($this->usr->name()));
         } else {
             $html_text .= $html->td();
         }
 
-        // the link change description
+        // the link change description; the old and new values are user settable
+        // phrase names, so escape them before showing them in the history row
+        $old_value = $html->esc($this->old_value);
+        $new_value = $html->esc($this->new_value);
         if ($this->old_value != '' and $this->new_value != '') {
-            $html_text .= $html->td('change from ' . $this->old_value . ' to ' . $this->new_value);
+            $html_text .= $html->td('change from ' . $old_value . ' to ' . $new_value);
         } elseif ($this->old_value != '') {
-            $html_text .= $html->td('unlink from ' . $this->old_value);
+            $html_text .= $html->td('unlink from ' . $old_value);
         } elseif ($this->new_value != '') {
-            $html_text .= $html->td('link to ' . $this->new_value);
+            $html_text .= $html->td('link to ' . $new_value);
         } else {
             $html_text .= $html->td();
         }

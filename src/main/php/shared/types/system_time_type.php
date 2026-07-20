@@ -62,6 +62,7 @@ class system_time_type extends type_object
     const string LOAD_USER_DATA = "load_user_data";
     const string LOCALHOST_VIEWS = "localhost view";
 
+    const string SCRIPT_LOADING = "script loading";
     const string URL_TO_ACTION = "url to action";
     const string URL_TO_HTML = "url to html";
     const string CLOSE = "close";

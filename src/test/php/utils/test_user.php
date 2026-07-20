@@ -60,15 +60,15 @@ function run_user_test(all_tests $t): void
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
-    // display system usernames
-    echo "based on<br>";
+    // display system usernames (each line timestamped via the log writer)
+    echo_timestamped('based on<br>');
     if (isset($_SERVER)) {
         if (in_array(rest_ctrl::PHP_AUTH_USER, $_SERVER)) {
-            echo 'php user: ' . $_SERVER[rest_ctrl::PHP_AUTH_USER] . '<br>';
-            echo 'remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>';
+            echo_timestamped('php user: ' . $_SERVER[rest_ctrl::PHP_AUTH_USER] . '<br>');
+            echo_timestamped('remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>');
         }
     }
-    echo 'user id: ' . $usr->id . '<br>';
+    echo_timestamped('user id: ' . $usr->id . '<br>');
 
     $t->subheader($ts . 'permission');
 

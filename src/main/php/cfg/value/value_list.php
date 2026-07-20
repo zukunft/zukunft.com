@@ -1308,6 +1308,25 @@ class value_list extends sandbox_value_list
     */
 
     /**
+     * sort this value list in place so that the value with the highest impact is first
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * values with the same impact are sorted by the numeric value descending
+     * and values with the same impact and number by the group name for a stable order
+     * (not by the id: a value's id is its phrase group key, packed from the word/triple db ids,
+     * which the seed assigns serially and shift between test database rebuilds, so an id tiebreak
+     * reorders the list per rebuild; the group name is built from the stable phrase names)
+     * @return void
+     */
+    function sort(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(value_base $a, value_base $b) => $b->impact() <=> $a->impact()
+            ?: $b->number() <=> $a->number()
+            ?: strcmp($a->name(), $b->name()));
+        $this->set_lst($lst);
+    }
+
+    /**
      * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */

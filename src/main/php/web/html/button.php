@@ -111,7 +111,7 @@ class button
     {
         $html = new html_base();
         $inner = '<' . html_base::IMG . ' ' . html_base::SRC . '="' . $icon . '" ' . html_base::ALT . '="' . $this->title . '">';
-        return $html->ref($this->call, $inner, $this->title);
+        return $html->ref($this->call, $inner, $this->title, '', true);
     }
 
     // same as html but the bootstrap version
@@ -119,7 +119,7 @@ class button
     {
         $html = new html_base();
         $inner = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="far ' . $icon . '"></' . html_base::I . '>';
-        return $html->ref($this->call, $inner, $this->title);
+        return $html->ref($this->call, $inner, $this->title, '', true);
     }
 
     private function set_ui_msg(msg_id $ui_msg_id, string $explain = ''): void

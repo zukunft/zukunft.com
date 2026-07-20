@@ -73,6 +73,12 @@ if ($db_con->is_open()) {
         }
     }
 
+    // do not disclose another user's private reference loaded by id (idor); neutral message
+    if ($result != '' and !$ref->is_readable_by($usr)) {
+        $result = '';
+        $msg = 'Cannot load ref because id is missing';
+    }
+
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 

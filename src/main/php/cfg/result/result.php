@@ -846,7 +846,7 @@ class result extends sandbox_value
         global $db_con;
         $result = false;
 
-        $val_rows = $db_con->get($qp);
+        $val_rows = $db_con->get($qp, 'result values');
         if ($val_rows != null) {
             if (count($val_rows) > 0) {
                 $val_row = $val_rows[0];

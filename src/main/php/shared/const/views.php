@@ -797,6 +797,14 @@ class views
         self::CONFIRM_DEL_ID,
     ];
 
+    // system masks that add, change or delete data incl. the confirm steps
+    // used to block a user without login from any data change (see https://wiki.php.net/rfc/spread_operator_for_array )
+    const array CHANGE_MASKS_IDS = [
+        ...self::ADD_MASKS_IDS,
+        ...self::EDIT_MASKS_IDS,
+        ...self::DEL_MASKS_IDS,
+    ];
+
     // system masks that should not have the standard zukunft header
     const array NO_NAVBAR_IDS = [
         self::SIGNUP_ID,
@@ -810,8 +818,23 @@ class views
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array EDIT_DEL_MASKS_IDS = [
-        self::EDIT_MASKS_IDS,
-        self::DEL_MASKS_IDS,
+        ...self::EDIT_MASKS_IDS,
+        ...self::DEL_MASKS_IDS,
+    ];
+
+    // system masks that change data and are therefore blocked for a user without login
+    // if this pod does not permit the changes of an ip user (see /http/view.php);
+    // beside the add, edit and del masks also the process masks that change data,
+    // but never the login, signup and export masks that an ip user must be able to use
+    const array IP_BLOCKED_MASKS_IDS = [
+        ...self::CHANGE_MASKS_IDS,
+        self::FORMULA_TEST_ID,
+        self::UNDO_ID,
+        self::PASTE_TABLE_ID,
+        self::IMPORT_ID,
+        self::JOB_ASYNC_ID,
+        self::JOB_CONTROL_ID,
+        self::JOB_CHECK_ID,
     ];
 
     // system masks that are used to modify other system masks

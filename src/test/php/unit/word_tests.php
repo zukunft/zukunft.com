@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -205,6 +206,51 @@ class word_tests
         $t->assert($test_name, $wrd_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $test_name = 'the admin reduction is not reported';
         $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $test_name = 'a normal user cannot raise the protection to no change';
+        $usr_msg = new user_message();
+        $wrd_imp = $t_wrd->word();
+        $wrd_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
+        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $wrd_imp->protection_id(), $wrd_db->protection_id());
+        $test_name = 'the denied raise is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
+        $test_name = 'a normal user keeping the admin protection unchanged is not reported';
+        $usr_msg = new user_message();
+        $wrd_imp = $t_wrd->word();
+        $wrd_imp->check_protection_change($wrd_db, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $test_name = 'a normal user cannot set the admin protection on a new object';
+        $usr_msg = new user_message();
+        $wrd_new = $t_wrd->word();
+        $wrd_new->check_protection_change(null, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $wrd_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
+        $test_name = 'the denied protection of the new object is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::MATH);
+        $test_name = 'an admin user can set the admin protection on a new object';
+        $usr_msg = new user_message();
+        $wrd_new = $t_wrd->word();
+        $wrd_new->check_protection_change(null, $t->usr_admin, $usr_msg);
+        $t->assert($test_name, $wrd_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        $test_name = 'the admin protection of the new object is not reported';
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
+
+        $t->subheader($ts . 'read access (share)');
+        // a non-public named object must not be disclosed to another user by id (idor);
+        // see sandbox::is_readable_by, enforced at the api/word (and sibling) read endpoints
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+        $wrd_priv = $t_wrd->word();
+        $wrd_priv->set_owner_id($t->usr1->id);
+        $wrd_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private word';
+        $t->assert_true($test_name, $wrd_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private word';
+        $t->assert_false($test_name, $wrd_priv->is_readable_by($t->usr2));
+        $test_name = 'an admin may read another user private word';
+        $t->assert_true($test_name, $wrd_priv->is_readable_by($t->usr_admin));
+        $wrd_pub = $t_wrd->word();
+        $wrd_pub->set_owner_id($t->usr1->id);
+        $test_name = 'a public word is readable by another user';
+        $t->assert_true($test_name, $wrd_pub->is_readable_by($t->usr2));
 
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $wrd);
@@ -307,6 +353,16 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_to_ui($wrd, new word_ui());
 
+        $test_name = 'the url array contains the filled plural';
+        $wrd_ui = $t_wrd->word_dsp();
+        $wrd_ui->plural = word_names::MATH_PLURAL;
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::PLURAL], word_names::MATH_PLURAL);
+        $test_name = 'an empty plural is excluded from the url array';
+        $wrd_ui->plural = '';
+        $url_arr = $wrd_ui->to_url_array();
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::PLURAL);
+
 
         $t->subheader($ts . 'subtitle with phrase limit');
 
@@ -315,13 +371,13 @@ class word_tests
         $wrd = $t_wrd->zh_ui();
         $wrd->phr_lst = $t_phr->list_ui();
         $txt = $form->title_named($wrd, 2);
-        $lnk = word_names::CITY_ID . '">' . word_names::CITY . '</a>';
+        $lnk = triple_names::CITY_ZH_ID . '" ' . html_base::TITLE . '="' . triple_names::CITY_ZH_COM . '">' . word_names::CITY . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
-        $test_name = '... and canton';
-        $lnk = word_names::CANTON_ID . '">' . word_names::CANTON . '</a>';
+        $test_name = '... and canton with its description as tooltip';
+        $lnk = triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... and "..." for more';
-        $lnk = views::WORD_RELATED_ID . '&id=' . word_names::ZH_ID . '">...</a>';
+        $lnk = views::WORD_RELATED_ID . '&amp;id=' . word_names::ZH_ID . '">...</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = '... but company is NOT';
         $t->assert_text_not_contains($test_name, $txt, word_names::COMPANY);
@@ -338,8 +394,8 @@ class word_tests
         $txt = $form->title_named($wrd);
         $t->assert_text_contains($test_name, $txt, verbs::SYMBOL_NAME);
         $test_name = 'link of "CHF is symbol for Swiss Frank" with the description as tooltip';
-        $lnk = '<a href="/http/view.php?m=' . views::WORD_ID
-            . '&id=' . word_names::SWISS_FRANC_ID . '" title="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
+        $lnk = '<a href="/http/view.php?m=' . views::TRIPLE_ID
+            . '&amp;id=' . triple_names::CHF_SYMBOL_ID . '" ' . html_base::TITLE . '="' . word_names::SWISS_FRANC_COM . '">' . word_names::SWISS_FRANC . '</a>';
         $t->assert_text_contains($test_name, $txt, $lnk);
         $test_name = 'name of "CHF is symbol for Swiss Frank';
         $t->assert_text_contains($test_name, $txt, '>CHF</h4>');
@@ -354,8 +410,8 @@ class word_tests
         $t->assert_text_contains($test_name, $txt, '>' . word_names::COMPANY . '</a>');
         $test_name = '... and still canton';
         $t->assert_text_contains($test_name, $txt, '>' . word_names::CANTON . '</a>');
-        $test_name = '... without a tooltip because canton has no description';
-        $t->assert_text_contains($test_name, $txt, '&id=' . word_names::CANTON_ID . '">' . word_names::CANTON . '</a>');
+        $test_name = '... linking to the canton triple with its description as tooltip';
+        $t->assert_text_contains($test_name, $txt, '&amp;id=' . triple_names::CANTON_ZURICH_ID . '" ' . html_base::TITLE . '="' . triple_names::CANTON_ZURICH_COM . '">' . word_names::CANTON . '</a>');
         $test_name = '... but city NOT';
         $t->assert_text_not_contains($test_name, $txt, '>' . word_names::CITY . '</a>');
 

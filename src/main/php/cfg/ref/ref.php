@@ -301,6 +301,14 @@ class ref extends sandbox_link
                 $this->set_phrase($phr);
             }
         }
+        if (array_key_exists(json_fields::SOURCE_ID, $api_json)) {
+            // TODO Prio 2 get from cache if possible
+            if ($api_json[json_fields::SOURCE_ID] != '' and $api_json[json_fields::SOURCE_ID] != 0) {
+                $src = new source($this->get_user());
+                $src->id = $api_json[json_fields::SOURCE_ID];
+                $this->set_source($src);
+            }
+        }
         if (array_key_exists(json_fields::EXTERNAL_KEY, $api_json)) {
             if ($api_json[json_fields::EXTERNAL_KEY] != '') {
                 $this->set_external_key($api_json[json_fields::EXTERNAL_KEY]);
@@ -1037,6 +1045,25 @@ class ref extends sandbox_link
     /*
      * info
      */
+
+    /**
+     * create human-readable messages of the differences between the reference objects
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param ref|CombineObject|db_object_seq_id $obj which might be different to this reference
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the reference objects
+     */
+    function diff_msg(ref|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this->diff_field_msg($msg, ref_fields::FLD_EX_KEY, $this->get_external_key(), $obj->get_external_key());
+        $this->diff_field_msg($msg, ref_fields::FLD_SOURCE, $this->source_id(), $obj->source_id());
+        $this->diff_field_msg($msg, fields::FLD_URL, $this->get_url(), $obj->get_url());
+        $this->diff_field_msg($msg, fields::FLD_CODE_ID, $this->get_code_id(), $obj->get_code_id());
+        $this->diff_field_msg($msg, fields::FLD_DESCRIPTION, $this->description, $obj->description);
+        return $msg;
+    }
 
     /**
      * check if the reference in the database needs to be updated

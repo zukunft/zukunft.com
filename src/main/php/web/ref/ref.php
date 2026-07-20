@@ -161,7 +161,7 @@ class ref extends sandbox
                 $this->phr = null;
             }
             if (array_key_exists(url_var::SOURCE, $url_array)) {
-                $this->set_source_by_id($url_array[url_var::PHRASE]);
+                $this->set_source_by_id($url_array[url_var::SOURCE]);
             } else {
                 $this->source = null;
             }
@@ -274,9 +274,22 @@ class ref extends sandbox
         $this->phr = $phr;
     }
 
+    /**
+     * @return phrase the phrase this external reference is linked to, or an empty phrase if it is
+     *                not yet set e.g. for a new reference of an add form (like db_object::phrase)
+     */
     function phrase(): phrase
     {
-        return $this->phr;
+        $phr = $this->phr;
+        if ($phr == null) {
+            // only a new reference of an add form has no phrase yet; a stored reference must be
+            // linked to a phrase, so a missing phrase is a data error (like triple::get_verb)
+            if ($this->id() > 0) {
+                log_err('phrase missing for reference ' . $this->dsp_id(), 'ref->phrase');
+            }
+            $phr = new phrase();
+        }
+        return $phr;
     }
 
     private function set_phrase_by_id(int $id): void
@@ -414,7 +427,10 @@ class ref extends sandbox
      */
     function name_tip(): string
     {
-        $result = $this->type_name() . ' ' . $this->external_key();
+        // escape the user-controlled external key and the type name: the name_tip base contract
+        // returns html-safe output, so a generic caller rendering it would be stored xss otherwise
+        $result = htmlspecialchars($this->type_name(), ENT_QUOTES) . ' '
+            . htmlspecialchars($this->external_key(), ENT_QUOTES);
         if ($this->last_update != null) {
             $result .= ', last update ' . $this->last_update;
         }
@@ -459,7 +475,7 @@ class ref extends sandbox
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::REFRESH . '"></' . html_base::I . '>';
         // reuse the small inline icon style of the page title edit icon so the refresh icon
         // is shown in a reduced size on the same line as the reference name
-        return $html->ref($url, $icon, $mtr->txt(msg_id::RELOAD), styles::HEADING_ICON_INLINE);
+        return $html->ref($url, $icon, $mtr->txt(msg_id::RELOAD), styles::HEADING_ICON_INLINE, true);
     }
 
 
@@ -515,6 +531,12 @@ class ref extends sandbox
      */
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
             $used_ref_type_id = $typ_lst->ref_typ->default_id();

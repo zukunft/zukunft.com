@@ -42,10 +42,13 @@ include_once paths::MODEL_USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class all_write_workflow_tests
 {
@@ -53,11 +56,11 @@ class all_write_workflow_tests
     /**
      * check if the url requests by the given user still produces the expected html pages
      *
-     * @param test_base $t the test environment including the error counter and execution times
+     * @param test_cleanup|test_base $t the test environment including the error counter and execution times
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    function run(test_base $t, user $usr, user_message $usr_msg): bool
+    function run(test_cleanup|test_base $t, user $usr, user_message $usr_msg): bool
     {
 
         // start the test section (ts)
@@ -68,6 +71,8 @@ class all_write_workflow_tests
 
             // url tests
             new word_write_url_tests()->run($t);
+            new triple_write_url_tests()->run($t);
+            new formula_write_url_tests()->run($t);
 
             /*
              * TODO Prio 1 easy workflow

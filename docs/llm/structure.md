@@ -165,7 +165,81 @@ if (property_exists($dbo, 'phrases_related') && $dbo->phrases_related !== null) 
 return $result;
 ```
 
-## Keep a function shorter than a screen page
+## Never fail silently — record the reason on `$msg`
+
+A function that carries a `user_message $msg` (or `Message`) and can reject, skip
+or abort **must record why on `$msg`** before returning the failure, so the caller
+and the frontend can surface it. Returning `false` / a default while leaving
+`$msg` untouched is a silent failure: the caller sees "not ok" with nothing to
+show and the user sees nothing at all.
+
+- Every rejecting branch adds a specific `msg_id` (via `$msg->add(...)` /
+  `add_warning_with_vars(...)`); a guard that returns `$msg->is_ok()` must have
+  set a message on every path that makes it not-ok. Never make `$msg` not-ok
+  without a matching entry.
+- Cover *every* fallback branch, not just some. Whenever a value the user supplied
+  is missing or invalid and you assign an empty stand-in (`new verb()`, `''`, `0`,
+  `null`) in its place, that stand-in is itself a user-relevant issue — add the
+  matching `$msg` entry on *that* branch too. Surfacing one fallback while leaving
+  a sibling fallback silent is the same silent failure with a gap.
+- The entry must carry human-readable text — a `msg_id` that renders to an empty
+  string is still a silent failure (the caller `add_message('')`s nothing). Verify
+  the case resolves to real text (e.g. a reserved-name rejection names the object
+  and the reason).
+- The failure must reach the user: a backend write that reports "not ok" has to
+  propagate into the frontend `$msg` (see `docs/llm/state-and-messages.md`), not
+  be swallowed by a conversion or an `if ($msg->is_ok())` gate that hides it.
+
+This is the `$msg` counterpart of "log the unexpected branch": `log_err` makes an
+*internal* inconsistency visible to developers; a `$msg` entry makes a *user-
+facing* rejection visible to the user. A real regression this caught: a triple
+add was blocked by the reserved-name check, but the rejection message rendered
+empty and never reached the UI, so the confirmed save silently did nothing.
+
+### Take `$msg` when the error is the user's to see
+
+The rule above covers functions that *already* carry `$msg`. A function that can
+produce an error a **user** needs to act on must go one step further and **take a
+`user_message $msg` parameter** in the first place — even a low-level helper — so
+it can record the specific problem *and its suggested solution* for the frontend,
+instead of only `log_err`-ing it (developer-only) or swallowing it. When a helper
+that can raise a user error has no `$msg`, add the parameter and thread it from
+the callers rather than downgrading a user error to a silent `log_err`.
+
+Which channel to use follows the cause, not the severity:
+
+- **`log_err` (no `$msg`)** — an *internal* inconsistency the user cannot fix: a
+  cache not loaded, a missing method overwrite, an id that should never be 0.
+- **`$msg` (add a `msg_id`)** — a cause the user chose or can correct: a name
+  already in use, a reserved name, a missing verb on the triple they are adding.
+  These need `$msg` so the reason *and the fix* reach the person who can act on it.
+
+Example: `triple::verb_from_api_json()` maps a verb from an api message; a missing
+or unknown verb makes the user's triple invalid, so it should take `$msg` and add
+a "verb missing — please pick a verb" message, not just `log_err` and return an
+empty verb. And it must do so on *every* branch that falls back to `new verb()`
+(the missing id, the id `0`, and the null value) — each of those empty verbs is
+the same user-relevant problem, so none may be left silent.
+
+## Whatever happens, avoid an uncaught PHP fatal
+
+The general rule behind all the error-handling rules above: **whatever happens —
+a corrupted database, an outdated schema, bad input, a missing config — an
+uncaught PHP fatal (TypeError, UnhandledMatchError, uncaught exception, call on
+null) is avoided**, because a fatal kills the script before it can do the three
+duties of error handling:
+
+1. write the error to the system log (`sys_log`), so it is not lost,
+2. inform the admin, so the cause gets fixed,
+3. show the user a helpful message instead of a white page.
+
+So guard the value before the call that would fatal on it (e.g. check the
+db-read result for `false` *before* passing it to `row_mapper(?array)` — see
+the DB read result contract in `docs/llm/architecture.md`), catch exceptions at
+the layer boundary and convert them to a `log_err`/`log_fatal` plus a `$msg`
+entry, and give every `match()` a default arm that logs the unexpected case.
+Failing loudly is right — but through the logging and `$msg` channels above,
+never by letting the language kill the process.
 
 A function body should fit on **one screen page** (~50 lines) whenever possible —
 short enough that a reader sees the whole control flow without scrolling. When a

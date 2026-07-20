@@ -84,6 +84,12 @@ if ($db_con->is_open()) {
         }
     }
 
+    // do not disclose another user's private formula loaded by id/name (idor); neutral message
+    if ($result != '' and !$frm->is_readable_by($usr)) {
+        $result = '';
+        $msg = 'formula id or name is missing';
+    }
+
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 

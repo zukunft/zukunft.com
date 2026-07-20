@@ -1115,11 +1115,12 @@ class value_base extends sandbox_value
      * create human-readable messages of the differences between the value objects
      * TODO add time_stamp and user value if needed
      * @param value_base|db_object_multi $obj which might be different to this value object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the value objects
      */
-    function diff_msg(value_base|db_object_multi $obj): user_message
+    function diff_msg(value_base|db_object_multi $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->get_value() != $obj->get_value()
             and $obj->get_value() != null
             and $this->get_value() != null) {
@@ -2186,6 +2187,11 @@ class value_base extends sandbox_value
         global $db_con;
         global $mtr;
 
+        // a value is user data, so a user without login may only change it if this pod permits it
+        if ($this->change_blocked($msg)) {
+            return false;
+        }
+
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
         $msg_fail = $mtr->txt(msg_id::FAILED);
@@ -2210,6 +2216,8 @@ class value_base extends sandbox_value
         if ($msg->is_ok()) {
             if (!$this->is_saved()) {
 
+                // make sure that only an admin user sets the admin protection also on a new value
+                $this->check_protection_change(null, $this->get_user(), $msg);
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
             } else {
@@ -2249,6 +2257,8 @@ class value_base extends sandbox_value
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($msg->is_ok()) {
+                    // make sure that only an admin user reduces or raises the protection level
+                    $this->check_protection_change($db_rec, $this->get_user(), $msg);
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                 } else {
@@ -2263,6 +2273,22 @@ class value_base extends sandbox_value
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * delete a value, but only if the requesting user is permitted to change data in this pod
+     * so a user without login is refused here as well as in save (see sandbox_multi::change_blocked)
+     *
+     * @param user_message $msg the user who has requested the deletion and to collect the reject reason
+     * @param bool $must_exist true if the value is expected to still exist in the database
+     * @return bool true if the value has been deleted or excluded
+     */
+    function del(user_message $msg, bool $must_exist = true): bool
+    {
+        if ($this->change_blocked($msg)) {
+            return false;
+        }
+        return parent::del($msg, $must_exist);
     }
 
 

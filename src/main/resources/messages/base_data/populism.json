@@ -17,6 +17,10 @@
         {
           "name": "Populism",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q180490",
+          "type": "wikidata"
         }
       ]
     },

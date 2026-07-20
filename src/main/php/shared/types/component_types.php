@@ -274,6 +274,8 @@ class component_types
     const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 168;
     const string ADMIN_FORM_FIELD_USER_PASSWORD = "admin_form_field_user_password";
     const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 170;
+    const string ADMIN_FORM_FIELD_USER_USES_SANDBOX = "admin_form_field_user_uses_sandbox";
+    const int ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID = 209;
     const string ADMIN_FORM_FIELD_LANGUAGE_SYMBOL = "admin_form_field_language_symbol";
     const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 179;
     const string FIELD_LANGUAGE_SYMBOL = "field_language_symbol";
@@ -324,8 +326,8 @@ class component_types
     const int SYSTEM_PASTE_TABLE_BODY_ID = 156;
     const string SYSTEM_SELECTION_TEXT = "system_selection_text";
     const int SYSTEM_SELECTION_TEXT_ID = 157;
-    const string SYSTEM_POPUP_TITLE = "system_popup_title";
-    const int SYSTEM_POPUP_TITLE_ID = 158;
+    const string SYSTEM_TITLE_OBJECT_NAMED = "system_title_named_object";
+    const int SYSTEM_TITLE_OBJECT_NAMED_ID = 158;
     const string FORM_CLASS = "form_class";
     const int FORM_CLASS_ID = 159;
     const string FORM_CHANGES = "form_changes";
@@ -444,6 +446,8 @@ class component_types
     const int LIST_VALUES_BY_SOURCE_ID = 152;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
+    const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";
+    const int LIST_FORMULAS_OF_PARENTS_ID = 206;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
     const int LIST_PHRASES_OF_FORMULA_ID = 48;
     const string LIST_REF = "ref_list";
@@ -496,11 +500,17 @@ class component_types
     // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
     const string VALUES_RELATED = "values_related";
     const int VALUES_RELATED_ID = 11;
+    // like values_related but grouped for a quick overview: newest time period first, then the phrases
+    // used by several values, then the remaining values by impact
+    const string VALUES_MOST_RELEVANT = "values_most_relevant";
+    const int VALUES_MOST_RELEVANT_ID = 207;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 93;
 
     const string SHOW_NAME = "system_show_field_name";
     const int SHOW_NAME_ID = 20;
+    const string SHOW_NAME_BIG = "system_show_field_name_big";
+    const int SHOW_NAME_BIG_ID = 208;
     const string SHOW_DESCRIPTION = "system_show_field_description";
     const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_PLURAL = "system_show_field_plural";
@@ -657,6 +667,7 @@ class component_types
         self::ADMIN_FORM_FIELD_USER_NAME,
         self::ADMIN_FORM_FIELD_USER_EMAIL,
         self::ADMIN_FORM_FIELD_USER_PASSWORD,
+        self::ADMIN_FORM_FIELD_USER_USES_SANDBOX,
         self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL,
         self::FIELD_LANGUAGE_SYMBOL,
         self::SYSTEM_ADMIN_URL_DELAY,
@@ -666,6 +677,7 @@ class component_types
         self::SYSTEM_ADMIN_JOBS_DELAYED,
         self::SELECT_LIST,
         self::SHOW_NAME,
+        self::SHOW_NAME_BIG,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
         self::SYSTEM_FIELD_PARENT_VIEW,
@@ -676,7 +688,7 @@ class component_types
         self::SYSTEM_PASTE_TABLE_CONTEXT,
         self::SYSTEM_PASTE_TABLE_BODY,
         self::SYSTEM_SELECTION_TEXT,
-        self::SYSTEM_POPUP_TITLE,
+        self::SYSTEM_TITLE_OBJECT_NAMED,
         self::FORM_CLASS,
         self::FORM_CHANGES,
         self::FORM_IMPACT,
@@ -706,7 +718,7 @@ class component_types
         self::FORM_TITLE,
         // the confirm-view title opens the confirm form like FORM_TITLE, so it must not be auto-wrapped
         // in a row div either - otherwise the row div closes around the still-open form (form straddle)
-        self::SYSTEM_POPUP_TITLE,
+        self::SYSTEM_TITLE_OBJECT_NAMED,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::FORM_END,
@@ -721,6 +733,7 @@ class component_types
         self::SYSTEM_SUB_TITLE,
         self::SYSTEM_SUB_TITLE_VAR,
         self::VALUES_RELATED,
+        self::VALUES_MOST_RELEVANT,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -834,6 +847,7 @@ class component_types
         [self::ADMIN_FORM_FIELD_USER_NAME, self::ADMIN_FORM_FIELD_USER_NAME_ID],
         [self::ADMIN_FORM_FIELD_USER_EMAIL, self::ADMIN_FORM_FIELD_USER_EMAIL_ID],
         [self::ADMIN_FORM_FIELD_USER_PASSWORD, self::ADMIN_FORM_FIELD_USER_PASSWORD_ID],
+        [self::ADMIN_FORM_FIELD_USER_USES_SANDBOX, self::ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID],
         [self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL, self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID],
         [self::FIELD_LANGUAGE_SYMBOL, self::FIELD_LANGUAGE_SYMBOL_ID],
         [self::SYSTEM_ADMIN_URL_DELAY, self::SYSTEM_ADMIN_URL_DELAY_ID],
@@ -882,6 +896,7 @@ class component_types
         [self::VIEW_TAB_BOX, self::VIEW_TAB_BOX_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
         [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
+        [self::LIST_FORMULAS_OF_PARENTS, self::LIST_FORMULAS_OF_PARENTS_ID],
         [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],
         [self::LIST_VALUES_BY_SOURCE, self::LIST_VALUES_BY_SOURCE_ID],
         [self::LIST_PHRASES_OF_FORMULA, self::LIST_PHRASES_OF_FORMULA_ID],
@@ -907,7 +922,9 @@ class component_types
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
+        [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
+        [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_PLURAL, self::SHOW_PLURAL_ID],
         [self::SHOW_PHRASE_TYPE, self::SHOW_PHRASE_TYPE_ID],
@@ -920,7 +937,7 @@ class component_types
         [self::SYSTEM_PASTE_TABLE_CONTEXT, self::SYSTEM_PASTE_TABLE_CONTEXT_ID],
         [self::SYSTEM_PASTE_TABLE_BODY, self::SYSTEM_PASTE_TABLE_BODY_ID],
         [self::SYSTEM_SELECTION_TEXT, self::SYSTEM_SELECTION_TEXT_ID],
-        [self::SYSTEM_POPUP_TITLE, self::SYSTEM_POPUP_TITLE_ID],
+        [self::SYSTEM_TITLE_OBJECT_NAMED, self::SYSTEM_TITLE_OBJECT_NAMED_ID],
         [self::FORM_CLASS, self::FORM_CLASS_ID],
         [self::FORM_CHANGES, self::FORM_CHANGES_ID],
         [self::FORM_IMPACT, self::FORM_IMPACT_ID],

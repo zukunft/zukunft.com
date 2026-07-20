@@ -1,0 +1,17 @@
+{
+  "version": "0.0.3",
+  "time": "2026-07-07 10:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message to create a word with a description and a word without a description to test the no update import"
+  ],
+  "words": [
+    {
+      "name": "System Test Word No Update",
+      "description": "the original description that a no update import must keep"
+    },
+    {
+      "name": "System Test Word Fill Up"
+    }
+  ]
+}

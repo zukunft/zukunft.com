@@ -45,6 +45,7 @@ the object structure is:
 │   └── value_ts_data - for a single time series value data entry
 ├── id_list - a base object for a list of database IDs
 ├── object_mapper - $map - a library class to collect the backend object mappings
+├── server_guard - enforce the tls, session and file based IP / user whitelist guards
 ├── system_object - $sys - a header object for the system data cache and execution time tracking
 ├── type_lists - helper class to combine all preloaded types in one class for the API
 ├── convert_wikipedia_table - convert a wikipedia table to a
@@ -63,7 +64,10 @@ the object structure is:
 ├── user_service
 │   └── xml - to im- and export xml files
 ├── ip_range_db - the database const for ip_range tables
+├── job_cache_refresh implements job_exe - $job_refresh - the proactive cache refresh sweep backend job
 ├── job_db - the database const for job tables
+├── job_db_cleanup implements job_exe - $job_clean - the database cleanup backend job
+├── job_runner - $job_run - execute the pending non-interactive backend jobs
 ├── log - the simple log interface object
 ├── sys_log_db - the database const for the system log table
 ├── system_time_list - a list of system error objects
@@ -122,6 +126,7 @@ the object structure is:
 │   └── db_object
 │       └── db_object_seq_id
 │           ├── group_link - only for fast selection of the phrase group assigned to one triple
+│           ├── db_cache_page - the cached html pages of view-only requests keyed by the url
 │           ├── db_id_object_non_sandbox
 │           │   └── user - $usr - a person who uses zukunft.com
 │           ├── db_object_seq_id_user

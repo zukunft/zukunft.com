@@ -114,6 +114,18 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT, $t);
         $test_name = 'sql_format select MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_MYSQL, $t);
+        $test_name = 'sql_format select count';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT, $t);
+        $test_name = 'sql_format select count MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_MYSQL, $t);
+        $test_name = 'sql_format select count by user';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER, $t);
+        $test_name = 'sql_format select count by user MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER_MYSQL, $t);
+        $test_name = 'sql_format create table';
+        $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE, $t);
+        $test_name = 'sql_format create table MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE_MYSQL, $t);
 
         // test trim of an JSON string to the relevant part
         // to make two JSON strings more comparable
@@ -633,7 +645,7 @@ class lib_tests
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '381//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
+        $target = '381//- href="Test" title=""////+ href="/http/view.php?m=2" title="add new word"//';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'json in short json files';

@@ -349,6 +349,14 @@ class phrase extends combine_named
         return $this->obj()->is_measure();
     }
 
+    /**
+     * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
+     */
+    function is_time(): bool
+    {
+        return $this->obj()->is_time();
+    }
+
     function is_info(): bool
     {
         return $this->obj()->is_info();
@@ -411,6 +419,12 @@ class phrase extends combine_named
      */
     function is_or_can_be(?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
             $result->merge($phr_lst_cac->parents($this, $typ_lst->vrb->get_by_code_id(verbs::IS)));
@@ -454,8 +468,9 @@ class phrase extends combine_named
      */
     function dsp_link_style($style): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
-            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description, $style);
+        $html = new html_base();
+        return $html->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $html->esc($this->name()), $this->obj()->description, $style);
     }
 
     /**
@@ -471,14 +486,16 @@ class phrase extends combine_named
      */
     function display_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
-            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
+        $html = new html_base();
+        return $html->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $html->esc($this->name()), $this->obj()->description);
     }
 
     function name_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
-            . url_var::ID . '=' . $this->id(), $this->name(), $this->obj()->description);
+        $html = new html_base();
+        return $html->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::PHRASE . '&'
+            . url_var::ID . '=' . $this->id(), $html->esc($this->name()), $this->obj()->description);
     }
 
     /**

@@ -32,18 +32,20 @@
 
 // the name of the environment file
 const ENV_FILE = '.env';
+// the name of the version file, which unlike .env is part of the git release
+const VERSION_FILE = 'version.txt';
 
 // names that can be used in the .env file
 const ENV_OS = 'OS';
 const ENVIRONMENT = 'ENV';
 const ENV_BRANCH = 'BRANCH';
 const ENV_DB = 'DB';
-const ENV_IP_ADMIN = 'IP_ADMIN';
 const ENV_CODE_VERSION = 'CODE_VERSION';
 const ENV_UI_VERSION = 'UI_VERSION';
 const ENV_POD_NAME = 'POD_NAME';
 const ENV_THIS_URL = 'THIS_URL';
 const ENV_SYS_LOG_URL = 'SYS_LOG_URL';
+const ENV_SOURCE_REPO_URL = 'SOURCE_REPO_URL'; // the git repository the program updates are pulled from
 const ENV_PGSQL_DATABASE = 'PGSQL_DATABASE';
 const ENV_PGSQL_USERNAME = 'PGSQL_USERNAME';
 const ENV_PGSQL_PASSWORD = 'PGSQL_PASSWORD';
@@ -52,7 +54,6 @@ const ENV_PGSQL_ADMIN_USERNAME = 'PGSQL_ADMIN_USERNAME';
 const ENV_PGSQL_ADMIN_PASSWORD = 'PGSQL_ADMIN_PASSWORD';
 const ENV_PGSQL_HOST = 'PGSQL_HOST';
 const ENV_PGSQL_PORT = 'PGSQL_PORT';
-const ENV_PGSQL_ZUKUNFT_VERSION = 'PGSQL_ZUKUNFT_VERSION';
 const ENV_MYSQL_DATABASE = 'MYSQL_DATABASE';
 const ENV_MYSQL_USERNAME = 'MYSQL_USERNAME';
 const ENV_MYSQL_PASSWORD = 'MYSQL_PASSWORD';
@@ -61,8 +62,29 @@ const ENV_MYSQL_ADMIN_USERNAME = 'MYSQL_ADMIN_USERNAME';
 const ENV_MYSQL_ADMIN_PASSWORD = 'MYSQL_ADMIN_PASSWORD';
 const ENV_MYSQL_HOST = 'MYSQL_HOST';
 const ENV_MYSQL_PORT = 'MYSQL_PORT';
-const ENV_MYSQL_ZUKUNFT_VERSION = 'MYSQL_ZUKUNFT_VERSION';
 const ENV_WWW_ROOT = 'WWW_ROOT';
+// path to the git repository (objects + history); kept outside WWW_ROOT so the
+// clone's .git cannot be downloaded over the web (see script/install.sh)
+const ENV_GIT_DIR = 'ZUKUNFT_GIT_DIR';
+
+// server admin page (http/server_admin.php) settings
+// a comma separated list of IPs / CIDR ranges allowed to reach the server admin page
+// (also the fixed IP of the main system admin; falls back to 'localhost')
+const ENV_SERVER_ADMIN_IP = 'SERVER_ADMIN_IP';
+// the full access server admin (may switch the IP whitelist off); username + bcrypt password hash
+const ENV_SERVER_ADMIN_USER = 'SERVER_ADMIN_USER';
+const ENV_SERVER_ADMIN_PW = 'SERVER_ADMIN_PW';
+// two restricted server admins that log in with a fixed username and password (bcrypt hash);
+// they may not switch the IP whitelist off (reduce it to the database blacklist)
+const ENV_SERVER_ADMIN_2_USER = 'SERVER_ADMIN_2_USER';
+const ENV_SERVER_ADMIN_2_PW = 'SERVER_ADMIN_2_PW';
+// optional client IP range (inclusive) the restricted admin may log in from; empty = no extra range check
+const ENV_SERVER_ADMIN_2_IP_FROM = 'SERVER_ADMIN_2_IP_FROM';
+const ENV_SERVER_ADMIN_2_IP_TO = 'SERVER_ADMIN_2_IP_TO';
+const ENV_SERVER_ADMIN_3_USER = 'SERVER_ADMIN_3_USER';
+const ENV_SERVER_ADMIN_3_PW = 'SERVER_ADMIN_3_PW';
+const ENV_SERVER_ADMIN_3_IP_FROM = 'SERVER_ADMIN_3_IP_FROM';
+const ENV_SERVER_ADMIN_3_IP_TO = 'SERVER_ADMIN_3_IP_TO';
 
 const ENV_SYSTEM_TIME_LIMIT_INFO = 'SYSTEM_TIME_LIMIT_INFO';
 const ENV_SYSTEM_TIME_LIMIT_WARN = 'SYSTEM_TIME_LIMIT_WARN';
@@ -76,6 +98,8 @@ const ENV_CACHE_MAX_AGE_FALLBACK = '-1 day';
 const ENV_ADMIN_USER = 'ADMIN_USER';  // can be set for a ui free setup
 const ENV_ADMIN_PW = 'ADMIN_PW'; // can be set for a ui free setup; in test and prod should be taken from the secret store
 const ENV_ADMIN_MAIL = 'ADMIN_MAIL';
+// public admin contact email shown to rejected visitors (whitelist reject pages); defaults to ADMIN_MAIL
+const ENV_SERVER_ADMIN_MAIL = 'SERVER_ADMIN_MAIL';
 const ENV_CO_ADMIN_USER = 'CO_ADMIN_USER'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_ADMIN_PW = 'CO_ADMIN_PW'; // if empty requested on initial startup
 const ENV_CO_ADMIN_MAIL = 'CO_ADMIN_MAIL';
@@ -85,21 +109,21 @@ const ENV_USER_MAIL = 'USER_MAIL';
 const ENV_CO_USER_NAME = 'CO_USER_NAME'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_USER_PW = 'CO_USER_PW'; // if empty requested on initial startup
 const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
-const SYSTEM_VERSION_FALLBACK = '0.0.3';
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
+const SOURCE_REPO_URL_FALLBACK = 'https://github.com/zukunft/zukunft.com';  // the default source repository for program updates
 
 const ENV_VARS = [
     ENV_OS,
     ENVIRONMENT,
     ENV_BRANCH,
     ENV_DB,
-    ENV_IP_ADMIN,
     ENV_CODE_VERSION,
     ENV_UI_VERSION,
     ENV_POD_NAME,
     ENV_THIS_URL,
     ENV_SYS_LOG_URL,
+    ENV_SOURCE_REPO_URL,
     ENV_PGSQL_DATABASE,
     ENV_PGSQL_USERNAME,
     ENV_PGSQL_PASSWORD,
@@ -108,7 +132,6 @@ const ENV_VARS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_PGSQL_HOST,
     ENV_PGSQL_PORT,
-    ENV_PGSQL_ZUKUNFT_VERSION,
     ENV_MYSQL_DATABASE,
     ENV_MYSQL_USERNAME,
     ENV_MYSQL_PASSWORD,
@@ -117,13 +140,25 @@ const ENV_VARS = [
     ENV_MYSQL_ADMIN_PASSWORD,
     ENV_MYSQL_HOST,
     ENV_MYSQL_PORT,
-    ENV_MYSQL_ZUKUNFT_VERSION,
     ENV_WWW_ROOT,
+    ENV_GIT_DIR,
+    ENV_SERVER_ADMIN_IP,
+    ENV_SERVER_ADMIN_USER,
+    ENV_SERVER_ADMIN_PW,
+    ENV_SERVER_ADMIN_2_USER,
+    ENV_SERVER_ADMIN_2_PW,
+    ENV_SERVER_ADMIN_2_IP_FROM,
+    ENV_SERVER_ADMIN_2_IP_TO,
+    ENV_SERVER_ADMIN_3_USER,
+    ENV_SERVER_ADMIN_3_PW,
+    ENV_SERVER_ADMIN_3_IP_FROM,
+    ENV_SERVER_ADMIN_3_IP_TO,
     ENV_CACHE,
     ENV_CACHE_MAX_AGE,
     ENV_ADMIN_USER,
     ENV_ADMIN_PW,
     ENV_ADMIN_MAIL,
+    ENV_SERVER_ADMIN_MAIL,
     ENV_CO_ADMIN_USER,
     ENV_CO_ADMIN_PW,
     ENV_CO_ADMIN_MAIL,
@@ -140,6 +175,9 @@ const ENV_SECRETS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_MYSQL_PASSWORD,
     ENV_MYSQL_ADMIN_PASSWORD,
+    ENV_SERVER_ADMIN_PW,
+    ENV_SERVER_ADMIN_2_PW,
+    ENV_SERVER_ADMIN_3_PW,
 ];
 
 // the possible environments
@@ -179,17 +217,26 @@ const SQL_DB_USER_DEFAULT = 'zukunft';
 const SQL_DB_PASSWD_FALLBACK = 'change_me';
 const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
 
-// temp solution to force reading the .env file
-$env = file(ROOT_PATH . ENV_FILE);
+// read the environment file: prefer a copy one level above the web root so the secrets are not
+// inside the docroot (and cannot be served even if the web server ever ignores the .htaccess
+// rules); fall back to the web root for the dev / docker setup that keeps .env in the repo root
+$env_path = ROOT_PATH . '..' . DIRECTORY_SEPARATOR . ENV_FILE;
+if (!file_exists($env_path)) {
+    $env_path = ROOT_PATH . ENV_FILE;
+}
+$env = file($env_path);
 foreach ($env as $line) {
     if (!str_starts_with($line, '#') and trim($line) != '') {
+        // everything from the # is a comment, also directly after the value,
+        // so a secret value like a password can never contain the # char
         if (str_contains($line, '#')) {
             $line = substr($line, 0, strpos($line, '#'));
         }
         if (str_contains($line, "\n")) {
             $line = substr($line, 0, strpos($line, "\n"));
         }
-        $parts = explode('=', $line);
+        // split only on the first = so that a secret value may contain the = char
+        $parts = explode('=', $line, 2);
         if (count($parts) != 2) {
             log_err('unexpected line format in ' . $line);
         } else {
@@ -226,15 +273,62 @@ foreach ($env as $line) {
     }
 }
 
+// server admin page authentication (see http/server_admin.php)
+// IPs / CIDR ranges allowed to reach the server admin page; falls back to 'localhost'
+define('SERVER_ADMIN_IP', getenv(ENV_SERVER_ADMIN_IP) ?: SYSTEM_ADMIN_IP_FALLBACK);
+
 // SYSTEM configuration from environment variables or the default fallback value
 // fixed IP of the main system admin as a second line of defence to prevent remote manipulation
-define('SYSTEM_ADMIN_IP', getenv(ENV_IP_ADMIN) ?: SYSTEM_ADMIN_IP_FALLBACK);
+define('SYSTEM_ADMIN_IP', SERVER_ADMIN_IP);
+// the full access server admin (username + bcrypt password hash); empty = not configured
+define('SERVER_ADMIN_USER', getenv(ENV_SERVER_ADMIN_USER) ?: '');
+define('SERVER_ADMIN_PW', getenv(ENV_SERVER_ADMIN_PW) ?: '');
+// two restricted server admins (username + bcrypt password hash, optional IP range); empty = not configured
+define('SERVER_ADMIN_2_USER', getenv(ENV_SERVER_ADMIN_2_USER) ?: '');
+define('SERVER_ADMIN_2_PW', getenv(ENV_SERVER_ADMIN_2_PW) ?: '');
+define('SERVER_ADMIN_2_IP_FROM', getenv(ENV_SERVER_ADMIN_2_IP_FROM) ?: '');
+define('SERVER_ADMIN_2_IP_TO', getenv(ENV_SERVER_ADMIN_2_IP_TO) ?: '');
+define('SERVER_ADMIN_3_USER', getenv(ENV_SERVER_ADMIN_3_USER) ?: '');
+define('SERVER_ADMIN_3_PW', getenv(ENV_SERVER_ADMIN_3_PW) ?: '');
+define('SERVER_ADMIN_3_IP_FROM', getenv(ENV_SERVER_ADMIN_3_IP_FROM) ?: '');
+define('SERVER_ADMIN_3_IP_TO', getenv(ENV_SERVER_ADMIN_3_IP_TO) ?: '');
 
-define('SYSTEM_CODE_VERSION', getenv(ENV_CODE_VERSION) ?: SYSTEM_VERSION_FALLBACK);
-define('SYSTEM_UI_VERSION', getenv(ENV_UI_VERSION) ?: SYSTEM_VERSION_FALLBACK);
+// the program version is read from the version file, never from .env,
+// because .env is not part of the release
+// and would still contain the version of the release that has created it
+$version = [];
+foreach (file(ROOT_PATH . VERSION_FILE) as $line) {
+    if (!str_starts_with($line, '#') and trim($line) != '') {
+        if (str_contains($line, '#')) {
+            $line = substr($line, 0, strpos($line, '#'));
+        }
+        $parts = explode('=', trim($line));
+        if (count($parts) != 2) {
+            log_err('unexpected line format in ' . ROOT_PATH . VERSION_FILE . ': ' . $line);
+        } else {
+            $version[trim($parts[0])] = trim($parts[1]);
+        }
+    }
+}
+
+// the version file is part of the release, so the code and the ui version are never missing
+// and there is no fallback version in the code which could differ from the version file
+if (!key_exists(ENV_CODE_VERSION, $version) or !key_exists(ENV_UI_VERSION, $version)) {
+    log_err('the code or the ui version is missing in ' . ROOT_PATH . VERSION_FILE);
+}
+// the micro version with four parts e.g. 0.0.3.0 where the last part is the build number
+define('SYSTEM_CODE_VERSION', $version[ENV_CODE_VERSION] ?? '');
+define('SYSTEM_UI_VERSION', $version[ENV_UI_VERSION] ?? '');
+// the minor version with three parts e.g. 0.0.3 which changes only if the json format
+// or the database structure changes; it is the version of the json exports and of the database
+define('SYSTEM_MINOR_VERSION', implode('.', array_slice(explode('.', SYSTEM_CODE_VERSION), 0, 3)));
+// the version shown in the page footer: the micro version of the running code, but the minor
+// version during a test run, so that a micro release does not change all html test files
+define('SYSTEM_PAGE_VERSION', defined('SYSTEM_TEST_RUN') ? SYSTEM_MINOR_VERSION : SYSTEM_CODE_VERSION);
 define('POD_NAME', getenv(ENV_POD_NAME) ?: POD_NAME_FALLBACK);
 define('THIS_URL', getenv(ENV_THIS_URL) ?: THIS_URL_FALLBACK);
 define('SYS_LOG_URL', getenv(ENV_SYS_LOG_URL) ?: '');
+define('SOURCE_REPO_URL', getenv(ENV_SOURCE_REPO_URL) ?: SOURCE_REPO_URL_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);
@@ -271,6 +365,8 @@ define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);
 define('ADMIN_USER', getenv(ENV_ADMIN_USER) ?: '');
 define('ADMIN_PW', getenv(ENV_ADMIN_PW) ?: '');
 define('ADMIN_MAIL', getenv(ENV_ADMIN_MAIL) ?: '');
+// public admin contact email shown on the whitelist reject pages; defaults to the admin mail
+define('SERVER_ADMIN_MAIL', getenv(ENV_SERVER_ADMIN_MAIL) ?: ADMIN_MAIL);
 define('CO_ADMIN_USER', getenv(ENV_CO_ADMIN_USER) ?: '');
 define('CO_ADMIN_PW', getenv(ENV_CO_ADMIN_PW) ?: '');
 define('CO_ADMIN_MAIL', getenv(ENV_CO_ADMIN_MAIL) ?: '');

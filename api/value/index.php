@@ -73,11 +73,14 @@ if ($db_con->is_open()) {
             $val = new value($load_usr);
             $val->load_by_id($val_id);
             $val->load_objects();
-            if ($with_phr == url_var::TRUE) {
+            // do not disclose another user's private/personal value loaded by id (idor); the same
+            // neutral message as a missing id, so the response does not confirm the value exists
+            if (!$val->is_readable_by($usr)) {
+                $msg = 'value id is missing';
+            } elseif ($with_phr == url_var::TRUE) {
                 $result = $val->api_json([api_types::INCL_PHRASES]);
             } else {
                 $result = $val->api_json();
-
             }
         } else {
             $msg = 'value id is missing';

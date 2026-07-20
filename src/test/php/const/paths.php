@@ -108,6 +108,10 @@ class paths
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;
     const string DB_FORMAT_TEST = self::DB . 'format_test' . DIRECTORY_SEPARATOR;
+    // the user db resource dir relative to RESOURCE (for the format test that reuses the count query fixtures)
+    const string DB_USER_FORMAT = self::DB . 'user' . DIRECTORY_SEPARATOR;
+    // the db cache resource dir relative to RESOURCE (for the format test that reuses the create table fixtures)
+    const string DB_CACHE = self::DB . 'db_cache' . DIRECTORY_SEPARATOR;
     const string FORMULA = 'formula' . DIRECTORY_SEPARATOR;
     // to test if all interface function of each web object word fine
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;

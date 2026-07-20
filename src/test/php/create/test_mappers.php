@@ -112,6 +112,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'languages.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -153,6 +154,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+
 // web group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
@@ -175,6 +177,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -187,6 +190,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -197,6 +201,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+
 // test group (alphabetic by FQN)
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -449,7 +454,7 @@ class test_mappers
         $t_cmp = new test_components($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
@@ -526,7 +531,7 @@ class test_mappers
         $t_cmp = new test_components($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled_add();
@@ -799,13 +804,14 @@ class test_mappers
             case component_types::ADMIN_FORM_FIELD_USER_NAME;
             case component_types::ADMIN_FORM_FIELD_USER_EMAIL;
             case component_types::ADMIN_FORM_FIELD_USER_PASSWORD;
+            case component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX;
             case component_types::SYSTEM_BODY_SIGNUP;
             case component_types::SYSTEM_BODY_LOGIN;
             case component_types::SYSTEM_BODY_LOGIN_ACTIVATE;
             case component_types::SYSTEM_BODY_LOGIN_RESET;
             case component_types::SYSTEM_BODY_LOGOUT;
             case component_types::SYSTEM_BODY_USER_SETTINGS;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 break;
             case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL;
             case component_types::FIELD_LANGUAGE_SYMBOL;
@@ -890,7 +896,7 @@ class test_mappers
             case component_types::SYSTEM_PASTE_TABLE_CONTEXT;
             case component_types::SYSTEM_PASTE_TABLE_BODY;
             case component_types::SYSTEM_SELECTION_TEXT;
-            case component_types::SYSTEM_POPUP_TITLE;
+            case component_types::SYSTEM_TITLE_OBJECT_NAMED;
             case component_types::CALC_SHEET;
             case component_types::WORDS_UP;
             case component_types::WORDS_DOWN;
@@ -944,6 +950,7 @@ class test_mappers
             case component_types::VALUE_NUMERIC;
             case component_types::LIST_VALUES_BY_TRIPLE;
             case component_types::VALUES_RELATED;
+            case component_types::VALUES_MOST_RELEVANT;
             case component_types::NUMERIC_VALUE;
             case component_types::VALUES_ALL;
             case component_types::SYSTEM_BODY_VALUE_DETAIL;
@@ -1069,13 +1076,13 @@ class test_mappers
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $obj_array = $this->word_url($obj, $type);
+                $obj_array = self::word_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
@@ -1188,13 +1195,17 @@ class test_mappers
         $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
-                $url_array[] = [url_var::NAME, $obj->name()];
-                $url_array[] = [url_var::IP, $obj->ip_addr];
+                $obj = $t_usr->user_filled($this->env);
+                // use the field names of the user forms, because e.g. the ip address
+                // is never part of a form url but taken from the request
+                $url_array[] = [url_var::USERNAME, $obj->name()];
+                $url_array[] = [url_var::EMAIL, $obj->email];
+                $url_array[] = [url_var::USER_FIRST_NAME, $obj->first_name];
+                $url_array[] = [url_var::USER_LAST_NAME, $obj->last_name];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $obj_array = $this->word_url($obj, $type);
+                $obj_array = self::word_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
@@ -1330,13 +1341,13 @@ class test_mappers
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $obj_array = $this->word_url($obj, $type);
+                $obj_array = self::word_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
@@ -1471,12 +1482,12 @@ class test_mappers
         $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $obj_array = $this->word_url($obj, $type);
+                $obj_array = self::word_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
@@ -1589,13 +1600,13 @@ class test_mappers
     {
         $url_array = [];
         $url_array[] = [url_var::MASK, $msk_id];
-        $t_usr = new test_users($this->env);
+        $t_usr = new test_users();
         $t_phr = new test_phrases($this->env);
         $t_frm = new test_formulas($this->env);
         $t_job = new test_jobs($this->env);
         switch ($class) {
             case user::class;
-                $obj = $t_usr->user_filled();
+                $obj = $t_usr->user_filled($this->env);
                 $obj_array = $this->user_step_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
@@ -1709,9 +1720,29 @@ class test_mappers
         return $url;
     }
 
+
+    static function object_to_url_array(
+        db_object    $dbo,
+        user_message $msg
+    ): array
+    {
+        $url_arr = [];
+        switch ($dbo::class) {
+            case word::class;
+                $url_arr = self::word_url_array($dbo);
+                break;
+            case triple::class;
+                $url_arr = self::triple_url_array($dbo);
+                break;
+            default:
+                log_err_msg_ui('no url mapper yet defined for ' . library::class_to_name($dbo::class), $msg);
+        }
+        return $url_arr;
+    }
+
     // TODO Prio 1 check if all object fields are included e.g. view of source is missing
 
-    private function word_url(word $wrd, string $type): array
+    private static function word_url(word $wrd, string $type = ''): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $wrd->name()];
@@ -1734,6 +1765,29 @@ class test_mappers
         return $url_array;
     }
 
+    private static function word_url_array(word $wrd): array
+    {
+        $url_array = [];
+        $url_array[url_var::NAME] = $wrd->name();
+        $url_array[url_var::DESCRIPTION] = $wrd->get_description();
+        // TODO Prio 2 activate
+        /*
+        if ($type == url_var::MASK_POD) {
+            $url_array[] = [url_var::TYPE, $wrd->type_id()];
+        } else {
+            $url_array[] = [url_var::TYPE, $wrd->type_name()];
+        }
+        */
+        $url_array[url_var::TYPE] = $wrd->type_id();
+        $url_array[url_var::PLURAL] = $wrd->plural;
+        $url_array[url_var::SHARE] = $wrd->share_id();
+        $url_array[url_var::PROTECTION] = $wrd->protection_id();
+        $url_array[url_var::VIEW] = $wrd->get_view_id();
+        $url_array[url_var::USAGE] = $wrd->usage;
+        $url_array[url_var::IMPACT] = $wrd->impact;
+        return $url_array;
+    }
+
     private function verb_url(verb $vrb, string $type): array
     {
         $url_array = [];
@@ -1748,20 +1802,40 @@ class test_mappers
         return $url_array;
     }
 
-    private function triple_url(triple $trp, string $type): array
+    // TODO Prio 2 deprecate and use triple_url_array
+    static function triple_url(triple $trp, string $type = ''): array
     {
         $url_array = [];
-        $url_array[] = [url_var::NAME, $trp->name()];
         $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
         $url_array[] = [url_var::VERB, $trp->get_verb_id()];
         $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
-        $url_array[] = [url_var::NAME, $trp->name_given()];
+        $url_array[] = [url_var::WEIGHT, $trp->weight];
+        $url_array[] = [url_var::TYPE, $trp->type_id()];
+        $url_array[] = [url_var::NAME, $trp->name()];
+        $url_array[] = [url_var::NAME_GIVEN, $trp->name_given()];
         $url_array[] = [url_var::DESCRIPTION, $trp->get_description()];
         $url_array[] = [url_var::SHARE, $trp->share_id()];
         $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
         $url_array[] = [url_var::VIEW, $trp->get_view_id()];
-            $url_array[] = [url_var::USAGE, $trp->usage];
-            $url_array[] = [url_var::IMPACT, $trp->impact];
+        $url_array[] = [url_var::USAGE, $trp->usage];
+        $url_array[] = [url_var::IMPACT, $trp->impact];
+        return $url_array;
+    }
+
+    private static function triple_url_array(triple $trp): array
+    {
+        $url_array = [];
+        $url_array[url_var::NAME] = $trp->name();
+        $url_array[url_var::PHRASE_FROM] = $trp->from_id();
+        $url_array[url_var::VERB] = $trp->get_verb_id();
+        $url_array[url_var::PHRASE_TO] = $trp->to_id();
+        $url_array[url_var::NAME_GIVEN] = $trp->name_given();
+        $url_array[url_var::DESCRIPTION] = $trp->get_description();
+        $url_array[url_var::SHARE] = $trp->share_id();
+        $url_array[url_var::PROTECTION] = $trp->protection_id();
+        $url_array[url_var::VIEW] = $trp->get_view_id();
+        $url_array[url_var::USAGE] = $trp->usage;
+        $url_array[url_var::IMPACT] = $trp->impact;
         return $url_array;
     }
 
@@ -1851,6 +1925,7 @@ class test_mappers
         $url_array[] = [url_var::NAME, $frm->name()];
         $url_array[] = [url_var::DESCRIPTION, $frm->get_description()];
         $url_array[] = [url_var::USER_EXPRESSION, $frm->get_usr_text()];
+        $url_array[] = [url_var::NEED_ALL, $frm->need_all_val];
         // all need
         // update
         $url_array[] = [url_var::TYPE, $frm->type_id()];
@@ -1893,6 +1968,7 @@ class test_mappers
         $url_array[] = [url_var::NAME, $msk->name()];
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
         $url_array[] = [url_var::TYPE, $msk->type_id()];
+        $url_array[] = [url_var::STYLE, $msk->get_style_id()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
         return $url_array;
@@ -1929,6 +2005,11 @@ class test_mappers
         $url_array[] = [url_var::NAME, $cmp->name()];
         $url_array[] = [url_var::DESCRIPTION, $cmp->get_description()];
         $url_array[] = [url_var::TYPE, $cmp->type_id()];
+        $url_array[] = [url_var::STYLE, $cmp->get_style_id()];
+        $url_array[] = [url_var::PHRASE_ROW, $cmp->row_phrase->id()];
+        $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];
+        $url_array[] = [url_var::PHRASE_COL_SUB, $cmp->col_sub_phrase->id()];
+        $url_array[] = [url_var::LINK_TYPE, $cmp->link_type_id];
         $url_array[] = [url_var::SHARE, $cmp->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
         return $url_array;

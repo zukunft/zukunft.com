@@ -101,8 +101,9 @@ class sql_db_read_tests
                 }
             }
         }
-        $t->assert($test_name . 'tables', $tbl_msg->all_message_text(), '');
-        $t->assert($test_name . 'fields', $fld_msg->all_message_text(), '');
+        // the change log preload reads the csv definitions, so a file timeout is used to avoid a false timeout
+        $t->assert($test_name . 'tables', $tbl_msg->all_message_text(), '', $t::TIMEOUT_LIMIT_FILE);
+        $t->assert($test_name . 'fields', $fld_msg->all_message_text(), '', $t::TIMEOUT_LIMIT_FILE);
     }
 
     private function table_no_change_log(string $tbl_name): bool

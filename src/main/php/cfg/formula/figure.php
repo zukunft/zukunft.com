@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_HELPER . 'combine_object.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
@@ -55,6 +56,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -208,6 +210,26 @@ class figure extends combine_object
     function get_user(): user
     {
         return $this->obj()->get_user();
+    }
+
+    /**
+     * check if the requesting user may read this figure by delegating to its underlying value or
+     * result (both share the sandbox_multi read scope); used at the api read boundary so a figure
+     * list cannot disclose another user's non-public value/result (see sandbox_multi::is_readable_by)
+     *
+     * @param user|null $usr the user who has requested to read this figure
+     * @return bool true if the figure may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        $obj = $this->obj();
+        if ($obj instanceof sandbox_multi) {
+            $result = $obj->is_readable_by($usr);
+        } else {
+            // a figure not backed by a value or result is public
+            $result = true;
+        }
+        return $result;
     }
 
     /**

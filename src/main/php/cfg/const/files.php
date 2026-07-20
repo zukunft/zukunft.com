@@ -57,6 +57,12 @@ class files
      * path
      */
 
+    // the text file for fatal errors that must work even if the database is broken
+    const string ERROR_LOG = ROOT_PATH . 'error.log';
+    // the json state file of the sys_log insert throttle, next to the error log
+    // because the throttle must work even if the database is broken
+    const string SYS_LOG_THROTTLE = ROOT_PATH . 'sys_log_throttle' . self::JSON;
+
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
     const string SYSTEM_UNIT_TEST_DATA_PATH = self::MESSAGE_PATH . 'system_unit_test_data' . DIRECTORY_SEPARATOR;
@@ -138,8 +144,6 @@ class files
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
 
     // initial data just to add some sample data and for system testing
-    const string COUNTRY_FILE = 'country' . self::JSON;
-    const string COMPANY_FILE = 'company' . self::JSON;
     const string ZURICH_HTP_IMPACT_FILE = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'zurich_htp_impact' . self::JSON;
 
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
@@ -156,15 +160,20 @@ class files
     const string ACCOUNTING_FILE = 'accounting' . self::JSON;
 
     // initial data import
-    CONST string TEST_COUNTRIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'countries' . self::JSON;
-    CONST string TEST_CURRENCIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'currencies' . self::JSON;
-    CONST string TEST_COMPANIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'companies' . self::JSON;
+    const string COUNTRY = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'country' . self::JSON;
+    CONST string COUNTRIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'countries' . self::JSON;
+    const string CURRENCY = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'currency' . self::JSON;
+    CONST string CURRENCIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'currencies' . self::JSON;
+    const string COMPANY = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'company' . self::JSON;
+    CONST string COMPANIES = self::SYSTEM_UNIT_TEST_DATA_FOLDER . 'companies' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = self::SYSTEM_UNIT_TEST_DATA_PATH . 'country-ISO-3166' . self::JSON;
     CONST string IMPORT_DEMOCRACY_INDEX = self::SYSTEM_UNIT_TEST_DATA_PATH . 'democracy_index_table' . self::JSON;
     CONST string IMPORT_WIND_INVESTMENT = self::SYSTEM_UNIT_TEST_DATA_PATH . 'wind_investment' . self::JSON;
 
     // key figures for the city and canton of Zurich used as a real-world demo and for system testing
     const string ZURICH_FILE = self::BASE_DATA_PATH . 'zurich' . self::JSON;
+    const string ZH_CITY_FILE = self::BASE_DATA_PATH . 'zh_city' . self::JSON;
+    const string ZH_CANTON_FILE = self::BASE_DATA_PATH . 'zh_canton' . self::JSON;
 
     // most relevant base data around the gross domestic product (GDP) used as a real-world demo and for system testing
     const string GDP_FILE = self::BASE_DATA_PATH . 'GDP' . self::JSON;
@@ -201,11 +210,12 @@ class files
         self::BASE_PHRASES_FILE,
         self::BASE_VIEWS_FILE,
         self::START_PAGE_DATA_FILE,
-        self::COMPANY_FILE,
-        self::COUNTRY_FILE,
-        self::TEST_COUNTRIES,
-        self::TEST_CURRENCIES,
-        self::TEST_COMPANIES,
+        self::COUNTRY,
+        self::COUNTRIES,
+        self::CURRENCY,
+        self::CURRENCIES,
+        self::COMPANY,
+        self::COMPANIES,
         // TODO Prio 0 activate
         //self::ZURICH_HTP_IMPACT_FILE,
     ];
@@ -242,6 +252,8 @@ class files
     // so that the views can be tested by name without relying on database ids
     const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
+        self::ZH_CITY_FILE,
+        self::ZH_CANTON_FILE,
         self::GDP_FILE,
         self::GLOBAL_WARMING_FILE,
         self::POPULISM_FILE,

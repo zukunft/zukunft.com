@@ -111,6 +111,7 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -185,6 +186,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
@@ -534,7 +536,7 @@ class type_list extends ListOfIdNamedCodeObjects
     {
         $this->set_lst([]);
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, library::class_to_name($class) . ' type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
@@ -576,12 +578,11 @@ class type_list extends ListOfIdNamedCodeObjects
                     }
                 }
                 $type_comment = strval($db_row[fields::FLD_DESCRIPTION]);
-                // TODO Prio 0 use a class to object function
-                if ($class == language::class) {
-                    $type_obj = new language($type_code_id, $type_name, $type_comment, $type_id);
-                } else {
-                    $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
-                }
+                $type_obj = $this->class_to_type_object($class);
+                $type_obj->id = $type_id;
+                $type_obj->set_name($type_name);
+                $type_obj->set_code_id_db($type_code_id);
+                $type_obj->set_description($type_comment);
 
                 // TODO Prio 1 add other missing type fields
                 // TODO Prio 2 remove exceptions and use object mapper instead
@@ -601,6 +602,29 @@ class type_list extends ListOfIdNamedCodeObjects
             }
         }
         return $this->lst();
+    }
+
+    /**
+     * fill this list from the api json rows of the cached types message
+     * the created objects mirror the classes that load_list creates from the database rows,
+     * so a list filled from the cache behaves exactly like a list loaded from the database
+     * the rows are from the own database, so the api_mapper is called as trusted
+     * e.g. to also restore the code ids that an api message of a frontend must never change
+     *
+     * @param array $api_rows the api json rows of this list e.g. from the db cached types message
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @return bool true if at least one type has been added
+     */
+    function fill_from_api_rows(array $api_rows, user_message $usr_msg): bool
+    {
+        $class = $this->list_class_to_type($this::class);
+        $this->set_lst([]);
+        foreach ($api_rows as $api_row) {
+            $typ_obj = $this->class_to_type_object($class);
+            $typ_obj->api_mapper($api_row, $usr_msg, true);
+            $this->add($typ_obj);
+        }
+        return !$this->is_empty();
     }
 
     /**
@@ -694,6 +718,8 @@ class type_list extends ListOfIdNamedCodeObjects
             $wiki_code_col = 0;
             $local_name_col = 0;
             $usage_col = 0;
+            $url_col = 0;
+            $action_col = 0;
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
@@ -740,24 +766,32 @@ class type_list extends ListOfIdNamedCodeObjects
                         if (in_array(sys_log_status::FLD_ACTION, $col_names)) {
                             $action_col = array_search(sys_log_status::FLD_ACTION, $col_names);
                         }
+                        if (in_array(ref_type::FLD_URL, $col_names)) {
+                            $url_col = array_search(ref_type::FLD_URL, $col_names);
+                        }
                         if (in_array(json_fields::DESCRIPTION, $col_names)) {
                             $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
                     } else {
-                        if ($list::class == language_list::class) {
-                            $typ_obj = new language();
+                        $typ_obj = $this->class_to_type_object($this->list_class_to_type($list::class));
+                        if ($typ_obj::class == language::class) {
                             $typ_obj->wiki_code = $data[$wiki_code_col];
                             $typ_obj->local_name = $data[$local_name_col];
                             $typ_obj->usage = $data[$usage_col];
-                        } elseif ($list::class == sys_log_statuum::class) {
-                            $typ_obj = new sys_log_status();
-                            $typ_obj->action = $data[$action_col];
-                        } else {
-                            if ($table_col > 0) {
-                                $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
-                            } else {
-                                $typ_obj = new type_object($data[$name_col]);
+                        } elseif ($typ_obj::class == sys_log_status::class) {
+                            if ($action_col > 0) {
+                                $typ_obj->action = $data[$action_col];
                             }
+                        } elseif ($typ_obj::class == ref_type::class) {
+                            if ($url_col > 0) {
+                                $typ_obj->url = $data[$url_col];
+                            }
+                        }
+                        // without a code id column the name (with the table prefix) is the code id
+                        if ($table_col > 0) {
+                            $typ_obj->set_code_id_db($data[$table_col] . $data[$name_col]);
+                        } else {
+                            $typ_obj->set_code_id_db($data[$name_col]);
                         }
                         $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
@@ -786,12 +820,19 @@ class type_list extends ListOfIdNamedCodeObjects
         $type = $lib->class_to_name($list::class);
         foreach (def::BASE_CODE_LINK_FILES as $csv_class) {
             $csv_file_name = $lib->class_to_name($csv_class);
-            if (str_ends_with($type, '_list')) {
-                $csv_list_type = $csv_file_name . '_list';
+            // statuum is the latin plural of status, so the enum class name and the csv file name
+            // are already the plural and the matching list class is named by the singular
+            if (str_ends_with($csv_file_name, 'statuum')) {
+                $csv_singular = str_replace('statuum', 'status', $csv_file_name);
             } else {
-                $csv_list_type = $csv_file_name;
+                $csv_singular = $csv_file_name;
+                $csv_file_name .= sql_db::TABLE_EXTENSION;
             }
-            $csv_file_name .= sql_db::TABLE_EXTENSION;
+            if (str_ends_with($type, '_list')) {
+                $csv_list_type = $csv_singular . '_list';
+            } else {
+                $csv_list_type = $csv_singular;
+            }
             if ($csv_list_type == $type) {
                 $csv_path = files::CODE_LINK_PATH . $csv_file_name . files::CODE_LINK_TYPE;
             }

@@ -116,7 +116,8 @@ class verb_read_tests
         // load the verbs
         $lst = new verb_list($t->usr1);
         $result = $lst->load($db_con);
-        $t->assert('load', $result, true);
+        // the first verb list load also warms up the type list cache, so a multi db timeout is used
+        $t->assert('load', $result, true, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and check if at least the most critical verb is loaded
         $result = $sys->typ_lst->vrb->id(verbs::IS);

@@ -73,6 +73,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
@@ -105,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
@@ -195,16 +197,25 @@ class triple extends sandbox_code_id
         parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
-                $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto);
+                if ($url_array[url_var::PHRASE_FROM] != null) {
+                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $usr_msg);
+                }
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
                 $this->set_verb_by_id($url_array[url_var::VERB]);
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
-                $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto);
+                if ($url_array[url_var::PHRASE_TO] != null) {
+                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $usr_msg);
+                }
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
-                $this->weight = $url_array[url_var::WEIGHT];
+                // an edit form without a weight entry posts an empty string, which is no weight
+                if (is_numeric($url_array[url_var::WEIGHT])) {
+                    $this->weight = $url_array[url_var::WEIGHT];
+                } else {
+                    $this->weight = null;
+                }
             }
             // TODO Prio 2 use the languages forms
             if (array_key_exists(url_var::PLURAL, $url_array)) {
@@ -226,6 +237,65 @@ class triple extends sandbox_code_id
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * besides the base checks a triple links a from phrase to a to phrase, so it cannot be added or
+     * changed without them; if both the from and the to phrase are missing a warning is shown the usual
+     * way instead of confirming the invalid triple (a delete needs no from or to phrase)
+     *
+     * @param user_message $usr_msg to enrich with a warning if the from and to phrase are both missing
+     * @param string $action the crud action of the change; the check does not apply to a delete
+     * @param array $url_array the pending change url (unused here, kept for the common signature)
+     * @return bool true if the entered data can be confirmed
+     */
+    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    {
+        $result = parent::input_valid($usr_msg, $action, $url_array);
+        if ($action != url_var::CRUD_DELETE) {
+            $from = $this->get_from();
+            $to = $this->get_to();
+            // a triple needs both linked phrases, so the save is also rejected if only one side is
+            // missing e.g. because a phrase name posted by the edit form could not be resolved
+            if (($from == null or $from->id() == 0) or ($to == null or $to->id() == 0)) {
+                $usr_msg->add_warning_with_vars(msg_id::TRIPLE_PHRASES_MISSING, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
+                ]);
+                $result = false;
+            }
+        } elseif ($this->is_in_use()) {
+            // a triple still linked to by a value, formula or another triple must not be deleted
+            // (mirrors word::input_valid); the frontend reads the usage posted with the delete url
+            $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+                msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                msg_id::VAR_NAME => $this->name()
+            ]);
+            $result = false;
+        }
+        return $result;
+    }
+
+    /**
+     * true if this triple is still used by another object (a value, formula or a triple that links it),
+     * so it must not be deleted; the usage is read from the INCL_RELATED api message which fills the
+     * related value, formula and phrase lists (mirrors word::is_in_use)
+     *
+     * @return bool true if the triple is still referenced by another object
+     */
+    function is_in_use(): bool
+    {
+        $result = false;
+        // TODO Prio 2 make sure that the backend always updates the usage
+        if ($this->usage > 0) {
+            $result = true;
+        } elseif ($this->id() != 0) {
+            if (($this->phr_lst != null and !$this->phr_lst->is_empty())
+                or ($this->val_lst != null and !$this->val_lst->is_empty())
+                or ($this->frm_lst != null and !$this->frm_lst->is_empty())) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -427,9 +497,9 @@ class triple extends sandbox_code_id
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::FROM] = $this->get_from()->id();
+        $vars[json_fields::FROM] = $this->get_from()?->id();
         $vars[json_fields::VERB] = $this->get_verb()->id();
-        $vars[json_fields::TO] = $this->get_to()->id();
+        $vars[json_fields::TO] = $this->get_to()?->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
         // usage is not included here because this system value is never updated by the frontend
@@ -438,6 +508,23 @@ class triple extends sandbox_code_id
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
         }
         return $vars;
+    }
+
+    /**
+     * @return array parent url array extended with the triple fields, without empty values (like the
+     *               word url array), so that an unset field never masks a posted value in a url union
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        $url_array[url_var::PHRASE_FROM] = $this->get_from()?->id();
+        $url_array[url_var::VERB] = $this->get_verb()?->id();
+        $url_array[url_var::PHRASE_TO] = $this->get_to()?->id();
+        $url_array[url_var::WEIGHT] = $this->weight;
+        $url_array[url_var::PLURAL] = $this->plural;
+        $url_array[url_var::USAGE] = $this->usage;
+        $url_array[url_var::IMPACT] = $this->impact;
+        return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
     }
 
 
@@ -457,9 +544,13 @@ class triple extends sandbox_code_id
         $this->from = $from;
     }
 
-    function set_from_by_id(int $id, data_object|null $dto = null): void
+    function set_from_by_id(
+        int|string       $id,
+        data_object|null $dto = null,
+        user_message     $usr_msg = new user_message()
+    ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $dto);
+        $this->from = $this->set_phrase_by_id($id, $dto, $usr_msg);
     }
 
     function set_verb(verb $vrb): void
@@ -479,31 +570,65 @@ class triple extends sandbox_code_id
         $this->to = $to;
     }
 
-    function set_to_by_id(int $id, data_object|null $dto = null): void
+    function set_to_by_id(
+        int|string       $id,
+        data_object|null $dto = null,
+        user_message     $usr_msg = new user_message()
+    ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $dto);
+        $this->to = $this->set_phrase_by_id($id, $dto, $usr_msg);
     }
 
-    private function set_phrase_by_id(int $id, data_object|null $dto): phrase
+    /**
+     * the phrase of a value posted by the edit form: a numeric value is the phrase id (negative
+     * for a triple); the datalist edit fields submit the shown phrase name instead of the id, so
+     * a non-numeric value is resolved as the phrase name via the request cache or the backend
+     *
+     * @param int|string $id the phrase id or the phrase name posted by the edit form
+     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
+     * @param user_message $usr_msg to report a phrase name that the user needs to correct
+     * @return phrase|null the resolved phrase or null if the name is unknown
+     */
+    private function set_phrase_by_id(
+        int|string       $id,
+        data_object|null $dto,
+        user_message     $usr_msg = new user_message()
+    ): phrase|null
     {
         $phr = null;
-        if ($dto != null) {
-            $phr_lst = $dto->phr_lst;
-            $phr = $phr_lst->get($id);
-        }
-        if ($phr == null) {
-            if ($id > 0) {
-                $wrd = new word();
-                $wrd->set_id($id);
-                $phr = $wrd->phrase();
-            } elseif ($id < 0) {
-                $trp = new triple();
-                $trp->set_id($id * -1);
-                $phr = $trp->phrase();
-            } else {
-                $wrd = new word();
-                $wrd->set_id(0);
-                $phr = $wrd->phrase();
+        if (!is_numeric($id)) {
+            // resolve the phrase name from the request cache first to avoid a backend call
+            if ($dto != null) {
+                $phr = $dto->phr_lst->get_by_name($id);
+            }
+            if ($phr == null) {
+                $phr_loaded = new phrase();
+                if ($phr_loaded->load_by_name($id)) {
+                    $phr = $phr_loaded;
+                } else {
+                    // an unknown phrase name is a user input that the user can correct
+                    $usr_msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
+                }
+            }
+        } else {
+            if ($dto != null) {
+                $phr_lst = $dto->phr_lst;
+                $phr = $phr_lst->get($id);
+            }
+            if ($phr == null) {
+                if ($id > 0) {
+                    $wrd = new word();
+                    $wrd->set_id($id);
+                    $phr = $wrd->phrase();
+                } elseif ($id < 0) {
+                    $trp = new triple();
+                    $trp->set_id($id * -1);
+                    $phr = $trp->phrase();
+                } else {
+                    $wrd = new word();
+                    $wrd->set_id(0);
+                    $phr = $wrd->phrase();
+                }
             }
         }
         return $phr;
@@ -676,6 +801,13 @@ class triple extends sandbox_code_id
      */
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list,
+        // like dsp_type_selector which reads $ui_sys->typ_lst_cache directly
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
@@ -727,6 +859,12 @@ class triple extends sandbox_code_id
         string      $style = view_styles::COL_SM_3
     ): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         if ($this->verb != null) {
             $id = $this->get_verb()->id();
         } else {
@@ -771,6 +909,14 @@ class triple extends sandbox_code_id
     function is_measure(): bool
     {
         return $this->is_type(phrase_types::MEASURE);
+    }
+
+    /**
+     * @return bool true if the triple has the type "time" (e.g. a named period triple)
+     */
+    function is_time(): bool
+    {
+        return $this->is_type(phrase_types::TIME);
     }
 
     /**
@@ -851,12 +997,14 @@ class triple extends sandbox_code_id
 
     /**
      * if this triple links a phrase with the given verb and direction
-     * create a html link to the linked phrase
+     * create a html link to this triple, labelled with the linked phrase name and using
+     * this triple's description as the tooltip (falling back to the linked phrase
+     * description); e.g. the triple "Zurich (city)" shown as "city" in Zurich's subtitle
      *
      * @param phrase $phr the staring phrase to select the link
      * @param verb $vrb use only triples with this verb
      * @param foaf_direction $dir to select either only parents or children
-     * @return string|null the html code to show the linked phrase if it matches
+     * @return string|null the html link to this triple, labelled with the linked phrase name
      */
     function get_link_by_verb(
         phrase         $phr,
@@ -882,15 +1030,22 @@ class triple extends sandbox_code_id
             }
         }
 
-        // build the link
+        // build the link to this qualifying triple (e.g. "Zurich (city)"), not to the bare
+        // category phrase, so the user reaches the specific triple; the visible text stays
+        // the short category name (e.g. "city"). the tooltip prefers this triple's own
+        // description (e.g. "Zurich is the largest city ...") and only falls back to the
+        // linked phrase description when the triple has none (e.g. the "Swiss franc"
+        // description for "CHF is symbol for Swiss franc")
         if ($lnk_phr != null) {
-            $msk_id = views::WORD_ID;
-            if ($lnk_phr->is_triple()) {
-                $msk_id = views::TRIPLE_ID;
+            $url = $html->url_new(views::TRIPLE_ID, $this->id());
+            $title = $this->get_description();
+            if ($title == '') {
+                $title = $lnk_phr->get_description() ?? '';
             }
-            $url = $html->url_new($msk_id, $lnk_phr->id());
-            // the phrase description as link title so the user sees it as a tooltip
-            $result = $html->ref($url, $lnk_phr->name(), $lnk_phr->get_description() ?? '');
+            if ($title == '') {
+                $title = $this->name();
+            }
+            $result = $html->ref($url, $html->esc($lnk_phr->name()), $title);
         }
         return $result;
     }
@@ -956,7 +1111,8 @@ class triple extends sandbox_code_id
      */
     function display_linked(): string
     {
-        return (new html_base())->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
+        $html = new html_base();
+        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $html->esc($this->name()));
     }
 
 }

@@ -86,7 +86,7 @@ class language_tests
 
         global $sys;
         $lan_typ = $sys->typ_lst->lan_for->get_by_code_id(language_forms::PLURAL);
-        $t->assert_api($lan_typ, 'language_form');
+        $t->assert_api($lan_typ, 'language_form_cache');
 
 
         // start the test section (ts)

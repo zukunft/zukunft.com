@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
@@ -56,6 +57,7 @@ include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -215,16 +217,105 @@ class test_values extends test_objects
 
     /**
      * @param phrase[] $phrases the phrases that should build the group of the value
-     * @return value with a sample number assigned to the group of the given phrases
+     * @param float $number the number assigned to the value (a sample number by default)
+     * @return value with the given number assigned to the group of the given phrases
      */
-    function value_for_phrases(array $phrases): value
+    function value_for_phrases(array $phrases, float $number = values::SAMPLE_FLOAT): value
     {
         $lst = new phrase_list($this->env->usr1);
         foreach ($phrases as $phr) {
             $lst->add($phr);
         }
         $grp = $lst->get_grp_id(false);
-        return new value($this->env->usr1, values::SAMPLE_FLOAT, $grp);
+        return new value($this->env->usr1, $number, $grp);
+    }
+
+    /**
+     * the system configuration with only the permission that decides
+     * if a user without login (an ip user) can change data in the database
+     * the yaml true of config.yaml is imported as one and the yaml false as zero
+     *
+     * @param bool $permitted true if an ip user is allowed to change data in the database
+     * @return config_numbers the pod configuration with the ip user database change permission set
+     */
+    function config_ip_user_change(bool $permitted): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->phrase_list_ip_user_change()->get_grp_id(false);
+        $val = new value($this->env->usr1, (float)$permitted, $grp);
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst([$val]);
+        return $cfg;
+    }
+
+    /**
+     * @param array $names the phrase names of the database cache switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @param bool $allowed true if the cache switch should permit the cache usage
+     * @return config_numbers a pod configuration with the given database cache switch
+     */
+    function config_cache_switch(array $names, bool $allowed): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        $val = new value($this->env->usr1, (float)$allowed, $grp);
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst([$val]);
+        return $cfg;
+    }
+
+    /**
+     * @return config_numbers a pod configuration without any config value
+     */
+    function config_empty(): config_numbers
+    {
+        return new config_numbers($this->env->usr1);
+    }
+
+    /**
+     * a value list to test the "most relevant" value list component: two year groups (2022 newest and
+     * 2021, each shared by two values), a phrase group (three values sharing the phrase "ABB") and one
+     * ungrouped value; see value_list::list_most_relevant and docs/llm/pending_next_launch.md
+     * @return value_list with time-grouped, phrase-grouped and ungrouped values
+     */
+    function value_list_most_relevant(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $zh = $t_wrd->word_zh()->phrase();
+        $bern = $t_wrd->word_bern()->phrase();
+        $abb = $t_wrd->word_abb()->phrase();
+        $vestas = $t_wrd->word_vestas()->phrase();
+        $pi = $t_wrd->word_pi()->phrase();
+        $y2021 = $t_wrd->word_2021()->phrase();
+        $y2022 = $t_wrd->word_2022()->phrase();
+
+        $lst = new value_list($this->env->usr1);
+        // time group 2022 (newest, shown first): two values share the year 2022
+        $lst->add($this->value_for_phrases([$inhab, $zh, $y2022], 434008));
+        $lst->add($this->value_for_phrases([$inhab, $bern, $y2022], 134591));
+        // time group 2021: two values share the year 2021
+        $lst->add($this->value_for_phrases([$inhab, $zh, $y2021], 421878));
+        $lst->add($this->value_for_phrases([$inhab, $bern, $y2021], 133883));
+        // phrase group "ABB": three values share the phrase ABB (no time)
+        $lst->add($this->value_for_phrases([$abb, $zh], 12.3));
+        $lst->add($this->value_for_phrases([$abb, $bern], 4.5));
+        $lst->add($this->value_for_phrases([$abb, $vestas], 6.7));
+        // one ungrouped value shown below by impact
+        $lst->add($this->value_for_phrases([$pi], 3.1415));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend "most relevant" test value list
+     */
+    function value_list_most_relevant_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_most_relevant(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -434,6 +525,22 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_zh_impact(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * two values with the same (zero) impact and the same number but assigned to phrases with a
+     * different name ("Zurich" and "city"), so that the deterministic tie break by the group name
+     * can be tested independent of the volatile phrase group id (see value_list::sort_by_impact)
+     * @return value_list_ui the ui value list with the two number-tie values
+     */
+    function value_list_number_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase()], values::SAMPLE_FLOAT));
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
     function value_list_math_ui(): value_list_ui

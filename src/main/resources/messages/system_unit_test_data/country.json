@@ -1,0 +1,222 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 21:17:00",
+  "user": "timon",
+  "selection": [
+    "country base setup"
+  ],
+  "description": "preloaded sample data to demonstrate how countries can be handled in zukunft.com",
+  "words": [
+    { "name": "country"},
+    { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
+    { "name": "canton"},
+    { "name": "city"},
+    { "name": "Zurich"},
+    { "name": "Bern"},
+    { "name": "Geneva"},
+    { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
+    { "name": "inhabitants"},
+    { "name": "company"},
+    { "name": "2013", "type": "time"},
+    { "name": "2014", "type": "time"},
+    { "name": "2015", "type": "time"},
+    { "name": "2016", "type": "time"},
+    { "name": "2017", "type": "time"},
+    { "name": "2018", "type": "time"},
+    { "name": "2019", "type": "time"},
+    { "name": "2020", "type": "time"},
+    { "name": "year", "type": "time"},
+    { "name": "countryside"},
+    { "name": "suburb"},
+    { "name": "total"},
+    {
+      "name": "one"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "thousand"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "ranking",
+      "comment": "relationship between a set of items, often recorded in a list, such that, for any two items, the first is either 'higher than', 'lower than', or 'equal to' the second. The default criteria is here 'good' and 'bad'."
+    },
+    { "name": "k" },
+    { "name": "Now" },
+    { "name": "ZU" }
+  ],
+  "triples": [
+    {"from": "country", "verb": "can use", "to": "ranking"},
+    {"from": "Switzerland", "verb": "is a", "to": "country"},
+    {"from": "Germany", "verb": "is a", "to": "country"},
+    {"name": "Zurich (canton)", "from": "Zurich", "verb": "is a", "to": "canton",
+      "refs": [ { "name": "canton of Zürich", "type": "wikipedia" },
+                { "name": "Q11943", "type": "wikidata" } ]
+    },
+    {"name": "Zurich (city)", "from": "Zurich", "verb": "is a", "to": "city"},
+    {"name": "Bern (city)", "from": "Bern", "verb": "is a", "to": "city"},
+    {"name": "Geneva (city)", "from": "Geneva", "verb": "is a", "to": "city",
+      "refs": [ { "name": "Zürich", "type": "wikipedia" },
+                { "name": "Q72", "type": "wikidata" },
+                { "name": "zurich", "type": "conceptnet" } ]
+    },
+    {"from": "Zurich (canton)", "verb": "is part of", "to": "Switzerland"},
+    {"name": "Zurich (city) share of Zurich (canton)", "from": "Zurich (city)", "verb": "is part of", "to": "Zurich (canton)"},
+    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company"},
+    {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
+    {"from": "2013", "verb": "is a", "to": "year"},
+    {"from": "2014", "verb": "is a", "to": "year"},
+    {"from": "2015", "verb": "is a", "to": "year"},
+    {"from": "2016", "verb": "is a", "to": "year"},
+    {"from": "2017", "verb": "is a", "to": "year"},
+    {"from": "2018", "verb": "is a", "to": "year"},
+    {"from": "2019", "verb": "is a", "to": "year"},
+    {"from": "2020", "verb": "is a", "to": "year"},
+    {"from": "2014", "verb": "is follower of", "to": "2013"},
+    {"from": "2015", "verb": "is follower of", "to": "2014"},
+    {"from": "2016", "verb": "is follower of", "to": "2015"},
+    {"from": "2017", "verb": "is follower of", "to": "2016"},
+    {"from": "2018", "verb": "is follower of", "to": "2017"},
+    {"from": "2019", "verb": "is follower of", "to": "2018"},
+    {"from": "2020", "verb": "is follower of", "to": "2019"},
+    {"from": "k", "verb": "is symbol for", "to": "thousand", "type": "scaling"}
+  ],
+  "values": [
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "2015"
+      ],
+      "number": "8327126"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "k",
+        "2016"
+      ],
+      "number": "8419.55"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "million",
+        "2020"
+      ],
+      "number": "8.505251"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "million",
+        "2019"
+      ],
+      "number": "8.438822"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "scale thousand to one",
+      "expression": "\"one\" = \"thousand\" * 1000",
+      "assigned_word": "thousand"
+    },
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "assigned_word": "million"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "inhabitants"
+    },
+    {
+      "name": "city population",
+      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"city\" )",
+      "assigned_word": "country"
+    },
+    {
+      "name": "countryside population",
+      "expression": "\"total\" = \"total\" \"inhabitants\" - \"city population\"",
+      "assigned_word": "country"
+    },
+    {
+      "name": "suburb population",
+      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"suburb\" )",
+      "assigned_word": "country"
+    },
+    {
+      "name": "countryside population without suburb",
+      "expression": "\"total\" = \"countryside population\" - \"suburb population\"",
+      "assigned_word": "country"
+    },
+    {
+      "name": "population in the city of Zurich in percent of Switzerland",
+      "expression": "\"percent\" = \"inhabitants\" \"Zurich (city)\" / \"inhabitants\" \"Switzerland\"",
+      "assigned_word": "Switzerland"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Federal Statistical Office",
+      "description": "Federal Statistical Office",
+      "url": "https://www.bfs.admin.ch/bfs/en/home.html"
+    },
+    {
+      "name": "Federal Statistical Office - Key population figures, 1950-2024",
+      "description": "Key population figures of Switzerland, 1950-2024 (Federal Statistical Office)",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36142064/master"
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
+  "views": [
+    {
+      "name": "country ratios",
+      "comment": "List all countries with the main ratios",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word"
+        }
+      ]
+    }
+  ]
+}

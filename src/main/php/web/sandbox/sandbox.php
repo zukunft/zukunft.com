@@ -275,6 +275,11 @@ class sandbox extends db_object
     public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
             $used_share_id = $typ_lst->shr_typ->default_id();
@@ -300,6 +305,11 @@ class sandbox extends db_object
     public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
             $used_protection_id = $typ_lst->ptc_typ->default_id();
@@ -344,6 +354,12 @@ class sandbox extends db_object
      */
     public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         if ($typ_lst->cmp_lnk_typ != null) {
             return $typ_lst->cmp_lnk_typ->selector($form);
         } else {

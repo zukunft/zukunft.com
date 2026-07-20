@@ -998,6 +998,35 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * create human-readable messages of the differences between the linked objects
+     * covering the from and to object of the link
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param sandbox_link|CombineObject|db_object_seq_id $obj which might be different to this linked object
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the linked objects
+     */
+    function diff_msg(sandbox_link|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        $this_from = $this->fob?->id();
+        $obj_from = $obj->fob?->id();
+        $this_to = is_object($this->tob) ? $this->tob->id() : $this->tob;
+        $obj_to = is_object($obj->tob) ? $obj->tob->id() : $obj->tob;
+        // under ex_def an unset link end (from_id/to_id 0 or null) counts as empty,
+        // so filling it from the import is a fill-up, not a reported overwrite
+        $from_both_set = !empty($this_from) && !empty($obj_from);
+        $to_both_set = !empty($this_to) && !empty($obj_to);
+        if (!$ex_def or $from_both_set) {
+            $this->diff_field_msg($msg, self::FLD_FROM, $this_from, $obj_from);
+        }
+        if (!$ex_def or $to_both_set) {
+            $this->diff_field_msg($msg, self::FLD_TO, $this_to, $obj_to);
+        }
+        return $msg;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
@@ -1358,6 +1387,11 @@ class sandbox_link extends sandbox
         // check for linked objects
         if ($this->fob == null or $this->tob == null) {
             log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
+        } elseif ($this->predicate_id() == null or $this->predicate_id() == 0) {
+            // a link without a predicate (e.g. a triple with no verb) cannot be compared to a similar
+            // link, so skip the check and log the inconsistency instead of crashing the type-link load,
+            // which requires an int predicate (see docs/llm/structure.md)
+            log_err('The predicate of ' . $this->dsp_id() . ' is missing, so the similar link cannot be checked.', '_sandbox->get_similar');
         } else {
             $db_chk = $this->clone_reset(true);
             $db_chk->set_predicate_id($this->predicate_id());
