@@ -93,8 +93,9 @@ function read_env(string $file): array
 
 /**
  * build the list of configured server admins from the parsed .env
- * - 'admin'           : full access admin (may switch the IP whitelist off)
- * - 'admin2'/'admin3' : restricted admins, may not switch the IP whitelist off
+ * - 'admin'           : the primary server admin
+ * - 'admin2'/'admin3' : additional admins with the same rights; the "restricted" flag now only labels
+ *                       them and each may be limited to a client IP range for login (SERVER_ADMIN_x_IP_FROM/_TO)
  * all log in with a fixed username + password and an optional inclusive client IP range
  * @param array<string,string> $env
  * @return array<int,array{id:string,username:string,pw_hash:string,ip_from:string,ip_to:string,restricted:bool}>
@@ -243,6 +244,28 @@ function whitelist_count(string $file): int
         }
     }
     return $n;
+}
+
+/** the raw content of the IP whitelist file for editing, or an empty string if it does not exist yet */
+function read_ip_whitelist(): string
+{
+    if (!is_readable(IP_WL_FILE)) {
+        return '';
+    }
+    return (string)file_get_contents(IP_WL_FILE);
+}
+
+/**
+ * write the edited IP whitelist to the file read by server_guard.
+ * the entries are only a DDoS pre-filter, not a hard security boundary, so letting the (already
+ * authenticated) admin edit them from the web page is acceptable - see server_admin/README.md
+ */
+function write_ip_whitelist(string $content): bool
+{
+    // normalise to unix line endings and end with a single trailing newline
+    $content = str_replace(["\r\n", "\r"], "\n", $content);
+    $content = rtrim($content, "\n") . "\n";
+    return @file_put_contents(IP_WL_FILE, $content, LOCK_EX) !== false;
 }
 
 /** run a server_admin.sh sub command via sudo and capture the combined output */
@@ -456,11 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     break;
                 case 'toggle_ip_wl':
-                    // restricted admins may not reduce the IP whitelist to the database blacklist
-                    if ($restricted && $state['ip_whitelist_active']) {
-                        $error = 'Your admin role may not switch the IP whitelist off (whitelist -> blacklist).';
-                        break;
-                    }
+                    // the IP whitelist is only a DDoS pre-filter, so any admin may switch it on or off
                     $state['ip_whitelist_active'] = !$state['ip_whitelist_active'];
                     $notice = write_state($state)
                         ? 'IP whitelist ' . ($state['ip_whitelist_active'] ? 'activated.' : 'deactivated (database blacklist applies).')
@@ -470,6 +489,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } elseif ($state['ip_whitelist_active'] && whitelist_count(IP_WL_FILE) === 0) {
                         $error = 'Warning: the IP whitelist is active but empty - every visitor is locked out of the '
                             . 'main app. Add entries to server_admin/ip_whitelist.txt now.';
+                    }
+                    break;
+                case 'save_ip_wl':
+                    // the IP whitelist is only a DDoS pre-filter, so any authenticated admin may edit it
+                    $wl = (string)($_POST['ip_whitelist'] ?? '');
+                    if (write_ip_whitelist($wl)) {
+                        $notice = 'IP whitelist saved (' . whitelist_count(IP_WL_FILE) . ' address(es)).';
+                        if ($state['ip_whitelist_active'] && whitelist_count(IP_WL_FILE) === 0) {
+                            $error = 'Warning: the IP whitelist is active but now empty - every visitor is '
+                                . 'locked out of the main app. Add at least your own IP.';
+                        }
+                    } else {
+                        $error = 'Could not write ' . IP_WL_FILE . ' - check permissions.';
                     }
                     break;
                 case 'update_program':
@@ -579,15 +611,20 @@ echo page_head('Server admin');
             <p class="text-danger">Empty whitelist: every visitor is locked out of the main app.
                 Add entries to <code>server_admin/ip_whitelist.txt</code>.</p>
         <?php endif; ?>
-        <?php if ($restricted && $state['ip_whitelist_active']): ?>
-            <p class="subtitle">Your admin role may not switch the IP whitelist off.</p>
-        <?php else: ?>
-            <form method="post">
-                <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
-                <input type="hidden" name="action" value="toggle_ip_wl">
-                <input type="submit" class="btn" value="<?= $state['ip_whitelist_active'] ? 'Deactivate' : 'Activate' ?> IP whitelist">
-            </form>
-        <?php endif; ?>
+        <form method="post">
+            <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+            <input type="hidden" name="action" value="toggle_ip_wl">
+            <input type="submit" class="btn" value="<?= $state['ip_whitelist_active'] ? 'Deactivate' : 'Activate' ?> IP whitelist">
+        </form>
+
+        <form method="post">
+            <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+            <input type="hidden" name="action" value="save_ip_wl">
+            <label for="ip_whitelist">IP whitelist entries (one IP or CIDR per line, # for comments):</label><br>
+            <textarea id="ip_whitelist" name="ip_whitelist" rows="8" class="standard-input"
+                      style="width:100%;font-family:monospace"><?= h(read_ip_whitelist()) ?></textarea><br>
+            <input type="submit" class="btn" value="Save IP whitelist">
+        </form>
 
         <hr>
 

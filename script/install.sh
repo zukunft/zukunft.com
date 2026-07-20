@@ -336,6 +336,18 @@ EOF
     chmod 0644 "$STATE_FILE"
     echo -e "${GREEN}$WEB_USER may now toggle the whitelist state in $STATE_FILE${NC}"
 
+    # the admin page also edits the IP whitelist (server_admin/ip_whitelist.txt) via a text field; it
+    # is only a DDoS pre-filter, not a hard security boundary (see server_admin/README.md), so hand the
+    # file to the web user too. seeded from the sample (localhost + the suggested admin IPs) only if
+    # missing, and inactive by default (state.json), so a fresh install locks nobody out.
+    IP_WL_FILE="$WWW_ROOT/server_admin/ip_whitelist.txt"
+    if [ ! -f "$IP_WL_FILE" ]; then
+        cp "$WWW_ROOT/server_admin/ip_whitelist.txt.example" "$IP_WL_FILE"
+    fi
+    chown "$WEB_USER":"$WEB_USER" "$IP_WL_FILE"
+    chmod 0644 "$IP_WL_FILE"
+    echo -e "${GREEN}$WEB_USER may now edit the IP whitelist in $IP_WL_FILE${NC}"
+
     sleep 3
 }
 

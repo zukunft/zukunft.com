@@ -1347,7 +1347,7 @@ class frontend
      * @param user_backend $usr_backend updated in-place with the logged-in user on success
      * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the session
-     * @return array URL array pointing to the back page on success, or the original login URL (minus credentials) on failure
+     * @return array URL array pointing to the back page (or the start view if no back target) on success, or the original login URL (minus credentials) on failure
      */
     private function action_login(
         array        $url_array,
@@ -1380,8 +1380,9 @@ class frontend
         if ($logged_in) {
             // reject at once if a user whitelist is active and this user is not on it
             server_guard::enforce_user((string)$usr_backend->id(), $usr_name);
+            // without a back target show the start view after the login, not the login view again
             $back_array = html_base::url_par_from_back_part($url_array);
-            $next_url = empty($back_array) ? [url_var::MASK => views::LOGIN_ID] : $back_array;
+            $next_url = empty($back_array) ? [url_var::MASK => views::START_ID] : $back_array;
         } else {
             // strip credentials so they don't leak into the rendered page; preserve the mask and 9-prefixed back params
             $next_url = $url_array;
