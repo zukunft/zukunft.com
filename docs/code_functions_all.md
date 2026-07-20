@@ -2184,6 +2184,7 @@
     \-- add_by_name_type_and_key - section for function add_by_name_type_and_key not yet defined that it should be modify in /ref/ref_list.php
     \-- add_direct - section for function add_direct not yet defined that it should be modify in /ref/ref_list.php
     \-- del - section for function del is expected to be del in /ref/ref_list.php
+    \-- filter_readable_by - section for function filter_readable_by not yet defined that it should be save in /ref/ref_list.php
 \-- ref_type
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map in /ref/ref_type.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/ref_type.php
@@ -3627,6 +3628,8 @@
         \-- db_cache_page - add or replace the cached html page for the given url
     \-- add
         \-- change_log - log a user change of a word, value or formula
+    \-- filter_readable_by
+        \-- ref_list - drop the references the requesting user may not read, so a reference list returned by the api
     \-- id_field
         \-- ip_range - helper because the db id field differs from the class name
     \-- save_with_cache

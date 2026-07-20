@@ -319,21 +319,28 @@ class change_log_named extends change_log
     function entry(): string
     {
         global $mtr;
+        $html = new html_base();
         $result = '';
 
-        if ($this->usr != null) {
-            if ($this->usr->name() <> '') {
-                $result .= $this->usr->name() . ' ';
-            }
+        // the user name and the old / new value are user-settable (e.g. a word / triple / formula
+        // name on add or rename), and this one-line entry is rendered raw into the html body by the
+        // "changes" tab and the system change-log component, so escape them here to stop stored xss
+        // (matching change_log_named::tr()); escaping in entry() also keeps the sort deterministic
+        $usr_name = $this->usr != null ? $html->esc($this->usr->name()) : '';
+        $old_value = $html->esc($this->old_value);
+        $new_value = $html->esc($this->new_value);
+
+        if ($usr_name <> '') {
+            $result .= $usr_name . ' ';
         }
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
+                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $new_value . '"';
             } else {
-                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $old_value . '"';
             }
         } else {
-            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
         }
         return $result;
     }

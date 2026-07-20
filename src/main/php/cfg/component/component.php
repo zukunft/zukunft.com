@@ -348,22 +348,26 @@ class component extends sandbox_code_id
     {
         parent::api_mapper($api_json, $usr_msg);
 
-        // it is expected that the code id is set via import by an admin not via api
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        // the ui message code ids link a component to a system ui message, so only a system /
+        // developer user may set them via the api - route through the privilege-checked setters
+        // (not a raw assignment) so a normal user's request is refused and reported on $usr_msg; the
+        // null-user guard fails closed if no requesting user is set on the message
+        global $mtr;
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json) and $usr_msg->usr != null) {
+            $usr_msg->merge($this->set_ui_msg_code_id(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $usr_msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id_vars = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json) and $usr_msg->usr != null) {
+            $usr_msg->merge($this->set_ui_msg_code_id_vars(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $usr_msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json)) {
-            global $mtr;
-            $this->ui_msg_code_id_exception = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json) and $usr_msg->usr != null) {
+            $usr_msg->merge($this->set_ui_msg_code_id_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $usr_msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json)) {
-            global $mtr;
-            $this->ui_msg_value_exception = $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]);
+        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $usr_msg->usr != null) {
+            $usr_msg->merge($this->set_ui_msg_value_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $usr_msg->usr));
         }
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);

@@ -65,17 +65,22 @@ if ($db_con->is_open()) {
     $rest_ctrl = new rest_call();
     $result = ''; // reset the json message string
 
-    // TODO remove temp
-    if (in_array(rest_ctrl::REQUEST_METHOD, $_SERVER)) {
+    // read the http method and request body of a real web request; array_key_exists (not in_array)
+    // because REQUEST_METHOD is a $_SERVER *key*, so the previous in_array (which searched the values)
+    // was always false and every request silently fell through to the GET debug branch, disabling all
+    // writes. the else branch stays the cli / test default where $_SERVER has no REQUEST_METHOD
+    if (array_key_exists(rest_ctrl::REQUEST_METHOD, $_SERVER)) {
         $method = $_SERVER[rest_ctrl::REQUEST_METHOD];
-        if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
-            $uri = $_SERVER[rest_ctrl::REQUEST_URI];
+        $uri = $_SERVER[rest_ctrl::REQUEST_URI] ?? '';
+        // only a write (post/put/delete) carries a json body; a GET has none, so reading php://input
+        // for a GET would be pointless (and used to be unreachable while the method detection was broken)
+        if ($method !== rest_ctrl::GET) {
+            $json_body = $rest_ctrl->request_json();
         } else {
-            $uri = '';
+            $json_body = [];
         }
-        $json_body = $rest_ctrl->request_json();
     } else {
-        // for debugging only
+        // cli / test default (no REQUEST_METHOD in $_SERVER)
         $method = rest_ctrl::GET;
         $json_body = [];
         $uri = '/api/word';

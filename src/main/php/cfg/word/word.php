@@ -528,6 +528,9 @@ class word extends sandbox_code_id
                         $this->load_phrases_related();
                     }
                     if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
+                        // drop the related phrases the requester may not read so a public word cannot
+                        // disclose another user's private triple/word attached to it (idor)
+                        $this->phrases_related->filter_readable_by($usr);
                         // INCL_PHRASES so each related triple emits its from/verb/to phrases,
                         // not just id+name — the page-title renderer needs the link names
                         $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
@@ -550,6 +553,8 @@ class word extends sandbox_code_id
                         $this->load_formulas_related();
                     }
                     if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
+                        // drop the related formulas the requester may not read (idor)
+                        $this->formulas_related->filter_readable_by($usr);
                         // a fresh api_type_list (no INCL_RELATED) so the formulas emit only
                         // their own name, id and impact, which the frontend needs to render
                         // and sort the list by impact, without recursing back into relations
@@ -564,6 +569,8 @@ class word extends sandbox_code_id
                         // <ancestor>' link and tooltip) and its formulas (own name, id and impact only)
                         $grp_lst = [];
                         foreach ($this->parent_formulas_related as $grp) {
+                            // drop the ancestor's formulas the requester may not read (idor)
+                            $grp['formulas']->filter_readable_by($usr);
                             $grp_lst[] = [
                                 json_fields::PHRASE => $grp['phrase']->api_json_array(new api_type_list(), $usr),
                                 json_fields::FORMULAS => $grp['formulas']->api_json_array(new api_type_list(), $usr)
@@ -575,6 +582,8 @@ class word extends sandbox_code_id
                         $this->load_references_related();
                     }
                     if ($this->references_related != null and !$this->references_related->is_empty()) {
+                        // drop the related references the requester may not read (idor)
+                        $this->references_related->filter_readable_by($usr);
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
                             new api_type_list(), $usr);
                     }
@@ -589,6 +598,8 @@ class word extends sandbox_code_id
                         $this->load_views_related();
                     }
                     if ($this->views_related != null and !$this->views_related->is_empty()) {
+                        // drop the related views the requester may not read (idor)
+                        $this->views_related->filter_readable_by($usr);
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }

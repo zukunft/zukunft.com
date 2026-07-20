@@ -165,10 +165,14 @@ class sandbox_code_id extends sandbox_typed
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         parent::api_mapper($api_json, $usr_msg);
-        if ($this->get_code_id() == null) {
-            if (array_key_exists(json_fields::CODE_ID, $api_json)) {
-                $this->set_code_id_db($api_json[json_fields::CODE_ID]);
-            }
+        // the code id links a database row to system program code, so only a system / developer user
+        // may set it - route through the privilege-checked set_code_id (not the raw set_code_id_db)
+        // so a normal user's request is refused and reported on $usr_msg, matching import_mapper. the
+        // previous `if (get_code_id() == null)` guard was always true for a new (POST) object, which
+        // let any user plant an arbitrary code_id. the null-user guard fails closed if no requesting
+        // user is set on the message
+        if (array_key_exists(json_fields::CODE_ID, $api_json) and $usr_msg->usr != null) {
+            $usr_msg->merge($this->set_code_id($api_json[json_fields::CODE_ID], $usr_msg->usr));
         }
         return $usr_msg->is_ok();
     }

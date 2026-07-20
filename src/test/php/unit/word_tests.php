@@ -517,6 +517,23 @@ class word_tests
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
 
+        // the api write path maps the code id from the client json; a normal user must not be able
+        // to plant a system code_id (see sandbox_code_id::api_mapper -> the privilege-checked setter)
+        $test_name = 'the api mapper refuses the code id for a normal user';
+        $usr_msg_map = new user_message($t->usr_normal);
+        $wrd_map = $t_wrd->word();
+        $wrd_map->set_code_id_db(null);
+        $wrd_map->api_mapper([json_fields::CODE_ID => 'planted code id'], $usr_msg_map);
+        $t->assert_null($test_name, $wrd_map->get_code_id());
+        $test_name = 'the api mapper reports the refused code id to the normal user';
+        $t->assert_false($test_name, $usr_msg_map->is_ok());
+        $test_name = 'the api mapper sets the code id for a system user';
+        $usr_msg_map = new user_message($t->usr_system);
+        $wrd_map = $t_wrd->word();
+        $wrd_map->set_code_id_db(null);
+        $wrd_map->api_mapper([json_fields::CODE_ID => 'allowed code id'], $usr_msg_map);
+        $t->assert($test_name, $wrd_map->get_code_id(), 'allowed code id');
+
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t_wrd->word_name_only();
         $db_wrd = $t_wrd->word_filled();
