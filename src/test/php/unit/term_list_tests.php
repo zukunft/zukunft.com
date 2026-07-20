@@ -177,13 +177,30 @@ class term_list_tests
         $test_name = 'term_list->links_with_context edit link points to the term edit page';
         $t->assert($test_name, str_contains($cols_html, 'm=3&amp;id=1'), true);
 
-        // positive: the url params of the calling page are added to the edit link with the
-        // url_var::BACK ('9') prefix so the edit mask can return to the calling page
+        // positive: the page-identifying url params of the calling page are added to the edit link
+        // with the url_var::BACK ('9') prefix so the edit mask can return to the calling page
         // e.g. if the pod blocks the change of an ip user (see /http/view.php)
         $test_name = 'term_list->links_with_context edit link carries the back params of the calling page';
         $back_html = $col_lst->links_with_context([url_var::MASK => views::WORD_FIND_ID, url_var::PATTERN => 'term']);
-        $t->assert($test_name, str_contains($back_html,
-            url_var::BACK . url_var::MASK . '=' . views::WORD_FIND_ID), true);
+        $t->assert_text_contains($test_name, $back_html,
+            url_var::BACK . url_var::MASK . '=' . views::WORD_FIND_ID);
+        $test_name = 'term_list->links_with_context edit link keeps the search pattern for the back';
+        $t->assert_text_contains($test_name, $back_html, url_var::BACK . url_var::PATTERN . '=term');
+
+        // negative: form state and already prefixed params of the calling page are not repeated
+        // in the back part, so the url stays short and no '99m' or '98k' compounds are created
+        $test_name = 'term_list->links_with_context back part skips an already prefixed param';
+        $dirty_url = [
+            url_var::MASK => views::WORD_FIND_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::PRE . url_var::NAME => 'old name'
+        ];
+        $back_html = $col_lst->links_with_context($dirty_url);
+        $t->assert_text_not_contains($test_name, $back_html,
+            url_var::BACK . url_var::BACK . url_var::MASK . '=');
+        $test_name = 'term_list->links_with_context back part skips a form state param';
+        $t->assert_text_not_contains($test_name, $back_html,
+            url_var::BACK . url_var::PRE . url_var::NAME . '=');
 
         // negative: an empty term list renders no columns
         $test_name = 'term_list->links_with_context of an empty list is empty';

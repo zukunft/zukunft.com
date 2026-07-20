@@ -737,6 +737,19 @@ class html_base
         return self::prefixed_url_array($url_arr, url_var::BACK);
     }
 
+    /**
+     * reduce the url params of the calling page to those identifying the page (url_var::PAGE_VARS),
+     * so the back part of an edit link stays short and form state or already '8'/'9'-prefixed
+     * params are never prefixed again (e.g. no '99m' or '98k' compounds)
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array only the page-identifying url params e.g. ['m' => 90, 'id' => 1]
+     */
+    static function page_url_array(array $url_arr): array
+    {
+        return array_intersect_key($url_arr, array_flip(url_var::PAGE_VARS));
+    }
+
     static function pre_url_array(array $url_arr): array
     {
         return self::prefixed_url_array($url_arr, url_var::PRE);

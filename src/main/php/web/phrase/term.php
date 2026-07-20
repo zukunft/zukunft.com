@@ -549,17 +549,21 @@ class term extends combine_named
     }
 
     /**
-     * @param array $url_array the url params of the calling page added with the url_var::BACK ('9')
-     *                         prefix so the edit mask can return to the calling page
+     * @param array $url_array the url params of the calling page; the page-identifying params are
+     *                         added with the url_var::BACK ('9') prefix so the edit mask can return
+     *                         to the calling page
      * @return string the html code of a "fas fa-edit" icon that links to the edit page of the
-     *                wrapped object e.g. /http/view.php?m=10&id=206&9m=66 for triple 206
+     *                wrapped object e.g. /http/view.php?m=10&id=206&9m=67 for triple 206
      */
     function edit_link(array $url_array = []): string
     {
         global $mtr;
 
         $html = new html_base();
-        $url = $html->url_with_back($html->url_new($this->edit_view_id(), $this->obj_id()), $url_array);
+        $url = $html->url_with_back(
+            $html->url_new($this->edit_view_id(), $this->obj_id()),
+            html_base::page_url_array($url_array)
+        );
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
         return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT), '', true);
     }

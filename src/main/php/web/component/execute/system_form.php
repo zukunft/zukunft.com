@@ -393,8 +393,8 @@ class system_form extends component
 
     /**
      * create a html link to change an object e.g. a word, value or formula
-     * the url params of the calling page are added with the url_var::BACK ('9') prefix
-     * so the edit mask can return to the calling page e.g. on cancel
+     * the page-identifying url params of the calling page are added with the url_var::BACK ('9')
+     * prefix so the edit mask can return to the calling page e.g. on cancel
      * or if the pod blocks the change of an ip user (see /http/view.php)
      *
      * @param db_object $dbo any database object that can be changed by the user or an admin
@@ -406,7 +406,10 @@ class system_form extends component
         global $mtr;
 
         $html = new html_base();
-        $url = $html->url_with_back($html->url_new($dbo::VIEW_EDIT_ID, $dbo->id()), $url_array);
+        $url = $html->url_with_back(
+            $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id()),
+            html_base::page_url_array($url_array)
+        );
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
         return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
     }
