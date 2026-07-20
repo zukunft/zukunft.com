@@ -4,7 +4,7 @@
 
 ## high prio
 
-add another workflow test where another user changes (not the word owner) the description of a word but without the back steps of the existing change word workflow test. it should be tested that the uses_sandbox flag is activated for the user, a user sandbox row ist created and the user sees the changed description whereas the owner still sees his unchanged description
+if on this page http://localhost/http/view.php?m=90&id=322 the edit button is pressed and the user is not permitted to change it, show the same view again with the message
 
 fix as many TODO Prio 0 as possible
 

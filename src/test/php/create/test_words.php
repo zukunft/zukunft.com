@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
@@ -53,6 +54,7 @@ include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
@@ -216,6 +218,23 @@ class test_words extends test_objects
         $wrd = new word(test_users::user_sys_test());
         $wrd->id = word_names::TEST_ADD_TO_ID;
         $wrd->set_name(word_names::TEST_ADD_TO);
+        return $wrd;
+    }
+
+    /**
+     * the reserved 'System Test Word' owned by the given user with the given description and without a
+     * fixed id, so save() creates a fresh standard row owned by that user; used by the change-by-other-
+     * user write workflow test to set up a base word with a known owner and original description
+     *
+     * @param user $usr the user who owns (creates) the word
+     * @param string $des the description of the word
+     * @return word the reserved test word for the given owner
+     */
+    static function add_owned(user $usr, string $des): word
+    {
+        $wrd = new word($usr);
+        $wrd->set_name(word_names::TEST_ADD);
+        $wrd->set_description($des);
         return $wrd;
     }
 

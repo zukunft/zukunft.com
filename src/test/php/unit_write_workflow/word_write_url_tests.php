@@ -44,9 +44,12 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,12 +74,106 @@ class word_write_url_tests extends word_url_tests
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, true);
         $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, true);
 
+        // a change by a user that does not own the word: unlike change_word_workflow (usr1 changes the
+        // system owned word) this is the linear confirm-write without the back / cancel excursions, and
+        // it checks the per-user sandbox side effect - the changing user gets the change, the owner does not
+        $this->change_word_by_other_user($t);
+
 
         $t->subheader($this->ts . 'cleanup');
 
         // cleanup - fallback delete in case a workflow did not persist as expected
         $this->cleanup_test_words($t);
 
+    }
+
+    /**
+     * check that a change by a user who does not own the word creates a per-user sandbox overlay:
+     * usr1 owns the base word, usr2 is another user. after usr2 changes the description the usr2
+     * uses_sandbox flag is set, a usr2 user sandbox row exists and usr2 sees the changed description,
+     * while the owner usr1 still sees the unchanged original. this is the persisted side effect of the
+     * change_word confirm step (url_to_action -> sandbox::save) reached directly, so no snapshot fixture
+     * is needed; the base word is created and removed by this test, so it is independent of the other
+     * workflows (see docs/llm/testing.md for the sandbox model)
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function change_word_by_other_user(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'other user change');
+
+        // start from a clean state so the base has the known original description and no overlay is left
+        $this->cleanup_test_words($t);
+
+        // usr1 creates and owns the base word with the original description
+        $owner = $t->usr1;
+        $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
+        $owner_msg = new user_message($owner);
+        $base->save($owner_msg);
+        $test_name = 'the base word is created for the owner';
+        $t->assert_msg($test_name, $owner_msg);
+
+        // usr2 (another user, not the owner) changes the description; because usr2 does not own the base
+        // row the change is routed to a usr2 user sandbox overlay (the same path url_to_action -> save uses).
+        // load the changer fresh so its in-memory profile matches the stored one: the shared $t->usr2 object
+        // can carry a profile that an earlier test left different from the database, which would make the
+        // uses_sandbox user update (set_uses_sandbox -> save_user) misread the flag flip as a profile
+        // escalation attempt and block the whole word save (see user::enforce_profile_privilege)
+        $changer = new user();
+        $changer->load_by_id($t->usr2->id());
+        $wrd = new word($changer);
+        $wrd->load_by_name(word_names::TEST_ADD);
+        // the changer must actually see the base standard row before changing it; if the load misses
+        // (e.g. a left over excluded row of the reserved word from the preceding add/change/del workflows)
+        // the following save would take the add path and fail on the reserved-name conflict instead of
+        // creating the overlay, so check the load first to keep the failure unambiguous
+        $test_name = 'the other user can load the base word before the change';
+        $t->assert_true($test_name, $wrd->id() > 0);
+        $wrd->set_description(word_names::TEST_CHANGE_COM);
+        $change_msg = new user_message($changer);
+        $wrd->save($change_msg);
+        $test_name = 'the other user change is saved';
+        $t->assert_msg($test_name, $change_msg);
+
+        // the changing user now uses the sandbox (the flag is set and persisted when the overlay is created)
+        $test_name = 'the changing user now uses the sandbox';
+        $usr_chk = new user();
+        $usr_chk->load_by_id($changer->id());
+        $t->assert_true($test_name, $usr_chk->uses_sandbox);
+
+        // a user sandbox row exists for the changing user and that user sees the changed description
+        $wrd_changer = new word($changer);
+        $wrd_changer->load_by_name(word_names::TEST_ADD);
+        $test_name = 'a user sandbox row is created for the changing user';
+        $t->assert_true($test_name, $wrd_changer->has_usr_cfg());
+        $test_name = 'the changing user sees the changed description';
+        $t->assert($test_name, $wrd_changer->get_description(), word_names::TEST_CHANGE_COM);
+
+        // the owner still sees the unchanged original description and has no overlay of his own
+        $wrd_owner = new word($owner);
+        $wrd_owner->load_by_name(word_names::TEST_ADD);
+        $test_name = 'the owner still sees the unchanged description';
+        $t->assert($test_name, $wrd_owner->get_description(), word_names::TEST_ADD_COM);
+        $test_name = 'the owner has no user sandbox overlay';
+        $t->assert_false($test_name, $wrd_owner->has_usr_cfg());
+
+        // undo the changer overlay by setting the description back to the owner's value: this removes the
+        // usr2 user sandbox row (no_diff), so the base word is then owned solely by usr1 with no other
+        // user using it. without this the owner delete in the cleanup below would not hard delete the word
+        // but transfer the ownership to the changer and only exclude the row (see sandbox::del), which
+        // leaves the reserved word in the database and breaks the add / delete word workflow on the next run
+        $wrd_undo = new word($changer);
+        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->set_description(word_names::TEST_ADD_COM);
+        $undo_msg = new user_message($changer);
+        $wrd_undo->save($undo_msg);
+        $wrd_undo_chk = new word($changer);
+        $wrd_undo_chk->load_by_name(word_names::TEST_ADD);
+        $test_name = 'the changer overlay is removed again';
+        $t->assert_false($test_name, $wrd_undo_chk->has_usr_cfg());
+
+        // remove the created rows so a re-run starts clean and the following cleanup finds nothing
+        $this->cleanup_test_words($t);
     }
 
     /**
