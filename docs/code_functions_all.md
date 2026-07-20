@@ -5270,6 +5270,9 @@
     \-- button_submit - section for function button_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_submit - section for function form_submit not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_input - section for function form_input not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- form_input_password - section for function form_input_password not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- input_password - section for function input_password not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
+    \-- icon - section for function icon not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_page - section for function about_page not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_body - section for function about_body not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functions for the pure HTML version in /html/html_base.php
@@ -7470,6 +7473,12 @@
         \-- html_base - end a html form with save, cancel and optional delete buttons
     \-- form_input
         \-- html_base - end a html form with save, cancel and optional delete buttons
+    \-- form_input_password
+        \-- html_base - a password input with a css-only "show password" toggle (no javascript, see docs/llm/frontend.md)
+    \-- input_password
+        \-- html_base - the bootstrap-styled variant of form_input_password for the admin form that may overwrite a
+    \-- icon
+        \-- html_base - the html of a font awesome icon
     \-- about_page
         \-- html_base - @return string the HTML code of the about page
     \-- about_body
