@@ -540,7 +540,7 @@ class word_write_tests
 
         // display
         $back = 1;
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&id=' . $wrd_read->id() . '&back=1" title="' . word_names::MATH_COM . '">' . word_names::MATH . '</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&amp;id=' . $wrd_read->id() . '&amp;back=1" title="' . word_names::MATH_COM . '">' . word_names::MATH . '</a>';
         $wrd_read_ui = new word_ui($wrd_read->api_json());
         $result = $wrd_read_ui->name_link($back);
         $t->assert('word->display "' . word_names::MATH . '"', $result, $target);

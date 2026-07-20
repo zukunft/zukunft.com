@@ -195,6 +195,20 @@ class change_log_list extends ListBase
      */
 
     /**
+     * sort this change list in place so that the newest change is first; changes with the same
+     * time are sorted alphabetically descending by the entry text (e.g. 'Zurich' before '1') so
+     * the display order is deterministic and independent of the db/api row order
+     * @return void
+     */
+    function sort_by_time_and_entry(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(change_log_named $a, change_log_named $b) => $b->change_time <=> $a->change_time
+            ?: strcmp($b->entry(), $a->entry()));
+        $this->set_lst($lst);
+    }
+
+    /**
      * the first $limit changes of this list, used to show only the configured number of change rows
      * (like sys_log_list::head limits the user error list)
      *

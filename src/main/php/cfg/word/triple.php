@@ -416,20 +416,25 @@ class triple extends sandbox_link_named
         parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::FROM, $api_json)) {
-            $phr = $this->phrase_from_api_json($api_json[json_fields::FROM]);
+            $phr = $this->phrase_from_api_json($api_json[json_fields::FROM], $usr_msg, msg_id::TRIPLE_FROM_PHRASE_MISSING);
             $this->set_from($phr);
         }
         if (array_key_exists(json_fields::VERB, $api_json)) {
-            $vrb = $this->verb_from_api_json($api_json[json_fields::VERB]);
+            $vrb = $this->verb_from_api_json($api_json[json_fields::VERB], $usr_msg);
             $this->set_verb($vrb);
         }
         if (array_key_exists(json_fields::TO, $api_json)) {
-            $phr = $this->phrase_from_api_json($api_json[json_fields::TO]);
+            $phr = $this->phrase_from_api_json($api_json[json_fields::TO], $usr_msg, msg_id::TRIPLE_TO_PHRASE_MISSING);
             $this->set_to($phr);
         }
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
             $this->weight = $api_json[json_fields::WEIGHT];
         }
+
+        if (key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+        }
+
         if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
             $this->impact = $api_json[fields::FLD_IMPACT];
         }
@@ -564,7 +569,9 @@ class triple extends sandbox_link_named
                     }
                 }
             }
-            $this->set_verb($vrb);
+            if ($vrb->check($msg, $this->dsp_id())) {
+                $this->set_verb($vrb);
+            }
         }
 
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
@@ -602,6 +609,20 @@ class triple extends sandbox_link_named
         if ($this->name() == null and $this->name_given() == null) {
             $this->name_generated = $this->generate_name();
             $this->name = $this->name_generated;
+        }
+
+        // reject an ambiguous duplicate from/verb/to link within the import: if a triple already
+        // mapped in this file uses the same link with a different name the link id is ambiguous
+        // (see docs/llm/json_structure.md - a from/verb/to key must be unique within an import)
+        if ($dto != null) {
+            $conflict = $dto->triple_list()->get_link_conflict($this);
+            if ($conflict != null) {
+                $msg->add(msg_id::IMPORT_TRIPLE_LINK_AMBIGUOUS, [
+                    msg_id::VAR_NAME => $this->generate_name(),
+                    msg_id::VAR_NAME_CHK => $conflict->name(),
+                    msg_id::VAR_TRIPLE_NAME => $this->name()
+                ]);
+            }
         }
 
         // map the external references and register them with the data object so that the import
@@ -758,6 +779,10 @@ class triple extends sandbox_link_named
                         $this->load_values_related();
                     }
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
+                        // drop the values the requester may not read so the related-value list
+                        // cannot disclose another user's private/personal value attached to this
+                        // triple (idor); see sandbox_multi::is_readable_by, same gate as api/valueList
+                        $this->values_related->filter_readable_by($usr);
                         // INCL_PHRASES so each value carries its group phrases, which the
                         // frontend needs for the value name and to sort the list by impact
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
@@ -807,10 +832,17 @@ class triple extends sandbox_link_named
     /**
      * select the id from a json array
      * TODO Prio 1 add user_message as parameter
-     * @param int|array $value either the id itself or an array with the id
-     * @return phrase
+     * @param int|array|null $value either the id itself or an array with the id
+     * @param user_message $msg to report a from/to phrase that cannot be resolved to the user with a
+     * *        suggested solution, because a triple without both linked phrases is invalid
+     * @param msg_id $missing_msg the side-specific message (from or to) to add if the phrase is empty
+     * @return phrase the mapped phrase, or an empty phrase if the value is null or the id is 0
      */
-    private function phrase_from_api_json(int|array $value): phrase
+    private function phrase_from_api_json(
+        int|array|null $value,
+        user_message $msg,
+        msg_id $missing_msg
+    ): phrase
     {
         $usr_msg = new user_message();
         $phr = new phrase($this->get_user());
@@ -822,26 +854,32 @@ class triple extends sandbox_link_named
                 $phr->set_id($value);
             }
         } else {
-            log_err('unexpected format of api message');
+            $msg->add_id($missing_msg);
         }
         return $phr;
     }
 
     /**
      * select the id from a json array
-     * @param int|array $value either the id itself or an array with the id
-     * @return verb
+     * @param int|array|null $value either the id itself or an array with the id
+     * @param user_message $msg to report a verb that cannot be resolved to the user with a suggested
+     * *        solution instead of only logging it, because a missing verb makes the user's triple invalid
+     * @return verb the mapped verb, or an empty verb if the value is null or the id is 0
      */
-    private function verb_from_api_json(int|array $value): verb
+    private function verb_from_api_json(
+        int|array|null $value,
+        user_message $msg
+    ): verb
     {
         global $sys;
         if (is_array($value)) {
             if (key_exists(json_fields::ID, $value)) {
+                // TODO Prio 1 if possible use the array to map the verb so that an updated version of the verb can be used
                 $id = $value[json_fields::ID];
                 $vrb = $sys->typ_lst->vrb->get($id);
             } else {
                 $vrb = new verb();
-                log_err('id field missing in ' . implode(',', $value));
+                $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         } elseif (is_int($value)) {
             if ($value != 0) {
@@ -851,7 +889,7 @@ class triple extends sandbox_link_named
             }
         } else {
             $vrb = new verb();
-            log_err('unexpected format of api message');
+            $msg->add(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
         }
         return $vrb;
     }
@@ -1314,6 +1352,22 @@ class triple extends sandbox_link_named
     function name_given(): ?string
     {
         return $this->name_given;
+    }
+
+    /**
+     * the unique link key of the from/verb/to phrases, used by the import to detect a duplicate
+     * link within a file (see docs/llm/json_structure.md - a from/verb/to key must be unique)
+     * @return string the from/verb/to link key, or an empty string if the from or to phrase is missing
+     */
+    function link_key(): string
+    {
+        $result = '';
+        if ($this->get_from() != null and $this->get_to() != null) {
+            if ($this->get_from()->name() != '' and $this->get_to()->name() != '') {
+                $result = $this->get_from()->name() . '|' . $this->get_verb_name() . '|' . $this->get_to()->name();
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2468,6 +2522,32 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * create human-readable messages of the differences between the triple objects
+     * @param triple|CombineObject|db_object_seq_id $obj which might be different to this triple
+     * @param bool $ex_def if true excluding differences in fields with a default value like the type
+     * @return user_message the human-readable messages of the differences between the triple objects
+     */
+    function diff_msg(triple|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
+    {
+        $msg = parent::diff_msg($obj, $ex_def);
+        if (!$ex_def and $this->type_id() != $obj->type_id()) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $obj->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
+            ]);
+        }
+        $this->diff_field_msg($msg, verb_db::FLD_ID, $this->get_verb_id(), $obj->get_verb_id());
+        $this->diff_field_msg($msg, triple_fields::FLD_NAME_GIVEN, $this->name_given(), $obj->name_given());
+        $this->diff_field_msg($msg, triple_fields::FLD_WIGHT, $this->weight, $obj->weight);
+        $this->diff_field_msg($msg, fields::FLD_USAGE, $this->get_usage(), $obj->get_usage());
+        $this->diff_field_msg($msg, fields::FLD_IMPACT, $this->get_impact(), $obj->get_impact());
+        return $msg;
+    }
+
+    /**
      * check if the word in the database needs to be updated
      * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
@@ -2562,9 +2642,9 @@ class triple extends sandbox_link_named
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $sys;
         global $mtr;
-        $usr = $sys?->usr_req;
+        // check the user the object is saved as its owner, not the session request user
+        $usr = $this->get_user();
 
         // init
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);

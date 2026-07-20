@@ -41,6 +41,8 @@ class styles
     const string STYLE_CHANGED = 'changed';
     // centered change preview table whose width follows the config 'side width' screen breakpoints
     const string CHANGE_PREVIEW = 'change-preview';
+    // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view
+    const string JUSTIFY_CENTER = 'justify-content-center';
     // the change impact line centered below the change preview table
     const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';

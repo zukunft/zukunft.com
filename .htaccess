@@ -1,14 +1,81 @@
-# Block direct access to log files anywhere
-<FilesMatch "\.log$">
+# Never list a directory that has no index file, so the source tree cannot be
+# browsed if a folder is requested directly (no directory listing guard by default)
+Options -Indexes
+
+# The /src tree holds the internal application php and the test code; the only web
+# entry points are /http and /api, and the browser only fetches the css and images
+# under /src/main/resources. Block the internal php and the whole test tree from
+# direct web access so they can neither be executed nor their source disclosed, while
+# leaving the style/image resources reachable. Fully moving /src out of the docroot
+# (so it is unreachable even if apache ignores this file) stays a deployment task.
+RedirectMatch 404 ^/src/main/php/
+RedirectMatch 404 ^/src/test/
+
+# Allow-list for the served file types: deny every file by default, so that e.g. a
+# future secret dropped as .json or .ini can never be silently served; only the
+# php entry points, the static pages and the style, script, font and image files
+# that a browser needs are allowed below (this replaces the fragile deny-list of
+# single blocked extensions that this file used before)
+<FilesMatch ".+">
     Require all denied
 </FilesMatch>
+<FilesMatch "\.(php|html|css|js|map|ico|svg|png|jpe?g|gif|webp|woff2?|ttf|eot)$">
+    Require all granted
+</FilesMatch>
 
-# Block dotfiles (catches .env, .env.example, .gitignore)
+# the static offline fallback pages in the docroot have no file extension,
+# so they are allowed by their exact names
+<FilesMatch "^(login|login_activate|logout|signup|settings|find)$">
+    Require all granted
+</FilesMatch>
+
+# Block dotfiles again after the allow-list, so that e.g. a dotfile ending
+# in .php (like .test.php) can never be served or executed
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>
 
-# Block the install/update shell scripts if they ended up in docroot
-<FilesMatch "\.(sh|sql|yaml|yml|md)$">
-    Require all denied
-</FilesMatch>
+# The /optional folder holds source-only offline fallback pages. They are never
+# served from here; the server_admin script copies the needed page into the
+# docroot when a fallback goes live. Block direct access so the folder is inert.
+RedirectMatch 404 ^/optional/
+
+# The /server_admin folder holds admin state, whitelist lists, keys and the CLI
+# helpers. It must never be reachable over the web (the admin UI lives at
+# /http/server_admin.php instead). Return 404 so the folder looks non-existent.
+RedirectMatch 404 ^/server_admin/
+
+# The /script folder holds install / update / admin shell scripts. They are run
+# from a shell, never over the web (.sh is already blocked above; this hides the
+# whole folder as well). Return 404 so it looks non-existent.
+RedirectMatch 404 ^/script/
+
+# The /vendor folder holds the composer packages that are only used by the backend
+# php code; direct web access could execute library code out of context, so the
+# whole folder is hidden (composer.json at the root is blocked by the allow-list)
+RedirectMatch 404 ^/vendor/
+
+# The /cache folder holds server side cache files (e.g. the file based config
+# cache) that are never fetched by a browser. Return 404 so the folder looks
+# non-existent even if a cache file gets an allowed file extension.
+RedirectMatch 404 ^/cache/
+
+# The /http_old folder holds legacy controllers no longer used by the frontend
+# (the modern UI routes through /http/view.php). They are kept for reference
+# only and must never be served. Return 404 so the folder looks non-existent.
+RedirectMatch 404 ^/http_old/
+
+# The top-level /test folder holds the CLI test runners (test.php, test_unit.php, ...) and
+# helpers that reset the database. They run only from a shell (each script additionally
+# refuses a non-cli request), never over the web. Block the whole folder as defense-in-depth
+# - matching the /src/test block above - so it can neither be executed nor its source read
+# even if a broken or missing nested .htaccess would otherwise expose it.
+RedirectMatch 404 ^/test/
+
+# The install/update flow keeps the docroot a git working tree (for the in-place
+# update-program mechanism). The .git repository itself is moved outside the
+# docroot via --separate-git-dir, but block the whole /.git path here as a second
+# line of defence: the dotfile rule above only matches the last path segment, so
+# it would miss /.git/config, /.git/HEAD, /.git/objects/... Serving those would
+# leak the full source and commit history. Return 404 so the path looks absent.
+RedirectMatch 404 ^/\.git

@@ -43,6 +43,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'triple_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'formula_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'all_write_workflow_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -76,6 +77,7 @@ class all_workflow_tests
             // url snapshot tests (read only, do_it false)
             new word_url_tests()->run($t);
             new triple_url_tests()->run($t);
+            new formula_url_tests()->run($t);
 
             // the same workflows run again as db write tests (do_it true), gated like the other
             // db write tests so a read-only run (WRITE_TEST false) does not touch the database

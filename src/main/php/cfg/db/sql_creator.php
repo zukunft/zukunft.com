@@ -47,6 +47,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_page.php';
 //include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
@@ -112,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -219,6 +221,7 @@ class sql_creator
         sys_log::class,
         job::class,
         db_cache::class,
+        db_cache_page::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
 
@@ -1839,7 +1842,11 @@ class sql_creator
                 sql::FLD_LOG_FIELD_PREFIX . $fld,
                 $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
                 sql_par_type::INT_SMALL);
-            if ($fvt_lst->get_old($fld) != null or $fvt_lst->get_old_id($fld) != null) {
+            // use a strict null check so a falsy old value (a boolean false or a 0) still declares
+            // the _old parameter that the change log body references (change::sql_insert_log emits
+            // the old_value column for any old_value !== null); a loose check would drop the
+            // parameter for e.g. all_values_needed and leave the log insert referencing an undeclared _old
+            if ($fvt_lst->get_old($fld) !== null or $fvt_lst->get_old_id($fld) !== null) {
                 if ($fvt_lst->get_old_id($fld) != null) {
                     $par_lst_out->add_field(
                         $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
@@ -5046,7 +5053,6 @@ class sql_creator
             $this->table .= $ext;
         }
         $this->table = $this->fix_table_name($this->table);
-        log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
     /**
@@ -5354,7 +5360,6 @@ class sql_creator
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug('to "' . $result . '"', $debug - 20);
         return $result;
     }
 

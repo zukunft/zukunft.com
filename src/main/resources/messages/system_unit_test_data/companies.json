@@ -8,9 +8,7 @@
   ],
   "words": [
     {
-      "name": "company",
-      "view": "company list with main ratios",
-      "protection": "admin_protection"
+      "name": "company"
     },
     {
       "name": "ABB",
@@ -83,16 +81,13 @@
       "name": "2012"
     },
     {
-      "name": "CHF",
-      "type": "measure"
+      "name": "CHF"
     },
     {
-      "name": "EUR",
-      "type": "measure"
+      "name": "EUR"
     },
     {
-      "name": "USD",
-      "type": "measure"
+      "name": "USD"
     },
     {
       "name": "scaling",
@@ -1099,7 +1094,6 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "description": "calculate the increase in percent e.g. yearly",
       "assigned_word": "year"
     }
   ],

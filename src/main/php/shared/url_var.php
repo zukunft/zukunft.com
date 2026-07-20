@@ -103,6 +103,7 @@ class url_var
     const string STYLE = 'cs';
     const string COMPONENT_TYPE = 'ct';
     const string COMPONENT_LINK_TYPE = 'cy';
+    const string LINK_TYPE = 'cx';
     // data fields used for system forms
     //
     // VIEW ('d') is an OBJECT-FIELD key: the value of an object's own "default view-id"
@@ -167,6 +168,7 @@ class url_var
     const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
+    const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
     const string PATTERN = 'kp'; // the wildcard pattern to select a list of objects by name
     const string REF = 'l'; // l for data link to external
@@ -176,6 +178,7 @@ class url_var
     const string REVERSE_PLURAL = 'lx'; // the name of the verb if used the other way round and there are many phrases
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
+    const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string PHRASE = 'p'; // the id or name of one phrase
     const string PHRASE_CLASS = 'pc'; // word or triple class indicator of the phrase
@@ -208,6 +211,7 @@ class url_var
     const string USERNAME = 'un';
     const string USER_PROFILE = 'up';
     const string URL = 'ur';
+    const string USER_USES_SANDBOX = 'us'; // checkbox if the pages for the user must be created from the user sandbox
     const string USER_TYPE = 'ut';
     const string USAGE = 'uu'; // the usage value a form field
     const string USER_PASSWORD = 'uw';
@@ -255,6 +259,7 @@ class url_var
     const string STEP_CANCELED = '-2'; // the process has been canceled
     const string STEP_FAILED = '-3'; // the process cannot be processed
 
+    // TODO move to workflows
     // user reaction actions: the first parameter of frontend::url_user_reaction and the
     // cumulative segment of a unit workflow snapshot filename (see docs/llm/testing.md)
     const string ACTION_SHOW = 'show'; // display the requested object e.g. the test word in its default view
@@ -276,7 +281,35 @@ class url_var
     // init
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
+    const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
+    const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
+    const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
+    const int DEBUG_LEVEL_POD_READS = 2; // the second debug level is to show data calls from other zukunft.com pods
+    const int DEBUG_LEVEL_POD_PUSH = 3; // the third debug level is to show push messages to other zukunft.com pods
+    const int DEBUG_LEVEL_SERVICE_CALLS = 4; // the fourth debug level is to show calls of internal services like an R-project server
+    const int DEBUG_LEVEL_API_CALL = 5; // the fifth debug level is to show the api calls of the frontend to the backend
+    const int DEBUG_LEVEL_DB_WRITE = 6; // the sixth debug level is to show write actions to the database
+    const int DEBUG_LEVEL_DB_READ = 7; // the seventh debug level is to show read actions from the database
+    const int DEBUG_LEVEL_COMPLEX_FUNCTION = 8; // the eighth debug level is to show potential long lasting function calls e.g. due to a potential endless loop
+    const int DEBUG_LEVEL_MAIN_STEP = 9; // the ninth debug level is to show the main processing steps such as start and end
+    const int DEBUG_LEVEL_MAX_FIXED = 10; // the max number of predefined debug level and the staring of the depth debug levels
+
+    // the url vars that control the view, the object selection and the render mode of a request
+    // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
+    const array CONTROL_VARS = [
+        self::MASK,
+        self::MASK_POD,
+        self::ID,
+        self::USER,
+        self::STEP,
+        self::ACTION,
+        self::LANGUAGE,
+        self::WORDS,
+        self::POST_SUBMIT,
+        self::DEBUG,
+        self::NO_CACHE,
+    ];
 
 
     // the var names for the easy human-readable url (in content related order)
@@ -318,6 +351,7 @@ class url_var
     //const string ID = 'id'; // repeated as comment from standard list above just to remember that it is the same as standard
     const string ID_LST_HUMAN = 'ids'; // a comma separated list of internal database ids
     const string NAME_HUMAN = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const string NAME_GIVEN_HUMAN = 'name_given'; // the unique name of a triple or group that overwrites the generated name
     const string PATTERN_HUMAN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const string DESCRIPTION_HUMAN = 'description';
     const string CODE_ID_HUMAN = 'code_id';
@@ -424,6 +458,7 @@ class url_var
     const string COMPONENT_TYPE_HUMAN = 'component_type';
     const string COMPONENT_LINK_HUMAN = 'component_link_id'; // link a component to a view
     const string COMPONENT_LINK_TYPE_HUMAN = 'component_link_type';
+    const string LINK_TYPE_HUMAN = 'link_type';
     const string POSITION_TYPE_HUMAN = 'position_type';
     const string STYLE_HUMAN = 'style';
     const string PHRASE_ROW_HUMAN = 'phrase_row';
@@ -518,6 +553,7 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::MSG_HUMAN, self::MSG],
+        [self::NO_CACHE_HUMAN, self::NO_CACHE],
 
         // user
         [self::USER_HUMAN, self::USER],
@@ -534,6 +570,7 @@ class url_var
         [self::ID, self::ID],
         [self::ID_LST_HUMAN, self::ID_LST],
         [self::NAME_HUMAN, self::NAME],
+        [self::NAME_GIVEN_HUMAN, self::NAME_GIVEN],
         [self::PATTERN_HUMAN, self::PATTERN],
         [self::DESCRIPTION_HUMAN, self::DESCRIPTION],
         [self::CODE_ID_HUMAN, self::CODE_ID],
@@ -637,6 +674,7 @@ class url_var
         [self::COMPONENT_TYPE_HUMAN, self::COMPONENT_TYPE],
         [self::COMPONENT_LINK_HUMAN, self::COMPONENT_LINK],
         [self::COMPONENT_LINK_TYPE_HUMAN, self::COMPONENT_LINK_TYPE],
+        [self::LINK_TYPE_HUMAN, self::LINK_TYPE],
         [self::POSITION_TYPE_HUMAN, self::POSITION_TYPE],
         [self::STYLE_HUMAN, self::STYLE],
         [self::PHRASE_ROW_HUMAN, self::PHRASE_ROW],

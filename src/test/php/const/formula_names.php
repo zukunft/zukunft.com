@@ -101,6 +101,7 @@ class formula_names
 
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
+    const int SYSTEM_TEST_ADD_ID = 996; // fixed snapshot id of the add workflow formula (like word_names::TEST_ADD_ID)
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Formula via SQL function';
     const string SYSTEM_TEST_ADD_COM = 'System Test Formula Description';
     const string SYSTEM_TEST_RENAMED = 'System Test Formula Renamed';

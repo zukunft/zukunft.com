@@ -1,8 +1,13 @@
 GET
-http://localhost/http/view.php?m=1&z=-1
-/http/view.php?m=1&z=-1
-/http/view.php?mask_id=entry_view&step=cancel&
+http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=0&z=-1
+/http/view.php?id=0&9m=1&k=System+Test+Word&m=0&z=-1
+/http/view.php?id=0&9mask_id=entry_view&name=System+Test+Word&mask_id=0&step=cancel&
 {
-    "mask_id": "entry_view",
-    "step": "cancel"
+    "id": "0",
+    "name": "System Test Word",
+    "mask_id": "0",
+    "step": "cancel",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
 }

@@ -124,6 +124,51 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+The type preload of this bootstrap (and of `application::start_api`) uses the
+**cached types json**: `type_lists::load_cached` fills all type lists with one
+read of the `db_cache` `types` entry — the same api message that
+`ui_config::write_db_cache` stores for the frontend — and only falls back to
+one select per type list when the entry is missing or outdated
+(`db_cache::is_outdated`). The fill goes through `api_mapper(..., trusted: true)`:
+the `$trusted` flag marks json from the own database and also restores the
+fields an api message of a frontend must never change (the `code_id`, the verb
+usage/impact). The pod switch for the types cache is a config value and the
+config loads *after* the types, so the bootstrap calls
+`type_lists::reload_if_cache_denied` once the config is known. A caller that
+needs guaranteed fresh types (e.g. `ui_config::reload`, the test bootstrap)
+keeps using `load_type_lists` / `type_lists::load`.
+
+## `frontend.php` boots the html frontend, `application.php` the api backend
+
+The target is a frontend and a backend that are complete and independent of each
+other and talk only over the API (see `architecture.md`). The request bootstrap is
+therefore split in two, and each side uses only its own:
+
+- `web/frontend.php` — the **pure html php frontend**: `http/view.php`,
+  `http/about.php`, `http/setup.php` call `frontend::start()` / `frontend::end()`.
+- `cfg/application.php` — the **backend**, i.e. the api calls: the `api/**`
+  scripts call `application::start_api()` / `start_api_core()` / `end_api()`.
+
+Never call `application::start()` from a `web/` entry point, and never call
+`frontend::start()` from an api script.
+
+Because both bootstrap a request they **overlap today** — session start and
+hardening, TLS enforcement, the session token, opening the database and the
+timing switches exist in both files. That overlap is the cost of the unfinished
+split (it disappears once the frontend stops opening a database), not a signal to
+merge the two.
+
+Watch out when changing the request lifecycle: the two classes have same-named
+methods with **different signatures** —
+
+```php
+application::start(string $code_name, bool $echo_env = false, bool $restart = false)
+frontend::start(string $code_name, Message $msg = new Message(), array $url_arr = [])
+```
+
+so a new guard, debug message or timing switch added to one silently misses the
+other. Until the split is done, apply such a change to **both**.
+
 ## Paired HTML tags go through an `html_base` function that uses a tag const
 
 Any element that has an opening **and** closing tag (`<form>…</form>`,

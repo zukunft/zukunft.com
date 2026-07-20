@@ -132,7 +132,8 @@ class view_read_tests
         $lst = new view_sys_list($t->usr1);
         $lst->usr = $t->usr1;
         $result = $lst->load($db_con);
-        $t->assert('load', $result, true);
+        // the first system view list load also warms up the type list cache, so a multi db timeout is used
+        $t->assert('load', $result, true, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and check if at least the most critical is loaded
         $result = $sys->msk_cac->id(view_shared::WORD);

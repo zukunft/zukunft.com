@@ -172,7 +172,7 @@ class job_list extends list_db_write
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'job list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $job = new job($this->usr);

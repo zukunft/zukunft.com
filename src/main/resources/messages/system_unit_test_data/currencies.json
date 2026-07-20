@@ -8,29 +8,10 @@
   ],
   "words": [
     {
-      "name": "currency",
-      "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Currency",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q8142",
-          "type": "wikidata"
-        }
-      ]
+      "name": "currency"
     },
     {
-      "name": "turnover",
-      "description": "In financial markets, turnover refers to the total value of transactions traded over a given period. For currencies it typically describes the gross volume of foreign exchange transactions, often reported on a daily, monthly, or yearly basis.",
-      "refs": [
-        {
-          "name": "Turnover (finance)",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "turnover"
     },
     {
       "name": "OTC",
@@ -51,16 +32,6 @@
       "description": "Originating from or characteristic of a country other than the one being referenced. In finance the term typically qualifies currencies, transactions, or instruments tied to a country other than the domestic one."
     },
     {
-      "name": "exchange",
-      "description": "The act of giving one thing in return for another, or a marketplace where such transactions are organised. In finance, an exchange may refer either to a transaction itself (such as currency exchange) or to an organised venue for trading securities and commodities.",
-      "refs": [
-        {
-          "name": "Exchange (organized market)",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "instruments",
       "description": "Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.",
       "refs": [
@@ -71,18 +42,10 @@
       ]
     },
     {
-      "name": "average",
-      "description": "A single number that represents a set of values, typically calculated as the arithmetic mean (sum divided by count). In statistics, other measures of central tendency such as median or mode may also be called averages.",
-      "refs": [
-        {
-          "name": "Average",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "average"
     },
     {
       "name": "million",
-      "description": "The natural number equal to 1,000,000 (one thousand thousand). Financial figures, particularly turnover statistics, are often expressed in millions of a given currency to keep numbers manageable.",
       "refs": [
         {
           "name": "1,000,000",
@@ -221,8 +184,7 @@
       "description": "A residual category used to group together items that are not individually itemised. In currency turnover statistics, 'other currencies' aggregates the trading volume of all currencies outside the top-ranked ones."
     },
     {
-      "name": "total",
-      "description": "The complete sum or aggregate of a set of values, with no items excluded."
+      "name": "total"
     },
     {
       "name": "net",
@@ -230,20 +192,9 @@
     },
     {
       "name": "base",
-      "description": "E.g. in a currency pair, the base currency is the first currency quoted and represents the unit being priced. For example, in the EUR/USD pair, EUR is the base currency.",
       "refs": [
         {
           "name": "Currency pair",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "spot",
-      "description": "A spot transaction is a foreign exchange deal in which two parties agree to exchange currencies at the current market rate, with settlement typically occurring within two business days.",
-      "refs": [
-        {
-          "name": "Spot contract",
           "type": "wikipedia"
         }
       ]
@@ -293,58 +244,17 @@
       ]
     },
     {
-      "name": "April",
-      "description": "The fourth month of the Gregorian calendar, consisting of 30 days. The BIS Triennial Survey of foreign exchange turnover traditionally uses April as its reference month."
+      "name": "April"
     },
     {
-      "name": "year",
-      "description": "The orbital period of the Earth around the Sun, used as a unit of time in calendars and as a standard reporting period in finance and statistics."
+      "name": "year"
     },
     {
       "name": "2022",
       "description": "The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled."
     },
     {
-      "name": "daily",
-      "description": "Occurring or measured every day. In foreign exchange statistics, daily averages are a standard reporting metric showing typical turnover over a 24-hour trading day."
-    },
-    {
-      "name": "weekly",
-      "description": "Occurring or measured every week. In financial reporting, weekly averages aggregate daily figures across a calendar week."
-    },
-    {
-      "name": "monthly",
-      "description": "Occurring or measured every month. Monthly turnover figures are widely used in financial reporting and serve as a building block for higher-frequency aggregations such as yearly averages."
-    },
-    {
-      "name": "yearly",
-      "description": "Occurring or measured every year. Yearly turnover figures provide a long-term view of trading activity and are often used as the primary ranking criterion for currencies."
-    },
-    {
-      "name": "trading",
-      "description": "The buying and selling of financial instruments, currencies, or other assets in a marketplace. Foreign exchange trading is the world's largest financial market by volume.",
-      "refs": [
-        {
-          "name": "Trade",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "most",
-      "description": "Denoting the greatest in quantity, extent, or degree among a group of compared items. Used in superlative constructions such as 'most relevant' or 'most traded'."
-    },
-    {
-      "name": "relevant",
-      "description": "Closely connected or appropriate to the matter at hand. In this dataset, relevance is determined by trading turnover, with currencies ranked by yearly turnover being considered the most relevant."
-    },
-    {
-      "name": "ranking",
-      "description": "The arrangement of items in order according to some measurable criterion. In currency analysis, ranking is typically based on trading turnover, market capitalisation, or reserve holdings."
-    },
-    {
-      "name": "criteria",
-      "description": "Standards or principles used as a basis for judgement, decision, or classification. Ranking criteria define how items are ordered relative to one another."
+      "name": "daily"
     },
     {
       "name": "¥",
@@ -361,68 +271,10 @@
       ]
     },
     {
-      "name": "amount",
-      "description": "A quantity of something, especially the total of a thing or things in number, size, value, or extent. In a currency context, an amount is a quantity of money expressed in a specific currency."
-    },
-    {
-      "name": "rate",
-      "description": "A measure, quantity, or frequency, typically one measured against some other quantity or measure. In finance, a rate often expresses a ratio between two values, such as one currency's value in terms of another."
-    },
-    {
-      "name": "source",
-      "description": "The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from."
-    },
-    {
-      "name": "target",
-      "description": "The intended destination or endpoint of a process. In a currency conversion, the target side refers to the currency being converted into."
-    },
-    {
-      "name": "conversion",
-      "description": "The process of changing something from one form to another. Currency conversion refers to exchanging an amount of money in one currency for the equivalent value in another currency, typically using an exchange rate.",
-      "refs": [
-        {
-          "name": "Currency converter",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cross",
-      "description": "Going from one side to another or involving two parties. A cross rate is an exchange rate between two currencies derived from each currency's rate against a common third currency, typically the US dollar."
-    },
-    {
-      "name": "bid",
-      "description": "The price at which a buyer is willing to purchase a currency or other asset. In a quoted currency pair, the bid is the lower of the two prices and represents what a dealer will pay to buy the base currency.",
-      "refs": [
-        {
-          "name": "Bid price",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "ask",
-      "description": "The price at which a seller is willing to sell a currency or other asset. In a quoted currency pair, the ask is the higher of the two prices and represents what a dealer will accept to sell the base currency.",
-      "refs": [
-        {
-          "name": "Ask price",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "spread",
-      "description": "The difference between two prices, rates, or yields. In foreign exchange, the bid-ask spread is the difference between the ask price (at which a dealer sells) and the bid price (at which a dealer buys), and represents a transaction cost.",
-      "refs": [
-        {
-          "name": "Bid–ask spread",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "rate"
     },
     {
       "name": "price",
-      "description": "The amount of money expected, required, or given in exchange for something. In currency markets, prices are quoted as exchange rates between two currencies.",
       "refs": [
         {
           "name": "Price",
@@ -432,48 +284,6 @@
     },
     {
       "name": "percent"
-    },
-    {
-      "name": "change",
-      "description": "The difference between an old and a new value. In finance, change is often expressed in absolute terms or as a percentage of the original value."
-    },
-    {
-      "name": "old",
-      "description": "Existing or in use at an earlier point in time. In a percent-change calculation, the old value is the baseline against which the new value is compared."
-    },
-    {
-      "name": "new",
-      "description": "Existing or in use at the current or most recent point in time. In a percent-change calculation, the new value is compared against the earlier (old) value."
-    },
-    {
-      "name": "forward",
-      "description": "Relating to a future date. A forward exchange rate is the rate agreed today for a currency transaction to be settled on a specified future date, derived from the spot rate and the interest rate differential between the two currencies.",
-      "refs": [
-        {
-          "name": "Forward exchange rate",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "interest",
-      "description": "A charge for the use of borrowed money, typically expressed as an annual percentage of the principal. Interest rates set by central banks are a key determinant of forward exchange rates.",
-      "refs": [
-        {
-          "name": "Interest",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "quote",
-      "description": "In a currency pair, the quote currency (also called the counter currency) is the second currency listed and indicates how much of it is required to buy one unit of the base currency. For example, in EUR/USD, USD is the quote currency.",
-      "refs": [
-        {
-          "name": "Currency pair",
-          "type": "wikipedia"
-        }
-      ]
     },
     {
       "name": "ISO 4217 code",
@@ -531,7 +341,8 @@
     },
     {
       "name": "USD",
-      "description": "ISO 4217 alphabetic code for the United States dollar."
+      "description": "ISO 4217 alphabetic code for the United States dollar.",
+      "type": "measure"
     },
     {
       "name": "US$",
@@ -1252,111 +1063,12 @@
     {
       "name": "Total",
       "description": "The complete sum across all categories, with no items excluded."
+    },
+    {
+      "name": "Growth rate (2019–2022)"
     }
   ],
   "triples": [
-    {
-      "name": "ranking criteria",
-      "from": "ranking",
-      "verb": "has a",
-      "to": "criteria",
-      "description": "A ranking is always defined relative to one or more criteria that determine the order. For currencies, common criteria include trading turnover, reserve holdings, and market capitalisation."
-    },
-    {
-      "name": "most relevant",
-      "from": "relevant",
-      "verb": "can be",
-      "to": "most",
-      "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria."
-    },
-    {
-      "name": "trading turnover",
-      "from": "trading",
-      "verb": "can have",
-      "to": "turnover",
-      "description": "Trading turnover is the total volume of trades executed in a market over a specified period. For foreign exchange, it is typically measured in USD-equivalent value."
-    },
-    {
-      "name": "daily turnover",
-      "from": "trading turnover",
-      "verb": "can be",
-      "to": "daily",
-      "description": "Daily turnover aggregates all trades executed within a single trading day."
-    },
-    {
-      "name": "weekly turnover",
-      "from": "trading turnover",
-      "verb": "can be",
-      "to": "weekly",
-      "description": "Weekly turnover aggregates daily turnover figures across a calendar week."
-    },
-    {
-      "name": "yearly turnover",
-      "from": "trading turnover",
-      "verb": "can be",
-      "to": "yearly",
-      "description": "Yearly turnover aggregates trading activity across a calendar or fiscal year, providing a long-term view of market activity."
-    },
-    {
-      "name": "daily turnover ranking",
-      "from": "daily turnover",
-      "verb": "can be",
-      "to": "ranking criteria",
-      "description": "A ranking that uses daily turnover as the ordering criterion to compare currencies, exchanges, or instruments."
-    },
-    {
-      "name": "weekly turnover ranking",
-      "from": "weekly turnover",
-      "verb": "can be",
-      "to": "ranking criteria",
-      "description": "A ranking that uses weekly turnover as the ordering criterion."
-    },
-    {
-      "name": "yearly turnover ranking",
-      "from": "yearly turnover",
-      "verb": "can be",
-      "to": "ranking criteria",
-      "description": "A ranking that uses yearly turnover as the ordering criterion. This is typically considered the most stable and relevant criterion for ranking currencies."
-    },
-    {
-      "name": "primary ranked by yearly turnover",
-      "from": "yearly turnover ranking",
-      "verb": "is a",
-      "to": "most relevant",
-      "description": "Yearly turnover ranking is treated here as the canonical 'most relevant' ranking for currencies, as it smooths out short-term volatility."
-    },
-    {
-      "name": "ranked by weekly turnover",
-      "from": "weekly turnover ranking",
-      "verb": "can be",
-      "to": "relevant",
-      "description": "Weekly turnover ranking provides a mid-term view of currency relevance, balancing immediacy with stability."
-    },
-    {
-      "name": "ranked by daily turnover",
-      "from": "daily turnover ranking",
-      "verb": "can be",
-      "to": "relevant",
-      "description": "Daily turnover ranking gives the most immediate view of currency relevance but is more volatile than longer-term rankings."
-    },
-    {
-      "from": "currency",
-      "verb": "has a",
-      "to": "primary ranked by yearly turnover",
-      "description": "Every currency in this dataset is primarily ordered by its yearly turnover, the default ranking criterion."
-    },
-    {
-      "from": "currency",
-      "verb": "can have",
-      "to": "ranked by weekly turnover",
-      "description": "Currencies may also be ranked by weekly turnover where a shorter-term view is needed."
-    },
-    {
-      "from": "currency",
-      "verb": "can have",
-      "to": "ranked by daily turnover",
-      "description": "Currencies may also be ranked by daily turnover, the most volatile of the supported ranking criteria."
-    },
     {
       "name": "average turnover",
       "from": "turnover",
@@ -1370,20 +1082,6 @@
       "verb": "can be",
       "to": "daily",
       "description": "Daily average turnover expresses turnover as a per-day mean, calculated by dividing total turnover in a period by the number of trading days."
-    },
-    {
-      "name": "monthly average turnover",
-      "from": "average turnover",
-      "verb": "can be",
-      "to": "monthly",
-      "description": "Monthly average turnover expresses turnover as a per-month mean over a longer reporting horizon."
-    },
-    {
-      "name": "yearly average turnover",
-      "from": "average turnover",
-      "verb": "can be",
-      "to": "yearly",
-      "description": "Yearly average turnover expresses turnover as a per-year mean, typically derived from monthly averages."
     },
     {
       "name": "in USD",
@@ -1427,184 +1125,6 @@
       "from": "U.S. dollar",
       "verb": "is alias of",
       "to": "US dollar"
-    },
-    {
-      "name": "exchange rate",
-      "from": "exchange",
-      "verb": "has a",
-      "to": "rate",
-      "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
-      "refs": [
-        {
-          "name": "Exchange rate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q66100",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "source amount",
-      "from": "amount",
-      "verb": "can be",
-      "to": "source",
-      "description": "The amount of money being converted from the source currency, expressed in units of that source currency."
-    },
-    {
-      "name": "target amount",
-      "from": "amount",
-      "verb": "can be",
-      "to": "target",
-      "description": "The amount of money produced by the conversion, expressed in units of the target currency."
-    },
-    {
-      "name": "source currency",
-      "from": "currency",
-      "verb": "can be",
-      "to": "source",
-      "description": "The currency from which an amount is converted in a currency-conversion operation."
-    },
-    {
-      "name": "target currency",
-      "from": "currency",
-      "verb": "can be",
-      "to": "target",
-      "description": "The currency into which an amount is converted in a currency-conversion operation."
-    },
-    {
-      "name": "currency conversion",
-      "from": "currency",
-      "verb": "can have",
-      "to": "conversion",
-      "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
-      "refs": [
-        {
-          "name": "Currency converter",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cross rate",
-      "from": "exchange rate",
-      "verb": "can be",
-      "to": "cross",
-      "description": "A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar."
-    },
-    {
-      "name": "bid price",
-      "from": "price",
-      "verb": "can be",
-      "to": "bid",
-      "description": "The bid price is the highest price a buyer (typically a market maker) is willing to pay for a currency at a given moment."
-    },
-    {
-      "name": "ask price",
-      "from": "price",
-      "verb": "can be",
-      "to": "ask",
-      "description": "The ask price (also called the offer price) is the lowest price a seller (typically a market maker) is willing to accept for a currency at a given moment."
-    },
-    {
-      "name": "bid-ask spread",
-      "from": "spread",
-      "verb": "between",
-      "to": "bid",
-      "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
-      "refs": [
-        {
-          "name": "Bid–ask spread",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "spread percent",
-      "from": "spread",
-      "verb": "in",
-      "to": "percent",
-      "description": "The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels."
-    },
-    {
-      "name": "rate change",
-      "from": "exchange rate",
-      "verb": "can have",
-      "to": "change",
-      "description": "The movement in an exchange rate between two points in time, expressed either in absolute terms or as a percentage."
-    },
-    {
-      "name": "old rate",
-      "from": "exchange rate",
-      "verb": "can be",
-      "to": "old",
-      "description": "The earlier of two exchange rate observations, used as the baseline in computing a rate change."
-    },
-    {
-      "name": "new rate",
-      "from": "exchange rate",
-      "verb": "can be",
-      "to": "new",
-      "description": "The more recent of two exchange rate observations, compared against the old rate to compute a rate change."
-    },
-    {
-      "name": "percent change",
-      "from": "change",
-      "verb": "in",
-      "to": "percent",
-      "description": "A change expressed as a fraction of the original value times 100. Standard formula: (new − old) / old × 100."
-    },
-    {
-      "name": "forward rate",
-      "from": "exchange rate",
-      "verb": "can be",
-      "to": "forward",
-      "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
-      "refs": [
-        {
-          "name": "Forward exchange rate",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "spot rate",
-      "from": "exchange rate",
-      "verb": "can be",
-      "to": "spot",
-      "description": "The spot rate is the current exchange rate at which a currency pair can be bought or sold for immediate delivery (typically T+2 settlement)."
-    },
-    {
-      "name": "interest rate",
-      "from": "interest",
-      "verb": "has a",
-      "to": "rate",
-      "description": "The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.",
-      "refs": [
-        {
-          "name": "Interest rate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q179179",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "base currency interest rate",
-      "from": "interest rate",
-      "verb": "of",
-      "to": "base",
-      "description": "The interest rate applicable to the base currency of a currency pair. Higher base-currency interest rates relative to the quote currency typically lead to forward rates below spot."
-    },
-    {
-      "name": "quote currency interest rate",
-      "from": "interest rate",
-      "verb": "of",
-      "to": "quote",
-      "description": "The interest rate applicable to the quote currency of a currency pair. Higher quote-currency interest rates relative to the base currency typically lead to forward rates above spot."
     },
     {
       "from": "US dollar",
@@ -2605,78 +2125,6 @@
       "description": "'Yen' (used in the original dataset) and 'Japanese yen' (used in the new file) refer to the same currency (JPY)."
     }
   ],
-  "formulas": [
-    {
-      "name": "yearly average turnover by month sum",
-      "expression": "\"yearly average turnover\" = &sum; ( \"monthly average turnover\" ) / 12",
-      "assigned_word": "currency"
-    },
-    {
-      "name": "currency conversion calculation",
-      "expression": "\"target amount\" = \"source amount\" * \"exchange rate\"",
-      "assigned": [
-        "currency",
-        "conversion"
-      ],
-      "description": "The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.",
-      "refs": [
-        {
-          "name": "Currency converter",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "reverse currency conversion",
-      "expression": "\"source amount\" = \"target amount\" / \"exchange rate\"",
-      "assigned_word": "currency"
-    },
-    {
-      "name": "USD cross rate",
-      "expression": "\"cross rate\" = \"exchange rate\" ( \"source currency\" , \"US dollar\" ) / \"exchange rate\" ( \"target currency\" , \"US dollar\" )",
-      "description": "A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar.",
-      "assigned": [
-        "currency",
-        "cross",
-        "rate"
-      ]
-    },
-    {
-      "name": "bid-ask spread absolut",
-      "expression": "\"bid-ask spread\" = \"ask price\" - \"bid price\"",
-      "assigned_word": "currency",
-      "description": "The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.",
-      "refs": [
-        {
-          "name": "Bid–ask spread",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "bid-ask spread percent",
-      "expression": "\"spread percent\" = ( \"ask price\" - \"bid price\" ) / \"ask price\" * 100",
-      "assigned_word": "currency",
-      "description": "The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels."
-    },
-    {
-      "name": "rate percent change",
-      "expression": "\"percent change\" = ( \"new rate\" - \"old rate\" ) / \"old rate\" * 100",
-      "assigned_word": "currency"
-    },
-    {
-      "name": "forward rate from spot",
-      "expression": "\"forward rate\" = \"spot rate\" * ( 1 + \"quote currency interest rate\" ) / ( 1 + \"base currency interest rate\" )",
-      "assigned_word": "forward",
-      "description": "A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.",
-      "refs": [
-        {
-          "name": "Forward exchange rate",
-          "type": "wikipedia"
-        }
-      ]
-    }
-  ],
   "sources": [
     {
       "name": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022",
@@ -3658,6 +3106,18 @@
         "Proportion of daily volume April 2022"
       ],
       "number": 200
+    }
+  ],
+  "formulas": [
+    {
+      "name": "USD cross rate",
+      "expression": "\"cross rate\" = \"exchange rate\" ( \"source currency\" , \"US dollar\" ) / \"exchange rate\" ( \"target currency\" , \"US dollar\" )",
+      "description": "A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar.",
+      "assigned": [
+        "currency",
+        "cross",
+        "rate"
+      ]
     }
   ]
 }

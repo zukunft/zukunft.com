@@ -69,8 +69,22 @@ class api
     const string LOGIN_ACTIVATE_FORWARD = DIRECTORY_SEPARATOR . 'login_activate';
     const string RESET_FORWARD = DIRECTORY_SEPARATOR . 'reset';
     const string LOGOUT_FORWARD = DIRECTORY_SEPARATOR . 'logout';
-    const string ERROR_LOG_SCRIPT = self::SCRIPT_PATH . 'error_log.php';
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
+
+    // flag added at the end of a cached html page to tell the frontend
+    // that a user specific refresh of the page is prepared in the background
+    // and the frontend should poll for the updated page
+    const string PAGE_REFRESH_FLAG = '<!-- page refresh coming -->';
+
+    // invisible placeholder before the footer of every html page, so that a text replace
+    // can add a user message to a html page loaded from the page cache;
+    // the raw comment cannot be forged by user content, because all content is html escaped
+    const string USER_MSG_PLACEHOLDER = '<!--usr_msg-->';
+
+    // the css class that marks the user message notification of a page, so that the message
+    // can be removed from the page before writing it to the html page cache
+    // (see db_cache_page::strip_user_msg and html_base::CLASS_NOTIFICATION)
+    const string USER_MSG_CLASS = 'notification-bar';
 
 
     /*
@@ -126,9 +140,6 @@ class api
     const string API_WORD = 'word';
     const string API_TRIPLE = 'triple';
 
-    const string DSP_VIEW_ADD = "view_add";
-    const string DSP_VIEW_EDIT = "view_edit";
-    const string DSP_VIEW_DEL = "view_del";
     const string DSP_COMPONENT_ADD = "component_add";
     const string DSP_COMPONENT_EDIT = "component_edit";
     const string DSP_COMPONENT_DEL = "component_del";

@@ -43,6 +43,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_GROUP . 'group.php';
 //include_once paths::MODEL_HELPER . 'db_cache.php';
+//include_once paths::MODEL_HELPER . 'db_cache_page.php';
 //include_once paths::MODEL_HELPER . 'db_cache_status.php';
 //include_once paths::MODEL_HELPER . 'db_cache_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
@@ -149,6 +150,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_status;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -239,7 +241,9 @@ class def
      * main code const
      */
 
-    const string PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
+    // the release part of the code version from version.txt; to detect the correct update script and to mark the data export
+    // the minor version from version.txt because a json format or database change raises the minor version
+    const string PRG_VERSION = SYSTEM_MINOR_VERSION;
     const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
     const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
 
@@ -534,18 +538,22 @@ class def
         user_status::class,
     ];
 
-    // list of classes that use the user sandbox
+    // list of classes that use the user sandbox, i.e. that have a user_* overlay table
     const array SANDBOX_CLASSES = [
         word::class,
         triple::class,
         source::class,
         ref::class,
+        group::class,
         value::class,
         formula::class,
+        formula_link::class,
         result::class,
         view::class,
+        view_relation::class,
+        term_view::class,
         component::class,
-        view_relation::class
+        component_link::class
     ];
 
     // list of classes that have n:m object links e.g. view has components linked
@@ -585,6 +593,7 @@ class def
     const array CLASSES_NO_LOG = [
         job::class,
         db_cache::class,
+        db_cache_page::class,
     ];
 
     // list of classes that use a database table but where the changes do not need to be logged
@@ -638,6 +647,7 @@ class def
         'db_cache_statuum',
         'db_cache_types',
         'db_caches',
+        'db_cache_pages',
         'user_official_types',
         'ip_ranges',
         'sessions',

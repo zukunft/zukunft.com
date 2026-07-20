@@ -194,6 +194,13 @@ class rest_call
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
+        // show every api call from '&debug=5' upward (url_var::DEBUG_LEVEL_API_CALL) to trace which
+        // backend calls a rendering triggers, because an api call is neither a db read nor a db write
+        log_debug($method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
+
+        // TODO Prio 2 measure the api call time in a frontend owned timing object on $ui_sys, so that
+        //      the api_ctrl section of the time report also covers the wait of the html frontend;
+        //      the backend $sys must not be used here (web/ may declare only $ui_sys and $mtr)
         $result = curl_exec($curl);
 
         if ($result === false) {

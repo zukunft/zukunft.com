@@ -35,10 +35,12 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -63,6 +65,7 @@ class sys_log_tests
     CONST string T2_LOG_TEXT = 'the log 2 text that describes the problem for the user or system admin';
     CONST string T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
     CONST string T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
+    CONST string THROTTLE_FILE_PREFIX = 'zukunft_test_sys_log_throttle_';
     CONST string T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
 
     function run(test_cleanup $t): void
@@ -79,6 +82,49 @@ class sys_log_tests
         // start the test section (ts)
         $ts = 'unit log ';
         $t->header($ts);
+
+        $t->subheader($ts . 'critical error output escaping');
+
+        // a critical error echoes the (possibly request-derived) message to the user, so it must be
+        // html-escaped or a crafted value (e.g. a url mask reaching log_err) could inject script into
+        // the error response (reflected xss); see text_log_functions.php::critical_error_html
+        $xss_payload = '<script>alert(1)</script>';
+        $err_html = \critical_error_html($xss_payload);
+        $test_name = 'the critical error html escapes an injected script tag';
+        $t->assert_text_contains($test_name, $err_html, htmlspecialchars($xss_payload, ENT_QUOTES));
+        $test_name = 'the critical error html does not echo the raw script tag';
+        $t->assert_text_not_contains($test_name, $err_html, $xss_payload);
+        // the internal function / file name is not disclosed to the user (information disclosure);
+        // it stays in the sys_log for the admin, so the user-facing html has no 'by <function>' part
+        $test_name = 'the critical error html does not disclose an internal function or file name';
+        $t->assert_text_not_contains($test_name, $err_html, ' by ');
+
+        $t->subheader($ts . 'sys_log insert throttle');
+
+        // the cross-request throttle caps the sys_log inserts per time window so that a flood of
+        // requests each logging a distinct error cannot grow the sys_log table unbounded (dos);
+        // see text_log_functions.php::sys_log_insert_allowed
+        $state_file = tempnam(sys_get_temp_dir(), self::THROTTLE_FILE_PREFIX);
+        $note_file = tempnam(sys_get_temp_dir(), self::THROTTLE_FILE_PREFIX);
+        $now = strtotime(self::TV_TIME);
+        $allowed = true;
+        for ($i = 0; $i < text_log::INSERT_LIMIT; $i++) {
+            $allowed = $allowed && \sys_log_insert_allowed($now, $state_file, $note_file);
+        }
+        $test_name = 'all inserts up to the limit are allowed';
+        $t->assert_true($test_name, $allowed);
+        $test_name = 'the insert above the limit is rejected';
+        $t->assert_false($test_name, \sys_log_insert_allowed($now, $state_file, $note_file));
+        $test_name = 'the start of the suppression is noted in the text error log';
+        $t->assert_text_contains($test_name, file_get_contents($note_file), 'suppressed');
+        $test_name = 'a new time window allows inserts again';
+        $t->assert_true($test_name,
+            \sys_log_insert_allowed($now + text_log::INSERT_WINDOW_SEC, $state_file, $note_file));
+        $test_name = 'a broken state file allows the insert to not lose a log entry';
+        file_put_contents($state_file, 'not a json');
+        $t->assert_true($test_name, \sys_log_insert_allowed($now, $state_file, $note_file));
+        unlink($state_file);
+        unlink($note_file);
 
         $t->subheader($ts . 'system sql setup');
         $log = new sys_log();

@@ -108,10 +108,13 @@ class system_page extends component
         if ($pattern == '') {
             $title = $mtr->txt(msg_id::FORM_TITLE_SEARCH);
         } else {
+            // escape the user supplied pattern before it is placed into the html title, so a
+            // reflected xss like ?pattern=<script>... is shown as text instead of executed
+            $html = new html_base();
             $title = $lib->msg_var_replace(
                 $mtr->txt(msg_id::FORM_TITLE_SEARCH_RESULT),
                 msg_id::VAR_PATTERN,
-                $pattern);
+                $html->esc($pattern));
         }
         return $title;
     }

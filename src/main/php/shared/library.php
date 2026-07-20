@@ -510,8 +510,8 @@ class library
             . 'SELECT (\S+) \((.+)\);$/';
         $pg_update = '/^PREPARE (\S+) \((.+?)\) AS (UPDATE .+);$/';
         $my_update = "/^PREPARE (\S+) FROM '(UPDATE .+)';$/";
-        $pg_select = '/^PREPARE (\S+) \((.+?)\) AS SELECT (.+) FROM (.+);$/';
-        $my_select = "/^PREPARE (\S+) FROM 'SELECT (.+) FROM (.+)';$/";
+        $pg_select = '/^PREPARE (\S+)(?: \((.+?)\))? AS SELECT (.+?) FROM (.+);$/';
+        $my_select = "/^PREPARE (\S+) FROM 'SELECT (.+?) FROM (.+)';$/";
         if (preg_match($pg_function, $sql, $prt)) {
             $result = $this->sql_format_function($prt);
         } elseif (preg_match($my_procedure, $sql, $prt)) {
@@ -523,7 +523,9 @@ class library
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
                 . $this->sql_format_update_quoted($prt[2]);
         } elseif (preg_match($pg_select, $sql, $prt)) {
-            $result = 'PREPARE ' . $prt[1] . ' (' . implode(', ', $this->sql_split($prt[2])) . ") AS\n"
+            // the parameter list is optional e.g. the count queries prepare without a parameter
+            $params = ($prt[2] ?? '') != '' ? ' (' . implode(', ', $this->sql_split($prt[2])) . ')' : '';
+            $result = 'PREPARE ' . $prt[1] . $params . " AS\n"
                 . $this->sql_format_select_fields($this->sql_split($prt[3])) . "\n"
                 . $this->sql_format_select_tail($prt[4]) . ';';
         } elseif (preg_match($my_select, $sql, $prt)) {
@@ -532,8 +534,264 @@ class library
             $result = 'PREPARE ' . $prt[1] . " FROM\n"
                 . "   '" . substr($fields, 4) . "\n"
                 . $this->sql_format_select_tail($prt[3]) . "';";
+        } elseif (preg_match('/^(-- -+ )?(?:-- -- .+? -- |CREATE (?:UNIQUE )?INDEX |CREATE TABLE |ALTER TABLE )/', $sql)) {
+            $result = $this->sql_format_setup($sql);
         }
         return $result;
+    }
+
+    /**
+     * format a table setup script the same way the existing setup sql test resource
+     * files are formatted, i.e. a create table, index or foreign key / constraint
+     * script (one or several statements with the matching header comment blocks):
+     * a header comment block, for a CREATE TABLE one column per line with the names
+     * aligned (and for the mariadb dialect the types and null clause aligned as well)
+     * and for an ALTER TABLE with several clauses one clause per line.
+     *
+     * the formatting only rearranges whitespace and never changes any token, so
+     * a formatted script is always equal to the input once trim_sql is applied;
+     * as a safety net the raw input is returned unchanged if the round trip fails
+     *
+     * @param string $sql a generated table setup script e.g. on a single line
+     * @return string the formatted setup script or the unchanged input
+     */
+    private function sql_format_setup(string $sql): string
+    {
+        $input = $this->trim($sql);
+        $is_mysql = stripos($input, 'ENGINE = InnoDB') !== false
+            || stripos($input, 'AUTO_INCREMENT') !== false;
+
+        $result = '';
+        $prev_kind = '';
+        foreach ($this->sql_split($input, ';') as $st) {
+            if ($st == '') {
+                continue;
+            }
+            $piece = $this->sql_format_setup_stmt($st, $is_mysql) . ';';
+            $kind = $this->sql_format_setup_kind($piece);
+            // a header prefixed statement always starts a new table section
+            $starts_group = str_starts_with($piece, '--');
+            if ($result == '') {
+                $result = $piece;
+            } elseif ($starts_group) {
+                $result .= "\n\n" . $piece;
+            } elseif ($kind == 'comment' and $prev_kind == 'comment') {
+                // consecutive comments stay together
+                $result .= "\n" . $piece;
+            } elseif ($kind == 'index' and $prev_kind == 'index') {
+                // consecutive CREATE INDEX statements stay together
+                $result .= "\n" . $piece;
+            } else {
+                $result .= "\n\n" . $piece;
+            }
+            $prev_kind = $kind;
+        }
+        $result .= "\n";
+
+        // safety net: never change any token; keep the raw input if the reformat does not match
+        // the input under the same normalization that the sql asserts use (trim_sql),
+        // which e.g. ignores the spaces around brackets that only differ due to the formatting
+        if ($this->trim_sql($result) != $this->trim_sql($sql)) {
+            return $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * format one top level statement of a table setup script
+     * i.e. split off the leading separator and '-- ... --' header comment, handle
+     * the mariadb auto increment block, the CREATE TABLE and the ALTER TABLE clauses
+     *
+     * @param string $st one top level statement without the trailing ';'
+     * @param bool $is_mysql true to align the statement for the mariadb dialect
+     * @return string the formatted statement
+     */
+    private function sql_format_setup_stmt(string $st, bool $is_mysql): string
+    {
+        $prefix = '';
+        // a real separator line has many dashes; the '-- ... --' header has only two
+        if (preg_match('/^(-- -{4,}) (.*)$/s', $st, $m)) {
+            $prefix = $m[1] . "\n\n";
+            $st = trim($m[2]);
+        }
+        // the auto increment block must be checked before the general header
+        if (preg_match('/^-- -- AUTO_INCREMENT for table (\S+) -- ALTER TABLE (\S+) (MODIFY .+)$/s', $st, $m)) {
+            return $prefix . "--\n-- AUTO_INCREMENT for table " . $m[1] . "\n--\n"
+                . 'ALTER TABLE ' . $m[2] . "\n    " . trim($m[3]);
+        }
+        // the general '-- -- <header> -- <body>' block e.g. 'table structure ...',
+        // 'indexes for table ...' or 'constraints for table ...'
+        if (preg_match('/^-- -- (.+?) -- (.*)$/s', $st, $m)) {
+            $prefix .= "--\n-- " . trim($m[1]) . "\n--\n\n";
+            $st = trim($m[2]);
+        }
+        if (preg_match('/^CREATE TABLE /', $st)) {
+            return $prefix . $this->sql_format_create_table($st, $is_mysql);
+        }
+        // an ALTER TABLE with several comma separated clauses gets one clause per line
+        if (preg_match('/^ALTER TABLE (\S+) (.+)$/s', $st, $m)) {
+            $clauses = $this->sql_split($m[2], ',');
+            if (count($clauses) > 1) {
+                return $prefix . 'ALTER TABLE ' . $m[1] . "\n    " . implode(",\n    ", $clauses);
+            }
+            return $prefix . 'ALTER TABLE ' . $m[1] . ' ' . $m[2];
+        }
+        // COMMENT ON ..., a single CREATE INDEX and any other statement is kept on one line
+        return $prefix . $st;
+    }
+
+    /**
+     * format a single CREATE TABLE statement with one column per line and the names
+     * (and for mariadb the types and null clause) aligned in columns
+     *
+     * @param string $create the CREATE TABLE statement without the trailing ';'
+     * @param bool $is_mysql true to align the statement for the mariadb dialect
+     * @return string the formatted CREATE TABLE statement
+     */
+    private function sql_format_create_table(string $create, bool $is_mysql): string
+    {
+        if (!preg_match('/^CREATE TABLE (IF NOT EXISTS )?(\S+) \((.*)$/s', $create, $m)) {
+            return $create;
+        }
+        $if_not_exists = $m[1] ?? '';
+        $table = $m[2];
+        $rest = $m[3];
+
+        // find the matching closing bracket of the column list
+        $depth = 1;
+        $in_quote = false;
+        $len = strlen($rest);
+        $cut = -1;
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $rest[$i];
+            if ($ch == "'") {
+                $in_quote = !$in_quote;
+            } elseif (!$in_quote) {
+                if ($ch == '(') {
+                    $depth++;
+                } elseif ($ch == ')') {
+                    $depth--;
+                    if ($depth == 0) {
+                        $cut = $i;
+                        break;
+                    }
+                }
+            }
+        }
+        if ($cut < 0) {
+            return $create;
+        }
+        $cols_str = trim(substr($rest, 0, $cut));
+        $tbl_tail = trim(substr($rest, $cut + 1)); // mariadb: ENGINE ... CHARSET ... COMMENT '...'
+
+        // split the field definitions from the table constraints e.g. the PRIMARY KEY
+        $defs = [];
+        $constraints = [];
+        foreach ($this->sql_split($cols_str, ',') as $c) {
+            if ($c == '') {
+                continue;
+            }
+            if (preg_match('/^(PRIMARY KEY|UNIQUE|KEY|CONSTRAINT|INDEX|FOREIGN KEY)\b/i', $c)) {
+                $constraints[] = $c;
+            } else {
+                $defs[] = $c;
+            }
+        }
+
+        // measure the column widths for the alignment
+        $name_w = 0;
+        $type_w = 0;
+        $null_w = 0;
+        $parsed = [];
+        foreach ($defs as $c) {
+            $sp = strpos($c, ' ');
+            $name = $sp === false ? $c : substr($c, 0, $sp);
+            $def = $sp === false ? '' : trim(substr($c, $sp + 1));
+            $parsed[] = [$name, $def];
+            $name_w = max($name_w, strlen($name));
+            if ($is_mysql) {
+                $sp2 = strpos($def, ' ');
+                $type = $sp2 === false ? $def : substr($def, 0, $sp2);
+                $after = $sp2 === false ? '' : trim(substr($def, $sp2 + 1));
+                $type_w = max($type_w, strlen($type));
+                if (str_starts_with($after, 'NOT NULL')) {
+                    $null_w = max($null_w, 8);
+                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                    $null_w = max($null_w, 12);
+                }
+            }
+        }
+
+        // build the aligned column lines
+        $lines = [];
+        foreach ($parsed as [$name, $def]) {
+            if ($is_mysql) {
+                $sp = strpos($def, ' ');
+                $type = $sp === false ? $def : substr($def, 0, $sp);
+                $after = $sp === false ? '' : trim(substr($def, $sp + 1));
+                $null_clause = '';
+                $rem = $after;
+                if (str_starts_with($after, 'NOT NULL')) {
+                    $null_clause = 'NOT NULL';
+                    $rem = trim(substr($after, 8));
+                } elseif (str_starts_with($after, 'DEFAULT NULL')) {
+                    $null_clause = 'DEFAULT NULL';
+                    $rem = trim(substr($after, 12));
+                }
+                if ($null_clause != '') {
+                    $body = str_pad($type, $type_w) . ' '
+                        . str_pad($null_clause, $null_w, ' ', STR_PAD_LEFT)
+                        . ($rem != '' ? ' ' . $rem : '');
+                } else {
+                    $body = str_pad($type, $type_w) . ($after != '' ? ' ' . $after : '');
+                }
+            } else {
+                $body = $def;
+            }
+            $lines[] = '    ' . str_pad($name, $name_w) . ' ' . rtrim($body);
+        }
+        foreach ($constraints as $c) {
+            $lines[] = '    ' . $c;
+        }
+
+        $out = 'CREATE TABLE ' . $if_not_exists . $table . "\n(\n";
+        if ($is_mysql) {
+            $out .= implode(",\n", $lines) . "\n)";
+            if ($tbl_tail != '') {
+                if (preg_match("/^ENGINE = (\S+) DEFAULT CHARSET = (\S+) COMMENT ('.*')$/s", $tbl_tail, $em)) {
+                    $out .= "\n    ENGINE = " . $em[1] . "\n    DEFAULT CHARSET = " . $em[2]
+                        . "\n    COMMENT " . $em[3];
+                } else {
+                    $out .= ' ' . $tbl_tail;
+                }
+            }
+        } else {
+            $out .= implode(",\n", $lines) . ')';
+        }
+        return $out;
+    }
+
+    /**
+     * classify a formatted statement to decide the blank lines between the statements
+     *
+     * @param string $piece a formatted top level statement
+     * @return string the kind of the statement e.g. 'create', 'comment' or 'other'
+     */
+    private function sql_format_setup_kind(string $piece): string
+    {
+        if (str_contains($piece, 'CREATE TABLE')) {
+            return 'create';
+        }
+        if (str_starts_with(ltrim($piece), 'COMMENT ON')) {
+            return 'comment';
+        }
+        if (str_contains($piece, 'CREATE INDEX')) {
+            return 'index';
+        }
+        if (str_contains($piece, 'AUTO_INCREMENT for table')) {
+            return 'autoinc';
+        }
+        return 'other';
     }
 
     /**
@@ -915,6 +1173,10 @@ class library
      */
     private function sql_format_select_tail(string $tail): string
     {
+        // a join on a sub query (e.g. the user change count) is formatted separately
+        if (str_contains($tail, ' LEFT JOIN (')) {
+            return $this->sql_format_count_tail($tail);
+        }
         if (!preg_match('/^(\S+( \S+)?)( LEFT JOIN (\S+( \S+)?) ON (.+?))?( WHERE (.+))?$/', $tail, $prt)) {
             return '          FROM ' . $tail;
         }
@@ -933,6 +1195,83 @@ class library
             $result .= "\n" . '         WHERE ' . $prt[8];
         }
         return $result;
+    }
+
+    /**
+     * format the from, left join sub query, where and order part of a user change count select
+     * the sub query counts the user sandbox rows per table and sums them up per user, so the
+     * union of the per-table counts is shown one table per line below the wrapping sub query
+     *
+     * @param string $tail the part of the query after the outer FROM keyword
+     * @return string the formatted from, join sub query, where and order lines
+     */
+    private function sql_format_count_tail(string $tail): string
+    {
+        // split off the outer table and the joined sub query
+        $join_pos = strpos($tail, ' LEFT JOIN (');
+        $outer_tbl = substr($tail, 0, $join_pos);
+        [$sub, $rest] = $this->sql_paren_split(substr($tail, $join_pos + strlen(' LEFT JOIN ')));
+        // the outer alias, the on condition and the optional where and order by follow the sub query
+        preg_match('/^ (\S+) ON (.+?)( WHERE (.+?))?( ORDER BY (.+))?$/', $rest, $prt);
+        $out_alias = $prt[1];
+        $on = $prt[2];
+        $where = $prt[4] ?? '';
+        $order = $prt[6] ?? '';
+        // split the wrapping sum sub query into its select part and the counted union
+        $from_pos = strpos($sub, ' FROM ( ');
+        $sum = substr($sub, strlen('SELECT '), $from_pos - strlen('SELECT '));
+        [$union, $sub_rest] = $this->sql_paren_split(substr($sub, $from_pos + strlen(' FROM ')));
+        preg_match('/^ (\S+) GROUP BY (.+)$/', $sub_rest, $sub_prt);
+        $sub_alias = $sub_prt[1];
+        $sub_group = $sub_prt[2];
+        // one line per counted user table
+        $branches = explode(' UNION ', $union);
+        $last = count($branches) - 1;
+        $result = '          FROM ' . $outer_tbl;
+        $result .= "\n" . '     LEFT JOIN ( SELECT ' . $sum;
+        foreach ($branches as $i => $branch) {
+            $prefix = $i == 0 ? '                   FROM ( ' : '                    UNION ';
+            $suffix = $i == $last ? ' ) ' . $sub_alias : '';
+            $result .= "\n" . $prefix . $branch . $suffix;
+        }
+        $result .= "\n" . '               GROUP BY ' . $sub_group . ' ) ' . $out_alias;
+        $result .= "\n" . '            ON ' . $on;
+        if ($where != '') {
+            $result .= "\n" . '         WHERE ' . $where;
+        }
+        if ($order != '') {
+            $result .= "\n" . '      ORDER BY ' . $order;
+        }
+        return $result;
+    }
+
+    /**
+     * split a string that starts with a '(' into the content of the first balanced
+     * parenthesis pair and the remaining string after the matching ')'
+     *
+     * @param string $sql the string that starts with an opening parenthesis
+     * @return array the trimmed inner content and the remaining string after the closing parenthesis
+     */
+    private function sql_paren_split(string $sql): array
+    {
+        $depth = 0;
+        $end = -1;
+        $len = strlen($sql);
+        for ($i = 0; $i < $len; $i++) {
+            if ($end < 0) {
+                if ($sql[$i] == '(') {
+                    $depth++;
+                } elseif ($sql[$i] == ')') {
+                    $depth--;
+                    if ($depth == 0) {
+                        $end = $i;
+                    }
+                }
+            }
+        }
+        $inside = trim(substr($sql, 1, $end - 1));
+        $rest = substr($sql, $end + 1);
+        return [$inside, $rest];
     }
 
     /**
@@ -1977,25 +2316,29 @@ class library
      */
 
     /**
-     * returns true if the version to check is older than this program version
+     * returns true if the version to check is newer than this program version
      * used e.g. for import to allow importing of files of an older version without warning
+     * a missing part counts as zero, so 0.0.3 is the same version as 0.0.3.0
+     * and a release version can be compared with a version that has a build number
+     * @param string $prg_version_to_check the version that should be compared with this version
+     * @param string $this_version the version to compare with e.g. the release part of the code version
+     * @return bool true if the version to check is newer than this version
      */
-    function prg_version_is_newer($prg_version_to_check, $this_version = def::PRG_VERSION): bool
+    function prg_version_is_newer(string $prg_version_to_check, string $this_version = def::PRG_VERSION): bool
     {
         $is_newer = false;
-
-        $this_prg_version_parts = explode(".", $this_version);
-        $to_check = explode(".", $prg_version_to_check);
         $is_older = false;
-        foreach ($this_prg_version_parts as $key => $this_part) {
-            if (!$is_newer and !$is_older) {
-                if ($this_part < $to_check[$key]) {
-                    $is_newer = true;
-                } else {
-                    if ($this_part > $to_check[$key]) {
-                        $is_older = true;
-                    }
-                }
+
+        $this_parts = explode(".", $this_version);
+        $to_check = explode(".", $prg_version_to_check);
+        $part_count = max(count($this_parts), count($to_check));
+        for ($i = 0; $i < $part_count and !$is_newer and !$is_older; $i++) {
+            $this_part = (int)($this_parts[$i] ?? 0);
+            $check_part = (int)($to_check[$i] ?? 0);
+            if ($this_part < $check_part) {
+                $is_newer = true;
+            } elseif ($this_part > $check_part) {
+                $is_older = true;
             }
         }
 
@@ -3479,7 +3822,12 @@ class library
         } else {
             $result = str_split($text);
         }
-        return $result;
+        // TODO Prio 1
+        if ($result == null) {
+            return [];
+        } else {
+            return $result;
+        }
     }
 
     /**

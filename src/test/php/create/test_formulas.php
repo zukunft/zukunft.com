@@ -51,6 +51,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -238,6 +240,69 @@ class test_formulas extends test_objects
         $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
+    }
+
+    /**
+     * the url of the empty add formula form, mirroring test_words::word_new_url
+     * @return array the url parameters of a formula without any field set
+     */
+    static function formula_new_url(): array
+    {
+        $frm_ui = new formula_ui();
+        return $frm_ui->to_url_array();
+    }
+
+    /**
+     * the url of the added test formula
+     *
+     * @return array the formula url parameters of the added test formula
+     */
+    function formula_add_url(): array
+    {
+        $frm_ui = new formula_ui($this->formula_add()->api_json());
+        return $frm_ui->to_url_array();
+    }
+
+    /**
+     * the filled formula url posted by the edit form in the second change_formula round, mirroring
+     * test_triples::fill_url_array: the first round only changed the description, so the fill round
+     * adds the still-missing need-all-values flag; the '8'-prefixed opening values are the state the
+     * formula has after the first round, so the confirm view shows only the new flag as changed
+     *
+     * @param int $id the database id of the formula the workflow runs on, used as the back target
+     * @return array the edit form url with every field set plus the '8'-prefixed opening values
+     */
+    function fill_url_array(int $id): array
+    {
+        $url_arr = $this->formula_add_url();
+        // the workflow step adds the current db id of the test formula, so drop the factory id
+        unset($url_arr[url_var::ID]);
+        $url_arr[url_var::DESCRIPTION] = formula_names::SYSTEM_TEST_ADD_COM;
+        $url_arr[url_var::NEED_ALL] = '1';
+        $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = $url_arr[url_var::DESCRIPTION];
+        $url_arr[url_var::PRE . url_var::USER_EXPRESSION] = $url_arr[url_var::USER_EXPRESSION];
+        $url_arr[url_var::BACK . url_var::ID] = $id;
+        return $url_arr;
+    }
+
+    /**
+     * TODO Prio 0 use to_url function
+     * the new formula fields posted by the add form on save and shown again in the confirm add view,
+     * mirroring test_triples::add_url_array; a formula is defined by its name and expression, and the
+     * reserved 'System Test Formula' name lets a later workflow load the added formula back
+     *
+     * @return array the add form url parameters of the new formula
+     */
+    function add_url_array(): array
+    {
+        return [
+            url_var::NAME => formula_names::SYSTEM_TEST_ADD,
+            url_var::USER_EXPRESSION => formula_names::INCREASE_EXP,
+            url_var::DESCRIPTION => formula_names::SYSTEM_TEST_ADD_COM,
+            url_var::SHARE => share_types::PUBLIC_ID,
+            url_var::PROTECTION => protection_types::NO_PROTECT_ID
+        ];
     }
 
     /**

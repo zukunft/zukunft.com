@@ -59,6 +59,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -275,6 +278,88 @@ class value_tests
         // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
 
+        $t->subheader($ts . 'protection');
+        // the value/result branch has its own save path, so it needs the same protection-level
+        // gating as the seq-id branch (see word_tests protection); a normal user may neither raise
+        // a value to admin protection (self-lock) nor reduce it below the stored level
+        global $sys;
+        $val_db = $t_val->value_protected(); // a value with admin protection stored in the database
+        $protect_denied = 'Only an admin'; // stable start of both protection warning translations
+
+        $test_name = 'a normal user cannot reduce the value protection level';
+        $usr_msg = new user_message();
+        $val_imp = $t_val->value();
+        $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
+        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
+        $test_name = 'the denied value reduction is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+
+        $test_name = 'an admin user can reduce the value protection level';
+        $usr_msg = new user_message();
+        $val_imp = $t_val->value();
+        $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
+        $val_imp->check_protection_change($val_db, $t->usr_admin, $usr_msg);
+        $t->assert($test_name, $val_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
+        $test_name = 'the admin value reduction is not reported';
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
+
+        $test_name = 'a normal user cannot raise the value protection to no change';
+        $usr_msg = new user_message();
+        $val_imp = $t_val->value();
+        $val_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
+        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
+        $test_name = 'the denied value raise is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+
+        $test_name = 'a normal user cannot set the admin protection on a new value';
+        $usr_msg = new user_message();
+        $val_new = $t_val->value();
+        $val_new->set_protection_by_code_id(protection_types::ADMIN);
+        $val_new->check_protection_change(null, $t->usr_normal, $usr_msg);
+        $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
+        $test_name = 'the denied protection of the new value is reported to the user';
+        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+
+        $test_name = 'an admin user can set the admin protection on a new value';
+        $usr_msg = new user_message();
+        $val_new = $t_val->value();
+        $val_new->set_protection_by_code_id(protection_types::ADMIN);
+        $val_new->check_protection_change(null, $t->usr_admin, $usr_msg);
+        $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
+        $test_name = 'the admin protection of the new value is not reported';
+        $t->assert($test_name, $usr_msg->all_message_text(), '');
+
+        $t->subheader($ts . 'read access (share)');
+        // a non-public value must not be disclosed to another user loaded by id (idor);
+        // see value::is_readable_by and value_list::filter_readable_by
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+
+        $val_priv = $t_val->value();
+        $val_priv->set_owner_id($t->usr1->id);
+        $val_priv->set_share_id($private_id);
+        $test_name = 'the owner may read their own private value';
+        $t->assert_true($test_name, $val_priv->is_readable_by($t->usr1));
+        $test_name = 'another user may not read a private value';
+        $t->assert_false($test_name, $val_priv->is_readable_by($t->usr2));
+        $test_name = 'an admin may read another user private value';
+        $t->assert_true($test_name, $val_priv->is_readable_by($t->usr_admin));
+
+        $val_pub = $t_val->value();
+        $val_pub->set_owner_id($t->usr1->id);
+        $test_name = 'a public value is readable by another user';
+        $t->assert_true($test_name, $val_pub->is_readable_by($t->usr2));
+
+        // the list filter drops the values another user may not read (allow_duplicates so both
+        // test values are actually listed regardless of their id before filtering)
+        $val_lst_read = new value_list($t->usr2);
+        $val_lst_read->add($val_priv, true);
+        $val_lst_read->add($val_pub, true);
+        $val_lst_read->filter_readable_by($t->usr2);
+        $test_name = 'the readable filter keeps only the public value for another user';
+        $t->assert($test_name, count($val_lst_read->lst()), 1);
+
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
@@ -330,7 +415,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&id=32770">3.14</a>');
+        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=32770">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 

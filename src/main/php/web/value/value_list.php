@@ -215,11 +215,14 @@ class value_list extends ListBase
     function sort_by_impact(): void
     {
         $lst = $this->lst();
-        // impact first, then number, then the value (group) id so that values with the
-        // same impact and number keep a deterministic order independent of the db/api row order
+        // impact first, then number, then the group name so that values with the same impact and
+        // number keep a deterministic order that does not depend on the value (group) id: a value's
+        // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
+        // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
+        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
         usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
-            ?: $a->id() <=> $b->id());
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $this->set_lst($lst);
     }
 
@@ -267,11 +270,7 @@ class value_list extends ListBase
             foreach ($this->lst() as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $row = $val->grp->name_link_list($context_phr_lst);
-                        $row .= ' ';
-                        $row .= $val->value_edit($back);
-                        $row .= $html->lf();
-                        $result .= $row;
+                        $result .= $this->value_line($val, $context_phr_lst, $back);
                     } else {
                         $diff = $this->count() - $i;
                         if ($diff > 0) {
@@ -282,6 +281,229 @@ class value_list extends ListBase
                     $i++;
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * render one value as a line for a value list: the phrase link(s) on the left and the numeric
+     * value (as an edit link) on the right; the shared line renderer of list() and list_most_relevant()
+     *
+     * @param value $val the value to render
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader and therefore left out of the line
+     * @param string $back the last view to suggest the best follow-up view
+     * @return string the html code of one value line
+     */
+    private function value_line(value $val, phrase_list $context_phr_lst, string $back): string
+    {
+        $html = new html_base();
+        $row = $val->grp->name_link_list($context_phr_lst);
+        $row .= ' ';
+        $row .= $val->value_edit($back);
+        $row .= $html->lf();
+        return $row;
+    }
+
+    /**
+     * create the html code to show the most relevant values grouped for a quick overview, ordered
+     * - first the time groups (newest period first) where a time word (e.g. "2022") is shared by more
+     *   than one value, each line showing the remaining phrase on the left and the number on the right
+     * - then a group per phrase that is used by more than the configured minimum of values, the groups
+     *   ordered by the aggregated impact of their values
+     * - last the remaining values sorted by impact descending (with the usual limit and "... more" tail)
+     * see docs/llm/pending_next_launch.md for the feature description
+     *
+     * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
+     * @param string $back the last view to suggest the best follow-up view
+     * @param string $style to define e.g. the width of the list
+     * @return string the html code to display the grouped values to the user
+     */
+    function list_most_relevant(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string      $back = '',
+        string      $style = ''
+    ): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            // the values still to be placed; each section consumes the values it groups
+            $pool = $this->lst();
+            [$time_html, $pool] = $this->time_groups($pool, $context_phr_lst, $back);
+            [$phrase_html, $pool] = $this->relevant_phrase_groups($pool, $context_phr_lst, $back);
+            $rest_html = $this->impact_lines($pool, $context_phr_lst, $back, $style);
+            $result = $time_html . $phrase_html . $rest_html;
+        }
+        return $result;
+    }
+
+    /**
+     * section one of list_most_relevant: group the values by their time phrase and render each time
+     * word that is shared by more than one value as a group, newest period first
+     *
+     * @param array $pool the values still to be placed
+     * @param phrase_list $context_phr_lst phrases left out of each value line
+     * @param string $back the last view to suggest the best follow-up view
+     * @return array [string the html of the time groups, array the values not put into a time group]
+     */
+    private function time_groups(array $pool, phrase_list $context_phr_lst, string $back): array
+    {
+        // bucket the values by the id of their time phrase, keeping the time phrase per bucket
+        $buckets = [];
+        $time_phr = [];
+        foreach ($pool as $val) {
+            $tphr = $val->time_phrase();
+            if ($tphr != null) {
+                $buckets[$tphr->id()][] = $val;
+                $time_phr[$tphr->id()] = $tphr;
+            }
+        }
+        // keep only the time words shared by more than one value, newest (name descending) first
+        $ids = [];
+        foreach ($buckets as $id => $vals) {
+            if (count($vals) > 1) {
+                $ids[] = $id;
+            }
+        }
+        usort($ids, fn($a, $b) => strcmp($time_phr[$b]->name(), $time_phr[$a]->name()));
+
+        $result = '';
+        $grouped = [];
+        foreach ($ids as $id) {
+            $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $back);
+            foreach ($buckets[$id] as $val) {
+                $grouped[$val->id()] = true;
+            }
+        }
+        $rest = array_values(array_filter($pool, fn(value $val) => !isset($grouped[$val->id()])));
+        return [$result, $rest];
+    }
+
+    /**
+     * section two of list_most_relevant: group the remaining values by a phrase that is used by more
+     * than the configured minimum of values, the groups ordered by the aggregated impact of the values
+     *
+     * @param array $pool the values still to be placed
+     * @param phrase_list $context_phr_lst phrases left out of each value line
+     * @param string $back the last view to suggest the best follow-up view
+     * @return array [string the html of the phrase groups, array the values not put into a phrase group]
+     */
+    private function relevant_phrase_groups(array $pool, phrase_list $context_phr_lst, string $back): array
+    {
+        $min = config::MIN_PHRASE_GROUP;
+        $ctx_ids = $this->phrase_id_set($context_phr_lst);
+
+        // per value the ids of its groupable phrases, plus the count, phrase and aggregated impact per id
+        $val_phr_ids = [];
+        $count = [];
+        $phr_by_id = [];
+        $impact = [];
+        foreach ($pool as $val) {
+            $ids_of_val = [];
+            foreach ($this->group_phrases($val, $ctx_ids) as $phr) {
+                $id = $phr->id();
+                $ids_of_val[$id] = true;
+                $count[$id] = ($count[$id] ?? 0) + 1;
+                $phr_by_id[$id] = $phr;
+                $impact[$id] = ($impact[$id] ?? 0) + $val->impact();
+            }
+            $val_phr_ids[$val->id()] = $ids_of_val;
+        }
+        // the phrases used often enough, ordered by the aggregated impact of their values
+        $ids = [];
+        foreach ($count as $id => $cnt) {
+            if ($cnt > $min) {
+                $ids[] = $id;
+            }
+        }
+        usort($ids, fn($a, $b) => $impact[$b] <=> $impact[$a]
+            ?: strcmp($phr_by_id[$a]->name(), $phr_by_id[$b]->name()));
+
+        // greedily assign each still-remaining value to the highest-impact phrase group it belongs to
+        $result = '';
+        $remaining = $pool;
+        foreach ($ids as $id) {
+            $members = array_values(array_filter($remaining,
+                fn(value $val) => isset($val_phr_ids[$val->id()][$id])));
+            if (count($members) > $min) {
+                $result .= $this->group_block($phr_by_id[$id], $members, $context_phr_lst, $back);
+                $taken = [];
+                foreach ($members as $val) {
+                    $taken[$val->id()] = true;
+                }
+                $remaining = array_values(array_filter($remaining, fn(value $val) => !isset($taken[$val->id()])));
+            }
+        }
+        return [$result, $remaining];
+    }
+
+    /**
+     * section three of list_most_relevant: the remaining values sorted by impact descending, rendered
+     * with the same per-line format, limit and "... more" tail as list()
+     *
+     * @param array $pool the remaining values
+     * @param phrase_list $context_phr_lst phrases left out of each value line
+     * @param string $back the last view to suggest the best follow-up view
+     * @param string $style to define e.g. the width of the list
+     * @return string the html of the remaining values
+     */
+    private function impact_lines(array $pool, phrase_list $context_phr_lst, string $back, string $style): string
+    {
+        $val_lst = new value_list();
+        $val_lst->set_lst($pool);
+        return $val_lst->list($context_phr_lst, $back, $style);
+    }
+
+    /**
+     * render one group of the most relevant value list: the group phrase (time word or shared phrase)
+     * as the header followed by one line per member value; the header phrase is added to the context so
+     * it is not repeated on each member line
+     *
+     * @param phrase $header the time word or shared phrase shown as the group header
+     * @param array $members the values of the group
+     * @param phrase_list $context_phr_lst phrases already assumed by the reader
+     * @param string $back the last view to suggest the best follow-up view
+     * @return string the html code of the group header and its value lines
+     */
+    private function group_block(phrase $header, array $members, phrase_list $context_phr_lst, string $back): string
+    {
+        $html = new html_base();
+        $result = $header->name_link() . $html->lf();
+        $ctx = clone $context_phr_lst;
+        $ctx->add_phrase($header);
+        foreach ($members as $val) {
+            $result .= $this->value_line($val, $ctx, $back);
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases of a value that can form a phrase group: the group phrases without the context phrases
+     * and without the time phrases (a time phrase groups in the time section, not here)
+     *
+     * @param value $val the value whose groupable phrases are returned
+     * @param array $ctx_ids the ids of the context phrases keyed by id
+     * @return array the groupable phrase objects of the value
+     */
+    private function group_phrases(value $val, array $ctx_ids): array
+    {
+        $result = [];
+        foreach ($val->grp->phr_lst()->lst() as $phr) {
+            if (!isset($ctx_ids[$phr->id()]) and !$phr->is_time()) {
+                $result[] = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrase list whose ids are collected
+     * @return array the phrase ids of the given list keyed by id for a fast "contains" lookup
+     */
+    private function phrase_id_set(phrase_list $phr_lst): array
+    {
+        $result = [];
+        foreach ($phr_lst->lst() as $phr) {
+            $result[$phr->id()] = true;
         }
         return $result;
     }

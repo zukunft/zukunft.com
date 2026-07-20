@@ -172,7 +172,7 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
-    const string CLASS_NOTIFICATION = 'alert alert-warning notification-bar';
+    const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
     const string CLASS_SUBMIT = 'submit-input';
@@ -247,7 +247,8 @@ class html_base
     {
         $txt = $this->nav($this->about() . ' &middot; ' . $this->privacy());
         $txt .= $this->p($this->foot_text());
-        return $this->foot($txt);
+        // the same invisible user message placeholder as in the standard footer
+        return api::USER_MSG_PLACEHOLDER . $this->foot($txt);
     }
 
     /**
@@ -404,7 +405,8 @@ class html_base
             $result .= $this->list_item($usr_label) . "\n";
         }
         if ($usr_name !== null) {
-            $url_logout = $this->url_with_back(api::LOGOUT_SCRIPT, $url_array);
+            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
+            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
             $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
@@ -451,7 +453,10 @@ class html_base
     function footer(bool $no_about = false): string
     {
         global $mtr;
-        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
+        // invisible placeholder so that a text replace can add a user message
+        // to a html page loaded from the page cache (see api::USER_MSG_PLACEHOLDER)
+        $result = api::USER_MSG_PLACEHOLDER . "\n";
+        $result .= '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
@@ -464,7 +469,7 @@ class html_base
         $result .= $this->ref(def::LINK_CC0, $mtr->txt(msg_id::CC0), $mtr->txt(msg_id::CC0_LICENSE)) . ' ' . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_LICENCE_UNLESS) . ' ' . "\n";
         $result .= $this->ref(def::LINK_GITHUB, $mtr->txt(msg_id::PROGRAM_CODE)) . ' ' . "\n";
-        $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_CODE_VERSION . "\n";
+        $result .= $mtr->txt(msg_id::FOOTER_OF_VERSION) . ' ' . SYSTEM_PAGE_VERSION . "\n";
         $result .= $mtr->txt(msg_id::FOOTER_UNDER_THE) . ' ' . $this->ref(def::LINK_AGPL, $mtr->txt(msg_id::AGPL3)) . ' ' . $mtr->txt(msg_id::FOOTER_LICENCE) . '. ' . "\n";
         $result .= '</' . self::P . '> ' . "\n";
 
@@ -482,27 +487,56 @@ class html_base
 
     // TODO Prio 1 use this everywhere if possible
 
+    // the url schemes that are linked; any other scheme e.g. javascript: is never linked
+    const array LINK_SCHEMES = ['http', 'https'];
+
     /**
      * create the html code for a link
+     * the url and the link text are escaped here at the output sink, so that a user supplied
+     * url e.g. of a source or reference can neither break the href attribute nor add a script,
+     * and only a http, https or relative url is linked (e.g. a javascript: url is never linked)
      *
      * @param string $url the target url
      * @param string $name the text shown to the user for the link e.g. 'global warming' to show the triple global warming
-     * @param string $title
-     * @param string $css_class
-     * @return string
+     * @param string $title the tooltip of the link
+     * @param string $css_class the css class name of the link
+     * @param bool $name_is_html true only if the calling function guarantees that the link text is safe html e.g. an icon
+     * @return string the html code of the link or just the text if the url scheme is not allowed
      */
-    function ref(string $url, string $name, string $title = '', string $css_class = ''): string
+    function ref(string $url, string $name, string $title = '', string $css_class = '', bool $name_is_html = false): string
     {
-        $result = '<' . self::A . ' ' . self::HREF . '="' . $url . '"';
-        if ($title != '' && $title != $name) {
-            $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        if (!$name_is_html) {
+            $name = $this->esc($name);
         }
-        if ($css_class != '') {
-            $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
+        if (!$this->url_scheme_allowed($url)) {
+            // show the text without the link and report the unexpected scheme
+            log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
+            $result = $name;
+        } else {
+            $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
+            if ($title != '' && $title != $name) {
+                $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+            }
+            if ($css_class != '') {
+                $result .= ' ' . self::CLASS_HTML . '="' . $css_class . '"';
+            }
+            $result .= '>';
+            $result .= $name;
+            $result .= '</' . self::A . '>';
         }
-        $result .= '>';
-        $result .= $name;
-        $result .= '</' . self::A . '>';
+        return $result;
+    }
+
+    /**
+     * @param string $url the target url of a link
+     * @return bool true if the url is relative or uses one of the allowed schemes
+     */
+    private function url_scheme_allowed(string $url): bool
+    {
+        $result = true;
+        if (preg_match('/^\s*([a-z][a-z0-9+.\-]*):/i', $url, $matches)) {
+            $result = in_array(strtolower($matches[1]), self::LINK_SCHEMES);
+        }
         return $result;
     }
 
@@ -517,6 +551,10 @@ class html_base
      */
     function ref_view(int $msk_id, int $id, string $name, string $par = ''): string
     {
+        // $name is always the plain object name shown as the link text, so
+        // escape it here to stop a name like '<img src=x onerror=...>' from
+        // running when another user browses or searches for the object
+        $name = $this->esc($name);
         if ($par == '') {
             return $this->ref(api::MAIN_SCRIPT
                 . '?' . url_var::MASK . '=' . $msk_id
@@ -533,12 +571,24 @@ class html_base
     {
         $result = '<' . self::IMG
             . ' ' . self::SRC . '="' . $img_path . '"'
-            . ' ' . self::ALT . '="' . $alt . '"';
+            . ' ' . self::ALT . '="' . htmlspecialchars($alt, ENT_QUOTES) . '"';
         if ($class !== '') {
             $result .= ' ' . self::CLASS_HTML . '="' . $class . '"';
         }
         $result .= '>';
         return $result;
+    }
+
+    /**
+     * escape user settable text so it is shown literally and cannot inject html
+     * (e.g. a word, triple, formula or verb name or description placed into the
+     * html body); the element helpers escape values that go into an attribute
+     * @param string|null $text the raw user text
+     * @return string the text safe to place between html tags
+     */
+    function esc(?string $text): string
+    {
+        return htmlspecialchars($text ?? '', ENT_NOQUOTES);
     }
 
     /**
@@ -553,7 +603,7 @@ class html_base
             $result .= ' ' . html_names::HTML_CLASS . '="' . $style . '"';
         }
         if ($title != '') {
-            $result .= ' ' . html_names::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+            $result .= ' ' . html_names::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '" ' . self::TOGGLE_TOOLTIP;
         }
         $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
@@ -673,6 +723,25 @@ class html_base
         return $this->prefixed_url_part($field_values, url_var::PRE);
     }
 
+    static function prefixed_url_array(array $url_arr, string $prefix): array
+    {
+        $par = [];
+        foreach ($url_arr as $key => $val) {
+            $par[$prefix . $key] = $val;
+        }
+        return $par;
+    }
+
+    static function back_url_array(array $url_arr): array
+    {
+        return self::prefixed_url_array($url_arr, url_var::BACK);
+    }
+
+    static function pre_url_array(array $url_arr): array
+    {
+        return self::prefixed_url_array($url_arr, url_var::PRE);
+    }
+
     /**
      * Build the additional URL parameters for an array, each key prefixed with the given prefix char.
      *
@@ -701,6 +770,21 @@ class html_base
                 return $url . '?' . $par_ext;
             }
         }
+    }
+
+    /**
+     * append the anti-csrf session token to a get action link (logout, error_update) so that the
+     * server (frontend::request_token_valid) can reject a top-level cross-site get that would
+     * otherwise trigger the action; the token is read from the session here, the same place
+     * form_session_token reads it for the crud post forms
+     * @param string $url the action url e.g. 'view.php?m=64'
+     * @return string the url with the session token param appended
+     */
+    function url_with_token(string $url): string
+    {
+        $token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
+        $sep = str_contains($url, '?') ? '&' : '?';
+        return $url . $sep . url_var::SESSION_TOKEN . '=' . rawurlencode($token);
     }
 
     /**
@@ -810,7 +894,7 @@ class html_base
         } else {
             $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_HTML);
         }
-        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
     }
 
     /**
@@ -819,7 +903,7 @@ class html_base
     function logo_big(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_BIG);
-        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        return $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
     }
 
     /**
@@ -828,7 +912,7 @@ class html_base
     function logo_flex(): string
     {
         $img = $this->img(files::LOGO, POD_NAME, self::CLASS_LOGO_FLEX);
-        $ref = $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO);
+        $ref = $this->ref(api::MAIN_SCRIPT, $img, POD_NAME, self::CLASS_LOGO, true);
         return $this->div($ref, self::CLASS_LOGO_SECTION);
     }
 
@@ -1087,6 +1171,17 @@ class html_base
     }
 
     /**
+     * the hidden anti-csrf field carrying the session token that the server validates on a submit
+     * every crud form (opened via form_start) and the login and signup forms include it so that a
+     * data change without the matching token is rejected (see frontend::request_token_valid)
+     * @return string the html code of the hidden session token field
+     */
+    function form_session_token(): string
+    {
+        return $this->form_hidden(url_var::SESSION_TOKEN, $_SESSION[url_var::SESSION_TOKEN] ?? '');
+    }
+
+    /**
      * end a html form with save, cancel and optional delete buttons
      * @param string $submit_name label for the save button; empty uses the default translated label
      * @param string $back the URL or word id to return to after cancelling
@@ -1112,7 +1207,7 @@ class html_base
                 }
             }
             if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -1189,7 +1284,7 @@ class html_base
         $result .= $mtr->txt(msg_id::ABOUT_SUPPORTS) . ' ';
         $result .= $this->ref(def::LINK_GITHUB_TREAM, $mtr->txt(msg_id::OPEN_SOURCE), $mtr->txt(msg_id::ABOUT_GITHUB_LINK)) . ' ' . $mtr->txt(msg_id::ABOUT_PORTFOLIO_MGMT) . '<br><br>';
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
-        $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO)) . '<' . self::BR . '><' . self::BR . '>';
+        $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
         $result .= $this->footer(true);
 
@@ -1293,7 +1388,7 @@ class html_base
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
                 $url = $this->url_new($class_name . rest_ctrl::UPDATE, $item->id(), '', $back);
-                $result .= $this->ref($url, $item->name());
+                $result .= $this->ref($url, $this->esc($item->name()));
                 $result .= '<' . self::BR . '>';
             }
         }
@@ -1586,7 +1681,7 @@ class html_base
                 }
             }
             if ($del_call <> '') {
-                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_POPUP_TITLE_DELETE), '', 'btn btn-outline-danger');
+                $result .= $this->ref($del_call, $mtr->txt(msg_id::SYSTEM_TITLE_OBJECT_NAMED_DELETE), '', 'btn btn-outline-danger');
             }
         } else {
             if ($submit_name == "") {
@@ -1908,7 +2003,9 @@ class html_base
         $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
         $id = ' ' . self::ID . '="' . $form_name . '"';
 
-        return '<' . self::FORM . $action . $id . '>';
+        // every crud form carries the anti-csrf session token as its first hidden field so the
+        // server can reject a data change that does not carry the matching token (see form_session_token)
+        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token();
     }
 
     /**
@@ -1998,7 +2095,7 @@ class html_base
         $result = $this->lf();
         $result .= '<' . self::DIV . ' ' . self::CLASS_HTML . '="row ';
         $result .= view_styles::COL_SM_12;
-        $result .= ' justify-content-center">';
+        $result .= ' ' . styles::JUSTIFY_CENTER . '">';
         return $result;
     }
 
@@ -2145,9 +2242,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h1(string $txt, string $style = ''): string
+    static function h1(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H1, $txt, $style);
+        return self::hx(self::H1, $txt, $style);
     }
 
     /**
@@ -2156,9 +2253,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h2(string $txt, string $style = ''): string
+    static function h2(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H2, $txt, $style);
+        return self::hx(self::H2, $txt, $style);
     }
 
     /**
@@ -2167,9 +2264,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h3(string $txt, string $style = ''): string
+    static function h3(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H3, $txt, $style);
+        return self::hx(self::H3, $txt, $style);
     }
 
     /**
@@ -2178,9 +2275,9 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    function h4(string $txt, string $style = ''): string
+    static function h4(string $txt, string $style = ''): string
     {
-        return $this->hx(self::H4, $txt, $style);
+        return self::hx(self::H4, $txt, $style);
     }
 
     /**
@@ -2190,7 +2287,7 @@ class html_base
      * @param string $style the html class name
      * @return string the wrapped html code
      */
-    private function hx(string $tag, string $txt, string $style = ''): string
+    private static function hx(string $tag, string $txt, string $style = ''): string
     {
         if ($style != '') {
             $style = ' ' . self::CLASS_HTML . '="' . $style . '"';
@@ -2452,7 +2549,9 @@ class html_base
         } else {
             $title = $this->concat_title_text($txt, $pod_name);
         }
-        return '<' . self::TITLE . '>' . $title . '</' . self::TITLE . '>';
+        // escape the title text: it is fed the raw object and view name, so an object renamed to
+        // "</title><script>..." would otherwise break out of the head title and inject script (xss)
+        return '<' . self::TITLE . '>' . $this->esc($title) . '</' . self::TITLE . '>';
     }
 
     /**

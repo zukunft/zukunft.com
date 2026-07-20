@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED . 'library.php';
@@ -56,6 +57,7 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -92,7 +94,8 @@ class export
 
                 // 1. create the header
                 $export_obj->version = def::PRG_VERSION;
-                $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con);
+                $usr_msg = new user_message($usr);
+                $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con, $usr_msg, 'get pod name');
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
                 $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()

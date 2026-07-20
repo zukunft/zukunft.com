@@ -109,7 +109,7 @@ class view_sys_list extends type_list
         $this->reset();
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_list($sc);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'system view list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $msk = new view($this->usr);

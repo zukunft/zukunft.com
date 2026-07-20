@@ -21,7 +21,8 @@ PREPARE user_by_name_or_email (text, text) AS
          last_name,
          term_id,
          view_id,
-         source_id
+         source_id,
+         uses_sandbox
     FROM users
    WHERE (user_name = $1
       OR email = $2);

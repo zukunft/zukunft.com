@@ -99,53 +99,57 @@ class db_check
      * read the version number from the database and compare it with the backend version
      * if the database has a lower version than the backend program start the upgrade process
      * @param sql_db $db_con the database connection object to the database that should be tested
-     * @return user_message the message that should be shown to the user immediately if not empty
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
+     *                          with the user who has requested the check,
+     *                          which is the virtual system user (user::system) for a system call e.g. on the program start
+     * @return bool true if the database is ready to use
      */
-    function db_check(sql_db $db_con): user_message
+    function db_check(sql_db $db_con, user_message $msg): bool
     {
         global $cfg;
         global $sys;
 
-        $usr_msg = new user_message(); // the message that should be shown to the user immediately
         $do_consistency_check = false;
         $lib = new library();
 
         // check if essential config table exists and if not setup the database
+        // because it is assumed that the database structure has not yet been created
+        // TODO Prio 0 in prod and test environment do this only is setup flag is on
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
-        if (!$db_con->has_table($main_tbl_name)) {
+        if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
-            // TODO Prio 1 maybe use the $msg object parameter
             $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
-            $usr_msg = $db_con->setup_db();
-            if ($usr_msg->is_ok()) {
+            $db_con->setup_db($msg);
+            if ($msg->is_ok()) {
                 $db_con->db_fill_code_links();
                 $db_con->db_check_missing_owner();
                 $cfg = new config();
-                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
             }
         }
 
         $cfg = new config();
-        $cfg->check_cfg(config::SITE_NAME, POD_NAME, $db_con);
+        $cfg->check_cfg(config::SITE_NAME, POD_NAME,
+            $db_con, $msg, '', 'check pod name in config');
 
         // get the db version and start the upgrade process if needed
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version == '') {
-            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con);
+            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con, $msg);
         } elseif ($db_version != def::PRG_VERSION) {
             $do_consistency_check = true;
             if ($lib->prg_version_is_newer($db_version)) {
                 log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
             } else {
                 $diff_txt = match ($db_version) {
-                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
-                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
+                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con, $msg),
+                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con, $msg),
                 };
-                $usr_msg->add_message_text($diff_txt);
+                $msg->add_message_text($diff_txt);
             }
         } else {
-            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con);
+            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con, $msg, 'get last consistency check');
             // run a database consistency check once every 24h if the database is the least busy
             $last_check = strtotime($last_consistency_check);
             $check_limit = strtotime("now -1 day");
@@ -167,33 +171,35 @@ class db_check
         if ($do_consistency_check) {
             $db_con->db_fill_code_links();
             $db_con->db_check_missing_owner();
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
         }
 
-        return $usr_msg;
+        return $msg->is_ok();
 
     }
 
     /**
      * upgrade the database from any version prior of 0.0.3
      * the version 0.0.3 is the first version, which has a build in upgrade process
+     * @param sql_db $db_con the database connection object to the database that should be upgraded
+     * @param user_message $msg to collect the messages with the user who has requested the upgrade
      */
-    function db_upgrade_0_0_3(sql_db $db_con): string
+    function db_upgrade_0_0_3(sql_db $db_con, user_message $msg): string
     {
         global $sys;
 
         $cfg = new config();
         $lib = new library();
-        $usr_msg = new user_message();
         $sys->times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
-        $msg = $this->db_move_time_phrase_to_group();
-        if ($msg->is_ok()) {
+        $usr_msg = $this->db_move_time_phrase_to_group();
+        if ($usr_msg->is_ok()) {
             //
-            $msg->merge($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
-            $msg->merge($db_con->del_field('result', 'time_word_id'));
+            $usr_msg->merge($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
+            $usr_msg->merge($db_con->del_field('result', 'time_word_id'));
         }
+        $msg->merge($usr_msg);
 
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
         $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
@@ -447,12 +453,12 @@ class db_check
         // Change code_id in verbs from contains to is_part_of
 
         // update the database version number in the config
-        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $db_con);
+        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $db_con, $msg);
 
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
@@ -476,12 +482,17 @@ class db_check
 
     /**
      * upgrade the database from any version prior of 0.0.4
+     * prepared but not yet in the upgrade path, because the version 0.0.3 has not yet been launched,
+     * so the fields added to 0.0.3 after the last database reset are collected here
+     * until the next launch (see docs/llm/versions.md)
+     * @param sql_db $db_con the database connection object to the database that should be upgraded
+     * @param user_message $msg to collect the messages with the user who has requested the upgrade
      */
-    function db_upgrade_0_0_4($db_con): string
+    function db_upgrade_0_0_4(sql_db $db_con, user_message $msg): string
     {
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }

@@ -115,7 +115,7 @@ class ip_range_list extends list_db_write
         $result = false;
 
         $qp = $this->load_sql_obj_vars($db_con);
-        $ip_lst = $db_con->get($qp);
+        $ip_lst = $db_con->get($qp, 'ip range list');
         foreach ($ip_lst as $db_row) {
             $ip = new ip_range();
             $ip->row_mapper($db_row);

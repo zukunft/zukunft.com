@@ -66,13 +66,23 @@ if ($db_con->is_open()) {
             $val = new value($usr);
             $val->load_by_id($fig_id);
             $val->load_objects();
-            $fig = $val->figure();
-            $result = $fig->api_json();
+            // do not disclose another user's private value behind a figure id (idor); the same
+            // neutral message as a missing id, so the response does not confirm it exists
+            if ($val->is_readable_by($usr)) {
+                $fig = $val->figure();
+                $result = $fig->api_json();
+            } else {
+                $msg = 'figure id is missing';
+            }
         } elseif ($fig_id < 0) {
             $res = new result($usr);
             $res->load_by_id($fig_id);
-            $fig = $res->figure();
-            $result = $fig->api_json();
+            if ($res->is_readable_by($usr)) {
+                $fig = $res->figure();
+                $result = $fig->api_json();
+            } else {
+                $msg = 'figure id is missing';
+            }
         } else {
             $msg = 'figure id is missing';
         }

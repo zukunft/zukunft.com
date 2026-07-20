@@ -128,11 +128,21 @@ class ui_config
         user|user_ui|null   $usr = null
     ): string
     {
-        $result = $this->read_db_cache($usr);
+        global $cfg;
+
+        // the pod setting that decides if the types api message is cached in the database;
+        // a pod without the switch (or before the config is loaded) uses the cache
+        $use_cache = $cfg?->cache_allowed(db_cache_types::TYPES) ?? true;
+        $result = false;
+        if ($use_cache) {
+            $result = $this->read_db_cache($usr);
+        }
         if ($result === false) {
             $this->reload($usr);
             $result = $this->api_json($typ_lst, $usr);
-            $this->write_db_cache($usr);
+            if ($use_cache) {
+                $this->write_db_cache($usr);
+            }
         }
         return $result;
     }
@@ -173,14 +183,20 @@ class ui_config
 
     private function write_db_cache(user $usr): void
     {
-        $cac = new db_cache($usr);
+        // the cache row is written as the system user because filling the cache is a system
+        // action that must also work for an ip user who cannot change data (like the html
+        // page cache, see frontend::save_html_page)
+        $cac = new db_cache(user::system());
         $cac->type_id = db_cache_types::TYPES_ID;
         $cac->data = $this->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
-        $cac->usr = $usr;
+        $cac->usr = user::system();
         $cac->status_id = db_cache_statuum::CLEAN_ID;
         $cac->last_update = new DateTime();
-        $msg = new user_message($usr);
-        $cac->save($msg);
+        // a failure is only logged because the user already has the api message
+        $msg = new user_message(user::system());
+        if (!$cac->save($msg)) {
+            log_warning('caching the types api message failed because ' . $msg->all_message_text());
+        }
     }
 
 }

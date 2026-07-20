@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
@@ -91,6 +92,18 @@ class figure_tests
         // TODO review
         //$t->assert('figure result symbol', $fig->get_symbol(), "{f1}");
 
+
+        $t->subheader($ts . 'read access (share)');
+        // a figure must not disclose the underlying value/result if it is not readable by the user
+        // (idor); figure::is_readable_by delegates to the value/result share scope
+        global $sys;
+        $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
+        $fig = $t_fig->figure_value();
+        $fig->obj()->set_owner_id($t->usr1->id);
+        $fig->obj()->set_share_id($private_id);
+        $t->assert_true('the owner may read a private value figure', $fig->is_readable_by($t->usr1));
+        $t->assert_false('another user may not read a private value figure', $fig->is_readable_by($t->usr2));
+        $t->assert_true('an admin may read a private value figure', $fig->is_readable_by($t->usr_admin));
 
         $t->subheader($ts . 'api');
 

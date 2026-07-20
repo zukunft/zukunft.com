@@ -84,6 +84,12 @@ if ($db_con->is_open()) {
         }
     }
 
+    // do not disclose another user's private view loaded by id/name (idor); neutral message
+    if ($result != '' and !$msk->is_readable_by($usr)) {
+        $result = '';
+        $msg = 'view id or name is missing';
+    }
+
     $ctrl = new controller();
     $ctrl->get_json($result, $msg);
 

@@ -368,6 +368,18 @@ class component extends sandbox_code_id
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
+        if (array_key_exists(json_fields::PHRASE_ROW, $api_json)) {
+            $this->reload_row_phrase($api_json[json_fields::PHRASE_ROW]);
+        }
+        if (array_key_exists(json_fields::PHRASE_COL, $api_json)) {
+            $this->reload_col_phrase($api_json[json_fields::PHRASE_COL]);
+        }
+        if (array_key_exists(json_fields::PHRASE_COL_SUB, $api_json)) {
+            $this->reload_col_sub_phrase($api_json[json_fields::PHRASE_COL_SUB]);
+        }
+        if (array_key_exists(json_fields::LINK_TYPE, $api_json)) {
+            $this->set_link_type_by_id($api_json[json_fields::LINK_TYPE]);
+        }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
             $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
             $this->set_formula($frm);
@@ -628,6 +640,13 @@ class component extends sandbox_code_id
      */
     function set_row_phrase(?phrase $phr): void
     {
+        $this->row_phrase = $phr;
+    }
+
+    // TODO Prio 0 use $dto or and load
+    function set_row_phrase_by_id(int $id): void
+    {
+        $phr = new phrase();
         $this->row_phrase = $phr;
     }
 
@@ -904,6 +923,17 @@ class component extends sandbox_code_id
     }
 
     /**
+     * set the type of linked components
+     *
+     * @param int|null $type_code_id the id that should be added to this view component
+     * @return void
+     */
+    function set_link_type_by_id(?int $type_id): void
+    {
+        $this->link_type_id = $type_id;
+    }
+
+    /**
      * TODO use a set_join function for all not simple sql joins
      * @param sql_creator $sc the sql creator without component joins
      * @return sql_creator the sql creator with the components join set
@@ -1118,7 +1148,19 @@ class component extends sandbox_code_id
         return $result;
     }
 
+    function reload_col_sub_phrase(?int $id = null): int
+    {
+        $result = 0;
+        $col_phr = $this->reload_phrase($id);
+        if ($col_phr != null) {
+            $this->col_sub_phrase = $col_phr;
+            $result = $id;
+        }
+        return $result;
+    }
+
     /**
+     * TODO Prio 1 add $dto cache to reduce db loading
      * load a phrase if the id is valid
      *
      * @param int|null $id the id of suggested the phrase
@@ -1277,12 +1319,12 @@ class component extends sandbox_code_id
      * create human-readable messages of the differences between the objects
      * is expected to be similar to the has_diff function
      * @param component|sandbox|CombineObject|db_object_seq_id $obj which might be different to this sandbox object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(component|sandbox|CombineObject|db_object_seq_id $obj): user_message
+    function diff_msg(component|sandbox|CombineObject|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
-        // TODO add the missing fields and review the unit test
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->get_formula_id() != $obj->get_formula_id()) {
             $lib = new library();
             $msg->add(msg_id::DIFF_FORMULA, [
@@ -1292,6 +1334,15 @@ class component extends sandbox_code_id
                 msg_id::VAR_SANDBOX_NAME => $this->name(),
             ]);
         }
+        $this->diff_field_msg($msg, fields::FLD_STYLE, $this->get_style_id(), $obj->get_style_id());
+        $this->diff_field_msg($msg, component_fields::FLD_UI_MSG_ID, $this->ui_msg_code_id?->name, $obj->ui_msg_code_id?->name);
+        $this->diff_field_msg($msg, component_fields::FLD_UI_MSG_ID_VARS, $this->ui_msg_code_id_vars?->name, $obj->ui_msg_code_id_vars?->name);
+        $this->diff_field_msg($msg, component_fields::FLD_UI_MSG_ID_EXCEPTION, $this->ui_msg_code_id_exception?->name, $obj->ui_msg_code_id_exception?->name);
+        $this->diff_field_msg($msg, component_fields::FLD_UI_MSG_VAL_EXCEPTION, $this->ui_msg_value_exception, $obj->ui_msg_value_exception);
+        $this->diff_field_msg($msg, component_fields::FLD_ROW_PHRASE, $this->get_row_phrase_id(), $obj->get_row_phrase_id());
+        $this->diff_field_msg($msg, component_fields::FLD_COL_PHRASE, $this->get_col_phrase_id(), $obj->get_col_phrase_id());
+        $this->diff_field_msg($msg, component_fields::FLD_COL2_PHRASE, $this->get_col_sub_phrase_id(), $obj->get_col_sub_phrase_id());
+        $this->diff_field_msg($msg, component_fields::FLD_LINK_TYPE, $this->link_type_id, $obj->link_type_id);
         return $msg;
     }
 

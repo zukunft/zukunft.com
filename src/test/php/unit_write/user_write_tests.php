@@ -45,7 +45,9 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -69,11 +71,42 @@ class user_write_tests
         // start the test section (ts)
         $ts = 'db write user ';
         $t->header($ts);
-        $t_usr->cleanup($ts);
+        $t_usr->cleanup($ts, $t);
 
         $t->subheader($ts . 'add');
         $usr = $t_usr->user_ip();
         $t->assert_write($usr, $usr->unique_value(), $usr->key_field());
+
+        // check that switching a user to sandbox usage is actually written to the database
+        $t->subheader($ts . 'sandbox usage');
+
+        // use a test user that exists in the database
+        $usr_db = new user();
+        $usr_db->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
+
+        // make sure the starting point is "not yet using the sandbox"
+        if ($usr_db->uses_sandbox) {
+            $usr_db->uses_sandbox = false;
+            $usr_db->save_user($usr_msg, $t->usr1);
+        }
+
+        // switch the user to sandbox usage which should store the flag in the database
+        $usr_db->set_uses_sandbox($usr_msg);
+
+        // reload the user by id to check that the flag has really been written to the database
+        $usr_reload = new user();
+        $usr_reload->load_by_id($usr_db->id());
+        $test_name = 'switching a user to sandbox usage is stored in the database';
+        $t->assert_true($test_name, $usr_reload->uses_sandbox);
+
+        // the test partner has no user sandbox rows, so counting and rechecking
+        // switches the flag off again and stores it in the database
+        global $db_con;
+        $usr_reload->check_sandbox_usage($db_con, $usr_msg);
+        $usr_check = new user();
+        $usr_check->load_by_id($usr_db->id());
+        $test_name = 'a user without any sandbox rows is switched off the sandbox usage again';
+        $t->assert_false($test_name, $usr_check->uses_sandbox);
 
         /*
 
@@ -169,7 +202,7 @@ class user_write_tests
         */
 
         // cleanup - fallback delete
-        $t_usr->cleanup($ts);
+        $t_usr->cleanup($ts, $t);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($usr_msg);

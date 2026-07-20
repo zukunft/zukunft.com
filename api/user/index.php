@@ -30,8 +30,6 @@
 
     http://zukunft.com
 
-    TODO add multi level security check to prevent gaining access right
-
 */
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
@@ -68,17 +66,29 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         $db_usr = new user();
+        $found = false;
         if ($usr_id != 0) {
             $db_usr->load_by_id($usr_id);
-            $result = $db_usr->api_json();
+            $found = true;
         } elseif ($usr_name != '') {
             $db_usr->load_by_name($usr_name);
-            $result = $db_usr->api_json();
+            $found = true;
         } elseif ($usr_email != '') {
             $db_usr->load_by_email($usr_email);
-            $result = $db_usr->api_json();
+            $found = true;
         } else {
             $msg = 'user id or name missing';
+        }
+
+        // only an admin or the user himself may read a user record; otherwise
+        // an anonymous visitor (who always gets an auto created ip user) could
+        // enumerate users and read the email, ip address and activation key
+        if ($found) {
+            if ($usr->is_admin() or $db_usr->id() == $usr->id) {
+                $result = $db_usr->api_json();
+            } else {
+                $msg = 'not permitted';
+            }
         }
     }
 

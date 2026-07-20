@@ -1,0 +1,18 @@
+GET
+http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&m=56&z=2&submit=
+/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=90&9id=999&m=56&z=2&submit=
+/http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&mask_id=confirm_delete&step=confirmed&
+{
+    "id": "999",
+    "name": "System Test Word",
+    "mask_id": "confirm_delete",
+    "step": "confirmed",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word"
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
+}

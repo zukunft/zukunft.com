@@ -1,0 +1,1 @@
+PREPARE db_cache_page_insert_0102 FROM 'INSERT INTO db_cache_pages (`url`,last_update)  VALUES ( ?,? )'; 

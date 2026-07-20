@@ -61,7 +61,7 @@ class text_log extends text_log_base
     function header(string $header_text): void
     {
         if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
+            $this->echo_lines($header_text);
         } else {
             $html = new html_base();
             echo '<br><br>' . $html->h2($this->time_stamp() . $header_text) . '<br>' . "\n";
@@ -77,7 +77,7 @@ class text_log extends text_log_base
     function subheader(string $header_text): void
     {
         if ($this->format == text_log_format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
+            $this->echo_lines($header_text);
         } else {
             $html = new html_base();
             echo '<br>' . $html->h3($this->time_stamp() . $header_text) . '<br>' . "\n";

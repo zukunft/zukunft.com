@@ -336,6 +336,13 @@ class db_object_key extends TextIdObject
         global $db_con;
 
         $db_row = $db_con->get1($qp);
+        // a false db row means that the query itself failed (e.g. on an outdated database),
+        // which the db layer has already logged;
+        // it is mapped like "no row found", because a fatal crash of the row mapper
+        // would hide the reason (see db read result contract in docs/llm/architecture.md)
+        if ($db_row === false) {
+            $db_row = null;
+        }
         return $this->row_mapper($db_row);
     }
 

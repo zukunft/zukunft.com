@@ -38,24 +38,30 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_preview extends ui_base
@@ -115,10 +121,11 @@ class ui_preview extends ui_base
     }
 
     /**
-     * show the heading of a confirm popup combining the translated action and the object class
-     * e.g. 'update word' for the confirm update view; the action text is selected by the component
-     * via its ui_msg_code_id (e.g. system_popup_title_update) and the class is derived from the object,
-     * so this single component replaces the former split into popup_title and popup_class
+     * show the heading of a confirm popup combining the translated action, the object class and the
+     * object name, e.g. 'Confirm adding word "System Test Word"' for the confirm add view; the action
+     * text is selected by the component via its ui_msg_code_id (e.g. form_title_confirm_add), the class
+     * is derived from the object and the name comes from the pending change url, so this single
+     * component replaces the former split into popup_title, popup_class and the name form field
      *
      * this is the confirm-view analog of form_tile: it shows the heading and then opens the form, so
      * the component must be the first one of the confirm view (ahead of the hidden fields)
@@ -126,9 +133,15 @@ class ui_preview extends ui_base
      * @param string $form_name the name of the confirm view used as the html form name
      * @param msg_id|null $ui_msg_code_id the message code id of the component using this component type
      * @param db_object|null $dbo the object that is being changed, used for the object class name
-     * @return string the html heading line followed by the opening form tag
+     * @param array $url_array the pending change url used for the name of the changed object
+     * @return string the html heading followed by the opening form tag
      */
-    function popup_title(string $form_name = '', ?msg_id $ui_msg_code_id = null, ?db_object $dbo = null): string
+    function popup_title(
+        string                                                $form_name = '',
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        array                                                 $url_array = []
+    ): string
     {
         global $mtr;
         $html = new html_base();
@@ -138,8 +151,12 @@ class ui_preview extends ui_base
             if ($dbo != null) {
                 $title .= ' ' . library::class_to_name_translated($dbo::class);
             }
-            $heading = $html->h4($title, styles::HEADING_INLINE);
-            $result = $html->div($heading, styles::HEADING_LINE);
+            // the confirm view object is not loaded from the db, so the name comes from the posted url
+            $name = $url_array[url_var::NAME] ?? '';
+            if ($name != '') {
+                $title .= ' "' . $name . '"';
+            }
+            $result = $html->text_h2($title);
         }
         // open the confirm form after the heading (like form_tile) so the following hidden step field
         // and the confirm button submit together as one post
@@ -151,11 +168,19 @@ class ui_preview extends ui_base
      * show the class of the object to add or change in a popup form
      * e.g. for a quick add of a word or value something like the translated 'word ' or 'value '
      * TODO Prio 2 fill with real code and maybe move
-     * @return string a dummy text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $sbx the object shown in the popup
+     *        form; the same union that dsp_entries passes, because any view object can be shown in a
+     *        popup form, e.g. a user (of the user settings form) or a language (of the language form)
+     * @return string the translated class name of the shown object or an empty string
      */
-    function popup_class(sandbox $sbx): string
+    function popup_class(db_object|type_object|combine_named|sandbox_list|null $sbx = null): string
     {
-        return library::class_to_name_translated($sbx::class);
+        $result = '';
+        if ($sbx != null) {
+            $result = library::class_to_name_translated($sbx::class);
+        }
+        return $result;
     }
 
     /**
@@ -166,9 +191,14 @@ class ui_preview extends ui_base
      * the config 'side width' screen breakpoints (8/12 very wide, 10/12 wide, 12/12 normal/small)
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed; the
+     *        same union that dsp_entries passes, because any view object can be shown in a popup form
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
-    function popup_changes(array $url_array = [], ?db_object $dbo = null): string
+    function popup_changes(
+        array                                                 $url_array = [],
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+    ): string
     {
         global $mtr;
         $html = new html_base();
@@ -196,6 +226,11 @@ class ui_preview extends ui_base
                 . $html->th($mtr->txt(msg_id::CHANGE_TBL_TO))));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
+        // the component brings its own centered row (matching its "side" position in the confirm
+        // views), so the hidden carry inputs and the preview table stay together in one row
+        if ($result != '') {
+            $result = $html->div_row($result, view_styles::COL_SM_12 . ' ' . styles::JUSTIFY_CENTER);
+        }
         return $result;
     }
 
@@ -205,15 +240,24 @@ class ui_preview extends ui_base
      * if the object has no field order yet the legacy fixed field set is used as a fallback
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
-     * @param db_object|null $dbo the object being changed, used for the db field order and the field labels
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed, used
+     *        for the db field order and the field labels; only a db object has an own field order, for
+     *        the other objects (e.g. a language) the labels are derived from the url keys
      * @return string the html table rows, one per changed field
      */
-    private function change_rows(array $url_array, ?db_object $dbo): string
+    private function change_rows(
+        array                                                 $url_array,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
     {
         global $mtr;
         $rows = '';
-        $order = $dbo?->sandbox_fld_order() ?? [];
-        $url_keys = $dbo?->db_fld_to_url() ?? [];
+        $order = [];
+        $url_keys = [];
+        if ($dbo instanceof db_object) {
+            $order = $dbo->sandbox_fld_order();
+            $url_keys = $dbo->db_fld_to_url();
+        }
         if ($order != [] and $url_keys != []) {
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
@@ -221,11 +265,11 @@ class ui_preview extends ui_base
                 }
             }
         } else {
-            // without an object field order derive the label from the url key itself: the human url key
-            // is the json field name, which maps to a db field, which the translator turns into the label
+            // without an object field order use the human url key (e.g. 'name') as the label, because
+            // without the object context the url key cannot be mapped to a real db field code id of
+            // change_fields.csv and a guessed code id would trigger a missing translation error
             foreach ($this->changed_fields($url_array) as $url_key) {
-                $db_fld = json_fields::json_field_to_db_field(url_var::std_to_human($url_key));
-                $rows .= $this->change_row($url_array, $url_key, $mtr->text_db_field($db_fld), $db_fld);
+                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key));
             }
         }
         return $rows;

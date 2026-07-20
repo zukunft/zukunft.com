@@ -43,9 +43,15 @@ include_once html_paths::ELEMENT . 'element_group.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -135,6 +141,67 @@ class formula_tests
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();
         $t->assert_api_to_ui($frm, new formula_ui());
+
+        $test_name = 'the url array contains the expression and the latex of the formula';
+        $frm_ui = new formula_ui($frm->api_json());
+        $url_arr = $frm_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::USER_EXPRESSION], formula_names::SCALE_TO_SEC_EXP);
+        $t->assert($test_name, $url_arr[url_var::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $test_name = 'the url array contains the set need all values flag and impact';
+        $frm_ui->need_all_val = true;
+        $frm_ui->impact = test_const::DUMMY_IMPACT;
+        $url_arr = $frm_ui->to_url_array();
+        $t->assert($test_name, $url_arr[url_var::NEED_ALL], '1');
+        $t->assert($test_name, $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
+        $test_name = 'the unset formula fields are excluded from the url array';
+        $url_arr = (new formula_ui())->to_url_array();
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::USER_EXPRESSION);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::LATEX);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::NEED_ALL);
+        $t->assert_contains_not($test_name, array_keys($url_arr), url_var::IMPACT);
+
+        $t->subheader($ts . 'partial update expression handling');
+        // the stored formula as loaded from the database, carrying its expression
+        $frm_db = $t_frm->formula();
+        $frm_db->ref_text = '{w1}=1';
+        // a frontend partial update (e.g. a description-only edit of a predefined formula whose
+        // expression field is not shown): convertToDb builds a fresh object from the api json that
+        // carries the name but no expression, so ref_text and usr_text stay null
+        $frm_upd = new formula($usr);
+        $frm_upd->set($frm_db->id(), $frm_db->name());
+        $frm_upd->set_type_id($frm_db->type_id());
+        $frm_upd->description = 'a new formula description';
+        $usr_msg = new user_message();
+        $chg_lst = $frm_upd->db_fields_changed($frm_db, $usr_msg);
+        $test_name = 'a formula update without an expression is not blocked';
+        $t->assert_true($test_name, $usr_msg->is_ok());
+        $test_name = 'a formula update without an expression keeps the stored expression';
+        $t->assert_false($test_name, $chg_lst->has_name(formula_fields::FLD_FORMULA_TEXT));
+        $test_name = 'a formula update still applies the changed description';
+        $t->assert_true($test_name, $chg_lst->has_name(fields::FLD_DESCRIPTION));
+        // a real expression change (the update carries a new expression) is still detected and written
+        $frm_upd->ref_text = '{w1}=2';
+        $chg_lst = $frm_upd->db_fields_changed($frm_db, new user_message());
+        $test_name = 'a changed formula expression is written';
+        $t->assert_true($test_name, $chg_lst->has_name(formula_fields::FLD_FORMULA_TEXT));
+
+        $t->subheader($ts . 'user overlay log for a boolean change');
+        // when a user turns on all_values_needed for a base formula that has it set to false, the
+        // change log function must declare the _all_values_needed_old parameter it references; a
+        // boolean false old value must not be dropped by a loose null check (reproduces the crash
+        // "Spalte _all_values_needed_old existiert nicht")
+        $frm_on = $t_frm->formula_filled();
+        $frm_on->ref_text = '{w1}=1';
+        $frm_base = $t_frm->formula_filled();
+        $frm_base->ref_text = '{w1}=1';
+        $frm_base->need_all_val = false;
+        $usr_msg = new user_message();
+        $par_lst = new sql_type_list([sql_type::INSERT, sql_type::LOG, sql_type::USER]);
+        $sc->reset(sql_db::POSTGRES);
+        $chg_lst = $frm_on->db_fields_changed($frm_base, $usr_msg, $par_lst);
+        $qp = $frm_on->sql_insert_switch($sc, $chg_lst, $frm_on->db_fields_all(), $usr_msg, $par_lst);
+        $test_name = 'the change log function declares the all_values_needed old parameter it uses';
+        $t->assert_text_contains($test_name, $qp->sql, '_all_values_needed_old smallint');
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_frm->formula(), $usr_sys);

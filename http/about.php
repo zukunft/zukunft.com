@@ -29,6 +29,8 @@
   
 */
 
+$start_time = microtime(true);
+
 include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
@@ -51,5 +53,5 @@ $db_con = $app->start("about", $msg);
 $html = new html_base();
 echo $html->about_page();
 
-// close the database  
-$app->end($db_con);
+// close the database and measure the script loading time before the frontend has been created
+$app->end($db_con, $start_time);

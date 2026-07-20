@@ -255,7 +255,7 @@ class result_list extends sandbox_value_list
         global $db_con;
         $result = false;
         if ($qp->name != '') {
-            $db_rows = $db_con->get($qp);
+            $db_rows = $db_con->get($qp, 'result list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());

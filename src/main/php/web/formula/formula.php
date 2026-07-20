@@ -202,6 +202,11 @@ class formula extends sandbox_code_id
             } else {
                 $this->impact = 0.0;
             }
+            if (array_key_exists(url_var::VIEW, $url_array)) {
+                if ($url_array[url_var::VIEW] != null) {
+                    $this->view_id = $url_array[url_var::VIEW];
+                }
+            }
         }
         return $usr_msg;
     }
@@ -224,6 +229,28 @@ class formula extends sandbox_code_id
             formula_fields::FLD_FORMULA_TEXT => url_var::USER_EXPRESSION,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
         ];
+    }
+
+    /**
+     * @return array parent url array extended with the formula fields that url_mapper reads back
+     */
+    function to_url_array(): array
+    {
+        $url_array = parent::to_url_array();
+        // an unset field is left out (not sent as an empty value) like the triple weight
+        if ($this->usr_text != '') {
+            $url_array[url_var::USER_EXPRESSION] = $this->usr_text;
+        }
+        if ($this->latex != '') {
+            $url_array[url_var::LATEX] = $this->latex;
+        }
+        if ($this->need_all_val) {
+            $url_array[url_var::NEED_ALL] = '1';
+        }
+        if ($this->impact > 0) {
+            $url_array[url_var::IMPACT] = $this->impact;
+        }
+        return $url_array;
     }
 
     /**
@@ -370,6 +397,8 @@ class formula extends sandbox_code_id
         $vars[json_fields::USER_TEXT] = $this->get_usr_text();
         $vars[json_fields::LATEX] = $this->get_latex();
         // usage is not included here because this system value is never updated by the frontend
+        $vars[json_fields::NEED_ALL_VAL] = $this->need_all_val;
+        $vars[json_fields::VIEW] = $this->view_id;
         $vars[json_fields::IMPACT] = $this->impact;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -410,7 +439,8 @@ class formula extends sandbox_code_id
     function edit_link(?string $back = ''): string
     {
         $url = $this->obj_url(views::FORMULA_EDIT_ID, $back);
-        return (new html_base())->ref($url, $this->name(), $this->name());
+        $html = new html_base();
+        return $html->ref($url, $this->name(), $this->name());
     }
 
 
@@ -457,6 +487,12 @@ class formula extends sandbox_code_id
      */
     function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         return $typ_lst->frm_typ->selector($form);
     }
 
@@ -467,6 +503,12 @@ class formula extends sandbox_code_id
      */
     public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
             $used_formula_type_id = $typ_lst->frm_typ->default_id();
@@ -484,7 +526,9 @@ class formula extends sandbox_code_id
      */
     function user_expression(): string
     {
-        return str_replace('"', '&quot;', $this->usr_text);
+        // the expression is user input rendered as element text, so escape it fully (the previous
+        // quote-only replacement left "<" / ">" through and allowed stored xss via the expression)
+        return htmlspecialchars($this->usr_text, ENT_QUOTES);
     }
 
     /**
@@ -508,7 +552,9 @@ class formula extends sandbox_code_id
      */
     function expression_latex(): string
     {
-        return $this->latex_html($this->get_latex());
+        // escape the user latex before the latex->html transforms emit it raw into a span; the
+        // math markup ("\frac", "^", "<") survives html-escaping and renders the same (stored xss)
+        return $this->latex_html(htmlspecialchars($this->get_latex(), ENT_QUOTES));
     }
 
     /**
@@ -521,12 +567,16 @@ class formula extends sandbox_code_id
     function expression_latex_link(): string
     {
         $latex = $this->get_latex();
+        // escape the user latex first, so only the trusted term-link html inserted below stays
+        // unescaped in the rendered expression; the term name in the search is escaped to match
+        // the now-escaped latex, name_link() returns the safe anchor html (stored xss via latex)
+        $latex = htmlspecialchars($latex, ENT_QUOTES);
         // link each "\text{<term>}" token to its term, keeping the latex layout; the link incl.
         // the description as tooltip stays inside the \text{} wrapper that latex_to_html unwraps
         if ($this->trm_lst != null) {
             foreach ($this->trm_lst->lst() as $trm) {
                 $latex = str_replace(
-                    '\text{' . $trm->name() . '}',
+                    '\text{' . htmlspecialchars($trm->name(), ENT_QUOTES) . '}',
                     '\text{' . $trm->name_link() . '}',
                     $latex
                 );
@@ -704,7 +754,7 @@ class formula extends sandbox_code_id
             $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
             $form_name = views::FORMULA_EDIT;
-            $result .= $html->dsp_text_h2('Formula "' . $this->name . '"');
+            $result .= $html->dsp_text_h2('Formula "' . $html->esc($this->name) . '"');
         }
         $result .= '<div class="row">';
 

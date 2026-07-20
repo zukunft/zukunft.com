@@ -160,7 +160,7 @@ class system_form extends component
     ): string
     {
         // for a named object the page title is simply its name shown big
-        return $this->title_box($dbo, $dbo->name(), $max);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max);
     }
 
     /**
@@ -189,7 +189,7 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->title_box($dbo, $dbo->name(), $max, $from_verb_to);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to);
     }
 
     /**
@@ -225,11 +225,11 @@ class system_form extends component
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value
-        $heading_content = $dbo->name();
+        $heading_content = $this->esc($dbo->name());
         if ($dbo::class == value::class) {
             $heading_content = $dbo->name_link();
         }
-        return $this->title_box($dbo, $heading_content, $max);
+        return $this->subtitle($dbo, $heading_content, $max);
     }
 
     /**
@@ -243,7 +243,7 @@ class system_form extends component
      * @param string $lead_subtitle optional html prepended to the subtitle (e.g. a triple's from/verb/to links)
      * @return string the html code for the page title
      */
-    private function title_box(
+    private function subtitle(
         db_object $dbo,
         string    $heading_content,
         int       $max = def::LIMIT_RELATED_PER_VERB,
@@ -261,10 +261,14 @@ class system_form extends component
         $typ = $this->type_subtitle($dbo);
         $cat_typ = $html->concat_category_text($cat, $typ);
 
-        // share and protection subtitle if not default
-        $shr = $this->share_subtitle($dbo);
-        $ptc = $this->protection_subtitle($dbo);
-        $shr_ptc = $html->concat_entry_text($shr, $ptc);
+        if ($dbo instanceof sandbox) {
+            // share and protection subtitle if not default
+            $shr = $this->share_subtitle($dbo);
+            $ptc = $this->protection_subtitle($dbo);
+            $shr_ptc = $html->concat_entry_text($shr, $ptc);
+        } else {
+            $shr_ptc = '';
+        }
 
         // join all subtitle parts with the category separator " / "; a triple prepends its
         // from/verb/to links so the whole subtitle stays on one parenthesized line
@@ -395,7 +399,7 @@ class system_form extends component
         $html = new html_base();
         $url = $html->url_new($dbo::VIEW_EDIT_ID, $dbo->id());
         $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE);
+        return $html->ref($url, $icon, $mtr->txt($dbo::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
     }
 
     /**
@@ -477,6 +481,20 @@ class system_form extends component
     }
 
     /**
+     * @return string the html code so that an admin user can switch if the pages
+     *                for the user must be created from the user sandbox
+     */
+    function admin_form_user_uses_sandbox(user|db_object $dbo): string
+    {
+        global $mtr;
+        $html = new html_base();
+        return $html->dsp_form_fld_checkbox(
+            url_var::USER_USES_SANDBOX,
+            $dbo->uses_sandbox,
+            $mtr->txt(msg_id::FORM_FIELD_USER_USES_SANDBOX));
+    }
+
+    /**
      * @return string the html code so that an admin can overwrite the language symbol
      */
     function admin_form_language_symbol(language|db_object $dbo): string
@@ -495,7 +513,7 @@ class system_form extends component
     function show_language_symbol(language|db_object $dbo): string
     {
         // TODO Prio 0 add system to web language
-        return $dbo->name;
+        return $this->esc($dbo->name);
     }
 
 
@@ -507,16 +525,53 @@ class system_form extends component
      */
     function show_name(db_object|type_object $dbo, string $code_id = ''): string
     {
+        return $this->get_name($dbo, $code_id);
+    }
+
+    /**
+     * show the name of an object as a headline in the center
+     * @param db_object|type_object $dbo the object
+     * @param string $code_id e.g. to select the name in case of a link object
+     * @return string the html code to show the object name to the user
+     */
+    function show_name_big(db_object|type_object $dbo, string $code_id = ''): string
+    {
+        return html_base::h3($this->get_name($dbo, $code_id));
+    }
+
+    /**
+     * TODO Prio 2 remove exceptions
+     * get the name of an object
+     * @param db_object|type_object $dbo the object
+     * @param string $code_id e.g. to select the name in case of a link object
+     * @return string the html code to show the object name to the user
+     */
+    private function get_name(db_object|type_object $dbo, string $code_id = ''): string
+    {
         if ($code_id == '') {
-            return $dbo->name();
+            $result = $dbo->name();
         } elseif ($code_id == 'show_field_formula_name') {
-            return $dbo->formula_name();
+            $result = $dbo->formula_name();
         } elseif ($code_id == 'show_field_phrase_name') {
-            return $dbo->phrase_name();
+            $result = $dbo->phrase_name();
         } else {
             log_warning('code id ' . $code_id . ' not yet defined in show_name');
-            return $dbo->name();
+            $result = $dbo->name();
         }
+        return $this->esc($result);
+    }
+
+    /**
+     * escape a user-settable string (a name, description or reference field) so it is shown
+     * literally and cannot inject html into the page (stored xss); element-text context, because
+     * these show_* outputs are concatenated into the page body by component_exe, not into an attribute
+     * @param string|null $text the raw user text
+     * @return string the text safe to place between html tags
+     */
+    private function esc(?string $text): string
+    {
+        $html = new html_base();
+        return $html->esc($text);
     }
 
     /**
@@ -525,7 +580,7 @@ class system_form extends component
      */
     function show_description(db_object|type_object $dbo): string
     {
-        return $dbo->get_description();
+        return $this->esc($dbo->get_description());
     }
 
     /**
@@ -534,7 +589,7 @@ class system_form extends component
      */
     function show_plural(word|db_object $dbo): string
     {
-        return $dbo->plural ?? '';
+        return $this->esc($dbo->plural ?? '');
     }
 
     /**
@@ -548,7 +603,7 @@ class system_form extends component
         $result = '';
         $type_id = $dbo->type_id();
         if ($type_id !== null) {
-            $result = $ui_sys->typ_lst_cache->phr_typ->name($type_id);
+            $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
         }
         return $result;
     }
@@ -559,7 +614,7 @@ class system_form extends component
      */
     function show_ref_type(ref|db_object $dbo): string
     {
-        return $dbo->type_name();
+        return $this->esc($dbo->type_name());
     }
 
     /**
@@ -568,7 +623,8 @@ class system_form extends component
      */
     function show_ref_key(ref|db_object $dbo): string
     {
-        return $dbo->external_key();
+        // a new reference of an add form has no external key yet
+        return $this->esc($dbo->external_key() ?? '');
     }
 
     /**
@@ -581,7 +637,7 @@ class system_form extends component
         if ($src_txt == null) {
             $src_txt = '';
         }
-        return $src_txt;
+        return $this->esc($src_txt);
     }
 
     /**
@@ -590,7 +646,8 @@ class system_form extends component
      */
     function show_ref_url(ref|db_object $dbo): string
     {
-        return $dbo->url();
+        // a new reference of an add form has no url yet
+        return $this->esc($dbo->url() ?? '');
     }
 
     /**
@@ -600,7 +657,7 @@ class system_form extends component
      */
     function show_usage(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -609,7 +666,7 @@ class system_form extends component
      */
     function show_parent_view(view_relation|db_object $dbo): string|null
     {
-        return $dbo->parent()?->name();
+        return $this->esc($dbo->parent()?->name());
     }
 
     /**
@@ -618,7 +675,7 @@ class system_form extends component
      */
     function show_child_view(view_relation|db_object $dbo): string|null
     {
-        return $dbo->child()?->name();
+        return $this->esc($dbo->child()?->name());
     }
 
     /**
@@ -627,7 +684,7 @@ class system_form extends component
      */
     function show_relation_type(view_relation|db_object $dbo): string|null
     {
-        return $dbo->relation_type()?->name();
+        return $this->esc($dbo->relation_type()?->name());
     }
 
     /**
@@ -646,7 +703,7 @@ class system_form extends component
      */
     function result(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -656,7 +713,7 @@ class system_form extends component
      */
     function used_as_text(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -666,7 +723,7 @@ class system_form extends component
      */
     function used_as_text_link(db_object $dbo): string
     {
-        return $dbo->name();
+        return $this->esc($dbo->name());
     }
 
     /**
@@ -692,10 +749,10 @@ class system_form extends component
      * @return string the html code of the editable field plus the hidden pre value
      */
     private function form_field_tracked(
-        string $url_id,
-        msg_id $label,
-        ?string $value,
-        string $style_text,
+        string                     $url_id,
+        msg_id                     $label,
+        ?string                    $value,
+        string                     $style_text,
         db_object|type_object|null $dbo = null
     ): string
     {
@@ -1769,14 +1826,17 @@ class system_form extends component
      */
     function form_formula_expression(db_object $dbo, string $form_name): string
     {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::NEED_ALL,
+        // the expression field posts the user expression (not the need-all flag, which is a
+        // separate checkbox with the same key); the raw expression is passed so form_field escapes
+        // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
+        // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
+        // formula text before the change (see url_var::PRE)
+        return $this->form_field_tracked(
+            url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
-            $dbo->user_expression(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12);
+            $dbo->get_usr_text(),
+            view_styles::COL_SM_12,
+            $dbo);
     }
 
     /**

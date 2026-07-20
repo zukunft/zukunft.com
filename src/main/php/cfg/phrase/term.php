@@ -642,6 +642,27 @@ class term extends combine_named
         return $result;
     }
 
+    /**
+     * check if the requesting user may read this term by delegating to its underlying word, triple
+     * or formula (all carry the sandbox read scope); a verb is public system vocabulary. used at the
+     * api read boundary so a term list cannot disclose another user's non-public phrase/formula
+     * (see sandbox::is_readable_by)
+     *
+     * @param user|null $usr the user who has requested to read this term
+     * @return bool true if the term may be disclosed to the given user
+     */
+    function is_readable_by(?user $usr): bool
+    {
+        $obj = $this->obj();
+        if ($obj instanceof sandbox) {
+            $result = $obj->is_readable_by($usr);
+        } else {
+            // a verb (system vocabulary) or an unbacked term is public
+            $result = true;
+        }
+        return $result;
+    }
+
     function type(): string
     {
         $result = '';

@@ -214,6 +214,23 @@ class db_object_seq_id_user extends db_object_seq_id
         return $this->usr->id;
     }
 
+    /**
+     * make sure that the user who has requested the change is set on the message,
+     * because the permission checks of save and del are based on the requesting user
+     *
+     * the user of the object is used as fallback, because a caller may reset the message
+     * and user_message->reset() sets an empty user, which has the profile of a user without login
+     *
+     * @param user_message $usr_msg the message of the change request
+     * @return void
+     */
+    protected function set_requesting_user(user_message $usr_msg): void
+    {
+        if ($usr_msg->usr == null or $usr_msg->usr->id() <= 0) {
+            $usr_msg->usr = $this->get_user();
+        }
+    }
+
 
     /*
      * load
@@ -241,11 +258,12 @@ class db_object_seq_id_user extends db_object_seq_id
     /**
      * create human-readable messages of the differences between the db id objects
      * @param CombineObject|db_object_seq_id_user|db_object_seq_id $obj which might be different to this db id object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the db id objects
      */
-    function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
+    function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->get_user_id() != $obj->get_user_id()) {
             $lib = new library();
             $msg->add(msg_id::DIFF_USER, [

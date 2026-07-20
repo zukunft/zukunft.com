@@ -465,6 +465,15 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * the impact of a value is the highest impact of the phrases it is assigned to
+     * @return float the system calculated impact used to sort the values by relevance
+     */
+    function impact(): float
+    {
+        return $this->grp()->phrase_list()->max_impact();
+    }
+
+    /**
      * to be overwritten by the child object
      * @return source|null the source of the value
      */
@@ -1200,11 +1209,12 @@ class sandbox_value extends sandbox_multi
     /**
      * create human-readable messages of the differences between the db id objects
      * @param sandbox_value|db_object_multi $obj which might be different to this db id object
+     * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the db id objects
      */
-    function diff_msg(sandbox_value|db_object_multi $obj): user_message
+    function diff_msg(sandbox_value|db_object_multi $obj, bool $ex_def = false): user_message
     {
-        $msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj, $ex_def);
         if ($this->grp_id() != $obj->grp_id()) {
             $msg->add(msg_id::DIFF_GROUP, [
                 msg_id::VAR_VALUE => $obj->grp()->dsp_id(),

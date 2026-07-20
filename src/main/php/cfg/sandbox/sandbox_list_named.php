@@ -974,6 +974,11 @@ class sandbox_list_named extends sandbox_list
         $imp->step_start(msg_id::CHECK, $class, count($db_names));
         $add_lst = clone $this;
         $add_lst = $add_lst->filter_by_name($db_names);
+        // make sure that only an admin user sets the admin protection also on new objects,
+        // because this mass insert does not use the single object save
+        foreach ($add_lst->lst() as $sbx) {
+            $sbx->check_protection_change(null, $sbx->get_user(), $usr_msg);
+        }
         $imp->step_end(count($db_names));
 
         if (!$add_lst->is_empty()) {
@@ -1039,6 +1044,34 @@ class sandbox_list_named extends sandbox_list
         // prepare
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
+
+        // TODO move this also to the non named objects
+        // on a no update import keep the not empty database fields so that only empty fields are filled up
+        if ($imp?->no_upd) {
+            foreach ($this->lst() as $sbx) {
+                $dbo = $db_lst->get_by_name($sbx->name());
+                if ($dbo != null) {
+                    // create and fill import object to check the diff without fill up
+                    $sbc = $sbx->clone_all();
+                    $sbc->fill($dbo, $imp->usr);
+                    $diff = $dbo->diff_msg($sbc, true);
+                    // if thee would be an overwrite
+                    // remember the error message
+                    // add remove the overwrites from the import object
+                    if (!$diff->is_ok()) {
+                        $usr_msg->merge($diff);
+                        // create an import object based on the database object
+                        // so that the database based are not overwritten
+                        $dbc = $dbo->clone_all();
+                        // fill up the import object with the database values
+                        // e.g. if the description has been empty set it
+                        $dbc->fill($sbx, $imp->usr);
+                        // if there is a difference, report it
+                        $this->update_object($dbc);
+                    }
+                }
+            }
+        }
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
@@ -1347,6 +1380,26 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $result;
+    }
+
+    /**
+     * drop the named objects the requesting user may not read, so a list returned by the api never
+     * discloses another user's non-public word/triple/formula/source/ref/view/component
+     * (see sandbox::is_readable_by); used at the api read boundary against id-list enumeration
+     *
+     * @param user|null $usr the user who has requested to read the list
+     * @return sandbox_list_named this list with only the entries readable by the given user
+     */
+    function filter_readable_by(?user $usr): sandbox_list_named
+    {
+        $result = array();
+        foreach ($this->lst() as $sbx_obj) {
+            if ($sbx_obj->is_readable_by($usr)) {
+                $result[] = $sbx_obj;
+            }
+        }
+        $this->set_lst($result);
+        return $this;
     }
 
 }

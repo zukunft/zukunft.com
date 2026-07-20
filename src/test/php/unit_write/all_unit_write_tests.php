@@ -135,10 +135,14 @@ class all_unit_write_tests extends all_unit_read_tests
                 // create the test dataset to check the basic write functions
                 $t->set_users();
                 $t_db->create_test_db_entries($t);
+                // creating the complete test dataset is a known one-time heavy operation, so reset the
+                // section timer to avoid charging its duration to the first write test as a false timeout
+                $t->reset_section_timer();
 
                 // run the general db write tests
                 new user_write_tests()->run($t);
                 new sys_log_write_tests()->run($t);
+                new db_cache_page_write_tests()->run($t);
                 // TODO Prio 0 activate
                 //new horizontal_write_tests()->run($t);
 
@@ -222,9 +226,10 @@ class all_unit_write_tests extends all_unit_read_tests
      * recreate the database to test the database setup script
      * TODO make sure that this can never be called in PROD
      *
+     * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return void
      */
-    function run_db_recreate(): void
+    function run_db_recreate(user_message $msg): void
     {
         global $db_con;
         global $usr;
@@ -240,7 +245,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // check if at least some database tables still exists
         $lib = new library();
         $ip_tbl_name = $lib->class_to_name(ip_range::class);
-        if ($db_con->has_table($ip_tbl_name)) {
+        if ($db_con->has_table($ip_tbl_name, $msg)) {
             $usr->get();
         } else {
             // TODO Prio 2 avoid setting the system user profile directly
@@ -252,7 +257,7 @@ class all_unit_write_tests extends all_unit_read_tests
         $test_usr = clone $usr;
 
         // use the system user for the database updates
-        if ($db_con->has_table($ip_tbl_name)) {
+        if ($db_con->has_table($ip_tbl_name, $msg)) {
             $usr->load_by_id(users::SYSTEM_ID);
         } else {
             // TODO Prio 2 avoid setting the system user profile directly
@@ -264,10 +269,17 @@ class all_unit_write_tests extends all_unit_read_tests
         foreach (def::DB_TABLE_LIST as $table_name) {
             $db_con->drop_table($table_name);
         }
-        $db_con->setup_db();
+        // recreate the database as the virtual system user,
+        // because this is a system call
+        $setup_msg = new user_message(user::system());
+        $db_con->setup_db($setup_msg);
 
         // restore the test user
         $usr = clone $test_usr;
+
+        // the complete database recreation above is a known one-time heavy operation, so reset the
+        // section timer to avoid charging its duration to the next test section as a false timeout
+        $this->reset_section_timer();
 
     }
 

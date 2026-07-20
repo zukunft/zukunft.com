@@ -53,5 +53,10 @@ class job_types
     const string FORMULA_UNLINK = "formula_unlink";
     const string BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
     const int BASE_IMPORT_ID = 11;
+    const string PAGE_REFRESH = "page_refresh"; // render the html page of a view-only request again and update the cached page
+    const string CACHE_REFRESH = "cache_refresh"; // proactively invalidate the outdated config and type caches so the next request hits a warm cache
+    const int CACHE_REFRESH_ID = 26;
+    const string DB_CLEANUP = "db_cleanup"; // remove the old completed jobs to keep the database small
+    const int DB_CLEANUP_ID = 27;
 
 }

@@ -553,30 +553,52 @@ class job extends db_object_seq_id_user
     }
 
     /**
-     * execute all open requests
+     * execute this job by dispatching it to the handler of its job type
+     * @return user_message the result of the execution so the caller (job_runner) can mark the job done or failed
      */
-    function exe(): void
+    function exe(): user_message
     {
         $usr_msg = new user_message();
 
         $this->start_time = new DateTime();
         $this->save($usr_msg);
 
-        if ($this->type_code_id() == job_types::VALUE_UPDATE) {
+        $code_id = $this->type_code_id();
+        if ($code_id == job_types::VALUE_UPDATE) {
             $this->exe_val_upd($usr_msg);
+        } elseif ($code_id == job_types::CACHE_REFRESH) {
+            // the handlers are included here (not at the top) to avoid a circular include with job
+            include_once paths::MODEL_SYSTEM . 'job_cache_refresh.php';
+            new job_cache_refresh()->execute($usr_msg);
+        } elseif ($code_id == job_types::DB_CLEANUP) {
+            include_once paths::MODEL_SYSTEM . 'job_db_cleanup.php';
+            new job_db_cleanup()->execute($usr_msg);
         } else {
-            log_err('Job type "' . $this->type_code_id() . '" not defined.', 'job->exe');
+            $usr_msg->add_err(msg_id::JOB_TYPE_INVALID, [msg_id::VAR_NAME => $this->dsp_id()]);
+            log_err('Job type "' . $code_id . '" not defined.', 'job->exe');
         }
+
+        return $usr_msg;
     }
 
     /**
-     * remove the old requests from the database if they are closed since a while
-     * @param user_message $msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
-     * @return bool true if everything has been fine
+     * remove this job row from the database (used by the database cleanup job for old completed jobs)
+     * a job row carries no user history worth logging, so the delete is done without a change log entry
+     * @param user_message $msg the message that collects the reason if the delete failed
+     * @return bool true if the job row has been deleted
      */
     function del(user_message $msg): bool
     {
-        return $msg->is_ok();
+        global $db_con;
+        $result = false;
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_delete($sc, $msg);
+        if ($qp !== null) {
+            $del_msg = $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
+            $msg->merge($del_msg);
+            $result = $del_msg->is_ok();
+        }
+        return $result;
     }
 
 

@@ -193,7 +193,7 @@ class verb_list extends type_list
             if ($qp->name != '') {
                 $vrb_lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
                 $vrb_id_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
-                $db_vrb_lst = $db_con->get($qp);
+                $db_vrb_lst = $db_con->get($qp, 'verb list');
                 if ($db_vrb_lst != null) {
                     foreach ($db_vrb_lst as $db_vrb) {
                         if (!in_array($db_vrb[verb_db::FLD_ID], $vrb_id_lst)) {
@@ -226,7 +226,7 @@ class verb_list extends type_list
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp);
+        $db_lst = $db_con->get($qp, 'verb list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
@@ -235,6 +235,26 @@ class verb_list extends type_list
             }
         }
         return $this->lst();
+    }
+
+    /**
+     * fill this list from the api json rows of the cached types message
+     * the rows are from the own database, so the api_mapper is called as trusted
+     * to restore all verb fields and a verb from the cache behaves exactly like one from the database
+     *
+     * @param array $api_rows the api json rows of the verbs e.g. from the db cached types message
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @return bool true if at least one verb has been added
+     */
+    function fill_from_api_rows(array $api_rows, user_message $usr_msg): bool
+    {
+        $this->set_lst([]);
+        foreach ($api_rows as $api_row) {
+            $vrb = new verb();
+            $vrb->api_mapper($api_row, $usr_msg, true);
+            $this->add_verb($vrb);
+        }
+        return !$this->is_empty();
     }
 
     /**

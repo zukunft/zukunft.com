@@ -220,7 +220,7 @@ class term_list extends sandbox_list_named
         global $db_con;
         $result = false;
 
-        $trm_lst = $db_con->get($qp);
+        $trm_lst = $db_con->get($qp, 'term list');
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->get_user());
             $trm->row_mapper_sandbox($db_row);

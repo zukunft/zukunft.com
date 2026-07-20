@@ -296,6 +296,7 @@ class component_exe extends component
             component_types::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
             component_types::ADMIN_FORM_FIELD_USER_EMAIL => $form->admin_form_user_email($dbo),
             component_types::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
+            component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX => $form->admin_form_user_uses_sandbox($dbo),
             component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
             component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
             component_types::SYSTEM_ADMIN_URL_DELAY => $page->admin_url_delay(),
@@ -324,7 +325,7 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo),
+            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_array),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
             component_types::FORM_CHANGES => $preview->popup_changes($url_array, $dbo),
             component_types::FORM_IMPACT => $preview->popup_impact($url_array),
@@ -378,7 +379,8 @@ class component_exe extends component
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
             component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
-            component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $cfg),
+            component_types::LIST_FORMULAS_OF_PARENTS => $list->formulas_of_parents($dbo),
+            component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $cfg, $test_mode),
 
             // TODO Prio 1 review the components below
 
@@ -401,6 +403,7 @@ class component_exe extends component
 
             // view only -
             component_types::SHOW_NAME => $form->show_name($dbo, $this->code_id),
+            component_types::SHOW_NAME_BIG => $form->show_name_big($dbo, $this->code_id),
             component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_types::SHOW_PLURAL => $form->show_plural($dbo),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo),
@@ -435,6 +438,7 @@ class component_exe extends component
             // table
             component_types::VALUES_ALL => $base->all($dbo, $back),
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
+            component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $cfg, $style_id),
             component_types::VALUE_CHART => $list->value_chart($dbo, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $test_mode),
             component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),

@@ -105,7 +105,7 @@ class group_list extends sandbox_list
         $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
 
         // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-        $db_rows = $db_con->get($qp);
+        $db_rows = $db_con->get($qp, 'group list');
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $phr_grp = new group($this->get_user());

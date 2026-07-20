@@ -66,6 +66,8 @@ if ($db_con->is_open()) {
         if ($frm_ids != '') {
             $lst = new formula_list($usr);
             $lst->load_by_ids(explode(',', $frm_ids));
+            // drop the formulas the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } elseif ($phr_id != 0) {
             // the formulas assigned to a phrase e.g. for the default word page
@@ -73,6 +75,8 @@ if ($db_con->is_open()) {
             $phr->set_id((int)$phr_id);
             $lst = new formula_list($usr);
             $lst->load_by_phr($phr);
+            // drop the formulas the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'list of formula id or the phrase id is missing';

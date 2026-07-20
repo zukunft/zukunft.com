@@ -117,6 +117,11 @@ class db_object_seq_id extends db_object
     // *_SQL_TYP is the sql data type used for the field
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
+    // the requested change used for the log message of the permission checks
+    const string ACTION_ADD = 'adding';
+    const string ACTION_CHANGE = 'changing';
+    const string ACTION_DELETE = 'deleting';
+
 
     /*
      * construct and map
@@ -519,6 +524,37 @@ class db_object_seq_id extends db_object
         return $msg;
     }
 
+    /**
+     * add a human-readable message to $msg if the given field value of this object
+     * differs from the value of the reference object loaded from the database
+     * used by the diff_msg functions of the sandbox objects to cover a field
+     * that has no dedicated difference message
+     *
+     * @param user_message $msg the message collection the difference is added to
+     * @param string $field_name the database field name shown to the user
+     * @param mixed $this_val the field value of this object e.g. from the import
+     * @param mixed $obj_val the field value of the reference object e.g. from the database
+     * @return void
+     */
+    protected function diff_field_msg(
+        user_message $msg,
+        string       $field_name,
+        mixed        $this_val,
+        mixed        $obj_val
+    ): void
+    {
+        if ($this_val != $obj_val) {
+            $lib = new library();
+            $msg->add(msg_id::DIFF_FIELD, [
+                msg_id::VAR_FIELD_NAME => $field_name,
+                msg_id::VAR_VALUE => $obj_val,
+                msg_id::VAR_VALUE_CHK => $this_val,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+    }
+
 
     /*
      * modify
@@ -714,15 +750,8 @@ class db_object_seq_id extends db_object
             }
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        } else {
-            $lib = new library();
-            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_NAME => $msg->usr?->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
-            ]);
         }
+        // the reject message for the user is added by can_be_added_by
 
         // TODO Prio 1 review
         /*
@@ -802,7 +831,7 @@ class db_object_seq_id extends db_object
         log_debug('update row ' . $this->dsp_id());
 
         // if the user has the right to change the database row ...
-        if ($this->can_be_changed_by($msg, $db_rec)) {
+        if ($this->can_be_changed_by($msg)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
             $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
@@ -811,15 +840,8 @@ class db_object_seq_id extends db_object
             $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        } else {
-            $lib = new library();
-            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_NAME => $msg->usr?->name(),
-                msg_id::VAR_USER_PROFILE => $msg->usr?->profile_name()
-            ]);
         }
+        // the reject message for the user is added by can_be_changed_by
 
         return $msg->is_ok();
     }
@@ -1377,11 +1399,14 @@ class db_object_seq_id extends db_object
         // add the child object specific fields and values
         if ($sc_par_lst->is_insert()) {
             $qp->sql = $sc->create_sql_insert($fvt_lst);
+            $qp->par = $fvt_lst->db_values();
         } else {
             $qp->sql = $sc->create_sql_update(
                 $this->id_field(), $this->id(), $fvt_lst);
+            // use the sql creator parameters because create_sql_update
+            // has added the where id at the end of the parameter list
+            $qp->par = $sc->get_par();
         }
-        $qp->par = $fvt_lst->db_values();
 
         return $qp;
     }
@@ -1521,6 +1546,38 @@ class db_object_seq_id extends db_object
     }
 
     /**
+     * true if the requesting user is permitted to change any data of this pod
+     * the base check for adding, changing and deleting an object
+     * a user without login (an ip user) is blocked if this pod does not permit the changes of an ip user
+     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     *
+     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param string $action the requested change used for the log message e.g. 'adding'
+     * @return bool true if the user is permitted to change data
+     */
+    private function user_can_change(user_message $usr_msg, string $action): bool
+    {
+        $can_change = false;
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+
+        if ($usr_msg->usr == null) {
+            // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
+            log_err('user missing while ' . $action . ' of ' . $class);
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($usr_msg->usr->is_blocked()) {
+            // tell the user why the change has been rejected and how to solve it
+            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            log_warning($action . ' of ' . $class . ' ' . $this->dsp_id()
+                . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
+        } else {
+            $can_change = true;
+        }
+
+        return $can_change;
+    }
+
+    /**
      * true if the requesting user is allowed to add this object
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
@@ -1528,46 +1585,59 @@ class db_object_seq_id extends db_object
      */
     function can_be_added_by(user_message $usr_msg): bool
     {
-        $can_change = true;
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-
-        // default is that all user can add data if they are not blocked
-        if ($usr_msg->usr == null) {
-            $can_change = false;
-            log_warning('user missing while adding of ' . $class);
-        } else {
-            if ($usr_msg->usr->is_blocked()) {
-                $can_change = false;
-                log_warning('adding of ' . $class . ' ' . $this->dsp_id() . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
-            }
-        }
-
-        return $can_change;
+        // any user that is not blocked can add data
+        return $this->user_can_change($usr_msg, self::ACTION_ADD);
     }
 
     /**
      * true if the requesting user is allowed to change this object
      *
      * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
-     * @param db_object_seq_id $db_rec the object that is loaded from the database to project single field changes
      * @return bool true if the is allowed to change the object
      */
-    function can_be_changed_by(user_message $usr_msg, db_object_seq_id $db_rec): bool
+    function can_be_changed_by(user_message $usr_msg): bool
+    {
+        return $this->can_be_modified_by($usr_msg, self::ACTION_CHANGE);
+    }
+
+    /**
+     * true if the requesting user is allowed to delete or exclude this object
+     * a delete needs the same permissions as a change of an existing object
+     *
+     * @param user_message $usr_msg the user who has requested the deletion and the object to collect the potential reject messages
+     * @return bool true if the is allowed to delete the object
+     */
+    function can_be_deleted_by(user_message $usr_msg): bool
+    {
+        return $this->can_be_modified_by($usr_msg, self::ACTION_DELETE);
+    }
+
+    /**
+     * true if the requesting user is allowed to change or delete an existing object
+     *
+     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param string $action the requested change used for the log message e.g. 'deleting'
+     * @return bool true if the user is allowed to change the existing object
+     */
+    private function can_be_modified_by(user_message $usr_msg, string $action): bool
     {
         $can_change = false;
         $lib = new library();
         $class = $lib->class_to_name($this::class);
 
-        if ($usr_msg->usr === null) {
-            log_err('user not set in user_message', 'can_be_changed_by');
-            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            // if the user has a unique id e.g. if at least the email is known
-            // the user if potentially allowed to change the object
-            if ($usr_msg->usr->is_unique()) {
+        if ($this->user_can_change($usr_msg, $action)) {
+            // an existing row can be changed by a user with a login (so with a unique id e.g. the email)
+            // or by an ip user, if this pod permits the changes of an ip user (checked by user_can_change)
+            if ($usr_msg->usr->is_unique() or $usr_msg->usr->is_ip_user()) {
                 $can_change = true;
                 log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $usr_msg->usr->dsp_id());
+            } else {
+                $usr_msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
+                    msg_id::VAR_CLASS_NAME => $class,
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_USER_NAME => $usr_msg->usr->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_msg->usr->profile_name()
+                ]);
             }
         }
 

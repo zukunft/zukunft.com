@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -111,6 +112,18 @@ class formula_ui_tests
             $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES])));
         $test_page .= $html->text_h2('results of the formula increase');
         $test_page .= $list->results_related($frm_increase, $res_cfg);
+
+        // the assigned-phrases component shows only the phrases the formula is assigned to (the
+        // "year" carried by the increase formula), never the full phrase list; test_mode true so
+        // the assigned list carried by the formula is used without an api reload
+        $assigned = $list->phrases_of_formula($frm_increase, null, true);
+        // building the assigned phrases list reads and writes to the database, so a db timeout is used
+        $test_name = 'assigned phrases of the increase formula show the assigned "year"';
+        $t->assert_text_contains($test_name, $assigned, words::YEAR_CAP, $t::TIMEOUT_LIMIT_DB);
+        $test_name = 'assigned phrases of the increase formula exclude a not assigned phrase';
+        $t->assert_text_not_contains($test_name, $assigned, words::PERCENT);
+        $test_page .= $html->text_h2('assigned phrases of the formula increase');
+        $test_page .= $assigned;
 
         // the values of the phrases used by the increase formula shown as a table,
         // e.g. the inhabitants of the regions that the increase is calculated for

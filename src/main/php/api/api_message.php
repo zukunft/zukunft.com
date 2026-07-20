@@ -40,6 +40,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use DateTime;
@@ -126,7 +127,10 @@ class api_message
         // for unit tests use the default pod name
         $site_name = POD_NAME;
         if ($db_con->connected()) {
-            $site_name = $cfg->get_db(config::SITE_NAME, $db_con);
+            // read as the virtual system user, because a missing site name entry
+            // is created with the default value, which is a system action
+            $sys_msg = new user_message(user::system());
+            $site_name = $cfg->get_db(config::SITE_NAME, $db_con, $sys_msg, 'get pod name');
             // TODO remove this fallback case
             if ($site_name == '') {
                 $site_name = POD_NAME;

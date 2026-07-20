@@ -230,7 +230,7 @@ class change extends change_log
                 $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
-            log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
+            log_debug('Change ' . $this->id() . ' loaded');
         }
         return $result;
     }

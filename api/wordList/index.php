@@ -70,10 +70,14 @@ if ($db_con->is_open()) {
         if ($wrd_ids != '') {
             $lst = new word_list($usr);
             $lst->load_by_ids(explode(",", $wrd_ids));
+            // drop the words the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } elseif ($pattern != '') {
             $lst = new word_list($usr);
             $lst->load_like($pattern);
+            // drop the words the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'word ids, pattern and related word is missing';

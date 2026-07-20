@@ -237,15 +237,20 @@ class verb extends type_object
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $usr_msg, $trusted);
 
         // TODO add user to request new verbs via api
 
         $this->common_mapper($api_json, $usr_msg);
 
         // the usage and impact var is not expected to be changed via api
+        // but is restored from a trusted source e.g. the db cached types json
+        if ($trusted) {
+            $this->usage = $api_json[json_fields::USAGE] ?? null;
+            $this->impact = $api_json[json_fields::IMPACT] ?? null;
+        }
 
         return $usr_msg->is_ok();
     }
@@ -1196,6 +1201,48 @@ class verb extends type_object
             }
         }
 
+        return $msg->is_ok();
+    }
+
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the verb exists and is valid or if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     *
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param string $con description of the context already translated
+     * @return bool true if everything has been fine
+     */
+    function check(user_message $msg, string $con = ''): bool
+    {
+        if ($this->id() == 0) {
+            if ($this->name() != '') {
+                global $sys;
+                $vrb = $sys->typ_lst->vrb->get_by_name($this->name());
+                if ($vrb == null) {
+                    $msg->add(msg_id::VERB_MISSING, [
+                        msg_id::VAR_TYPE => $this->name(),
+                        msg_id::VAR_NAME => $con
+                    ]);
+                }
+            }
+        }
+        // all types must have a code_id or a name
+        // TODO Prio 3 review
+        /*
+        if ($this->code_id != '') {
+            if ($this->name != '') {
+                $msg->add_err(msg_id::TYPE_CODE_ID_MISSING, [
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                    msg_id::VAR_CLASS_NAME => $this::class
+                ]);
+            }
+        }
+        */
         return $msg->is_ok();
     }
 

@@ -2,15 +2,15 @@
 
 **Timon Zielonka**
 
-Version: 0.5 (draft) — April 2026
+Version: 0.7 (draft) — July 2026
 License: CC BY-SA 4.0
-DOI: https://doi.org/10.5281/zenodo.19371011
+DOI: https://doi.org/10.5281/zenodo.21315000
 
 ---
 
 ## Abstract
 
-This working paper applies the ethical principles of the Categorical Imperative (Immanuel Kant) and the Golden Rule to concrete policy areas. Starting from the maxim "Do not make others unhappy," nine domains are identified in which a universalisable practice can be implemented: from the regulation of disinformation, through climate protection and wealth concentration, to digital sovereignty and open AI infrastructure. The paper is intended as a basis for discussion on the application of deontological and contractualist ethics to policymaking. It draws on John Rawls' *Theory of Justice* (in particular the Difference Principle) as well as Tim Berners-Lee's concept of the Giant Global Graph as a foundation for precise and neutral knowledge.
+This working paper applies the ethical principles of the Categorical Imperative (Immanuel Kant) and the Golden Rule to concrete policy areas. Starting from the maxim "Do not make others unhappy," ten domains are identified in which a universalisable practice can be implemented: from the regulation of disinformation, through climate protection and wealth concentration, to digital sovereignty and open AI infrastructure. The paper is intended as a basis for discussion on the application of deontological and contractualist ethics to policymaking. It draws on John Rawls' *Theory of Justice* (in particular the Difference Principle) as well as Tim Berners-Lee's concept of the Giant Global Graph as a foundation for precise and neutral knowledge.
 
 ---
 
@@ -20,13 +20,13 @@ The Categorical Imperative in its core formulation states: "Act only according t
 
 John Rawls' *Theory of Justice* (1971) extends this tradition with the idea of fairness: principles of justice are those that rational persons would choose in a fair initial position (veil of ignorance). In particular, the Difference Principle — social and economic inequalities are justified only if they benefit the least advantaged — offers a bridge from formal ethics to concrete distributive justice.
 
-The order of the following nine points follows a prioritisation based on expected severity of suffering: the most urgent points are listed first, based on an extension of the lower two levels of Maslow's hierarchy of needs (physiological basic needs and safety) by the Disability-Adjusted Life Year (DALY) index of the World Health Organization. DALYs measure the healthy life years lost due to disease and premature death (Murray & Lopez 1996; WHO 2024). This combination named "Happy Time points (htp)" allows an evidence-based prioritisation: topics that directly affect life and limb (disinformation with health consequences, climate protection, subsistence-securing resources) are addressed before those that target higher levels of needs (self-actualisation, cultural participation). In case of dependencies.
+The order of the following ten points follows a prioritisation based on expected severity of suffering: the most urgent points are listed first, based on an extension of the lower two levels of Maslow's hierarchy of needs (physiological basic needs and safety) by the Disability-Adjusted Life Year (DALY) index of the World Health Organization. DALYs measure the healthy life years lost due to disease and premature death (Murray & Lopez 1996; WHO 2024). This combination named "Happy Time points (htp)" allows an evidence-based prioritisation: topics that directly affect life and limb (disinformation with health consequences, climate protection, subsistence-securing resources) are addressed before those that target higher levels of needs (self-actualisation, cultural participation) in case of dependencies.
 
 Methodologically, this paper follows the principle of the Delphi Method: a structured procedure for stepwise approximation of expertise through iterative, anonymised consultations of domain experts (Linstone & Turoff 1975). Applied to political decision-making, this means that complex problems should be solved not by individual opinions but through iterative, transparent consensus-building.
 
 This paper asks: How can these principles be translated into concrete, socially implementable steps?
 
-The following nine points are formulated as proposals that should withstand ethical scrutiny.
+The following ten points are formulated as proposals that should withstand ethical scrutiny.
 
 ---
 
@@ -36,7 +36,7 @@ The following nine points are formulated as proposals that should withstand ethi
 
 **Empirical findings:** Many voters make decisions to their own disadvantage (Funke et al. 2024). Since the widespread adoption of social media and smartphones, the Flynn Effect (the long-term rise in measured intelligence) has reversed (Flynn 2007; Dutton et al. 2016). In parallel, the share of people living in democracies has declined (Herre et al. 2013; Lührmann et al. 2018). Experiments with mice show that overstimulation permanently impairs orientation ability (Christakis et al. 2012). There is thus a correlation, and there are indications of a causal relationship between digital sensory overload and cognitive as well as democratic decline (Wurzer 2025).
 
-It would be possible to draw the consequence and build a dam against the strategy of "Flood the zone with shit" (the deliberate flooding of public discourse with disinformation) (Sirens Call Book 2024; Campact 2026). fMRI scans demonstrate that the human brain, under conditions of cognitive overload, is factually no longer capable of distinguishing truth from misinformation (Simons et al. 2005). A key reason why this is not politically implemented is likely the omission bias: the omission of a measure is psychologically perceived as less harmful than the active implementation of a (even necessary) regulatory action.
+It would be possible to draw the consequence and build a dam against the strategy of "Flood the zone with shit" (the deliberate flooding of public discourse with disinformation) (Sirens Call Book 2024; Campact 2026). fMRI scans demonstrate that the human brain, under conditions of cognitive overload, is factually no longer capable of distinguishing truth from misinformation (Berns et al. 2005). A key reason why this is not politically implemented is likely the omission bias: the omission of a measure is psychologically perceived as less harmful than the active implementation of a (even necessary) regulatory action.
 
 **Proposal:** Society must establish rules against disinformation on the basis of democratic processes. These rules must be subject to the rule of law, transparent, and contestable. Tolerance towards the intolerant must not lead to self-destruction (Tolerance Paradox, following Popper), but the decision about where to draw the line must be democratic and justiciable. *Primum non nocere* means here: regulations must be designed so that they do not disproportionately restrict legitimate expression of opinion.
 
@@ -46,7 +46,17 @@ It would be possible to draw the consequence and build a dam against the strateg
 
 ---
 
-## 3. Implementing Climate Protection Effectively — Proposal for a Transparent, Publicly Calculated Climate Tariff
+## 3. Implementing Climate Protection Effectively
+
+### Why a CBAM Is a Prerequisite for Effective Climate Protection
+
+**Diverging national interests as the starting point:** Climate protection is a global public good: the costs of emission reduction are borne locally, while the benefits are distributed worldwide. This creates a systematic incentive to free-ride — every individual country benefits when others reduce their emissions, without bearing any abatement costs itself (Nordhaus 2015). In addition, interests differ structurally: countries vary greatly in their vulnerability to climate damage, their economic dependence on fossil fuels, and their capacity for transition. The Production Gap Report shows that the major producer countries, taken together, plan to produce around 110% more fossil fuels in 2030 than would be consistent with the 1.5°C target — even though most of these governments have announced net-zero targets, and not a single one of the 20 profiled producer countries has committed to production cuts compatible with 1.5°C (SEI et al. 2023). The asymmetry is equally measurable in carbon pricing: only around 28% of global greenhouse gas emissions are subject to a direct carbon price at all, and the average price of implemented instruments is a mere USD 19 per tonne (World Bank 2025). For the foreseeable future, a globally uniform, sufficiently high carbon price is therefore not to be expected — climate policy will remain a patchwork of regions with high, low, and no carbon prices.
+
+**Carbon leakage — why shifting emissions harms climate protection:** As long as carbon prices differ regionally, an economic incentive arises to relocate emission-intensive production to regions with little or no carbon pricing ("carbon havens", Branger & Quirion 2014a). The emissions saved in the regulated area then partially reappear elsewhere — often with worse energy efficiency and a more carbon-intensive electricity mix. Model studies estimate this relocation rate (carbon leakage) without countermeasures at typically 5–25% of avoided emissions, on average around 14% (Branger & Quirion 2014b). For the climate, however, only the global sum of emissions counts: every relocated tonne of CO₂-eq renders the local reduction effort partially ineffective, increases the total cost of abatement, and can, in the extreme case, turn the intention of climate policy into its opposite. There is also political damage: the loss of industry and jobs to unregulated regions undermines public acceptance of ambitious climate policy in the regulating country — and thereby supplies the central argument against tightening it. From the perspective of the maxim "Do not make others unhappy", relocation is doubly problematic: the climate damage still affects everyone, while the burdens of the sham solution are borne locally.
+
+**Border adjustment as a condition for effective climate policy:** Neither problem — free-riding and leakage — can be solved without a border adjustment. Nordhaus (2015) shows through model-based analysis that international climate coalitions without sanctions against non-participants remain unstable and achieve only minimal abatement levels; only moderate trade measures against non-participants (a "Climate Club") make large, stable coalitions with high abatement targets possible. A CBAM is the concrete implementation of this mechanism: it puts imports on an equal price footing with domestic production, reduces the leakage rate in model calculations from an average of around 14% to around 6% (Branger & Quirion 2014b), and at the same time creates an incentive for third countries to introduce their own carbon prices — because without their own pricing, the levies flow as tariff revenue to the importing country instead of into their own national budget. A CBAM is thus not protectionism, but the precondition for unilateral or coalition-based climate policy to be effective at all: it protects ecological effectiveness (against leakage), political viability (against competitive disadvantages), and the international spread of carbon pricing (via the club incentive). The transparent, publicly calculated climate tariff proposed below addresses the remaining main obstacle: the complexity of the calculation.
+
+### Proposal for a Transparent, Publicly Calculated Climate Tariff
 
 **Problem:** The Swiss Federal Council has opted against introducing a Carbon Border Adjustment Mechanism (CBAM), partly due to the uncertain cost–benefit ratio (Federal Council 2023). From 2026, imports from the EU (e.g. metals) will be gradually subject to the EU climate tariff. However, the climate tariff is not refunded on exports of finished goods to countries outside the EU. For metals, this causes estimated annual losses of approximately CHF 140 million. Should the EU extend emissions trading (ETS 2) to fossil fuels, the loss due to non-implementation and non-refund increases to an estimated CHF 500 million per year (zukunft.com 2023).
 
@@ -125,7 +135,7 @@ The system builds on open standards and open-source components: numbers from ope
 
 2. **Low starting point with controlled increases:** The "Proto-UBI" (Ur-BGE Proposal 2026) is initially set so low that the overwhelming majority feels no significant effect. The amount is then gradually adjusted and increased as long as the net effect remains positive. This enables a controlled, evidence-based introduction.
 
-3. **Measurement of effects:** The effects are to be measured along several dimensions: changes in healthcare costs; and changes in utility relative to labour output (zukunft.com 2020). The latter concept (Gross Domestic Usage, GDU) attempts to capture actual societal benefit — for instance, when an app increases the efficiency of services or free knowledge (Wikipedia) becomes available at no cost, while gross domestic product often inadequately reflects this.
+3. **Measurement of effects:** The effects are to be measured along several dimensions: changes in healthcare costs; and changes in utility relative to labour output (zukunft.com 2020). The latter concept (Gross Domestic Usage, GDU; discussed in detail in Section 11) attempts to capture actual societal benefit — for instance, when an app increases the efficiency of services or free knowledge (Wikipedia) becomes available at no cost, while gross domestic product often inadequately reflects this.
 
 4. **Insurance model as a parallel test:** An "insurance variant" enables voluntary, risk-minimised piloting: participants pay a one-time or annual amount into a pool; randomly selected persons receive a lifelong basic income. Unclaimed funds flow into further lotteries. Accompanying studies examine the effects on health and work behaviour.
 
@@ -341,6 +351,36 @@ By combining the transparency function of Voting Advice Applications with the st
 
 ---
 
+## 11. Measuring the Benefit of the Economy — Gross Domestic Usage (GDU)
+
+**Problem:** Gross domestic product (GDP) is often used as a yardstick for a society's level of development. However, it measures market production, not benefit. It would be more meaningful to look at the "benefit per capita" — or, put differently, at the "prevention of unhappiness". What makes people happy varies from person to person; what makes them unhappy is largely universal. And beyond a certain level of wealth, additional purchasing power hardly increases a person's happiness any further. It is therefore fair to say: if no one is unhappy, a high level of development has been reached. GDP does not reflect this — free goods enter the national accounts at a price of zero and thus a value of zero, and damage (such as environmental pollution) does not reduce GDP as long as it remains unrepaired.
+
+**Why measurement concepts feed back into economic reality:** The choice of metric is not a neutral accounting question — it changes what is being measured. Three strands of research document this feedback:
+
+1. *Metrics steer policy:* The Stiglitz-Sen-Fitoussi Commission concluded that what is measured influences what is done — those who measure the wrong thing do the wrong thing (Stiglitz, Sen & Fitoussi 2009). The follow-up report shows concretely that over-reliance on GDP as a performance yardstick led policymakers to miss the approach of the 2008 crisis, and that concentrating on the wrong indicators after the crisis broke out resulted in inadequate policy decisions with severe, long-lasting consequences (Stiglitz, Fitoussi & Durand 2018).
+
+2. *Metrics steer behaviour (Goodhart's Law):* As soon as a metric becomes a target, it ceases to be a good metric (Goodhart 1975; Strathern 1997). Actors then optimise the metric rather than the purpose behind it. Applied to GDP: a policy that declares GDP growth to be the goal will maximise market transactions — even where actual benefit declines, for instance when environmental damage creates future clean-up costs that today's GDP does not capture.
+
+3. *Models shape markets (performativity):* MacKenzie (2006) shows, using the example of the Black-Scholes option pricing model, that economic models are not merely cameras depicting the economy but engines that change it: after the model was published, actual option prices converged towards the model prices — the measurement theory created the reality it claimed to describe. The same applies to GDP: as the dominant measurement concept, it shapes investment decisions, targets, and political priorities. The same feedback can be observed in the Swiss derivatives market: in 1998, unhedged call warrant purchases drove up volatility and share prices — and the more attention implied volatility received, the faster imbalances were corrected and the weaker its signal became (Zielonka 2004).
+
+The consequence: a measurement concept that captures benefit instead of turnover would, through the same feedback, favour an economic policy that maximises benefit instead of turnover.
+
+**Proposal — Gross Domestic Usage (GDU):** To calculate the increase (or decrease) in the prevention of unhappiness, actual usage is compared from one time period to the next. The name GDU (Gross Domestic Usage) is proposed for this measure (zukunft.com 2020). Three examples illustrate the difference from GDP:
+
+1. **Taxi:** Assume that last year taxis were used for 10 million miles and passengers spent USD 10 million on this. This year, passengers can order taxis via an app, which reduces costs by 20%; because of the lower prices, usage rises by 10%. GDP (for taxis) falls from USD 10 million to 8.8 million — but the benefit actually experienced has risen to 11 million miles. GDU would reflect what people actually experience.
+
+2. **Wikipedia:** Around 2001, the Brockhaus Enzyklopädie sold printed editions worth around EUR 60 million per year. Assuming the roughly 300,000 buyers each used the work 100 times a year, this corresponded to about EUR 2 per look-up. Today, the German-language Wikipedia records around 5 billion page views per year — at a price of zero. GDP for encyclopaedias has almost disappeared, while GDU for encyclopaedias has risen by orders of magnitude and roughly doubled each year on average for more than 15 years. Brynjolfsson et al. (2019) name exactly this case — Wikipedia replacing encyclopaedias — as an example of how the problem of welfare gains invisible in GDP becomes increasingly severe as free digital goods spread.
+
+3. **Air:** Assume that many years ago the air in China was clean and GDP was USD 1 billion. After factories were built, GDP doubled to USD 2 billion, but air pollution is high. If cleaning the air would cost USD 1.2 billion, then GDU has fallen while GDP as measured so far has doubled.
+
+**Connecting to the research — GDP-B:** The GDU proposal does not stand alone. Brynjolfsson, Collis, Diewert, Eggers and Fox (2019) have presented, with *GDP-B*, a formally developed measure that captures the benefits of new and free goods, which enter the conventional accounts at a value of zero. Methodologically, they use incentive-compatible choice experiments to determine what compensation people demand to give up a free good (willingness to accept): for Facebook, the median in 2016/17 was around USD 42 per month; accounting for this single service alone would have increased US growth measured by GDP-B by 0.05–0.11 percentage points per year. Particularly instructive is their smartphone camera example, which follows the logic of the taxi example: when a smartphone replaces a separate digital camera, conventionally measured GDP falls (because no camera is bought any more), while consumer welfare rises — the measured change has the opposite sign of the actual one. GDU goes beyond GDP-B by also including negative externalities (Example 3, air pollution), which GDP-B leaves out. Conversely, GDP-B provides the measurement-methodological foundation (reservation prices, choice experiments, total income approach) on which a GDU calculation can build. The transparent, semantic data structure of zukunft.com (Sections 3 and 4) would make it possible to render such benefit calculations — like the climate tariff calculations — public, traceable, and iteratively improvable.
+
+**Scientific context:** Simon Kuznets, the architect of the national accounts, warned as early as 1934 that the welfare of a nation can scarcely be inferred from GDP (cited in Brynjolfsson et al. 2019). The Stiglitz-Sen-Fitoussi Commission (2009) transformed this critique into a broad "Beyond GDP" agenda. For this paper, GDU is also methodologically central: the prioritisation by "Happy Time points" described in the introduction and the impact measurement of the Ur-UBI (Section 5) presuppose a benefit measure that captures the prevention of unhappiness rather than turnover. Rawls' Difference Principle points in the same direction: what must be assessed is how the least advantaged are actually faring — not how much turnover an economy generates. Finally, *primum non nocere* demands that a measurement system make damage visible instead of reporting it (as GDP does in the air example) as growth.
+
+**Further reading:** Concept page "Gross Domestic Usage" on [zukunft.com](https://www.zukunft.com/).
+
+---
+
 ## Conclusion
 
 The implementation of ethical principles such as the Categorical Imperative or justice as fairness (Rawls) requires more than the formulation of maxims. It demands translation into concrete policy areas, institutional reforms, and democratically legitimised procedures. This paper understands itself as a contribution to such translation work. It connects philosophical foundations (Kant, Rawls) with technical infrastructures (Giant Global Graph, Open Source) and concrete policy proposals (climate tariff, monopoly taxation, digital sovereignty). The next steps lie in broad discussion and the transfer into political processes.
@@ -359,6 +399,8 @@ Behrens, J., Kistner, A., Nitsche, A. & Swierczek, B. (2014): *The Principles of
 
 Berners-Lee, T. (2007): Giant Global Graph. W3C Design Issues.
 
+Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E. & Richards, J. (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. *Biological Psychiatry*, 58(4), 245--253. https://doi.org/10.1016/j.biopsych.2005.04.012
+
 Bloom, D. E. & Canning, D. (2008): Population Health and Economic Growth. Commission on Growth and Development, Working Paper No. 24. Washington: World Bank.
 
 Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic Growth: A Production Function Approach. *World Development*, 32(1), 1–13.
@@ -366,6 +408,12 @@ Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic
 Blum, C. & Zuber, C. I. (2016): Liquid Democracy: Potentials, Problems, and Perspectives. *Journal of Political Philosophy*, 24(2), 162–182.
 
 BMWi (2022): Expert report on CO₂ border adjustment. German Federal Ministry for Economic Affairs and Energy.
+
+Branger, F. & Quirion, P. (2014a): Climate Policy and the 'Carbon Haven' Effect. *WIREs Climate Change*, 5(1), 53–71. https://doi.org/10.1002/wcc.245
+
+Branger, F. & Quirion, P. (2014b): Would Border Carbon Adjustments Prevent Carbon Leakage and Heavy Industry Competitiveness Losses? Insights from a Meta-Analysis of Recent Economic Studies. *Ecological Economics*, 99, 29–39. https://doi.org/10.1016/j.ecolecon.2013.12.010
+
+Brynjolfsson, E., Collis, A., Diewert, W. E., Eggers, F. & Fox, K. J. (2019): GDP-B: Accounting for the Value of New and Free Goods in the Digital Economy. NBER Working Paper 25695. https://ssrn.com/abstract=3356697
 
 Byrd, B. S., Hruschka, J. & Joerden, J. C. (Eds.) (2004): On the developmental history of fundamental moral principles in the philosophy of the Enlightenment. *Yearbook for Law and Ethics*, Vol. 12. Duncker & Humblot.
 
@@ -417,6 +465,8 @@ Godfrey-Smith, P. & Kerr, B. (2019): Tolerance: A Hierarchical Analysis. *Journa
 
 Gölz, P., Kahng, A., Mackenzie, S. & Procaccia, A. D. (2021): The Fluid Mechanics of Liquid Democracy. *ACM Transactions on Economics and Computation*, 9(4), Article 23.
 
+Goodhart, C. A. E. (1975): Problems of Monetary Management: The UK Experience. In: *Papers in Monetary Economics*, Vol. 1. Reserve Bank of Australia.
+
 Gutmann, A. & Thompson, D. (1996): *Democracy and Disagreement*. Harvard University Press.
 
 Habermas, J. (1996): *Between Facts and Norms: Contributions to a Discourse Theory of Law and Democracy*. MIT Press.
@@ -445,11 +495,15 @@ List, C. & Pettit, P. (2002): Aggregating Sets of Judgments: An Impossibility Re
 
 Lührmann, A., Tannenberg, M. & Lindberg, S. (2018): Regimes of the World (RoW). *Politics and Governance*, 6(1), 60–77.
 
+MacKenzie, D. (2006): *An Engine, Not a Camera: How Financial Models Shape Markets*. MIT Press.
+
 Maslow, A. H. (1943): A Theory of Human Motivation. *Psychological Review*, 50(4), 370–396.
 
 MoneyPark (2025): *Der Schweizer Hypothekarmarkt 2024 — Hypothekarmarktstudie*. MoneyPark AG. https://www.moneypark.ch/content/dam/os/ch/mp/documents/mortgages/de/MoneyPark_Hypothekarmarktstudie_2024.pdf
 
 Murray, C. J. L. & Lopez, A. D. (1996): *The Global Burden of Disease*. Harvard University Press.
+
+Nordhaus, W. (2015): Climate Clubs: Overcoming Free-Riding in International Climate Policy. *American Economic Review*, 105(4), 1339–1370. https://doi.org/10.1257/aer.15000001
 
 Popper, K. (1945): *The Open Society and Its Enemies*. Routledge.
 
@@ -461,9 +515,15 @@ Rawls, J. (1993): *Political Liberalism*. Columbia University Press.
 
 Rebbe, C. (2023): Should the EU introduce a climate tariff? *Politisches Lernen*, 41(3–4), 64–67.
 
-Simons, A. et al. (2005): fMRI evidence for the role of the prefrontal cortex in the detection of deception. *NeuroImage*, 25(4), 1215–1222.
+SEI, Climate Analytics, E3G, IISD & UNEP (2023): *The Production Gap Report 2023: Phasing Down or Phasing Up? Top Fossil Fuel Producers Plan Even More Extraction Despite Climate Promises*. Stockholm Environment Institute et al. https://doi.org/10.51414/sei2023.050
 
 Stark, J. (2025): Postulat 25.3951: Grundlagen für ein neues schlankes und wirksames CO₂-Gesetz. Ständerat. https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20253951
+
+Stiglitz, J. E., Sen, A. & Fitoussi, J.-P. (2009): *Report by the Commission on the Measurement of Economic Performance and Social Progress*. Paris.
+
+Stiglitz, J. E., Fitoussi, J.-P. & Durand, M. (2018): *Beyond GDP: Measuring What Counts for Economic and Social Performance*. OECD Publishing, Paris. https://doi.org/10.1787/9789264307292-en
+
+Strathern, M. (1997): 'Improving ratings': Audit in the British University System. *European Review*, 5(3), 305–321.
 
 Trepanier, S. (2025): The Paradox of Tolerance as a Shield to Demonstrate Intolerance. *Journal of Continuing Education in Nursing*, 56(8), 312–313.
 
@@ -475,9 +535,13 @@ Washington, A. L. (2025): Built on sand: The hidden risks of generative AI for t
 
 WHO (2024): Global Health Estimates: Disability-Adjusted Life Years (DALYs). World Health Organization.
 
+World Bank (2025): *State and Trends of Carbon Pricing 2025*. Washington, DC: World Bank. https://www.worldbank.org/en/publication/state-and-trends-of-carbon-pricing
+
 Wurzer, D. (2025): Brain Rot: Are we really getting dumber? Spektrum.de SciLogs.
 
 yacy.net (2025): Free, decentralised search engine. https://yacy.net
+
+Zielonka, T. (2004): Dank der Belebung an den Derivatmärkten steigt die Aussagekraft des VLEU (Teil 3). *Finanz und Wirtschaft*, 21 February 2004. https://www.fuw.ch/article/dank-der-belebung-an-den
 
 Züger, T. & Asghari, H. (2025): The landscape of public-interest-oriented AI. Digital Society Blog, Alexander von Humboldt Institute for Internet and Society.
 

@@ -148,7 +148,7 @@ class word_list_write_tests
         $wrd_lst_linked = $wrd_lst->load_linked_words($sys->typ_lst->vrb->get_verb(verbs::IS), foaf_direction::UP);
         $result = $lib->dsp_array($wrd_lst_linked->names());
         $target = word_names::CANTON . "," . word_names::CITY . "," . word_names::COMPANY; // order adjusted based on the number of usage
-        $t->assert('word_list->load_linked_words for "' . word_names::ZH . '" "' . verbs::IS . '" up', $result, $target);
+        $t->assert_text_contains('word_list->load_linked_words for "' . word_names::ZH . '" "' . verbs::IS . '" up', $result, $target);
 
         // test getting all parents e.g. "Cash" is part of "Current Assets" and "Assets"
         $wrd_lst = new word_list($usr);
@@ -196,7 +196,7 @@ class word_list_write_tests
         $lst_is = $wrd_lst->is();
         $result = $lib->dsp_array($lst_is->names());
         $target = $lib->dsp_array(array(word_names::CANTON, word_names::CITY, word_names::COMPANY)); // order adjusted based on the number of usage
-        $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
+        $t->assert_text_contains('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
         // test "are" e.g. "cantons are Zurich and ..."
         $wrd_lst = new word_list($usr);

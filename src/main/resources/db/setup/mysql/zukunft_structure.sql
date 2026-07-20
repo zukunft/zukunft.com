@@ -267,6 +267,30 @@ ALTER TABLE db_caches
 -- --------------------------------------------------------
 
 --
+-- table structure cached html pages of view-only requests keyed by the url for faster response times
+--
+
+CREATE TABLE IF NOT EXISTS db_cache_pages
+(
+    db_cache_page_id bigint        NOT NULL COMMENT 'the internal unique primary index',
+    `url`            text          NOT NULL COMMENT 'the request url that the cached html page belongs to',
+    html_page        text      DEFAULT NULL COMMENT 'the pre-rendered html page returned for the url',
+    last_update      timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the last rendering of the cached html page',
+    PRIMARY KEY (db_cache_page_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'cached html pages of view-only requests keyed by the url for faster response times';
+
+--
+-- AUTO_INCREMENT for table db_cache_pages
+--
+ALTER TABLE db_cache_pages
+    MODIFY db_cache_page_id bigint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
 -- table structure predefined status of batch task as a database table e.g. so that admin can change the description
 --
 
@@ -506,6 +530,7 @@ CREATE TABLE IF NOT EXISTS users
     view_id            bigint       DEFAULT NULL COMMENT 'the last mask that the user has used',
     source_id          bigint       DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
     user_status_id     smallint     DEFAULT NULL COMMENT 'e.g. to exclude inactive users',
+    uses_sandbox       smallint     DEFAULT NULL COMMENT 'true if the user has changed any data, so the pages for this user cannot be served from the cache of the standard pages',
     created            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login         timestamp    DEFAULT NULL,
     last_logoff        timestamp    DEFAULT NULL,
@@ -4720,6 +4745,16 @@ ALTER TABLE db_caches
     ADD KEY db_caches_user_idx (user_id),
     ADD KEY db_caches_status_idx (status_id),
     ADD KEY db_caches_last_update_idx (last_update);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table db_cache_pages
+--
+
+ALTER TABLE db_cache_pages
+    ADD KEY db_cache_pages_url_idx (url),
+    ADD KEY db_cache_pages_last_update_idx (last_update);
 
 -- --------------------------------------------------------
 

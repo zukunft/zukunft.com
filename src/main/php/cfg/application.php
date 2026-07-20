@@ -49,6 +49,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -56,7 +57,9 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -66,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -73,7 +77,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -92,13 +98,25 @@ class application
     {
         global $sys;
         global $mtr;
+        // the config and db_cache loaded below read the db connection from the
+        // global $db_con (e.g. db_cache::load_by_type_id), so the connection
+        // opened here must populate that global and not just a local variable,
+        // otherwise every api request fails with 'sql_creator() on null'
+        global $db_con;
 
         // init system
         $code_name = 'api/' . $code_name;
         $sys = new system_object($code_name);
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
-        // resume session (based on cookies)
+        // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
+        // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
+        // issued, then enforce the file based IP / user whitelist (the only dos protection)
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -107,6 +125,8 @@ class application
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
 
         // link to database
         $db_con = new sql_db;
@@ -116,10 +136,15 @@ class application
         // for the api only English is used
         $mtr = new Translator(language_codes::SYS);
 
-        // preload all types from the database
-        // TODO Prio 2 check if really all types needs to be loaded
-        //$sys->typ_lst->load_core($db_con);
-        $sys->typ_lst->load($db_con);
+        // preload all types, with one database read from the cached types json when available
+        // or with one select per type list if the cache is missing or outdated
+        $sys->typ_lst->load_cached($db_con);
+
+        $this->load_system_config();
+
+        // honor the pod switch for the types cache, which is only known once the config is loaded
+        global $cfg;
+        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
@@ -133,12 +158,24 @@ class application
     function start_api(string $code_name): sql_db
     {
         global $sys;
+        // the config and db_cache loaded below read the db connection from the
+        // global $db_con (e.g. db_cache::load_by_type_id), so the connection
+        // opened here must populate that global and not just a local variable,
+        // otherwise every api request fails with 'sql_creator() on null'
+        // TODO Prio 2 split from the backend
+        global $db_con;
 
         $code_name = 'api/' . $code_name;
-        log_debug($code_name . ' ..');
         $sys = new system_object($code_name);
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
 
-        // resume session (based on cookies)
+        // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
+        // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
+        // issued, then enforce the file based IP / user whitelist (the only dos protection)
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -147,6 +184,8 @@ class application
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
 
         // link to database
         $db_con = new sql_db;
@@ -158,21 +197,52 @@ class application
         global $mtr;
         $mtr = new Translator(language_codes::SYS);
 
-        // preload all types from the database
-        // TODO Prio 3 try to speed up
-        $sys->load_type_lists($db_con);
+        // preload all types, with one database read from the cached types json when available
+        // or with one select per type list if the cache is missing or outdated
+        $sys->load_type_lists_cached($db_con);
+
+        $this->load_system_config();
+
+        // honor the pod switch for the types cache, which is only known once the config is loaded
+        global $cfg;
+        $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
 
         return $db_con;
     }
 
+    /**
+     * load the system configuration to the global config numbers
+     * every api request needs the system configuration, because without it
+     * e.g. the permission check of a user without login (user->is_blocked) cannot be done
+     * and would allow the database changes that this pod does not permit
+     *
+     * @return void
+     */
+    private function load_system_config(): void
+    {
+        global $cfg;
+
+        // the system profile must be set explicit, because the default profile of a new user
+        // is the profile of a user without login, which is not permitted to load the configuration
+        $usr_sys = new user();
+        $usr_sys->id = users::SYSTEM_ID;
+        $usr_sys->name = users::SYSTEM_NAME;
+        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
+
+        $cfg = new config_numbers($usr_sys);
+        $cfg->load_cfg(null, $usr_sys);
+    }
+
     function end_api($db_con): void
     {
+        global $sys;
+
         $this->write_time($db_con);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
 
-        log_debug(' ... database link closed');
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**
@@ -194,6 +264,9 @@ class application
         global $sys;
 
         $sys->script = $code_name;
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // TODO Prio 2 check if cookies are actually needed
@@ -273,43 +346,48 @@ class application
         } else {
             log_debug($code_name . ': db open');
 
-            // check the system setup
+            // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $usr_msg = $db_chk->db_check($db_con);
-            if (!$usr_msg->is_ok()) {
+            $msg = new user_message(user::system());
+            if (!$db_chk->db_check($db_con, $msg)) {
                 echo '\n';
-                echo $usr_msg->all_message_text();
+                echo $msg->all_message_text();
                 $db_con->close();
                 $db_con = null;
             }
 
-            // create a virtual one-time system user to load the system users
-            $usr_sys = new user();
-            $usr_sys->id = users::SYSTEM_ID;
-            $usr_sys->name = users::SYSTEM_NAME;
+            // skip the start-up loading if the database check has failed and the connection has been closed,
+            // because continuing without a database would end in a fatal crash that hides the fail message
+            if ($db_con != null) {
 
-            // load system configuration
-            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-            $sys->load_cache_type($db_con);
-            // TODO cache the system config json and detect
-            $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg(null, $usr_sys);
-            $mtr = new Translator($cfg->language());
+                // create a virtual one-time system user to load the system users
+                $usr_sys = new user();
+                $usr_sys->id = users::SYSTEM_ID;
+                $usr_sys->name = users::SYSTEM_NAME;
 
-            // preload all types from the database
-            $sys->times->switch(system_time_type::LOAD_TYPES);
-            // the types are general so the system user can be used to load the types
-            $cac = new data_object($usr_sys);
-            $sys->load_type_lists($db_con);
+                // load system configuration
+                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+                $sys->load_cache_type($db_con);
+                // TODO cache the system config json and detect
+                $cfg = new config_numbers($usr_sys);
+                $cfg->load_cfg(null, $usr_sys);
+                $mtr = new Translator($cfg->language());
 
-            $log = new change_log($usr_sys);
-            $db_changed = $log->create_log_references($db_con);
-
-            // reload the type list if needed and trigger an update in the frontend
-            // even tough the update of the preloaded list should already be done by the single adds
-            if ($db_changed) {
+                // preload all types from the database
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                // the types are general so the system user can be used to load the types
+                $cac = new data_object($usr_sys);
                 $sys->load_type_lists($db_con);
+
+                $log = new change_log($usr_sys);
+                $db_changed = $log->create_log_references($db_con);
+
+                // reload the type list if needed and trigger an update in the frontend
+                // even tough the update of the preloaded list should already be done by the single adds
+                if ($db_changed) {
+                    $sys->load_type_lists($db_con);
+                }
             }
 
         }
@@ -319,16 +397,17 @@ class application
 
     function end($db_con, $echo_header = true): void
     {
+        global $sys;
 
         $this->write_time($db_con);
 
         // Free result test
         //mysqli_free_result($result);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
 
-        log_debug(' ... database link closed');
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
     }
 
     /**

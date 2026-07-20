@@ -33,14 +33,17 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::VERB . 'verb.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -74,6 +77,19 @@ class test_verbs extends test_objects
         $vrb->set_description(verbs::NOT_SET_COM);
         $vrb->set_user($this->env->usr1);
         return $vrb;
+    }
+
+    static function verb_static(): verb
+    {
+        $vrb = new verb(verbs::NOT_SET_ID, verbs::NOT_SET_NAME, verbs::NOT_SET);
+        $vrb->set_description(verbs::NOT_SET_COM);
+        $vrb->set_user(test_users::user_sys_test());
+        return $vrb;
+    }
+
+    static function verb_ui(): verb_ui
+    {
+        return new verb_ui(self::verb_static()->api_json());
     }
 
     /**
@@ -184,7 +200,7 @@ class test_verbs extends test_objects
     /**
      * @return verb a standard verb with user null
      */
-    function verb_part(): verb
+    static function verb_part(): verb
     {
         return new verb(verbs::PART_ID, verbs::PART_NAME, verbs::PART_NAME);
     }

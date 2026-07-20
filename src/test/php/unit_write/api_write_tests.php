@@ -35,10 +35,13 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_WORD . 'word.php';
+include_once test_paths::CREATE . 'test_users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class api_write_tests
@@ -68,6 +71,11 @@ class api_write_tests
         //$t->assert_api_put(word::class);
         $t->assert_api_del_direct(word::class, $t->usr1, $t);
         //}
+
+        // a user without login (ip user) must be refused, because the ip user change block is
+        // enforced centrally in the model save/del, not only in the http/view.php frontend
+        $t_usr = new test_users($t);
+        $t->assert_api_write_blocked_for_ip_user(word::class, $t_usr->user_ip_loaded(), $t);
 
         $t->subheader($ts . ' api login');
 

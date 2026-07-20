@@ -123,34 +123,38 @@ class word_names
     const int WARMER_ID = 223;
     const string POPULISM = 'populism';
     const int POPULISM_ID = 227;
+    const string POPULISM_COM = 'a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.';
     const string HEALTH = 'health';
     const int HEALTH_ID = 243;
+    const string HEALTH_COM = 'a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.';
     const string POVERTY = 'poverty';
     const int POVERTY_ID = 245;
+    const string POVERTY_COM = 'the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.';
     const string EDUCATION = 'education';
     const int EDUCATION_ID = 247;
+    const string EDUCATION_COM = 'process of teaching and learning';
     const string HTP = 'htp';
     const int HTP_ID = 255;
     const string TRILLION = 'trillion';
     const int TRILLION_ID = 256;
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 321;
+    const int SWISS_FRANC_ID = 329;
     const string USD = 'USD';
-    const int USD_ID = 259;
+    const int USD_ID = 347;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 281;
+    const int SALES_ID = 465;
     const string CASH = 'cash';
-    const int CASH_ID = 282;
+    const int CASH_ID = 466;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 283;
+    const int STATEMENT_ID = 467;
     const string PARTS = 'parts';
-    const int PARTS_ID = 286;
+    const int PARTS_ID = 469;
     const string INCOME = 'income';
-    const int INCOME_ID = 288;
+    const int INCOME_ID = 470;
     const string TAX = 'tax';
-    const int TAX_ID = 289;
+    const int TAX_ID = 471;
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
@@ -168,25 +172,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 294;
+    const int YEAR_2013_ID = 267;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 295;
+    const int YEAR_2014_ID = 268;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 296;
+    const int YEAR_2015_ID = 269;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 297;
+    const int YEAR_2016_ID = 270;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 298;
+    const int YEAR_2017_ID = 271;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 299;
+    const int YEAR_2018_ID = 272;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
+    const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 190;
     const string ABB = 'ABB';
-    const int ABB_ID = 279;
+    const int ABB_ID = 463;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 280;
+    const int VESTAS_ID = 464;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -219,25 +224,25 @@ class word_names
     const int HOUR_ID = 105;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 926;
+    const int YEAR_2021_ID = 535;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 925;
+    const int YEAR_2022_ID = 338;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 924;
+    const int YEAR_2023_ID = 534;
     const string YEAR_2024 = '2024';
-    const int YEAR_2024_ID = 264;
+    const int YEAR_2024_ID = 262;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 1091;
+    const int YEAR_2025_ID = 533;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 1090;
+    const int YEAR_2026_ID = 532;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 1089;
+    const int YEAR_2027_ID = 531;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 1088;
+    const int YEAR_2028_ID = 530;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 1087;
+    const int YEAR_2029_ID = 529;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 1086;
+    const int YEAR_2030_ID = 528;
     const string LIGHT = 'light';
     const int LIGHT_ID = 86;
     const string SPEED = 'speed';
@@ -293,7 +298,15 @@ class word_names
     const string TEST_ADD_COM = 'test description added to the word via import';
     // the new description posted by the confirm change workflow to change the test word description
     const string TEST_CHANGE_COM = 'a confirm change test description';
+    // words to test the no update import that only fills up empty fields
+    const string TEST_NO_UPD = 'System Test Word No Update';
+    const string TEST_NO_UPD_COM = 'the original description that a no update import must keep';
+    const string TEST_NO_UPD_CHANGED = 'the changed description that a no update import must ignore';
+    const string TEST_FILL_UP = 'System Test Word Fill Up';
+    const string TEST_FILL_UP_COM = 'the description added to an empty field by a no update import';
     const string TEST_ADD_TO = 'System Test Word To';
+    // the fixed snapshot id of the 'System Test Word To' (like TEST_ADD_ID for the 'System Test Word')
+    const int TEST_ADD_TO_ID = 997;
     const string TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const string TEST_ADD_GROUP_PRIME = 'System Test Word for prime values';
     const string TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
@@ -350,6 +363,7 @@ class word_names
     // and that are never expected to be used by a user
     const array TEST_WORDS = array(
         self::TEST_ADD,
+        self::TEST_ADD_TO,
         self::TEST_ADD_VIA_FUNC,
         self::TEST_ADD_GROUP_PRIME,
         self::TEST_ADD_GROUP_PRIME_FUNC,

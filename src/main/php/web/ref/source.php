@@ -206,7 +206,9 @@ class source extends sandbox_code_id
      */
     function name_tip(): string
     {
-        return $this->name();
+        // escape the user-settable name: the name_tip base contract returns html-safe output, so a
+        // generic name_tip caller that renders it into a list would otherwise be stored xss
+        return htmlspecialchars($this->name(), ENT_QUOTES);
     }
 
     /**
@@ -248,6 +250,12 @@ class source extends sandbox_code_id
      */
     function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
             $used_source_type_id = $typ_lst->src_typ->default_id();

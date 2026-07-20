@@ -7,6 +7,20 @@
 
     $ui is the suggested var name
 
+    The main sections of this object are
+    - api const:         const for the backend api link
+    - vars:              the variables of this frontend object
+    - construct and map: set the vars of this frontend object to the initial value
+    - set and get:       to capsule the vars from unexpected changes
+    - session:           start and end a frontend session e.g. incl. the user login
+    - user:              get the user of this frontend session
+    - execute:           forward a user action to the backend and create the url of the next page
+    - view:              create the html code for a view
+    - cached page:       serve view-only pages from the cached html pages to reduce the response time
+    - log:               forward the log messages to the backend
+    - api:               get json messages from the backend
+    - internal:          helper functions e.g. to map a view id to the main frontend object
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -131,11 +145,17 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+// server admin whitelist, tls and session hardening (file based IP / user whitelist)
+include_once paths::MODEL_HELPER . 'server_guard.php';
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 // cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
@@ -143,8 +163,12 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\job as job_backend;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
@@ -196,6 +220,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 // test group (alphabetic by FQN)
@@ -273,11 +298,18 @@ class frontend
     {
         global $sys;
         $sys->script = $code_name;
+        // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
+        // to see the request lifecycle without the message flood of the levels above
+        log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
         $sys->times->switch(system_time_type::INIT);
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
         $session_is_fine = true;
+        // in prod/test upgrade a plain-http request to https first, then harden the session cookie
+        // (httponly/secure/samesite, use_strict_mode and hsts on tls) before the session starts
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -285,15 +317,18 @@ class frontend
             } catch (RandomException $e) {
                 log_err('RandomException ' . $e->getMessage());
             }
-        } elseif (!empty($url_arr[url_var::SESSION_TOKEN])) {
-            // TODO Prio 0 add the session token to each frontend form
-            if (!hash_equals($_SESSION[url_var::SESSION_TOKEN], $url_arr[url_var::SESSION_TOKEN])) {
-                $msg_txt = 'Suspect request. Please close browser, delete cache and login again.';
-                log_fatal($msg_txt, 'view.php');
-                log_fatal('session token is' . $_SESSION[url_var::SESSION_TOKEN] . ' but POST token is ' . $url_arr[url_var::SESSION_TOKEN], 'view.php');
-                $session_is_fine = false;
-            }
         }
+        // a data change (a submit of an add, edit or delete mask) must carry the session token that
+        // every crud form emits as a hidden field; reject it when the token is missing or wrong so
+        // an attacker cannot csrf a victim into creating or changing an object (fail closed)
+        if (!self::request_token_valid($url_arr, $_SESSION[url_var::SESSION_TOKEN] ?? '')) {
+            log_fatal('suspect request for mask ' . ($url_arr[url_var::MASK] ?? 0) . ' with a missing or wrong session token', 'view.php');
+            $session_is_fine = false;
+        }
+
+        // enforce the file based IP / user whitelist activated on the server admin page;
+        // done before opening the database so an IP reject also works while the db is offline
+        server_guard::enforce();
 
         /*
         require __DIR__ . '/vendor/autoload.php';
@@ -331,6 +366,72 @@ class frontend
     }
 
     /**
+     * true if the request will trigger a state change through url_to_action, i.e. it is either a
+     * form submit (the post submit marker, e.g. a crud change, login, signup, import or paste) or a
+     * get action mask (views::GET_ACTION_IDS: logout and error_update, which act on a plain get).
+     * this is the single decision shared by the dispatch in view.php and the anti-csrf token gate
+     * below, so the two can never drift apart and leave an action reachable without a token
+     *
+     * @param array $url_arr the parameters given with the url for the request
+     * @return bool true if the request triggers an action (and therefore must carry the session token)
+     */
+    static function request_triggers_action(array $url_arr): bool
+    {
+        $is_post_action = isset($url_arr[url_var::POST_SUBMIT]);
+        $is_get_action = in_array($url_arr[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
+        $result = $is_post_action || $is_get_action;
+        return $result;
+    }
+
+    /**
+     * decide whether a request may proceed with respect to the anti-csrf session token
+     * every request that triggers an action (see request_triggers_action) - a crud change, a login,
+     * signup, import or paste submit, but also a get action mask like logout or error_update - must
+     * carry the session token that the form emits as a hidden field or the action link appends as a
+     * url param; without it an attacker could csrf a victim into an action, so a missing or wrong
+     * token is rejected (fail closed). samesite=lax still sends the cookie on a top-level cross-site
+     * get, so the get actions need the token too. a plain get navigation triggers no action and needs
+     * no token; a non-action request that still sends a token is rejected only when it does not match
+     *
+     * @param array $url_arr the parameters given with the url for the request
+     * @param string $session_token the anti-csrf token stored in the current session
+     * @return bool true if the request may proceed
+     */
+    static function request_token_valid(array $url_arr, string $session_token): bool
+    {
+        $sent_token = $url_arr[url_var::SESSION_TOKEN] ?? '';
+        $token_required = self::request_triggers_action($url_arr);
+        $result = true;
+        if ($token_required or $sent_token != '') {
+            $result = $session_token != '' && hash_equals($session_token, $sent_token);
+        }
+        return $result;
+    }
+
+    /**
+     * central authorization for the admin only masks (views::ADMIN_MASK_IDS, e.g. the admin main and
+     * the complete system view): only an admin (or the higher system user) may render or act on them,
+     * so the dispatch refuses the request once here instead of relying on scattered per renderer
+     * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
+     *
+     * @param int|string $view_id the resolved view id (or code id) of the request
+     * @param user_ui|null $usr the session user requesting the view (null for an anonymous request)
+     * @param user_message $usr_msg to tell the user why the admin mask is not shown
+     * @return bool true if the request is for an admin mask that the user may not access
+     */
+    private function admin_mask_denied(int|string $view_id, ?user_ui $usr, user_message $usr_msg): bool
+    {
+        $denied = false;
+        if (in_array($view_id, views::ADMIN_MASK_IDS)) {
+            if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
+                $usr_msg->add(msg_id::ADMIN_MASK_DENIED, []);
+                $denied = true;
+            }
+        }
+        return $denied;
+    }
+
+    /**
      * TODO Prio 1 to be deprecated and use the api only for the frontend
      * open the database connection and load the base cache
      * @param string $code_name the place that is displayed to the user e.g. add word
@@ -363,43 +464,54 @@ class frontend
         } else {
             log_debug($code_name . ': db open');
 
-            // check the system setup
+            // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $usr_msg = $db_chk->db_check($db_con);
-            if (!$usr_msg->is_ok()) {
+            $sys_msg = new backend_user_message(user_backend::system());
+            if (!$db_chk->db_check($db_con, $sys_msg)) {
                 echo '\n';
-                echo $usr_msg->all_message_text();
+                echo $sys_msg->all_message_text();
                 $db_con->close();
                 $db_con = null;
             }
 
-            // create a virtual one-time system user to load the system users
-            $usr_sys = new user_backend();
-            $usr_sys->id = users::SYSTEM_ID;
-            $usr_sys->name = users::SYSTEM_NAME;
+            // skip the start-up loading if the database check has failed and the connection has been closed,
+            // because continuing without a database would end in a fatal crash that hides the fail message
+            if ($db_con != null) {
 
-            // load system configuration
-            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-            $sys->load_cache_type($db_con);
-            // TODO cache the system config json and detect
-            $cfg = new config_numbers($usr_sys);
-            $cfg->load_cfg(null, $usr_sys);
-            $mtr = new Translator($cfg->language());
+                // create a virtual one-time system user to load the system users
+                $usr_sys = new user_backend();
+                $usr_sys->id = users::SYSTEM_ID;
+                $usr_sys->name = users::SYSTEM_NAME;
 
-            // preload all types from the database
-            $sys->times->switch(system_time_type::LOAD_TYPES);
-            // the types are general so the system user can be used to load the types
-            $cac = new data_object_backend($usr_sys);
-            $sys->load_type_lists($db_con);
+                // preload all types, with one database read from the cached types json when available
+                // or with one select per type list if the cache is missing or outdated
+                $sys->times->switch(system_time_type::LOAD_TYPES);
+                $sys->load_type_lists_cached($db_con);
 
-            $log = new change_log($usr_sys);
-            $db_changed = $log->create_log_references($db_con);
+                // load system configuration
+                $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+                // TODO cache the system config json and detect
+                $cfg = new config_numbers($usr_sys);
+                $cfg->load_cfg(null, $usr_sys);
+                $mtr = new Translator($cfg->language());
 
-            // reload the type list if needed and trigger an update in the frontend
-            // even tough the update of the preloaded list should already be done by the single adds
-            if ($db_changed) {
-                $sys->load_type_lists($db_con);
+                // honor the pod switch for the types cache, which is only known once the config is loaded
+                $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+
+                $cac = new data_object_backend($usr_sys);
+                if (!$sys->typ_lst->from_cache()) {
+                    // check the change log references only after a fresh type load, because
+                    // they can only be incomplete if the types have changed in the database
+                    $log = new change_log($usr_sys);
+                    $db_changed = $log->create_log_references($db_con);
+
+                    // reload the type list if needed and trigger an update in the frontend
+                    // even tough the update of the preloaded list should already be done by the single adds
+                    if ($db_changed) {
+                        $sys->load_type_lists($db_con);
+                    }
+                }
             }
 
         }
@@ -420,6 +532,9 @@ class frontend
 
         // resume session (based on cookies)
         // TODO review session start and end calls
+        // enforce tls (prod/test) then harden the session cookie before the session starts
+        server_guard::enforce_tls();
+        server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
             try {
@@ -428,6 +543,9 @@ class frontend
                 log_err('RandomException ' . $e->getMessage());
             }
         }
+
+        // enforce the file based IP / user whitelist activated on the server admin page
+        server_guard::enforce();
 
         // just for cache loading
         // TODO Prio 2 switch to user setting later
@@ -458,7 +576,9 @@ class frontend
     {
         global $sys;
         if ($start_time != 0) {
-            $sys->times->add($start_time - $this->start_time, 'script loading');
+            // the time from the first line of the calling script until this frontend object has been
+            // created, i.e. the includes and the const setup that no other section measures
+            $sys->times->add($this->start_time - $start_time, system_time_type::SCRIPT_LOADING);
             $duration = microtime(true) - $start_time;
         } else {
             $duration = microtime(true) - $this->start_time;
@@ -471,8 +591,10 @@ class frontend
         // Free result test
         //mysqli_free_result($result);
 
-        // Closing connection
+        // Closing connection (which reports itself at url_var::DEBUG_LEVEL_MAIN_STEP)
         $db_con->close();
+
+        log_debug('end script ' . $sys->script, url_var::DEBUG_LEVEL_MAIN_STEP);
 
         if (SYS_LOG_URL != '') {
             return $this->log_info('end ' . $this->code_name);
@@ -619,6 +741,12 @@ class frontend
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         $lan = $url_array[url_var::LANGUAGE] ?? languages::DEFAULT;
 
+        // central admin mask authorization: refuse to act on an admin only view for a non-admin user
+        // and send them to the start view, so an admin action cannot be triggered without the rights
+        if ($this->admin_mask_denied($view, $usr, $usr_msg)) {
+            return [url_var::MASK => views::START_ID];
+        }
+
         // an unconfirmed change to a sandbox object is first shown in the confirm change view
         // so the user can check the impact before it is written to the database; the change
         // fields stay in the url so the confirm view can show the pending change
@@ -664,13 +792,19 @@ class frontend
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
+            // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
+            // explicit action overrules the crud action derived from the mask, because e.g. the delete
+            // of a just added object is posted with the add mask of the object
+            $action == url_var::CRUD_DELETE and $step == url_var::STEP_CONFIRMED,
+            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
+                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
+            // a confirmed create request: triggered by an add mask or by an explicit create action
+            $action == url_var::CRUD_CREATE and $step == url_var::STEP_CONFIRMED,
             in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
-            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
-            default => null
+            default => $this->log_ignored_write_step($view, $step, $usr_msg)
         };
 
         return $url;
@@ -690,13 +824,15 @@ class frontend
      * @param user_ui|null $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
         user_ui|null      $usr,
         user_message $usr_msg,
-        data_object  $dto = new data_object()
+        data_object  $dto = new data_object(),
+        bool         $test_mode = false
     ): string
     {
         $lib = new library();
@@ -724,7 +860,7 @@ class frontend
             $back = '';
         }
 
-        // TODO move to the frontend __construct
+        // TODO Prio 1 move to the frontend __construct
         // get the fixed frontend config
         //$api_msg = $this->api_get(type_lists::class);
         //$frontend_cache = new type_lists($api_msg);
@@ -757,40 +893,36 @@ class frontend
             }
         }
 
+        // central admin mask authorization: an admin only view is shown to no one but an admin (or
+        // system) user, so a non-admin request is sent to the start view with a message instead of
+        // rendering the admin page (which would otherwise leak the admin content to anyone)
+        if ($this->admin_mask_denied($view_id, $usr, $usr_msg)) {
+            $view_id = views::START_ID;
+            $view_code_id = views::START_CODE;
+        }
+
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
 
-        // save form action
-        // if the save bottom has been pressed
-        if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array, $usr_msg, $dto);
-            if ($usr != null) {
-                $upd_result = $dbo->add_via_api($usr, $usr_msg);
-            }
-
-            // if update was fine ...
-            if ($upd_result->is_ok()) {
-                // TODO Prio 0 get the id from the result
-                //$id = $dbo->id();
-                $id = 0;
-                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                // switched off because maybe staying on the edit page is the expected behaviour
-                if ($back == '' or $back == 0) {
-                    $view_id = views::START_ID;
-                }
-                //$result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result->get_last_message();
+        // an unconfirmed create, update or delete request that the user has submitted (marked by the
+        // named submit button, see url_var::POST_SUBMIT) is first shown in the matching confirm view,
+        // so the user can check the change before it is written to the database; without the submit
+        // marker the url just renders the requested form, e.g. the add view with the given values
+        if ($action != null and $step <= 0 and array_key_exists(url_var::POST_SUBMIT, $url_array)) {
+            $confirm_view_id = $this->confirm_view_id($view_id, url_var::STEP_CONFIRM);
+            if ($confirm_view_id != 0) {
+                $view_id = $confirm_view_id;
             }
         }
 
-
         // get the main object to display
         if ($id != 0) {
-            // if only the id is included in the url load the data via api
-            // TODO Prio 1 why? better always reload from db
-            if (count($url_array) <= 3) {
+            // load the object from the database unless the url carries object field values (e.g. a
+            // form submit, a confirm view url or a prefilled edit link), because a control var like
+            // the debug flag must not switch the render from the loaded object to the incomplete url
+            // values; only a single db object can be loaded by the id, a list (e.g. of phrases)
+            // always takes the values from the url
+            if (!$this->url_has_object_values($url_array) and $dbo instanceof db_object_ui) {
                 // pass the session user id so the backend loads the user-related object (the user's
                 // sandbox overlay), not the default derived from the api caller
                 $usr_id = $usr?->id() ?? 0;
@@ -810,32 +942,16 @@ class frontend
         }
 
         // select the view
+        // an edit or del mask is the view that the user has requested, so it is never overwritten here
+        // and only a view that the user has selected for the object needs to be saved
         if (in_array($view_id, views::EDIT_DEL_MASKS_IDS)) {
             // TODO move as much a possible to backend functions
-            if ($dbo->id() > 0) {
-                // if the user has changed the view for this word, save it
-                if ($new_view_id != '') {
-                    $dbo->save_view($new_view_id);
-                    $view_id = $new_view_id;
-                } else {
-                    // if the user has selected a special view, use it
-                    if ($view_id == 0) {
-                        // if the user has set a view for this word, use it
-                        $view_id = $dbo->view_id();
-                        if ($view_id <= 0) {
-                            // if any user has set a view for this word, use the common view
-                            $view_id = $dbo->calc_view_id();
-                            if ($view_id <= 0) {
-                                // if no one has set a view for this word, use the fallback view
-                                $msk = $this->dto->typ_lst_cache->get_view(views::WORD_NAME);
-                                $view_id = $msk->id();
-                            }
-                        }
-                    }
-                }
-            } else {
-                $result .= log_err("No word selected.", "view.php", '',
+            if ($dbo->id() === 0 or $dbo->id() === '' or $dbo->id() === null) {
+                $result .= log_err("id of " . library::class_to_name($dbo::class) . " is empty", "view.php", '',
                     (new Exception)->getTraceAsString());
+            } elseif ($new_view_id != '' and $new_view_id != 0) {
+                $dbo->save_view($new_view_id);
+                $view_id = $new_view_id;
             }
         }
 
@@ -851,7 +967,7 @@ class frontend
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
                 $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', false, $url_array);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
@@ -869,28 +985,7 @@ class frontend
                             $logged_in ? $usr->navbar_role() : null);
                     }
                     $result .= $html->main($dsp_text);
-                    if ($usr_msg->has_info()) {
-                        $msg_txt = $usr_msg->get_last_message_translated();
-                        if ($msg_txt === '') {
-                            $msg_txt = $usr_msg->get_last_message();
-                        }
-                        if ($msg_txt === '') {
-                            $msg_txt = $usr_msg->get_last_info();
-                        }
-                        if ($msg_txt !== '') {
-                            if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
-                                $reset_link = $html->ref(
-                                    api::RESET_SCRIPT,
-                                    msg_id::PASSWORD_WRONG->value,
-                                    msg_id::PASSWORD_WRONG_TITLE->value
-                                );
-                                $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
-                                $result .= $html->dsp_notification_html($notification_html);
-                            } else {
-                                $result .= $html->dsp_notification($msg_txt);
-                            }
-                        }
-                    }
+                    $result .= $this->user_msg_html($usr_msg);
                     $result .= $html->footer();
                 }
             }
@@ -902,6 +997,283 @@ class frontend
         return $result;
     }
 
+
+    /*
+     * cached page
+     */
+
+    /**
+     * the fast path of the request routing that serves an already cached html page
+     * before the heavy frontend setup (loading the user views, the type cache and the
+     * frontend config) so that a user without own data changes gets a view-only page
+     * with only the system config, the user and this cached page read from the database
+     *
+     * returns null if the page is not (yet) cached or must not be served from the cache,
+     * so the caller does the full setup and renders the page live
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @param user_message $usr_msg with the messages of this request that are added to the cached page
+     * @return string|null the cached html page or null if the page cannot be served from the cache
+     */
+    function cached_page_or_null(array $url_array, user_backend $usr, user_message $usr_msg): ?string
+    {
+        $result = null;
+        // only a user without own data changes may get the standard cached page
+        if (!$usr->uses_sandbox) {
+            $url_key = $this->url_cache_key($url_array);
+            if ($url_key != '') {
+                $cac_page = new db_cache_page();
+                $cached_html = $cac_page->html_by_url($url_key);
+                if ($cached_html !== null) {
+                    // fill in the reading user's own anti-csrf token so the shared page does not
+                    // carry the token of whoever first rendered and cached it (see request_token_valid)
+                    $result = db_cache_page::restore_session_token($cached_html, self::session_token());
+                    // a cached page never contains a message (see save_html_page), so add the
+                    // message of this request e.g. that a change without login is not allowed
+                    $result = db_cache_page::add_user_msg($result, $this->user_msg_html($usr_msg));
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the anti-csrf token of the current session, read from the session here (the request/session
+     * boundary, like html_base::form_session_token) so a cached html page can be personalised with
+     * the reading user's token instead of the token of whoever first rendered and cached the page
+     * @return string the current session token or '' if none is set yet
+     */
+    private static function session_token(): string
+    {
+        return $_SESSION[url_var::SESSION_TOKEN] ?? '';
+    }
+
+    /**
+     * create the html code for the given url and use the cached html pages
+     * of the view-only requests to reduce the response time
+     *
+     * - a request that changes data is always rendered live
+     * - for a user without own data changes (uses_sandbox is false)
+     *   the cached html page is served if available and created if it is missing
+     * - for a user with own data changes (uses_sandbox is true)
+     *   the cached html page is served immediately with a refresh flag
+     *   and the rendering of the user specific page is requested as a backend job
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_backend $usr the session user with the uses_sandbox flag loaded
+     * @param user_ui|null $usr_ui the session user frontend object who has requested the view
+     * @param user_message $usr_msg to enrich with potential errors
+     * @param bool $is_action true if the request has changed data so the result must be rendered live
+     * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @return string the html code to show the page to the user
+     */
+    function url_to_html_cached(
+        array        $url_array,
+        user_backend $usr,
+        user_ui|null $usr_ui,
+        user_message $usr_msg,
+        bool         $is_action = false,
+        data_object  $dto = new data_object()
+    ): string
+    {
+        $result = '';
+        // an action request is always rendered live because the data has just been changed
+        $url_key = '';
+        if (!$is_action) {
+            $url_key = $this->url_cache_key($url_array);
+        }
+        // get the last cached html page for the url and fill in the reading user's own anti-csrf
+        // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
+        $cac_page = new db_cache_page();
+        $cached_html = null;
+        if ($url_key != '') {
+            $cached_html = $cac_page->html_by_url($url_key);
+            if ($cached_html !== null) {
+                $cached_html = db_cache_page::restore_session_token($cached_html, self::session_token());
+            }
+        }
+        // route the request based on the user sandbox usage and the cache state
+        if ($url_key == '') {
+            $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+        } elseif (!$usr->uses_sandbox) {
+            if ($cached_html !== null) {
+                // a cached page never contains a message (see save_html_page),
+                // so add the message of this request if there is one
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg));
+            } else {
+                // remember the rendered page for the next request of any user without sandbox data
+                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+                $this->save_html_page($cac_page, $url_key, $result, $usr);
+            }
+        } else {
+            if ($cached_html !== null) {
+                // serve the standard page immediately and request the user specific rendering
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg))
+                    . api::PAGE_REFRESH_FLAG;
+                $this->request_page_refresh($cac_page, $usr);
+            } else {
+                // no cached page yet, so render the user specific page live
+                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the canonical cache key of a view-only page request
+     * e.g. 'm=1&id=2' for the word view of the word zurich
+     *
+     * @param array $url_array the parsed url as an array
+     * @return string the cache key or an empty string if the request must not be cached
+     */
+    function url_cache_key(array $url_array): string
+    {
+        global $cfg;
+
+        $result = '';
+        $mask_id = $url_array[url_var::MASK] ?? 0;
+        $obj_id = $url_array[url_var::ID] ?? 0;
+        $lan = $url_array[url_var::LANGUAGE] ?? '';
+        // a request with more than the view, object and language is not cached; the anti-csrf token
+        // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
+        // never part of the rendered html), and a process step of 0 (no action started) does not
+        // change a view-only page, so all three are allowed without preventing the cache and are not
+        // part of the cache key - so e.g. ?m=2&debug=6 takes the same cached path as ?m=2
+        // the same applies to the cache switch itself, which is checked below instead
+        $is_view_only = true;
+        foreach ($url_array as $url_key => $url_val) {
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+                url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
+            $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
+            if (!$is_key_param and !$is_show_step) {
+                $is_view_only = false;
+            }
+        }
+        // 'nc=1' (or 'nocache=1' in the human-readable url) switches the cache off for this request:
+        // an empty cache key makes the caller render the page live and skip the cache write, so an
+        // admin can compare the live page with the cached one without emptying the cache table
+        if (($url_array[url_var::NO_CACHE] ?? '') == url_var::NO_CACHE_ON) {
+            $is_view_only = false;
+        }
+        // the pod setting from config.yaml switches the html page cache off for all requests;
+        // an empty key covers read and write, because a page is only cached with a non-empty key
+        if (!($cfg?->page_cache_allowed() ?? true)) {
+            $is_view_only = false;
+        }
+        // a request that shows a change or process step view is not cached
+        if (in_array($mask_id, views::CHANGE_MASKS_IDS)) {
+            $is_view_only = false;
+        }
+        if (in_array($mask_id, views::PROCESS_STEP_MASKS_IDS)) {
+            $is_view_only = false;
+        }
+        if (in_array($mask_id, views::GET_ACTION_IDS)) {
+            $is_view_only = false;
+        }
+        if ($is_view_only) {
+            $result = url_var::MASK . url_var::EQ . $mask_id . url_var::ADD_ID . $obj_id;
+            if ($lan != '') {
+                $result .= url_var::ADD . url_var::LANGUAGE . url_var::EQ . $lan;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the html notification for the user messages of the current request
+     * used to render the message into a live page and to add it to a page loaded from the cache
+     *
+     * @param user_message $usr_msg with the messages collected during the request
+     * @return string the html code of the notification or an empty string if there is no message
+     */
+    private function user_msg_html(user_message $usr_msg): string
+    {
+        $result = '';
+        $html = new html_base();
+        if ($usr_msg->has_info()) {
+            $msg_txt = $usr_msg->get_last_message_translated();
+            if ($msg_txt === '') {
+                $msg_txt = $usr_msg->get_last_message();
+            }
+            if ($msg_txt === '') {
+                $msg_txt = $usr_msg->get_last_info();
+            }
+            if ($msg_txt !== '') {
+                if ($usr_msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
+                    $reset_link = $html->ref(
+                        api::RESET_SCRIPT,
+                        msg_id::PASSWORD_WRONG->value,
+                        msg_id::PASSWORD_WRONG_TITLE->value
+                    );
+                    $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
+                    $result = $html->dsp_notification_html($notification_html);
+                } else {
+                    $result = $html->dsp_notification($msg_txt);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * remember the rendered html page for the next request of the same url
+     * the cache row is written as the system user because filling the cache is
+     * a system action that must also work for an ip user who cannot change data
+     * (public so that the db write test can check exactly this permission case)
+     * a failure is only logged because the user already has the rendered page
+     *
+     * @param db_cache_page $cac_page the cache page object used to check the cache
+     * @param string $url_key the canonical cache key of the request
+     * @param string $html the rendered html page that should be cached
+     * @param user_backend $usr the session user who has requested the page
+     * @return void
+     */
+    function save_html_page(
+        db_cache_page $cac_page,
+        string        $url_key,
+        string        $html,
+        user_backend  $usr
+    ): void
+    {
+        // store the page with the session token replaced by a placeholder so the shared cache does
+        // not carry this session's anti-csrf token to another session (see restore_session_token)
+        $html = db_cache_page::strip_session_token($html, self::session_token());
+        // store the page without the user message, because a message belongs to one request
+        // and must never be repeated to another user (see add_user_msg)
+        $html = db_cache_page::strip_user_msg($html);
+        $save_msg = new backend_user_message(user_backend::system());
+        $cac_page->save_html($url_key, $html, $save_msg);
+        if (!$save_msg->is_ok()) {
+            log_warning('caching the html page for ' . $url_key
+                . ' failed because ' . $save_msg->get_message());
+        }
+    }
+
+    /**
+     * request the background rendering of the user specific html page
+     * a failure is only logged because the user already has the standard page
+     *
+     * @param db_cache_page $cac_page the cached page that should be rendered again
+     * @param user_backend $usr the session user for whom the page should be rendered
+     * @return void
+     */
+    private function request_page_refresh(
+        db_cache_page $cac_page,
+        user_backend  $usr
+    ): void
+    {
+        $job = new job_backend($usr);
+        $job->set_type(job_types::PAGE_REFRESH, $usr);
+        $job->row_id = $cac_page->id();
+        $job_msg = new backend_user_message($usr);
+        $job->save($job_msg);
+        if (!$job_msg->is_ok()) {
+            log_warning('page refresh job for ' . $cac_page->dsp_id()
+                . ' failed because ' . $job_msg->get_message());
+        }
+    }
+
     /**
      * react to a user action such as pressing the save button on an edit form:
      * the action const sets the user process step, then the request is run through
@@ -909,20 +1281,27 @@ class frontend
      * and the resulting url is rendered via url_to_html.
      * This is the two step dispatch of http/view.php wrapped in one call for the workflow tests.
      *
-     * @param string $action the user reaction action const e.g. url_var::ACTION_SAVE
-     * @param array $url_array the parsed url of the user action e.g. the submitted edit form
+     * @param array $url_arr the parsed url of the user action e.g. the submitted edit form
      * @param user_request $req the bundled request context (users, message, cache and the do_it flag)
      * @return string the html code of the next page shown to the user
      */
-    function url_user_reaction(
-        string       $action,
-        array        $url_array,
+    function execute_and_next(
+        array        $url_arr,
         user_request $req
     ): string
     {
-        $url_array[url_var::STEP] = url_var::action_step($action);
-        $next_url = $this->url_to_action($url_array, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
-        return $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto);
+        global $sys;
+
+        // measure the action and the rendering separately, so a slow request shows which of the two
+        // is slow; an interleaved db read or write still counts as db_read / db_write because its
+        // own switch() restores this section
+        $sys->times->switch(system_time_type::URL_TO_ACTION);
+        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $result = $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto, $req->test_mode);
+        // return to the default section for whatever the caller does next
+        $sys->times->switch(system_time_type::DEFAULT);
+        return $result;
     }
 
     function show_view(int $id): string
@@ -975,6 +1354,8 @@ class frontend
         }
 
         if ($logged_in) {
+            // reject at once if a user whitelist is active and this user is not on it
+            server_guard::enforce_user((string)$usr_backend->id(), $usr_name);
             $back_array = html_base::url_par_from_back_part($url_array);
             $next_url = empty($back_array) ? [url_var::MASK => views::LOGIN_ID] : $back_array;
         } else {
@@ -1013,9 +1394,28 @@ class frontend
         $signed_up = false;
 
         if ($do_it) {
+            // reject a user name with a path or control character so it can never be used to build
+            // a file path (e.g. the config file cache keys by user id now, but a raw name must also
+            // never travel into a path) or break out of an output context; the check stays a lenient
+            // deny-list so the reserved names (which contain spaces and dots) remain valid
+            if (str_contains($usr_name, '/')
+                or str_contains($usr_name, '\\')
+                or preg_match('/[\x00-\x1f]/', $usr_name) === 1) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
+            }
+            // block signup up front if a user whitelist is active and this name is not on it;
+            // no account is created and the user is told how to get access (see is_ok() gate below)
+            if (server_guard::user_rejected('', $usr_name)) {
+                $usr_msg->add(msg_id::SIGNUP_ERR_WHITELIST, []);
+            }
             $existing = new user_backend();
             $existing->load_by_name($usr_name);
             if ($existing->has_db_id()) {
+                // the distinct message reveals that the name is taken (user enumeration), unlike
+                // the neutral reset flow (see action_login_reset); a conscious trade-off because
+                // without it the user cannot pick a free name, so signup would be impossible;
+                // the message points a returning user to the password reset instead, and the
+                // planned per-ip request rate limit will bound the probing speed (see pending.md)
                 $usr_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
             }
             if (empty($email)) {
@@ -1044,6 +1444,9 @@ class frontend
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
                         session_start();
+                        // regenerate the session id on this authentication transition so a planted
+                        // session id cannot become authenticated (session fixation), matching login
+                        session_regenerate_id(true);
                         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                             try {
                                 $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -1112,11 +1515,9 @@ class frontend
             } else {
                 $usr = new user_backend();
                 $usr->load_by_id($usr_id);
-                $db_key = $usr->activation_key ?? '';
-                $db_timeout = $usr->activation_timeout;
-                $db_now = $usr->db_now;
 
-                if ($db_key === $post_key && $db_timeout !== null && $db_timeout > $db_now) {
+                // compare the stored key hash with the hash of the posted key in constant time
+                if ($usr->activation_key_valid($post_key)) {
                     if (empty($pw)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
                     if (empty($pw_re)) { $usr_msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
@@ -1134,6 +1535,9 @@ class frontend
                             $usr_by_id->load_by_id($usr_id);
                             if ($usr_by_id->has_db_id()) {
                                 session_start();
+                                // regenerate the session id on this authentication transition so a
+                                // planted session id cannot become authenticated (session fixation)
+                                session_regenerate_id(true);
                                 if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                                     try {
                                         $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -1144,6 +1548,8 @@ class frontend
                                 $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
                                 $_SESSION[url_var::USERNAME_HUMAN] = $usr_by_id->name();
                                 $_SESSION[url_var::SESSION_LOGGED] = true;
+                                // reject at once if a user whitelist is active and this user is not on it
+                                server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
                                 $usr_backend = $usr_by_id;
                                 $usr_ui->set_from_json($usr_by_id->api_json(), $usr_msg);
                                 $activated = true;
@@ -1157,7 +1563,9 @@ class frontend
                         $usr_msg->merge($msg_activate_ui);
                     }
                 } else {
-                    if ($db_key !== '') {
+                    // a still valid key that did not match is a wrong key; otherwise it is absent
+                    // or timed out, so the user is asked to request a new reset link
+                    if ($usr->has_active_activation_key()) {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
                     } else {
                         $usr_msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
@@ -1250,34 +1658,27 @@ class frontend
         $usr_mail = $url_array[url_var::EMAIL_HUMAN] ?? '';
         $db_usr = new user_backend();
         $key = '';
-        $sent = false;
 
         if ($do_it) {
+            // only a matching account gets a reset mail, but the user is told the same either way
+            // (see the neutral message below), so the reset never reveals whether the account exists
             if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
                 $key_ok = true;
                 try {
                     $key = bin2hex(random_bytes(10));
                 } catch (RandomException $e) {
                     log_err('RandomException in action_login_reset: ' . $e->getMessage());
-                    $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_KEY_GEN));
                     $key_ok = false;
                 }
                 if ($key_ok) {
-                    $timeout = new DateTime();
-                    try {
-                        $timeout->modify('+1 day');
-                    } catch (Exception $e) {
-                        log_err('DateTime modify failed in action_login_reset: ' . $e->getMessage());
-                    }
-                    $db_usr->activation_key = $key;
-                    $db_usr->activation_timeout = $timeout;
+                    // store only the sha256 hash of the key with a short validity; the cleartext
+                    // $key is never persisted and is sent to the user by email below
+                    $db_usr->set_activation_key($key);
                     $reset_msg = new backend_user_message();
                     $db_usr->save($reset_msg);
-                    $msg_reset_ui = new user_message();
-                    $msg_reset_ui->api_mapper($reset_msg->api_array());
-                    $usr_msg->merge($msg_reset_ui);
-
-                    if ($usr_msg->is_ok()) {
+                    // a save failure is logged, not shown, so the response stays identical for an
+                    // existing and a non-existing account (do not merge it into the user message)
+                    if ($reset_msg->is_ok()) {
                         $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
                             . url_var::PAR . url_var::ID . url_var::EQ . $db_usr->id
                             . '&' . url_var::POST_KEY . url_var::EQ . $key;
@@ -1287,21 +1688,18 @@ class frontend
                             . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . $activate_url . "\n\n"
                             . $this->mail_txt(msg_id::RESET_MAIL_IGNORE);
                         mail($db_usr->email, $mail_subject, $mail_body, users::mail_header());
-                        $sent = true;
+                    } else {
+                        log_err('password reset save failed: ' . $reset_msg->all_message_text());
                     }
                 }
-            } else {
-                $usr_msg->add_message($mtr->txt(msg_id::RESET_ERR_NOT_FOUND));
             }
+            // the same neutral confirmation for a found and a not-found account (user enumeration)
+            $usr_msg->add_message($mtr->txt(msg_id::RESET_MAIL_SENT));
         }
 
-        if ($sent) {
-            $next_url = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => $db_usr->id];
-        } else {
-            $next_url = $url_array;
-            unset($next_url[url_var::POST_SUBMIT]);
-        }
-        return $next_url;
+        // the same next page in both cases; a real account received the reset link (with its id and
+        // key) by email, so the redirect carries no user id, which would leak that the account exists
+        return [url_var::MASK => views::LOGIN_ID];
     }
 
     /**
@@ -1381,6 +1779,47 @@ class frontend
         return $confirm_view;
     }
 
+    /**
+     * true if the url carries object field values (e.g. of a form submit, a confirm view url or a
+     * prefilled edit link) and not only the control vars that select the view, the object and the
+     * render mode; the '9'-prefixed back vars are navigation targets and no object values either
+     *
+     * @param array $url_array the parsed url
+     * @return bool true if at least one url key is an object field value
+     */
+    private function url_has_object_values(array $url_array): bool
+    {
+        $result = false;
+        foreach ($url_array as $key => $val) {
+            if (!in_array($key, url_var::CONTROL_VARS)
+                and $key != rest_ctrl::PAR_VIEW_NEW_ID
+                and !str_starts_with($key, url_var::BACK)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * log a confirm or confirmed step that no action handles, because these steps are a write request
+     * and ignoring one silently would hide the missing database change from the user: the returned url
+     * just re-renders the requested view, which looks exactly like the redirect after a successful
+     * write (see docs/llm/structure.md); the plain navigation steps (show, edit, back, cancel) are
+     * expected to fall through without an action, so they are not logged
+     *
+     * @param int|string $view the requested view that no action arm has matched
+     * @param string $step the user process step of the request
+     * @param user_message $usr_msg to inform the user that the request has been ignored
+     */
+    private function log_ignored_write_step(int|string $view, string $step, user_message $usr_msg): void
+    {
+        if ($step == url_var::STEP_CONFIRM or $step == url_var::STEP_CONFIRMED) {
+            log_err_msg_ui('the ' . $step . ' step for view ' . $view . ' has been ignored,'
+                . ' because the view is not an add, edit or del mask, so nothing has been saved',
+                $usr_msg);
+        }
+    }
+
     private function action_crud(
         array        $url_array,
         int          $view,
@@ -1391,8 +1830,17 @@ class frontend
         bool         $do_it
     ): array
     {
-        $dbo = $this->dbo_for_url($view, $url_array);
+        // a confirmed create/update/delete writes the object, so the back mask that carries its type is
+        // required here (unlike a standalone confirm view render)
+        $dbo = $this->dbo_for_url($view, $url_array, true);
         $dbo->url_mapper($url_array, $usr_msg, $dto);
+
+        // a delete request by name (e.g. right after the confirmed add of the object, when the url
+        // does not yet carry the assigned id) resolves the database id first
+        if ($crud == url_var::CRUD_DELETE and $dbo instanceof sandbox_named_ui
+            and $dbo->id() == 0 and $dbo->name() != '') {
+            $dbo->load_by_name($dbo->name());
+        }
 
         if ($do_it) {
             $result_msg = match ($crud) {
@@ -1402,7 +1850,7 @@ class frontend
                 default => new user_message()
             };
             if (!$result_msg->is_ok()) {
-                $usr_msg->add_message($result_msg->get_last_message());
+                $usr_msg->merge($result_msg);
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
@@ -1431,7 +1879,7 @@ class frontend
     }
 
     /**
-     * // TODO Prio 2 review
+     * // TODO Prio 1 review
      * the main frontend object to display or change for a view: normally the object of the requested
      * view, but for a confirm view (whose mask does not encode the object type) the object of the
      * '9'-prefixed back target view (the object's own default view), so the confirm view and its write
@@ -1441,12 +1889,22 @@ class frontend
      * @param array $url_array the url that may carry the '9'-prefixed back target
      * @return sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui the matching frontend object
      */
-    private function dbo_for_url(int $view_id, array $url_array): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
+    private function dbo_for_url(int $view_id, array $url_array, bool $for_action = false): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
     {
         $dbo = $this->view_id_to_dbo_ui($view_id);
-        if (in_array($view_id, views::CONFIRM_MASKS_IDS)
-            and array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
-            $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
+        // a confirm view does not encode its own object type, so it takes the type from the '9'-prefixed
+        // back mask (the object's own default view). without it view_id_to_dbo_ui has fallen back to a
+        // word, which would let a confirmed change or delete target the wrong object, so log the
+        // inconsistency instead of defaulting silently (see docs/llm/structure.md). only a confirm view
+        // that triggers a write ($for_action) needs the back mask; rendering one standalone (e.g. the
+        // view catalog test) legitimately has none, so it is not logged
+        if (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
+            if (array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
+                $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
+            } elseif ($for_action) {
+                log_err('confirm view ' . $view_id . ' reached without a back mask, '
+                    . 'so its object type is unknown and defaults to a word');
+            }
         }
         // TODO Prio 2 review
         // stamp the prime object id from the url onto the dbo so it already knows which row it

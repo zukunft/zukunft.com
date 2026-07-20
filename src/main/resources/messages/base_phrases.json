@@ -32,7 +32,19 @@
       "name": "city"
     },
     {
-      "name": "company"
+      "name": "company",
+      "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Company",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q783794",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "day"
@@ -105,9 +117,6 @@
     },
     {
       "name": "way"
-    },
-    {
-      "name": "week"
     },
     {
       "name": "woman"

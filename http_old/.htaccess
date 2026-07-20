@@ -1,0 +1,4 @@
+# /http_old holds legacy controllers that are no longer used by the frontend
+# (the modern UI routes through /http/view.php). They are kept for reference
+# only and must never be reachable over the web. Block all access.
+Require all denied

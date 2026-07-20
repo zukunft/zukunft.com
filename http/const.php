@@ -32,13 +32,24 @@
 
 // add as first step a global debug var to allow also interactive debugging
 // of php script loading by adding &debug=9 to the url
+// the requested level is NOT trusted yet: honoring it outside the dev
+// environment would echo the live sql and the internal call graph to any
+// anonymous visitor, so keep $debug at 0 until the environment is known
 global $debug;
-$debug = $_GET['debug'] ?? 0;
+$debug_requested = $_GET['debug'] ?? 0;
+$debug = 0;
 
 // set the path const for the initial backend and frontend settings
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
+
+// init.php has loaded the environment from .env, so the url debug level can now
+// be honored - but only in the dev environment; any other environment stays
+// silent to avoid leaking sql, table and column names or the call graph
+if (getenv(ENVIRONMENT) == ENV_DEV) {
+    $debug = $debug_requested;
+}
 
 // test path for the initial load of the test files
 // TODO Prio 2 remove

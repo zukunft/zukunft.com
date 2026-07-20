@@ -160,7 +160,7 @@ class source_list extends sandbox_list_named
         global $db_con;
         $result = false;
 
-        $src_lst = $db_con->get($qp);
+        $src_lst = $db_con->get($qp, 'source list');
         foreach ($src_lst as $db_row) {
             $src = new source($this->get_user());
             $src->row_mapper_sandbox($db_row);

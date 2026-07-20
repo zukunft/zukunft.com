@@ -136,10 +136,10 @@ class formula_write_tests
         $frm->element_refresh($usr_msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
-        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'remove an element and update the database ... compare with fixed text';
         $target = '';
-        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database';
         $frm->set_user_text(formula_names::INCREASE_EXP);
@@ -147,14 +147,14 @@ class formula_write_tests
         $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
         $elm_lst = $elm_lst->unique();
         $elm_lst_db = $frm->load_element_list();
-        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
         $frm->element_refresh($usr_msg);
         $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
-        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_EXP);
@@ -162,7 +162,7 @@ class formula_write_tests
         $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $elm_lst = $elm_lst->unique();
-        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id());
+        $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $t->subheader($ts . 'formulas using verb following');
 
@@ -296,7 +296,7 @@ class formula_write_tests
             $result = '';
         }
         $target = results::TV_INCREASE_LONG;
-        $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_CALC);
 
         // test the scaling mainly to check the scaling handling of the results later
         // TODO remove any scaling words from the phrase list if the result word is of type scaling
@@ -309,7 +309,7 @@ class formula_write_tests
             $result = '';
         }
         $target = '8505251.0';
-        $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_CALC);
 
         // test the scaling back to a thousand
         $phr_lst = new phrase_list($t->usr1);
@@ -353,15 +353,15 @@ class formula_write_tests
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_ui);
         $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_this->id() . '&back=0">' . word_names::THIS_NAME . '</a>'
-            . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . word_names::PRIOR_NAME . '</a> )'
-            . ' / <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_prior->id() . '&back=0">' . word_names::PRIOR_NAME . '</a>';
+            . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_this->id() . '&amp;back=0">' . word_names::THIS_NAME . '</a>'
+            . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '&amp;back=0">' . word_names::PRIOR_NAME . '</a> )'
+            . ' / <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '&amp;back=0">' . word_names::PRIOR_NAME . '</a>';
         $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
 
         // ... in HTML format with link
         $frm_increase = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $result = $frm_html->edit_link($back);
-        $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&id=' . $frm_increase->id() . '&back=0">' . formula_names::SYSTEM_TEST_ADD . '</a>';
+        $target = '<a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_increase->id() . '&amp;back=0">' . formula_names::SYSTEM_TEST_ADD . '</a>';
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
         // ... the formula result selected by the word and in percent
@@ -406,7 +406,8 @@ class formula_write_tests
         // test formula refresh functions
         $usr_msg_elm = $usr_msg->clone_reset();
         $result = $frm->element_refresh($usr_msg_elm);
-        $t->assert('formula->element_refresh for ' . $frm->dsp_id(), $result, true);
+        // the element refresh writes the formula elements to the database, so a db timeout is used
+        $t->assert('formula->element_refresh for ' . $frm->dsp_id(), $result, true, $t::TIMEOUT_LIMIT_DB);
 
 
         // to link and unlink a formula is tested in the formula_link section

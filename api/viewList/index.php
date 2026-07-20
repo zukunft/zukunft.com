@@ -64,12 +64,16 @@ if ($db_con->is_open()) {
         if ($cmp_id != '') {
             $lst = new view_list($usr);
             $lst->load_by_component_id($cmp_id);
+            // drop the views the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } elseif ($pattern != null) {
             $lst = new view_list($usr);
             // load with the full field set (incl. the view type) so the frontend can
             // filter the views that can be assigned to a word (ex_system / ex_non_phrase)
             $lst->load_by_pattern($pattern);
+            // drop the views the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
             $msg = 'view id and pattern missing';

@@ -98,6 +98,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -130,6 +132,35 @@ class system_view_ui_tests
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
+
+        $t->subheader($ts . 'user message placeholder');
+        // every page footer carries an invisible placeholder, so that a text replace
+        // can add a user message to a html page loaded from the page cache
+        $html = new html_base();
+        $test_name = 'the page footer contains the user message placeholder exactly once';
+        $t->assert($test_name, substr_count($html->footer(), api::USER_MSG_PLACEHOLDER), 1);
+        $test_name = 'the about page footer also contains the user message placeholder';
+        $t->assert_text_contains($test_name, $html->footer(true), api::USER_MSG_PLACEHOLDER);
+        $test_name = 'the placeholder is an invisible html comment';
+        $t->assert_true($test_name, str_starts_with(api::USER_MSG_PLACEHOLDER, '<!--')
+            and str_ends_with(api::USER_MSG_PLACEHOLDER, '-->'));
+
+        $t->subheader($ts . 'link escaping');
+        // a user supplied url e.g. of a source can neither break the href attribute
+        // nor inject a script and the link text is escaped by default
+        $test_name = 'the href attribute of a link is escaped';
+        $t->assert($test_name,
+            $html->ref('https://example.org/?a=1&b="x"', 'a name'),
+            '<a href="https://example.org/?a=1&amp;b=&quot;x&quot;">a name</a>');
+        $test_name = 'the link text is escaped by default';
+        $t->assert_text_contains($test_name,
+            $html->ref('https://example.org/', 'a<b>name'), 'a&lt;b&gt;name');
+        $test_name = 'a javascript url is not linked and only the text is shown';
+        $t->assert($test_name,
+            $html->ref('javascript:alert(1)', 'a name'), 'a name');
+        $test_name = 'a relative url is linked';
+        $t->assert_text_contains($test_name,
+            $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
         $t->usr1 = $t_usr->user_sys_test();
         $usr_msg = new user_message();
         $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
@@ -143,6 +174,110 @@ class system_view_ui_tests
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         $usr_sys_ui = $tl->cast_user($t->usr1);
+
+        // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
+        // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)
+        $t->subheader($ts . 'anti-csrf token');
+        $token = test_const::DUMMY_SESSION_TOKEN;
+
+        $submit_ok = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $test_name = 'a crud submit with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($submit_ok, $token));
+
+        $submit_no_token = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => ''];
+        $test_name = 'a crud submit without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($submit_no_token, $token));
+
+        $login_submit = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => ''];
+        $test_name = 'a login submit without a token is rejected (previously fail-open)';
+        $t->assert_false($test_name, frontend::request_token_valid($login_submit, $token));
+
+        $login_ok = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $test_name = 'a login submit with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($login_ok, $token));
+
+        $submit_wrong = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
+        $test_name = 'a submit with a wrong token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($submit_wrong, $token));
+
+        $get_nav = [url_var::MASK => views::WORD_ID, url_var::ID => 1];
+        $test_name = 'a plain get navigation without a token is allowed';
+        $t->assert_true($test_name, frontend::request_token_valid($get_nav, $token));
+
+        // a get action mask (logout, error_update) triggers url_to_action on a plain get, so it must
+        // carry the token too - samesite=lax still sends the cookie on a top-level cross-site get
+        $logout_no_token = [url_var::MASK => views::LOGOUT_ID];
+        $test_name = 'a logout get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($logout_no_token, $token));
+
+        $logout_ok = [url_var::MASK => views::LOGOUT_ID, url_var::SESSION_TOKEN => $token];
+        $test_name = 'a logout get with the correct token is accepted';
+        $t->assert_true($test_name, frontend::request_token_valid($logout_ok, $token));
+
+        $error_update_no_token = [url_var::MASK => views::ERROR_UPDATE_ID, url_var::ID => 1];
+        $test_name = 'an error_update get without a token is rejected';
+        $t->assert_false($test_name, frontend::request_token_valid($error_update_no_token, $token));
+
+        // request_triggers_action is the single predicate shared by the view.php dispatch and the
+        // token gate, so an action can never be dispatched without a token having been required
+        $test_name = 'a get action mask is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($logout_no_token));
+        $test_name = 'a form submit is recognised as an action';
+        $t->assert_true($test_name, frontend::request_triggers_action($submit_no_token));
+        $test_name = 'a plain get navigation is not an action';
+        $t->assert_false($test_name, frontend::request_triggers_action($get_nav));
+
+        // the data changing masks are blocked for an ip user if the pod does not permit changes,
+        // but the login, signup and export masks must always stay open for an ip user
+        $test_name = 'the import view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::IMPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the undo view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::UNDO_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the paste table view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::PASTE_TABLE_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the job view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::JOB_ASYNC_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the word add view is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::WORD_ADD_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the login view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::LOGIN_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the signup view is never blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::SIGNUP_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the export view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::EXPORT_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the start view is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
+
+        // tls is enforced (plain http redirected to https) in the prod and test environment so the
+        // session cookie is never sent in the clear, but not in dev so the local http docker works;
+        // the api entry (application::start_api) and the html frontend share this via server_guard
+        $t->subheader($ts . 'tls enforcement');
+        $test_name = 'the prod environment enforces tls';
+        $t->assert_true($test_name, server_guard::tls_required(ENV_PROD));
+        $test_name = 'the test environment enforces tls';
+        $t->assert_true($test_name, server_guard::tls_required(ENV_UA));
+        $test_name = 'the dev environment does not enforce tls';
+        $t->assert_false($test_name, server_guard::tls_required(ENV_DEV));
+        $test_name = 'an unknown environment does not enforce tls';
+        $t->assert_false($test_name, server_guard::tls_required(''));
+
+        // the api write endpoints (post/put/delete) reject a cross-site request (csrf): a browser
+        // sends an Origin/Referer whose host must match this pod's host; a call without any origin
+        // hint (server-to-server) is allowed because it carries no ambient session cookie
+        $t->subheader($ts . 'api write same-origin');
+        $host = 'zukunft.com';
+        $test_name = 'a same-origin write is allowed';
+        $t->assert_true($test_name, server_guard::origin_allowed('https://zukunft.com', '', $host));
+        $test_name = 'a cross-origin write is rejected';
+        $t->assert_false($test_name, server_guard::origin_allowed('https://evil.example', '', $host));
+        $test_name = 'a cross-origin write is rejected by its referer when no origin is sent';
+        $t->assert_false($test_name, server_guard::origin_allowed('', 'https://evil.example/x', $host));
+        $test_name = 'a same-origin referer is allowed when no origin is sent';
+        $t->assert_true($test_name, server_guard::origin_allowed('', 'https://zukunft.com/x', $host));
+        $test_name = 'a call without an origin or referer is allowed (server-to-server)';
+        $t->assert_true($test_name, server_guard::origin_allowed('', '', $host));
+        $test_name = 'a same host on a non-standard port is allowed';
+        $t->assert_true($test_name, server_guard::origin_allowed('http://localhost:8080', '', 'localhost:8080'));
 
         // test the notification component standalone
         $t->subheader($ts . 'notification');
@@ -159,7 +294,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::PASSWORD_WRONG, []);
         $url_array = [url_var::MASK => views::LOGIN_ID];
-        $login_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+        $login_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
 
         $notification_div = '<div class="alert alert-warning notification-bar">';
         $test_name = 'login page with failed login shows notification bar';
@@ -197,7 +332,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
         $url_array = [url_var::MASK => views::SIGNUP_ID];
-        $signup_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+        $signup_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
 
         $test_name = 'signup page with duplicate name shows notification bar';
         $t->assert_text_contains($test_name, $signup_html, $notification_div);
@@ -231,7 +366,7 @@ class system_view_ui_tests
         // test that the logout page shows the success message
         global $mtr;
         $url_array = [url_var::MASK => views::LOGOUT_ID];
-        $logout_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+        $logout_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
 
         $test_name = 'logout page shows logout notice text';
         $t->assert_text_contains($test_name, $logout_html, $mtr->txt(msg_id::LOGOUT_NOTICE));
@@ -246,10 +381,11 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::ACTIVATE_ERR_KEY_MISMATCH, []);
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto);
+        $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
 
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page with key mismatch shows notification bar';
-        $t->assert_text_contains($test_name, $activate_html, $notification_div);
+        $t->assert_text_contains($test_name, $activate_html, $notification_div, $t::TIMEOUT_LIMIT_PAGE);
 
         $test_name = 'activate page notification contains key mismatch message';
         $t->assert_text_contains($test_name, $activate_html, $mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
@@ -258,15 +394,17 @@ class system_view_ui_tests
         $test_name = 'activate page with key mismatch notification matches snapshot';
         $t->assert_html_page($test_name, $activate_html, $file_path);
 
-        // test that the activate page shown after a successful password reset email renders correctly
-        // (action_login_reset redirects to LOGIN_ACTIVATE_ID on success, passing the user id)
+        // test that the activate page reached from the reset email link renders correctly; the reset
+        // itself returns the login page with a neutral message (see action_login_reset), the real
+        // activate link with the user id and key is delivered by email
         $t->subheader($ts . 'login reset');
 
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+        $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
 
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
-        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT));
+        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT), $t::TIMEOUT_LIMIT_PAGE);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'reset_email_sent';
         $test_name = 'activate page after reset email matches snapshot';
@@ -274,7 +412,7 @@ class system_view_ui_tests
 
         // test that the login_reset form renders with a cancel and go back link when no back params are given
         $url_array = [url_var::MASK => views::LOGIN_RESET_ID];
-        $reset_form_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto);
+        $reset_form_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
 
         $test_name = 'login reset page shows cancel and go back link';
         $t->assert_text_contains($test_name, $reset_form_html, $mtr->txt(msg_id::CANCEL_AND_GO));
@@ -292,7 +430,7 @@ class system_view_ui_tests
         $url = 'http://localhost/http/view.php';
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
-        $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto);
+        $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'start_page';
         $t->assert_html_page($test_name, $html, $file_path);
         */
@@ -305,11 +443,42 @@ class system_view_ui_tests
         $add_url = $t_map->class_to_filled_url(formula_link::class, views::FORMULA_LINK_ADD_ID, change_actions::ADD);
         $add_part = parse_url($add_url);
         parse_str($add_part['query'], $add_array);
-        $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto);
+        $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto, true);
+        // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'add view keeps the hidden id field at 0';
-        $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"');
+        $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"', $t::TIMEOUT_LIMIT_PAGE);
         $test_name = 'add view does not stamp the url id onto the new object';
         $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
+
+        // the admin only masks (views::ADMIN_MASK_IDS) must be authorized centrally so the admin
+        // content is not rendered to just anyone (see frontend::admin_mask_denied)
+        $t->subheader($ts . 'admin mask authorization');
+        $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+
+        // negative: an anonymous user is sent to the start view with a permission message and never
+        // sees the admin content
+        $anon_msg = new user_message();
+        $anon_html = $ui->url_to_html($admin_url, null, $anon_msg, $ui->dto, true);
+        // the first assert after a page render carries the render time, so a page timeout is used
+        $test_name = 'the admin main view is not rendered for an anonymous user';
+        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
+        $test_name = 'the anonymous user is told that the admin view needs an administrator';
+        $t->assert_text_contains($test_name, $anon_html, msg_id::ADMIN_MASK_DENIED->value);
+
+        // positive: an admin (here the system user, see admin_mask_denied) may render the admin view
+        $adm_msg = new user_message();
+        $adm_html = $ui->url_to_html($admin_url, $usr_sys_ui, $adm_msg, $ui->dto, true);
+        $test_name = 'the admin main view is rendered for a system user';
+        $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
+
+        // negative: url_to_action refuses an admin mask action for a non-admin user and returns the
+        // start view instead of acting on it (a fresh frontend user has the ip-only profile)
+        $act_msg = new user_message();
+        $act_backend = clone $t->usr1;
+        $act_usr = new user_ui();
+        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_usr, $act_msg, $ui->dto, false);
+        $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
+        $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
         // loop over the system views
         $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
@@ -347,10 +516,16 @@ class system_view_ui_tests
                 }
                 $url_part = parse_url($url);
                 parse_str($url_part["query"], $url_array);
-                if (in_array($id, views::TEST_LOGIN_VIEW_IDS)) {
-                    $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto);
+                // an admin mask is now rendered only for an admin or system user (see
+                // frontend::admin_mask_denied), so render it as the system user like the login views
+                // that also need a session; the other views keep rendering as an anonymous user.
+                // because of this the admin mask snapshots show the logged-in user menu (logout)
+                // instead of the anonymous login/signup menu
+                if (in_array($id, views::TEST_LOGIN_VIEW_IDS)
+                    or in_array($id, views::ADMIN_MASK_IDS)) {
+                    $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
                 } else {
-                    $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto);
+                    $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto, true);
                 }
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
