@@ -1180,18 +1180,22 @@ class user extends db_id_object_non_sandbox
      * normal or ip user the requested id is ignored and the session user's own data is loaded, so
      * the request cannot use the user parameter to read another user's private data (idor)
      * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @param bool $from_pod true if the request has been sent by this pod itself (see server_guard::from_own_pod)
      * @return user the session user, or the loaded requested user when the caller is permitted
      */
-    function data_user(int $req_usr_id): user
+    function data_user(int $req_usr_id, bool $from_pod = false): user
     {
         $result = $this;
         // only switch to the requested data user if it differs from the session user (the session
         // user is already fully loaded via get(), so reloading it by id would drop that setup) and
-        // only when the session user may see another user's data (an admin or the system user); a
+        // only when the session user may see another user's data (an admin or the system user) or
+        // the request comes from this pod itself ($from_pod, see server_guard::from_own_pod),
+        // because the own html frontend has validated the browsing user's session before calling
+        // the read api server-to-server e.g. to show the user's own changed word description; a
         // normal or ip user requesting a foreign id keeps the session user, blocking the idor
         if ($req_usr_id > 0
             and $req_usr_id != $this->id
-            and ($this->is_admin() or $this->is_system())) {
+            and ($from_pod or $this->is_admin() or $this->is_system())) {
             $req_usr = new user();
             $req_usr->load_by_id($req_usr_id);
             if ($req_usr->id > 0) {

@@ -60,6 +60,9 @@ class server_guard
     // placeholder in the offline reject pages, replaced with the admin contact email at serve time
     private const string CONTACT_PLACEHOLDER = '{{ADMIN_CONTACT}}';
 
+    // the loopback addresses that mark a server-to-server call on the same host (see from_own_pod)
+    private const array LOOPBACK_ADDRESSES = ['127.0.0.1', '::1'];
+
     /**
      * reject the current request if it violates an active whitelist.
      * safe to call on every request: it does nothing unless a whitelist is on.
@@ -216,6 +219,46 @@ class server_guard
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         return self::origin_allowed($origin, $referer, $host);
+    }
+
+    /**
+     * true if the request has been sent by this pod itself, e.g. the html frontend calling its
+     * own read api server-to-server for the browsing user, so the api may trust the data user
+     * parameter (url_var::USER, see user::data_user): the remote address must be the loopback
+     * address or the pod's own address and no proxy forward header may be present, because behind
+     * a reverse proxy on the same host an external request would also arrive from the loopback
+     * address but always carries the forward header of the proxy.
+     * $_SERVER is read here because this is the request boundary, like same_origin / enforce
+     * @return bool true if the request has been sent by this pod itself
+     */
+    public static function from_own_pod(): bool
+    {
+        $forwarded = isset($_SERVER['HTTP_X_FORWARDED_FOR']) || isset($_SERVER['HTTP_X_REAL_IP']);
+        return self::is_own_pod_call(
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            $_SERVER['SERVER_ADDR'] ?? '',
+            $forwarded);
+    }
+
+    /**
+     * pure own-pod decision: true if the remote address is the loopback address or the pod's own
+     * address and the request has not been forwarded by a proxy
+     * @param string $remote_ip the address the request has been sent from ('' if unknown)
+     * @param string $server_ip the own address of this pod server ('' if unknown)
+     * @param bool $forwarded true if the request carries a proxy forward header
+     * @return bool true if the request has been sent by this pod itself
+     */
+    public static function is_own_pod_call(string $remote_ip, string $server_ip, bool $forwarded): bool
+    {
+        $result = false;
+        if (!$forwarded and $remote_ip !== '') {
+            if (in_array($remote_ip, self::LOOPBACK_ADDRESSES, true)) {
+                $result = true;
+            } elseif ($server_ip !== '' and $remote_ip === $server_ip) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

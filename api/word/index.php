@@ -35,12 +35,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
@@ -99,8 +101,11 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
-        // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+        // of a user or the own html frontend requests the data for the browsing user whose
+        // session it has validated itself; the data user is included in the request in
+        // url_var::USER and honored for a server-to-server call of this pod, so that e.g.
+        // a description changed by the browsing user is shown in the word and edit views
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, server_guard::from_own_pod());
 
         $wrd = new word($load_usr);
 
@@ -124,8 +129,10 @@ if ($db_con->is_open()) {
             }
 
             // do not disclose another user's private word loaded by id/name (idor); the same
-            // neutral message as a missing id so the response does not confirm the word exists
-            if ($result != '' and !$wrd->is_readable_by($usr)) {
+            // neutral message as a missing id so the response does not confirm the word exists;
+            // checked against the data user, because for a trusted pod call the data user is
+            // the browsing user who must be able to see the own private words
+            if ($result != '' and !$wrd->is_readable_by($load_usr)) {
                 $result = '';
                 $msg = 'word id or name is missing';
             }

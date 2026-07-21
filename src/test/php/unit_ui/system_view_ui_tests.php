@@ -290,6 +290,23 @@ class system_view_ui_tests
         $test_name = 'a same host on a non-standard port is allowed';
         $t->assert_true($test_name, server_guard::origin_allowed('http://localhost:8080', '', 'localhost:8080'));
 
+        // a read api call from the pod itself (the html frontend calling its own api) may act for
+        // the browsing user (user::data_user), but only a genuine local call is trusted: a request
+        // forwarded by a proxy on the same host must never count as the pod itself
+        $t->subheader($ts . 'api call from the own pod');
+        $test_name = 'a loopback call without a forward header is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('127.0.0.1', '', false));
+        $test_name = 'an ipv6 loopback call is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('::1', '', false));
+        $test_name = 'a call from the own server address is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('10.0.0.5', '10.0.0.5', false));
+        $test_name = 'an external call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('203.0.113.7', '10.0.0.5', false));
+        $test_name = 'a proxied loopback call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('127.0.0.1', '', true));
+        $test_name = 'an unknown remote address is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();

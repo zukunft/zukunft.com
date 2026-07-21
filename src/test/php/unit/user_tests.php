@@ -177,6 +177,12 @@ class user_tests
         $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID)->id(), users::TEST_USER_ID);
         $test_name = 'the data user parameter is ignored for the session user own id';
         $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID)->id(), users::TEST_USER_ID);
+        // the own pod flag is set by the api entry scripts via server_guard::from_own_pod, never
+        // from a request value, so an external caller can never combine it with the user parameter
+        $test_name = 'without the own pod flag the data user request of a normal user stays blocked';
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID, false)->id(), users::TEST_USER_ID);
+        $test_name = 'the own pod flag without a requested user keeps the session user';
+        $t->assert($test_name, $usr_attacker->data_user(0, true)->id(), users::TEST_USER_ID);
 
 
         $t->subheader($ts . 'sandbox usage');
