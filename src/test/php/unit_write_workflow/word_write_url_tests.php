@@ -256,6 +256,12 @@ class word_write_url_tests extends word_url_tests
         $wrd_chk->load_by_id($wrd_ui->id());
         $t->assert($test_name, $wrd_chk->name(), $renamed);
 
+        // the rename request carries only the changed name (the '8'-prefixed edit baseline drops
+        // the unchanged fields), so the values of the original word must survive the rename,
+        // e.g. the description (see the fill on a key update in sandbox::save)
+        $test_name = 'the description survives the rename';
+        $t->assert($test_name, $wrd_chk->get_description(), word_names::TEST_ADD_COM);
+
         // the owner keeps the original word under the original id
         $test_name = 'the owner keeps the original word name';
         $wrd_owner = new word($owner);

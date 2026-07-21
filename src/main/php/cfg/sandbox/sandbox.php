@@ -2934,6 +2934,12 @@ class sandbox extends db_object_seq_id_user
                     // check if the id parameters are supposed to be changed
                     if ($msg->is_ok()) {
                         if ($this->is_key_updated($db_rec)) {
+                            // a rename request carries only the changed fields (see the '8'-prefixed
+                            // edit baseline in docs/llm/state-and-messages.md), so the values that the
+                            // request has not specified (e.g. the description) are taken over from the
+                            // database row - otherwise a rename that creates a new database row would
+                            // lose them (fill never overwrites a value the request has specified)
+                            $msg->merge($this->fill($db_rec, $this->get_user()));
                             $this->delete_old_key_row($db_rec, $msg);
                         }
                     }

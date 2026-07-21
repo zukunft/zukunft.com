@@ -4,8 +4,6 @@
 
 ## high prio
 
-if a word name is renamed, the renamed word is shown, but without the valued of the overwritten object e.g. the descrition of the original word
-
 if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed
 
 find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
