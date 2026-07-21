@@ -213,11 +213,12 @@ class term_list extends sandbox_list_named
      *      for verbs with config::LIMIT_NAME_LIST triples where the verb is used by impact
      *      for formulas with the latex formula converted to MathML
      *
-     * @param string $back the back trace url for the undo functionality
+     * @param array $url_array the url params of the calling page added to the edit links with the
+     *                         url_var::BACK ('9') prefix so the edit mask can return to the calling page
      * @param int $limit the max number of terms to show
      * @return string the html of three balanced columns with the term links, highest impact first
      */
-    function links_with_context(string $back = '', int $limit = config::LIMIT_SEARCH_LIST): string
+    function links_with_context(array $url_array = [], int $limit = config::LIMIT_SEARCH_LIST): string
     {
         $this->sort_by_impact();
         // each entry is the term name link followed by a "fas fa-edit" link to the term's edit page
@@ -225,7 +226,7 @@ class term_list extends sandbox_list_named
         $pos = 0;
         foreach ($this->lst() as $trm) {
             if ($pos < $limit) {
-                $entries[] = $trm->name_link() . ' ' . $trm->edit_link();
+                $entries[] = $trm->name_link() . ' ' . $trm->edit_link($url_array);
                 $pos++;
             }
         }

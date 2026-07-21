@@ -202,6 +202,45 @@ defaults to `false` (e.g. `public bool $uses_sandbox = false`) instead of
 insert, so the generated insert-log SQL includes the old value
 (`_uses_sandbox_old`) — the insert-log test fixtures must match that.
 
+## Default values are resolved at the point of use, never fabricated in a mapper
+
+A nullable typed db field (e.g. `users.user_type_id`, `users.user_status_id`,
+the share and protection type of a sandbox object) stores **null** when the
+default applies; the default itself is defined in exactly one place, the
+`default_id()` function of the owning type list (e.g.
+`user_type_list::default_id()` = guest, `user_status_list::default_id()` =
+active, `share_type_list`, `protect_type_list`).
+
+Where the default **is** applied:
+
+- **At the point of use** — a display, a selector preselection or a behaviour
+  decision resolves a null id via `$typ_lst->...->default_id()` when it needs
+  an effective value (the share and protection selectors in
+  `web/sandbox/sandbox.php` are the pattern). The resolved default is never
+  written back to the object or the database.
+- **In `import_mapper`** — an import file is a self-contained declaration of
+  the target state, so a missing field there *means* the default and the
+  mapper fills it explicitly (e.g. user profile normal, type guest, status
+  active).
+- **In the database insert** — a new row simply keeps null and the nullable
+  column default, so no code sets it.
+
+Where the default is **never** fabricated:
+
+- **In `row_mapper`, `api_mapper` and `url_mapper`** — these carry partial
+  state, so a missing field maps to **null** meaning "not specified". A
+  fabricated default is indistinguishable from a real value and a later save
+  of the object writes it over the stored value (this reset user passwords,
+  types and statuum via json-born user objects before it was fixed).
+- **In the save path** — `db_fields_changed` treats a null in-memory value of
+  such a field as "not loaded / not specified" and skips the field, so a
+  partial object can be saved without destroying the fields it does not carry
+  (see the password, activation key, type and status guards in
+  `user::db_fields_changed`).
+- **In `export_json` / `api_json_array`** — a null field is omitted (not
+  exported as the default), so the export stays faithful and the import
+  default fills it on the other side.
+
 ## config.yaml keys are at most two space-separated words
 
 Every key in `src/main/resources/config.yaml` imports as a **word** (one token)

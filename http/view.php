@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -106,13 +107,29 @@ if ($db_con->is_open()) {
         // if this pod does not permit the changes of an ip user
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
         // beside add, edit and del this covers e.g. the import, paste, undo and job views;
-        // checked before the page cache probe, so that the blocked request is answered
-        // with the cached start page and the message is added to it (see cached_page_or_null)
+        // the blocked request is answered with the calling page taken from the '9'-prefixed
+        // back params of the blocked url, so the user stays on the page where the change
+        // link has been clicked and only the message is added; the back mask is user input,
+        // so it is only used if it is not itself a blocked mask; a request without a back
+        // e.g. a typed url falls back to the default view of the target object (word edit
+        // mask -> word default view) and masks without an object view fall back to the
+        // start page; checked before the page cache probe, so that the blocked request is
+        // answered with the cached page and the message is added to it (see cached_page_or_null)
         $mask_id = $url_array[url_var::MASK] ?? 0;
         if (in_array($mask_id, views::IP_BLOCKED_MASKS_IDS) and $usr->is_blocked()) {
             log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
             $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
-            $url_array = [url_var::MASK => views::START_ID];
+            $back_url = html_base::url_par_from_back_part($url_array);
+            $back_msk_id = (int)($back_url[url_var::MASK] ?? 0);
+            if ($back_msk_id > 0 and !in_array($back_msk_id, views::IP_BLOCKED_MASKS_IDS)) {
+                $url_array = $back_url;
+            } else {
+                $show_url = [url_var::MASK => (new views())->change_to_show_id($mask_id)];
+                if (isset($url_array[url_var::ID])) {
+                    $show_url[url_var::ID] = $url_array[url_var::ID];
+                }
+                $url_array = $show_url;
+            }
         }
 
         // fast path: serve an already cached view-only page before the heavy frontend setup

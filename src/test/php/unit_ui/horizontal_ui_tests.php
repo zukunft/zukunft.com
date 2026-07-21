@@ -168,6 +168,16 @@ class horizontal_ui_tests
                 $refilled_obj->last_login = $filled_obj->last_login;
                 $refilled_obj->last_logoff = $filled_obj->last_logoff;
                 $refilled_obj->right_level = $filled_obj->right_level;
+                // the type and the status are set by the verification and admin processes, not by
+                // a form, and api_mapper keeps a missing field null instead of fabricating the
+                // default (see docs/llm/constants.md), so the refilled user cannot know them;
+                // only a null is filled so the diff still catches a wrongly mapped real value
+                if ($refilled_obj->type_id === null) {
+                    $refilled_obj->type_id = $filled_obj->type_id;
+                }
+                if ($refilled_obj->status_id === null) {
+                    $refilled_obj->status_id = $filled_obj->status_id;
+                }
                 // the sandbox usage checkbox is only part of the admin user edit mask
                 $refilled_obj->uses_sandbox = $filled_obj->uses_sandbox;
                 $refilled_obj->created = $filled_obj->created;

@@ -409,6 +409,30 @@ into a snapshot by hand. A **minor** release does change the snapshots on purpos
 version of the json format and of the database has changed - and then the developer
 regenerates them. → `docs/llm/versions.md`
 
+## Horizontal round-trip tests refill a not-transported field only when it is null
+
+The horizontal ui tests (`unit_ui/horizontal_ui_tests.php`) round-trip a filled
+backend object through the form url, the frontend mappers and the api json back
+into a backend object and diff it against the original. A field that no form
+transports (e.g. the user ip address, login times, type and status) is
+backfilled from the original before the diff — but **only if the refilled value
+is null**, meaning "not transported". An unconditional backfill would overwrite
+a wrongly mapped real value with the expected one, so the diff could never
+catch a mapper that fabricates or distorts the field (this is how the guest and
+active default fabrication in `user::api_mapper` stayed unnoticed; see
+docs/llm/constants.md "Default values are resolved at the point of use").
+
+- **Right**:
+```php
+if ($refilled_obj->type_id === null) {
+    $refilled_obj->type_id = $filled_obj->type_id;
+}
+```
+- **Wrong** — masks a mapper that sets a wrong non-null value:
+```php
+$refilled_obj->type_id = $filled_obj->type_id;
+```
+
 ## Page-based UI tests for component-type renderers
 
 Every UI rendering function dispatched from `web/component/component_exe.php` —

@@ -363,7 +363,7 @@ class system_page extends component
             $trm_lst->get_by_pattern($pattern);
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
-            $result .= $trm_lst->links_with_context();
+            $result .= $trm_lst->links_with_context($url_array);
         }
 
         return $result;

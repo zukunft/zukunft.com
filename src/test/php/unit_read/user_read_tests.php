@@ -91,6 +91,16 @@ class user_read_tests
         $test_name = 'data_user keeps the session user when its own id is requested';
         $t->assert_true($test_name, $session->data_user($session->id()) === $session);
 
+        // an api call of the own html frontend (server-to-server, session validated by the frontend)
+        // is trusted to load the browsing user, so e.g. a description changed by the browsing user
+        // is shown in the word and edit views; without the own pod flag the request stays blocked
+        $unprivileged = new user();
+        $unprivileged->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
+        $test_name = 'a pod internal call loads the browsing user via the data user parameter';
+        $t->assert($test_name, $unprivileged->data_user($session->id(), true)->id(), $session->id());
+        $test_name = 'without the own pod flag an unprivileged session keeps its own user';
+        $t->assert($test_name, $unprivileged->data_user($session->id())->id(), $unprivileged->id());
+
         // TODO test type and view
 
 

@@ -295,6 +295,18 @@ class url_var
     const int DEBUG_LEVEL_MAIN_STEP = 9; // the ninth debug level is to show the main processing steps such as start and end
     const int DEBUG_LEVEL_MAX_FIXED = 10; // the max number of predefined debug level and the staring of the depth debug levels
 
+    // the url vars that identify the page a request shows: the mask, the object selection
+    // and the search pattern; used to build the '9'-prefixed back part of an edit link
+    // (html_base::page_url_array), so form state and already prefixed params are never
+    // repeated in the back part and the url stays short
+    const array PAGE_VARS = [
+        self::MASK,
+        self::ID,
+        self::ID_LST,
+        self::PATTERN,
+        self::PATTERN_HUMAN,
+    ];
+
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
     const array CONTROL_VARS = [

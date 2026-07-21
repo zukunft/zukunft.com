@@ -177,6 +177,12 @@ class user_tests
         $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID)->id(), users::TEST_USER_ID);
         $test_name = 'the data user parameter is ignored for the session user own id';
         $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID)->id(), users::TEST_USER_ID);
+        // the own pod flag is set by the api entry scripts via server_guard::from_own_pod, never
+        // from a request value, so an external caller can never combine it with the user parameter
+        $test_name = 'without the own pod flag the data user request of a normal user stays blocked';
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID, false)->id(), users::TEST_USER_ID);
+        $test_name = 'the own pod flag without a requested user keeps the session user';
+        $t->assert($test_name, $usr_attacker->data_user(0, true)->id(), users::TEST_USER_ID);
 
 
         $t->subheader($ts . 'sandbox usage');
@@ -227,6 +233,74 @@ class user_tests
         $usr = new user();
         $usr->api_mapper([], $usr_msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
+
+
+        $t->subheader($ts . 'logon secrets preserved on save');
+
+        // the api json never carries the logon secrets, so in a user rebuilt from it the
+        // password and the activation key are null, meaning "not loaded", never "clear";
+        // a save of such a user e.g. via set_uses_sandbox must keep the stored values
+        $usr_msg = new user_message($t->usr_admin);
+        $db_usr = $t_usr->sandbox_user();
+        $db_usr->set_password_hash(user::DUMMY_PW_HASH);
+        $db_usr->activation_key = 'dummy activation key hash for unit test';
+        $upd_usr = $t_usr->sandbox_user();
+        $upd_usr->uses_sandbox = true;
+        $db_usr->uses_sandbox = false;
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $test_name = 'the sandbox usage switch is saved';
+        $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_USES_SANDBOX));
+        $test_name = 'a not loaded password never overwrites the stored hash';
+        $t->assert_false($test_name, $chg_lst->has_name(user_db::FLD_PASSWORD));
+        $test_name = 'a not loaded activation key never overwrites the stored key';
+        $t->assert_false($test_name, $chg_lst->has_name(user_db::FLD_ACTIVATION_KEY));
+
+        // a real password change (a new hash is set) is still detected and written
+        $upd_usr->set_password_hash('changed dummy password hash for unit test');
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $test_name = 'a new password hash is saved';
+        $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_PASSWORD));
+
+        // a used activation key is cleared with '' (see frontend::action_login_activate),
+        // so the clearing is still detected and written
+        $upd_usr->activation_key = '';
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $test_name = 'clearing a used activation key is saved';
+        $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_ACTIVATION_KEY));
+
+
+        $t->subheader($ts . 'type and status preserved on save');
+
+        // api_mapper keeps a missing type and status null (not specified), so a save of a
+        // json-born user keeps the stored values instead of resetting them to guest and active
+        $usr_msg = new user_message($t->usr_admin);
+        $json_usr = new user();
+        $json_usr->api_mapper([json_fields::USES_SANDBOX => 1], $usr_msg);
+        $test_name = 'a missing type in the api json maps to null';
+        $t->assert_true($test_name, $json_usr->type_id === null);
+        $test_name = 'a missing status in the api json maps to null';
+        $t->assert_true($test_name, $json_usr->status_id === null);
+        $db_usr = $t_usr->non_sandbox_user();
+        $db_usr->type_id = 2;
+        $db_usr->status_id = 3;
+        $chg_lst = $json_usr->db_fields_changed($db_usr, $usr_msg);
+        $test_name = 'a not specified type never overwrites the stored type';
+        $t->assert_false($test_name, $chg_lst->has_name(user_db::FLD_TYPE_ID));
+        $test_name = 'a not specified status never overwrites the stored status';
+        $t->assert_false($test_name, $chg_lst->has_name(user_db::FLD_STATUS));
+
+        // an explicit type and status change is still detected and written
+        // and the status survives the api round trip (sent under json_fields::STATUS)
+        $api_json = [json_fields::TYPE => 4, json_fields::STATUS => 5];
+        $upd_usr = new user();
+        $upd_usr->api_mapper($api_json, $usr_msg);
+        $test_name = 'the status is mapped from the api json';
+        $t->assert_true($test_name, $upd_usr->status_id == 5);
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $test_name = 'a changed type is saved';
+        $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_TYPE_ID));
+        $test_name = 'a changed status is saved';
+        $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_STATUS));
 
 
         $t->subheader($ts . 'profile privilege escalation');

@@ -499,8 +499,6 @@ class user extends db_id_object_non_sandbox
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $sys;
-
         parent::api_mapper($api_json, $usr_msg);
 
         // map the fields that are common for import and api json messages
@@ -517,15 +515,20 @@ class user extends db_id_object_non_sandbox
         } else {
             $this->profile_id = user_profiles::NORMAL_ID;
         }
+        // the type and the status are mapped faithfully like the profile: a missing json field
+        // stays null meaning "not specified", so a save of a json-born user keeps the stored
+        // values (db_fields_changed skips a null type and status) instead of resetting them
+        // to the guest and active defaults; a really new user gets the defaults from the database
         if (key_exists(json_fields::TYPE, $api_json)) {
             $this->type_id = $api_json[json_fields::TYPE];
         } else {
-            $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+            $this->type_id = null;
         }
-        if (key_exists(json_fields::STATUS_ID, $api_json)) {
-            $this->status_id = $api_json[json_fields::STATUS_ID];
+        // the status id is sent under json_fields::STATUS (see api_json_array and the frontend user)
+        if (key_exists(json_fields::STATUS, $api_json)) {
+            $this->status_id = $api_json[json_fields::STATUS];
         } else {
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
+            $this->status_id = null;
         }
         // a missing flag reads as false like a null db value (see docs/llm/constants.md)
         if (key_exists(json_fields::USES_SANDBOX, $api_json)) {
@@ -926,8 +929,19 @@ class user extends db_id_object_non_sandbox
             $msg->add(msg_id::PASSWORD_WRONG, []);
         }
         if ($msg->is_ok()) {
-            session_start();
-            session_regenerate_id(true);
+            // a session can only be started before any output has been sent, and restarting an
+            // active session would only raise a php notice, so the session is started only if
+            // possible and needed; in the http streamed test runs the output is already flowing,
+            // there the login is verified and the session vars are set without a php session
+            if (session_status() === PHP_SESSION_NONE and !headers_sent()) {
+                session_start();
+            }
+            // regenerate the session id on this authentication transition so a planted session id
+            // cannot become authenticated (session fixation); the new session cookie can also only
+            // be sent before any output, so the regeneration is skipped when it could not work anyway
+            if (session_status() === PHP_SESSION_ACTIVE and !headers_sent()) {
+                session_regenerate_id(true);
+            }
             if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                 try {
                     $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -1166,18 +1180,22 @@ class user extends db_id_object_non_sandbox
      * normal or ip user the requested id is ignored and the session user's own data is loaded, so
      * the request cannot use the user parameter to read another user's private data (idor)
      * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @param bool $from_pod true if the request has been sent by this pod itself (see server_guard::from_own_pod)
      * @return user the session user, or the loaded requested user when the caller is permitted
      */
-    function data_user(int $req_usr_id): user
+    function data_user(int $req_usr_id, bool $from_pod = false): user
     {
         $result = $this;
         // only switch to the requested data user if it differs from the session user (the session
         // user is already fully loaded via get(), so reloading it by id would drop that setup) and
-        // only when the session user may see another user's data (an admin or the system user); a
+        // only when the session user may see another user's data (an admin or the system user) or
+        // the request comes from this pod itself ($from_pod, see server_guard::from_own_pod),
+        // because the own html frontend has validated the browsing user's session before calling
+        // the read api server-to-server e.g. to show the user's own changed word description; a
         // normal or ip user requesting a foreign id keeps the session user, blocking the idor
         if ($req_usr_id > 0
             and $req_usr_id != $this->id
-            and ($this->is_admin() or $this->is_system())) {
+            and ($from_pod or $this->is_admin() or $this->is_system())) {
             $req_usr = new user();
             $req_usr->load_by_id($req_usr_id);
             if ($req_usr->id > 0) {
@@ -2799,7 +2817,11 @@ class user extends db_id_object_non_sandbox
             $this->uses_sandbox = true;
             // a user object without a database id cannot be updated e.g. during unit tests
             if ($this->id() > 0) {
-                $this->save_user($msg, $this);
+                // write the flag via a freshly loaded copy, because this object can be a stale
+                // or partially filled user (e.g. a unit test dummy with only the id and the name
+                // set) and the field compare of such a copy would overwrite the real row fields
+                // (see "Default values are resolved at the point of use" in docs/llm/constants.md)
+                $this->save_flag_on_fresh_copy($msg);
             }
         }
     }
@@ -2820,9 +2842,32 @@ class user extends db_id_object_non_sandbox
                 $this->uses_sandbox = false;
                 // a user object without a database id cannot be updated e.g. during unit tests
                 if ($this->id() > 0) {
-                    $this->save_user($msg, $this);
+                    // like in set_uses_sandbox only the flag of the stored row is updated
+                    $this->save_flag_on_fresh_copy($msg);
                 }
             }
+        }
+    }
+
+    /**
+     * persist the in-memory uses_sandbox flag by loading a fresh copy of this user from the
+     * database, setting the flag on it and saving the copy, so that only the flag is written:
+     * this object can be a stale or partially filled user (e.g. a unit test dummy with only the
+     * id and the name set) and saving it directly would overwrite the other fields of the real
+     * row with the stale values (this once reset user profiles, emails and passwords)
+     *
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    private function save_flag_on_fresh_copy(user_message $msg): void
+    {
+        $db_usr = new user();
+        if ($db_usr->load_by_id($this->id()) > 0) {
+            $db_usr->uses_sandbox = $this->uses_sandbox;
+            $db_usr->save_user($msg, $db_usr);
+        } else {
+            // a missing row is only logged because the flag matters for the page cache, not the data
+            log_warning('user ' . $this->dsp_id() . ' not found to update the sandbox usage');
         }
     }
 
@@ -3557,7 +3602,10 @@ class user extends db_id_object_non_sandbox
         }
 
         // password should not be part of the change log
-        if ($obj->password <> $this->password) {
+        // a null in-memory password can only mean "not loaded" (e.g. a user rebuilt from the
+        // api json, which never carries the logon secrets), never a request to clear the hash,
+        // because a password reset always writes a new hash; so a null never overwrites the db value
+        if ($this->password !== null and $obj->password <> $this->password) {
             // TODO Prio 3 log the password hash change in a admin only log for security reasons
             if ($do_log) {
                 $lst->add_field(
@@ -3574,7 +3622,9 @@ class user extends db_id_object_non_sandbox
             );
         }
         // the activation_key is used during the signup process and is not logged
-        if ($obj->activation_key <> $this->activation_key) {
+        // like the password a null can only mean "not loaded": a used key is cleared with '' (see
+        // frontend::action_login_activate), so a null never overwrites the stored key
+        if ($this->activation_key !== null and $obj->activation_key <> $this->activation_key) {
             // the change of the activation_key if logged e.g. to be able to limit the number of login attempts
             if ($do_log) {
                 $lst->add_field(
@@ -3685,7 +3735,9 @@ class user extends db_id_object_non_sandbox
         }
         // TODO the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
-        if ($obj->type_id !== $this->type_id) {
+        // like the password a null in-memory type can only mean "not specified" (e.g. a user rebuilt
+        // from an api json without the field), so a null never overwrites the stored type
+        if ($this->type_id !== null and $obj->type_id !== $this->type_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
@@ -3715,7 +3767,8 @@ class user extends db_id_object_non_sandbox
                 $obj->right_level
             );
         }
-        if ($obj->status_id !== $this->status_id) {
+        // like the type a null in-memory status means "not specified" and never overwrites the stored status
+        if ($this->status_id !== null and $obj->status_id !== $this->status_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_STATUS,

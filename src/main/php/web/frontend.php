@@ -957,6 +957,12 @@ class frontend
             }
         }
 
+        // an admin protected object can still be changed by a normal user (the change creates the
+        // user's own sandbox overlay), so the edit view opens without any protection message; only
+        // the ownership takeover and the change of the protection level itself are admin only and
+        // are enforced in the backend save path (see sandbox::check_protection and take_ownership
+        // and "Admin protection does not block user changes" in docs/llm/architecture.md)
+
         // select the view
         // an edit or del mask is the view that the user has requested, so it is never overwritten here
         // and only a view that the user has selected for the object needs to be saved
@@ -1882,8 +1888,18 @@ class frontend
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
-        // id as the '9'-prefixed back target, so the user returns to the changed object
-        return $this->url_to_back_url($url_array);
+        // id as the '9'-prefixed back target, so the user returns to the changed object; the id of
+        // the just saved object is preferred over the back id, because the id can change with the
+        // write, e.g. a rename by a user that cannot change the standard row creates a new database
+        // row and the old id of the back target would show an empty view
+        $back_url = $this->url_to_back_url($url_array);
+        if ($crud != url_var::CRUD_DELETE
+            and $dbo instanceof db_object_ui
+            and $dbo->id() != 0
+            and array_key_exists(url_var::ID, $back_url)) {
+            $back_url[url_var::ID] = $dbo->id();
+        }
+        return $back_url;
     }
 
     /**

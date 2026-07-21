@@ -1345,7 +1345,9 @@ class sandbox extends db_object_seq_id_user
 
         $qp = $this->load_sql_median_user($db_con);
         $db_row = $db_con->get1($qp);
-        if ($db_row[user_db::FLD_ID] > 0) {
+        // an object without any user sandbox row returns no median user row at all,
+        // so fall back to the owner (or the requesting user) like for a zero user id
+        if (($db_row[user_db::FLD_ID] ?? 0) > 0) {
             $result = $db_row[user_db::FLD_ID];
         } else {
             if ($this->owner_id() > 0) {
@@ -2932,6 +2934,12 @@ class sandbox extends db_object_seq_id_user
                     // check if the id parameters are supposed to be changed
                     if ($msg->is_ok()) {
                         if ($this->is_key_updated($db_rec)) {
+                            // a rename request carries only the changed fields (see the '8'-prefixed
+                            // edit baseline in docs/llm/state-and-messages.md), so the values that the
+                            // request has not specified (e.g. the description) are taken over from the
+                            // database row - otherwise a rename that creates a new database row would
+                            // lose them (fill never overwrites a value the request has specified)
+                            $msg->merge($this->fill($db_rec, $this->get_user()));
                             $this->delete_old_key_row($db_rec, $msg);
                         }
                     }

@@ -249,6 +249,17 @@ class system_view_ui_tests
         $test_name = 'the start view is not blocked for an ip user';
         $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
 
+        // a blocked change mask is answered with the calling page from the '9'-prefixed back
+        // params or, if the request has no back e.g. a typed url, with the default view of
+        // the target object so the user stays on the object (see /http/view.php)
+        $msk = new views();
+        $test_name = 'a blocked word edit shows the word default view again';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::WORD_EDIT_ID) == views::WORD_ID);
+        $test_name = 'a blocked formula test shows the formula default view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_TEST_ID) == views::FORMULA_ID);
+        $test_name = 'a blocked mask without an object view falls back to the start view';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::UNDO_ID) == views::START_ID);
+
         // tls is enforced (plain http redirected to https) in the prod and test environment so the
         // session cookie is never sent in the clear, but not in dev so the local http docker works;
         // the api entry (application::start_api) and the html frontend share this via server_guard
@@ -279,6 +290,23 @@ class system_view_ui_tests
         $t->assert_true($test_name, server_guard::origin_allowed('', '', $host));
         $test_name = 'a same host on a non-standard port is allowed';
         $t->assert_true($test_name, server_guard::origin_allowed('http://localhost:8080', '', 'localhost:8080'));
+
+        // a read api call from the pod itself (the html frontend calling its own api) may act for
+        // the browsing user (user::data_user), but only a genuine local call is trusted: a request
+        // forwarded by a proxy on the same host must never count as the pod itself
+        $t->subheader($ts . 'api call from the own pod');
+        $test_name = 'a loopback call without a forward header is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('127.0.0.1', '', false));
+        $test_name = 'an ipv6 loopback call is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('::1', '', false));
+        $test_name = 'a call from the own server address is from the own pod';
+        $t->assert_true($test_name, server_guard::is_own_pod_call('10.0.0.5', '10.0.0.5', false));
+        $test_name = 'an external call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('203.0.113.7', '10.0.0.5', false));
+        $test_name = 'a proxied loopback call is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('127.0.0.1', '', true));
+        $test_name = 'an unknown remote address is not from the own pod';
+        $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
 
         // test the notification component standalone
         $t->subheader($ts . 'notification');

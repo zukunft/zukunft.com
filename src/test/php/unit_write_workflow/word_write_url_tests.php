@@ -37,16 +37,27 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -78,6 +89,15 @@ class word_write_url_tests extends word_url_tests
         // system owned word) this is the linear confirm-write without the back / cancel excursions, and
         // it checks the per-user sandbox side effect - the changing user gets the change, the owner does not
         $this->change_word_by_other_user($t);
+
+        // the same change wrapped in real logins: the first save of a user flips uses_sandbox, which
+        // once nulled the stored password hash (a user rebuilt from the api json carried no hash),
+        // so the re-login after the change is the regression check for that data loss
+        $this->change_word_by_other_user_with_login($t);
+
+        // a rename by a user that does not own the word: the view shown after the rename must
+        // never be empty, so the ui object must end up with an id that resolves to the renamed word
+        $this->rename_word_by_other_user($t);
 
 
         $t->subheader($this->ts . 'cleanup');
@@ -174,6 +194,244 @@ class word_write_url_tests extends word_url_tests
 
         // remove the created rows so a re-run starts clean and the following cleanup finds nothing
         $this->cleanup_test_words($t);
+    }
+
+    /**
+     * the change_word_by_other_user scenario wrapped in real logins and logouts: usr2 logs in with the
+     * fixed test password, changes the word owned by usr1 (which flips and persists the usr2
+     * uses_sandbox flag), and must still be able to log in again afterwards - the re-login is the
+     * regression check that the sandbox flag save never touches the stored password hash (a user
+     * rebuilt from the api json carried no hash and the save once nulled it, see user::db_fields_changed);
+     * after the re-login usr2 sees the changed description, and the owner login still sees the original
+     *
+     * @param test_cleanup $t the test environment
+     */
+    /**
+     * a rename by a user who does not own the word must never lead to an empty view afterwards:
+     * the frontend ui object takes over the id of the saved backend object (see
+     * db_object_ui::update), because a rename by a user that cannot change the standard row can
+     * create a new database row with a new id; the contract checked here is that the word loaded
+     * by the ui object's id after the rename shows the new name for the renaming user, while the
+     * owner keeps the original word under the original id
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function rename_word_by_other_user(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'other user rename');
+
+        // start from a clean state so the base word has the known original name
+        $this->cleanup_test_words($t);
+
+        // usr1 creates and owns the base word
+        $owner = new user();
+        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
+        $owner_msg = new user_message($owner);
+        $base->save($owner_msg);
+        $test_name = 'the base word is created for the owner';
+        $t->assert_msg($test_name, $owner_msg);
+        $base_id = $base->id();
+        $test_name = 'the base word has a database id';
+        $t->assert_true($test_name, $base_id > 0);
+
+        // usr2 renames the word via the same frontend bridge that the confirmed edit uses
+        $changer = new user();
+        $changer->load_by_id($t->usr2->id());
+        $msg_ui = new user_message_ui();
+        $changer_ui = new user_ui();
+        $changer_ui->set_from_json($changer->api_json(), $msg_ui);
+        $renamed = word_names::TEST_ADD . test_cleanup::EXT_RENAME;
+        $wrd_ui = new word_ui();
+        $wrd_ui->set_id($base_id);
+        $wrd_ui->set_name($renamed);
+        $upd_msg = $wrd_ui->update($changer_ui, $msg_ui);
+        $test_name = 'the rename by user 2 is saved';
+        $t->assert_msg($test_name, $upd_msg);
+
+        // the id of the ui object must resolve to the renamed word for user 2, also if the
+        // backend has created a new database row for the rename (the id take over)
+        $test_name = 'the ui object id shows the renamed word for user 2';
+        $wrd_chk = new word($changer);
+        $wrd_chk->load_by_id($wrd_ui->id());
+        $t->assert($test_name, $wrd_chk->name(), $renamed);
+
+        // the rename request carries only the changed name (the '8'-prefixed edit baseline drops
+        // the unchanged fields), so the values of the original word must survive the rename,
+        // e.g. the description (see the fill on a key update in sandbox::save)
+        $test_name = 'the description survives the rename';
+        $t->assert($test_name, $wrd_chk->get_description(), word_names::TEST_ADD_COM);
+
+        // the owner keeps the original word under the original id
+        $test_name = 'the owner keeps the original word name';
+        $wrd_owner = new word($owner);
+        $wrd_owner->load_by_id($base_id);
+        $t->assert($test_name, $wrd_owner->name(), word_names::TEST_ADD);
+
+        // remove the created rows (the cleanup also covers the renamed variant of the test name)
+        $this->cleanup_test_words($t);
+    }
+
+    private function change_word_by_other_user_with_login(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'other user change with login');
+
+        // start from a clean word state before the password setup, because the cleanup can
+        // trigger a save of the shared $t->usr1 object (word del -> check_sandbox_usage) and a
+        // stale in-memory password hash of the shared object would overwrite a just written one
+        $this->cleanup_test_words($t);
+        $this->logout();
+
+        // make sure both test users can log in with the fixed test password;
+        // the users are loaded fresh by name - the same key user::login uses -
+        // so the hash is checked and set on the row that the login reads
+        $this->ensure_test_password($t, users::SYSTEM_TEST_NAME);
+        $this->ensure_test_password($t, users::SYSTEM_TEST_PARTNER_NAME);
+
+        // usr1 creates and owns the base word (the owner login is checked at the end);
+        // loaded fresh by name so the word save never writes back stale shared object fields
+        $owner = new user();
+        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
+        $owner_msg = new user_message($owner);
+        $base->save($owner_msg);
+        $test_name = 'the base word is created for the owner';
+        $t->assert_msg($test_name, $owner_msg);
+
+        // a wrong password is rejected and reported before any change
+        $test_name = 'a wrong password is rejected';
+        $fail_usr = new user();
+        $fail_msg = new user_message();
+        $failed_login = $fail_usr->login(
+            users::SYSTEM_TEST_PARTNER_NAME, users::TEST_USER_PASSWORD . ' wrong', $fail_msg);
+        // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
+        $t->reset_section_timer();
+        $t->assert_false($test_name, $failed_login);
+        $this->logout();
+
+        // usr2 logs in and changes the word owned by usr1, which creates the usr2 sandbox
+        // overlay and flips and persists the usr2 uses_sandbox flag (see sandbox::add_usr_cfg)
+        $changer = $this->login_as($t, 'user 2 can log in before the change', users::SYSTEM_TEST_PARTNER_NAME);
+        $wrd = new word($changer);
+        $wrd->load_by_name(word_names::TEST_ADD);
+        $test_name = 'the logged in user 2 can load the base word';
+        $t->assert_true($test_name, $wrd->id() > 0);
+        $wrd->set_description(word_names::TEST_CHANGE_COM);
+        $change_msg = new user_message($changer);
+        $wrd->save($change_msg);
+        $test_name = 'the user 2 change is saved';
+        $t->assert_msg($test_name, $change_msg);
+        $test_name = 'user 2 now uses the sandbox';
+        $usr_chk = new user();
+        $usr_chk->load_by_id($changer->id());
+        $t->assert_true($test_name, $usr_chk->uses_sandbox);
+
+        // the sandbox flag save must not touch the stored password hash
+        $test_name = 'the password hash of user 2 is unchanged after the sandbox flag update';
+        $pw_kept = password_verify(users::TEST_USER_PASSWORD, $usr_chk->get_password() ?? '');
+        // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
+        $t->reset_section_timer();
+        $t->assert_true($test_name, $pw_kept);
+
+        // usr2 logs out and in again, which fails if the password hash has been overwritten,
+        // and still sees the changed description
+        $this->logout();
+        $changer = $this->login_as($t, 'user 2 can log in again after the change', users::SYSTEM_TEST_PARTNER_NAME);
+        $wrd_changer = new word($changer);
+        $wrd_changer->load_by_name(word_names::TEST_ADD);
+        $test_name = 'user 2 sees the changed description after the re-login';
+        $t->assert($test_name, $wrd_changer->get_description(), word_names::TEST_CHANGE_COM);
+
+        // usr2 logs out and the owner logs in and still sees the unchanged original
+        $this->logout();
+        $owner_in = $this->login_as($t, 'the owner can log in', users::SYSTEM_TEST_NAME);
+        $wrd_owner = new word($owner_in);
+        $wrd_owner->load_by_name(word_names::TEST_ADD);
+        $test_name = 'the owner sees the unchanged description';
+        $t->assert($test_name, $wrd_owner->get_description(), word_names::TEST_ADD_COM);
+
+        // undo the usr2 overlay so the cleanup can hard delete the base word (see change_word_by_other_user)
+        $wrd_undo = new word($changer);
+        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->set_description(word_names::TEST_ADD_COM);
+        $undo_msg = new user_message($changer);
+        $wrd_undo->save($undo_msg);
+        $test_name = 'the user 2 overlay is removed again';
+        $t->assert_msg($test_name, $undo_msg);
+
+        // end the login so the following tests run without a logged in session user;
+        // the fixed test session token of test_app is never touched by the logins
+        // (user::login only sets a token if none is set), so the snapshots stay deterministic
+        $this->logout();
+        $this->cleanup_test_words($t);
+    }
+
+    /**
+     * log in the given user with the fixed test password and report the result
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $test_name the name of the login check shown in the test log
+     * @param string $usr_name the name of the user to log in
+     * @return user the logged in user e.g. to load the word as this user
+     */
+    private function login_as(test_cleanup $t, string $test_name, string $usr_name): user
+    {
+        $login_msg = new user_message();
+        $db_usr = new user();
+        $db_usr->login($usr_name, users::TEST_USER_PASSWORD, $login_msg);
+        // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
+        $t->reset_section_timer();
+        // assert via the login message so a failed login shows the reason, not just a false
+        $t->assert_msg($test_name, $login_msg);
+        return $db_usr;
+    }
+
+    /**
+     * end the login like frontend::action_logout but without destroying the php session:
+     * the http streamed test run has already sent output, so a destroyed session could never be
+     * started again (headers already sent) and the fixed session token of test_app would be lost;
+     * removing the login vars is enough to end the login for the next login check
+     * @return void
+     */
+    private function logout(): void
+    {
+        unset($_SESSION[url_var::SESSION_LOGGED]);
+        unset($_SESSION[url_var::SESSION_USER_ID]);
+        unset($_SESSION[url_var::USERNAME_HUMAN]);
+    }
+
+    /**
+     * make sure the user with the given name can log in with the fixed test password
+     * (users::TEST_USER_PASSWORD) without rewriting an already matching hash on every run;
+     * the user is loaded fresh by name - the same key user::login uses - so the check and the
+     * login always read the same database row, independent of the shared test user objects
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $usr_name the name of the test user that needs the fixed test password
+     * @return void
+     */
+    private function ensure_test_password(test_cleanup $t, string $usr_name): void
+    {
+        $db_usr = new user();
+        $db_usr->load_by_name($usr_name);
+        $pw_hash = $db_usr->get_password();
+        if ($pw_hash == null or !password_verify(users::TEST_USER_PASSWORD, $pw_hash)) {
+            $pw_msg = new user_message($db_usr);
+            $db_usr->set_password(users::TEST_USER_PASSWORD, $pw_msg);
+            $db_usr->save($pw_msg);
+            $test_name = 'the test password is set for ' . $usr_name;
+            $t->assert_msg($test_name, $pw_msg);
+        }
+        // check the written state the way the login will read it, so a later login failure
+        // can be separated into a setup problem (this fails too) or a change in between
+        $chk_usr = new user();
+        $chk_usr->load_by_name($usr_name);
+        $pw_ok = password_verify(users::TEST_USER_PASSWORD, $chk_usr->get_password() ?? '');
+        // the bcrypt hash checks and creation are intentionally slow,
+        // so they are not charged to the assert timing
+        $t->reset_section_timer();
+        $test_name = 'the test password verifies for ' . $usr_name;
+        $t->assert_true($test_name, $pw_ok);
     }
 
     /**

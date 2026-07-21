@@ -4,7 +4,23 @@
 
 ## high prio
 
-if on this page http://localhost/http/view.php?m=90&id=322 the edit button is pressed and the user is not permitted to change it, show the same view again with the message
+if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed
+
+find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
+
+if a user logs in make sure that always the last used ip address is saved in the user table
+
+check that the login page does not $_POST the unhashed password
+
+review the rename semantics for named sandbox objects: a rename by a user that cannot change the standard row goes through sandbox::delete_old_key_row, which deletes or excludes the old row and creates a new one with a new database id (the branch seems designed for link objects where the key is the link); decide whether a rename of a named object (word, formula, view, ...) should instead create a name overlay in the user table like a description change, so the database id stays stable for all users; the frontend now takes over the id of the saved object (db_object_ui::update and frontend::action_crud) so the view after a rename is no longer empty, but the id change itself remains user visible e.g. in bookmarked urls
+
+roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
+
+fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
+
+fix the last violation of the default-value rule (docs/llm/constants.md "Default values are resolved at the point of use, never fabricated in a mapper"): user::api_mapper still fabricates user_profiles::NORMAL_ID for a missing PROFILE_ID (cfg/user/user.php ~515) and the profile branch in db_fields_changed (~3653) has no null guard, so a json-born user without the profile field saved by an admin requester silently demotes the stored profile to normal (enforce_profile_privilege only blocks unprivileged requesters, an admin passes can_set_profile(normal); the frontend api_array omits PROFILE_ID unless is_profile_valid()). Apply the same treatment as for the type and status: map a missing profile to null in api_mapper, add the !== null guard in db_fields_changed, let enforce_profile_privilege treat null as "keep stored" (its int $req_profile_id parameter needs ?int or an early guard), and add the matching negative and positive tests to the "preserved on save" blocks in src/test/php/unit/user_tests.php; also backfill profile_id in the user exception block of horizontal_ui_tests.php like type_id and status_id, because the add url does not transport the profile and the round trip only passes today because the fabricated normal profile matches the filled test user
+
+cosmetic alignment with the default-value rule (no data-loss risk, round trip is safe): web/user/user.php api_mapper defaults profile_id, type_id and status_id to 0 instead of null (api_array drops them via the >0 and is_profile_valid() checks) and web/component/component.php api_mapper sets pos_type_id to position_types::DEFAULT_ID (the property is declared non-nullable with that default and api_array suppresses the default), so the frontend mirrors cannot express "not specified"; align them to nullable properties mapping to null when the field is missing
 
 fix as many TODO Prio 0 as possible
 

@@ -653,6 +653,11 @@ class db_object extends TextIdObject
         $db_usr = $map->convertToDb($usr, $usr_msg_db);
         $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $add_result = $db_obj->save($usr_msg_db);
+        // take over the id assigned by the backend save, so the caller can show the added
+        // object by its id (see frontend::action_crud)
+        if ($usr_msg_db->is_ok()) {
+            $this->id = $db_obj->id();
+        }
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
@@ -678,6 +683,12 @@ class db_object extends TextIdObject
         $db_usr = $map->convertToDb($usr, $usr_msg_db);
         $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
         $upd_result = $db_obj->save($usr_msg_db);
+        // take over the id of the saved object, because it can differ from the requested id:
+        // e.g. a rename by a user that cannot change the standard row creates a new database
+        // row, so the following render must show the object by the new id (see frontend::action_crud)
+        if ($usr_msg_db->is_ok()) {
+            $this->id = $db_obj->id();
+        }
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
