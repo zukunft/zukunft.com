@@ -499,8 +499,6 @@ class user extends db_id_object_non_sandbox
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $sys;
-
         parent::api_mapper($api_json, $usr_msg);
 
         // map the fields that are common for import and api json messages
@@ -517,15 +515,20 @@ class user extends db_id_object_non_sandbox
         } else {
             $this->profile_id = user_profiles::NORMAL_ID;
         }
+        // the type and the status are mapped faithfully like the profile: a missing json field
+        // stays null meaning "not specified", so a save of a json-born user keeps the stored
+        // values (db_fields_changed skips a null type and status) instead of resetting them
+        // to the guest and active defaults; a really new user gets the defaults from the database
         if (key_exists(json_fields::TYPE, $api_json)) {
             $this->type_id = $api_json[json_fields::TYPE];
         } else {
-            $this->type_id = $sys->typ_lst->usr_typ->id(user_types::GUEST);
+            $this->type_id = null;
         }
-        if (key_exists(json_fields::STATUS_ID, $api_json)) {
-            $this->status_id = $api_json[json_fields::STATUS_ID];
+        // the status id is sent under json_fields::STATUS (see api_json_array and the frontend user)
+        if (key_exists(json_fields::STATUS, $api_json)) {
+            $this->status_id = $api_json[json_fields::STATUS];
         } else {
-            $this->status_id = $sys->typ_lst->usr_sta->id(user_statuum::ACTIVE);
+            $this->status_id = null;
         }
         // a missing flag reads as false like a null db value (see docs/llm/constants.md)
         if (key_exists(json_fields::USES_SANDBOX, $api_json)) {
@@ -3557,7 +3560,10 @@ class user extends db_id_object_non_sandbox
         }
 
         // password should not be part of the change log
-        if ($obj->password <> $this->password) {
+        // a null in-memory password can only mean "not loaded" (e.g. a user rebuilt from the
+        // api json, which never carries the logon secrets), never a request to clear the hash,
+        // because a password reset always writes a new hash; so a null never overwrites the db value
+        if ($this->password !== null and $obj->password <> $this->password) {
             // TODO Prio 3 log the password hash change in a admin only log for security reasons
             if ($do_log) {
                 $lst->add_field(
@@ -3574,7 +3580,9 @@ class user extends db_id_object_non_sandbox
             );
         }
         // the activation_key is used during the signup process and is not logged
-        if ($obj->activation_key <> $this->activation_key) {
+        // like the password a null can only mean "not loaded": a used key is cleared with '' (see
+        // frontend::action_login_activate), so a null never overwrites the stored key
+        if ($this->activation_key !== null and $obj->activation_key <> $this->activation_key) {
             // the change of the activation_key if logged e.g. to be able to limit the number of login attempts
             if ($do_log) {
                 $lst->add_field(
@@ -3685,7 +3693,9 @@ class user extends db_id_object_non_sandbox
         }
         // TODO the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
-        if ($obj->type_id !== $this->type_id) {
+        // like the password a null in-memory type can only mean "not specified" (e.g. a user rebuilt
+        // from an api json without the field), so a null never overwrites the stored type
+        if ($this->type_id !== null and $obj->type_id !== $this->type_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
@@ -3715,7 +3725,8 @@ class user extends db_id_object_non_sandbox
                 $obj->right_level
             );
         }
-        if ($obj->status_id !== $this->status_id) {
+        // like the type a null in-memory status means "not specified" and never overwrites the stored status
+        if ($this->status_id !== null and $obj->status_id !== $this->status_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_STATUS,
