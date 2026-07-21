@@ -37,9 +37,13 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'url_var.php';
@@ -49,6 +53,9 @@ include_once test_paths::CONST . 'workflows.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -87,6 +94,10 @@ class word_write_url_tests extends word_url_tests
         // once nulled the stored password hash (a user rebuilt from the api json carried no hash),
         // so the re-login after the change is the regression check for that data loss
         $this->change_word_by_other_user_with_login($t);
+
+        // a rename by a user that does not own the word: the view shown after the rename must
+        // never be empty, so the ui object must end up with an id that resolves to the renamed word
+        $this->rename_word_by_other_user($t);
 
 
         $t->subheader($this->ts . 'cleanup');
@@ -195,6 +206,66 @@ class word_write_url_tests extends word_url_tests
      *
      * @param test_cleanup $t the test environment
      */
+    /**
+     * a rename by a user who does not own the word must never lead to an empty view afterwards:
+     * the frontend ui object takes over the id of the saved backend object (see
+     * db_object_ui::update), because a rename by a user that cannot change the standard row can
+     * create a new database row with a new id; the contract checked here is that the word loaded
+     * by the ui object's id after the rename shows the new name for the renaming user, while the
+     * owner keeps the original word under the original id
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function rename_word_by_other_user(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'other user rename');
+
+        // start from a clean state so the base word has the known original name
+        $this->cleanup_test_words($t);
+
+        // usr1 creates and owns the base word
+        $owner = new user();
+        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
+        $owner_msg = new user_message($owner);
+        $base->save($owner_msg);
+        $test_name = 'the base word is created for the owner';
+        $t->assert_msg($test_name, $owner_msg);
+        $base_id = $base->id();
+        $test_name = 'the base word has a database id';
+        $t->assert_true($test_name, $base_id > 0);
+
+        // usr2 renames the word via the same frontend bridge that the confirmed edit uses
+        $changer = new user();
+        $changer->load_by_id($t->usr2->id());
+        $msg_ui = new user_message_ui();
+        $changer_ui = new user_ui();
+        $changer_ui->set_from_json($changer->api_json(), $msg_ui);
+        $renamed = word_names::TEST_ADD . test_cleanup::EXT_RENAME;
+        $wrd_ui = new word_ui();
+        $wrd_ui->set_id($base_id);
+        $wrd_ui->set_name($renamed);
+        $upd_msg = $wrd_ui->update($changer_ui, $msg_ui);
+        $test_name = 'the rename by user 2 is saved';
+        $t->assert_msg($test_name, $upd_msg);
+
+        // the id of the ui object must resolve to the renamed word for user 2, also if the
+        // backend has created a new database row for the rename (the id take over)
+        $test_name = 'the ui object id shows the renamed word for user 2';
+        $wrd_chk = new word($changer);
+        $wrd_chk->load_by_id($wrd_ui->id());
+        $t->assert($test_name, $wrd_chk->name(), $renamed);
+
+        // the owner keeps the original word under the original id
+        $test_name = 'the owner keeps the original word name';
+        $wrd_owner = new word($owner);
+        $wrd_owner->load_by_id($base_id);
+        $t->assert($test_name, $wrd_owner->name(), word_names::TEST_ADD);
+
+        // remove the created rows (the cleanup also covers the renamed variant of the test name)
+        $this->cleanup_test_words($t);
+    }
+
     private function change_word_by_other_user_with_login(test_cleanup $t): void
     {
         $t->subheader($this->ts . 'other user change with login');

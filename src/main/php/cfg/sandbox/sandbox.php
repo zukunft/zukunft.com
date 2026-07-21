@@ -1345,7 +1345,9 @@ class sandbox extends db_object_seq_id_user
 
         $qp = $this->load_sql_median_user($db_con);
         $db_row = $db_con->get1($qp);
-        if ($db_row[user_db::FLD_ID] > 0) {
+        // an object without any user sandbox row returns no median user row at all,
+        // so fall back to the owner (or the requesting user) like for a zero user id
+        if (($db_row[user_db::FLD_ID] ?? 0) > 0) {
             $result = $db_row[user_db::FLD_ID];
         } else {
             if ($this->owner_id() > 0) {

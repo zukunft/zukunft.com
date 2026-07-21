@@ -763,19 +763,24 @@ class test_base
      * check if the user message does not contain any error messages
      *
      * @param string $msg (unique) description of the test
-     * @param user_message $usr_msg which contains the messages that have occurred during the test
+     * @param user_message|user_message_ui $usr_msg the backend or frontend message collected during the test
      * @return bool true is the result is fine
      */
     function assert_msg(
-        string       $msg,
-        user_message $usr_msg,
-        float        $exe_max_time = self::TIMEOUT_LIMIT
+        string                       $msg,
+        user_message|user_message_ui $usr_msg,
+        float                        $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         if ($usr_msg->is_ok()) {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, true, $usr_msg->all_message_text(), '', $exe_max_time);
+            // the backend message offers the full text, the frontend message the shared text()
+            // TODO Prio 1 switch to ->text() for both
+            $msg_txt = $usr_msg instanceof user_message
+                ? $usr_msg->all_message_text()
+                : $usr_msg->text();
+            return $this->assert_dsp($msg, false, true, $msg_txt, '', $exe_max_time);
         }
     }
 
