@@ -4,9 +4,9 @@
 
 ## high prio
 
-add a test where a user 2 logs in, that user changes a word owned by some else, so that the uses_sandbox is updated (and password is hopefully not resetted - whcih should be tested). Than the user logs out and logs in again (which will fail if the password is iverwritten) and see the changed word. Than the user 2 logs out and the owner of the word logs in and see the unchanged word. 
-
 find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
+
+if a user logs in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
 

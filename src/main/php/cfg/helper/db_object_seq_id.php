@@ -75,6 +75,7 @@ include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -101,6 +102,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -1566,10 +1568,15 @@ class db_object_seq_id extends db_object
             log_err('user missing while ' . $action . ' of ' . $class);
             $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         } elseif ($usr_msg->usr->is_blocked()) {
+            global $sys;
             // tell the user why the change has been rejected and how to solve it
             $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            // the block can only be caused by the user profile matching the ip profile, so both
+            // ids are logged to make an unexpected block (e.g. a wrong profile row) analysable
             log_warning($action . ' of ' . $class . ' ' . $this->dsp_id()
-                . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked');
+                . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked'
+                . ' (user profile id ' . ($usr_msg->usr->profile_id ?? 'null')
+                . ' = ip profile id ' . $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY, false) . ')');
         } else {
             $can_change = true;
         }

@@ -929,8 +929,19 @@ class user extends db_id_object_non_sandbox
             $msg->add(msg_id::PASSWORD_WRONG, []);
         }
         if ($msg->is_ok()) {
-            session_start();
-            session_regenerate_id(true);
+            // a session can only be started before any output has been sent, and restarting an
+            // active session would only raise a php notice, so the session is started only if
+            // possible and needed; in the http streamed test runs the output is already flowing,
+            // there the login is verified and the session vars are set without a php session
+            if (session_status() === PHP_SESSION_NONE and !headers_sent()) {
+                session_start();
+            }
+            // regenerate the session id on this authentication transition so a planted session id
+            // cannot become authenticated (session fixation); the new session cookie can also only
+            // be sent before any output, so the regeneration is skipped when it could not work anyway
+            if (session_status() === PHP_SESSION_ACTIVE and !headers_sent()) {
+                session_regenerate_id(true);
+            }
             if (empty($_SESSION[url_var::SESSION_TOKEN])) {
                 try {
                     $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
@@ -2802,7 +2813,11 @@ class user extends db_id_object_non_sandbox
             $this->uses_sandbox = true;
             // a user object without a database id cannot be updated e.g. during unit tests
             if ($this->id() > 0) {
-                $this->save_user($msg, $this);
+                // write the flag via a freshly loaded copy, because this object can be a stale
+                // or partially filled user (e.g. a unit test dummy with only the id and the name
+                // set) and the field compare of such a copy would overwrite the real row fields
+                // (see "Default values are resolved at the point of use" in docs/llm/constants.md)
+                $this->save_flag_on_fresh_copy($msg);
             }
         }
     }
@@ -2823,9 +2838,32 @@ class user extends db_id_object_non_sandbox
                 $this->uses_sandbox = false;
                 // a user object without a database id cannot be updated e.g. during unit tests
                 if ($this->id() > 0) {
-                    $this->save_user($msg, $this);
+                    // like in set_uses_sandbox only the flag of the stored row is updated
+                    $this->save_flag_on_fresh_copy($msg);
                 }
             }
+        }
+    }
+
+    /**
+     * persist the in-memory uses_sandbox flag by loading a fresh copy of this user from the
+     * database, setting the flag on it and saving the copy, so that only the flag is written:
+     * this object can be a stale or partially filled user (e.g. a unit test dummy with only the
+     * id and the name set) and saving it directly would overwrite the other fields of the real
+     * row with the stale values (this once reset user profiles, emails and passwords)
+     *
+     * @param user_message $msg to report a failed user update to the requesting user
+     * @return void
+     */
+    private function save_flag_on_fresh_copy(user_message $msg): void
+    {
+        $db_usr = new user();
+        if ($db_usr->load_by_id($this->id()) > 0) {
+            $db_usr->uses_sandbox = $this->uses_sandbox;
+            $db_usr->save_user($msg, $db_usr);
+        } else {
+            // a missing row is only logged because the flag matters for the page cache, not the data
+            log_warning('user ' . $this->dsp_id() . ' not found to update the sandbox usage');
         }
     }
 

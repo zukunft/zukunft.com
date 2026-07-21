@@ -58,6 +58,19 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class url_test_base
 {
 
+    // the role that is always shown in the navbar user menu of a snapshot (see normalize_navbar_role)
+    const string WF_FIXED_ROLE = 'system test';
+    // the display names of the elevated profiles that user::navbar_role can render (user_profiles.csv),
+    // longest first so that collapsing 'system test' never leaves a partial 'system' prefix behind
+    const array NAVBAR_ROLE_NAMES = [
+        'system test',
+        'system link',
+        'system log',
+        'developer',
+        'system',
+        'admin',
+    ];
+
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
     protected test_cleanup $t;       // the test environment
     protected string $ts;            // the test section prefix used in the headers
@@ -381,16 +394,7 @@ class url_test_base
             '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
             workflows::WF_CHANGE_LOG,
             $html);
-        // user::navbar_role() resolves the elevated role label only when the user profile cache is
-        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
-        // so always show the system role in the navbar user menu to keep the snapshot deterministic
-        $name = $this->req->usr->name();
-        if ($name != null and $name != '') {
-            // 'system test' is the display name of the system user profile (no const exists for it)
-            $role_name = 'system test ' . $name;
-            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
-            $html = str_replace($name, $role_name, $html); // then always show the role
-        }
+        $html = $this->normalize_navbar_role($html);
         $this->t->assert_html_page($test_name, $html, $test_name);
     }
 
@@ -415,17 +419,33 @@ class url_test_base
             '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
             workflows::WF_CHANGE_LOG,
             $html);
-        // user::navbar_role() resolves the elevated role label only when the user profile cache is
-        // loaded; that is not guaranteed across test runners (a missing profile gives an empty role),
-        // so always show the system role in the navbar user menu to keep the snapshot deterministic
+        $html = $this->normalize_navbar_role($html);
+        $this->t->assert_html_page($test_name, $html, $test_name);
+    }
+
+    /**
+     * user::navbar_role() resolves the elevated role label only when the user profile cache is
+     * loaded; that is not guaranteed across test runners (a missing profile gives an empty role
+     * and a differing cache another role name), so any rendered role prefix is collapsed first and
+     * the system test role is always shown in the navbar user menu to keep the snapshot deterministic
+     *
+     * @param string $html the rendered html of the step
+     * @return string the html with the fixed navbar user role
+     */
+    private function normalize_navbar_role(string $html): string
+    {
         $name = $this->req->usr->name();
         if ($name != null and $name != '') {
-            // 'system test' is the display name of the system user profile (no const exists for it)
-            $role_name = 'system test ' . $name;
-            $html = str_replace($role_name, $name, $html); // collapse an already present role prefix
-            $html = str_replace($name, $role_name, $html); // then always show the role
+            // collapse any elevated role prefix (see user::navbar_role) that the live render has
+            // added, so re-adding the fixed role below never stacks e.g. to 'system system test';
+            // the display names of the elevated profiles have no const (see user_profiles.csv)
+            foreach (self::NAVBAR_ROLE_NAMES as $role) {
+                $html = str_replace($role . ' ' . $name, $name, $html);
+            }
+            // then always show the system test role
+            $html = str_replace($name, self::WF_FIXED_ROLE . ' ' . $name, $html);
         }
-        $this->t->assert_html_page($test_name, $html, $test_name);
+        return $html;
     }
 
 }
