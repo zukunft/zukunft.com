@@ -3774,6 +3774,26 @@ class test_base
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
             $sbx->del($usr_msg);
+            // a delete by a user that cannot change the standard row only writes an exclusion
+            // to the overlay row, so remove the overlay row too for a complete cleanup
+            // (only sandbox objects have user overlay rows, e.g. a verb has none)
+            if ($sbx instanceof sandbox and $sbx->has_usr_cfg()) {
+                $sbx->del_usr_cfg($usr_msg);
+            }
+        } else {
+            // an excluded overlay row of a previous run hides the object from the load above,
+            // so it would survive every cleanup: find the object via the system user view
+            // and remove the leftover overlay row of the given user directly
+            $sbx_std = clone $sbx;
+            if ($sbx_std instanceof sandbox) {
+                $sbx_std->reset();
+                $sbx_std->set_user($this->usr_system);
+                $sbx_std->load_by_name($name);
+                if ($sbx_std->id() != 0) {
+                    $sbx_std->set_user($usr);
+                    $sbx_std->del_usr_cfg($usr_msg);
+                }
+            }
         }
     }
 

@@ -4,15 +4,17 @@
 
 ## high prio
 
-if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed
+if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed - probably already resolved by the overlay rename (the duplicate check finds the same database row, which routes through the is_same / name-updated branches of sandbox::save without the already-used message, and the no_diff check then removes the user overlay row); the rename back asserts in word_write_url_tests::rename_word_by_other_user check exactly this, so remove this entry if they pass
+
+check why the user overlay row insert writes a zero into system calculated fields that the request has not set: the forward rename of a word by a second user created a user_words row with impact=0 although only the name was changed (found via the janitor debug in sandbox::no_usr_fld_used, which now treats zero as "no overwrite" so the row cleanup works); the insert (sql_insert_switch in the user branch of save_fields_func) should only write the requested fields, and the system calculated fields (impact, usage) should arguably never be part of a user overlay row at all
+
+route a name-only change of a link object (triple, ...) to the user overlay like for the named objects: sandbox_link_named::is_key_updated reports a name change as a key update, so a triple rename still goes through sandbox::delete_old_key_row and creates a new database row although user_triples has its own name column; the link fields (from, verb, to) must stay the only real key of a link object, but the name-only case needs a decision about the generated name handling (see the triple branch in the save similar handling) before is_key_updated can be split into link fields and name
 
 find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 if a user logs in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
-
-review the rename semantics for named sandbox objects: a rename by a user that cannot change the standard row goes through sandbox::delete_old_key_row, which deletes or excludes the old row and creates a new one with a new database id (the branch seems designed for link objects where the key is the link); decide whether a rename of a named object (word, formula, view, ...) should instead create a name overlay in the user table like a description change, so the database id stays stable for all users; the frontend now takes over the id of the saved object (db_object_ui::update and frontend::action_crud) so the view after a rename is no longer empty, but the id change itself remains user visible e.g. in bookmarked urls
 
 roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
 

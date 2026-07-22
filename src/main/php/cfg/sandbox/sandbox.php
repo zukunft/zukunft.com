@@ -1915,7 +1915,14 @@ class sandbox extends db_object_seq_id_user
     {
         $result = true;
         foreach ($fld_lst as $field_name) {
-            if ($db_row[$field_name] != '') {
+            $val = $db_row[$field_name] ?? '';
+            // an empty or zero value is never a user overwrite: the merged load falls back to
+            // the standard value for null and '', a type id is never zero and a zero of a system
+            // calculated field (e.g. the impact) is just the technical default of the row insert
+            if ($val != '' and $val != 0) {
+                // name the blocking field, so an unexpectedly kept user row can be explained
+                log_debug('user overwrite ' . $field_name . '=' . $val
+                    . ' keeps the user row of ' . $this->dsp_id());
                 $result = false;
             }
         }
@@ -2206,6 +2213,13 @@ class sandbox extends db_object_seq_id_user
                     if ($qp != null) {
                         $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
                     }
+                    // remove the user overlay row if the update has cleared the last user
+                    // overwrite, e.g. after a rename back to the standard name; the same
+                    // janitor call as in the norm branch, and it keeps the row if any real
+                    // overwrite (e.g. an exclusion) is left
+                    if ($usr_msg->is_ok()) {
+                        $this->del_usr_cfg_if_not_needed($usr_msg);
+                    }
                 }
             } else {
                 if (!$this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
@@ -2398,32 +2412,31 @@ class sandbox extends db_object_seq_id_user
             if ($db_chk->id() == 0
                 or ($this::class == triple::class and $this->name() != $db_rec->name())) {
                 log_debug('target does not yet exist or name should be updated');
-                // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
                 if (!$this->can_change($msg)) {
                     $to_del = clone $db_rec;
-                    if (!$this->not_used()) {
-                        // if the target link has not yet been created
-                        // ... request to delete the old
+                    if ($this->not_used()) {
+                        // nobody else uses the old row, so it can be removed completely
                         if (!$to_del->del($msg)) {
                             $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
                                 msg_id::VAR_CLASS_NAME => $this::class
                             ]);
                         }
-                        // TODO .. and create a deletion request for all users ???
-
-                        if ($msg->is_ok()) {
-                            // ... and create a new display component link
-                            $this->id = 0;
-                            $this->set_owner_id($this->get_user()->id);
-                            $this->add($msg);
-                        }
                     } else {
+                        // the old row is used by other users, so it is kept for them with its
+                        // related values and links and only excluded for the requesting user
                         $to_del->exclude();
                         if (!$to_del->save($msg)) {
-                            $msg->add(msg_id::FAILED_TO_EXCLUDE_UNUSED, [
+                            $msg->add(msg_id::FAILED_TO_EXCLUDE_USED, [
                                 msg_id::VAR_CLASS_NAME => $this::class
                             ]);
                         }
+                    }
+                    // ... and in both cases create the row with the changed key for the requesting
+                    // user, so the change never loses the object for the user who has requested it
+                    if ($msg->is_ok()) {
+                        $this->id = 0;
+                        $this->set_owner_id($this->get_user()->id);
+                        $this->add($msg);
                     }
                 }
             } else {
@@ -2817,6 +2830,13 @@ class sandbox extends db_object_seq_id_user
         if ($msg->is_ok()) {
             if ($this->has_id()) {
                 $db_rec = $this->load_db($msg);
+                // a request object e.g. built from the api json cannot know if the user already
+                // has an overlay row, so take over the overlay state from the loaded database row,
+                // because the user field save must update or remove the existing overlay row
+                // (e.g. on a rename back to the standard name) and never add a second one
+                if (!$this->has_usr_cfg() and $db_rec->has_usr_cfg()) {
+                    $this->usr_cfg_id = $db_rec->usr_cfg_id;
+                }
             }
         }
 
@@ -2938,9 +2958,23 @@ class sandbox extends db_object_seq_id_user
                             // edit baseline in docs/llm/state-and-messages.md), so the values that the
                             // request has not specified (e.g. the description) are taken over from the
                             // database row - otherwise a rename that creates a new database row would
-                            // lose them (fill never overwrites a value the request has specified)
+                            // lose them (fill never overwrites a value the request has specified);
+                            // only a user exclusion is never taken over, because the rename works on
+                            // the active object, so a leftover exclusion overlay row must not turn
+                            // the requested rename into a silent re-exclusion
+                            $excluded_requested = $this->excluded;
                             $msg->merge($this->fill($db_rec, $this->get_user()));
-                            $this->delete_old_key_row($db_rec, $msg);
+                            $this->excluded = $excluded_requested;
+                            // for a named object the name is a normal sandbox field: a user that
+                            // cannot change the standard row renames only for himself via the name
+                            // in the user overlay row written by save_fields_func below, so the
+                            // database id and with it the related values, formulas and links stay;
+                            // the delete and recreate of the row (delete_old_key_row) is only needed
+                            // for link objects where the changed key fields are the link itself
+                            // (a duplicate name is already rejected by the get_similar check above)
+                            if (!($this instanceof sandbox_named) or $this->can_change($msg)) {
+                                $this->delete_old_key_row($db_rec, $msg);
+                            }
                         }
                     }
 

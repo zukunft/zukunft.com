@@ -1110,7 +1110,7 @@ enum messages: string
     case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
     case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
-    case FAILED_TO_EXCLUDE_UNUSED = 'Failed to exclude the unused '
+    case FAILED_TO_EXCLUDE_USED = 'Failed to exclude the used '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
