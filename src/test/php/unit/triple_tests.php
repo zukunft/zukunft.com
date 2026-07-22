@@ -119,6 +119,24 @@ class triple_tests
         $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
 
+        $t->subheader($ts . 'rename routing');
+
+        // a name change of a triple is a key update (so the duplicate name check of the save
+        // runs), but it never identifies the database row: only a change of the link fields
+        // (from, verb, to) forces a new row, so a rename keeps the id and the related values
+        // (see sandbox::save and is_id_key_updated)
+        $trp_db = $t_trp->triple();
+        $trp_ren = $t_trp->triple();
+        $trp_ren->set_name($trp_db->name() . ' renamed');
+        $test_name = 'a triple rename is a key update for the duplicate check';
+        $t->assert_true($test_name, $trp_ren->is_key_updated($trp_db));
+        $test_name = 'a triple rename never changes the database row identity';
+        $t->assert_false($test_name, $trp_ren->is_id_key_updated($trp_db));
+        $trp_lnk = $t_trp->triple();
+        $trp_lnk->set_from($t_trp->triple_pi()->phrase());
+        $test_name = 'a changed from phrase changes the database row identity of a triple';
+        $t->assert_true($test_name, $trp_lnk->is_id_key_updated($trp_db));
+
         $t->subheader($ts . 'no update diff treats an unset link end as empty');
         // under ex_def (the no_upd import mode) an unset from (id 0) is empty,
         // so filling it from the import is a fill-up, not a reported overwrite

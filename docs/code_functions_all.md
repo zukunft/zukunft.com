@@ -2405,6 +2405,7 @@
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_link_named.php
     \-- no_id_but_name - section for function no_id_but_name not yet defined that it should be info in /sandbox/sandbox_link_named.php
     \-- is_key_updated - section for function is_key_updated is expected to be info in /sandbox/sandbox_link_named.php
+    \-- is_id_key_updated - section for function is_id_key_updated is expected to be info in /sandbox/sandbox_link_named.php
     \-- is_similar_named - section for function is_similar_named is expected to be info in /sandbox/sandbox_link_named.php
     \-- get_similar - section for function get_similar is expected to be save in /sandbox/sandbox_link_named.php
     \-- log_last_msg - section for function log_last_msg is expected to be log in /sandbox/sandbox_link_named.php
@@ -2570,6 +2571,7 @@
     \-- log_del - section for function log_del is expected to be log in /sandbox/sandbox_named.php
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_named.php
     \-- is_key_updated - section for function is_key_updated is expected to be info in /sandbox/sandbox_named.php
+    \-- is_id_key_updated - section for function is_id_key_updated is expected to be info in /sandbox/sandbox_named.php
     \-- msg_id_already_used - section for function msg_id_already_used not yet defined that it should be save helper in /sandbox/sandbox_named.php
     \-- is_same - section for function is_same is expected to be info in /sandbox/sandbox_named.php
     \-- is_same_std - section for function is_same_std is expected to be info in /sandbox/sandbox_named.php

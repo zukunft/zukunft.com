@@ -690,6 +690,21 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * only the link fields (e.g. from, verb and to of a triple) identify the database row of a
+     * named link object: a change of the name alone is a normal field update or a name in the
+     * user overlay row (e.g. user_triples has its own name columns), so the database id and the
+     * related values stay; the name still counts as a key update (see is_key_updated above) so
+     * that the duplicate name check of sandbox::save keeps running on a rename
+     *
+     * @param sandbox_named|db_object_seq_id $db_rec the database record before the saving
+     * @return bool true only if the changed link fields identify the database row
+     */
+    function is_id_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        return parent::is_key_updated($db_rec);
+    }
+
+    /**
      * just to double-check if the get similar function is working correctly
      * so if the formulas "millions" is compared with the word "millions" this function returns true
      * in short: if two objects are similar by this definition, they should not be both in the database

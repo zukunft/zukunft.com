@@ -2965,14 +2965,15 @@ class sandbox extends db_object_seq_id_user
                             $excluded_requested = $this->excluded;
                             $msg->merge($this->fill($db_rec, $this->get_user()));
                             $this->excluded = $excluded_requested;
-                            // for a named object the name is a normal sandbox field: a user that
-                            // cannot change the standard row renames only for himself via the name
-                            // in the user overlay row written by save_fields_func below, so the
-                            // database id and with it the related values, formulas and links stay;
-                            // the delete and recreate of the row (delete_old_key_row) is only needed
-                            // for link objects where the changed key fields are the link itself
-                            // (a duplicate name is already rejected by the get_similar check above)
-                            if (!($this instanceof sandbox_named) or $this->can_change($msg)) {
+                            // the name of a named object and of a named link object (e.g. a triple)
+                            // is a normal sandbox field: a user that cannot change the standard row
+                            // renames only for himself via the name in the user overlay row written
+                            // by save_fields_func below, so the database id and with it the related
+                            // values, formulas and links stay; the delete and recreate of the row
+                            // (delete_old_key_row) is only needed if the changed fields identify the
+                            // database row (see is_id_key_updated), e.g. the from, verb and to of a
+                            // triple (a duplicate name is already rejected by the get_similar check above)
+                            if ($this->is_id_key_updated($db_rec) or $this->can_change($msg)) {
                                 $this->delete_old_key_row($db_rec, $msg);
                             }
                         }

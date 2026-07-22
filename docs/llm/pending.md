@@ -4,11 +4,9 @@
 
 ## high prio
 
-if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed - probably already resolved by the overlay rename (the duplicate check finds the same database row, which routes through the is_same / name-updated branches of sandbox::save without the already-used message, and the no_diff check then removes the user overlay row); the rename back asserts in word_write_url_tests::rename_word_by_other_user check exactly this, so remove this entry if they pass
+find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
-route a name-only change of a link object (triple, ...) to the user overlay like for the named objects: sandbox_link_named::is_key_updated reports a name change as a key update, so a triple rename still goes through sandbox::delete_old_key_row and creates a new database row although user_triples has its own name column; the link fields (from, verb, to) must stay the only real key of a link object, but the name-only case needs a decision about the generated name handling (see the triple branch in the save similar handling) before is_key_updated can be split into link fields and name
-
-find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
+add a write workflow test for the triple rename by a second user like word_write_url_tests::rename_word_by_other_user: the name-only rename of a link object now routes to the user overlay (sandbox::save uses is_id_key_updated, which for a named link object reports only a change of the link fields as a row identity change), so the triple id and the related values must stay on a rename by a non owner and the overlay must be removed on a rename back; the unit asserts for the routing predicate are in triple_tests 'rename routing'
 
 if a user logs in make sure that always the last used ip address is saved in the user table
 
