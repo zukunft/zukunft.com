@@ -148,7 +148,11 @@ class sandbox_typed extends sandbox_named
         parent::api_mapper($api_json, $usr_msg);
 
         if (key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+            // the requesting user normally comes from the message, but the frontend write bridge
+            // (MapObject::convertToDb) maps with a message that has no user set, so fall back to
+            // the object's own user (the requesting user the object was created with); set_type_id
+            // needs a non-null user for the permission check
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr ?? $this->get_user());
         }
         return $usr_msg->is_ok();
     }

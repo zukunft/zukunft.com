@@ -4,13 +4,13 @@
 
 ## high prio
 
-find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
-
-add a write workflow test for the triple rename by a second user like word_write_url_tests::rename_word_by_other_user: the name-only rename of a link object now routes to the user overlay (sandbox::save uses is_id_key_updated, which for a named link object reports only a change of the link fields as a row identity change), so the triple id and the related values must stay on a rename by a non owner and the overlay must be removed on a rename back; the unit asserts for the routing predicate are in triple_tests 'rename routing'
+create an 'invisible change log table' component type and link a component of this type to the word and triple default view. The 'invisible change log table' should be a table without borders and should have three columns: 'when', 'who' and 'what'. In the 'what' column the chars per entry should be limited based on a config.yaml value. Add the 'invisible change log table' to src/test/resources/web/html/object_pages/sys_log.html .      
 
 if a user logs in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
+
+find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
 

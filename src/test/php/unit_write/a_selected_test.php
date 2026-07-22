@@ -53,6 +53,7 @@ include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
+include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
@@ -79,6 +80,7 @@ use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\formula_write_url_tests;
+use Zukunft\ZukunftCom\test\php\unit_write_workflow\triple_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -354,7 +356,8 @@ class a_selected_test extends test_cleanup
              */
 
             //new word_url_tests()->run($this);
-            new word_write_url_tests()->run($this);
+            //new word_write_url_tests()->run($this);
+            new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
 
             // cleanup - fallback delete
