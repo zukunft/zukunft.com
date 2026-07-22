@@ -150,6 +150,14 @@ class horizontal_ui_tests
                 and $filled_obj::class != term_view::class) {
                 $refilled_obj->usage = $filled_obj->usage;
             }
+            // the impact is a system calculated value that the frontend api json never carries
+            // (see e.g. the word api_array), so it is backfilled like the usage;
+            // only a null is filled so the diff still catches a wrongly mapped real value
+            if (property_exists($refilled_obj, 'impact') and property_exists($filled_obj, 'impact')) {
+                if ($refilled_obj->impact === null) {
+                    $refilled_obj->impact = $filled_obj->impact;
+                }
+            }
             // TODO Prio 1 remove exception
             if ($filled_obj::class == triple::class) {
                 $refilled_obj->name_given = $filled_obj->name_given;
