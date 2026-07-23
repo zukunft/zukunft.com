@@ -71,6 +71,10 @@ class change_log_named extends change_log
     // matches test_const::DUMMY_DATETIME used to set the test change log entries
     const string TEST_TIME = '2022-12-26T18:23:45+01:00';
 
+    // appended to the what column of the change log table pure when the text is longer than the
+    // configured char limit, to indicate that the full text is shown in the mouseover popup
+    const string MORE_INDICATOR = '...';
+
 
     /*
      * object vars
@@ -287,6 +291,67 @@ class change_log_named extends change_log
     }
 
     /**
+     * the changed field name without the table id prefix, e.g. 'description' for the code id
+     * '5description' (the code id is the table id followed by the field name, see change_log::set_field)
+     * @return string the changed field name e.g. 'description', 'phrase_type_id' or 'word_name'
+     */
+    private function field(): string
+    {
+        $prefix = (string)$this->table_id;
+        $code_id = $this->field_code_id();
+        $result = $code_id;
+        if (str_starts_with($code_id, $prefix)) {
+            $result = substr($code_id, strlen($prefix));
+        }
+        return $result;
+    }
+
+    /**
+     * the translated name of the changed field followed by a space, used to prefix the changed value
+     * in the change log table pure (e.g. 'added description "..."'); empty for the object's own prime
+     * field (name, value or external key), because the log row already names that object
+     * @return string the lower-cased translated field name and a space e.g. 'description ', or '' for a prime field
+     */
+    private function field_name_prefix(): string
+    {
+        global $mtr;
+        $field = $this->field();
+        $result = '';
+        if ($field != '' and !in_array($field, change_fields::PRIME_FIELDS, true)) {
+            $result = lcfirst($mtr->text_db_field($field)) . ' ';
+        }
+        return $result;
+    }
+
+    /**
+     * the value to show for the old or new value of a change: for a type field the type name resolved
+     * from the type id, so the user sees the type name instead of the type number; the type id is taken
+     * from the reference id if set (a change logged via sql_par_field_list::add_type_field) and else
+     * from a numeric value (e.g. the protection id logged via sandbox_multi::add_field); any other field
+     * keeps its raw value
+     *
+     * @param int|null $ref_id the change reference id (old_id / new_id), set for a type change via add_type_field
+     * @param string|null $value the raw old / new value, which for some type fields is the numeric type id
+     * @return string the type name for a type field, else the raw value
+     */
+    private function value_to_show(?int $ref_id, ?string $value): string
+    {
+        global $ui_sys;
+        $result = $value ?? '';
+        $typ_lst = $ui_sys->typ_lst_cache->field_to_type_list($this->field());
+        if ($typ_lst != null) {
+            $type_id = $ref_id;
+            if ($type_id === null and is_numeric($value)) {
+                $type_id = (int)$value;
+            }
+            if ($type_id !== null) {
+                $result = $typ_lst->name($type_id);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string the name of the change table name
      */
     private function table_name(): string
@@ -359,10 +424,11 @@ class change_log_named extends change_log
         $html = new html_base();
 
         // start from the raw description, so the char limit counts the visible chars and never cuts
-        // an html entity in half, and escape only the final shortened text
+        // an html entity in half, and escape only the final shortened text; the '...' shows that
+        // the full text is available in the mouseover popup (see tr_when_who_what)
         $what = $this->what_text();
         if ($max_chars > 0 and mb_strlen($what) > $max_chars) {
-            $what = mb_substr($what, 0, $max_chars);
+            $what = mb_substr($what, 0, $max_chars) . self::MORE_INDICATOR;
         }
         return $html->esc($what);
     }
@@ -377,16 +443,22 @@ class change_log_named extends change_log
     function what_text(): string
     {
         global $mtr;
+        // the translated field name (e.g. 'description ') unless the object's own prime field changed
+        $fld = $this->field_name_prefix();
+        // for a type field show the type name instead of the type id (see value_to_show)
+        $old = $this->value_to_show($this->old_id, $this->old_value);
+        $new = $this->value_to_show($this->new_id, $this->new_value);
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                return $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" '
-                    . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
+                $result = $mtr->txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
+                    . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
             } else {
-                return $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';
+                $result = $mtr->txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
             }
         } else {
-            return $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';
+            $result = $mtr->txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
         }
+        return $result;
     }
 
     /**
@@ -405,10 +477,15 @@ class change_log_named extends change_log
         // the test data happened to be created (like dsp())
         $time = $test_mode ? new DateTime(self::TEST_TIME) : $this->change_time;
         $when = date_format($time, $ui_sys->cfg->date_time_format());
-        // the user name is user settable, so escape it (like entry() and tr())
-        $who = $this->usr != null ? $html->esc($this->usr->name()) : '';
-        return $html->tr(
-            $html->td($when) . $html->td($who) . $html->td($this->what($what_max_chars)));
+        // link the user name to the user default page so a click shows that user (name_link escapes
+        // the user-settable name via html_base::ref, like the plain esc() used before)
+        $who = $this->usr != null ? $this->usr->name_link() : '';
+        // show the full change text as a mouseover popup only when the what column is shortened, so the
+        // user can still read the complete change that the '...' indicates (td escapes the title)
+        $full_what = $this->what_text();
+        $popup = ($what_max_chars > 0 and mb_strlen($full_what) > $what_max_chars) ? $full_what : '';
+        $what_cell = $html->td($this->what($what_max_chars), '', 0, $popup);
+        return $html->tr($html->td($when) . $html->td($who) . $what_cell);
     }
 
 }

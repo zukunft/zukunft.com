@@ -77,6 +77,7 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once test_paths::CONST . 'formula_names.php';
@@ -85,6 +86,7 @@ include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
@@ -126,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -133,6 +136,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use DateTime;
@@ -276,6 +280,35 @@ class test_log
         $chg->set_action(change_actions::DELETE);
         $chg->new_value = null;
         $chg->new_id = null;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the description of a named user sandbox object
+     * @return change with a change log entry of adding a word description as a sample
+     */
+    function log_word_add_description(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_DESCRIPTION);
+        $chg->new_value = word_names::MATH_COM;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the protection type of a named user sandbox object;
+     * the protection is logged with the numeric type id as the value (like sandbox_multi::add_field,
+     * not add_type_field), so the change log table pure must resolve the id to the protection name
+     * @return change with a change log entry of increasing the word protection as a sample
+     */
+    function log_word_update_protection(): change
+    {
+        global $sys;
+        $chg = $this->log_word_add();
+        $chg->set_action(change_actions::UPDATE);
+        $chg->set_field(fields::FLD_PROTECT);
+        $chg->old_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT);
+        $chg->new_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::ADMIN);
         return $chg;
     }
 
@@ -715,13 +748,17 @@ class test_log
     }
 
     /**
-     * @return change_log_list a change log with a single word add entry, used e.g. to show the
-     *                         change log table pure with a deterministic single row
+     * @return change_log_list the changes of one word (name, phrase type, description and
+     *                         protection type), used e.g. to show the change log table pure
+     *                         with a deterministic row per change field type
      */
-    function log_list_word_add(): change_log_list
+    function log_list_word_changes(): change_log_list
     {
         $log_lst = new change_log_list();
         $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_word_update_type());
+        $log_lst->add($this->log_word_add_description());
+        $log_lst->add($this->log_word_update_protection());
         return $log_lst;
     }
 

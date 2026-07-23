@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
@@ -269,14 +271,16 @@ class change_log_list extends ListBase
 
     /**
      * the borderless change log table with the three columns when, who and what;
-     * the what column is limited to the given number of chars (from config.yaml, read by
-     * ui_log::change_log_table_pure), so a long change stays on one line
+     * the what column is limited to the given number of chars and the table to the given number of
+     * rows (both from config.yaml, read by ui_log::change_log_table_pure), so a long change stays on
+     * one line and only the most recent changes are shown
      *
      * @param int $what_max_chars the max number of chars per what entry, 0 for no limit
+     * @param int $max_rows the max number of change rows shown, 0 for no limit
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the borderless when / who / what table
      */
-    function tbl_when_who_what(int $what_max_chars, bool $test_mode = false): string
+    function tbl_when_who_what(int $what_max_chars, int $max_rows = 0, bool $test_mode = false): string
     {
         global $mtr;
         $html = new html_base();
@@ -284,11 +288,46 @@ class change_log_list extends ListBase
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO))
             . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
         $rows = $html->tr($head);
-        foreach ($this->lst() as $chg) {
+        // show only the most recent changes up to the configured row limit (the list is already
+        // sorted newest first by ui_log::prepared_change_log resp. the test)
+        $lst = $max_rows > 0 ? $this->head($max_rows) : $this;
+        foreach ($lst->lst() as $chg) {
             $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode);
         }
+        // the forward button appears when more changes exist than the row limit shows; the back
+        // button is prepared for the paging implementation (see docs/llm/pending.md) but stays hidden
+        // until the page offset is passed in, because the table currently always starts at the newest
+        // change, so the first page is always shown
+        $more_rows = ($max_rows > 0 and $this->count() > $max_rows);
+        $first_page = true;
+        $rows .= $this->tr_page_nav($more_rows, $first_page);
         // borderless table with the standard zukunft.com grey text
         return $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
+    }
+
+    /**
+     * the paging footer row of the change log table pure: a forward button when more changes exist
+     * than shown (the row limit is reached) and a back button when not the first (newest) page is
+     * shown; the buttons are only the icons for now and do not yet navigate (see docs/llm/pending.md)
+     *
+     * @param bool $more_rows true if the list has more changes than the shown row limit
+     * @param bool $first_page true if the first (newest) page is shown, so no back button is needed
+     * @return string the html of the footer row, or '' if neither button is needed
+     */
+    private function tr_page_nav(bool $more_rows, bool $first_page): string
+    {
+        $html = new html_base();
+        $result = '';
+        if ($more_rows or !$first_page) {
+            $back = !$first_page ? $html->icon(icons::PAGE_BACK) : '';
+            $forward = $more_rows ? $html->icon(icons::PAGE_FORWARD) : '';
+            // back button on the left, forward button right-aligned at the end of the table
+            $result = $html->tr(
+                $html->td($back)
+                . $html->td('')
+                . $html->td($forward, styles::TEXT_RIGHT));
+        }
+        return $result;
     }
 
     /**

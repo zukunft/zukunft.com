@@ -68,4 +68,20 @@ enum change_fields: string
     const string FLD_COMPONENT_NAME = 'component_name';
     const string FLD_COMPONENT_TYPE = 'component_type_id';
 
+    // the prime identity field of each user sandbox object (its name, numeric value or external key);
+    // a change of one of these is shown in the change log table pure without the field name prefix,
+    // because the log row already represents that object, whereas any other field is prefixed with its
+    // translated name (see web/log/change_log_named::what_text)
+    const array PRIME_FIELDS = [
+        self::FLD_WORD_NAME,
+        self::FLD_VERB_NAME,
+        self::FLD_TRIPLE_NAME,
+        self::FLD_FORMULA_NAME,
+        self::FLD_SOURCE_NAME,
+        self::FLD_VIEW_NAME,
+        self::FLD_COMPONENT_NAME,
+        self::FLD_NUMERIC_VALUE,
+        self::FLD_REF_KEY,
+    ];
+
 }

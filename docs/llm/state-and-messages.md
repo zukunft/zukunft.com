@@ -25,6 +25,12 @@ Code in the wrong scope must not read these globals — frontend renderers
 code (`src/main/php/cfg/**`) may not touch `$ui_sys`/`$mtr`; tests own
 `$t`/`$t_sys`, production code does not.
 
+`$usr` is deliberately **not** in the list: the requesting user changes per
+request, so it is always an explicit parameter — the session user comes from
+`$ui_sys` in the frontend, everything below receives it from its caller. A test
+takes it from the test environment (`$t->usr1`, `$t->usr2`, …), see
+[testing.md](testing.md#the-user-of-a-test-comes-from-the-test-environment--never-global-usr).
+
 ## Unit-testability
 
 Every function must be fully unit-testable:
