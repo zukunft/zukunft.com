@@ -51,5 +51,9 @@ class icons
     // the show / hide password toggle icons (see form_input_password and style_html.css)
     const string PASSWORD_SHOW = 'fas fa-eye';       // shown while the password is masked, click to reveal it
     const string PASSWORD_HIDE = 'fas fa-eye-slash'; // shown while the password is revealed, click to mask it
+    // paging of a row-limited list e.g. the change log table pure: forward to the next / back to the
+    // previous page of rows
+    const string PAGE_FORWARD = 'fas fa-chevron-right';
+    const string PAGE_BACK = 'fas fa-chevron-left';
 
 }

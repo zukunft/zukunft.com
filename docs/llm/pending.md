@@ -4,21 +4,25 @@
 
 ## high prio
 
-for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
+### change log table paging (implement the prepared forward/back buttons)
+
+the change log table pure already renders a forward button (icons::PAGE_FORWARD) when the row limit is reached and has a prepared back button (icons::PAGE_BACK) in change_log_list::tr_page_nav; the buttons are only icons so far and do not navigate yet. implement the actual paging with the prompts below in order.
+
+add a change log page url parameter (a new url_var const, '9'-prefix rules do not apply as this is not a back param) that carries the zero-based page number of the change log table pure; read it in http/view.php resp. the word/triple page controller and pass it down as an explicit parameter (never a superglobal) to ui_log::change_log_table_pure.
+
+thread the page number from ui_log::change_log_table_pure into change_log_list::tbl_when_who_what as a new $page parameter (default 0) next to $max_rows; replace the hard coded $first_page = true with $first_page = ($page == 0) and compute $more_rows from the page window (the list has more changes than $page * $max_rows + $max_rows), so the back button shows from page 1 on and the forward button hides on the last page.
+
+show only the rows of the current page: instead of head($max_rows) use an offset+limit slice of the sorted list (add change_log_list::page(int $page, int $max_rows) returning the $max_rows changes starting at $page * $max_rows, mirroring head()); keep the newest-first sort from ui_log::prepared_change_log. note that prepared_change_log currently head()s the list to the 'word changes' row limit (20) before the pure table is rendered, which would cap paging at those 20 rows - remove that head() for the pure table (or raise it) so the paging can reach all changes of the object.
+
+turn the prepared icons in change_log_list::tr_page_nav into real links: the forward button links to the same page with the change log page url param increased by one, the back button decreased by one, built via html_base::url_new / ref like ref::refresh_job_link; add a msg_id + en/de translation for the 'next page' and 'previous page' tooltip and pass it as the ref title.
+
+add a unit workflow snapshot test for the change log paging under unit_ui: render the change log table pure for page 0 (forward only), page 1 (back and forward) and the last page (back only) from a change log longer than two pages, and assert the correct buttons and the correct row window per page; extend src/test/resources/web/html/object_pages/sys_log.html accordingly.
 
 the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
 
-add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
-
-if in the borderless change log table another field than the prime key e.g. the name is changed show the translated name of the field before the changed value e.g. 'added description "ISO 4217 alphabetic code for the ...' . and if the char limit is used, indicate with '...' that there is more. Show the full change text as mouseover popup.
-
-if in the borderless change log table a type field is shown, display the type name instead of the type number
-
-in the borderless change log table use for the username the linked version so that a click on the username shows the user default page
-
 if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
 
-if a user logs in make sure that always the last used ip address is saved in the user table
+if a user has logged in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
 
@@ -38,8 +42,9 @@ create the user_message $msg at the entry point and add it as a parameter to all
 
 create an admin view with the system errors 
 
-if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
+if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible.
 
+Add to admin yaml a list of term that should be added on start to the document route. Add a "en" folder with static pages that store each request to a file that is read, executed and cleaned by the sceduled job runner. For non en languages use e.g de subfolder
 
 ### reduce response time
 
