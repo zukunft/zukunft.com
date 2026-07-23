@@ -4,17 +4,9 @@
 
 ## high prio
 
-for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
-
 the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
 
-add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
-
-if in the borderless change log table another field than the prime key e.g. the name is changed show the translated name of the field before the changed value e.g. 'added description "ISO 4217 alphabetic code for the ...' . and if the char limit is used, indicate with '...' that there is more. Show the full change text as mouseover popup.
-
-if in the borderless change log table a type field is shown, display the type name instead of the type number
-
-in the borderless change log table use for the username the linked version so that a click on the username shows the user default page
+in the change log table limit the number of rows the show the a specific value defined in the config.yaml. Create for src/test/resources/web/html/object_pages/sys_log.html another example of a change log that is longer than the limit.   
 
 if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
 
@@ -38,8 +30,9 @@ create the user_message $msg at the entry point and add it as a parameter to all
 
 create an admin view with the system errors 
 
-if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible. 
+if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible.
 
+Add to admin yaml a list of term that should be added on start to the document route. Add a "en" folder with static pages that store each request to a file that is read, executed and cleaned by the sceduled job runner. For non en languages use e.g de subfolder
 
 ### reduce response time
 

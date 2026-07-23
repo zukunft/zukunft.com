@@ -994,20 +994,25 @@ class html_base
      * @param string|null $cell_text the text or link that should be shown or null to return an empty cell
      * @param string $style the bootstrap formatting class
      * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @param string $title the mouseover popup text of the cell, e.g. the full text of a shortened cell
      * @return string the html code of the table cell
      */
-    function td(?string $cell_text = '', string $style = '', int $intent = 0): string
+    function td(?string $cell_text = '', string $style = '', int $intent = 0, string $title = ''): string
     {
         // just for formatting the html code
         while ($intent > 0) {
             $cell_text .= '&nbsp;';
             $intent = $intent - 1;
         }
+        $attributes = '';
         if ($style != '') {
-            return '<' . self::TD . ' ' . self::CLASS_HTML . '="' . $style . '">' . $cell_text . '</' . self::TD . '>';
-        } else {
-            return '<' . self::TD . '>' . $cell_text . '</' . self::TD . '>';
+            $attributes .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
+        // the title is user settable (e.g. the full change text of a shortened cell), so escape it
+        if ($title != '') {
+            $attributes .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        return '<' . self::TD . $attributes . '>' . $cell_text . '</' . self::TD . '>';
     }
 
     /**

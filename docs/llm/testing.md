@@ -124,6 +124,37 @@ factory method waiting to be named — e.g. a Zurich word with related phrases, 
 non-default type, share and protection is `test_words::zh_full_ui()`, not five
 set-up lines in the test.
 
+### The user of a test comes from the test environment — never `global $usr`
+
+Nearly every test object needs a `user`, and it always comes from the test
+environment `$t` (`utils/test_base.php`), never from a global:
+
+| test user           | purpose                                                          |
+|---------------------|------------------------------------------------------------------|
+| `$t->usr1`          | the main test user                                                |
+| `$t->usr2`          | the second user, to test the user sandbox (overlay, exclude)      |
+| `$t->usr_normal`    | standard profile, to test that a privileged function denies       |
+| `$t->usr_admin`     | admin profile, to test that an admin function allows              |
+| `$t->usr_system`    | system profile, for the system-level functions                    |
+| `$t->usr_dev`       | the virtual dev user allowed to set a `code_id`                   |
+| `$t->usr_test_admin`| the admin used by the write tests                                 |
+| `$t->usr_signup`    | the system user that adds new users                               |
+
+Inside a `create/test_*.php` factory the same environment is reached through the
+injected `$this->env` (`new word($this->env->usr1)`). A `static` factory has no
+environment, so it takes the user from `test_users`
+(`new word(test_users::user_sys_test())`) — not from a global either.
+
+- **Right**: `$wrd = new word($t->usr1);` / `$wrd = new word($this->env->usr1);`
+- **Wrong**: `global $usr; $wrd = new word($usr);`
+
+`$usr` is not in the allowed global set (see
+[state-and-messages.md](state-and-messages.md#allowed-global-variables)) — the
+requesting user is always an explicit parameter. In a test it additionally makes
+the result depend on whichever session happens to run the test, so the same test
+can pass locally and fail in a clean run, and a sandbox test cannot tell the two
+users apart.
+
 ### Populated list / collection fixtures come from a factory too
 
 A test that builds a populated list inline —

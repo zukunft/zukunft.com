@@ -146,6 +146,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
 - Never run the predefined test scripts in `/test/*` (especially `test/test.php`): they need a local deployment, which is never an LLM task; the developer runs them and reports the results. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
+- The user of a test comes from the test environment (`$t->usr1`, `$t->usr2`, `$t->usr_admin`, … resp. `$this->env->usr1` in a factory, `test_users::*` in a static one); never `global $usr`. → `docs/llm/testing.md`
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.
 - `$test_name` is a named variable declared first (top of the block), reused before each later assertion.
