@@ -112,10 +112,74 @@ previous rule wins: keep it as a parameter.
 `$msg` is created **once** in `http/view.php` as `new user_message()` — the
 single collector for every message shown during a request. It is passed as an
 explicit parameter (named `$msg`) to every function that may report a warning,
-error, or info notice.
+error, or info notice — and, because it also carries the requesting user (see
+the next section), to every function that needs to know who is asking.
 
-- **Right**: `function url_to_action(array $url_array, user $usr_dsp, user_message $msg, ...): array`
+- **Right**: `function url_to_action(array $url_array, user_message $msg, ...): array`
 - **Wrong**: creating `new user_message()` inside a helper and returning/echoing the message directly
+
+### The requesting user is set on `$msg` by the http entry point
+
+The **http entry point** (`http/view.php`, and every other script under `http/`
+that answers a request) is the **only** place that determines who is asking. It
+loads the session user once and stores it on the request's `user_message`:
+
+```php
+$msg = new user_message();          // the single message of this request
+…
+$usr = new user;                    // backend user from session / ip
+$web_txt .= $usr->get();
+if ($usr->id() > 0) {
+    $usr_ui = new user_ui();
+    $usr_ui->set_from_json($usr->api_json(), $msg);
+    $msg->usr = $usr_ui;            // <- the requesting user, set exactly once
+    …
+}
+```
+
+From there on **every function that needs to know who is asking takes `$msg` as
+a parameter and reads `$msg->usr`** — it never receives the requesting user as a
+second parameter, never reads it from a global, and never re-derives it from the
+session.
+
+- **Right**: `function check_preserved(user_message $msg): user_message { … if ($msg->usr->is_admin()) … }`
+- **Wrong**: `function check_preserved(user $usr_req, user_message $msg)` — the
+  requesting user duplicated next to the message that already carries it
+- **Wrong**: `global $sys; $usr_req = $sys->usr_req;` inside a function
+- **Wrong**: reading `$_SESSION[url_var::SESSION_USER_ID]` below the entry point
+
+**Set it as early as possible**, directly after the user is known and *before*
+any branch decides what to do: the blocked-request branch, the cached-page fast
+path and the live rendering all need the requesting user, so a late assignment
+leaves the early paths without one. A `$msg->usr` that is `null` must therefore
+be treated as "no user known" (fall back to the least privilege), never as a
+normal case to fabricate a user for.
+
+**Why**: the requesting user is what every permission decision, every change-log
+row and every sandbox write depends on. Kept next to the message, it travels
+with the one object those functions already receive — so the permission check
+and the message explaining its outcome cannot drift apart, and a function can
+never be called with a user other than the one that made the request. It also
+keeps the signatures short: one parameter instead of two, and no function has to
+be re-threaded when a new check needs the user.
+
+**Each layer holds its own user object.** The two `user_message` classes are
+distinct and so are the users they carry:
+
+| message class                  | `->usr` type            | set in                     |
+|--------------------------------|-------------------------|----------------------------|
+| `web\user\user_message`        | `web\user\user` (`user_ui`) | `http/view.php`        |
+| `cfg\user\user_message`        | `cfg\user\user` (backend)   | the api / backend entry |
+
+A frontend function reads the frontend user from its frontend message, a backend
+function the backend user from its backend message; the two are never mixed.
+
+**A user that is the *subject* of the call stays an explicit parameter.** The
+rule covers the *requesting* user only. When a function operates *on* a user —
+`user::no_diff($usr_to_compare, $msg)`, `sandbox::take_ownership($new_owner,
+$msg)`, `user_list::save(...)` — that user is normal payload and keeps its own
+parameter; `$msg->usr` stays the one who triggered the operation. If a signature
+has both, check which is which before removing one.
 
 ### Never overwrite or reset the accumulated messages
 

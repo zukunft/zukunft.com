@@ -85,13 +85,13 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
@@ -100,7 +100,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_ADD_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // TODO Prio 1 activate
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
@@ -110,7 +110,7 @@ class word_url_tests extends url_test_base
         // the user presses the save button of the add form, which adds the named submit marker;
         // without the marker the same url just renders the add form with the given values
         $url_arr[url_var::POST_SUBMIT] = '';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD), $t::TIMEOUT_LIMIT_PAGE_LONG);
 
@@ -125,7 +125,7 @@ class word_url_tests extends url_test_base
 
         // a create or delete request is executed by url_to_action (not url_to_html, which only
         // renders), so use the combined execute and render call and check the database result
-        $req = new user_request($t->usr1, $usr_ui, $usr_msg, $ui->dto, true, true);
+        $req = new user_request($t->usr1, $usr_msg, $ui->dto, true, true);
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
@@ -155,7 +155,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
-        $form = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $form = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the first assert follows a complete edit form render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"', $t::TIMEOUT_LIMIT_PAGE_LONG);
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::DESCRIPTION . '"');
@@ -186,7 +186,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::VIEW] = '0';
         $url_arr[url_var::SHARE] = '1';
         $url_arr[url_var::PROTECTION] = '1';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $save_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $save_msg, $ui->dto, true);
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_MAP_MISSING));
         $t->assert_false($test_name, $save_msg->has_msg_id(msg_id::URL_KEY_MISSING));
         // the render time of the save url above is charged to this assert, so a long page timeout is used
@@ -200,7 +200,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK_POD] = views::WORD_EDIT;
         $url_arr[url_var::ID] = word_names::MATH_ID;
-        $ui->url_to_html($url_arr, $usr_ui, $err_msg, $ui->dto, true);
+        $ui->url_to_html($url_arr, $err_msg, $ui->dto, true);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_KEY_MISSING));
 
 
@@ -222,7 +222,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $usr_ui, $usr_msg, $ui->dto, false, true);
+        $req = new user_request($usr_backend, $usr_msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -235,7 +235,7 @@ class word_url_tests extends url_test_base
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
-        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
+        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $usr_msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
 
         /*
@@ -271,7 +271,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
-        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the assert follows the word find view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, 'def', $t::TIMEOUT_LIMIT_PAGE_LONG);
 

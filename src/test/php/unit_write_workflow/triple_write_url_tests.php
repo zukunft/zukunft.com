@@ -169,7 +169,7 @@ class triple_write_url_tests extends triple_url_tests
         $renamed = triple_names::SYSTEM_TEST_ADD . test_cleanup::EXT_RENAME;
         $trp_ui = new triple_ui($trp_load->api_json());
         $trp_ui->set_name($renamed);
-        $upd_msg = $trp_ui->update($changer_ui, $msg_ui);
+        $upd_msg = $trp_ui->update($msg_ui);
         $test_name = 'the rename by user 2 is saved';
         $t->assert_msg($test_name, $upd_msg);
 
@@ -200,7 +200,7 @@ class triple_write_url_tests extends triple_url_tests
         // empty user overlay row
         $trp_back = new triple_ui($trp_load->api_json());
         $trp_back->set_name(triple_names::SYSTEM_TEST_ADD);
-        $back_msg = $trp_back->update($changer_ui, $msg_ui);
+        $back_msg = $trp_back->update($msg_ui);
         $test_name = 'the rename back to the standard name is saved without a duplicate message';
         $t->assert_msg($test_name, $back_msg);
         $test_name = 'the rename back removes the user overlay row';
@@ -216,10 +216,12 @@ class triple_write_url_tests extends triple_url_tests
         // overlay left after the rename back, so the sole owner delete removes the row completely
         $owner_ui = new user_ui();
         $owner_ui->set_from_json($owner->api_json(), $msg_ui);
+        // the delete is requested by the owner, so switch the message user to the owner
+        $msg_ui->usr = $owner_ui;
         $trp_owner_load = new triple($owner);
         $trp_owner_load->load_by_id($base_id);
         $trp_del = new triple_ui($trp_owner_load->api_json());
-        $del_msg = $trp_del->del($owner_ui, $msg_ui);
+        $del_msg = $trp_del->del($msg_ui);
         $test_name = 'the owner deletes the triple via the frontend bridge';
         $t->assert_msg($test_name, $del_msg);
         $test_name = 'the triple is removed after the url delete';

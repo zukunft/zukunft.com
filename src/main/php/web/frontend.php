@@ -415,12 +415,12 @@ class frontend
      * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
      *
      * @param int|string $view_id the resolved view id (or code id) of the request
-     * @param user_ui|null $usr the session user requesting the view (null for an anonymous request)
-     * @param user_message $usr_msg to tell the user why the admin mask is not shown
+     * @param user_message $usr_msg carries the requesting user (null for an anonymous request) and tells the user why the admin mask is not shown
      * @return bool true if the request is for an admin mask that the user may not access
      */
-    private function admin_mask_denied(int|string $view_id, ?user_ui $usr, user_message $usr_msg): bool
+    private function admin_mask_denied(int|string $view_id, user_message $usr_msg): bool
     {
+        $usr = $usr_msg->usr;
         $denied = false;
         if (in_array($view_id, views::ADMIN_MASK_IDS)) {
             if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
@@ -709,12 +709,11 @@ class frontend
     /**
      * execute the user request e.g. a database update and create the url for the next page
      * the execution should be done via api
-     * TODO Prio 0 deprecate $usr_backend and $usr and find another way to switch the user after login or signup
+     * TODO Prio 0 deprecate $usr_backend and find another way to switch the user after login or signup
      *
      * @param array $url_array the parsed url as an array
      * @param user_backend $usr_backend the backend user object updated in-place on successful login
-     * @param user_ui $usr the frontend user object updated in-place on successful login
-     * @param user_message $usr_msg to enrich with potential errors with the requesting user
+     * @param user_message $usr_msg to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
      * @return array the url array to display the result and the next step
@@ -722,12 +721,17 @@ class frontend
     function  url_to_action(
         array        $url_array,
         user_backend &$usr_backend,
-        user_ui      &$usr,
         user_message $usr_msg,
         data_object  $dto = new data_object(),
         bool         $do_it = true
     ): array
     {
+        // the requesting user of this request (docs/llm/state-and-messages.md); a request without
+        // a known user (e.g. before the first login) acts as an anonymous ip-only user, and the
+        // login actions below replace the local var by reference, so the switched user is written
+        // back to the message after the dispatch
+        $usr_ui = $usr_msg->usr ?? new user_ui();
+
         // init the url to show the result to the user and for the next step
         $url = $url_array;
 
@@ -744,7 +748,7 @@ class frontend
 
         // central admin mask authorization: refuse to act on an admin only view for a non-admin user
         // and send them to the start view, so an admin action cannot be triggered without the rights
-        if ($this->admin_mask_denied($view, $usr, $usr_msg)) {
+        if ($this->admin_mask_denied($view, $usr_msg)) {
             return [url_var::MASK => views::START_ID];
         }
 
@@ -787,26 +791,32 @@ class frontend
         }
 
         match (true) {
-            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr, $do_it),
-            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr, $do_it),
-            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr, $usr_msg, $do_it),
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $usr_msg, $usr_backend, $usr_ui, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $usr_msg, $usr_backend, $usr_ui, $do_it),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $usr_msg, $usr_backend, $usr_ui, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $usr_msg, $do_it),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $usr_msg, $do_it),
-            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_backend, $usr_msg, $do_it),
+            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $usr_msg, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
             $action == url_var::CRUD_DELETE and $step == url_var::STEP_CONFIRMED,
             in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
+                $url_array, $view, $usr_msg, $dto, url_var::CRUD_DELETE, $do_it),
             // a confirmed create request: triggered by an add mask or by an explicit create action
             $action == url_var::CRUD_CREATE and $step == url_var::STEP_CONFIRMED,
             in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
+                $url_array, $view, $usr_msg, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $usr, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
+                $url_array, $view, $usr_msg, $dto, url_var::CRUD_UPDATE, $do_it),
             default => $this->log_ignored_write_step($view, $step, $usr_msg)
         };
+
+        // a login, signup, activation or logout has replaced the local user var by reference, so
+        // store the (possibly switched) requesting user back on the message: from here on every
+        // function of this request sees the new user via $usr_msg->usr (the user switch on login
+        // is the one sanctioned change of the requesting user after the entry point assignment)
+        $usr_msg->usr = $usr_ui;
 
         return $url;
     }
@@ -840,20 +850,22 @@ class frontend
      * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_ui|null $usr the session user who has requested the view
-     * @param user_message $usr_msg to enrich with potential errors
+     * @param user_message $usr_msg to enrich with potential errors; carries the requesting user (null for an anonymous request)
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
-        user_ui|null      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object(),
         bool         $test_mode = false
     ): string
     {
+        // the requesting user of this request; null renders the page for an anonymous user
+        // (docs/llm/state-and-messages.md)
+        $usr = $usr_msg->usr;
+
         $lib = new library();
 
         // init the view
@@ -913,7 +925,7 @@ class frontend
         // central admin mask authorization: an admin only view is shown to no one but an admin (or
         // system) user, so a non-admin request is sent to the start view with a message instead of
         // rendering the admin page (which would otherwise leak the admin content to anyone)
-        if ($this->admin_mask_denied($view_id, $usr, $usr_msg)) {
+        if ($this->admin_mask_denied($view_id, $usr_msg)) {
             $view_id = views::START_ID;
             $view_code_id = views::START_CODE;
         }
@@ -1035,15 +1047,16 @@ class frontend
      * so the caller does the full setup and renders the page live
      *
      * @param array $url_array the parsed url as an array
-     * @param user_backend $usr the session user with the uses_sandbox flag loaded
-     * @param user_message $usr_msg with the messages of this request that are added to the cached page
+     * @param user_message $usr_msg with the messages of this request that are added to the cached page and the requesting user with the uses_sandbox flag loaded
      * @return string|null the cached html page or null if the page cannot be served from the cache
      */
-    function cached_page_or_null(array $url_array, user_backend $usr, user_message $usr_msg): ?string
+    function cached_page_or_null(array $url_array, user_message $usr_msg): ?string
     {
         $result = null;
-        // only a user without own data changes may get the standard cached page
-        if (!$usr->uses_sandbox) {
+        // only a user without own data changes may get the standard cached page; an unknown
+        // user (null) has no own data changes, so the shared page is the correct answer
+        $uses_sandbox = $usr_msg->usr?->uses_sandbox ?? false;
+        if (!$uses_sandbox) {
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
@@ -1084,22 +1097,20 @@ class frontend
      *   and the rendering of the user specific page is requested as a backend job
      *
      * @param array $url_array the parsed url as an array
-     * @param user_backend $usr the session user with the uses_sandbox flag loaded
-     * @param user_ui|null $usr_ui the session user frontend object who has requested the view
-     * @param user_message $usr_msg to enrich with potential errors
+     * @param user_message $usr_msg to enrich with potential errors; carries the requesting user with the uses_sandbox flag loaded
      * @param bool $is_action true if the request has changed data so the result must be rendered live
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_html_cached(
         array        $url_array,
-        user_backend $usr,
-        user_ui|null $usr_ui,
         user_message $usr_msg,
         bool         $is_action = false,
         data_object  $dto = new data_object()
     ): string
     {
+        // an unknown user (null) has no own data changes, so the shared cached page is served
+        $uses_sandbox = $usr_msg->usr?->uses_sandbox ?? false;
         $result = '';
         // an action request is always rendered live because the data has just been changed
         $url_key = '';
@@ -1118,26 +1129,37 @@ class frontend
         }
         // route the request based on the user sandbox usage and the cache state
         if ($url_key == '') {
-            $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
-        } elseif (!$usr->uses_sandbox) {
+            $result = $this->url_to_html($url_array, $usr_msg, $dto);
+        } elseif (!$uses_sandbox) {
             if ($cached_html !== null) {
                 // a cached page never contains a message (see save_html_page),
                 // so add the message of this request if there is one
                 $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg));
             } else {
                 // remember the rendered page for the next request of any user without sandbox data
-                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
-                $this->save_html_page($cac_page, $url_key, $result, $usr);
+                $result = $this->url_to_html($url_array, $usr_msg, $dto);
+                $this->save_html_page($cac_page, $url_key, $result);
             }
         } else {
             if ($cached_html !== null) {
                 // serve the standard page immediately and request the user specific rendering
                 $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($usr_msg))
                     . api::PAGE_REFRESH_FLAG;
-                $this->request_page_refresh($cac_page, $usr);
+                // the refresh job is a backend write for the requesting user, so it needs the
+                // backend user object (with the profile for the job type permission), which the
+                // frontend message does not carry; until the job is requested via the api the
+                // backend requesting user is taken from the system object of this request
+                // TODO Prio 1 request the job via the api instead of the direct backend call
+                global $sys;
+                if ($sys->usr_req != null) {
+                    $this->request_page_refresh($cac_page, $sys->usr_req);
+                } else {
+                    log_err('page refresh for ' . $url_key . ' skipped,'
+                        . ' because the backend requesting user is missing');
+                }
             } else {
                 // no cached page yet, so render the user specific page live
-                $result = $this->url_to_html($url_array, $usr_ui, $usr_msg, $dto);
+                $result = $this->url_to_html($url_array, $usr_msg, $dto);
             }
         }
         return $result;
@@ -1257,14 +1279,12 @@ class frontend
      * @param db_cache_page $cac_page the cache page object used to check the cache
      * @param string $url_key the canonical cache key of the request
      * @param string $html the rendered html page that should be cached
-     * @param user_backend $usr the session user who has requested the page
      * @return void
      */
     function save_html_page(
         db_cache_page $cac_page,
         string        $url_key,
-        string        $html,
-        user_backend  $usr
+        string        $html
     ): void
     {
         // store the page with the session token replaced by a placeholder so the shared cache does
@@ -1327,9 +1347,9 @@ class frontend
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr, $req->usr_msg, $req->dto, $req->do_it);
+        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr_msg, $req->dto, $req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $result = $this->url_to_html($next_url, $req->usr, $req->usr_msg, $req->dto, $req->test_mode);
+        $result = $this->url_to_html($next_url, $req->usr_msg, $req->dto, $req->test_mode);
         // return to the default section for whatever the caller does next
         $sys->times->switch(system_time_type::DEFAULT);
         return $result;
@@ -1742,25 +1762,24 @@ class frontend
      *
      * @param array $url_array the normalised URL params; expects ID (log id) and
      *                         rest_ctrl::PAR_LOG_STATUS (new status id)
-     * @param user_backend $usr_backend the session user; only admins may perform this action
-     * @param user_message $usr_msg collects backend errors so they surface in the notification bar
+     * @param user_message $usr_msg collects backend errors so they surface in the notification bar; carries the requesting user and only admins may perform this action
      * @param bool $do_it set to false in unit tests so the DB is not touched
      * @return array the URL array for the next page — stays on the error_update view with the
      *               action parameters stripped so a page reload does not re-submit the change
      */
     private function action_error_update(
         array        $url_array,
-        user_backend $usr_backend,
         user_message $usr_msg,
         bool         $do_it
     ): array
     {
-        if ($do_it and $usr_backend->is_admin()) {
+        $usr = $usr_msg->usr;
+        if ($do_it and $usr != null and $usr->is_admin()) {
             $log_id = (int)($url_array[url_var::ID] ?? 0);
             $status_id = (int)($url_array[rest_ctrl::PAR_LOG_STATUS] ?? 0);
             if ($log_id > 0 and $status_id > 0) {
                 $err_entry = new sys_log_backend();
-                $err_entry->set_user($usr_backend);
+                $err_entry->set_user_id($usr->id());
                 $err_entry->id = $log_id;
                 $err_entry->status_id = $status_id;
                 $save_msg = new backend_user_message();
@@ -1782,8 +1801,7 @@ class frontend
      * execute a create, update, or delete action on a sandbox object and return the next URL
      * @param array $url_array the normalised URL params
      * @param int $view the view ID that determines the object type
-     * @param user_ui $usr the session user executing the action
-     * @param user_message $usr_msg collects errors
+     * @param user_message $usr_msg collects errors and carries the requesting user executing the action
      * @param data_object $dto the frontend cache
      * @param string $crud one of url_var::CRUD_CREATE / CRUD_UPDATE / CRUD_DELETE
      * @param bool $do_it false for unit tests that should not touch the database
@@ -1855,7 +1873,6 @@ class frontend
     private function action_crud(
         array        $url_array,
         int          $view,
-        user_ui      $usr,
         user_message $usr_msg,
         data_object  $dto,
         string       $crud,
@@ -1876,9 +1893,9 @@ class frontend
 
         if ($do_it) {
             $result_msg = match ($crud) {
-                url_var::CRUD_CREATE => $dbo->add_via_api($usr, $usr_msg),
-                url_var::CRUD_UPDATE => $dbo->update($usr, $usr_msg),
-                url_var::CRUD_DELETE => $dbo->del($usr, $usr_msg),
+                url_var::CRUD_CREATE => $dbo->add_via_api($usr_msg),
+                url_var::CRUD_UPDATE => $dbo->update($usr_msg),
+                url_var::CRUD_DELETE => $dbo->del($usr_msg),
                 default => new user_message()
             };
             if (!$result_msg->is_ok()) {

@@ -77,7 +77,6 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -642,16 +641,23 @@ class db_object extends TextIdObject
      * save the frontend object in the database
      * TODO Prio 2 should be done via api
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function add_via_api(user $usr, user_message $usr_msg): user_message
+    function add_via_api(user_message $usr_msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($usr_msg->usr == null) {
+            $result = new user_message();
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object created below is owned by the user of this message
         $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $add_result = $db_obj->save($usr_msg_db);
         // take over the id assigned by the backend save, so the caller can show the added
         // object by its id (see frontend::action_crud)
@@ -672,16 +678,23 @@ class db_object extends TextIdObject
     /**
      * update the frontend object via api in the database
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function update(user $usr, user_message $usr_msg): user_message
+    function update(user_message $usr_msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($usr_msg->usr == null) {
+            $result = new user_message();
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object changed below is changed by the user of this message
         $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $upd_result = $db_obj->save($usr_msg_db);
         // take over the id of the saved object, because it can differ from the requested id:
         // e.g. a rename by a user that cannot change the standard row creates a new database
@@ -703,16 +716,23 @@ class db_object extends TextIdObject
     /**
      * exclude this frontend object via api from the database
      *
-     * @param user $usr the frontend user
-     * @param user_message $usr_msg the frontend message object to collect the message to the user
-     * * @return user_message the frontend message object filled up with the backend message for the user
+     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function del(user $usr, user_message $usr_msg): user_message
+    function del(user_message $usr_msg): user_message
     {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($usr_msg->usr == null) {
+            $result = new user_message();
+            $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return $result;
+        }
         $map = new MapObject();
+        // the backend message carries the backend twin of the requesting user,
+        // so the backend object excluded below is excluded for the user of this message
         $usr_msg_db = $map->convertMsgToDb($usr_msg);
-        $db_usr = $map->convertToDb($usr, $usr_msg_db);
-        $db_obj = $map->convertToDb($this, $usr_msg_db, $db_usr);
+        $db_obj = $map->convertToDb($this, $usr_msg_db);
         $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call

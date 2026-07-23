@@ -243,11 +243,13 @@ class word_write_url_tests extends word_url_tests
         $msg_ui = new user_message_ui();
         $changer_ui = new user_ui();
         $changer_ui->set_from_json($changer->api_json(), $msg_ui);
+        // the requesting user of the change is carried by the message (docs/llm/state-and-messages.md)
+        $msg_ui->usr = $changer_ui;
         $renamed = word_names::TEST_ADD . test_cleanup::EXT_RENAME;
         $wrd_ui = new word_ui();
         $wrd_ui->set_id($base_id);
         $wrd_ui->set_name($renamed);
-        $upd_msg = $wrd_ui->update($changer_ui, $msg_ui);
+        $upd_msg = $wrd_ui->update($msg_ui);
         $test_name = 'the rename by user 2 is saved';
         $t->assert_msg($test_name, $upd_msg);
 
@@ -283,7 +285,7 @@ class word_write_url_tests extends word_url_tests
         $wrd_back = new word_ui();
         $wrd_back->set_id($base_id);
         $wrd_back->set_name(word_names::TEST_ADD);
-        $back_msg = $wrd_back->update($changer_ui, $msg_ui);
+        $back_msg = $wrd_back->update($msg_ui);
         $test_name = 'the rename back to the standard name is saved without a duplicate message';
         $t->assert_msg($test_name, $back_msg);
         $test_name = 'the rename back removes the user overlay row';

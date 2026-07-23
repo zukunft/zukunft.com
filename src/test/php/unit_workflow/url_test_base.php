@@ -153,7 +153,7 @@ class url_test_base
         $this->usr_msg = new user_message();
         $this->usr_msg->usr = $this->usr;
         // render in test mode so that the snapshot is reproducible without backend calls
-        $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it, true);
+        $this->req = new user_request($this->t->usr1, $this->usr_msg, $this->ui->dto, $do_it, true);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
@@ -196,11 +196,11 @@ class url_test_base
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->usr, $this->req->usr_msg,
+            $this->req->usr_backend, $this->req->usr_msg,
             $this->req->dto, $this->req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls
-        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg,
+        $result = $this->ui->url_to_html($next_url, $this->req->usr_msg,
             $this->req->dto, $this->req->test_mode);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);
@@ -448,7 +448,7 @@ class url_test_base
     private function normalize_navbar_role(string $html): string
     {
         $result = $html;
-        $name = $this->req->usr->name();
+        $name = $this->req->usr_msg->usr?->name();
         if ($name != null and $name != '') {
             // scope the role prefix to the navbar user menu (the <details class="user-menu"> block)
             // only, so it is never added to other occurrences of the user name on the page e.g. in

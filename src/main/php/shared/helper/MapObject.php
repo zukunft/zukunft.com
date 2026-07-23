@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi_user;
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
@@ -154,11 +156,19 @@ class MapObject
     /**
      * convert a frontend object to a backend object via api json
      * @param db_object_ui $ui_obj the filled frontend object
-     * @param user|null $usr the frontend user used to define the owner of the backend object
+     * @param user_message $usr_msg the backend message that carries the requesting user who owns the created backend object
      * @return db_object_seq_id|db_object_multi_user|user the backend object filled with the value from the frontend object
      */
-    function convertToDb(db_object_ui $ui_obj, user_message $usr_msg, ?user $usr = null): db_object_seq_id|db_object_multi_user|user
+    function convertToDb(db_object_ui $ui_obj, user_message $usr_msg): db_object_seq_id|db_object_multi_user|user
     {
+        // the requesting user of the message becomes the owner of the backend object; without
+        // a user only a user object itself can be converted, so report the missing user and
+        // return an empty base object instead of a fatal in the backend object constructor
+        $usr = $usr_msg->usr;
+        if ($usr == null and $ui_obj::class != user_ui::class) {
+            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $ui_obj::class]);
+            return new db_object_seq_id();
+        }
         $db_obj = $this->dbObject($ui_obj, $usr);
         $db_obj->api_mapper($ui_obj->api_array(), $usr_msg);
         return $db_obj;
