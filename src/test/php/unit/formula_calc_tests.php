@@ -68,9 +68,6 @@ class formula_calc_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
-
         // init
         $lib = new library();
         $t_frm = new test_formulas($t);
@@ -173,9 +170,9 @@ class formula_calc_tests
         $t->assert_false($ts . 'without predefined formula', $t_frm->formula()->is_predefined());
 
         // get the id of the phrases that should be added to the result based on the formula reference text
-        $target = new phrase_list($usr);
-        $trm_lst = new term_list($usr);
-        $frm->set_user($usr);
+        $target = new phrase_list($t->usr1);
+        $trm_lst = new term_list($t->usr1);
+        $frm->set_user($t->usr1);
         $frm_wrd = $t_wrd->word_one();
         $target->add($frm_wrd->phrase());
         $trm_lst->add($frm_wrd->term());
@@ -187,11 +184,11 @@ class formula_calc_tests
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
         /*
-        $frm_next = new formula($usr);
+        $frm_next = new formula($t->usr1);
         $frm_next->name = "next";
         $frm_next->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $frm_next->id = 1;
-        $frm_has_next = new formula($usr);
+        $frm_has_next = new formula($t->usr1);
         $frm_has_next->usr_text = '=next';
         $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
@@ -240,7 +237,7 @@ class formula_calc_tests
         $test_name = 'result_can_calc allows the calculation when not all values are needed';
         $frm = $t_frm->formula_increase();
         $frm->need_all_val = false;
-        $res = new result($usr);
+        $res = new result($t->usr1);
         $t->assert_true($test_name, $frm->result_can_calc($res));
 
         // ... but it denies the calculation when all values are needed and one is still missing

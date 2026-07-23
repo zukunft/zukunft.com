@@ -41,7 +41,7 @@ SELECT language_form_insert_log_11110
 
 SELECT language_form_insert_log_11110
     ('plural'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      301::smallint,
      302::smallint,

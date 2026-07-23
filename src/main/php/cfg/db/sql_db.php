@@ -5726,7 +5726,7 @@ class sql_db
             try {
                 $this->exe($sql);
             } catch (Exception $e) {
-                //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+                log_err('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
             }
         }
         $sys->times->switch();

@@ -64,7 +64,6 @@ class term_list_tests
      */
     function run(test_cleanup $t): void
     {
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -83,12 +82,12 @@ class term_list_tests
         $t->subheader($ts . 'sql statement creation');
 
         // load only the names
-        $phr_lst = new term_list($usr);
-        $t->assert_sql_names($sc, $phr_lst, new term($usr));
-        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::IS_NAME);
+        $phr_lst = new term_list($t->usr1);
+        $t->assert_sql_names($sc, $phr_lst, new term($t->usr1));
+        $t->assert_sql_names($sc, $phr_lst, new term($t->usr1), verbs::IS_NAME);
 
         $test_name = 'load terms by ids';
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($t->usr1);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
         $t->assert_sql_by_ids($test_name, $sc, $trm_lst, $trm_ids);
         $lst = $t_trm->term_list();
@@ -214,10 +213,9 @@ class term_list_tests
      */
     function get_term_list_related(test_cleanup $t): term_list
     {
-        global $usr;
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($t->usr1);
         $trm_lst->add($t_trp->triple_pi()->term());
         $trm_lst->add($t_wrd->word()->term());
         return $trm_lst;
@@ -226,20 +224,19 @@ class term_list_tests
     /**
      * create the standard filled term object
      */
-    private function get_term(int $id, string $name, int $type): term
+    private function get_term(test_cleanup $t, int $id, string $name, int $type): term
     {
-        global $usr;
         $result = null;
         if ($type == 1) {
-            $wrd = new word($usr);
+            $wrd = new word($t->usr1);
             $wrd->set($id, $name);
             $result = $wrd->term();
         } elseif ($type == 2)  {
-            $trp = new triple($usr);
+            $trp = new triple($t->usr1);
             $trp->set($id, $name);
             $result = $trp->term();
         } elseif ($type == 3)  {
-            $frm = new formula($usr);
+            $frm = new formula($t->usr1);
             $frm->set($id, $name);
             $result = $frm->term();
         } elseif ($type == 4)  {

@@ -422,6 +422,7 @@ class test_base
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
+    public user $usr_test_admin; // a second testing user e.g. to test the user sandbox
     public user $usr_normal; // a user with the standard profile to test deny of admin functionality
     public user $usr_signup; // the system user to add new users to the database
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
@@ -3774,6 +3775,26 @@ class test_base
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
             $sbx->del($usr_msg);
+            // a delete by a user that cannot change the standard row only writes an exclusion
+            // to the overlay row, so remove the overlay row too for a complete cleanup
+            // (only sandbox objects have user overlay rows, e.g. a verb has none)
+            if ($sbx instanceof sandbox and $sbx->has_usr_cfg()) {
+                $sbx->del_usr_cfg($usr_msg);
+            }
+        } else {
+            // an excluded overlay row of a previous run hides the object from the load above,
+            // so it would survive every cleanup: find the object via the system user view
+            // and remove the leftover overlay row of the given user directly
+            $sbx_std = clone $sbx;
+            if ($sbx_std instanceof sandbox) {
+                $sbx_std->reset();
+                $sbx_std->set_user($this->usr_system);
+                $sbx_std->load_by_name($name);
+                if ($sbx_std->id() != 0) {
+                    $sbx_std->set_user($usr);
+                    $sbx_std->del_usr_cfg($usr_msg);
+                }
+            }
         }
     }
 

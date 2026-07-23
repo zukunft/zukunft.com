@@ -49,8 +49,6 @@ class element_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);

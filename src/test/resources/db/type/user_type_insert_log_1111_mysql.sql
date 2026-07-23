@@ -37,7 +37,7 @@ PREPARE user_type_insert_log_1111_call
 
 SELECT user_type_insert_log_1111
     ('Verified',
-     1,
+     3,
      1,
      255,
      256,

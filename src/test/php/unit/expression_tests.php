@@ -359,7 +359,6 @@ class expression_tests
         ?term_list   $in_trm_lst = null
     ): void
     {
-        global $usr;
         $t_frm = new test_formulas($t);
         $frm = $t_frm->formula();
 

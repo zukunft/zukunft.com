@@ -53,8 +53,6 @@ class view_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -74,21 +72,21 @@ class view_tests
         $t->assert_sql_foreign_key_create($msk);
 
         $t->subheader($ts . 'sql read');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $t->assert_sql_by_id($sc, $msk);
         $t->assert_sql_by_name($sc, $msk);
         $t->assert_sql_by_code_id($sc, $msk);
         $t->assert_sql_by_term($sc, $msk, $t_trm->term());
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->id = 2;
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
 
         $t->subheader($ts . 'sql read standard and user changes by name');
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard_by_name($sc, $msk);
@@ -147,10 +145,10 @@ class view_tests
         $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t_msk->view(), $usr_sys);
-        $t->assert_ex_and_import($t_msk->view_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_msk->view(), $t->usr_system);
+        $t->assert_ex_and_import($t_msk->view_filled(), $t->usr_system);
         $json_file = 'unit/view/car_costs.json';
-        $t->assert_json_file(new view($usr), $json_file);
+        $t->assert_json_file(new view($t->usr1), $json_file);
 
 
         $test_name = 'view create from json string';
@@ -161,7 +159,7 @@ class view_tests
         $t->assert($test_name, $dsp_text, $target);
 
         // sql to load the view components
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->id = 2;
 
         $lib = new library();
@@ -200,7 +198,7 @@ class view_tests
         $t->assert_sql_foreign_key_create($mrl);
 
         $t->subheader($ts . 'sql read');
-        $mrl = new view_relation($usr);
+        $mrl = new view_relation($t->usr1);
         $t->assert_sql_by_id($sc, $mrl);
 
         $t->subheader($ts . 'sql write insert');
@@ -242,8 +240,8 @@ class view_tests
         $msk->id = 1;
         $msk->code_id = null;
         $msk->name = view::TEST_NAME_ADD;
-        $msk->usr = $usr;
-        $wrd = new word($usr);
+        $msk->usr = $t->usr1;
+        $wrd = new word($t->usr1);
         $wrd->set_name(word::TEST_NAME);
         $result = $msk->display($wrd, 1);
         $target = '';

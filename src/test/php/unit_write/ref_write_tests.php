@@ -45,7 +45,6 @@ class ref_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_ref = new test_refs($t);
@@ -64,7 +63,7 @@ class ref_write_tests
 
         // load by phrase and type
         global $sys;
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $ref->set_phrase($wrd->phrase());
         $ref->set_predicate_id($sys->typ_lst->ref_typ->id(ref_types::WIKIDATA));
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
@@ -74,7 +73,7 @@ class ref_write_tests
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
-            $ref2 = new ref($usr);
+            $ref2 = new ref($t->usr1);
             $ref2->load_by_id($ref->id());
             $result = $ref2->phrase()->name();
             $target = word_names::TEST_ADD;

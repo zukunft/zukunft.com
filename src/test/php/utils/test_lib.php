@@ -335,34 +335,4 @@ class test_lib
         return $db_con;
     }
 
-    /*
-     * TODO Prio 0 review
-     */
-
-    /**
-     * create the dummy users for internal unit testing
-     * @return user the normal test user
-     */
-    function users_for_unit_tests(): user
-    {
-        global $usr_sys;
-        global $usr;
-
-        $msg = new backend_user_message();
-
-        // create a dummy system user for unit testing
-        $usr_sys = new user;
-        $usr_sys->id = users::SYSTEM_ID;
-        $usr_sys->name = users::SYSTEM_NAME;
-
-        // create a dummy user for testing
-        $usr = new user;
-        $usr->id = users::SYSTEM_TEST_ID;
-        $usr->name = users::SYSTEM_TEST_NAME;
-        $usr->set_profile(user_profiles::EMAIL, $msg);
-
-        return $usr;
-    }
-
-
 }

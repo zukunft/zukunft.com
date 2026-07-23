@@ -54,7 +54,6 @@ class result_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -64,7 +63,7 @@ class result_list_tests
         $t_frm = new test_formulas($t);
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
 
         // start the test section (ts)
         $ts = 'unit result list ';
@@ -85,36 +84,36 @@ class result_list_tests
             . 'e.g. to update the results if the value has been updated';
         $this->assert_sql_by_src($test_name, $t_phr->canton_zh_phrase_list(), $t);
 
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $grp->set_id(2);
         $t->assert_sql_by_group($sc, $res_lst, $grp);
         $t->assert_sql_by_group($sc, $res_lst, $grp, true);
 
         // sql to load a list of results by the phrase group id
-        $res_lst = new result_list($usr);
-        $grp = new group($usr);
+        $res_lst = new result_list($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(2);
         // TODO list the results for all users, formulas and sources
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $grp);
 
         // sql to load a list of results by the source phrase group id
-        $res_lst = new result_list($usr);
-        $grp = new group($usr);
+        $res_lst = new result_list($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(2);
         // TODO Prio 1 activate
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $grp, true);
 
         // sql to load a list of results by the word id
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         // TODO Prio 1 activate
-        //$wrd = new word($usr);
+        //$wrd = new word($t->usr1);
         //$wrd->id = 2;
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $wrd);
 
         // sql to load a list of results by the triple id
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         // TODO Prio 1 activate
-        //$trp = new triple($usr);
+        //$trp = new triple($t->usr1);
         //$trp->id = 3;
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $trp);
 
@@ -122,7 +121,7 @@ class result_list_tests
         $t->subheader($ts . 'im- and export');
 
         $json_file = 'unit/result/result_list_import_part.json';
-        $t->assert_json_file(new result_list($usr), $json_file);
+        $t->assert_json_file(new result_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

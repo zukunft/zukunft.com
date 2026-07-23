@@ -4,15 +4,25 @@
 
 ## high prio
 
-if the name of a renamed word is changed back, a message is shown, that the word name is already use, but instead the user_word should just be removed
+for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
 
-find all '&back=' url parameter and list here the prompts to fix these issues by using instead the url_var::BACK prefix
+the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
+
+add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
+
+if in the borderless change log table another field than the prime key e.g. the name is changed show the translated name of the field before the changed value e.g. 'added description "ISO 4217 alphabetic code for the ...' . and if the char limit is used, indicate with '...' that there is more. Show the full change text as mouseover popup.
+
+if in the borderless change log table a type field is shown, display the type name instead of the type number
+
+in the borderless change log table use for the username the linked version so that a click on the username shows the user default page
+
+if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
 
 if a user logs in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
 
-review the rename semantics for named sandbox objects: a rename by a user that cannot change the standard row goes through sandbox::delete_old_key_row, which deletes or excludes the old row and creates a new one with a new database id (the branch seems designed for link objects where the key is the link); decide whether a rename of a named object (word, formula, view, ...) should instead create a name overlay in the user table like a description change, so the database id stays stable for all users; the frontend now takes over the id of the saved object (db_object_ui::update and frontend::action_crud) so the view after a rename is no longer empty, but the id change itself remains user visible e.g. in bookmarked urls
+find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
 
@@ -135,3 +145,6 @@ covered by the planned rate limiter, ensure it also bounds the reset endpoint. i
 `$qp->call`, the documented never-executed sample string - add a guard/comment so it is never routed
 into exe(); finish deprecating sql_db::sf() in favour of bound parameters.
 
+### Prio 2
+
+allow at least admin users to overwrite the impact and usage via GUI 

@@ -37,7 +37,7 @@ PREPARE view_type_insert_log_1111_call
 
 SELECT view_type_insert_log_1111
     ('standard',
-     1,
+     3,
      1,
      714,
      715,

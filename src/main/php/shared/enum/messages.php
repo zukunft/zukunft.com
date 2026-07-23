@@ -1111,7 +1111,7 @@ enum messages: string
     case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
     case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
-    case FAILED_TO_EXCLUDE_UNUSED = 'Failed to exclude the unused '
+    case FAILED_TO_EXCLUDE_USED = 'Failed to exclude the used '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
@@ -1604,6 +1604,10 @@ enum messages: string
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
     case POPUP_IMPACT = 'popup_impact';
+    // the column headers of the change log table pure
+    case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
+    case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
+    case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
 
     // import
     case IMPORT_JSON = 'import';

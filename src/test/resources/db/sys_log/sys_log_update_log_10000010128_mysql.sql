@@ -44,7 +44,7 @@ PREPARE sys_log_update_log_10000010128_call FROM
     'SELECT sys_log_update_log_10000010128 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT sys_log_update_log_10000010128
-    (1,
+    (3,
      1,
      null,
      null,

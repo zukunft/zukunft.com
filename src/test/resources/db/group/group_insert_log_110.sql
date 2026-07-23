@@ -26,7 +26,7 @@ SELECT group_insert_log_110
     ($1, $2, $3, $4, $5, $6);
 
 SELECT group_insert_log_110
-        (1::bigint,
+        (3::bigint,
          1::smallint,
          320::smallint,
          'Pi'::text,

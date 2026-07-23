@@ -41,7 +41,7 @@ SELECT component_link_type_insert_log_1111
 
 SELECT component_link_type_insert_log_1111
     ('always'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      760::smallint,
      761::smallint,

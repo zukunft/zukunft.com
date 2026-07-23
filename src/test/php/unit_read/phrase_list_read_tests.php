@@ -57,7 +57,6 @@ class phrase_list_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);

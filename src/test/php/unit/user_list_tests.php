@@ -44,7 +44,6 @@ class user_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -62,7 +61,7 @@ class user_list_tests
 
         // sql to load a list of value by ids
         $test_name = 'load users by ids';
-        $usr_lst = new user_list($usr);
+        $usr_lst = new user_list($t->usr1);
         $t->assert_sql_by_ids($test_name, $sc, $usr_lst);
         $t->assert_sql_by_code_id($sc, $usr_lst);
         $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
@@ -70,7 +69,7 @@ class user_list_tests
 
         $t->subheader($ts . 'im- and export');
 
-        // $t->assert_json_file(new value_list($usr), $json_file);
+        // $t->assert_json_file(new value_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

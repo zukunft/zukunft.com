@@ -49,6 +49,9 @@ class styles
     const string STYLE_USER = 'user_specific';
     const string STYLE_RIGHT = 'right_ref';
     const string STYLE_BORDERLESS = 'borderless';
+    // a borderless table with the standard zukunft.com grey text (the .grey color), used for
+    // the change log table pure (see html_base::tbl and tbl_start_borderless_grey)
+    const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken

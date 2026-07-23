@@ -39,7 +39,7 @@ SELECT config_update_log_1021
     ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 
 SELECT config_update_log_1021
-        (1::bigint,
+        (3::bigint,
          1::smallint,
          176::smallint,
          null::text,

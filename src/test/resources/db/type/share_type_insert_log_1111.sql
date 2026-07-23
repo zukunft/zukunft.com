@@ -41,7 +41,7 @@ SELECT share_type_insert_log_1111
 
 SELECT share_type_insert_log_1111
     ('public'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      194::smallint,
      195::smallint,

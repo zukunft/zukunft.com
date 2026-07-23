@@ -59,7 +59,6 @@ class phrase_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
 
         // init
@@ -82,14 +81,14 @@ class phrase_write_tests
         $zh_id = $wrd->id();
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->load_by_link_id($zh_id, $is_id, $company_id);
         $zh_company_id = $trp->phrase()->id();
 
 
         // test the phrase display functions for words
-        $phr = new phrase($usr);
-        $phr->set_user($usr);
+        $phr = new phrase($t->usr1);
+        $phr->set_user($t->usr1);
         $phr->load_by_id($company_id);
         $result = $phr->name();
         $target = word_names::COMPANY;
@@ -105,7 +104,7 @@ class phrase_write_tests
         $t->assert('phrase->dsp_tbl word for ' . word_names::COMPANY, $result, $target);
 
         // test the phrase display functions for triples
-        $phr = new phrase($usr);
+        $phr = new phrase($t->usr1);
         $phr->set_id_from_obj($zh_company_id, triple::class);
         $phr->load_by_id($zh_company_id);
         $result = $phr->name();

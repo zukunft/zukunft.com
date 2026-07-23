@@ -67,7 +67,6 @@ class value_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -100,7 +99,7 @@ class value_list_tests
         $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
 
         // two values of the same (zero) impact are sorted by the numeric value descending
-        $num_lst = new value_list($usr);
+        $num_lst = new value_list($t->usr1);
         $num_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 2));
         $num_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 8));
         $num_lst->sort();
@@ -112,7 +111,7 @@ class value_list_tests
         // two values with the same impact and number are sorted by the group name, not by the
         // volatile group id (packed from the seed-assigned word ids), so the order is stable across
         // test database rebuilds; "city" is added first but "Zurich" must sort ahead of it by name
-        $tie_lst = new value_list($usr);
+        $tie_lst = new value_list($t->usr1);
         $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_city()->phrase()], 5));
         $tie_lst->add($t_val->value_for_phrases([$t_wrd->word_zh()->phrase()], 5));
         $tie_lst->sort();
@@ -122,7 +121,7 @@ class value_list_tests
         $t->assert($test_name, $tie_lst->lst()[1]->name(), word_names::CITY);
 
         $test_name = 'sort of an empty value list keeps it empty';
-        $empty_lst = new value_list($usr);
+        $empty_lst = new value_list($t->usr1);
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
 
@@ -134,7 +133,7 @@ class value_list_tests
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
-        $val_lst = new value_list($usr);
+        $val_lst = new value_list($t->usr1);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the city of Zurich';
         $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
@@ -174,7 +173,7 @@ class value_list_tests
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
-        $t->assert_json_file(new value_list($usr), $json_file);
+        $t->assert_json_file(new value_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

@@ -41,7 +41,7 @@ SELECT sys_log_status_insert_log_11110
 
 SELECT sys_log_status_insert_log_11110
     ('new'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      843::smallint,
      844::smallint,

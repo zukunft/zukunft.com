@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::CONST . 'workflows.php';
@@ -76,7 +77,6 @@ class url_test_base
     protected string $ts;            // the test section prefix used in the headers
     protected frontend $ui;          // the frontend used to render the html
     protected user_ui $usr;          // the rendering (frontend) user
-    protected user_ui $usr_sys;      // the system (admin) user used for admin protected objects
     protected user_message $usr_msg; // the message buffer carried through the steps
     protected user_request $req;     // the bundled request context for the workflow steps
     protected int $wf_id;            // the dynamic db id of the object the workflow runs on
@@ -110,9 +110,11 @@ class url_test_base
         $ui_sys->cfg = new config_ui();
         $this->usr = new user_ui();
         $this->usr->set_from_json($t->usr1->api_json(), $this->usr_msg);
-        $this->usr_sys = new user_ui();
-        $this->usr_sys->set_from_json($t->usr_system->api_json(), $this->usr_msg);
-        $this->usr_msg->usr = $this->usr_sys;
+        // the backend attributes an insert (the new row user and the change log author) to the
+        // message user (see db_object_seq_id insert log), so use usr1 - the preferred test user -
+        // to record all workflow changes for usr1; the test profile of usr1 is system privileged
+        // (user::is_system), so adding the reserved test names is still allowed (check_preserved)
+        $this->usr_msg->usr = $this->usr;
         $t->name = $name;
         $t->header($ts);
     }
@@ -123,11 +125,18 @@ class url_test_base
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 2 for wf2
      * @param string $name the workflow name used for the snapshot folder and the subheader e.g. 'change_word'
+     * @param user $usr the requesting user that is performing the workflow actions
      * @param int $fix_id if the workflow adds an object the database id of the object may change. For the test files the id is fixed so that the test files are not volatile any more
      * @param bool $do_it false to only render the steps (snapshot unit test), true to also write the
      *                     confirmed change to the database (workflow write test)
      */
-    protected function wf_start(int $wf_nbr, string $name, int $fix_id = 0, bool $do_it = false): void
+    protected function wf_start(
+        int $wf_nbr,
+        string $name,
+        user $usr,
+        int $fix_id = 0,
+        bool $do_it = false
+    ): void
     {
         // the snapshot file name prefix of this workflow e.g. 'wf2'
         $wf = workflows::WF_PREFIX . $wf_nbr;
@@ -135,10 +144,14 @@ class url_test_base
         $this->wf_fixed_id = $fix_id;
         // each workflow sets its own additional ids to normalize (e.g. the triple from/to words)
         $this->wf_norm_ids = [];
+        // fix the user
+        $usr_ui = new user_ui($usr->api_json());
+        $this->usr = $usr_ui;
         // start each workflow with a fresh message buffer so a warning from a previous workflow
         // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
+        // the message user is usr1 so the workflow writes are recorded for the preferred test user (see init)
         $this->usr_msg = new user_message();
-        $this->usr_msg->usr = $this->usr_sys;
+        $this->usr_msg->usr = $this->usr;
         // render in test mode so that the snapshot is reproducible without backend calls
         $this->req = new user_request($this->t->usr1, $this->usr, $this->usr_msg, $this->ui->dto, $do_it, true);
         // no page has been rendered yet; default the form method to get until the first render updates it
@@ -434,18 +447,34 @@ class url_test_base
      */
     private function normalize_navbar_role(string $html): string
     {
+        $result = $html;
         $name = $this->req->usr->name();
         if ($name != null and $name != '') {
-            // collapse any elevated role prefix (see user::navbar_role) that the live render has
-            // added, so re-adding the fixed role below never stacks e.g. to 'system system test';
-            // the display names of the elevated profiles have no const (see user_profiles.csv)
-            foreach (self::NAVBAR_ROLE_NAMES as $role) {
-                $html = str_replace($role . ' ' . $name, $name, $html);
+            // scope the role prefix to the navbar user menu (the <details class="user-menu"> block)
+            // only, so it is never added to other occurrences of the user name on the page e.g. in
+            // the change log 'who' column (the navbar_role label is a navbar-only display of the
+            // requesting user, see user::navbar_role)
+            $open = '<' . html_base::DETAILS . ' ' . html_base::CLASS_HTML . '="user-menu">';
+            $close = '</' . html_base::DETAILS . '>';
+            $start = strpos($html, $open);
+            if ($start !== false) {
+                $end = strpos($html, $close, $start);
+                if ($end !== false) {
+                    $end += strlen($close);
+                    $navbar = substr($html, $start, $end - $start);
+                    // collapse any elevated role prefix (see user::navbar_role) that the live render
+                    // has added, so re-adding the fixed role below never stacks e.g. to 'system
+                    // system test'; the display names of the elevated profiles have no const (csv)
+                    foreach (self::NAVBAR_ROLE_NAMES as $role) {
+                        $navbar = str_replace($role . ' ' . $name, $name, $navbar);
+                    }
+                    // then always show the fixed system test role in the navbar user menu
+                    $navbar = str_replace($name, self::WF_FIXED_ROLE . ' ' . $name, $navbar);
+                    $result = substr($html, 0, $start) . $navbar . substr($html, $end);
+                }
             }
-            // then always show the system test role
-            $html = str_replace($name, self::WF_FIXED_ROLE . ' ' . $name, $html);
         }
-        return $html;
+        return $result;
     }
 
 }

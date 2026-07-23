@@ -31,7 +31,7 @@ PREPARE user_official_type_insert_log_1110_call
 
 SELECT user_official_type_insert_log_1110
     ('EU passport',
-     1,
+     3,
      1,
      181,
      182,

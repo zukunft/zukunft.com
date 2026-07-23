@@ -61,7 +61,6 @@ class element_group_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
@@ -107,7 +106,7 @@ class element_group_write_tests
 
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
-            $phr_lst = new phrase_list($usr);
+            $phr_lst = new phrase_list($t->usr1);
             $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
 
             // get "this" from the formula element group list

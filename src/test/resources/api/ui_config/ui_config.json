@@ -1,10 +1,10 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 1,
+    "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-07-21T12:33:30+00:00",
+    "timestamp": "2026-07-22T15:20:42+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9163,6 +9163,12 @@
                 "code_id": "admin_form_field_user_uses_sandbox",
                 "description": "checkbox in the admin form so that an admin can switch if the pages for the user must be created from the user sandbox",
                 "id": 209
+            },
+            {
+                "name": "change log table pure",
+                "code_id": "invisible_change_log_table",
+                "description": "a borderless change log table with the three columns when, who and what limited to a config char count",
+                "id": 210
             }
         ],
         "component_link_types": [
@@ -20675,7 +20681,7 @@
                     },
                     {
                         "link_id": 1000,
-                        "id": 314,
+                        "id": 315,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -20844,7 +20850,7 @@
                     },
                     {
                         "link_id": 1015,
-                        "id": 314,
+                        "id": 315,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,
@@ -21042,7 +21048,7 @@
                     },
                     {
                         "link_id": 1031,
-                        "id": 314,
+                        "id": 315,
                         "name": "view tab box",
                         "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
                         "type_id": 199,

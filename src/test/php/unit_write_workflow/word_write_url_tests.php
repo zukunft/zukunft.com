@@ -85,9 +85,10 @@ class word_write_url_tests extends word_url_tests
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, true);
         $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, true);
 
-        // a change by a user that does not own the word: unlike change_word_workflow (usr1 changes the
-        // system owned word) this is the linear confirm-write without the back / cancel excursions, and
-        // it checks the per-user sandbox side effect - the changing user gets the change, the owner does not
+        // a change by a user that does not own the word: unlike change_word_workflow (usr1 changes its
+        // own word) this creates a base word owned by usr1 and lets usr2 change it in a linear
+        // confirm-write without the back / cancel excursions, and it checks the per-user sandbox side
+        // effect - the changing user (usr2) gets the change as an overlay, the owner (usr1) does not
         $this->change_word_by_other_user($t);
 
         // the same change wrapped in real logins: the first save of a user flips uses_sandbox, which
@@ -207,12 +208,13 @@ class word_write_url_tests extends word_url_tests
      * @param test_cleanup $t the test environment
      */
     /**
-     * a rename by a user who does not own the word must never lead to an empty view afterwards:
-     * the frontend ui object takes over the id of the saved backend object (see
-     * db_object_ui::update), because a rename by a user that cannot change the standard row can
-     * create a new database row with a new id; the contract checked here is that the word loaded
-     * by the ui object's id after the rename shows the new name for the renaming user, while the
-     * owner keeps the original word under the original id
+     * a rename by a user who does not own the word must never lead to an empty view afterwards
+     * and must never lose the values related to the word: the rename of a named object by a user
+     * that cannot change the standard row is written to the name of the user overlay row (see the
+     * key update handling in sandbox::save), so the database id stays stable and with it all
+     * related values, formulas and links; the contract checked here is that the word id is
+     * unchanged, the renaming user sees the new name and the original description, and the owner
+     * keeps the original word
      *
      * @param test_cleanup $t the test environment
      */
@@ -249,8 +251,12 @@ class word_write_url_tests extends word_url_tests
         $test_name = 'the rename by user 2 is saved';
         $t->assert_msg($test_name, $upd_msg);
 
-        // the id of the ui object must resolve to the renamed word for user 2, also if the
-        // backend has created a new database row for the rename (the id take over)
+        // the rename of a named object never changes the database id, because the id carries
+        // all relations: the values, formulas and links of the word would be lost with a new id
+        $test_name = 'the word id is unchanged by the rename';
+        $t->assert($test_name, $wrd_ui->id(), $base_id);
+
+        // the id of the ui object must resolve to the renamed word for user 2
         $test_name = 'the ui object id shows the renamed word for user 2';
         $wrd_chk = new word($changer);
         $wrd_chk->load_by_id($wrd_ui->id());
@@ -267,6 +273,25 @@ class word_write_url_tests extends word_url_tests
         $wrd_owner = new word($owner);
         $wrd_owner->load_by_id($base_id);
         $t->assert($test_name, $wrd_owner->name(), word_names::TEST_ADD);
+
+        // renaming back to the standard name must not report the name as already used, because
+        // the similar object found by the duplicate check is the same database row; the name
+        // overlay then matches the standard row again, so the user overlay row is removed
+        // use $debug for better error detection like this
+        //global $debug;
+        // $debug = 11;
+        $wrd_back = new word_ui();
+        $wrd_back->set_id($base_id);
+        $wrd_back->set_name(word_names::TEST_ADD);
+        $back_msg = $wrd_back->update($changer_ui, $msg_ui);
+        $test_name = 'the rename back to the standard name is saved without a duplicate message';
+        $t->assert_msg($test_name, $back_msg);
+        $test_name = 'the rename back removes the user overlay row';
+        $wrd_undo_chk = new word($changer);
+        $wrd_undo_chk->load_by_id($base_id);
+        $t->assert_false($test_name, $wrd_undo_chk->has_usr_cfg());
+        $test_name = 'after the rename back user 2 sees the standard name again';
+        $t->assert($test_name, $wrd_undo_chk->name(), word_names::TEST_ADD);
 
         // remove the created rows (the cleanup also covers the renamed variant of the test name)
         $this->cleanup_test_words($t);
@@ -445,9 +470,11 @@ class word_write_url_tests extends word_url_tests
     {
         $wrd = new word($t->usr1);
         foreach (word_names::TEST_WORDS as $wrd_name) {
-            // write_named_cleanup removes the usr1 / usr2 sandbox rows; the reserved test word is owned
-            // by the system user (it is added with the system message user), so remove that row too -
-            // otherwise it survives between runs and a later add keeps its old (changed) description
+            // write_named_cleanup removes the usr1 / usr2 sandbox rows including the usr1 owned base
+            // word (the workflows add it with the usr1 message user, see url_test_base::init); the
+            // system user cleanup stays to also remove a system owned row left over from a run
+            // before the usr1 message user - otherwise it survives between runs and a later add
+            // resurrects it with its old (system authored) change log entries
             $t->write_named_cleanup($wrd, $wrd_name);
             $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);
         }

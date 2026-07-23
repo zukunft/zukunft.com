@@ -87,10 +87,8 @@ class all_unit_tests extends test_cleanup
 
         // remember the global var for restore after the unit tests
         global $db_con;
-        global $usr;
         global $sys;
         $global_db_con = $db_con;
-        $global_usr = $usr;
 
         // create the testing users
         $this->subheader($ts . 'prepare');
@@ -109,7 +107,7 @@ class all_unit_tests extends test_cleanup
         $tl = new test_lib();
         $tl->ui_test_cache($this->usr_dev, $this);
         $u_env = new unit_env();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($this->usr1);
 
         // do the general unit tests
         $all = new all_tests();
@@ -184,7 +182,6 @@ class all_unit_tests extends test_cleanup
 
         // restore the global vars
         $db_con = $global_db_con;
-        $usr = $global_usr;
     }
 
     /**
@@ -207,10 +204,6 @@ class all_unit_tests extends test_cleanup
     protected function users_for_unit_tests(): void
     {
         global $sys;
-
-        // TODO Prio 1 remove global system user for security reasons
-        global $usr;
-        global $usr_sys;
 
         // create a dummy admin user for unit testing
         $usr_admin = new user;
@@ -235,6 +228,13 @@ class all_unit_tests extends test_cleanup
         $usr2->name = users::SYSTEM_TEST_PARTNER_NAME;
         $usr2->set_profile(user_profiles::EMAIL, $msg);
         $this->usr2 = $usr2;
+
+        // create a test admin user for testing
+        $usr_test_admin = new user;
+        $usr_test_admin->id = users::SYSTEM_TEST_ADMIN_ID;
+        $usr_test_admin->name = users::SYSTEM_TEST_ADMIN_NAME;
+        $usr_test_admin->set_profile(user_profiles::ADMIN, $msg);
+        $this->usr_test_admin = $usr_test_admin;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;

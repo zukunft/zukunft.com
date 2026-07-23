@@ -42,7 +42,7 @@ PREPARE ip_range_update_log_111110_call FROM
     'SELECT ip_range_update_log_111110 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT ip_range_update_log_111110
-    (1,
+    (3,
      1,
      859,
      null,

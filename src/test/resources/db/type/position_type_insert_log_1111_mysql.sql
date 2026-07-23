@@ -37,7 +37,7 @@ PREPARE position_type_insert_log_1111_call
 
 SELECT position_type_insert_log_1111
     ('below',
-     1,
+     3,
      1,
      764,
      765,

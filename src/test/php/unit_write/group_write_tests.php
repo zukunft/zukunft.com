@@ -58,7 +58,6 @@ class group_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
@@ -118,9 +117,9 @@ class group_write_tests
 
         // test if the time word is correctly excluded
         // TODO move to phrase list tests
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
-        $phr_grp = new group($usr);
+        $phr_grp = new group($t->usr1);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
@@ -140,7 +139,7 @@ class group_write_tests
 
         // load based on id
         if ($phr_grp->is_id_set()) {
-            $phr_grp_reload = new group($usr);
+            $phr_grp_reload = new group($t->usr1);
             $phr_grp_reload->load_by_id($phr_grp->id());
             $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->words();
             $result = array_diff(
@@ -152,7 +151,7 @@ class group_write_tests
         $t->assert('phrase_group->load for id ' . $phr_grp->id(), $result, $target);
 
         // test getting the phrase group id based on word and word link ids
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(triple_names::CITY_ZH, word_names::INHABITANTS));
         $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
@@ -167,20 +166,20 @@ class group_write_tests
         $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS));
         $grp = $phr_lst->get_grp_id();
-        $grp_check = new group($usr);
+        $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
         $t->assert('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
         $grp = $phr_lst->get_grp_id();
-        $grp_check = new group($usr);
+        $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();

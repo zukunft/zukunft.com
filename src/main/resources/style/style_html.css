@@ -286,6 +286,13 @@ a:hover {
     color: #9ea09e; /* the zukunft.com grey used for the old value of a change */
 }
 
+/* the invisible change log table (class "table table-borderless grey") shows its cells in the
+   standard zukunft.com grey; the extra .grey class raises the specificity above the bootstrap
+   ".table > :not(caption) > * > *" cell color rule, which a plain .grey on the table would lose to */
+.table.grey > :not(caption) > * > * {
+    color: #9ea09e;
+}
+
 .changed {
     color: #6b86c2; /* a light blue between the grey old value and the #385eb7 link blue to mark a changed value */
 }

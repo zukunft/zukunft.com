@@ -136,7 +136,6 @@ class formula_ui_tests
         // TODO review
 
         /*
-        global $usr;
         $ts = 'unit ui html formula user ';
         $t->header($ts);
 

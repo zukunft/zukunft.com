@@ -62,7 +62,6 @@ class all_unit_read_tests extends all_unit_tests
     function run_unit_db_tests(all_tests $t): void
     {
         global $db_con;
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
@@ -79,7 +78,6 @@ class all_unit_read_tests extends all_unit_tests
         // create the testing users
         $t->subheader($ts . 'prepare');
         $this->set_users();
-        $usr = $this->usr1;
 
         // check that the main database test entries are still active
         $t_db->create_test_db_entries($t);

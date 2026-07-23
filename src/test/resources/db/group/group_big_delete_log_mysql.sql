@@ -17,7 +17,7 @@ BEGIN
 END;
 
 SELECT group_big_delete_log
-    (1,
+    (3,
      3,
      320,
      'Pi',

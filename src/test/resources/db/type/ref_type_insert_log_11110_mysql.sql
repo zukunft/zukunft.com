@@ -37,7 +37,7 @@ PREPARE ref_type_insert_log_11110_call
 
 SELECT ref_type_insert_log_11110
     ('wikidata',
-     1,
+     3,
      1,
      352,
      353,

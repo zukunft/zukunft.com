@@ -107,7 +107,7 @@ class triple_url_tests extends url_test_base
     protected function add_triple_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_triple workflow creates a new triple, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty triple
         $url_arr = test_triples::triple_new_url();
@@ -143,7 +143,7 @@ class triple_url_tests extends url_test_base
     protected function add_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_triple workflow creates a new triple, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // initial url with an empty triple
@@ -195,7 +195,7 @@ class triple_url_tests extends url_test_base
         // sandbox overlay from a previous run must not mask the freshly written base value)
         if ($do_it) {
             $this->assert_triple_in_db('add_triple workflow has written the triple',
-                triple_names::SYSTEM_TEST_ADD, $this->t->usr_system, triple_names::SYSTEM_TEST_ADD_COM);
+                triple_names::SYSTEM_TEST_ADD, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_COM);
         }
     }
 
@@ -212,7 +212,7 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_by_name_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_BY_NAME, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
@@ -272,7 +272,7 @@ class triple_url_tests extends url_test_base
     {
         // the workflow runs on the reserved 'System Test Triple'; resolve its db id by name and set the
         // fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
@@ -340,7 +340,7 @@ class triple_url_tests extends url_test_base
      */
     protected function change_triple_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
@@ -453,7 +453,7 @@ class triple_url_tests extends url_test_base
     {
         // the workflow runs on the reserved 'System Test Triple' so a blocked delete can never touch
         // seeded data; resolve its db id by name and set the fixed snapshot id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE_FAIL, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
@@ -510,7 +510,7 @@ class triple_url_tests extends url_test_base
     {
         // the del_triple workflow runs on the reserved 'System Test Triple'; resolve its current db id
         // by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_TRIPLE, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
         $this->set_word_norm_ids();
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var

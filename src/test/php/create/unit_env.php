@@ -91,22 +91,12 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 class unit_env
 {
 
-    function init_unit_tests(): void
+    function init_unit_tests(user $usr): void
     {
-        global $usr;
-        global $usr_sys;
-        global $sys;
-
         // prepare the unit tests
         $this->init_sys_log_status();
         $this->init_user_profiles();
         $this->init_job_types();
-
-        // set the profile of the test users
-        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::EMAIL);
-        $usr_sys->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
-        $usr->id = 1;
-        $this->init_sys_users($usr_sys);
 
         // continue with preparing unit tests
         $this->init_phrase_types();

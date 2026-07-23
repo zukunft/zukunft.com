@@ -26,7 +26,7 @@ SELECT phrase_type_update_log_100200
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT phrase_type_update_log_100200
-    (1::bigint,
+    (3::bigint,
      1::smallint,
      837::smallint,
      'changed description'::text,

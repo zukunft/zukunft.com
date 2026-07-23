@@ -220,7 +220,7 @@ class test_users
     }
 
     /**
-     * @return user a user used for unit testing with the test profile
+     * @return user a normal user used for unit testing with the test profile
      */
     static function user_sys_test(): user
     {

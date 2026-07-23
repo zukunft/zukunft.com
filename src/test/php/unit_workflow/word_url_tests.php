@@ -74,7 +74,6 @@ class word_url_tests extends url_test_base
         $this->init($t, 'word url->', 'url word ');
         $ui = $this->ui;
         $usr_ui = $this->usr;
-        $usr_sys_ui = $this->usr_sys;
         $usr_msg = $this->usr_msg;
         $ts = $this->ts;
 
@@ -114,6 +113,15 @@ class word_url_tests extends url_test_base
         $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD), $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // remove any test word left over from an aborted earlier run before the add below;
+        // without this purge a leftover standard row owned by another user (e.g. the system user
+        // of runs before the usr1 message user) would not be deleted by the usr1 delete request
+        // (a non-owner delete only excludes) and the following add would resurrect the old row
+        // together with its old change log entries instead of creating a fresh row owned by usr1
+        $wrd_pre = new word($t->usr1);
+        $t->write_named_cleanup($wrd_pre, word_names::TEST_ADD);
+        $t->write_named_cleanup_one($wrd_pre, $t->usr_system, word_names::TEST_ADD);
 
         // a create or delete request is executed by url_to_action (not url_to_html, which only
         // renders), so use the combined execute and render call and check the database result
@@ -166,7 +174,7 @@ class word_url_tests extends url_test_base
         // (the failing url was ?mask=3&id=259&back=259&confirm=1&Name=USD&py=3&...)
         $test_name = 'change word save url maps without missing url mapper error';
         $save_msg = new user_message();
-        $save_msg->usr = $usr_sys_ui;
+        $save_msg->usr = $usr_ui;
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = word_names::MATH_ID;
@@ -188,7 +196,7 @@ class word_url_tests extends url_test_base
         // must still report the missing url key (the error path stays intact)
         $test_name = 'pod url without mask_id still reports the missing url key';
         $err_msg = new user_message();
-        $err_msg->usr = $usr_sys_ui;
+        $err_msg->usr = $usr_ui;
         $url_arr = [];
         $url_arr[url_var::MASK_POD] = views::WORD_EDIT;
         $url_arr[url_var::ID] = word_names::MATH_ID;
@@ -203,7 +211,7 @@ class word_url_tests extends url_test_base
         // confirm change view (views::CONFIRM_EDIT) built by url_to_action, which shows the
         // pending change before it is written to the database (docs/llm/state-and-messages.md)
         $test_name = 'pressing save shows the confirm change view with the pending change';
-        $usr_msg->usr = $usr_sys_ui;
+        $usr_msg->usr = $usr_ui;
         // build the edit form url array from a test word instead of hard-coding the field keys;
         // change the description so the confirm view shows it as the pending change.
         // the test word is admin protected, so render it as the system (admin) user
@@ -214,7 +222,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false, true);
+        $req = new user_request($usr_backend, $usr_ui, $usr_msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -227,7 +235,7 @@ class word_url_tests extends url_test_base
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
-        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $usr_sys_ui, $usr_msg, $ui->dto, false);
+        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $usr_ui, $usr_msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
 
         /*
@@ -291,7 +299,7 @@ class word_url_tests extends url_test_base
      */
     protected function add_word_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::WF_ADD_WORD_FAIL, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_WORD_FAIL, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // initial url with an empty word
         $url_arr = test_words::word_new_url();
@@ -329,7 +337,7 @@ class word_url_tests extends url_test_base
      */
     protected function add_word_workflow(int $wf_nbr, bool $do_it = false): void
     {
-        $this->wf_start($wf_nbr, workflows::ADD_WORD, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::ADD_WORD, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // initial url with an empty word
         $url_arr = test_words::word_new_url();
@@ -371,7 +379,7 @@ class word_url_tests extends url_test_base
         // a write run must actually create the word, so check it is now in the database
         if ($do_it) {
             $this->assert_word_in_db('add_word workflow has written the word',
-                word_names::TEST_ADD, $this->t->usr_system);
+                word_names::TEST_ADD, $this->t->usr1);
         }
 
     }
@@ -394,7 +402,7 @@ class word_url_tests extends url_test_base
     {
         // the change_word workflow runs on the 'System Test Word' added above, not on real data;
         // resolve its current database id by name and set the fixed snapshot id of the test word
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $wrd = new word($this->t->usr1);
@@ -462,7 +470,8 @@ class word_url_tests extends url_test_base
         $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
 
         // a write run must actually persist the change, so check the new description in the database;
-        // the change is a usr1 user sandbox overlay on top of the system base, so read it as usr1
+        // usr1 owns the base word (it is added with the usr1 message user, see url_test_base::init),
+        // so the change is written to the usr1 standard row and is read back as usr1
         if ($do_it) {
             $this->assert_word_in_db('change_word workflow has changed the word',
                 word_names::TEST_ADD, $this->t->usr1, word_names::TEST_CHANGE_COM);
@@ -508,7 +517,7 @@ class word_url_tests extends url_test_base
     protected function change_word_fail_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the workflow runs on the 'System Test Word'; resolve its current database id by name
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD_FAIL, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD_FAIL, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // initial url with the added word
         $url_arr = test_words::word_add_url();
@@ -575,7 +584,7 @@ class word_url_tests extends url_test_base
         // the workflow runs on the reserved 'System Test Word' (created earlier in this test run) so a
         // blocked delete can never touch seeded data; resolve its database id by name and set the fixed
         // snapshot id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD_FAIL, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD_FAIL, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id and load the related objects so the usage shows
         // that the word is still in use
@@ -639,7 +648,7 @@ class word_url_tests extends url_test_base
     {
         // the del_word workflow runs on the 'System Test Word' added above;
         // resolve its current database id by name and set the fixed snapshot id of the test word
-        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD, word_names::TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_WORD, $this->t->usr1, word_names::TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $wrd = new word($this->t->usr1);
@@ -726,8 +735,8 @@ class word_url_tests extends url_test_base
     /**
      * TODO Prio 2 create a more general form
      * check that the second change_word round actually filled the previously empty fields of the test
-     * word, used by the change write workflow to verify the filled confirm step was persisted. the fill
-     * is a usr1 user sandbox overlay on top of the system base, so the plural is read as usr1.
+     * word, used by the change write workflow to verify the filled confirm step was persisted. usr1
+     * owns the base word (added with the usr1 message user), so the plural is written to and read as usr1.
      *
      * @param string $test_name the description of the assertion
      * @param string $name the name of the test word in the database

@@ -72,7 +72,6 @@ class value_ui_tests
 
         // TODO review
 
-        global $usr;
 
         // start the test section (ts)
         $ts = 'unit ui html value ';
@@ -80,16 +79,16 @@ class value_ui_tests
 
         /*
         // prepare the frontend testing
-        $phr_lst_added = new phrase_list($usr);
+        $phr_lst_added = new phrase_list($t->usr1);
         $phr_lst_added->add_name(words::TN_INHABITANTS);
         $phr_lst_added->add_name(words::TN_MIO);
         $phr_lst_added->add_name(words::TN_2020);
         $phr_lst_ch = clone $phr_lst_added;
         $phr_lst_ch->add_name(words::TN_CH);
         $phr_lst_added->add_name(words::TN_RENAMED);
-        $val_added = new value($usr);
+        $val_added = new value($t->usr1);
         $val_added->load_by_grp($phr_lst_added->get_grp_id());
-        $val_ch = new value($usr);
+        $val_ch = new value($t->usr1);
         $val_ch->load_by_grp($phr_lst_ch->get_grp_id());
 
         // call the add value page and check if at least some basic keywords are returned
@@ -124,18 +123,18 @@ class value_ui_tests
         $t->subheader($ts . 'Test the value list class (classes/value_list.php)');
 
         // check the database consistency for all values
-        $val_lst = new value_list($usr);
+        $val_lst = new value_list($t->usr1);
         $result = $val_lst->check_all();
         $target = '';
         $t->assert('value_list->check_all', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // test get a single value from a value list by group and time
         // get all value for Switzerland
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->load_by_name(words::TN_CH);
         $val_lst = $wrd->val_lst();
         // build the phrase list to select the value sales for 2014
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
         $wrd_time = $wrd_lst->assume_time();
         $grp = $wrd_lst->get_grp();
@@ -151,7 +150,7 @@ class value_ui_tests
 
         // ... get all times of the Switzerland values
         $time_lst = $val_lst->time_list();
-        $wrd_2014 = new word($usr);
+        $wrd_2014 = new word($t->usr1);
         $wrd_2014->load_by_name(words::TN_2014);
         if ($time_lst->does_contain($wrd_2014)) {
             $result = true;
@@ -161,7 +160,7 @@ class value_ui_tests
         $t->assert('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name(), $result, true, $t::TIMEOUT_LIMIT_DB);
 
         // ... and filter by times
-        $time_lst = new word_list($usr);
+        $time_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(words::TN_2019, words::TN_2021));
         $used_value_lst = $val_lst->filter_by_time($time_lst);
         $used_time_lst = $used_value_lst->time_list();
@@ -173,7 +172,7 @@ class value_ui_tests
         $t->assert('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name(), $result, true);
 
         // ... but not 2020
-        $wrd_2020 = new word($usr);
+        $wrd_2020 = new word($t->usr1);
         $wrd_2020->load_by_name(words::TN_2020);
         if ($time_lst->does_contain($wrd_2020)) {
             $result = true;
@@ -183,12 +182,12 @@ class value_ui_tests
         $t->assert('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name(), $result, true);
 
         // ... and filter by phrases
-        $sector_lst = new word_list($usr);
+        $sector_lst = new word_list($t->usr1);
         $sector_lst->load_by_names(array('Low Voltage Products', 'Power Products'));
         $phr_lst = $sector_lst->phrase_lst();
         $used_value_lst = $val_lst->filter_by_phrase_lst($phr_lst);
         $used_phr_lst = $used_value_lst->phr_lst();
-        $wrd_auto = new word($usr);
+        $wrd_auto = new word($t->usr1);
         $wrd_auto->load_by_name('Discrete Automation and Motion');
         if ($used_phr_lst->does_contain($wrd_auto)) {
             $result = true;
@@ -198,7 +197,7 @@ class value_ui_tests
         $t->assert('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name(), $result, true);
 
         // ... but not 2016
-        $wrd_power = new word($usr);
+        $wrd_power = new word($t->usr1);
         $wrd_power->load_by_name('Power Products');
         if ($used_phr_lst->does_contain($wrd_power)) {
             $result = true;
@@ -211,9 +210,9 @@ class value_ui_tests
         $t->subheader($ts . 'Test the value list display class (classes/value_list_display.php)');
 
         // test the value table
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->load_by_name('Nestlé');
-        $wrd_col = new word($usr);
+        $wrd_col = new word($t->usr1);
         $wrd_col->load_by_name(words::TN_CASH_FLOW);
         $val_lst = new value_list_dsp();
         // TODO review
@@ -222,7 +221,7 @@ class value_ui_tests
         $target = values::TV_NESN_SALES_2016_FORMATTED;
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
-        //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());
+        //$target = zuv_table ($wrd->id, $wrd_col->id, $t->usr1->id());
         //$t->assert('value_list_dsp->dsp_table for "'.$wrd->name.'"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         */
 

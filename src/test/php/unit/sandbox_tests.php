@@ -104,7 +104,6 @@ class sandbox_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
 
         // init
@@ -144,7 +143,7 @@ class sandbox_tests
         $to = $t_wrd->word();
         $vrb = $t_vrb->verb();
         $wrd->set_name($wrd->name() . sandbox_link::KEY_SEP . $vrb->name());
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set_from($wrd->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($to->phrase());
@@ -161,7 +160,7 @@ class sandbox_tests
         $to = $t_wrd->word();
         $vrb = $t_vrb->verb();
         $vrb->set_name($vrb->name() . sandbox_link::KEY_SEP . $wrd->name());
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set_from($wrd->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($to->phrase());
@@ -174,14 +173,14 @@ class sandbox_tests
 
 
         $t->subheader($ts . 'link list');
-        $lst = new component_link_list($usr);
+        $lst = new component_link_list($t->usr1);
         $test_name = 'add link is fine';
         $result = $lst->add_link($t_cmp->component_link());
         $t->assert_true($test_name, $result);
         $test_name = 'adding link twice is rejected';
         $result = $lst->add_link($t_cmp->component_link());
         $t->assert_false($test_name, $result);
-        $lst = new component_link_list($usr);
+        $lst = new component_link_list($t->usr1);
         $test_name = 'add component is fine';
         $result = $lst->add(1, $t_msk->view(), $t_cmp->component(), 1);
         $t->assert_true($test_name, $result);
@@ -208,9 +207,9 @@ class sandbox_tests
         $t->assert($test_name, $result, $target);
 
         // test if two sources are supposed to be the same
-        $src1 = new source($usr);
+        $src1 = new source($t->usr1);
         $src1->set(sources::SIB_ID, sources::IPCC_AR6_SYNTHESIS);
-        $src2 = new source($usr);
+        $src2 = new source($t->usr1);
         $src2->set(sources::WIKIDATA_ID, sources::IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
         $t->assert("two sources are not the same if the id does not match", $result, false);
@@ -226,20 +225,20 @@ class sandbox_tests
 
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
-        $wrd1 = new word($usr);
+        $wrd1 = new word($t->usr1);
         $wrd1->id = 1;
         $wrd1->set_name(sources::IPCC_AR6_SYNTHESIS);
-        $src2 = new source($usr);
+        $src2 = new source($t->usr1);
         $src2->id = 2;
         $src2->set_name(sources::IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
 
         // but a formula should not have the same name as a word
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set_name(word_names::MIO);
         $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_types::FORMULA_LINK);
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $frm->set_name(word_names::MIO);
         $result = $wrd->is_similar($frm);
         $t->assert("a formula should not have the same name as a word", $result, true);
@@ -1716,7 +1715,7 @@ class sandbox_tests
         $t->resource_path = 'db/sandbox/';
 
         // the word changer query (used in _sandbox->changer_sql)
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->id = 1;
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;

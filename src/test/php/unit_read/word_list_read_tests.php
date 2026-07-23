@@ -57,7 +57,6 @@ class word_list_read_tests
         // TODO create const wherever possible
         // TODO use the test user instead of the global user
 
-        global $usr;
 
         // init
         $t->name = 'word list read db';

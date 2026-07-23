@@ -55,7 +55,6 @@ class term_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $usr;
 
         // init
         $lib = new library();
@@ -70,7 +69,7 @@ class term_write_tests
         $wrd_zh = $t_db->test_word(word_names::ZH);
 
         // check that adding the predefined word "company" creates an error message
-        $term = new term($usr);
+        $term = new term($t->usr1);
         $term->load_by_obj_name(word_names::ZH);
         $target = 'A word with the name "' . word_names::ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
@@ -78,7 +77,7 @@ class term_write_tests
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a triple
-        $term = new term($usr);
+        $term = new term($t->usr1);
         $term->load_by_obj_name(triple_names::CITY_ZH);
         $target = '<style class="text-danger">A triple with the name "' . triple_names::CITY_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
@@ -86,7 +85,7 @@ class term_write_tests
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a verb
-        $term = new term($usr);
+        $term = new term($t->usr1);
         $term->load_by_obj_name(verbs::IS);
         $target = '<style class="text-danger">A word with the name "" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
@@ -95,7 +94,7 @@ class term_write_tests
         //$t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a formula
-        $term = new term($usr);
+        $term = new term($t->usr1);
         $term->load_by_obj_name(formula_names::INCREASE);
         // each formula name has also a word
         $target = 'A formula with the name "' . formula_names::INCREASE . '" already exists. '

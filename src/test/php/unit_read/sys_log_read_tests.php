@@ -45,7 +45,6 @@ class sys_log_read_tests
     {
 
         global $db_con;
-        global $usr;
 
         // init
         $t->name = 'error log read db->';

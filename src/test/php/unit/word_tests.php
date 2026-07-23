@@ -92,8 +92,6 @@ class word_tests
     {
 
         global $sys;
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -115,13 +113,13 @@ class word_tests
         $t->assert_sql_foreign_key_create($wrd);
 
         $t->subheader($ts . 'sql read');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $t->assert_sql_by_id($sc, $wrd);
         $t->assert_sql_by_name($sc, $wrd);
         $this->assert_sql_formula_name($t, $sc, $wrd);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->id = word_names::CONST_ID;
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
@@ -130,7 +128,7 @@ class word_tests
         $this->assert_sql_view($t, $wrd);
 
         $t->subheader($ts . 'sql write insert');
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set_name(word_names::TEST_ADD);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $wrd = $t_wrd->word();
@@ -171,7 +169,7 @@ class word_tests
         $wrd = $t_wrd->word();
         $wrd->description = word_names::MATH_COM;
         $wrd_updated = $t_wrd->word();
-        $wrd_updated->set_user($usr_sys);
+        $wrd_updated->set_user($t->usr_system);
         $wrd_updated->plural = word_names::TEST_RENAMED;
         $wrd_updated->description = word_names::TEST_RENAMED;
         $wrd_updated->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
@@ -468,52 +466,52 @@ class word_tests
         $t->subheader($ts . 'im- and export');
 
         // TODO check that all objects have a im and export test
-        $t->assert_ex_and_import($t_wrd->word(), $usr_sys);
-        $t->assert_ex_and_import($t_wrd->word_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_wrd->word(), $t->usr_system);
+        $t->assert_ex_and_import($t_wrd->word_filled(), $t->usr_system);
         $json_file = 'unit/word/second.json';
-        $t->assert_json_file(new word($usr), $json_file);
+        $t->assert_json_file(new word($t->usr1), $json_file);
 
         $t->subheader($ts . 'sync and fill');
         $test_name = 'check if the word fill function set all database fields';
         $usr_msg = new user_message();
         $wrd_imp = $t_wrd->word_filled();
         $wrd_db = new word($wrd_imp->get_user());
-        $wrd_db->fill($wrd_imp, $usr_sys);
+        $wrd_db->fill($wrd_imp, $t->usr_system);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word();
         $wrd_db_after = clone $wrd_db;
-        $wrd_db_after->fill($wrd_imp, $usr_sys);
+        $wrd_db_after->fill($wrd_imp, $t->usr_system);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing just the word name does not overwrite any database fields';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word_name_only();
         $wrd_db_after = clone $wrd_db;
-        $wrd_db_after->fill($wrd_imp, $usr_sys);
+        $wrd_db_after->fill($wrd_imp, $t->usr_system);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_db_after, $usr_msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->id = 0;
         $wrd_db = $t_wrd->word();
-        $wrd_imp->fill($wrd_db, $usr_sys);
+        $wrd_imp->fill($wrd_db, $t->usr_system);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if description can be set to an empty string';
         $wrd_imp = $t_wrd->word();
         $wrd_imp->set_description('');
         $wrd_db = $t_wrd->word();
-        $wrd_db->fill($wrd_imp, $usr_sys);
+        $wrd_db->fill($wrd_imp, $t->usr_system);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->set_code_id('test code id', $usr_sys);
+        $wrd_imp->set_code_id('test code id', $t->usr_system);
         $wrd_db = $t_wrd->word();
-        $wrd_db->fill($wrd_imp, $usr);
+        $wrd_db->fill($wrd_imp, $t->usr_normal);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_CODE_ID]);
 
@@ -542,7 +540,7 @@ class word_tests
         // TODO Prio 1 review
         /*
         $test_name = 'a word json without the phrase type keeps the type empty';
-        $wrd_new = new word($usr);
+        $wrd_new = new word($t->usr1);
         $wrd_new->import_mapper([json_fields::NAME => word_names::MATH], $usr_msg);
         $t->assert_true($t->name . $test_name, $wrd_new->type_id() === null);
 
@@ -554,7 +552,7 @@ class word_tests
         $t->assert($t->name . $test_name, $non_db_fld_names, []);
 
         $test_name = '... but a changed phrase type is written to the database';
-        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $usr_sys);
+        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $t->usr_system);
         $non_db_fld_names = $in_wrd->db_fields_changed($db_wrd, $usr_msg)->names();
         $t->assert($t->name . $test_name, $non_db_fld_names, [phrase::FLD_TYPE]);
 

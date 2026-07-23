@@ -51,7 +51,6 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 function run_system_test(test_cleanup $t): void
 {
 
-    global $usr;
     global $db_con;
 
     $t_db = new test_db_load($t);
@@ -109,7 +108,7 @@ function run_system_test(test_cleanup $t): void
 
     $t->subheader('user list');
 
-    $usr_lst = new user_list($usr);
+    $usr_lst = new user_list($t->usr1);
     $usr_lst->load_active();
     $result = $usr_lst->name_lst();
     $target = users::TEST_NAME;

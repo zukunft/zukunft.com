@@ -709,11 +709,12 @@ class frontend
     /**
      * execute the user request e.g. a database update and create the url for the next page
      * the execution should be done via api
+     * TODO Prio 0 deprecate $usr_backend and $usr and find another way to switch the user after login or signup
      *
      * @param array $url_array the parsed url as an array
      * @param user_backend $usr_backend the backend user object updated in-place on successful login
      * @param user_ui $usr the frontend user object updated in-place on successful login
-     * @param user_message $usr_msg to enrich with potential errors
+     * @param user_message $usr_msg to enrich with potential errors with the requesting user
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
      * @return array the url array to display the result and the next step

@@ -92,8 +92,6 @@ class change_log_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $lib = new library();
         $db_con = new sql_db();
@@ -208,9 +206,9 @@ class change_log_tests
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
         $t->subheader($ts . 'load by user');
-        $log = new change($usr);
+        $log = new change($t->usr1);
         $t->assert_sql_by_user($sc, $log);
-        $log = new change_link($usr);
+        $log = new change_link($t->usr1);
         $t->assert_sql_by_user($sc, $log);
 
         $t->subheader($ts . 'load list');
@@ -238,16 +236,16 @@ class change_log_tests
         $t->subheader($ts . 'link change list by object');
         $cl_lst = new change_log_link_list();
         $test_name = 'sql to load the link changes of a word selects the change_links table';
-        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $usr);
+        $sql_word = $cl_lst->load_sql_by_obj($db_con, word::class, 123, $t->usr1);
         $t->assert_text_contains($test_name, $sql_word, 'FROM change_links c');
         $test_name = 'the link changes of a word are selected by the from and to id';
         $t->assert_text_contains($test_name, $sql_word,
             '(c.old_from_id = 123 OR c.old_to_id = 123 OR c.new_from_id = 123 OR c.new_to_id = 123)');
         $test_name = 'the link changes of a component are selected by the to id only';
-        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $usr);
+        $sql_cmp = $cl_lst->load_sql_by_obj($db_con, component::class, 45, $t->usr1);
         $t->assert_text_contains($test_name, $sql_cmp, '(c.old_to_id = 45 OR c.new_to_id = 45)');
         $test_name = 'an unknown object class creates no link change sql';
-        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $usr), '');
+        $t->assert($test_name, $cl_lst->load_sql_by_obj($db_con, change_table::class, 1, $t->usr1), '');
 
         // a link change is sent to the frontend with the relevant side as old/new value
         $t->subheader($ts . 'link change api');
@@ -257,19 +255,19 @@ class change_log_tests
         $api = $log_lnk->api_json_array(new api_type_list([]));
         $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', word_names::MATH);
         $test_name = 'a link change without a display text sends no new value';
-        $log_empty = new change_link($usr);
+        $log_empty = new change_link($t->usr1);
         $api = $log_empty->api_json_array(new api_type_list([]));
         $t->assert_true($test_name, ($api[json_fields::NEW_VALUE] ?? null) === null);
 
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes
-        $log = new change($usr);
+        $log = new change($t->usr1);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes
         // TODO add tests for all value types
-        $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
 
         // sql to load a field by field name and table id
         $tbl = new change_table();
@@ -281,14 +279,14 @@ class change_log_tests
         $this->assert_sql_field_by_name_and_id($t, $db_con, $fld);
 
         // sql to load a log entry by field and row id
-        $log = new change_link($usr);
+        $log = new change_link($t->usr1);
         $this->assert_sql_link_by_table($t, $db_con, $log);
 
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
         $wrd = $t_wrd->word();
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
 
 

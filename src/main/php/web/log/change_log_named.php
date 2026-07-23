@@ -313,7 +313,7 @@ class change_log_named extends change_log
 
     /**
      * the human-readable text of this change without the change time, also used to sort changes
-     * of the same time deterministically (see change_log_list::sort_by_time_and_entry)
+     * of the same time deterministically (see change_log_list::sort_by_time_and_what)
      * @return string the change entry text e.g. 'zukunft.com system test added "Zurich"'
      */
     function entry(): string
@@ -343,6 +343,72 @@ class change_log_named extends change_log
             $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
         }
         return $result;
+    }
+
+    /**
+     * the change as the 'what' column of the change log table pure: the action and the old and
+     * new value without the user (the user is the separate 'who' column), limited to the given number
+     * of chars (from config.yaml, see ui_log::change_log_table_pure) and html escaped to stop
+     * stored xss because the old and new value are user settable (like entry() and tr())
+     *
+     * @param int $max_chars the max number of chars shown, 0 or less for no limit
+     * @return string the length limited and escaped change description without the user name
+     */
+    function what(int $max_chars): string
+    {
+        $html = new html_base();
+
+        // start from the raw description, so the char limit counts the visible chars and never cuts
+        // an html entity in half, and escape only the final shortened text
+        $what = $this->what_text();
+        if ($max_chars > 0 and mb_strlen($what) > $max_chars) {
+            $what = mb_substr($what, 0, $max_chars);
+        }
+        return $html->esc($what);
+    }
+
+    /**
+     * the raw (unescaped and untruncated) 'what' text of this change: the action and the old and new
+     * value without the user (the user is the separate 'who' column); the shared source of what()
+     * and the tie-break sort key of the change log table (change_log_list::sort_by_time_and_what)
+     *
+     * @return string the change description without the user name
+     */
+    function what_text(): string
+    {
+        global $mtr;
+        if ($this->old_value <> '') {
+            if ($this->new_value <> '') {
+                return $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" '
+                    . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
+            } else {
+                return $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';
+            }
+        } else {
+            return $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';
+        }
+    }
+
+    /**
+     * one row of the change log table pure with the three columns when, who and what
+     *
+     * @param int $what_max_chars the max number of chars shown in the what column (config.yaml), 0 for no limit
+     * @param bool $test_mode true to use a fixed change time so the change log snapshots stay deterministic
+     * @return string the html code of the borderless table row
+     */
+    function tr_when_who_what(int $what_max_chars, bool $test_mode = false): string
+    {
+        global $ui_sys;
+        $html = new html_base();
+
+        // in test mode use a fixed change time so the snapshot does not change with the moment
+        // the test data happened to be created (like dsp())
+        $time = $test_mode ? new DateTime(self::TEST_TIME) : $this->change_time;
+        $when = date_format($time, $ui_sys->cfg->date_time_format());
+        // the user name is user settable, so escape it (like entry() and tr())
+        $who = $this->usr != null ? $html->esc($this->usr->name()) : '';
+        return $html->tr(
+            $html->td($when) . $html->td($who) . $html->td($this->what($what_max_chars)));
     }
 
 }

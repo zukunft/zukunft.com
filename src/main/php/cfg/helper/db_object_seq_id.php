@@ -464,6 +464,20 @@ class db_object_seq_id extends db_object
     }
 
     /**
+     * true if the changed key fields identify the database row, so the change cannot be saved
+     * as a field update or a user overlay and the row must be deleted and recreated (see
+     * sandbox::save); by default every key field is part of the row identity, a named object
+     * overwrites this because its name is a normal sandbox field with a user overlay column
+     *
+     * @param db_object_seq_id $db_rec the database record before the saving
+     * @return bool true if the changed fields identify the database row
+     */
+    function is_id_key_updated(db_object_seq_id $db_rec): bool
+    {
+        return $this->is_key_updated($db_rec);
+    }
+
+    /**
      * @return bool true if the object has a valid database id
      */
     function is_loaded(): bool

@@ -81,7 +81,6 @@ $log_txt = new text_log();
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_con; // the database connection
-global $usr;    // the session user
 
 // TODO check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();

@@ -37,7 +37,7 @@ PREPARE view_relation_type_insert_log_1111_call
 
 SELECT view_relation_type_insert_log_1111
     ('add components',
-     1,
+     3,
      1,
      823,
      824,

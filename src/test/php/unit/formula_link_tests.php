@@ -54,8 +54,6 @@ class formula_link_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $lib = new library();
         $db_con = new sql_db();
@@ -82,7 +80,7 @@ class formula_link_tests
         $t->subheader($ts . 'sql user sandbox statement');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-        $flk = new formula_link($usr);
+        $flk = new formula_link($t->usr1);
         $t->assert_sql_by_id($sc, $flk);
         $t->assert_sql_by_link($sc, $flk);
 
@@ -90,7 +88,7 @@ class formula_link_tests
         $t->subheader($ts . 'sql load default statement');
 
         // sql to load the standard formula link by id
-        $lnk = new formula_link($usr);
+        $lnk = new formula_link($t->usr1);
         $lnk->id = 1;
         $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($sc, $lnk);
@@ -126,7 +124,7 @@ class formula_link_tests
         $t->subheader($ts . 'im- and export');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
-        $lnk = new formula($usr);
+        $lnk = new formula($t->usr1);
         $lnk->import_obj($json_in, $usr_msg, $dto);
         $json_ex = json_decode(json_encode($lnk->export_json($exp_typ, false)), true);
         $result = json_is_similar($json_in, $json_ex);
@@ -143,7 +141,7 @@ class formula_link_tests
         $t->subheader($ts . 'sql statement');
 
         // sql to load the formula link list by formula id
-        $frm_lnk_lst = new formula_link_list($usr);
+        $frm_lnk_lst = new formula_link_list($t->usr1);
         $this->assert_sql_by_frm_id($t, $db_con, $frm_lnk_lst);
 
     }

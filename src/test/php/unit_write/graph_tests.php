@@ -48,7 +48,6 @@ class graph_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_vrb = new test_verbs($t);
@@ -74,16 +73,16 @@ class graph_tests
         // request building
         // step 1: define the phrase list e.g. in this case only the test word for city
 
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::CITY));
 
         // step 2: get all values related to the phrases
-        $val_lst = new value_list($usr);
+        $val_lst = new value_list($t->usr1);
         $val_lst->load_by_phr_lst($phr_lst);
         $wrd_lst_all = $val_lst->phr_lst()->wrd_lst_all();
 
         // step 3: get all phrases used for the value descriptions
-        $phr_lst_used = new phrase_list($usr);
+        $phr_lst_used = new phrase_list($t->usr1);
         foreach ($wrd_lst_all->lst() as $wrd) {
             if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
                 $phr_lst_used->add($wrd->phrase());
@@ -92,7 +91,7 @@ class graph_tests
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
         // TODO Prio 1 activate
-        $lnk_lst = new triple_list($usr);
+        $lnk_lst = new triple_list($t->usr1);
         //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         //$result = $lnk_lst->name();
         // check if at least the basic relations are in the database
@@ -106,9 +105,9 @@ class graph_tests
         */
 
         // similar to above, but just for the zurich
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ZH, word_names::INHABITANTS, word_names::MIO));
-        $lnk_lst = new triple_list($usr);
+        $lnk_lst = new triple_list($t->usr1);
         $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
@@ -119,10 +118,10 @@ class graph_tests
 
         $test_name = 'load the types of Zurich from the database: Zurich is a ';
         // load the word Zurich from the database
-        $ZH = new word($usr);
+        $ZH = new word($t->usr1);
         $ZH->load_by_name(word_names::ZH);
         // load all types of Zurich e.g. Zurich Insurance
-        $zh_lst = new phrase_list($usr);
+        $zh_lst = new phrase_list($t->usr1);
         $zh_lst->load_by_phr($ZH->phrase(), $t_vrb->verb_is(), foaf_direction::UP);
         // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();

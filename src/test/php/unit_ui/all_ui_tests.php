@@ -88,14 +88,11 @@ class all_ui_tests extends all_unit_tests
         $ts = 'unit ui html ';
         $t->header($ts);
 
-        // create a dummy users for testing
-        $t->users_for_unit_tests();
-
         // prepare the unit tests
         $tl = new test_lib();
         $tl->ui_test_cache($t->usr_dev, $t);
         $u_env = new unit_env();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($t->usr1);
 
         $t->subheader($ts . 'base');
         // the used html elements e.g. the buttons

@@ -62,7 +62,6 @@ class group_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -147,7 +146,7 @@ class group_tests
 
         $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_SYMBOL_ID);
         $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t_trp->triple_list_one()->phrase_list()->ids());
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
@@ -189,7 +188,7 @@ class group_tests
             $t::TIMEOUT_LIMIT_PAGE);
 
         $t->subheader($ts . 'sql statements - setup');
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
@@ -204,7 +203,7 @@ class group_tests
 
         // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql statements - write');
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $grp->set_phrase_list($t_phr->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
@@ -290,9 +289,8 @@ class group_tests
         test_cleanup $t,
         sql_db       $db_con): void
     {
-        global $usr;
 
-        $grp = new group($usr);
+        $grp = new group($t->usr1);
         $t_phr = new test_phrases($t);
 
         // check the Postgres query syntax for a list of up to four prime phrases

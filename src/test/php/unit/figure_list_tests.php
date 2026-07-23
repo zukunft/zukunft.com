@@ -54,8 +54,6 @@ class figure_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $sc = new sql_creator();
         $t_fig = new test_figures($t);
@@ -71,7 +69,7 @@ class figure_list_tests
 
         // load by figure ids
         $test_name = 'load figures by ids';
-        $fig_lst = new figure_list($usr);
+        $fig_lst = new figure_list($t->usr1);
         $t->assert_sql_by_ids($test_name, $sc, $fig_lst, new fig_ids([1, -1]));
 
 

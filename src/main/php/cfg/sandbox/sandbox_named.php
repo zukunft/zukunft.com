@@ -1006,6 +1006,19 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * the name identifies a named object for the user, but never the database row: a rename is
+     * a normal field update of the standard row or of the name in the user overlay row, so the
+     * database id and with it the related values, formulas and links always stay (see sandbox::save)
+     *
+     * @param sandbox_named|db_object_seq_id $db_rec the database record before the saving
+     * @return bool false because a name change never identifies the database row
+     */
+    function is_id_key_updated(sandbox_named|db_object_seq_id $db_rec): bool
+    {
+        return false;
+    }
+
+    /**
      * @return string text that request the user to use another name
      */
     function msg_id_already_used(): string

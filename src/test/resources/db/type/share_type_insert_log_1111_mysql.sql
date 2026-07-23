@@ -37,7 +37,7 @@ PREPARE share_type_insert_log_1111_call
 
 SELECT share_type_insert_log_1111
     ('public',
-     1,
+     3,
      1,
      194,
      195,

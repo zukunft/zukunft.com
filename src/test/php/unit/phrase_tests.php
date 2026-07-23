@@ -64,7 +64,6 @@ class phrase_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -83,7 +82,7 @@ class phrase_tests
         $t->assert_sql_view_create($phr);
 
         $t->subheader($ts . 'sql read');
-        $phr = new phrase($usr);
+        $phr = new phrase($t->usr1);
         $t->assert_sql_by_id($sc, $phr);
         $t->assert_sql_by_name($sc, $phr);
 
@@ -108,7 +107,7 @@ class phrase_tests
         $t->assert_api_to_ui($phr, new phrase_ui());
 
         // check the Postgres query syntax
-        $wrd_company = new word($usr);
+        $wrd_company = new word($t->usr1);
         $wrd_company->set(word_names::CONST_ID, word_names::COMPANY);
         $sql_name = 'phrase_list_related';
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;

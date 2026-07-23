@@ -41,7 +41,7 @@ SELECT db_cache_type_insert_log_1111
 
 SELECT db_cache_type_insert_log_1111
     ('system configuration'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      875::smallint,
      876::smallint,

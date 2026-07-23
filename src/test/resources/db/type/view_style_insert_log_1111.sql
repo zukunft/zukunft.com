@@ -41,7 +41,7 @@ SELECT view_style_insert_log_1111
 
 SELECT view_style_insert_log_1111
     ('1/3 width'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      785::smallint,
      786::smallint,

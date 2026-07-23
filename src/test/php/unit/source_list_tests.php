@@ -41,7 +41,6 @@ class source_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init for source list
         $sc = new sql_creator();
@@ -53,10 +52,10 @@ class source_list_tests
 
         $t->subheader($ts . 'sql read');
         $test_name = 'load sources by ids';
-        $src_lst = new source_list($usr);
+        $src_lst = new source_list($t->usr1);
         $trm_ids = array(1, 2, 3);
         $t->assert_sql_by_ids($test_name, $sc, $src_lst, $trm_ids);
-        $src_lst = new source_list($usr);
+        $src_lst = new source_list($t->usr1);
         $t->assert_sql_like($sc, $src_lst);
 
     }

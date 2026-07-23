@@ -37,7 +37,7 @@ PREPARE phrase_type_insert_log_111100_call
 
 SELECT phrase_type_insert_log_111100
     ('standard',
-     1,
+     3,
      1,
      835,
      836,

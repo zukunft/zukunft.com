@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -58,18 +59,14 @@ class user_ui_tests
         global $mtr;
 
         $t_sys = new test_sys_log($t);
+        $t_usr = new test_users();
         $log = new ui_log();
 
         // start the test section (ts)
         $ts = 'unit ui html user ';
         $t->header($ts);
 
-        $usr_ui = new user_ui();
-        $usr_ui->id = 1;
-        $usr_ui->name = 'zukunft.com';
-        $usr_ui->email = 'heang@zukunft.com';
-        $usr_ui->first_name = 'Heang';
-        $usr_ui->last_name = 'Lor';
+        $usr_ui = new user_ui($t_usr->user_sys_test()->api_json());
         $test_page = $usr_ui->form_edit(1) . '<br>';
 
         $t->subheader($ts . 'system errors');

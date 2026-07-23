@@ -469,9 +469,9 @@ class word extends sandbox_code_id
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent->api_array();
         }
-        // usage is not included here because this system value is never updated by the frontend
+        // usage and impact are included here because to allow
+        // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
-        // send the selected default view id so a view change is persisted (backend reads it as the id)
         $vars[json_fields::VIEW] = $this->view_id;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();

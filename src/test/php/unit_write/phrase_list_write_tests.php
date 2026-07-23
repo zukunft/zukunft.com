@@ -61,7 +61,6 @@ class phrase_list_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
 
         // init
@@ -84,16 +83,16 @@ class phrase_list_write_tests
 
         // prepare test by loading Insurance Zurich
         $wrd_zh = $t_db->load_word(word_names::ZH);
-        $lnk_company = new triple($usr);
+        $lnk_company = new triple($t->usr1);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $triple_sample_id = $lnk_company->id();
 
         // test the phrase loading via id
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(word_names::ABB, word_names::VESTAS));
         $id_lst = $wrd_lst->ids();
         $id_lst[] = $triple_sample_id * -1;
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_names_by_ids(new phr_ids($id_lst));
         $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '","' . triple_names::COMPANY_ZURICH . '"';
         $target = '"' . word_names::ABB . '","' . word_names::VESTAS . '"';
@@ -110,7 +109,7 @@ class phrase_list_write_tests
 
         // test getting the parent for phrase list with ABB
         $lib = new library();
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(word_names::ABB));
         $phr_lst = $wrd_lst->phrase_list();
         $lst_parents = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
@@ -125,7 +124,7 @@ class phrase_list_write_tests
         $t->assert('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // ... same with Vestas
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::VESTAS));
         $phr_lst = $wrd_lst->phrase_list();
         $lst_is = $phr_lst->is();
@@ -134,7 +133,7 @@ class phrase_list_write_tests
         //$t->assert('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // test the excluding function
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::ABB, word_names::SALES, words::CHF, word_names::MIO, word_names::YEAR_2017));
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();

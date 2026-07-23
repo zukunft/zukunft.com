@@ -96,7 +96,6 @@ class base_ui_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         $lib = new library();
         $html = new html_base();
         $t_wrd = new test_words($t);
@@ -408,7 +407,6 @@ class base_ui_tests
 
         // TODO review
 
-        global $usr;
         global $sys;
         $html = new html_base();
 
@@ -419,7 +417,7 @@ class base_ui_tests
         // test the usage of a view to create the HTML code
         /*
         $wrd = $t->load_word(words::TN_READ);
-        $msk = new view($usr);
+        $msk = new view($t->usr1);
         $msk->load_by_name(views::TN_READ_RATIO);
         //$result = $msk->display($wrd, $back);
         $target = true;

@@ -41,7 +41,7 @@ SELECT view_type_insert_log_1111
 
 SELECT view_type_insert_log_1111
     ('standard'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      714::smallint,
      715::smallint,

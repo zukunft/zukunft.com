@@ -58,7 +58,6 @@ class triple_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $db_con = new sql_db();
@@ -75,18 +74,18 @@ class triple_list_tests
         $t->subheader($ts . 'database query creation');
 
         // load only the names
-        $trp_lst = new triple_list($usr);
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr));
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_names::MATH_CONST_COM);
+        $trp_lst = new triple_list($t->usr1);
+        $t->assert_sql_names($sc, $trp_lst, new triple($t->usr1));
+        $t->assert_sql_names($sc, $trp_lst, new triple($t->usr1), triple_names::MATH_CONST_COM);
 
         // load by triple ids
         $test_name = 'load triples by ids';
-        $trp_lst = new triple_list($usr);
+        $trp_lst = new triple_list($t->usr1);
         $t->assert_sql_by_ids($test_name, $sc, $trp_lst, array(3, 2, 4));
 
         // load by phr
-        $trp_lst = new triple_list($usr);
-        $phr = new phrase($usr);
+        $trp_lst = new triple_list($t->usr1);
+        $phr = new phrase($t->usr1);
         $phr->set_id(5);
         $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr);
         $vrb = new verb(1);
@@ -94,12 +93,12 @@ class triple_list_tests
         $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr, $vrb, foaf_direction::DOWN);
 
         // load by phrase list
-        $trp_lst = new triple_list($usr);
-        $phr = new phrase($usr);
+        $trp_lst = new triple_list($t->usr1);
+        $phr = new phrase($t->usr1);
         $phr->set_id(6);
-        $phr2 = new phrase($usr);
+        $phr2 = new phrase($t->usr1);
         $phr2->set_id(7);
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->add($phr);
         $phr_lst->add($phr2);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, null, foaf_direction::UP);
@@ -115,7 +114,7 @@ class triple_list_tests
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/triple_list.json';
-        $t->assert_json_file(new triple_list($usr), $json_file);
+        $t->assert_json_file(new triple_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

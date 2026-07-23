@@ -53,8 +53,6 @@ class verb_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $db_con = new sql_db();
@@ -90,7 +88,7 @@ class verb_tests
 
         $vrb = new verb();
         // set the admin user if this is needed for the import e.g. for verbs
-        $vrb->set_user($usr_sys);
+        $vrb->set_user($t->usr_system);
         $json_file = 'unit/verb/is_a.json';
         $t->assert_json_file($vrb, $json_file);
 
@@ -114,12 +112,12 @@ class verb_tests
         $t->subheader($ts . 'sql statement');
 
         // sql to load a list with all verbs
-        $vrb_lst = new verb_list($usr);
+        $vrb_lst = new verb_list($t->usr1);
         $t->assert_sql_all($sc, $vrb_lst);
 
         // sql to load a verb list by phrase id and direction up
-        $vrb_lst = new verb_list($usr);
-        $phr = new phrase($usr);
+        $vrb_lst = new verb_list($t->usr1);
+        $phr = new phrase($t->usr1);
         $phr->set_id(5);
         $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, foaf_direction::UP);
 

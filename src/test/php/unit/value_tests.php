@@ -80,8 +80,6 @@ class value_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $usr_msg = new user_message();
@@ -102,16 +100,16 @@ class value_tests
 
         $t->subheader($ts . 'value object selection');
         $test_name = 'create a numeric value object';
-        $val = new value_obj()->get($usr, values::PI_LONG);
+        $val = new value_obj()->get($t->usr1, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
         $test_name = 'create a time value object';
-        $val = new value_obj()->get($usr, new DateTime(values::TIME));
+        $val = new value_obj()->get($t->usr1, new DateTime(values::TIME));
         $t->assert($test_name, $val::class, value_time::class);
         $test_name = 'create a text value object';
-        $val = new value_obj()->get($usr, values::TEXT);
+        $val = new value_obj()->get($t->usr1, values::TEXT);
         $t->assert($test_name, $val::class, value_text::class);
         $test_name = 'create a geolocation value object';
-        $val = new value_obj()->get($usr, values::GEO);
+        $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
         $t->subheader($ts . 'scaling');
@@ -384,10 +382,10 @@ class value_tests
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t_val->value(), $usr_sys);
-        $t->assert_ex_and_import($t_val->value_16_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value(), $t->usr_system);
+        $t->assert_ex_and_import($t_val->value_16_filled(), $t->usr_system);
         $json_file = 'unit/value/speed_of_light.json';
-        $t->assert_json_file(new value($usr), $json_file);
+        $t->assert_json_file(new value($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'ui formatting');
@@ -421,7 +419,7 @@ class value_tests
 
         // casting API
         $grp = $t_grp->group();
-        $val = new value($usr, round(values::PI_LONG, 13), $grp);
+        $val = new value($t->usr1, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
         $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->time_value();
@@ -435,7 +433,7 @@ class value_tests
         $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
 
         // casting figure
-        $val = new value($usr);
+        $val = new value($t->usr1);
         $val->set_number(values::SAMPLE_PCT);
         $fig = $val->figure();
         $t->assert($t->name . ' get figure', $fig->number(), $val->number());
@@ -447,7 +445,7 @@ class value_tests
         $t->subheader($ts . 'database query creation');
 
         // sql to load a user-specific time series by id
-        $vts = new value_time_series($usr);
+        $vts = new value_time_series($t->usr1);
         $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
 
@@ -489,7 +487,6 @@ class value_tests
      */
     private function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj, group $grp): void
     {
-        global $usr;
 
         $sc = $db_con->sql_creator();
 

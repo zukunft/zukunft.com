@@ -280,6 +280,12 @@
       "code_id": "change_log_word"
     },
     {
+      "name": "change log table pure",
+      "description": "show the change log of this word or triple as a borderless table with the columns when, who and what",
+      "type": "invisible_change_log_table",
+      "code_id": "invisible_change_log_table_word"
+    },
+    {
       "name": "system sub title views",
       "description": "show the language specific sub title for the related views",
       "type": "system_sub_title",

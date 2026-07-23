@@ -54,7 +54,6 @@ class term_view_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -67,13 +66,13 @@ class term_view_tests
         $t->header($ts);
 
         $t->subheader($ts . 'term_view sql setup');
-        $trm_lnk_ui = new term_view($usr);
+        $trm_lnk_ui = new term_view($t->usr1);
         $t->assert_sql_table_create($trm_lnk_ui);
         $t->assert_sql_index_create($trm_lnk_ui);
         $t->assert_sql_foreign_key_create($trm_lnk_ui);
 
         $t->subheader($ts . 'term_view sql read');
-        $lnk = new term_view($usr);
+        $lnk = new term_view($t->usr1);
         $t->assert_sql_by_id($sc, $lnk);
         $lnk = $t_lnk->term_view();
         $t->assert_sql_standard($sc, $lnk);

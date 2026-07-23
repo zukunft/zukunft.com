@@ -41,7 +41,7 @@ SELECT formula_link_type_insert_log_111100
 
 SELECT formula_link_type_insert_log_111100
     ('default'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      704::smallint,
      705::smallint,

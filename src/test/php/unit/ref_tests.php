@@ -55,8 +55,6 @@ class ref_tests
     {
 
         // TODO Prio 1 use the users of $t->env->usr_... instead
-        global $usr;
-        global $usr_sys;
 
         // init for reference
         $sc = new sql_creator();
@@ -69,7 +67,7 @@ class ref_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $t->assert_sql_table_create($ref);
         $t->assert_sql_index_create($ref);
         $t->assert_sql_foreign_key_create($ref);
@@ -80,7 +78,7 @@ class ref_tests
         $this->assert_sql_link_ids($t, $sc, $ref);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
         $ref = $t_ref->reference();
@@ -152,10 +150,10 @@ class ref_tests
         $t->assert_api_to_ui($ref, new ref_ui());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_ref->reference(), $usr_sys);
-        $t->assert_ex_and_import($t_ref->ref_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_ref->reference(), $t->usr_system);
+        $t->assert_ex_and_import($t_ref->ref_filled(), $t->usr_system);
         $json_file = 'unit/ref/wikipedia.json';
-        $t->assert_json_file(new ref($usr), $json_file);
+        $t->assert_json_file(new ref($t->usr1), $json_file);
 
     }
 
