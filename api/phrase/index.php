@@ -39,6 +39,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -54,9 +55,13 @@ if ($db_con->is_open()) {
     $phr_name = $_GET[url_var::NAME] ?? '';
 
     // load the session user parameters
-    $msg = '';
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     $ctrl = new controller();
     $result = ''; // reset the json message string
@@ -72,13 +77,13 @@ if ($db_con->is_open()) {
             $phr->load_by_name($phr_name);
             $result = $phr->api_json([api_types::HEADER], $usr);
         } else {
-            $msg = 'phrase id or name is missing';
+            $msg->add_message_text('phrase id or name is missing');
         }
 
         // do not disclose another user's private phrase loaded by id/name (idor); neutral message
         if ($result != '' and !$phr->is_readable_by($usr)) {
             $result = '';
-            $msg = 'phrase id or name is missing';
+            $msg->add_message_text('phrase id or name is missing');
         }
 
         // add, update or delete the phrase

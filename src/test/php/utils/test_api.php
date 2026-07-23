@@ -818,7 +818,6 @@ class test_api extends test_base
     /**
      * check if the REST POST call returns a JSON message with the id of the object just added
      * for testing the local deployments needs to be updated using an external script
-     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
@@ -826,14 +825,16 @@ class test_api extends test_base
     function assert_api_post_direct(
         string       $class,
         user         $usr,
-        test_cleanup $t,
-        string       $msg = ''
+        test_cleanup $t
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
+        // the requesting user of the simulated api call travels on the message
+        $msg = new user_message();
+        $msg->usr = $usr;
 
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
@@ -842,7 +843,7 @@ class test_api extends test_base
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         // replacement for the api call
         $name = $dbo->name();
-        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, $msg);
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
         $dbo->load_by_name($name);
 
         return $this->assert_greater_zero($test_name, $dbo->id());
@@ -851,7 +852,6 @@ class test_api extends test_base
     /**
      * check if the REST DELETE call returns an empty JSON message if the exclusion has been successful
      * for testing the local deployments needs to be updated using an external script
-     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
@@ -859,14 +859,16 @@ class test_api extends test_base
     function assert_api_del_direct(
         string       $class,
         user         $usr,
-        test_cleanup $t,
-        string       $msg = ''
+        test_cleanup $t
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
+        // the requesting user of the simulated api call travels on the message
+        $msg = new user_message();
+        $msg->usr = $usr;
 
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
@@ -874,7 +876,7 @@ class test_api extends test_base
         $dbo->load_by_name($dbo->name());
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
-        $ctrl->delete($dbo_ui->id(), $dbo, $usr, $msg);
+        $ctrl->delete($dbo_ui->id(), $dbo, $msg);
 
         $dbo->load_by_name($dbo->name());
         return $this->assert($test_name, $dbo->id(), 0);
@@ -907,22 +909,61 @@ class test_api extends test_base
         $dbo = $t_map->class_to_add_filled_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        // the requesting (blocked ip) user of the simulated api calls travels on the message
+        $msg = new user_message();
+        $msg->usr = $usr;
 
         // simulate the api post (add) call and capture the echoed rejection
         ob_start();
-        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, '');
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
         $post_response = ob_get_clean();
         $test_name = 'the api post of a ' . $class_name . ' by an ip user is refused';
         $post_blocked = $this->assert_text_contains($test_name, $post_response, $blocked_txt);
 
         // simulate the api delete call and capture the echoed rejection
         ob_start();
-        $ctrl->delete($dbo_ui->id(), $dbo, $usr, '');
+        $ctrl->delete($dbo_ui->id(), $dbo, $msg);
         $del_response = ob_get_clean();
         $test_name = 'the api delete of a ' . $class_name . ' by an ip user is refused';
         $del_blocked = $this->assert_text_contains($test_name, $del_response, $blocked_txt);
 
         return $post_blocked and $del_blocked;
+    }
+
+    /**
+     * check that a data change via the api is refused when the message carries no requesting user:
+     * an unknown user may never change data (docs/llm/state-and-messages.md), so the api controller
+     * refuses the write with the same message as for a user without login
+     *
+     * @param string $class the class name of the object to test e.g. word
+     * @param test_cleanup $t the test object that includes the test results collected until now
+     * @return bool true if the write is refused with the blocking message
+     */
+    function assert_api_write_blocked_without_user(
+        string       $class,
+        test_cleanup $t
+    ): bool
+    {
+        global $mtr;
+        $lib = new library();
+        $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
+        $class_name = $lib->class_to_name($class);
+        $blocked_txt = $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER);
+
+        $dbo = $t_map->class_to_add_filled_object($class);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        // a message without a requesting user
+        $msg = new user_message();
+
+        // simulate the api post (add) call and capture the echoed rejection
+        ob_start();
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
+        $response = ob_get_clean();
+        $test_name = 'the api post of a ' . $class_name . ' without a requesting user is refused';
+        return $this->assert_text_contains($test_name, $response, $blocked_txt);
     }
 
 

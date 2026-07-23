@@ -39,6 +39,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -53,12 +54,16 @@ if ($db_con->is_open()) {
     $class = $_GET[url_var::LOG_CLASS] ?? '';
     $id = $_GET[url_var::ID] ?? 0;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -73,7 +78,7 @@ if ($db_con->is_open()) {
             $lst->load_by_obj($class, $id, $usr);
             $result = $lst->api_json();
         } else {
-            $msg = 'object class missing';
+            $msg->add_message_text('object class missing');
         }
     }
 
