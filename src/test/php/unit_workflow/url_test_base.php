@@ -196,11 +196,11 @@ class url_test_base
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->usr, $this->req->usr_msg,
+            $this->req->usr_backend, $this->req->usr_msg,
             $this->req->dto, $this->req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls
-        $result = $this->ui->url_to_html($next_url, $this->req->usr, $this->req->usr_msg,
+        $result = $this->ui->url_to_html($next_url, $this->req->usr_msg,
             $this->req->dto, $this->req->test_mode);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);

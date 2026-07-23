@@ -101,6 +101,16 @@ if ($db_con->is_open()) {
     // at minimum the IP address is used as the user id, so id() > 0 is always true for real requests
     if ($usr->id() > 0) {
 
+        // store the requesting user on the message before anything is decided or rendered:
+        // this http entry point is the only place where the requesting user of a request is
+        // set, so every function below takes $msg as a parameter and reads the requesting
+        // user from $msg->usr instead of receiving it separately or reading a global
+        // (see docs/llm/state-and-messages.md); set here and not further down, so that the
+        // blocked-request branch and the cached page also know who is asking
+        $usr_ui = new user_ui();
+        $usr_ui->set_from_json($usr->api_json(), $msg);
+        $msg->usr = $usr_ui;
+
         $ui = new frontend('view');
 
         // block a data changing request of a user without login before any change is done
@@ -136,19 +146,13 @@ if ($db_con->is_open()) {
         // so that a user without own data changes gets the page with a few database reads only
         // (the cached types json, the system config, the user incl. the uses_sandbox flag
         // and this cached page); the message of this request is added to the cached page
-        $cached_page = $ui->cached_page_or_null($url_array, $usr, $msg);
+        $cached_page = $ui->cached_page_or_null($url_array, $msg);
         if ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
 
             // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
             $usr->load_usr_data();
-
-            $usr_ui = new user_ui();
-            $usr_ui->set_from_json($usr->api_json(), $msg);
-            // store the requesting user on the message so the write path (e.g. sandbox::check_preserved)
-            // knows who is changing the data when the confirm button posts the change (see the TODO above)
-            $msg->usr = $usr_ui;
 
             $ui->load_cache();
 
@@ -170,14 +174,14 @@ if ($db_con->is_open()) {
             $is_action = ($is_post_action or $is_get_action);
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
-                    $url_array = $ui->url_to_action($url_array, $usr, $usr_ui, $msg, $ui->dto);
+                    $url_array = $ui->url_to_action($url_array, $usr, $msg, $ui->dto);
                 }
             }
 
             // show the result to the user
             // and use the cached html pages for view-only requests to reduce the response time
             $sys->times->switch(system_time_type::URL_TO_HTML);
-            $web_txt .= $ui->url_to_html_cached($url_array, $usr, $usr_ui, $msg, $is_action, $ui->dto);
+            $web_txt .= $ui->url_to_html_cached($url_array, $msg, $is_action, $ui->dto);
             $sys->times->switch(system_time_type::CLOSE);
         }
     }

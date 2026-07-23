@@ -323,7 +323,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::PASSWORD_WRONG, []);
         $url_array = [url_var::MASK => views::LOGIN_ID];
-        $login_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $login_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         $notification_div = '<div class="alert alert-warning notification-bar">';
         $test_name = 'login page with failed login shows notification bar';
@@ -355,7 +355,8 @@ class system_view_ui_tests
             $back_id_key => '123',
         ];
         $fail_msg = new user_message();
-        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $usr_sys_ui, $fail_msg, $ui->dto, false);
+        $fail_msg->usr = $usr_sys_ui;
+        $result_url = $ui->url_to_action($url_with_back, $t->usr1, $fail_msg, $ui->dto, false);
 
         $test_name = 'failed login preserves back mask param in returned url';
         $t->assert($test_name, $result_url[$back_mask_key] ?? '', views::WORD_ID);
@@ -370,7 +371,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
         $url_array = [url_var::MASK => views::SIGNUP_ID];
-        $signup_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $signup_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         $test_name = 'signup page with duplicate name shows notification bar';
         $t->assert_text_contains($test_name, $signup_html, $notification_div);
@@ -379,14 +380,14 @@ class system_view_ui_tests
         $test_name = 'signup page with name exists notification matches snapshot';
         $t->assert_html_page($test_name, $signup_html, $file_path);
 
-        // test that url_to_action on logout resets both user objects to anonymous state
+        // test that url_to_action on logout resets both user objects to anonymous state:
+        // the backend user by reference and the frontend user via the message (docs/llm/state-and-messages.md)
         $logout_backend = clone $t->usr1;
-        $logout_frontend = $tl->cast_user($logout_backend);
         $logout_msg = new user_message();
+        $logout_msg->usr = $tl->cast_user($logout_backend);
         $logout_result_url = $ui->url_to_action(
             [url_var::MASK => views::LOGOUT_ID],
             $logout_backend,
-            $logout_frontend,
             $logout_msg,
             $ui->dto,
             false
@@ -398,13 +399,13 @@ class system_view_ui_tests
         $test_name = 'logout action resets backend user to anonymous';
         $t->assert($test_name, $logout_backend->has_db_id(), false);
 
-        $test_name = 'logout action resets frontend user to ip-only';
-        $t->assert($test_name, $logout_frontend->is_ip_only(), true);
+        $test_name = 'logout action resets the message user to ip-only';
+        $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
 
         // test that the logout page shows the success message
         global $mtr;
         $url_array = [url_var::MASK => views::LOGOUT_ID];
-        $logout_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $logout_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
 
         $test_name = 'logout page shows logout notice text';
         $t->assert_text_contains($test_name, $logout_html, $mtr->txt(msg_id::LOGOUT_NOTICE));
@@ -419,7 +420,7 @@ class system_view_ui_tests
         $err_msg = new user_message();
         $err_msg->add(msg_id::ACTIVATE_ERR_KEY_MISMATCH, []);
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $activate_html = $ui->url_to_html($url_array, null, $err_msg, $ui->dto, true);
+        $activate_html = $ui->url_to_html($url_array, $err_msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page with key mismatch shows notification bar';
@@ -438,7 +439,7 @@ class system_view_ui_tests
         $t->subheader($ts . 'login reset');
 
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $reset_sent_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $reset_sent_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
@@ -450,7 +451,7 @@ class system_view_ui_tests
 
         // test that the login_reset form renders with a cancel and go back link when no back params are given
         $url_array = [url_var::MASK => views::LOGIN_RESET_ID];
-        $reset_form_html = $ui->url_to_html($url_array, null, new user_message(), $ui->dto, true);
+        $reset_form_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
 
         $test_name = 'login reset page shows cancel and go back link';
         $t->assert_text_contains($test_name, $reset_form_html, $mtr->txt(msg_id::CANCEL_AND_GO));
@@ -468,7 +469,7 @@ class system_view_ui_tests
         $url = 'http://localhost/http/view.php';
         $url_part = parse_url($url);
         parse_str($url_part["query"], $url_array);
-        $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
+        $html = $ui->url_to_html($url_array, $usr_msg, $ui->dto, true);
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'start_page';
         $t->assert_html_page($test_name, $html, $file_path);
         */
@@ -481,7 +482,7 @@ class system_view_ui_tests
         $add_url = $t_map->class_to_filled_url(formula_link::class, views::FORMULA_LINK_ADD_ID, change_actions::ADD);
         $add_part = parse_url($add_url);
         parse_str($add_part['query'], $add_array);
-        $add_html = $ui->url_to_html($add_array, null, new user_message(), $ui->dto, true);
+        $add_html = $ui->url_to_html($add_array, new user_message(), $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'add view keeps the hidden id field at 0';
         $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"', $t::TIMEOUT_LIMIT_PAGE);
@@ -496,7 +497,7 @@ class system_view_ui_tests
         // negative: an anonymous user is sent to the start view with a permission message and never
         // sees the admin content
         $anon_msg = new user_message();
-        $anon_html = $ui->url_to_html($admin_url, null, $anon_msg, $ui->dto, true);
+        $anon_html = $ui->url_to_html($admin_url, $anon_msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'the admin main view is not rendered for an anonymous user';
         $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
@@ -505,7 +506,8 @@ class system_view_ui_tests
 
         // positive: an admin (here the system user, see admin_mask_denied) may render the admin view
         $adm_msg = new user_message();
-        $adm_html = $ui->url_to_html($admin_url, $usr_sys_ui, $adm_msg, $ui->dto, true);
+        $adm_msg->usr = $usr_sys_ui;
+        $adm_html = $ui->url_to_html($admin_url, $adm_msg, $ui->dto, true);
         $test_name = 'the admin main view is rendered for a system user';
         $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
 
@@ -513,8 +515,8 @@ class system_view_ui_tests
         // start view instead of acting on it (a fresh frontend user has the ip-only profile)
         $act_msg = new user_message();
         $act_backend = clone $t->usr1;
-        $act_usr = new user_ui();
-        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_usr, $act_msg, $ui->dto, false);
+        $act_msg->usr = new user_ui();
+        $act_url = $ui->url_to_action($admin_url, $act_backend, $act_msg, $ui->dto, false);
         $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
@@ -561,10 +563,11 @@ class system_view_ui_tests
                 // instead of the anonymous login/signup menu
                 if (in_array($id, views::TEST_LOGIN_VIEW_IDS)
                     or in_array($id, views::ADMIN_MASK_IDS)) {
-                    $html = $ui->url_to_html($url_array, $usr_sys_ui, $usr_msg, $ui->dto, true);
+                    $usr_msg->usr = $usr_sys_ui;
                 } else {
-                    $html = $ui->url_to_html($url_array, null, $usr_msg, $ui->dto, true);
+                    $usr_msg->usr = null;
                 }
+                $html = $ui->url_to_html($url_array, $usr_msg, $ui->dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;

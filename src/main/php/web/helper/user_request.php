@@ -94,6 +94,10 @@ class user_request
         $this->usr_backend = $usr_backend;
         $this->usr = $usr;
         $this->usr_msg = $usr_msg;
+        // the frontend functions read the requesting user from the message
+        // (docs/llm/state-and-messages.md), so keep the bundle consistent
+        // TODO Prio 2 drop the separate user parameter and use the message user only
+        $this->usr_msg->usr = $usr;
         $this->dto = $dto;
         $this->do_it = $do_it;
         $this->test_mode = $test_mode;

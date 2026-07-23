@@ -4,9 +4,29 @@
 
 ## high prio
 
-for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
+### requesting user lives on $msg — implementation steps
 
-the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
+the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry point sets the requesting user on the request's user_message once, as early as possible, and every function below takes $msg as a parameter and reads $msg->usr — never a second requesting-user parameter, never a global, never $_SESSION. http/view.php is done; run the steps below one at a time, each as its own commit with tests written first:
+
+1. done (web/frontend.php reads the requesting user from $msg->usr; the by-reference user parameters of action_login/signup/activate/logout and the backend user of url_to_action stay until the login user switch goes through the api)
+
+2. same treatment for the remaining web/ signatures that carry both a user and a user_message: web/sandbox/db_object.php add_via_api / update / del, web/helper/user_request.php __construct and shared/helper/MapObject.php convertToDb; where the function needs a backend flag the frontend user does not carry yet, add the flag to user::api_json_array and web/user/user.php set_from_json instead of keeping the backend user parameter
+
+3. give the api entry points the same single assignment: each api/*/index.php (33 files, same skeleton) creates one backend user_message right after $usr->get() and sets $msg->usr = $usr before the method dispatch, and passes that $msg into the controller/rest handling instead of the local string $msg; do api/word/index.php first as the template, then roll the identical diff over the other 32; http/setup.php gets the same block after its new user
+
+4. remove the ad-hoc fallback assignments below the entry points: sql_db.php:1221/:1529, text_log_functions.php:581 and sandbox_multi.php:2841 set $msg->usr mid-request because the entry point did not — after step 3 replace each with a read of $msg->usr plus a log_err if it is null (an entry point missed the assignment is an internal inconsistency, not a user error)
+
+5. retire the $sys->usr_req duplicate of the same fact: import.php, user.php, sql_db.php and web/frontend.php url_to_html_cached (the page refresh job bridge added in step 1) still read it; where a $msg is already threaded read $msg->usr instead, where none is threaded yet thread it (rule: mutable state as explicit parameter), the frontend bridge falls once the refresh job is requested via the api; then delete the usr_req property from the system object
+
+6. classify the remaining dual user+user_message signatures (32 at last count) and confirm the keepers are all subject-user cases where the user is the payload the function operates on — user::no_diff / no_non_id_diff / is_same / save_user / del / import_obj / check_preserved, sandbox::take_ownership / check_protection_change, user_list::save, sql_db::add_user_from_env / add_admin_users_from_env, config_numbers read_cache / read_db_cache / read_file_cache, job_db_cleanup / job_cache_refresh; document each keeper with a @param line saying which user it is
+
+7. add the coded check to unit/coding_rule_tests.php (rule: every machine-checkable rule has one): no file below the entry points assigns $msg->usr / ->usr on a user_message — allowed writers are http/*, api/*/index.php, the user_message classes themselves and the test utils (all_unit_tests.php, test_base.php, horizontal_write_tests.php); follow the scanner pattern of php_web_config_from_cache_tests
+
+add to /docs/llm/* the rule that for objects if there is not a very good reason, always the same var name should be used, so that docs/code_object_name_exceptions.md lists only a few exception. The name for user_message should be $msg. Change the name to $msg where possible.
+
+All message to the user should be transported via $msg. Check if there are any e.g. log_warning messages that should better be shown to the user. Use the function that does both in one (log and $msg enrichment if possible)
+
+for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
 
 add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
 
