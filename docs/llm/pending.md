@@ -6,8 +6,6 @@
 
 if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
 
-check that the login page does not $_POST the unhashed password
-
 find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
