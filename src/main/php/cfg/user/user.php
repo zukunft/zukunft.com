@@ -1573,6 +1573,40 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
+     * check if the last used ip of a loaded user should be updated in the user table, i.e. the
+     * request comes from a new, non-empty ip that differs from the ip currently stored for the user
+     * @param string|null $req_ip the ip address of the current request
+     * @return bool true if this is a loaded user (id set) and $req_ip is set and differs from the stored ip
+     */
+    function needs_ip_update(?string $req_ip): bool
+    {
+        $result = false;
+        if ($this->id > 0 and $req_ip != null and $req_ip != '' and $req_ip != $this->ip_addr) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * store the ip of the current request as the last used ip of the logged in user, so the user
+     * table always holds the most recently used ip; only writes when the ip actually changed (see
+     * needs_ip_update) and a failed write does not block the login, it is only logged
+     * @param string|null $req_ip the ip address of the current request (before the stored ip was loaded)
+     * @return void
+     */
+    private function save_last_ip(?string $req_ip): void
+    {
+        if ($this->needs_ip_update($req_ip)) {
+            $this->ip_addr = $req_ip;
+            $ip_msg = new user_message();
+            $this->save_user($ip_msg);
+            if (!$ip_msg->is_ok()) {
+                log_warning('cannot save the last ip of ' . $this->dsp_id() . ': ' . $ip_msg->get_last_message());
+            }
+        }
+    }
+
+    /**
      * TODO return a translatable msg_id instead of a string
      * @returns string the active session user object
      */
@@ -1603,8 +1637,12 @@ class user extends db_id_object_non_sandbox
             if (isset($_SESSION[url_var::SESSION_LOGGED])) {
                 log_debug('use session');
                 if ($_SESSION[url_var::SESSION_LOGGED]) {
+                    // keep the request ip before load_by_id overwrites it with the stored ip, so the
+                    // user table always keeps the last used ip of the logged in user (see save_last_ip)
+                    $req_ip = $this->ip_addr;
                     $this->load_by_id($_SESSION[url_var::SESSION_USER_ID]);
                     log_debug('use session id ' . $this->id);
+                    $this->save_last_ip($req_ip);
                 }
             } else {
                 log_info('ip check result is ' . $result);

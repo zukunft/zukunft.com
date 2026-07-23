@@ -260,6 +260,7 @@
     \-- load_usr_data - section for function load_usr_data is expected to be load in /user/user.php
     \-- has_any_user_this_profile - section for function has_any_user_this_profile not yet defined that it should be load sql in /user/user.php
     \-- ip_check - section for function ip_check not yet defined that it should be load sql in /user/user.php
+    \-- needs_ip_update - section for function needs_ip_update not yet defined that it should be load sql in /user/user.php
     \-- get - section for function get not yet defined that it should be load sql in /user/user.php
     \-- create_system_user - section for function create_system_user not yet defined that it should be load sql in /user/user.php
     \-- diff_msg - section for function diff_msg is expected to be info in /user/user.php
