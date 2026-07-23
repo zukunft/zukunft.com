@@ -610,6 +610,16 @@ class html_base
     }
 
     /**
+     * the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+     * @param string $icon_class the css class string of the icon, always an icons::* const
+     * @return string the html code e.g. '<i class="fas fa-chevron-right"></i>'
+     */
+    function icon(string $icon_class): string
+    {
+        return '<' . self::I . ' ' . self::CLASS_HTML . '="' . $icon_class . '"></' . self::I . '>';
+    }
+
+    /**
      * @param string $text the superscript text e.g. the exponent "2"
      * @return string the html code that shows the given text as a superscript e.g. <sup>2</sup>
      */

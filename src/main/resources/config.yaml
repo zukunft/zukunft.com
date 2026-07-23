@@ -382,6 +382,9 @@ zukunft.com:
             what limit:
               sys-conf-value: 40
               tooltip-comment: "the maximum number of characters shown per entry in the what column of the change log table pure"
+            row limit:
+              sys-conf-value: 10
+              tooltip-comment: "the maximum number of change rows shown in the change log table pure"
           behaviour:
             tooltip-comment: "reaction settings e.g. the expected response time"
             response time:

@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
@@ -57,6 +58,10 @@ class sys_log_ui_tests
     // shortened in the snapshot; matches the production default (config.yaml 'what limit') and stays
     // below the length of the test description word_names::MATH_COM so exactly that row is truncated
     const int WHAT_LIMIT_SAMPLE = 40;
+
+    // a sample row limit for the change log table pure so that a change log longer than the limit is
+    // shortened to the most recent rows in the snapshot (config.yaml 'change log > row limit')
+    const int ROW_LIMIT_SAMPLE = 5;
 
     function run(test_cleanup $t): void
     {
@@ -94,16 +99,25 @@ class sys_log_ui_tests
         // sort like the page renderer (ui_log::change_log_table_pure) so that the row order of the
         // changes with the same time never depends on the api row order
         $chg_lst_ui->sort_by_time_and_what();
-        $chg_tbl = $chg_lst_ui->tbl_when_who_what($what_max, true);
+        $chg_tbl = $chg_lst_ui->tbl_when_who_what($what_max, 0, true);
         $test_page .= 'change log table pure (borderless when / who / what)<br>';
         $test_page .= $chg_tbl . '<br>';
 
         // the same table rendered with a char limit so a long change (the description) triggers the
         // limit: the what column is shortened with '...' and the full change text is kept as a
         // mouseover popup (see change_log_named::what / tr_when_who_what)
-        $chg_tbl_short = $chg_lst_ui->tbl_when_who_what(self::WHAT_LIMIT_SAMPLE, true);
+        $chg_tbl_short = $chg_lst_ui->tbl_when_who_what(self::WHAT_LIMIT_SAMPLE, 0, true);
         $test_page .= 'change log table pure with char limit (shortened long what)<br>';
         $test_page .= $chg_tbl_short . '<br>';
+
+        // a change log longer than the row limit: only the most recent rows up to the limit are shown,
+        // so the change log table pure stays compact on the word and triple page (config.yaml row limit)
+        $chg_lst_lng_ui = new change_log_list_ui(
+            $t_log->log_list_named()->api_json(new api_type_list([api_types::TEST_MODE])));
+        $chg_lst_lng_ui->sort_by_time_and_what();
+        $chg_tbl_limited = $chg_lst_lng_ui->tbl_when_who_what(self::WHAT_LIMIT_SAMPLE, self::ROW_LIMIT_SAMPLE, true);
+        $test_page .= 'change log table pure limited to ' . self::ROW_LIMIT_SAMPLE . ' rows (longer than the limit)<br>';
+        $test_page .= $chg_tbl_limited . '<br>';
 
         $t->subheader($ts . 'change log table pure');
 
@@ -141,6 +155,26 @@ class sys_log_ui_tests
 
         $test_name = 'the linked user name is shown as the link text';
         $t->assert_text_contains($test_name, $chg_tbl, users::SYSTEM_NAME . '</a>');
+
+        // the change log is longer than the row limit, so the table shows only the configured rows;
+        // each shown row has exactly one linked user name, so counting them counts the shown rows
+        $test_name = 'the sample change log is longer than the row limit';
+        $t->assert_greater($test_name, self::ROW_LIMIT_SAMPLE, $chg_lst_lng_ui->count());
+
+        $test_name = 'the change log table pure shows only the configured number of rows';
+        $t->assert($test_name, substr_count($chg_tbl_limited, users::SYSTEM_NAME . '</a>'), self::ROW_LIMIT_SAMPLE);
+
+        // when the row limit is reached a forward button (fontawesome icon) is shown at the end
+        $test_name = 'a forward button is shown when the row limit is reached';
+        $t->assert_text_contains($test_name, $chg_tbl_limited, icons::PAGE_FORWARD);
+
+        // the back button is only prepared (paging is not implemented yet), so the first page shows none
+        $test_name = 'no back button is shown on the first page';
+        $t->assert_text_not_contains($test_name, $chg_tbl_limited, icons::PAGE_BACK);
+
+        // a table that shows all changes (no row limit reached) has no forward button
+        $test_name = 'no forward button is shown when all changes fit';
+        $t->assert_text_not_contains($test_name, $chg_tbl, icons::PAGE_FORWARD);
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
     }

@@ -5240,6 +5240,7 @@
     \-- img - section for function img not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- esc - section for function esc not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
+    \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -7406,6 +7407,8 @@
         \-- html_base - escape user settable text so it is shown literally and cannot inject html
     \-- span
         \-- html_base - @param string $text the text that should be formatted
+    \-- icon
+        \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
 \-- wrapper for internal references used in the html code

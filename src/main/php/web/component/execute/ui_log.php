@@ -90,14 +90,18 @@ class ui_log
         // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
         // table is sorted with the same parameters as the previously used change log
         $log_lst = $this->prepared_change_log($dbo, $log_lst);
-        // the max number of chars of the what column comes from the frontend config
+        // the max number of chars of the what column and the max number of rows both come from the
+        // frontend config (config.yaml > ... > change log > what limit / row limit)
         global $ui_sys;
         $what_max_chars = 0;
+        $max_rows = 0;
         if ($ui_sys?->cfg !== null) {
             $what_max_chars = (int)$ui_sys->cfg->get_by(
                 [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+            $max_rows = (int)$ui_sys->cfg->get_by(
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
         }
-        return $log_lst->tbl_when_who_what($what_max_chars, $test_mode);
+        return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode);
     }
 
     /**

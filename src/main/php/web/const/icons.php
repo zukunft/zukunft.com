@@ -48,5 +48,9 @@ class icons
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data
     const string REFRESH = 'fas fa-arrows-rotate';
+    // paging of a row-limited list e.g. the change log table pure: forward to the next / back to the
+    // previous page of rows
+    const string PAGE_FORWARD = 'fas fa-chevron-right';
+    const string PAGE_BACK = 'fas fa-chevron-left';
 
 }
