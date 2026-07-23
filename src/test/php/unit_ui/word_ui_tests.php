@@ -75,6 +75,22 @@ class word_ui_tests
         $ts = 'unit ui html word ';
         $t->header($ts);
 
+        // a database change is only executed for a known requesting user on the message
+        // (docs/llm/state-and-messages.md); the positive twins that save with a message user
+        // are the rename and delete tests in unit_write_workflow/*_write_url_tests.php
+        $t->subheader($ts . 'crud guard');
+        $test_name = 'add without a message user reports the missing user';
+        $no_usr_msg = new user_message();
+        $wrd_crud = new word($t_wrd->word()->api_json());
+        $result = $wrd_crud->add_via_api($no_usr_msg);
+        $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
+        $test_name = 'update without a message user reports the missing user';
+        $result = $wrd_crud->update($no_usr_msg);
+        $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
+        $test_name = 'del without a message user reports the missing user';
+        $result = $wrd_crud->del($no_usr_msg);
+        $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
+
         // TODO add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
         // TODO add this ui test for all main sandbox objects

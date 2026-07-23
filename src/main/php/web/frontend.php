@@ -1879,9 +1879,6 @@ class frontend
         bool         $do_it
     ): array
     {
-        // the requesting user of this change; an unknown user acts as an anonymous ip-only
-        // user and the backend write path rejects the change if it is not permitted
-        $usr = $usr_msg->usr ?? new user_ui();
         // a confirmed create/update/delete writes the object, so the back mask that carries its type is
         // required here (unlike a standalone confirm view render)
         $dbo = $this->dbo_for_url($view, $url_array, true);
@@ -1896,9 +1893,9 @@ class frontend
 
         if ($do_it) {
             $result_msg = match ($crud) {
-                url_var::CRUD_CREATE => $dbo->add_via_api($usr, $usr_msg),
-                url_var::CRUD_UPDATE => $dbo->update($usr, $usr_msg),
-                url_var::CRUD_DELETE => $dbo->del($usr, $usr_msg),
+                url_var::CRUD_CREATE => $dbo->add_via_api($usr_msg),
+                url_var::CRUD_UPDATE => $dbo->update($usr_msg),
+                url_var::CRUD_DELETE => $dbo->del($usr_msg),
                 default => new user_message()
             };
             if (!$result_msg->is_ok()) {

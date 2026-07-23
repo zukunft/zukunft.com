@@ -10,7 +10,7 @@ the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry 
 
 1. done (web/frontend.php reads the requesting user from $msg->usr; the by-reference user parameters of action_login/signup/activate/logout and the backend user of url_to_action stay until the login user switch goes through the api)
 
-2. same treatment for the remaining web/ signatures that carry both a user and a user_message: web/sandbox/db_object.php add_via_api / update / del, web/helper/user_request.php __construct and shared/helper/MapObject.php convertToDb; where the function needs a backend flag the frontend user does not carry yet, add the flag to user::api_json_array and web/user/user.php set_from_json instead of keeping the backend user parameter
+2. done (web/sandbox/db_object.php add_via_api / update / del and shared/helper/MapObject.php convertToDb read the requesting user from the message — the backend twin travels inside the message api json via convertMsgToDb — and user_request no longer carries a separate frontend user; a crud call without a message user reports msg_id::USER_MISSING, see the crud guard tests in unit_ui/word_ui_tests.php; no new backend flag was needed because user::api_json_array already emits uses_sandbox)
 
 3. give the api entry points the same single assignment: each api/*/index.php (33 files, same skeleton) creates one backend user_message right after $usr->get() and sets $msg->usr = $usr before the method dispatch, and passes that $msg into the controller/rest handling instead of the local string $msg; do api/word/index.php first as the template, then roll the identical diff over the other 32; http/setup.php gets the same block after its new user
 

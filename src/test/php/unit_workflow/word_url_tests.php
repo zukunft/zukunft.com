@@ -125,7 +125,7 @@ class word_url_tests extends url_test_base
 
         // a create or delete request is executed by url_to_action (not url_to_html, which only
         // renders), so use the combined execute and render call and check the database result
-        $req = new user_request($t->usr1, $usr_ui, $usr_msg, $ui->dto, true, true);
+        $req = new user_request($t->usr1, $usr_msg, $ui->dto, true, true);
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
@@ -222,7 +222,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $usr_ui, $usr_msg, $ui->dto, false, true);
+        $req = new user_request($usr_backend, $usr_msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);

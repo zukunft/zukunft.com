@@ -6,8 +6,9 @@
     ---------------------------
 
     combines the recurring parameters of frontend::url_to_action and
-    frontend::url_user_reaction (the backend and frontend user, the message buffer,
-    the frontend cache and the do_it flag) into one object so the call stays short
+    frontend::url_user_reaction (the backend user, the message buffer with the
+    requesting frontend user, the frontend cache and the do_it flag) into one
+    object so the call stays short
     var name: $req
 
 
@@ -42,11 +43,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_USER . 'user.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class user_request
@@ -58,9 +57,8 @@ class user_request
 
     // the backend user, updated in place e.g. on login
     public user_backend $usr_backend;
-    // the frontend user, updated in place e.g. on login
-    public user_ui $usr;
-    // the message buffer enriched with potential errors
+    // the message buffer enriched with potential errors; carries the requesting
+    // frontend user as $usr_msg->usr (docs/llm/state-and-messages.md)
     public user_message $usr_msg;
     // the frontend cache used to reduce the backend loading
     public data_object $dto;
@@ -76,15 +74,13 @@ class user_request
 
     /**
      * @param user_backend $usr_backend the backend user, updated in place e.g. on login
-     * @param user_ui $usr the frontend user, updated in place e.g. on login
-     * @param user_message $usr_msg the message buffer enriched with potential errors
+     * @param user_message $usr_msg the message buffer enriched with potential errors; must carry the requesting frontend user as $usr_msg->usr
      * @param data_object $dto the frontend cache used to reduce the backend loading
      * @param bool $do_it false to skip the database execution e.g. for unit testing
      * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      */
     function __construct(
         user_backend $usr_backend,
-        user_ui      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object(),
         bool         $do_it = true,
@@ -92,12 +88,7 @@ class user_request
     )
     {
         $this->usr_backend = $usr_backend;
-        $this->usr = $usr;
         $this->usr_msg = $usr_msg;
-        // the frontend functions read the requesting user from the message
-        // (docs/llm/state-and-messages.md), so keep the bundle consistent
-        // TODO Prio 2 drop the separate user parameter and use the message user only
-        $this->usr_msg->usr = $usr;
         $this->dto = $dto;
         $this->do_it = $do_it;
         $this->test_mode = $test_mode;
