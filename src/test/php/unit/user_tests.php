@@ -303,6 +303,25 @@ class user_tests
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_STATUS));
 
 
+        $t->subheader($ts . 'last used ip saved on login');
+
+        // a logged in user connecting from a new ip must get its last used ip updated in the user
+        // table; needs_ip_update decides this so get() can persist the new ip via save_user
+        $ip_usr = $t_usr->user_ip_loaded();
+        $test_name = 'a new ip of a logged in user is saved';
+        $t->assert_true($test_name, $ip_usr->needs_ip_update(users::TEST_IP));
+
+        $test_name = 'the unchanged ip is not saved again';
+        $t->assert_false($test_name, $ip_usr->needs_ip_update(users::TEST_USER_IP));
+
+        $test_name = 'an empty request ip never overwrites the stored ip';
+        $t->assert_false($test_name, $ip_usr->needs_ip_update(''));
+
+        // an anonymous user without a database id (id 0) is not persisted by ip
+        $test_name = 'a user without a database id is not updated by ip';
+        $t->assert_false($test_name, $t_usr->user_ip()->needs_ip_update(users::TEST_IP));
+
+
         $t->subheader($ts . 'profile privilege escalation');
 
         // the profile is a critical field that must not be trusted from the request json; api_mapper

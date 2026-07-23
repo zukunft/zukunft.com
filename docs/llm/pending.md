@@ -4,25 +4,7 @@
 
 ## high prio
 
-add to /docs/llm/* the rule that for objects if there is not a very good reason, always the same var name should be used, so that docs/code_object_name_exceptions.md lists only a few exception. The name for user_message should be $msg. Change the name to $msg where possible.
-
-All message to the user should be transported via $msg. Check if there are any e.g. log_warning messages that should better be shown to the user. Use the function that does both in one (log and $msg enrichment if possible)
-
-for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
-
-the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
-
-add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
-
-if in the borderless change log table another field than the prime key e.g. the name is changed show the translated name of the field before the changed value e.g. 'added description "ISO 4217 alphabetic code for the ...' . and if the char limit is used, indicate with '...' that there is more. Show the full change text as mouseover popup.
-
-if in the borderless change log table a type field is shown, display the type name instead of the type number
-
-in the borderless change log table use for the username the linked version so that a click on the username shows the user default page
-
 if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
-
-if a user has logged in make sure that always the last used ip address is saved in the user table
 
 check that the login page does not $_POST the unhashed password
 
@@ -63,6 +45,10 @@ the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry 
 6. classify the remaining dual user+user_message signatures (32 at last count) and confirm the keepers are all subject-user cases where the user is the payload the function operates on — user::no_diff / no_non_id_diff / is_same / save_user / del / import_obj / check_preserved, sandbox::take_ownership / check_protection_change, user_list::save, sql_db::add_user_from_env / add_admin_users_from_env, config_numbers read_cache / read_db_cache / read_file_cache, job_db_cleanup / job_cache_refresh; document each keeper with a @param line saying which user it is
 
 7. add the coded check to unit/coding_rule_tests.php (rule: every machine-checkable rule has one): no file below the entry points assigns $msg->usr / ->usr on a user_message — allowed writers are http/*, api/*/index.php, the user_message classes themselves and the test utils (all_unit_tests.php, test_base.php, horizontal_write_tests.php); follow the scanner pattern of php_web_config_from_cache_tests
+
+add to /docs/llm/* the rule that for objects if there is not a very good reason, always the same var name should be used, so that docs/code_object_name_exceptions.md lists only a few exception. The name for user_message should be $msg. Change the name to $msg where possible.
+
+All message to the user should be transported via $msg. Check if there are any e.g. log_warning messages that should better be shown to the user. Use the function that does both in one (log and $msg enrichment if possible)
 
 ### change log table paging (implement the prepared forward/back buttons)
 
