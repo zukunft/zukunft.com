@@ -635,6 +635,27 @@ class html_base
     }
 
     /**
+     * the html of a font awesome icon
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
+     * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
+     * @param string $title the hover tooltip and accessible hint of the icon
+     * @return string the icon <i> element
+     */
+    function icon_with_title(string $icon, string $class_add = '', string $title = ''): string
+    {
+        $class = $icon;
+        if ($class_add != '') {
+            $class .= ' ' . $class_add;
+        }
+        $result = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $class . '"';
+        if ($title != '') {
+            $result .= ' ' . self::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result .= '></' . self::I . '>';
+        return $result;
+    }
+
+    /**
      * @param string $text the superscript text e.g. the exponent "2"
      * @return string the html code that shows the given text as a superscript e.g. <sup>2</sup>
      */
@@ -1376,31 +1397,10 @@ class html_base
             . self::ARIA_LABEL . '="' . htmlspecialchars($show_label, ENT_QUOTES) . '">';
         // the eye icon is shown while the password is masked and the eye-slash icon while it is revealed;
         // the css in style_html.css toggles which icon is visible based on the checkbox state
-        $eye = $this->icon(icons::PASSWORD_SHOW, self::CLASS_PASSWORD_ICON_SHOW, $show_label);
-        $eye .= $this->icon(icons::PASSWORD_HIDE, self::CLASS_PASSWORD_ICON_HIDE, $show_label);
+        $eye = $this->icon_with_title(icons::PASSWORD_SHOW, self::CLASS_PASSWORD_ICON_SHOW, $show_label);
+        $eye .= $this->icon_with_title(icons::PASSWORD_HIDE, self::CLASS_PASSWORD_ICON_HIDE, $show_label);
         $toggle = $check . $this->label($eye, $show_id);
         return $this->span($field . $toggle, self::CLASS_PASSWORD_FIELD);
-    }
-
-    /**
-     * the html of a font awesome icon
-     * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
-     * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
-     * @param string $title the hover tooltip and accessible hint of the icon
-     * @return string the icon <i> element
-     */
-    function icon(string $icon, string $class_add = '', string $title = ''): string
-    {
-        $class = $icon;
-        if ($class_add != '') {
-            $class .= ' ' . $class_add;
-        }
-        $result = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $class . '"';
-        if ($title != '') {
-            $result .= ' ' . self::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
-        }
-        $result .= '></' . self::I . '>';
-        return $result;
     }
 
     /**

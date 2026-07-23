@@ -5241,6 +5241,7 @@
     \-- esc - section for function esc not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
+    \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /html/html_base.php
     \-- url - section for function url not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
     \-- url_new - section for function url_new not yet defined that it should be wrapper for internal references used in the html code in /html/html_base.php
@@ -5280,7 +5281,6 @@
     \-- form_input - section for function form_input not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- form_input_password - section for function form_input_password not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- input_password - section for function input_password not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
-    \-- icon - section for function icon not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_page - section for function about_page not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- about_body - section for function about_body not yet defined that it should be the form HTML elements used in zukunft.com in /html/html_base.php
     \-- edit_url - section for function edit_url not yet defined that it should be output device specific support functions for the pure HTML version in /html/html_base.php
@@ -7413,6 +7413,8 @@
         \-- html_base - @param string $text the text that should be formatted
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+    \-- icon_with_title
+        \-- html_base - the html of a font awesome icon
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
 \-- wrapper for internal references used in the html code
@@ -7496,8 +7498,6 @@
         \-- html_base - a password input with a css-only "show password" toggle (no javascript, see docs/llm/frontend.md)
     \-- input_password
         \-- html_base - the bootstrap-styled variant of form_input_password for the admin form that may overwrite a
-    \-- icon
-        \-- html_base - the html of a font awesome icon
     \-- about_page
         \-- html_base - @return string the HTML code of the about page
     \-- about_body
