@@ -45,7 +45,7 @@ SELECT ip_range_update_log_111110
     ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
 
 SELECT ip_range_update_log_111110
-        (1::bigint,
+        (3::bigint,
          1::smallint,
          859::smallint,
          null::text,

@@ -1053,6 +1053,7 @@ class html_base
         return match ($tbl_style) {
             self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
             styles::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::STYLE_BORDERLESS_GREY => $this->tbl_start_borderless_grey() . $tbl_rows . $this->tbl_end(),
             styles::TABLE_PUR => $this->tbl_start_pur() . $tbl_rows . $this->tbl_end(),
             default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
         };
@@ -1091,6 +1092,18 @@ class html_base
     function tbl_start_pur(): string
     {
         return '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table">';
+    }
+
+    // a borderless table with the standard zukunft.com grey text (the .grey color) instead of the
+    // bootstrap text-muted grey of tbl_start_hist; used for the change log table pure
+    function tbl_start_borderless_grey(): string
+    {
+        if (self::UI_USE_BOOTSTRAP) {
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="table table-borderless ' . styles::STYLE_GREY . '">';
+        } else {
+            $result = '<' . self::TABLE . ' ' . self::CLASS_HTML . '="' . styles::STYLE_GREY . '">';
+        }
+        return $result;
     }
 
     /**

@@ -24,7 +24,7 @@ PREPARE group_insert_log_110_call FROM
     'SELECT group_insert_log_110 (?, ?, ?, ?, ?, ?)';
 
 SELECT group_insert_log_110
-        (1,
+        (3,
          1,
          320,
          'Pi',

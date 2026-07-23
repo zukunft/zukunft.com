@@ -37,7 +37,7 @@ PREPARE protection_type_insert_log_1111_call
 
 SELECT protection_type_insert_log_1111
     ('no protection',
-     1,
+     3,
      1,
      190,
      191,

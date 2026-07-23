@@ -75,7 +75,6 @@ class phrase_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $sys;
 
         // init
@@ -93,7 +92,7 @@ class phrase_list_tests
 
         $t->subheader($ts . 'cast');
 
-        $phr_lst = $this->get_phrase_list();
+        $phr_lst = $this->get_phrase_list($t);
         $trm_lst = $phr_lst->term_list();
         // using dsp_id() does not work here because the second word has the term id 3 instead of the phrase id 2
         $t->assert('cast phrase list to term list', $phr_lst->dsp_name(), $trm_lst->dsp_name());
@@ -102,11 +101,11 @@ class phrase_list_tests
         $t->subheader($ts . 'sql statement creation');
 
         // load by name pattern (expected to be most often used)
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $t->assert_sql_like($sc, $phr_lst, 'S');
 
         // load by phrase ids
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         $test_name = 'load phrases by ids';
         $t->assert_sql_by_ids($test_name, $sc, $phr_lst, $phr_ids);
@@ -115,14 +114,14 @@ class phrase_list_tests
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_names::MATH_CONST);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($t->usr1));
+        $t->assert_sql_names($sc, $phr_lst, new phrase($t->usr1), triple_names::MATH_CONST);
 
         $this->test = $t;
 
         // sql to load a list of phrases by a phrase list
-        $phr_lst = new phrase_list($usr);
-        $wrd = new word($usr);
+        $phr_lst = new phrase_list($t->usr1);
+        $wrd = new word($t->usr1);
         $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $sys->typ_lst->vrb->get_verb(verbs::PART_NAME);
@@ -134,12 +133,12 @@ class phrase_list_tests
         $t->subheader($ts . 'selection');
 
         // check that a time phrase is correctly removed from a phrase list
-        $phr_lst = $this->get_phrase_list();
+        $phr_lst = $this->get_phrase_list($t);
         $phr_lst_ex_time = clone $phr_lst;
         $phr_lst_ex_time->ex_time();
         $t->assert('phrase_list->ex_time', true, true);
         $result = $phr_lst_ex_time->dsp_id();
-        $target = $this->get_phrase_list_ex_time()->dsp_id();
+        $target = $this->get_phrase_list_ex_time($t)->dsp_id();
         $t->assert('phrase_list->ex_time names', $result, $target);
 
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
@@ -196,33 +195,30 @@ class phrase_list_tests
     /**
      * create the standard phrase list test object without using a database connection
      */
-    function get_phrase_list(): phrase_list
+    function get_phrase_list(test_cleanup $t): phrase_list
     {
-        global $usr;
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->add($this->get_phrase_add());
-        $phr_lst->add($this->get_time_phrase());
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase_add($t));
+        $phr_lst->add($this->get_time_phrase($t));
         return $phr_lst;
     }
 
     /**
      * same as get_phrase_list but without time phrase
      */
-    private function get_phrase_list_ex_time(): phrase_list
+    private function get_phrase_list_ex_time(test_cleanup $t): phrase_list
     {
-        global $usr;
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->add($this->get_phrase_add());
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase_add($t));
         return $phr_lst;
     }
 
     /**
      * create the standard filled phrase object
      */
-    private function get_phrase_add(): phrase
+    private function get_phrase_add(test_cleanup $t): phrase
     {
-        global $usr;
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set(words::DEFAULT_WORD_ID, word_names::TEST_ADD);
         return $wrd->phrase();
     }
@@ -230,12 +226,11 @@ class phrase_list_tests
     /**
      * create the filled time phrase object
      */
-    private function get_time_phrase(): phrase
+    private function get_time_phrase(test_cleanup $t): phrase
     {
-        global $usr;
         global $sys;
 
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set(word_names::CONST_ID, word_names::TEST_RENAMED);
         $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         return $wrd->phrase();
@@ -244,10 +239,9 @@ class phrase_list_tests
     /**
      * create the standard filled phrase object
      */
-    private function get_phrase(int $id, string $name): phrase
+    private function get_phrase(test_cleanup $t, int $id, string $name): phrase
     {
-        global $usr;
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->set($id, $name);
         return $wrd->phrase();
     }

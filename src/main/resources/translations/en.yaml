@@ -350,6 +350,9 @@ messages:
   change_tbl_field: "Field"
   change_tbl_from: "From"
   change_tbl_to: "To"
+  change_log_tbl_when: "when"
+  change_log_tbl_who: "who"
+  change_log_tbl_what: "what"
   popup_impact: "impact"
   extends: "extends"
   # database table names (Translator::text_db_table, code id from change_tables.csv)

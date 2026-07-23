@@ -41,7 +41,7 @@ SELECT user_status_insert_log_1111
 
 SELECT user_status_insert_log_1111
     ('Verified'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      255::smallint,
      256::smallint,

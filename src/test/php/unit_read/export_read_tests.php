@@ -45,7 +45,6 @@ class export_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_phr = new test_phrases($t);
@@ -67,7 +66,7 @@ class export_read_tests
         $t->subheader($ts . 'json');
 
         // TODO Prio 2 activate
-        //$json_export = new json_io($usr, $phr_lst);
+        //$json_export = new json_io($t->usr1, $phr_lst);
         //$result = $json_export->export();
         //$target = 'Mathematics';
         //$t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);

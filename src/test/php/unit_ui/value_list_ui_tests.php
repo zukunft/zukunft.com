@@ -52,8 +52,6 @@ class value_list_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
-
         // init
         $html = new html_base();
         $tl = new test_lib();
@@ -71,7 +69,7 @@ class value_list_ui_tests
         $phr_inhabitant = $t_wrd->word_inhabitant()->phrase();
 
         // create a test set of phrase groups
-        $phr_lst_context = new phrase_list($usr);
+        $phr_lst_context = new phrase_list($t->usr1);
         $phr_lst_context->add($phr_inhabitant);
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json());
 

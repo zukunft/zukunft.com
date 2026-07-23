@@ -360,8 +360,7 @@ class test_log
      */
     function log_value_add(): change_values_prime
     {
-        global $usr_sys;
-        $chg = new change_values_prime($usr_sys);
+        $chg = new change_values_prime($this->env->usr_system);
         $chg->id = $this->chg_log_seq();
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
@@ -453,9 +452,7 @@ class test_log
      */
     function log_norm(): changes_norm
     {
-        global $usr_sys;
-
-        $chg = new changes_norm($usr_sys);
+        $chg = new changes_norm($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
@@ -470,9 +467,7 @@ class test_log
      */
     function log_big(): changes_big
     {
-        global $usr_sys;
-
-        $chg = new changes_big($usr_sys);
+        $chg = new changes_big($this->env->usr_system);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
@@ -511,41 +506,40 @@ class test_log
      */
     private function log_class_to_object(string $class): change|change_values_big|change_values_geo_big|change_values_geo_norm|change_values_geo_prime|change_values_norm|change_values_prime|change_values_text_prime|change_values_text_norm|change_values_text_big|change_values_time_big|change_values_time_norm|change_values_time_prime|changes_big|changes_norm
     {
-        global $usr_sys;
 
         if ($class == change::class) {
-            $chg = new change($usr_sys);
+            $chg = new change($this->env->usr_system);
         } elseif ($class == changes_norm::class) {
-            $chg = new changes_norm($usr_sys);
+            $chg = new changes_norm($this->env->usr_system);
         } elseif ($class == changes_big::class) {
-            $chg = new changes_big($usr_sys);
+            $chg = new changes_big($this->env->usr_system);
         } elseif ($class == change_values_prime::class) {
-            $chg = new change_values_prime($usr_sys);
+            $chg = new change_values_prime($this->env->usr_system);
         } elseif ($class == change_values_norm::class) {
-            $chg = new change_values_norm($usr_sys);
+            $chg = new change_values_norm($this->env->usr_system);
         } elseif ($class == change_values_big::class) {
-            $chg = new change_values_big($usr_sys);
+            $chg = new change_values_big($this->env->usr_system);
         } elseif ($class == change_values_time_prime::class) {
-            $chg = new change_values_time_prime($usr_sys);
+            $chg = new change_values_time_prime($this->env->usr_system);
         } elseif ($class == change_values_time_norm::class) {
-            $chg = new change_values_time_norm($usr_sys);
+            $chg = new change_values_time_norm($this->env->usr_system);
         } elseif ($class == change_values_time_big::class) {
-            $chg = new change_values_time_big($usr_sys);
+            $chg = new change_values_time_big($this->env->usr_system);
         } elseif ($class == change_values_text_prime::class) {
-            $chg = new change_values_text_prime($usr_sys);
+            $chg = new change_values_text_prime($this->env->usr_system);
         } elseif ($class == change_values_text_norm::class) {
-            $chg = new change_values_text_norm($usr_sys);
+            $chg = new change_values_text_norm($this->env->usr_system);
         } elseif ($class == change_values_text_big::class) {
-            $chg = new change_values_text_big($usr_sys);
+            $chg = new change_values_text_big($this->env->usr_system);
         } elseif ($class == change_values_geo_prime::class) {
-            $chg = new change_values_geo_prime($usr_sys);
+            $chg = new change_values_geo_prime($this->env->usr_system);
         } elseif ($class == change_values_geo_norm::class) {
-            $chg = new change_values_geo_norm($usr_sys);
+            $chg = new change_values_geo_norm($this->env->usr_system);
         } elseif ($class == change_values_geo_big::class) {
-            $chg = new change_values_geo_big($usr_sys);
+            $chg = new change_values_geo_big($this->env->usr_system);
         } else {
             log_err('change log class ' . $class . ' not expected');
-            $chg = new change($usr_sys);
+            $chg = new change($this->env->usr_system);
         }
         return $chg;
     }
@@ -636,10 +630,8 @@ class test_log
      */
     function log_value(): change_values_norm
     {
-        global $usr_sys;
-
         $t_grp = new test_groups($this->env);
-        $chg = new change_values_norm($usr_sys);
+        $chg = new change_values_norm($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::VALUE);
@@ -655,9 +647,7 @@ class test_log
      */
     function log_value_prime(): change_values_prime
     {
-        global $usr_sys;
-
-        $chg = new change_values_prime($usr_sys);
+        $chg = new change_values_prime($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
@@ -672,9 +662,7 @@ class test_log
      */
     function log_value_big(): change_values_big
     {
-        global $usr_sys;
-
-        $chg = new change_values_big($usr_sys);
+        $chg = new change_values_big($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
@@ -709,9 +697,7 @@ class test_log
      */
     function log_link(): change_link
     {
-        global $usr_sys;
-
-        $chg = new change_link($usr_sys);
+        $chg = new change_link($this->env->usr1);
         $chg->set_time_str(test_const::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::TRIPLE);
@@ -726,6 +712,17 @@ class test_log
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->log_list_named(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return change_log_list a change log with a single word add entry, used e.g. to show the
+     *                         change log table pure with a deterministic single row
+     */
+    function log_list_word_add(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_word_add());
+        return $log_lst;
     }
 
     /**

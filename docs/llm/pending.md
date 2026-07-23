@@ -4,7 +4,19 @@
 
 ## high prio
 
-create an 'invisible change log table' component type and link a component of this type to the word and triple default view. The 'invisible change log table' should be a table without borders and should have three columns: 'when', 'who' and 'what'. In the 'what' column the chars per entry should be limited based on a config.yaml value. Add the 'invisible change log table' to src/test/resources/web/html/object_pages/sys_log.html .      
+for testing use always the users of the test environment e.g. $t->usr1, ... and never any global user like global $usr
+
+the http entry point like /http/view.php should set the user_message $msg with the requesting user and this should be used in all functions as a parameter
+
+add to the test set used for the borderless change log table here ( src/test/resources/web/html/object_pages/sys_log.html ) a fey more rows including a phrase type change, a description change and a protection type change.
+
+if in the borderless change log table another field than the prime key e.g. the name is changed show the translated name of the field before the changed value e.g. 'added description "ISO 4217 alphabetic code for the ...' . and if the char limit is used, indicate with '...' that there is more. Show the full change text as mouseover popup.
+
+if in the borderless change log table a type field is shown, display the type name instead of the type number
+
+in the borderless change log table use for the username the linked version so that a click on the username shows the user default page
+
+if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
 
 if a user logs in make sure that always the last used ip address is saved in the user table
 

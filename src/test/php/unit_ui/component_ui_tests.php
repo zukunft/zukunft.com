@@ -41,7 +41,6 @@ class component_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
         // start the test section (ts)

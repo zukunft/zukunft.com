@@ -37,7 +37,7 @@ PREPARE db_cache_status_insert_log_1111_call
 
 SELECT db_cache_status_insert_log_1111
     ('clean',
-     1,
+     3,
      1,
      871,
      872,

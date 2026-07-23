@@ -37,7 +37,7 @@ PREPARE sys_log_function_insert_log_1111_call
 
 SELECT sys_log_function_insert_log_1111
     ('Import system configuration',
-     1,
+     3,
      1,
      847,
      848,

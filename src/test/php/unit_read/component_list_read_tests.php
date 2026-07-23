@@ -42,7 +42,6 @@ class component_list_read_tests
 
     function run(test_cleanup $t): void
     {
-        global $usr;
 
         // init
         $t->name = 'component list read db->';

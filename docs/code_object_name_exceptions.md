@@ -34,7 +34,7 @@ view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_new, $msk_old, $msk_plain, $
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_power, $wrd_pre, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -61,7 +61,7 @@ change_field: $fld, $typ
 change_field_list: $cng_fld_cac
 change_link: $chg, $log, $log_empty
 change_log_link_list: $cl_lst, $log_link_ui, $lst
-change_log_list: $chg_lst, $log, $log_lst, $log_ui, $lst, $result
+change_log_list: $chg_lst, $chg_lst_ui, $log, $log_lst, $log_ui, $lst, $result
 change_log_named: $chg_ui, $log_ui
 change_table_field: $tbl_fld
 change_table_list: $cng_tbl_cac

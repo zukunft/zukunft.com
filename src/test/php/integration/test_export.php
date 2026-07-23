@@ -43,25 +43,23 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 function run_export_test(test_cleanup $t): void
 {
 
-    global $usr;
-
     // start the test section (ts)
     $ts = 'integration export ';
     $t->header($ts);
 
     $t->subheader($ts . 'xml');
 
-    $phr_lst = new phrase_list($usr);
+    $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_names(array(word_names::MATH));
-    $xml_export = new xml($usr);
-    $result = $xml_export->export_by_phrase_list($phr_lst, $usr);
+    $xml_export = new xml($t->usr1);
+    $result = $xml_export->export_by_phrase_list($phr_lst, $t->usr1);
     $target = 'mathematics';
     // the xml export reads the phrases from the database, so a semi page timeout is used to avoid a false timeout
     $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     $t->subheader($ts . 'json');
 
-    $json_export = new json_io($usr, $phr_lst);
+    $json_export = new json_io($t->usr1, $phr_lst);
     $result = $json_export->export();
     $target = 'mathematics';
     $t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);

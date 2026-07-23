@@ -60,8 +60,6 @@ class formula_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -80,12 +78,12 @@ class formula_tests
         $t->assert_sql_foreign_key_create($frm);
 
         $t->subheader($ts . 'sql read');
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $t->assert_sql_by_id($sc, $frm);
         $t->assert_sql_by_name($sc, $frm);
 
         $t->subheader($ts . 'sql read default and user changes by id');
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $frm->id = formula_names::SCALE_HOUR_ID;
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
@@ -93,7 +91,7 @@ class formula_tests
         $this->assert_sql_user_changes_frm($t, $frm);
 
         $t->subheader($ts . 'sql read default by name');
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $frm->set_name(formula_names::SCALE_MIO_EXP);
         $t->assert_sql_standard_by_name($sc, $frm);
 
@@ -167,7 +165,7 @@ class formula_tests
         // a frontend partial update (e.g. a description-only edit of a predefined formula whose
         // expression field is not shown): convertToDb builds a fresh object from the api json that
         // carries the name but no expression, so ref_text and usr_text stay null
-        $frm_upd = new formula($usr);
+        $frm_upd = new formula($t->usr1);
         $frm_upd->set($frm_db->id(), $frm_db->name());
         $frm_upd->set_type_id($frm_db->type_id());
         $frm_upd->description = 'a new formula description';
@@ -204,10 +202,10 @@ class formula_tests
         $t->assert_text_contains($test_name, $qp->sql, '_all_values_needed_old smallint');
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t_frm->formula(), $usr_sys);
-        $t->assert_ex_and_import($t_frm->formula_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_frm->formula(), $t->usr_system);
+        $t->assert_ex_and_import($t_frm->formula_filled(), $t->usr_system);
         $json_file = 'unit/formula/scale_second_to_minute.json';
-        $t->assert_json_file(new formula($usr), $json_file);
+        $t->assert_json_file(new formula($t->usr1), $json_file);
 
     }
 

@@ -78,7 +78,7 @@ class formula_url_tests extends url_test_base
     protected function add_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
         // the add_formula workflow creates a new formula, so there is no object id to load yet
-        $this->wf_start($wf_nbr, workflows::WF_ADD_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_ADD_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty formula
         $url_arr = test_formulas::formula_new_url();
@@ -128,7 +128,7 @@ class formula_url_tests extends url_test_base
         // sandbox overlay from a previous run must not mask the freshly written base value)
         if ($do_it) {
             $this->assert_formula_in_db('add_formula workflow has written the formula',
-                formula_names::SYSTEM_TEST_ADD, $this->t->usr_system, formula_names::SYSTEM_TEST_ADD_COM);
+                formula_names::SYSTEM_TEST_ADD, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_COM);
         }
     }
 
@@ -146,7 +146,7 @@ class formula_url_tests extends url_test_base
     {
         // the workflow runs on the reserved 'System Test Formula' added above, not on seeded data;
         // resolve its current database id by name and set the fixed snapshot id of the test formula
-        $this->wf_start($wf_nbr, workflows::WF_CHANGE_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $frm = new formula($this->t->usr1);
@@ -247,7 +247,7 @@ class formula_url_tests extends url_test_base
     {
         // the del_formula workflow runs on the reserved 'System Test Formula'
         // resolve its current db id by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
-        $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
+        $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // set the real and the fixed object id TODO Prio 2 at least to be replace with an url var
         $frm = new formula($this->t->usr1);

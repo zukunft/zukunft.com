@@ -41,7 +41,7 @@ SELECT sys_log_level_insert_log_1111
 
 SELECT sys_log_level_insert_log_1111
     ('Info'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      839::smallint,
      840::smallint,

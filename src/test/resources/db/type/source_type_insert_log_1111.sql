@@ -41,7 +41,7 @@ SELECT source_type_insert_log_1111
 
 SELECT source_type_insert_log_1111
     ('XBRL'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      343::smallint,
      344::smallint,

@@ -44,7 +44,6 @@ class group_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_wrd = new test_words($t);
@@ -57,10 +56,10 @@ class group_read_tests
         $t->subheader($ts . 'load');
 
         $test_name = 'group by word names';
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names($t_wrd->words_canton_zh_inhabitants());
         $test_name .= ' for ' . $wrd_lst->dsp_id();
-        $phr_grp = new group($usr);
+        $phr_grp = new group($t->usr1);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $phr_grp->id();
         $target = 0;

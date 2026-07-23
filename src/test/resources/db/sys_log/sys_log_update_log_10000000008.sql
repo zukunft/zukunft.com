@@ -27,7 +27,7 @@ SELECT sys_log_update_log_10000000008
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT sys_log_update_log_10000000008
-    (1::bigint,
+    (3::bigint,
      1::smallint,
      209::smallint,
      'resolved'::text,

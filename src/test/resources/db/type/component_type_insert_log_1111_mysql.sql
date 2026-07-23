@@ -37,7 +37,7 @@ PREPARE component_type_insert_log_1111_call
 
 SELECT component_type_insert_log_1111
     ('spreadsheet',
-     1,
+     3,
      1,
      747,
      748,

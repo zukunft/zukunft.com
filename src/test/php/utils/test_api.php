@@ -384,8 +384,6 @@ class test_api extends test_base
      */
     function assert_api_del_no_rest(string $class, int $id): bool
     {
-        global $usr;
-
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
 
@@ -393,12 +391,12 @@ class test_api extends test_base
         $usr_msg = new user_message();
         switch ($class) {
             case word::class:
-                $wrd = new word($usr);
+                $wrd = new word($this->usr1);
                 $wrd->id = $id;
                 $wrd->del($usr_msg);
                 break;
             case source::class:
-                $src = new source($usr);
+                $src = new source($this->usr1);
                 $src->id = $id;
                 $src->del($usr_msg);
                 break;

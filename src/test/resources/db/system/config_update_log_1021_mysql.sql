@@ -35,7 +35,7 @@ PREPARE config_update_log_1021_call FROM
     'SELECT config_update_log_1021 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT config_update_log_1021
-       (1,
+       (3,
         1,
         176,
         null,

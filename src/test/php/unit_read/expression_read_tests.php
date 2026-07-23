@@ -40,7 +40,6 @@ class expression_read_tests
     {
 
         global $db_con;
-        global $usr;
 
         // init
         $t->name = 'expression->';
@@ -50,7 +49,7 @@ class expression_read_tests
         $t->header($ts);
 
         /*
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::TN_SECTOR);
         $result = $frm->usr_text;
         $target = '= "' . words::TN_COUNTRY . '" "differentiator" "' . words::TN_CANTON . '" / "' . words::TN_TOTAL . '"';

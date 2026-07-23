@@ -321,13 +321,12 @@ class test_terms
      */
     function list_huge(test_cleanup $t, int $size): term_list
     {
-        global $usr;
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
         $t_vrb = new test_verbs($t);
         $t_frm = new test_formulas($t);
 
-        $lst = new term_list($usr);
+        $lst = new term_list($t->usr1);
         for ($i = 1; $i <= $size; $i++) {
             // first create at least two words, so that a triple can be created
             if ($i <= 2) {

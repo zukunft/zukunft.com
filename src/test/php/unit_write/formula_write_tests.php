@@ -679,8 +679,7 @@ class formula_write_tests
         $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_BIL, formula_names::SYSTEM_TEST_SCALE_BIL_EXP, $usr_msg);
 
         // modify the special test cases
-        global $usr;
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $frm->load_by_name(formula_names::SYSTEM_TEST_EXCLUDED);
         if ($frm->name() == '') {
             log_err('formula ' . formula_names::SYSTEM_TEST_EXCLUDED . ' could not be loaded', 'create_test_formulas');

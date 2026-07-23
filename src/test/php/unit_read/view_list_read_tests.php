@@ -44,7 +44,6 @@ class view_list_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         $lib = new library();
 
         // init

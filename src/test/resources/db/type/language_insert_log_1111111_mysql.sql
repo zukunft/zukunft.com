@@ -55,7 +55,7 @@ PREPARE language_insert_log_1111111_call
 
 SELECT language_insert_log_1111111
     ('German',
-     1,
+     3,
      1,
      296,
      297,

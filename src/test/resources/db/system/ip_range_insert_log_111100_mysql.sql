@@ -36,7 +36,7 @@ PREPARE ip_range_insert_log_111100_call FROM
 
 SELECT ip_range_insert_log_111100
     ('66.249.64.95-66.249.64.95',
-     1,
+     3,
      1,
      859,
      185,

@@ -561,6 +561,12 @@ class user_list
         $this->lst[users::SYSTEM_TEST_PARTNER_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_PARTNER_CODE_ID] = users::SYSTEM_TEST_PARTNER_ID;
 
+        $usr = new user(users::SYSTEM_TEST_ADMIN_NAME, users::SYSTEM_TEST_ADMIN_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_ADMIN_CODE_ID;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
+        $this->lst[users::SYSTEM_TEST_ADMIN_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_ADMIN_CODE_ID] = users::SYSTEM_TEST_ADMIN_ID;
+
         $usr = new user(users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_NORMAL_CODE_ID;
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);

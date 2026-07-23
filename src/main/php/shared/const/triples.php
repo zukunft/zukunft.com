@@ -89,6 +89,7 @@ class triples
     const string PER_MONTH = 'per month';
     const string PER_VERB = 'per verb';
     const string PER_WEEK = 'per week';
+    const string CHANGE_LOG = 'change log';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
     const string RESPONSE_TIME = 'response time';
@@ -106,6 +107,7 @@ class triples
     const string USER_FRONTEND = 'user frontend';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';
+    const string WHAT_LIMIT = 'what limit';
     const string WORD_CHANGES = 'word changes';
 
     const array BASE_TRIPLES = [

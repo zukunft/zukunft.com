@@ -263,8 +263,7 @@ class component_write_tests
         $t_db->test_component(components::TEST_TABLE_NAME, comp_type_shared::NUMERIC_VALUE);
 
         // modify the special test cases
-        global $usr;
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->load_by_name(components::TEST_EXCLUDED_NAME);
         $cmp->excluded = true;
         $cmp->save($usr_msg);

@@ -29,7 +29,7 @@ PREPARE word_insert_log_0110000000000_call FROM
 
 SELECT word_insert_log_0110000000000
     ('System Test Word',
-     1,
+     3,
      1,
      10,
      9);

@@ -51,7 +51,6 @@ class phrase_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t->name = 'phrase read db->';

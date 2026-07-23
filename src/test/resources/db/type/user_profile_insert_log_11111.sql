@@ -47,7 +47,7 @@ SELECT user_profile_insert_log_11111
 
 SELECT user_profile_insert_log_11111
     ('ip only'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      250::smallint,
      251::smallint,

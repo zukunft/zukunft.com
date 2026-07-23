@@ -61,7 +61,6 @@ class term_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $sc = new sql_creator();
@@ -110,7 +109,7 @@ class term_tests
         // check the creation of the prepared sql statements to load a term by id or name
         // TODO use assert_load_sql_id for all objects
         // TODO use assert_load_sql_name for all named objects
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $t->assert_sql_by_id($sc, $trm);
         $t->assert_sql_by_name($sc, $trm);
 

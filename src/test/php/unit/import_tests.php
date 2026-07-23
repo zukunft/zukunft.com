@@ -60,11 +60,10 @@ class import_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $usr;
-        $usr_msg = new user_message($usr);
+        $imp->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'unit import ';
@@ -119,7 +118,7 @@ class import_tests
         // differ only by one phrase and the number; each of the 1653 "values" entries (across
         // 10 lists) is expanded to one value and added to the 7 plain values of the same file
         $test_name = 'JSON import value-list count';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_TRAVEL_SCORING_VALUE_LIST);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
@@ -129,7 +128,7 @@ class import_tests
         // the compact "phrase-values" map assigns a number directly to a single phrase
         // (here three "<city> inhabitants" triples), expanded to one value per entry
         $test_name = 'JSON import phrase-values count';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_PHRASE_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
@@ -175,7 +174,7 @@ class import_tests
         // the result of "total = price * quantity" must be reproducible
         // based on the values and formulas of the import file
         $test_name = 'JSON import calc validation confirms a consistent import file';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
@@ -184,7 +183,7 @@ class import_tests
         $t->assert_true($test_name, $usr_msg->is_ok());
 
         $test_name = 'JSON import calc validation reports a result mismatch';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
@@ -193,7 +192,7 @@ class import_tests
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
 
         $test_name = 'JSON import calc validation reports a missing value';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_VALUE_MISSING . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr_msg);
@@ -203,7 +202,7 @@ class import_tests
         $t->assert($test_name, $usr_msg->all_message_text(), $target);
 
         $test_name = 'JSON import warning creation';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
         $imp->put_json_direct($json_str, $usr_msg);
@@ -211,7 +210,7 @@ class import_tests
         $t->assert($test_name, $usr_msg->get_last_message_translated(), $target);
 
         $test_name = 'JSON import newer version detection';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_VERSION_NEWER_TEST);
         $imp = new import(test_files::IMPORT_VERSION_NEWER_TEST);
         $imp->put_json_direct($json_str, $usr_msg);
@@ -220,11 +219,11 @@ class import_tests
 
         $t->subheader($ts . 'duplicate component check');
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
-        $imp->usr = $usr;
+        $imp->usr = $t->usr1;
 
         // a component name is the key the views use, so the same name twice in one import is reported
         $test_name = 'JSON import reports a component defined twice';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::PHRASES_RELATED]
@@ -236,7 +235,7 @@ class import_tests
 
         // two components with different names are a valid import
         $test_name = 'JSON import accepts components with unique names';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array = [json_fields::COMPONENTS => [
             [json_fields::NAME => components::TEST_VALUES_NAME, json_fields::TYPE_NAME => component_types::VALUES_RELATED],
             [json_fields::NAME => components::TEST_RESULTS_NAME, json_fields::TYPE_NAME => component_types::RESULTS_RELATED]
@@ -248,7 +247,7 @@ class import_tests
 
         // a view that opens a row with row_right but never closes it with row_end is reported
         $test_name = 'JSON import reports a view with an unclosed row';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_ROW_NOT_CLOSED . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $usr_msg);
@@ -257,7 +256,7 @@ class import_tests
 
         // the same view is a valid import once the row is closed with a row_end component
         $test_name = 'JSON import accepts a view with a closed row';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][] = [
             json_fields::POSITION => 3,
             json_fields::NAME => 'system formatter row end'
@@ -269,7 +268,7 @@ class import_tests
 
         // a view that uses the same component position twice (and so misses one) is reported as an error
         $test_name = 'JSON import reports a double component position';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_VIEW_COMPONENT_POS_DOUBLE . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $usr_msg);
@@ -278,7 +277,7 @@ class import_tests
 
         // the same view is a valid import once every component has a unique position from 1 to n
         $test_name = 'JSON import accepts a view with complete component positions';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 2;
         $imp->get_data_object($json_array, $usr_msg);
         $t->assert_true($test_name, $usr_msg->is_ok());
@@ -286,7 +285,7 @@ class import_tests
         // json has no order, so a position that differs from the json order is only a warning
         // that does not block the import but is reported because it could confuse the user
         $test_name = 'JSON import reports a position differing from the json order as a warning only';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][0][json_fields::POSITION] = 2;
         $json_array[json_fields::VIEWS][0][json_fields::COMPONENTS][1][json_fields::POSITION] = 1;
         $imp->get_data_object($json_array, $usr_msg);
@@ -299,7 +298,7 @@ class import_tests
         // two triples that share the same from/verb/to link but carry different names give an
         // ambiguous link id, so the import reports it (see docs/llm/json_structure.md)
         $test_name = 'JSON import reports two triples with the same link but different names';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_TRIPLE_LINK_AMBIGUOUS . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $imp->get_data_object($json_array, $usr_msg);
@@ -308,7 +307,7 @@ class import_tests
 
         // the same two names are a valid import once their links differ (here the second uses "of")
         $test_name = 'JSON import accepts two triples with different names and different links';
-        $usr_msg = new user_message($usr);
+        $usr_msg = new user_message($t->usr1);
         $json_array[json_fields::TRIPLES][1][json_fields::EX_VERB] = 'of';
         $imp->get_data_object($json_array, $usr_msg);
         $t->assert_true($test_name, $usr_msg->is_ok());
@@ -319,7 +318,7 @@ class import_tests
         $in_table = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX_TXT);
         $json_str = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX);
         $conv_wiki = new convert_wikipedia_table;
-        $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
+        $conv_str = $conv_wiki->convert($in_table, $t->usr1, test_base::TEST_TIMESTAMP,
             ['Democracy Index'],
             'country', 1,
             'year', 'time', 3);
@@ -333,7 +332,7 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
-        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, $context_str,
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $t->usr1, test_base::TEST_TIMESTAMP, $context_str,
             ['country', 'ISO 3166'], [], 1,
             'English short name  (using title case)','country',
             'Alpha-3 code',      '');
@@ -347,7 +346,7 @@ class import_tests
         $context_str = file_get_contents(test_files::IMPORT_CURRENCY_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert_wiki_json(
-            $in_table, $usr, test_base::TEST_TIMESTAMP, $context_str);
+            $in_table, $t->usr1, test_base::TEST_TIMESTAMP, $context_str);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);

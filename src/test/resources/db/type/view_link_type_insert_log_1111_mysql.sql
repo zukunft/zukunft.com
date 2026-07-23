@@ -37,7 +37,7 @@ PREPARE view_link_type_insert_log_1111_call
 
 SELECT view_link_type_insert_log_1111
     ('main word',
-     1,
+     3,
      1,
      732,
      733,

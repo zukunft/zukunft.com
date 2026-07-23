@@ -37,7 +37,7 @@ PREPARE db_cache_type_insert_log_1111_call
 
 SELECT db_cache_type_insert_log_1111
     ('system configuration',
-     1,
+     3,
      1,
      875,
      876,

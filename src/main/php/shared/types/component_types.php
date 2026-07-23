@@ -545,6 +545,11 @@ class component_types
     const string SYSTEM_CHANGE_LOG = "change_log";
     const int SYSTEM_CHANGE_LOG_ID = 45;
 
+    // a borderless change log table with the three columns when, who and what
+    const string CHANGE_LOG_TABLE_PURE = "invisible_change_log_table";
+    const int CHANGE_LOG_TABLE_PURE_ID = 210;
+    const string CHANGE_LOG_TABLE_PURE_COM = "a change log table without borders with the three columns when, who and what limited to a config char count";
+
     const string USER_SYSTEM_ERRORS = "user_system_errors";
     const int USER_SYSTEM_ERRORS_ID = 193;
     const string USER_SYSTEM_ERRORS_COM = "show the most relevant open system errors linked to the user";
@@ -953,6 +958,7 @@ class component_types
         [self::CSV_EXPORT, self::CSV_EXPORT_ID],
         [self::ODS_EXPORT, self::ODS_EXPORT_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID],
+        [self::CHANGE_LOG_TABLE_PURE, self::CHANGE_LOG_TABLE_PURE_ID],
         [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID]
     );
 

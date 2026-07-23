@@ -49,8 +49,6 @@ class component_link_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $lib = new library();
         $db_con = new sql_db();
@@ -65,15 +63,15 @@ class component_link_list_tests
         $t->subheader($ts . 'sql query');
 
         // load by component_link ids
-        $lst = new component_link_list($usr);
+        $lst = new component_link_list($t->usr1);
         //$t->assert_sql_by_ids($sc, $lst, array(3, 2, 4));
 
         // load by view
-        $lst = new component_link_list($usr);
+        $lst = new component_link_list($t->usr1);
         $this->assert_sql_by_view($t, $db_con, $lst);
 
         // load by component
-        $lst = new component_link_list($usr);
+        $lst = new component_link_list($t->usr1);
         $this->assert_sql_by_component($t, $db_con, $lst);
 
     }

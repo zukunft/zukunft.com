@@ -71,6 +71,48 @@ class ui_log
      */
     function system_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
     {
+        // the pure change log table below uses the same prepared list, so both are sorted equally
+        return $this->prepared_change_log($dbo, $log_lst)->dsp(null, false, false, $test_mode);
+    }
+
+    /**
+     * the pure (borderless) change log table of the given object with the three columns
+     * when, who and what; the number of shown rows and the max chars of the what column both
+     * come from the frontend config (config.yaml, like system_change_log above)
+     *
+     * @param db_object $dbo the word or triple whose change log is shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the borderless when / who / what change log table
+     */
+    function change_log_table_pure(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    {
+        // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
+        // table is sorted with the same parameters as the previously used change log
+        $log_lst = $this->prepared_change_log($dbo, $log_lst);
+        // the max number of chars of the what column comes from the frontend config
+        global $ui_sys;
+        $what_max_chars = 0;
+        if ($ui_sys?->cfg !== null) {
+            $what_max_chars = (int)$ui_sys->cfg->get_by(
+                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+        }
+        return $log_lst->tbl_when_who_what($what_max_chars, $test_mode);
+    }
+
+    /**
+     * select the change log source for the given object (the object's own recent changes, else the
+     * given list, else the request cache), keep only its changes filtered to the object and sorted
+     * newest first (change_log_list::sort_by_time_and_what), and limit them to the configured number
+     * of rows; the shared preparation of system_change_log and change_log_table_pure so both use the
+     * exact same filter, sort and limit parameters
+     *
+     * @param db_object $dbo the word or triple whose change log is shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @return change_log_list the filtered, sorted and row-limited change log ready to render
+     */
+    private function prepared_change_log(db_object $dbo, change_log_list $log_lst): change_log_list
+    {
         // a word or triple loaded for its page carries its recent changes directly (like the
         // related values, formulas and references); otherwise use the given change log or, if
         // that is empty, the global request cache
@@ -87,9 +129,9 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
-        // newest change first; same-time changes are sorted descending by the entry text so the
+        // newest change first; same-time changes are sorted ascending by the what text so the
         // display order never depends on the api/db row order (see docs/llm/frontend.md)
-        $log_lst->sort_by_time_and_entry();
+        $log_lst->sort_by_time_and_what();
         // the number of change rows to show comes from the frontend config (like the values list)
         global $ui_sys;
         $limit = def::FALLBACK_DB_PAGE_ROWS;
@@ -98,7 +140,7 @@ class ui_log
                 [triples::WORD_CHANGES, triples::ROW_LIMIT, words::FRONTEND, words::USER],
                 def::FALLBACK_DB_PAGE_ROWS);
         }
-        return $log_lst->head($limit)->dsp(null, false, false, $test_mode);
+        return $log_lst->head($limit);
     }
 
     /**

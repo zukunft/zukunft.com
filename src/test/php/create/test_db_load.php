@@ -1299,6 +1299,10 @@ class test_db_load
                 if ($class == user::class) {
                     $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_PASSWORD);
                     $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_PASSWORD);
+                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_ACTIVATION_TIMEOUT);
+                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_ACTIVATION_TIMEOUT);
+                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_USES_SANDBOX);
+                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_USES_SANDBOX);
                 }
                 $diff = $lib->diff_msg($csv_db, $csv_file);
                 if ($diff != '') {

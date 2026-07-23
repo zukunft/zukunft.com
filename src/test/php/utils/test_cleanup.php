@@ -542,9 +542,8 @@ class test_cleanup extends test_api
      */
     function term_list_for_tests(array $names): term_list
     {
-        global $usr;
 
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($this->usr1);
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
@@ -553,7 +552,7 @@ class test_cleanup extends test_api
                 verbs::NOT_SET, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
-            $trm = new term($usr);
+            $trm = new term($this->usr1);
             $trm->set_obj_from_class($class);
             $trm->set_obj_id($pos);
             $trm->set_name($name);
@@ -562,14 +561,14 @@ class test_cleanup extends test_api
             if ($name == formula_names::THIS_NAME) {
                 $trm->obj()->type_cl = formula_type::THIS;
                 $trm->set_obj_id(formula_names::THIS_ID);
-                $wrd = new word($usr);
+                $wrd = new word($this->usr1);
                 $wrd->set(word_names::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_wrd = $wrd;
             }
             if ($name == formula_names::PRIOR) {
                 $trm->obj()->type_cl = formula_type::PREV;
                 $trm->set_obj_id(formula_names::PRIOR_ID);
-                $wrd = new word($usr);
+                $wrd = new word($this->usr1);
                 $wrd->set(word_names::PRIOR_ID, formula_type::PREV);
                 $trm->obj()->name_wrd = $wrd;
             }

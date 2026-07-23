@@ -53,7 +53,6 @@ class result_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
 
         // init
         $t_db = new test_db_load($t);
@@ -81,7 +80,7 @@ class result_write_tests
 
 
         // test load result without time
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->add_name(words::CH);
         //$phr_lst->add_name(formulas::TN_ADD);
         $phr_lst->add_name(formula_names::SYSTEM_TEST_RENAMED);
@@ -89,7 +88,7 @@ class result_write_tests
         $phr_lst->add_name(word_names::INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->is_id_set()) {
-            $ch_increase = new result($usr);
+            $ch_increase = new result($t->usr1);
             $ch_increase->load_by_grp($ch_up_grp);
             $result = $ch_increase->number();
             if ($result == null) {
@@ -109,7 +108,7 @@ class result_write_tests
         $phr_lst->ex_time();
         $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->is_id_set()) {
-            $ch_increase = new result($usr);
+            $ch_increase = new result($t->usr1);
             $ch_increase->load_by_grp($ch_up_grp, true);
             $result = $ch_increase->number();
             if ($result == null) {
@@ -128,22 +127,22 @@ class result_write_tests
 
         // test the scaling
         // test the scaling of a value
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::TEST_IN_K));
         $phr_lst->ex_time();
         $ch_k_grp = $phr_lst->get_grp_id();
         /*
-        $dest_wrd_lst = new word_list($usr);
+        $dest_wrd_lst = new word_list($t->usr1);
         $dest_wrd_lst->add_name(words::TN_INHABITANTS);
         $dest_wrd_lst->load();
-        $mio_val = new value($usr);
+        $mio_val = new value($t->usr1);
         $mio_val->ids = $wrd_lst->ids;
         $mio_val->load();
         log_debug('value->scale value loaded');
         $result = $mio_val->scale($dest_wrd_lst);
         $result = $mio_val->scale($dest_wrd_lst);
         */
-        $k_val = new result($usr);
+        $k_val = new result($t->usr1);
         //$result = $mio_val->check();
         $k_val->load_by_grp($ch_k_grp);
         $result = $k_val->number();
@@ -157,10 +156,10 @@ class result_write_tests
         // test getting the "best guess" value
         // e.g. if ABB,sales,2014 is requested, but there is only a value for ABB,sales,2014,CHF,million get it
         //      based
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020));
         $phr_lst->ex_time();
-        $val_best_guess = new value($usr);
+        $val_best_guess = new value($t->usr1);
         $val_best_guess->load_by_grp($phr_lst->get_grp_id());
         $result = $val_best_guess->number();
         // TODO check why this value sometimes switch
@@ -205,7 +204,6 @@ class result_write_tests
     function run_list(test_cleanup $t): void
     {
 
-        global $usr;
 
         $t_db = new test_db_load($t);
 
@@ -215,7 +213,7 @@ class result_write_tests
 
         // load results by formula
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_RENAMED);
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
@@ -223,7 +221,7 @@ class result_write_tests
 
         // load results by phrase group
         $grp = $t_db->load_phrase_group(array(words::CH, word_names::INHABITANTS, word_names::TEST_IN_K));
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp($grp);
         $result = $res_lst->dsp_id();
         $target = '8505.251';
@@ -231,14 +229,14 @@ class result_write_tests
 
         // ... and also with time selection
         $grp = $t_db->load_phrase_group(array(words::CH, word_names::INHABITANTS, word_names::TEST_IN_K, word_names::YEAR_2020));
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp($grp);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by source phrase group
         $grp = $t_db->load_phrase_group(array(words::CH, word_names::INHABITANTS, word_names::MIO));
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp($grp, true);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
@@ -246,14 +244,14 @@ class result_write_tests
 
         // ... and also with time selection
         $time_phr = $t_db->load_phrase(word_names::YEAR_2020);
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp($grp, true);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by word (via its phrase)
         $wrd = $t_db->load_word(word_names::INHABITANTS);
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_phrase($wrd->phrase());
         $result = $res_lst->dsp_id();
         $target = '0.0078';
@@ -262,7 +260,7 @@ class result_write_tests
         // TODO add PE frm test
         //$frm = $t_db->load_formula(TF_PE);
         $frm = $t_db->load_formula(formula_names::INCREASE);
-        $res_lst = new result_list($usr);
+        $res_lst = new result_list($t->usr1);
         $res_lst->load_by_formula($frm);
         $result = $res_lst->dsp_id();
         $target = '"sales","' . words::PCT . '","increase","' . word_names::TEST_RENAMED . '","2017"';

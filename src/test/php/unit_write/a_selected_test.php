@@ -61,31 +61,17 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
-use Zukunft\ZukunftCom\main\php\cfg\const\files;
-use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
-use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
-use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
-use Zukunft\ZukunftCom\test\php\unit\import_tests;
-use Zukunft\ZukunftCom\test\php\unit\user_tests;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
-use Zukunft\ZukunftCom\test\php\unit_write_workflow\formula_write_url_tests;
-use Zukunft\ZukunftCom\test\php\unit_write_workflow\triple_write_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class a_selected_test extends test_cleanup
+class a_selected_test extends all_unit_tests
 {
 
     // the import json files to load for a fast single-file debugging cycle
@@ -119,7 +105,6 @@ class a_selected_test extends test_cleanup
     {
 
         global $db_con;
-        global $usr;
 
         // init
         $tl = new test_lib();
@@ -136,15 +121,14 @@ class a_selected_test extends test_cleanup
 
         // remember the global var for restore after the unit tests
         $global_db_con = $db_con;
-        $global_usr = $usr;
 
         // prepare for unit testing
         $db_con = $tl->unit_test_db_con();
-        $this->usr1 = $tl->users_for_unit_tests();
+        $this->users_for_unit_tests();
         // set the system user like all_unit_tests->set_users does for the full test suite,
         // because e.g. the delete sql creation tests are done with the system user
         $this->usr_system = $this->user_system();
-        $u_env->init_unit_tests();
+        $u_env->init_unit_tests($this->usr1);
 
         /*
          * unit testing - without users
@@ -160,8 +144,6 @@ class a_selected_test extends test_cleanup
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
-        $usr = $global_usr;
-
 
         /*
          * db testing - prepare
@@ -355,9 +337,9 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            //new word_url_tests()->run($this);
-            //new word_write_url_tests()->run($this);
-            new triple_write_url_tests()->run($this);
+            new word_url_tests()->run($this);
+            new word_write_url_tests()->run($this);
+            //new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
 
             // cleanup - fallback delete

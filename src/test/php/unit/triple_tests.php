@@ -40,8 +40,6 @@ class triple_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -60,20 +58,20 @@ class triple_tests
         $t->assert_sql_foreign_key_create($trp);
 
         $t->subheader($ts . 'sql read');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($sc, $trp);
         $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($sc, $trp, $t);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->id = 2;
         $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 
         $t->subheader($ts . 'sql read standard by name');
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->set_name(triple_names::PI);
         $t->assert_sql_standard_by_name($sc, $trp);
 
@@ -142,7 +140,7 @@ class triple_tests
         // so filling it from the import is a fill-up, not a reported overwrite
         $trp_full = $t_trp->triple();
         $trp_empty_from = $t_trp->triple();
-        $trp_empty_from->set_from(new phrase($usr));
+        $trp_empty_from->set_from(new phrase($t->usr1));
         $test_name = 'diff_msg reports no overwrite when the db from is empty and ex_def is set';
         $diff = $trp_empty_from->diff_msg($trp_full, true);
         $t->assert_true($test_name, $diff->is_ok());
@@ -165,13 +163,13 @@ class triple_tests
         $t->subheader($ts . 'api mapping of an incomplete message');
         // an api message with only the id maps the id and does not fail
         $test_name = 'api_mapper with only the id keeps the id';
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], new user_message());
         $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
 
         // an api message with only the name maps the name and leaves the id at 0
         $test_name = 'api_mapper with only the name keeps the name';
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], new user_message());
         $t->assert($test_name, $trp->name(), triple_names::MATH_CONST);
         $test_name = 'api_mapper with only the name leaves the id at 0';
@@ -179,7 +177,7 @@ class triple_tests
 
         // an api message with neither the id nor the name maps nothing and leaves the id at 0
         $test_name = 'api_mapper with neither id nor name leaves the id at 0';
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->api_mapper([], new user_message());
         $t->assert($test_name, $trp->id(), 0);
 
@@ -187,7 +185,7 @@ class triple_tests
         // them to empty objects instead of throwing a TypeError; guards the phrase_from_api_json and
         // verb_from_api_json regression
         $test_name = 'api_mapper with a null from leaves the from phrase empty';
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $trp->api_mapper([
             json_fields::ID => triple_names::MATH_CONST_ID,
             json_fields::FROM => null,
@@ -272,10 +270,10 @@ class triple_tests
             !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array()));
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_trp->triple(), $usr_sys);
-        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple(), $t->usr_system);
+        $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $t->usr_system);
         $json_file = 'unit/triple/pi.json';
-        $t->assert_json_file(new triple($usr), $json_file);
+        $t->assert_json_file(new triple($t->usr1), $json_file);
 
         // the impact field is part of the triple im- and export
         // even if the impact is expected to be calculated internal
@@ -287,8 +285,8 @@ class triple_tests
         // the assert follows the json export above, so a page timeout is used to avoid a false timeout
         $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH, $t::TIMEOUT_LIMIT_PAGE);
         // re-import the exported json and check that the impact is read back
-        $trp_in = new triple($usr_sys);
-        $trp_in->import_mapper($json_ex, new user_message($usr_sys), new data_object($usr_sys));
+        $trp_in = new triple($t->usr_system);
+        $trp_in->import_mapper($json_ex, new user_message($t->usr_system), new data_object($t->usr_system));
         $t->assert($ts . 'import reads the impact', $trp_in->impact, impacts::HIGH);
 
 

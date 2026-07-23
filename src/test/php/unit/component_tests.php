@@ -52,8 +52,6 @@ class component_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -75,19 +73,19 @@ class component_tests
         $t->assert_sql_foreign_key_create($cmp);
 
         $t->subheader($ts . 'component sql read');
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $t->assert_sql_by_id($sc, $cmp);
         $t->assert_sql_by_name($sc, $cmp);
 
         $t->subheader($ts . 'component sql read standard and user changes by id');
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->id = 2;
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);
 
         $t->subheader($ts . 'component sql read standard by name');
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->set_name(views::START_NAME);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard_by_name($sc, $cmp);
@@ -129,10 +127,10 @@ class component_tests
         $t->assert_api_to_ui($cmp, new component_ui());
 
         $t->subheader($ts . 'component im- and export');
-        $t->assert_ex_and_import($t_cmp->component(), $usr_sys);
-        $t->assert_ex_and_import($t_cmp->component_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_cmp->component(), $t->usr_system);
+        $t->assert_ex_and_import($t_cmp->component_filled(), $t->usr_system);
         $json_file = 'unit/view/component_import.json';
-        $t->assert_json_file(new component($usr), $json_file);
+        $t->assert_json_file(new component($t->usr1), $json_file);
 
     }
 

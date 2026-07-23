@@ -85,9 +85,10 @@ class word_write_url_tests extends word_url_tests
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, true);
         $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, true);
 
-        // a change by a user that does not own the word: unlike change_word_workflow (usr1 changes the
-        // system owned word) this is the linear confirm-write without the back / cancel excursions, and
-        // it checks the per-user sandbox side effect - the changing user gets the change, the owner does not
+        // a change by a user that does not own the word: unlike change_word_workflow (usr1 changes its
+        // own word) this creates a base word owned by usr1 and lets usr2 change it in a linear
+        // confirm-write without the back / cancel excursions, and it checks the per-user sandbox side
+        // effect - the changing user (usr2) gets the change as an overlay, the owner (usr1) does not
         $this->change_word_by_other_user($t);
 
         // the same change wrapped in real logins: the first save of a user flips uses_sandbox, which
@@ -469,9 +470,11 @@ class word_write_url_tests extends word_url_tests
     {
         $wrd = new word($t->usr1);
         foreach (word_names::TEST_WORDS as $wrd_name) {
-            // write_named_cleanup removes the usr1 / usr2 sandbox rows; the reserved test word is owned
-            // by the system user (it is added with the system message user), so remove that row too -
-            // otherwise it survives between runs and a later add keeps its old (changed) description
+            // write_named_cleanup removes the usr1 / usr2 sandbox rows including the usr1 owned base
+            // word (the workflows add it with the usr1 message user, see url_test_base::init); the
+            // system user cleanup stays to also remove a system owned row left over from a run
+            // before the usr1 message user - otherwise it survives between runs and a later add
+            // resurrects it with its old (system authored) change log entries
             $t->write_named_cleanup($wrd, $wrd_name);
             $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);
         }

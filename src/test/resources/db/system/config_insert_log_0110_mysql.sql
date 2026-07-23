@@ -30,7 +30,7 @@ PREPARE config_insert_log_0110_call FROM
 
 SELECT config_insert_log_0110
        ('version_database',
-        1,
+        3,
         1,
         177,
         178,

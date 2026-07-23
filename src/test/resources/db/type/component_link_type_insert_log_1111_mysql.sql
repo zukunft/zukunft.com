@@ -37,7 +37,7 @@ PREPARE component_link_type_insert_log_1111_call
 
 SELECT component_link_type_insert_log_1111
     ('always',
-     1,
+     3,
      1,
      760,
      761,

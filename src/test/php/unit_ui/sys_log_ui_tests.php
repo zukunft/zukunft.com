@@ -35,8 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -62,6 +68,21 @@ class sys_log_ui_tests
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';
         $test_page .= $log_lst->display_admin($sys_usr_ui) . '<br>';
+
+        // the invisible (borderless) change log table with the three columns when, who and what;
+        // the what column is limited to the config char count (config.yaml, read like the renderer);
+        // rendered in test mode so the change time stays deterministic in the snapshot
+        $t_log = new test_log($t);
+        $chg_lst_ui = new change_log_list_ui(
+            $t_log->log_list_word_add()->api_json(new api_type_list([api_types::TEST_MODE])));
+        global $ui_sys;
+        $what_max = 0;
+        if ($ui_sys?->cfg !== null) {
+            $what_max = (int)$ui_sys->cfg->get_by(
+                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+        }
+        $test_page .= 'change log table pure (borderless when / who / what)<br>';
+        $test_page .= $chg_lst_ui->tbl_when_who_what($what_max, true) . '<br>';
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
     }

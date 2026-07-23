@@ -132,6 +132,7 @@ class components
     const string LINK_LIST_WORD = "link_list_word";
     const string USAGE_WORD = "usage_word";
     const string CHANGE_LOG_WORD = "change_log_word";
+    const string INVISIBLE_CHANGE_LOG_TABLE_WORD = "invisible_change_log_table_word";
     const string VIEW_LIST_WORD = "view_list_word";
     const string VIEW_TAB_BOX_WORD = "view_tab_box_word";
 

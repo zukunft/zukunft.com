@@ -37,7 +37,7 @@ PREPARE sys_log_status_insert_log_11110_call
 
 SELECT sys_log_status_insert_log_11110
     ('new',
-     1,
+     3,
      1,
      843,
      844,

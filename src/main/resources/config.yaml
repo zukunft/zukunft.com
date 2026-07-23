@@ -377,6 +377,11 @@ zukunft.com:
             word changes:
               sys-conf-value: 20
               tooltip-comment: "number of change rows to show in the changes tab"
+          change log:
+            tooltip-comment: "the settings for the change log table pure shown on the word and triple page"
+            what limit:
+              sys-conf-value: 40
+              tooltip-comment: "the maximum number of characters shown per entry in the what column of the change log table pure"
           behaviour:
             tooltip-comment: "reaction settings e.g. the expected response time"
             response time:

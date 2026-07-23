@@ -41,7 +41,7 @@ SELECT component_type_insert_log_1111
 
 SELECT component_type_insert_log_1111
     ('spreadsheet'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      747::smallint,
      748::smallint,

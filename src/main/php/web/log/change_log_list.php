@@ -43,6 +43,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'styles.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -196,15 +198,16 @@ class change_log_list extends ListBase
 
     /**
      * sort this change list in place so that the newest change is first; changes with the same
-     * time are sorted alphabetically descending by the entry text (e.g. 'Zurich' before '1') so
-     * the display order is deterministic and independent of the db/api row order
+     * time are sorted alphabetically ascending by the what text (the change description shown in
+     * the what column, without the user) so the display order is deterministic and independent of
+     * the db/api row order
      * @return void
      */
-    function sort_by_time_and_entry(): void
+    function sort_by_time_and_what(): void
     {
         $lst = $this->lst();
         usort($lst, fn(change_log_named $a, change_log_named $b) => $b->change_time <=> $a->change_time
-            ?: strcmp($b->entry(), $a->entry()));
+            ?: strcmp($a->what_text(), $b->what_text()));
         $this->set_lst($lst);
     }
 
@@ -262,6 +265,30 @@ class change_log_list extends ListBase
             $html_text .= $chg->tr($back, $condensed, $with_users);
         }
         return $html->tbl($html_text, styles::STYLE_BORDERLESS);
+    }
+
+    /**
+     * the borderless change log table with the three columns when, who and what;
+     * the what column is limited to the given number of chars (from config.yaml, read by
+     * ui_log::change_log_table_pure), so a long change stays on one line
+     *
+     * @param int $what_max_chars the max number of chars per what entry, 0 for no limit
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the borderless when / who / what table
+     */
+    function tbl_when_who_what(int $what_max_chars, bool $test_mode = false): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $head = $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHEN))
+            . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHO))
+            . $html->th($mtr->txt(msg_id::CHANGE_LOG_TBL_WHAT));
+        $rows = $html->tr($head);
+        foreach ($this->lst() as $chg) {
+            $rows .= $chg->tr_when_who_what($what_max_chars, $test_mode);
+        }
+        // borderless table with the standard zukunft.com grey text
+        return $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
     }
 
     /**

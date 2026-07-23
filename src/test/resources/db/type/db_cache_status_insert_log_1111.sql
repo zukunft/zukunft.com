@@ -41,7 +41,7 @@ SELECT db_cache_status_insert_log_1111
 
 SELECT db_cache_status_insert_log_1111
     ('clean'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      871::smallint,
      872::smallint,

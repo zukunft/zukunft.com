@@ -49,8 +49,6 @@ class source_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init for source
         $sc = new sql_creator();
@@ -63,7 +61,7 @@ class source_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $t->assert_sql_table_create($src);
         $t->assert_sql_index_create($src);
         $t->assert_sql_foreign_key_create($src);
@@ -74,7 +72,7 @@ class source_tests
         $t->assert_sql_by_code_id($sc, $src);
 
         $t->subheader($ts . 'sql read standard and user changes by id');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $src->id = 4;
         $t->assert_sql_standard($sc, $src);
         $src->id = 5;
@@ -82,7 +80,7 @@ class source_tests
         $t->assert_sql_user_changes($sc, $src);
 
         $t->subheader($ts . 'sql read standard by name');
-        $src = new source($usr);
+        $src = new source($t->usr1);
         $src->set_name(sources::WIKIDATA);
         $t->assert_sql_standard_by_name($sc, $src);
 
@@ -137,10 +135,10 @@ class source_tests
         $t->assert_api_to_ui($src, new source_ui());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t_src->source(), $usr_sys);
-        $t->assert_ex_and_import($t_src->source_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_src->source(), $t->usr_system);
+        $t->assert_ex_and_import($t_src->source_filled(), $t->usr_system);
         $json_file = 'unit/ref/bipm.json';
-        $t->assert_json_file(new source($usr), $json_file);
+        $t->assert_json_file(new source($t->usr1), $json_file);
 
 
         // start the test section (ts)

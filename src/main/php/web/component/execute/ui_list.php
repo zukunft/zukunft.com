@@ -43,9 +43,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -76,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -555,11 +558,10 @@ class ui_list extends ui_base
                     $views_html .= $html->div($preview . $html->esc($msk->name()) . ' ' . $buttons);
                 }
             }
-            // tab 2: the change log of the word, latest first
-            $log_html = '';
-            if ($dbo->chg_log != null) {
-                $log_html = $dbo->chg_log->filter($dbo)->dsp(null, false, false, $test_mode);
-            }
+            // tab 2: the change log of the word as the invisible (borderless, standard grey) table
+            // with the three columns when, who and what, latest first (see ui_log)
+            $log = new ui_log();
+            $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $test_mode);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,

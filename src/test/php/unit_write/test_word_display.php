@@ -54,7 +54,6 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 function run_word_display_test(all_tests $t): void
 {
 
-    global $usr;
 
     // init
     $lib = new library();
@@ -68,7 +67,7 @@ function run_word_display_test(all_tests $t): void
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
-    $wrd_ZH = new word($usr);
+    $wrd_ZH = new word($t->usr1);
     $wrd_ZH->load_by_name(word_names::ZH);
     $direction = foaf_direction::UP;
     $target = word_names::COMPANY;
@@ -81,7 +80,7 @@ function run_word_display_test(all_tests $t): void
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
-    $wrd_ZH = new word($usr);
+    $wrd_ZH = new word($t->usr1);
     $wrd_ZH->load_by_name(word_names::ZH);
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
@@ -93,10 +92,10 @@ function run_word_display_test(all_tests $t): void
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... and the graph display for 2019
-    $wrd_2020 = new word($usr);
+    $wrd_2020 = new word($t->usr1);
     $wrd_2020->load_by_name(word_names::YEAR_2020);
     $direction = foaf_direction::DOWN;
-    $wrd_2021 = new word($usr);
+    $wrd_2021 = new word($t->usr1);
     $wrd_2021->load_by_name(word_names::TEST_2021);
     $lnk_20_to_21 = $t_db->load_triple(word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
@@ -137,12 +136,12 @@ function run_word_display_test(all_tests $t): void
     //$t->assert_text_contains($t->name . ' has 2019 to 2020 link', $result, $lnk_19_to_20->id());
 
     // the value table for ABB
-    $wrd_ZH = new word($usr);
+    $wrd_ZH = new word($t->usr1);
     $wrd_ZH->load_by_name(word_names::ZH, word::class);
-    $wrd_year = new word($usr);
+    $wrd_year = new word($t->usr1);
     $wrd_year->load_by_name(words::YEAR_CAP, word::class);
     /*
-    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id());
+    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $t->usr1->id());
     $target = substr($target,0,208);
     */
     $target = word_names::YEAR_2020;
@@ -156,13 +155,13 @@ function run_word_display_test(all_tests $t): void
     /*
     $wrd_company = New word_ui;
     $wrd_company->name = "TEST_WORD";
-    $wrd_company->set_user($usr);
+    $wrd_company->set_user($t->usr1);
     $wrd_company->load();
     $wrd_ratios = New word_ui;
     $wrd_ratios->name = "company main ratio";
-    $wrd_ratios->set_user($usr);
+    $wrd_ratios->set_user($t->usr1);
     $wrd_ratios->load();
-    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());
+    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $t->usr1->id());
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);

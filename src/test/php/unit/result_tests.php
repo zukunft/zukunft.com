@@ -55,8 +55,6 @@ class result_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-        global $usr_sys;
 
         // init
         $db_con = new sql_db();
@@ -157,7 +155,7 @@ class result_tests
         // test phrase based default formatter
         // ... for big values
         $wrd_const = $t_wrd->word_math();
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(results::TV_INT);
@@ -173,10 +171,10 @@ class result_tests
 
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t_res->result(), $usr_sys);
-        $t->assert_ex_and_import($t_res->result_main_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_res->result(), $t->usr_system);
+        $t->assert_ex_and_import($t_res->result_main_filled(), $t->usr_system);
         $json_file = 'unit/result/result_import_part.json';
-        $t->assert_json_file(new result($usr), $json_file);
+        $t->assert_json_file(new result($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');

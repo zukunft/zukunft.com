@@ -53,8 +53,6 @@ class component_link_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
@@ -81,7 +79,7 @@ class component_link_tests
         $t->subheader($ts . 'sql user sandbox statement');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-        $vcl = new component_link($usr);
+        $vcl = new component_link($t->usr1);
         $t->assert_sql_by_id($sc, $vcl);
         $t->assert_sql_by_link($sc, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
@@ -91,7 +89,7 @@ class component_link_tests
         $t->subheader($ts . 'sql statement');
 
         // sql to load a view component link by the id
-        $lnk = new component_link($usr);
+        $lnk = new component_link($t->usr1);
         $lnk->id = 1;
         $t->assert_sql_user_changes($sc, $lnk);
 

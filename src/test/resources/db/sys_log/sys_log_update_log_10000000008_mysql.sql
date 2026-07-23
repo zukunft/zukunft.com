@@ -25,7 +25,7 @@ PREPARE sys_log_update_log_10000000008_call FROM
     'SELECT sys_log_update_log_10000000008 (?,?,?,?,?,?,?,?)';
 
 SELECT sys_log_update_log_10000000008
-       (1,
+       (3,
         1,
         209,
         'resolved',

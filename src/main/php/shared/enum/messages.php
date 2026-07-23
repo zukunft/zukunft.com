@@ -1603,6 +1603,10 @@ enum messages: string
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
     case POPUP_IMPACT = 'popup_impact';
+    // the column headers of the change log table pure
+    case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
+    case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
+    case CHANGE_LOG_TBL_WHAT = 'change_log_tbl_what';
 
     // import
     case IMPORT_JSON = 'import';

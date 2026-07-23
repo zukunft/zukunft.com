@@ -243,9 +243,11 @@ class triple_write_url_tests extends triple_url_tests
     {
         $trp = new triple($t->usr1);
         foreach (triple_names::TEST_TRIPLES as $trp_name) {
-            // write_named_cleanup removes the usr1 / usr2 sandbox rows; the reserved test triple is owned
-            // by the system user (it is added with the system message user), so remove that row too -
-            // otherwise it survives between runs and a later add keeps its old (changed) description
+            // write_named_cleanup removes the usr1 / usr2 sandbox rows including the usr1 owned base
+            // triple (the workflows add it with the usr1 message user, see url_test_base::init); the
+            // system user cleanup stays to also remove a system owned row left over from a run
+            // before the usr1 message user - otherwise it survives between runs and a later add
+            // resurrects it with its old (system authored) change log entries
             $t->write_named_cleanup($trp, $trp_name);
             $t->write_named_cleanup_one($trp, $t->usr_system, $trp_name);
         }

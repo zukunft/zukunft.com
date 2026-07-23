@@ -58,8 +58,6 @@ class formula_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
@@ -74,12 +72,12 @@ class formula_list_tests
         $t->subheader($ts . 'sql statement creation');
 
         // load only the names
-        $frm_lst = new formula_list($usr);
-        $t->assert_sql_names($sc, $frm_lst, new formula($usr));
-        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formula_names::SCALE_TO_SEC);
+        $frm_lst = new formula_list($t->usr1);
+        $t->assert_sql_names($sc, $frm_lst, new formula($t->usr1));
+        $t->assert_sql_names($sc, $frm_lst, new formula($t->usr1), formula_names::SCALE_TO_SEC);
 
         // sql to load a list of formulas by the id, name or ...
-        $frm_lst = new formula_list($usr);
+        $frm_lst = new formula_list($t->usr1);
         $test_name = 'load formulas by ids';
         $t->assert_sql_by_ids($test_name, $sc, $frm_lst);
         $t->assert_sql_by_names($sc, $frm_lst, array(formula_names::INCREASE, formula_names::INCREASE));
@@ -103,7 +101,7 @@ class formula_list_tests
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/formula/formula_list.json';
-        $t->assert_json_file(new formula_list($usr), $json_file);
+        $t->assert_json_file(new formula_list($t->usr1), $json_file);
 
 
         $t->subheader($ts . 'html frontend');
@@ -273,7 +271,7 @@ class formula_list_tests
     private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
-        $phr_lst = (new phrase_list_tests)->get_phrase_list();
+        $phr_lst = (new phrase_list_tests)->get_phrase_list($t);
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

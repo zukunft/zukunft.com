@@ -41,7 +41,7 @@ SELECT ref_type_insert_log_11110
 
 SELECT ref_type_insert_log_11110
     ('wikidata'::text,
-     1::bigint,
+     3::bigint,
      1::smallint,
      352::smallint,
      353::smallint,

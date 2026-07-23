@@ -37,7 +37,7 @@ PREPARE formula_link_type_insert_log_111100_call
 
 SELECT formula_link_type_insert_log_111100
     ('default',
-     1,
+     3,
      1,
      704,
      705,
