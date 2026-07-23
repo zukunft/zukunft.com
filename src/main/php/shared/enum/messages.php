@@ -1030,6 +1030,7 @@ enum messages: string
     case FORM_NAME_USER_NAME_OR_EMAIL = 'username or email';
     case FORM_NAME_PASSWORD = 'password';
     case FORM_NAME_PASSWORD_RE = 're-type password';
+    case FORM_SHOW_PASSWORD = 'show password';
     case FORM_NAME_LOGIN = 'Login';
     case PASSWORD_TOO_SHORT = 'password must be at least '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END

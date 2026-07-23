@@ -178,6 +178,36 @@ class base_ui_tests
         $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
         $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
 
+        // the login and signup form pages are served from the page cache even though they are process
+        // masks, because the plain form is static (the per-session token is restored per request)
+        $test_name = 'the login form is cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::LOGIN_ID . '&id=0');
+
+        $test_name = 'the signup form is cached';
+        $url_array = [url_var::MASK => views::SIGNUP_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SIGNUP_ID . '&id=0');
+
+        // the login submit is a post action, so only the form GET is cached, never the submission
+        $test_name = 'the login submit is not cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => 'Login'];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // another process step mask that is not a login or signup form stays excluded from the cache
+        $test_name = 'a non-login process step view is still not cached';
+        $url_array = [url_var::MASK => views::EXPORT_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
+        // the start page is cached; the bare landing page (no view) and an explicit start request
+        // share the same start view cache key, because a request without a view shows the start view
+        $test_name = 'the explicit start view is cached';
+        $url_array = [url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0');
+
+        $test_name = 'the bare landing page is cached under the start view key';
+        $url_array = [];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0');
+
         $t->subheader($ts . 'tab box');
 
         // the tab box switches via the url fragment with pure css (:target) and no javascript: the

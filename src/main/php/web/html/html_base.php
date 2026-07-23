@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
+include_once html_paths::CONST . 'icons.php';
 //include_once paths::SHARED_CONST . 'def.php';
 //include_once paths::SHARED_CONST . 'files.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
 
 class html_base
@@ -88,6 +90,12 @@ class html_base
     const string INPUT_HIDDEN = 'hidden';
     const string INPUT_PASSWORD = 'password';
     const string INPUT_EMAIL = 'email'; // to validate the email in the frontend
+    // the autocomplete tokens so a password manager still recognises a masked text password input
+    const string AUTOCOMPLETE = 'autocomplete';
+    const string AUTOCOMPLETE_CURRENT_PW = 'current-password';
+    const string AUTOCOMPLETE_NEW_PW = 'new-password';
+    // the id prefix of the css-only "show password" checkbox that reveals a password field
+    const string SHOW_PASSWORD_PREFIX = 'show_';
 
     // bootstrap const string used in zukunft.com
     const string BS_FORM = 'form-control';
@@ -149,6 +157,7 @@ class html_base
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
+    const string ARIA_LABEL = 'aria-label'; // the accessible name of a control that shows only an icon
     const string PLACEHOLDER = 'placeholder';
     const string BR = 'br';
     const string TABLE = 'table';
@@ -175,6 +184,12 @@ class html_base
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
+    // css-only show-password toggle classes (see the .password / .show-password rules in style_html.css)
+    const string CLASS_PASSWORD_FIELD = 'password-field';
+    const string CLASS_PASSWORD = 'password';
+    const string CLASS_SHOW_PASSWORD = 'show-password';
+    const string CLASS_PASSWORD_ICON_SHOW = 'password-icon-show'; // the eye icon shown while the password is masked
+    const string CLASS_PASSWORD_ICON_HIDE = 'password-icon-hide'; // the eye-slash icon shown while it is revealed
     const string CLASS_SUBMIT = 'submit-input';
     const string CLASS_BUTTON = 'btn';
     const string CLASS_NAV = 'navbar site-header fixed-top';
@@ -1291,6 +1306,101 @@ class html_base
         }
         $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . '">';
         return $txt;
+    }
+
+    /**
+     * a password input with a css-only "show password" toggle (no javascript, see docs/llm/frontend.md)
+     * the field is a text input masked by the .password css class (-webkit-text-security); the checkbox
+     * next to it reveals the real password while it is checked via the rules in style_html.css.
+     * the type is text and not password because css cannot unmask a native password field; the
+     * autocomplete token keeps the password manager working on the masked text input
+     *
+     * @param string $name the submitted field / url var name e.g. url_var::USER_PASSWORD
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @param string $autocomplete the autocomplete token e.g. self::AUTOCOMPLETE_NEW_PW for a new password
+     * @param string $value the pre-filled value, only used where an existing password may be overwritten
+     * @return string the html of the masked password field followed by its show-password checkbox
+     */
+    function form_input_password(
+        string $name,
+        string $show_label,
+        string $autocomplete = self::AUTOCOMPLETE_CURRENT_PW,
+        string $value = ''
+    ): string
+    {
+        $field = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_TEXT . '" ' . self::NAME . '="' . $name . '"';
+        if ($value != '') {
+            $field .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        }
+        $field .= ' ' . self::AUTOCOMPLETE . '="' . $autocomplete . '"';
+        $field .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . ' ' . self::CLASS_PASSWORD . '">';
+        return $this->password_show_toggle($field, $name, $show_label);
+    }
+
+    /**
+     * the bootstrap-styled variant of form_input_password for the admin form that may overwrite a
+     * user password; reuses the bootstrap input() rendering as a masked text field and adds the same
+     * css-only show-password checkbox (see form_input_password and style_html.css)
+     *
+     * @param string $url_id the submitted field / url var name e.g. url_var::USER_PASSWORD
+     * @param msg_id $msg_id the message id of the field label
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @param string|null $value the pre-filled password value the admin may overwrite (null if not set)
+     * @return string the html of the masked password field followed by its show-password checkbox
+     */
+    function input_password(
+        string      $url_id,
+        msg_id      $msg_id,
+        string      $show_label,
+        string|null $value = ''
+    ): string
+    {
+        $field = $this->input($url_id, $msg_id, $value, self::INPUT_TEXT, self::CLASS_PASSWORD);
+        return $this->password_show_toggle($field, $url_id, $show_label);
+    }
+
+    /**
+     * wrap a masked password input with the css-only show-password checkbox that reveals it while checked
+     * @param string $field the html of the masked password input (must carry the .password css class)
+     * @param string $name the field name used to build the unique id of the show-password checkbox
+     * @param string $show_label the already translated label of the show-password checkbox
+     * @return string the password field followed by its show-password checkbox, wrapped for the css toggle
+     */
+    private function password_show_toggle(string $field, string $name, string $show_label): string
+    {
+        $show_id = self::SHOW_PASSWORD_PREFIX . $name;
+        // the checkbox is the css-only state holder (no javascript); it is visually hidden but keyboard
+        // focusable and carries the accessible name because the visible switch is only an icon
+        $check = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" '
+            . self::CLASS_HTML . '="' . self::CLASS_SHOW_PASSWORD . '" ' . self::ID . '="' . $show_id . '" '
+            . self::ARIA_LABEL . '="' . htmlspecialchars($show_label, ENT_QUOTES) . '">';
+        // the eye icon is shown while the password is masked and the eye-slash icon while it is revealed;
+        // the css in style_html.css toggles which icon is visible based on the checkbox state
+        $eye = $this->icon(icons::PASSWORD_SHOW, self::CLASS_PASSWORD_ICON_SHOW, $show_label);
+        $eye .= $this->icon(icons::PASSWORD_HIDE, self::CLASS_PASSWORD_ICON_HIDE, $show_label);
+        $toggle = $check . $this->label($eye, $show_id);
+        return $this->span($field . $toggle, self::CLASS_PASSWORD_FIELD);
+    }
+
+    /**
+     * the html of a font awesome icon
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
+     * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
+     * @param string $title the hover tooltip and accessible hint of the icon
+     * @return string the icon <i> element
+     */
+    function icon(string $icon, string $class_add = '', string $title = ''): string
+    {
+        $class = $icon;
+        if ($class_add != '') {
+            $class .= ' ' . $class_add;
+        }
+        $result = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $class . '"';
+        if ($title != '') {
+            $result .= ' ' . self::TITLE . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result .= '></' . self::I . '>';
+        return $result;
     }
 
     /**

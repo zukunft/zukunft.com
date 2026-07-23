@@ -405,3 +405,57 @@ a:hover {
 .css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-pane {
     display: block;
 }
+
+/* css-only "show password" toggle (no javascript): the password field is a text input that is masked
+   by default and revealed while the sibling "show password" checkbox is checked; the raw checkbox is
+   hidden and the eye / eye-slash icon in the label is the clickable symbol that toggles it */
+/* keep the input at its normal width but place the eye icon inside it on the right, so the icon never
+   wraps to the next line (the label's negative margin pulls it back over the field's right padding) */
+.password-field {
+    position: relative;
+    white-space: nowrap;
+}
+.password-field .password {
+    -webkit-text-security: disc;
+    text-security: disc;
+    padding-right: 2em; /* reserve room inside the field so the text does not run under the icon */
+    vertical-align: middle;
+}
+.password-field:has(.show-password:checked) .password {
+    -webkit-text-security: none;
+    text-security: none;
+}
+/* keep the checkbox out of view but focusable so the toggle also works with the keyboard */
+.password-field .show-password {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+}
+/* the show-password label is an inline toggle, not a stacked field label, so keep it on the same line
+   as the input; this overrides the generic ".main-container form label { display: block }" rule */
+.main-container form .password-field label {
+    display: inline-block;
+}
+.password-field label {
+    margin-left: -1.8em; /* pull the icon back over the field's reserved right padding */
+    vertical-align: middle;
+    cursor: pointer;
+}
+.password-field:has(.show-password:focus-visible) label {
+    outline: 2px solid;
+    outline-offset: 2px;
+}
+.password-field .password-icon-show {
+    display: inline-block;
+}
+.password-field .password-icon-hide {
+    display: none;
+}
+.password-field:has(.show-password:checked) .password-icon-show {
+    display: none;
+}
+.password-field:has(.show-password:checked) .password-icon-hide {
+    display: inline-block;
+}

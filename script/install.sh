@@ -320,6 +320,34 @@ EOF
         echo -e "\n${RED}invalid sudo rule removed again: $SUDOERS_FILE${NC}"
     fi
 
+    # the "activate whitelist" buttons on http/server_admin.php write only server_admin/state.json;
+    # make that single data file owned and writable by the web user so the toggle works instead of
+    # showing "Could not write ... state.json - check permissions". only the file is handed over, not
+    # the server_admin directory (it stays owned by the deploy user and is not writable by the web
+    # user), so a compromised web process cannot drop a new php file next to the admin scripts.
+    # state.json holds no secret (two on/off flags) and is already denied web access by the docroot
+    # .htaccess allow-list (only php/html/css/... are served, never .json), so exposing it is safe.
+    # created from the sample only if missing, so re-running the installer keeps the current state.
+    STATE_FILE="$WWW_ROOT/server_admin/state.json"
+    if [ ! -f "$STATE_FILE" ]; then
+        cp "$WWW_ROOT/server_admin/state.json.example" "$STATE_FILE"
+    fi
+    chown "$WEB_USER":"$WEB_USER" "$STATE_FILE"
+    chmod 0644 "$STATE_FILE"
+    echo -e "${GREEN}$WEB_USER may now toggle the whitelist state in $STATE_FILE${NC}"
+
+    # the admin page also edits the IP whitelist (server_admin/ip_whitelist.txt) via a text field; it
+    # is only a DDoS pre-filter, not a hard security boundary (see server_admin/README.md), so hand the
+    # file to the web user too. seeded from the sample (localhost + the suggested admin IPs) only if
+    # missing, and inactive by default (state.json), so a fresh install locks nobody out.
+    IP_WL_FILE="$WWW_ROOT/server_admin/ip_whitelist.txt"
+    if [ ! -f "$IP_WL_FILE" ]; then
+        cp "$WWW_ROOT/server_admin/ip_whitelist.txt.example" "$IP_WL_FILE"
+    fi
+    chown "$WEB_USER":"$WEB_USER" "$IP_WL_FILE"
+    chmod 0644 "$IP_WL_FILE"
+    echo -e "${GREEN}$WEB_USER may now edit the IP whitelist in $IP_WL_FILE${NC}"
+
     sleep 3
 }
 

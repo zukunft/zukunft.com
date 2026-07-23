@@ -484,12 +484,21 @@ class system_form extends component
      */
     function admin_form_user_password(user|db_object $dbo): string
     {
+        global $mtr;
         $html = new html_base();
         return $html->input(
             url_var::USER_PASSWORD,
             msg_id::FORM_FIELD_USER_PASSWORD,
             $dbo->password(),
             html_base::INPUT_PASSWORD);
+        /*
+         * optional with show password but without auto fill
+        return $html->input_password(
+            url_var::USER_PASSWORD,
+            msg_id::FORM_FIELD_USER_PASSWORD,
+            $mtr->txt(msg_id::FORM_SHOW_PASSWORD),
+            $dbo->password());
+        */
     }
 
     /**

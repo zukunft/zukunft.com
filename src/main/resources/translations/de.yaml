@@ -1,5 +1,6 @@
 messages:
   done: "erledigt"
+  show password: "Passwort anzeigen"
   and: "und"
   more: "mehr"
   form_title_verb_add: "Neues Verb"
