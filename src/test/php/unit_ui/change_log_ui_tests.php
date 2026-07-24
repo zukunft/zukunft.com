@@ -84,6 +84,14 @@ class change_log_ui_tests
         $test_name = 'the changes tab prefixes a user sandbox change with user';
         $t->assert_text_contains($test_name, $chg_usr_txt, 'user added "' . views::WORD_NAME . '"');
 
+        // adding an empty value in the user sandbox removes the user's overwrite for that field, so the
+        // changes tab shows 'remove user overwrite for view' instead of '... user added ""'
+        $chg_rem_ui = new change_log_named($t_log->log_word_remove_view()->api_json());
+        $chg_rem_txt = $chg_rem_ui->dsp(true);
+        $test_page .= $chg_rem_txt . '<br>';
+        $test_name = 'the changes tab shows the remove user overwrite text for an empty sandbox change';
+        $t->assert_text_contains($test_name, $chg_rem_txt, 'remove user overwrite for view');
+
 
         $test_page .= '<br>simple list of changes of a word<br>';
         $log_lst = $t_log->log_list_named();
@@ -94,6 +102,23 @@ class change_log_ui_tests
         $log_lst = $t_log->log_list_named();
         $log_ui = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_ui->tbl($back, true, true);
+
+        // the tr changes table (tbl) also shows 'remove user overwrite for view' in the field column
+        // when a user sandbox change adds an empty value (see change_log_named::tr)
+        $test_page .= '<br>changes table with a removed user overwrite<br>';
+        $log_rem_ui = new change_log_list($t_log->log_list_word_changes()->api_json($api_typ_lst));
+        $rem_tbl = $log_rem_ui->tbl($back);
+        $test_page .= $rem_tbl;
+        $test_name = 'the tr changes table shows the remove user overwrite text';
+        $t->assert_text_contains($test_name, $rem_tbl, 'remove user overwrite for view');
+
+        // the condensed changes table also shows 'remove user overwrite for view' (without a trailing
+        // ': ' because there is no value to show, see change_log_named::tr)
+        $test_page .= '<br>condensed changes table with a removed user overwrite<br>';
+        $rem_tbl_cond = $log_rem_ui->tbl($back, true, true);
+        $test_page .= $rem_tbl_cond;
+        $test_name = 'the condensed changes table shows the remove user overwrite text';
+        $t->assert_text_contains($test_name, $rem_tbl_cond, 'remove user overwrite for view');
 
         $t->html_page_test($test_page, 'change_log', 'change_log', $t);
 

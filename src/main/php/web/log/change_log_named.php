@@ -172,6 +172,11 @@ class change_log_named extends change_log
         } else {
             $txt_fld .= $this->table_name() . ' ' . $this->field_description();
         }
+        // adding an empty value in the user sandbox removes the user's overwrite for that field, so
+        // show 'remove user overwrite for view' in the field column (the old and new value are empty)
+        if ($this->is_user_overwrite_removal()) {
+            $txt_fld = $this->user_overwrite_removal_txt();
+        }
 
         // create the description for the old and new field value for the user
         $txt_old = $this->old_value;
@@ -206,7 +211,13 @@ class change_log_named extends change_log
         $txt_new = $html->esc($txt_new);
         $html_text .= $html->td($time_text);
         if ($condensed) {
-            $html_text .= $html->td($txt_fld . ': ' . $txt_new);
+            // the overwrite removal has no value to show, so show only 'remove user overwrite for
+            // view' without the trailing ': ' that a normal condensed field / value change uses
+            if ($this->is_user_overwrite_removal()) {
+                $html_text .= $html->td($txt_fld);
+            } else {
+                $html_text .= $html->td($txt_fld . ': ' . $txt_new);
+            }
         } else {
 
             // display the change
@@ -428,6 +439,10 @@ class change_log_named extends change_log
             } else {
                 $result .= $this->action_txt(msg_id::LOG_DEL) . ' "' . $old_value . '"';
             }
+        } elseif ($this->is_user_overwrite_removal()) {
+            // adding an empty value in the user sandbox removes the user's overwrite for that field,
+            // so instead of '... user added ""' show '... remove user overwrite for view'
+            $result .= $this->user_overwrite_removal_txt();
         } else {
             $result .= $this->action_txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
         }
@@ -489,10 +504,10 @@ class change_log_named extends change_log
                 } else {
                     $result = $this->action_txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
                 }
-            } elseif ($this->is_user_sandbox_change() and $this->new_value == '') {
+            } elseif ($this->is_user_overwrite_removal()) {
                 // adding an empty value in the user sandbox removes the user's overwrite for that
                 // field, so instead of 'user added view id ""' show 'remove user overwrite for view'
-                $result = $mtr->txt(msg_id::LOG_REMOVE_USER_OVERWRITE) . ' ' . $this->field_name();
+                $result = $this->user_overwrite_removal_txt();
             } else {
                 $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
             }
@@ -525,6 +540,31 @@ class change_log_named extends change_log
     private function is_user_sandbox_change(): bool
     {
         return in_array($this->table_name(), change_tables::USER_TABLES, true);
+    }
+
+    /**
+     * @return bool true if this change adds an empty value in the user sandbox, i.e. it removes the
+     *              user's overwrite for that field (shown as 'remove user overwrite for ...')
+     */
+    private function is_user_overwrite_removal(): bool
+    {
+        $result = false;
+        if ($this->is_user_sandbox_change() and $this->old_value == '' and $this->new_value == '') {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * the text shown when a user sandbox change removes the user's overwrite for a field, e.g.
+     * 'remove user overwrite for view'; shared by the change log table (what_text) and the changes
+     * tab / system change-log text (entry)
+     * @return string the translated 'remove user overwrite for' message and the field name
+     */
+    private function user_overwrite_removal_txt(): string
+    {
+        global $mtr;
+        return $mtr->txt(msg_id::LOG_REMOVE_USER_OVERWRITE) . ' ' . $this->field_name();
     }
 
     /**
