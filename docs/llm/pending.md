@@ -4,8 +4,6 @@
 
 ## high prio
 
-add an entry to the changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added user id "1"' is shown
-
 if in the change log 'added user id "1"' is shown, shown instead of the user id the username. And 'added user' should be replace with a translatable 'set owner to'
 
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added view id ""' is shown
@@ -19,6 +17,7 @@ if a user change log entry adds an empty field like 'user added view id ""' show
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
 
 if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
+
 
 find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 

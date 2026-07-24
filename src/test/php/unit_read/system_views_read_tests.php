@@ -180,16 +180,18 @@ class system_views_read_tests
             api::SCRIPT_PATH_NAME . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
-        // the error update view is a get action mask, so a request without the anti-csrf
-        // session token is rejected before any action (see frontend::request_token_valid)
+        // the error update view is a get action mask; a request without the anti-csrf session token
+        // no longer runs the action (see frontend::request_token_valid + http/view.php, the action is
+        // gated on the token), so an ip user without a login is shown the 'log in to change' message
+        // instead of resolving the error - the change is never applied
+        global $mtr;
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::ERROR_UPDATE_ID
             . url_var::ADD_ID . 1,
-            'suspect request for mask ' . views::ERROR_UPDATE_ID,
+            $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=error_update without a token contains at least', $is_connected);
         // an add view changes data, so a user without login is blocked before the view is created
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
-        global $mtr;
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
