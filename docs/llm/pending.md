@@ -4,11 +4,23 @@
 
 ## high prio
 
-if a session token is not valid any more and there is an indication that a non ip user has been logged in, show the login page with the url as back page. if there is no hind that the user has been logged in or the user has been an ip user, just create a new token and show the page for the url again if permitted  
+add an entry to the changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added user id "1"' is shown
+
+if in the change log 'added user id "1"' is shown, shown instead of the user id the username. And 'added user' should be replace with a translatable 'set owner to'
+
+add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added view id ""' is shown
+
+if in the change log the entry is 'id' try to show the name instead if given in the change log
+
+if in the change log the entry is caused by a change in the user sandbox add a translatable 'user' before the translated action, so the result should be 'user added view id ""'
+
+if a user change log entry adds an empty field like 'user added view id ""' show it as a 'remove user overwrite for', so that the entry is 'remove user overwrite for view'   
+
+add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
+
+if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
 
 find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
-
-roll out the own-pod data user trust to the remaining read api endpoints: api/word/index.php now passes server_guard::from_own_pod() to user::data_user so the html frontend's server-to-server read call can load the object with the browsing user's sandbox overlay (this fixed the word description changed by a user not being shown in the word and edit views); apply the same one-line change (and the is_readable_by check against $load_usr instead of the session user) to api/value, api/triple, api/formula, api/view, api/component, api/source, api/reference and api/group so user overlays and private objects render correctly for all object types
 
 fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
 

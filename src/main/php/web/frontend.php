@@ -247,6 +247,11 @@ class frontend
     private string $code_name; // the name of the call script to locate issues
     private string $msg; // messages that should be shown to the user asap
 
+    // false if the request's anti-csrf session token did not match the session token any more
+    // (e.g. the session has expired); set by start() and read by http/view.php to recover the
+    // session gracefully instead of running the action (see session_recovery_url)
+    public bool $session_token_valid = true;
+
     // the main data cache of the frontend
     public ?data_object $dto = null;
 
@@ -305,13 +310,13 @@ class frontend
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
-        $session_is_fine = true;
         // in prod/test upgrade a plain-http request to https first, then harden the session cookie
         // (httponly/secure/samesite, use_strict_mode and hsts on tls) before the session starts
         server_guard::enforce_tls();
         server_guard::harden_session();
         session_start();
         if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+            // no (or an expired) session: create a new token so the page can be shown again
             try {
                 $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
             } catch (RandomException $e) {
@@ -319,11 +324,13 @@ class frontend
             }
         }
         // a data change (a submit of an add, edit or delete mask) must carry the session token that
-        // every crud form emits as a hidden field; reject it when the token is missing or wrong so
-        // an attacker cannot csrf a victim into creating or changing an object (fail closed)
-        if (!self::request_token_valid($url_arr, $_SESSION[url_var::SESSION_TOKEN] ?? '')) {
-            log_fatal('suspect request for mask ' . ($url_arr[url_var::MASK] ?? 0) . ' with a missing or wrong session token', 'view.php');
-            $session_is_fine = false;
+        // every crud form emits as a hidden field; when it is missing or wrong the action is never
+        // run (fail closed against csrf), so an attacker cannot csrf a victim into a change; the
+        // recovery (show the login page for a logged in user, else the page again) is done in
+        // http/view.php based on this flag (see session_recovery_url)
+        $this->session_token_valid = self::request_token_valid($url_arr, $_SESSION[url_var::SESSION_TOKEN] ?? '');
+        if (!$this->session_token_valid) {
+            log_warning('request for mask ' . ($url_arr[url_var::MASK] ?? 0) . ' with a missing or invalid session token');
         }
 
         // enforce the file based IP / user whitelist activated on the server admin page;
@@ -358,11 +365,9 @@ class frontend
         }
         */
 
-        if ($session_is_fine) {
-            return $this->open_db($code_name);
-        } else {
-            return new sql_db();
-        }
+        // an invalid session token no longer blocks the db open: the page is still shown (the action
+        // is skipped in http/view.php), so the user gets a helpful page instead of a hard failure
+        return $this->open_db($code_name);
     }
 
     /**
@@ -404,6 +409,28 @@ class frontend
         $result = true;
         if ($token_required or $sent_token != '') {
             $result = $session_token != '' && hash_equals($session_token, $sent_token);
+        }
+        return $result;
+    }
+
+    /**
+     * decide how to recover a request whose session token is not valid any more (see start()):
+     * - a non-ip user that has been logged in is sent to the login page with the requested page as
+     *   the '9'-prefixed back target, so after re-login the user returns to where they were
+     * - for any other request (no login hint or an ip user) null is returned: the caller just shows
+     *   the requested page again (a new token was created at session start) and skips the action
+     *
+     * @param bool $token_valid whether the session token of the request is still valid
+     * @param bool $is_logged_in true if the session indicates a logged-in (non-ip) user
+     * @param array $url_array the parameters of the requested page, used as the back target
+     * @return array|null the login page url with the back params, or null to show the page as usual
+     */
+    static function session_recovery_url(bool $token_valid, bool $is_logged_in, array $url_array): ?array
+    {
+        $result = null;
+        if (!$token_valid and $is_logged_in) {
+            $back = html_base::back_url_array(html_base::page_url_array($url_array));
+            $result = array_merge([url_var::MASK => views::LOGIN_ID], $back);
         }
         return $result;
     }
