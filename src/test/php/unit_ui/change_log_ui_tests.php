@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -74,6 +75,14 @@ class change_log_ui_tests
         $chg = $t_log->log_word_add();
         $chg_ui = new change_log_named($chg->api_json());
         $test_page .= $chg_ui->dsp() .  '<br>';
+
+        // a change in the user sandbox is prefixed with a translatable 'user' before the action
+        // also in the changes tab text (see change_log_named::entry / action_txt)
+        $chg_usr_ui = new change_log_named($t_log->log_word_add_view()->api_json());
+        $chg_usr_txt = $chg_usr_ui->dsp(true);
+        $test_page .= $chg_usr_txt . '<br>';
+        $test_name = 'the changes tab prefixes a user sandbox change with user';
+        $t->assert_text_contains($test_name, $chg_usr_txt, 'user added "' . views::WORD_NAME . '"');
 
 
         $test_page .= '<br>simple list of changes of a word<br>';

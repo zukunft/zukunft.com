@@ -4,14 +4,6 @@
 
 ## high prio
 
-add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added view id ""' is shown
-
-if in the change log the entry is 'id' try to show the name instead if given in the change log
-
-if in the change log the entry is caused by a change in the user sandbox add a translatable 'user' before the translated action, so the result should be 'user added view id ""'
-
-if a user change log entry adds an empty field like 'user added view id ""' show it as a 'remove user overwrite for', so that the entry is 'remove user overwrite for view'   
-
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
 
 if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user

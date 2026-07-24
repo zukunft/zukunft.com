@@ -146,6 +146,16 @@ class sys_log_ui_tests
         $test_name = 'an owner change shows set owner to and the resolved owner name';
         $t->assert_text_contains($test_name, $chg_tbl, 'set owner to ' . users::SYSTEM_NAME);
 
+        // a reference (id) field shows the referenced object's name when the change log carries it
+        // (add_link_field stores the name); a change in the user sandbox is prefixed with 'user'
+        $test_name = 'a user sandbox view change shows the user prefix and the view name';
+        $t->assert_text_contains($test_name, $chg_tbl, 'user added view id "' . views::WORD_NAME . '"');
+
+        // adding an empty value in the user sandbox removes the user's overwrite for that field, so it
+        // is shown as 'remove user overwrite for view' instead of 'user added view id ""'
+        $test_name = 'an empty user sandbox change shows the remove user overwrite text';
+        $t->assert_text_contains($test_name, $chg_tbl, 'remove user overwrite for view');
+
         // the long description change is shortened with '...' and the full change text is kept as a
         // mouseover popup (title) so the user can still read the whole change
         $test_name = 'long change is shortened with a more indicator';

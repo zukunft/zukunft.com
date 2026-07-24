@@ -81,6 +81,23 @@ enum change_tables: string
     const string VALUE_TIME_SERIES = 'values_time_series';
     const string VALUE_TS_DATA = 'value_ts_data';
 
+    // the user sandbox (overlay) tables; a change logged to one of these is a user-specific change and
+    // is shown with a translatable 'user' prefix in the change log (see web/log/change_log_named)
+    // TODO Prio 2 check if this is not a duplicate and should be moved to a def class
+    const array USER_TABLES = [
+        self::WORD_USR,
+        self::TRIPLE_USR,
+        self::VALUE_USR,
+        self::FORMULA_USR,
+        self::FORMULA_LINK_USR,
+        self::VIEW_USR,
+        self::VIEW_COMPONENT_USR,
+        self::VIEW_LINK_USR,
+        self::REF_USR,
+        self::SOURCE_USR,
+        self::VIEW_RELATION_USR,
+    ];
+
     // system tables that are registered in change_tables.csv to complete the class to table mapping
     // TODO Prio 2 use the *_db class const
     const string CONFIG = 'config';
