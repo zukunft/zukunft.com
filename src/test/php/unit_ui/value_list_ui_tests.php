@@ -95,6 +95,8 @@ class value_list_ui_tests
         $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui()->list_unit(7) . '<br><br>';
         $table_html = $t_val->value_list_most_relevant_ui()->list_most_relevant();
         $test_page .= 'as short and grouped list: ' . $table_html . '<br>';
+        // the same values in the standard, none grouped format: all phrases of a value, then its number
+        $test_page .= 'same values in standard / none grouped format: ' . $t_val->value_list_most_relevant_ui()->list() . '<br>';
         $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_ui->headline();

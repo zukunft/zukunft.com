@@ -75,7 +75,8 @@ $msg = new user_message();
 // TODO llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 if (!empty($_POST)) {
-    log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
+    // redact the unhashed password before logging so a login post never leaks it into the log
+    log_debug('view $_POST array: ' . library::dsp_array(url_var::without_secrets($_POST), true));
 }
 
 // TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
@@ -112,6 +113,20 @@ if ($db_con->is_open()) {
         $msg->usr = $usr_ui;
 
         $ui = new frontend('view');
+
+        // if the session token is not valid any more (e.g. the session has expired) recover
+        // gracefully instead of running the action: a non-ip user that has been logged in is sent to
+        // the login page with the requested page as the back target, so after re-login the user
+        // returns to where they were; an anonymous / ip user just gets the requested page again (a new
+        // token was created at session start) - the action is never executed for an invalid token
+        // (see the request_triggers_action gate below), so a csrf attempt still changes nothing
+        if (!$app->session_token_valid) {
+            $is_logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
+            $login_url = frontend::session_recovery_url(false, $is_logged_in, $url_array);
+            if ($login_url !== null) {
+                $url_array = $login_url;
+            }
+        }
 
         // block a data changing request of a user without login before any change is done
         // if this pod does not permit the changes of an ip user
@@ -171,7 +186,9 @@ if ($db_con->is_open()) {
             $sys->times->switch(system_time_type::URL_TO_ACTION);
             $is_post_action = isset($url_array[url_var::POST_SUBMIT]);
             $is_get_action = in_array($url_array[url_var::MASK] ?? 0, views::GET_ACTION_IDS);
-            $is_action = ($is_post_action or $is_get_action);
+            // never run the action of a request whose session token is not valid any more (fail closed
+            // against csrf); the user still gets the page or the login form (see session_recovery_url)
+            $is_action = ($is_post_action or $is_get_action) && $app->session_token_valid;
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
                     $url_array = $ui->url_to_action($url_array, $usr, $msg, $ui->dto);

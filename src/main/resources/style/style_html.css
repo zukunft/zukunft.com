@@ -242,6 +242,28 @@ body {
     vertical-align: middle;
 }
 
+/* grouped value list (value_list::list_most_relevant): a container of value groups, each with a */
+/* title and an item list; per value the phrase name on the left and the number on the right */
+.value-group {
+    margin-bottom: 0.5rem;
+}
+.value-group-title {
+    font-weight: bold;
+}
+.value-items {
+    list-style: none;       /* no bullet points */
+    margin: 0;
+    padding-left: 1rem;     /* small indent under the group title */
+}
+.value-items li {
+    display: flex;                  /* name on the left, number on the right */
+    justify-content: space-between;
+    gap: 1rem;
+}
+.value-name {
+    white-space: nowrap;    /* keep the phrases of one value on one line */
+}
+
 /* buttons */
 .btn {
     background: #9ea09e; /* Sets the button background to zukunft.com specific grey */

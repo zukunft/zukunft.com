@@ -57,8 +57,10 @@ class workflows
     // separator between the name parts of a workflow snapshot file name e.g. 'wf2_show_edit'
     const string NAME_SEP = '_';
 
-    // fixed text that replaces the volatile change log entry (add time + add user) in the snapshots
-    const string WF_CHANGE_LOG = 'system test change log entry';
+    // the dummy start time that replaces the volatile change log time in the snapshots; the change log
+    // rows keep a deterministic time sequence by increasing this by one second per shown entry (see
+    // url_test_base::normalize_change_log_time)
+    const string WF_CHANGE_LOG_START = '1997-06-07 16:01:00';
 
     // the snapshot file name prefix that is followed by the workflow id e.g. 'wf2'
     const string WF_PREFIX = 'wf';

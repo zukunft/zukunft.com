@@ -141,6 +141,10 @@ class sys_log_ui_tests
         $test_name = 'protection type change does not show the raw type number';
         $t->assert_text_not_contains($test_name, $chg_tbl, 'protection "' . protection_types::NO_PROTECT_ID . '"');
 
+        // a plain (non-type) reference field shows the field name and the raw value
+        $test_name = 'a user id change shows the field name and the raw id';
+        $t->assert_text_contains($test_name, $chg_tbl, 'added user id "' . users::SYSTEM_ID . '"');
+
         // the long description change is shortened with '...' and the full change text is kept as a
         // mouseover popup (title) so the user can still read the whole change
         $test_name = 'long change is shortened with a more indicator';

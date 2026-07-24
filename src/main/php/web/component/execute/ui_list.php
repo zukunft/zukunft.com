@@ -681,10 +681,12 @@ class ui_list extends ui_base
     ): string
     {
         $val_lst = $this->value_related_list($dbo, $dto);
-        // value_list::list() sorts by impact and limits the number via the user/config setting
+        // show the grouped list (value_list::list_most_relevant) so the newest time period and the
+        // phrases shared by several values are highlighted, matching this "most relevant and related
+        // values" component that the default word view uses
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $style_id);
+        return $this->value_list($val_lst, $phr_lst, $style_id, true);
     }
 
     /**
@@ -749,7 +751,8 @@ class ui_list extends ui_base
         }
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $style_id);
+        // show the grouped list (list_most_relevant) like the default word view
+        return $this->value_list($val_lst, $phr_lst, $style_id, true);
     }
 
     /**

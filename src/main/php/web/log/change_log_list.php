@@ -203,6 +203,8 @@ class change_log_list extends ListBase
      * time are sorted alphabetically ascending by the what text (the change description shown in
      * the what column, without the user) so the display order is deterministic and independent of
      * the db/api row order
+     *
+     * TODO Prio 1  try to find the reason why the wrting order of the changes due to the full test run changes
      * @return void
      */
     function sort_by_time_and_what(): void

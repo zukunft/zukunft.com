@@ -78,5 +78,14 @@ class styles
     const string FRAC_NUM = 'num';
     const string FRAC_DEN = 'den';
 
+    // css classes for the grouped value list (value_list::list_most_relevant): the outer container,
+    // a value group with its title and item list, and per value the phrase name and the number
+    const string VALUE_LIST = 'value-list';
+    const string VALUE_GROUP = 'value-group';
+    const string VALUE_GROUP_TITLE = 'value-group-title';
+    const string VALUE_ITEMS = 'value-items';
+    const string VALUE_NAME = 'value-name';
+    const string VALUE_NUM = 'value-num';
+
 
 }
