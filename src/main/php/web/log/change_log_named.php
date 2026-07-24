@@ -443,20 +443,31 @@ class change_log_named extends change_log
     function what_text(): string
     {
         global $mtr;
-        // the translated field name (e.g. 'description ') unless the object's own prime field changed
-        $fld = $this->field_name_prefix();
         // for a type field show the type name instead of the type id (see value_to_show)
-        $old = $this->value_to_show($this->old_id, $this->old_value);
         $new = $this->value_to_show($this->new_id, $this->new_value);
-        if ($this->old_value <> '') {
-            if ($this->new_value <> '') {
-                $result = $mtr->txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
-                    . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
+        if ($this->field() == change_fields::FLD_USER_ID) {
+            // a change of the owner (user_id) shows 'set owner to' instead of 'added user id'; the new
+            // owner is often the change author, whose name is already resolved (and shown in the who
+            // column), so reuse that name instead of the raw user id, otherwise keep the quoted id
+            if ($this->usr != null and $new === (string)$this->usr->id()) {
+                $result = $mtr->txt(msg_id::LOG_SET_OWNER) . ' ' . $this->usr->name();
             } else {
-                $result = $mtr->txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
+                $result = $mtr->txt(msg_id::LOG_SET_OWNER) . ' "' . $new . '"';
             }
         } else {
-            $result = $mtr->txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+            // the translated field name (e.g. 'description ') unless the object's own prime field changed
+            $fld = $this->field_name_prefix();
+            $old = $this->value_to_show($this->old_id, $this->old_value);
+            if ($this->old_value <> '') {
+                if ($this->new_value <> '') {
+                    $result = $mtr->txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
+                        . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
+                } else {
+                    $result = $mtr->txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
+                }
+            } else {
+                $result = $mtr->txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+            }
         }
         return $result;
     }

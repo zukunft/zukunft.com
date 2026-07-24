@@ -4,8 +4,6 @@
 
 ## high prio
 
-if in the change log 'added user id "1"' is shown, shown instead of the user id the username. And 'added user' should be replace with a translatable 'set owner to'
-
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added view id ""' is shown
 
 if in the change log the entry is 'id' try to show the name instead if given in the change log

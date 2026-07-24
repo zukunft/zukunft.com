@@ -317,8 +317,9 @@ class test_log
     }
 
     /**
-     * an insert change log entry for the owner (user id) of a named user sandbox object; the user id
-     * is a plain (non-type) field, so the change log table pure shows it as e.g. 'added user id "1"'
+     * an insert change log entry for the owner (user id) of a named user sandbox object; the owner is
+     * set to the change author (the system user), so the change log table pure resolves the user id to
+     * the author name and shows 'set owner to zukunft.com system' (see change_log_named::what_text)
      * @return change with a change log entry of setting the word owner to the system user as a sample
      */
     function log_word_add_user_id(): change

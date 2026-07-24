@@ -1599,6 +1599,8 @@ enum messages: string
     case LOG_DEL = 'deleted';
     case LOG_LINK = 'linked';
     case LOG_TO = 'to';
+    // shown for a change of the object owner (the user_id field) instead of 'added user id'
+    case LOG_SET_OWNER = 'set owner to';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';
