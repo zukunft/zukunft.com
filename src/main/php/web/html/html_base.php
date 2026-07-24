@@ -2633,11 +2633,16 @@ class html_base
     /**
      * html unsorted list
      * @param string $txt the html code of the list entries
+     * @param string $style the css class of the list e.g. styles::VALUE_ITEMS
      * @return string the html code of a unsorted list
      */
-    function list_unsorted(string $txt): string
+    function list_unsorted(string $txt, string $style = ''): string
     {
-        return '<' . self::UL . '>' . $txt . '</' . self::UL . '>';
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::UL . $attr . '>' . $txt . '</' . self::UL . '>';
     }
 
     /**

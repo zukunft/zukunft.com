@@ -75,7 +75,8 @@ $msg = new user_message();
 // TODO llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 if (!empty($_POST)) {
-    log_debug('view $_POST array: ' . library::dsp_array($_POST, true));
+    // redact the unhashed password before logging so a login post never leaks it into the log
+    log_debug('view $_POST array: ' . library::dsp_array(url_var::without_secrets($_POST), true));
 }
 
 // TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing

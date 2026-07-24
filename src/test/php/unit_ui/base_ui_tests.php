@@ -76,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -648,6 +649,16 @@ class base_ui_tests
         // negative: a navigation action does not advance the process step
         $test_name = 'action_step maps a navigation action to the base step';
         $t->assert($test_name, url_var::action_step(url_var::ACTION_SHOW), url_var::STEP_BASE);
+
+        // without_secrets masks the unhashed password of a login post so it is never logged (http/view.php);
+        // a non-secret field like the username is kept unchanged so the log stays useful
+        $dummy_pw = 'dummy unhashed password for the redaction unit test';
+        $post = [url_var::USERNAME_HUMAN => users::TEST_USER_NAME, url_var::USER_PASSWORD_HUMAN => $dummy_pw];
+        $redacted = url_var::without_secrets($post);
+        $test_name = 'without_secrets masks the unhashed password';
+        $t->assert($test_name, $redacted[url_var::USER_PASSWORD_HUMAN], url_var::SECRET_MASK);
+        $test_name = 'without_secrets keeps a non-secret field unchanged';
+        $t->assert($test_name, $redacted[url_var::USERNAME_HUMAN], users::TEST_USER_NAME);
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));

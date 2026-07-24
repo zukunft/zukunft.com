@@ -307,6 +307,19 @@ class url_var
         self::PATTERN_HUMAN,
     ];
 
+    // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
+    // form) and must never be written to a log or reflected in a page; used to redact the post array
+    // before it is logged in http/view.php (see without_secrets)
+    const array SECRET_VARS = [
+        self::USER_PASSWORD,
+        self::USER_PASSWORD_HUMAN,
+        self::USER_PASSWORD_RETYPE,
+        self::USER_PASSWORD_RETYPE_HUMAN,
+    ];
+
+    // the placeholder shown instead of a secret value in a redacted url / post array
+    const string SECRET_MASK = '***';
+
     // the url vars that control the view, the object selection and the render mode of a request
     // and that never carry an object field value (used e.g. by frontend::url_has_object_values)
     const array CONTROL_VARS = [
@@ -816,6 +829,24 @@ class url_var
         foreach (self::HUMAN_TO_STD as $entry) {
             if ($entry[1] == $std) {
                 $result = $entry[0];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a copy of the given url / post array with every secret value (the unhashed password) masked,
+     * so the array can be logged or shown without leaking the plain password (see http/view.php)
+     *
+     * @param array $url_array the raw url / post array possibly carrying a plain password
+     * @return array a copy with every SECRET_VARS value replaced by SECRET_MASK
+     */
+    static function without_secrets(array $url_array): array
+    {
+        $result = $url_array;
+        foreach (self::SECRET_VARS as $secret) {
+            if (array_key_exists($secret, $result)) {
+                $result[$secret] = self::SECRET_MASK;
             }
         }
         return $result;

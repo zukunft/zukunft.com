@@ -258,12 +258,7 @@ class value_list extends ListBase
             // sort so the highest impact value is shown first and the order is always deterministic
             $this->sort_by_impact();
             if ($limit == null) {
-                global $ui_sys;
-                if ($ui_sys?->cfg !== null) {
-                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
-                } else {
-                    $limit = config::LIMIT_VALUE_LIST;
-                }
+                $limit = $this->configured_limit();
             }
 
             $i = 0;
@@ -297,10 +292,10 @@ class value_list extends ListBase
     private function value_line(value $val, phrase_list $context_phr_lst, string $back): string
     {
         $html = new html_base();
-        $row = $val->grp->name_link_list($context_phr_lst);
-        $row .= ' ';
-        $row .= $val->value_edit($back);
-        $row .= $html->lf();
+        // keep the phrases and the value of one value on a single row (text-nowrap) so they are never
+        // wrapped and the html snapshot keeps them on one line as well (see library::format_html)
+        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($back);
+        $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
 
@@ -326,12 +321,16 @@ class value_list extends ListBase
     {
         $result = '';
         if (!$this->is_empty()) {
+            $html = new html_base();
             // the values still to be placed; each section consumes the values it groups
             $pool = $this->lst();
             [$time_html, $pool] = $this->time_groups($pool, $context_phr_lst, $back);
             [$phrase_html, $pool] = $this->relevant_phrase_groups($pool, $context_phr_lst, $back);
-            $rest_html = $this->impact_lines($pool, $context_phr_lst, $back, $style);
-            $result = $time_html . $phrase_html . $rest_html;
+            $rest_html = $this->impact_group($pool, $context_phr_lst, $back);
+            // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
+            // list width) is added as a second css class of that container
+            $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
+            $result = $html->div($time_html . $phrase_html . $rest_html, $cls);
         }
         return $result;
     }
@@ -438,40 +437,97 @@ class value_list extends ListBase
 
     /**
      * section three of list_most_relevant: the remaining values sorted by impact descending, rendered
-     * with the same per-line format, limit and "... more" tail as list()
+     * as a titleless value item list (the values share no group phrase) with the same limit and
+     * "... more" tail as list()
      *
      * @param array $pool the remaining values
-     * @param phrase_list $context_phr_lst phrases left out of each value line
+     * @param phrase_list $context_phr_lst phrases left out of each value name
      * @param string $back the last view to suggest the best follow-up view
-     * @param string $style to define e.g. the width of the list
-     * @return string the html of the remaining values
+     * @return string the html of the remaining values as a 'value-items' list, or '' if none remain
      */
-    private function impact_lines(array $pool, phrase_list $context_phr_lst, string $back, string $style): string
+    private function impact_group(array $pool, phrase_list $context_phr_lst, string $back): string
     {
-        $val_lst = new value_list();
-        $val_lst->set_lst($pool);
-        return $val_lst->list($context_phr_lst, $back, $style);
+        $html = new html_base();
+        $result = '';
+        if (count($pool) > 0) {
+            $val_lst = new value_list();
+            $val_lst->set_lst($pool);
+            $val_lst->sort_by_impact();
+            $limit = $this->configured_limit();
+            $items = '';
+            $i = 0;
+            foreach ($val_lst->lst() as $val) {
+                if ($i < $limit) {
+                    $items .= $this->value_item($val, $context_phr_lst, $back);
+                }
+                $i++;
+            }
+            $diff = count($pool) - $limit;
+            if ($diff > 0) {
+                // TODO Prio 1 base the translation on the $mtr object
+                $items .= $html->list_item(' ... and ' . $diff . ' more');
+            }
+            $result = $html->list_unsorted($items, styles::VALUE_ITEMS);
+        }
+        return $result;
     }
 
     /**
-     * render one group of the most relevant value list: the group phrase (time word or shared phrase)
-     * as the header followed by one line per member value; the header phrase is added to the context so
-     * it is not repeated on each member line
+     * render one group of the most relevant value list as a 'value-group' div: the group phrase (time
+     * word or shared phrase) as the title followed by one value item per member; the header phrase is
+     * added to the context so it is not repeated on each member name
      *
-     * @param phrase $header the time word or shared phrase shown as the group header
+     * @param phrase $header the time word or shared phrase shown as the group title
      * @param array $members the values of the group
      * @param phrase_list $context_phr_lst phrases already assumed by the reader
      * @param string $back the last view to suggest the best follow-up view
-     * @return string the html code of the group header and its value lines
+     * @return string the html code of the value group (title and item list)
      */
     private function group_block(phrase $header, array $members, phrase_list $context_phr_lst, string $back): string
     {
         $html = new html_base();
-        $result = $header->name_link() . $html->lf();
+        $title = $html->div($header->name_link(), styles::VALUE_GROUP_TITLE);
         $ctx = clone $context_phr_lst;
         $ctx->add_phrase($header);
+        $items = '';
         foreach ($members as $val) {
-            $result .= $this->value_line($val, $ctx, $back);
+            $items .= $this->value_item($val, $ctx, $back);
+        }
+        $result = $html->div($title . $html->list_unsorted($items, styles::VALUE_ITEMS), styles::VALUE_GROUP);
+        return $result;
+    }
+
+    /**
+     * render one value of the grouped value list as a list item: the phrase name(s) on the left and
+     * the number on the right; the shared item renderer of group_block and impact_group
+     *
+     * @param value $val the value to render
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
+     * @param string $back the last view to suggest the best follow-up view
+     * @return string the html code of one value list item
+     */
+    private function value_item(value $val, phrase_list $context_phr_lst, string $back): string
+    {
+        $html = new html_base();
+        $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
+        $num = $html->span($val->value_edit($back), styles::VALUE_NUM);
+        $result = $html->list_item($name . $num);
+        return $result;
+    }
+
+    /**
+     * the configured maximum number of values shown in a value list (config.yaml, falling back to
+     * config::LIMIT_VALUE_LIST); shared by list() and impact_group
+     * @return int the maximum number of value rows to show
+     */
+    private function configured_limit(): int
+    {
+        global $ui_sys;
+        $result = config::LIMIT_VALUE_LIST;
+        if ($ui_sys?->cfg !== null) {
+            $result = $ui_sys->cfg->get_by(
+                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                config::LIMIT_VALUE_LIST);
         }
         return $result;
     }
