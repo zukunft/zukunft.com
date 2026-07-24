@@ -659,6 +659,21 @@ class base_ui_tests
         $t->assert($test_name, $redacted[url_var::USER_PASSWORD_HUMAN], url_var::SECRET_MASK);
         $test_name = 'without_secrets keeps a non-secret field unchanged';
         $t->assert($test_name, $redacted[url_var::USERNAME_HUMAN], users::TEST_USER_NAME);
+
+        // session_recovery_url: when the session token is not valid any more a logged-in (non-ip)
+        // user is sent to the login page with the requested page kept as the '9'-prefixed back
+        // target; a valid token or an anonymous / ip user needs no recovery (null)
+        $req_url = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $recovery = frontend::session_recovery_url(false, true, $req_url);
+        $test_name = 'an expired token of a logged-in user shows the login page';
+        $t->assert($test_name, $recovery[url_var::MASK], views::LOGIN_ID);
+        $test_name = 'the login page keeps the requested page as the back target';
+        $t->assert($test_name, $recovery[url_var::BACK . url_var::MASK], views::WORD_ID);
+        $test_name = 'a valid token needs no session recovery';
+        $t->assert_true($test_name, frontend::session_recovery_url(true, true, $req_url) === null);
+        $test_name = 'an anonymous or ip user with an expired token just gets the page again';
+        $t->assert_true($test_name, frontend::session_recovery_url(false, false, $req_url) === null);
+
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));

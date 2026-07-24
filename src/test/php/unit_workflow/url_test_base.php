@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\workflows;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class url_test_base
 {
@@ -401,12 +402,8 @@ class url_test_base
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
         $html = $this->normalize_ids($html, $this->wf_id);
         // the change history of the test object shows the real change time and change user, both of
-        // which vary per run; replace each change log line (date time + user + action) with a fixed
-        // text - this covers the default view (in a container div) and the edit view (a bare line)
-        $html = preg_replace(
-            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
-            workflows::WF_CHANGE_LOG,
-            $html);
+        // which vary per run; replace each change log time with a dummy time sequence (see below)
+        $html = $this->normalize_change_log_time($html);
         $html = $this->normalize_navbar_role($html);
         $this->t->assert_html_page($test_name, $html, $test_name);
     }
@@ -426,14 +423,38 @@ class url_test_base
         // an add workflow has no id yet (wf_id 0), so there is nothing to normalize
         $html = $this->normalize_ids($html, $url_arr[url_var::ID] ?? 0);
         // the change history of the test object shows the real change time and change user, both of
-        // which vary per run; replace each change log line (date time + user + action) with a fixed
-        // text - this covers the default view (in a container div) and the edit view (a bare line)
-        $html = preg_replace(
-            '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#',
-            workflows::WF_CHANGE_LOG,
-            $html);
+        // which vary per run; replace each change log time with a dummy time sequence (see below)
+        $html = $this->normalize_change_log_time($html);
         $html = $this->normalize_navbar_role($html);
         $this->t->assert_html_page($test_name, $html, $test_name);
+    }
+
+    /**
+     * replace each change log time in the rendered html with a dummy time so the snapshot does not
+     * vary with the real change time; instead of one repeated placeholder the times form a readable
+     * sequence: the change log is shown newest first, so the last (oldest) entry gets the fixed dummy
+     * start time (workflows::WF_CHANGE_LOG_START) and every entry above it one second more, giving an
+     * ascending time from the bottom to the top of the list based on the real change time order
+     *
+     * the whole time expression (the date time plus any trailing text up to the next tag) is replaced,
+     * which covers both the change log table (a 'when' cell) and the edit view (a bare change line)
+     *
+     * @param string $html the rendered html of the workflow step
+     * @return string the html with the change log times replaced by the dummy time sequence
+     */
+    private function normalize_change_log_time(string $html): string
+    {
+        $pattern = '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#';
+        $matches = [];
+        $count = preg_match_all($pattern, $html, $matches);
+        $i = 0;
+        $result = preg_replace_callback($pattern, function () use (&$i, $count) {
+            $time = new DateTime(workflows::WF_CHANGE_LOG_START);
+            $time->modify('+' . ($count - 1 - $i) . ' second');
+            $i++;
+            return $time->format('d-m-Y H:i:s');
+        }, $html);
+        return $result;
     }
 
     /**

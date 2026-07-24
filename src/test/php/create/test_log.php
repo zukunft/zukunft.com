@@ -55,6 +55,7 @@ include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_time_prime.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -68,6 +69,7 @@ include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -109,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -120,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -309,6 +313,19 @@ class test_log
         $chg->set_field(fields::FLD_PROTECT);
         $chg->old_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT);
         $chg->new_value = (string)$sys->typ_lst->ptc_typ->id(protection_types::ADMIN);
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the owner (user id) of a named user sandbox object; the user id
+     * is a plain (non-type) field, so the change log table pure shows it as e.g. 'added user id "1"'
+     * @return change with a change log entry of setting the word owner to the system user as a sample
+     */
+    function log_word_add_user_id(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_field(user_db::FLD_ID);
+        $chg->new_value = (string)users::SYSTEM_ID;
         return $chg;
     }
 
@@ -759,6 +776,7 @@ class test_log
         $log_lst->add($this->log_word_update_type());
         $log_lst->add($this->log_word_add_description());
         $log_lst->add($this->log_word_update_protection());
+        $log_lst->add($this->log_word_add_user_id());
         return $log_lst;
     }
 
