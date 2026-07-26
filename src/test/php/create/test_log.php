@@ -317,8 +317,9 @@ class test_log
     }
 
     /**
-     * an insert change log entry for the owner (user id) of a named user sandbox object; the user id
-     * is a plain (non-type) field, so the change log table pure shows it as e.g. 'added user id "1"'
+     * an insert change log entry for the owner (user id) of a named user sandbox object; the owner is
+     * set to the change author (the system user), so the change log table pure resolves the user id to
+     * the author name and shows 'set owner to zukunft.com system' (see change_log_named::what_text)
      * @return change with a change log entry of setting the word owner to the system user as a sample
      */
     function log_word_add_user_id(): change
@@ -326,6 +327,39 @@ class test_log
         $chg = $this->log_word_add();
         $chg->set_field(user_db::FLD_ID);
         $chg->new_value = (string)users::SYSTEM_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the default view (view_id) of a named object in the user sandbox
+     * (the user_words overlay table); the view name is stored as the value and the view id as the
+     * reference (like sql_par_field_list::add_link_field), and because it is a user sandbox change the
+     * change log table pure shows 'user added view id "Word"' (see change_log_named::what_text)
+     * @return change with a change log entry of setting the word view in the user sandbox
+     */
+    function log_word_add_view(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_table(change_tables::WORD_USR);
+        $chg->set_field(fields::FLD_VIEW);
+        $chg->new_value = views::WORD_NAME;
+        $chg->new_id = views::WORD_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry that adds an empty view (view_id) in the user sandbox (user_words);
+     * adding an empty value in the sandbox removes the user's overwrite for that field, so the change
+     * log table pure shows 'remove user overwrite for view' instead of 'user added view id ""'
+     * (see change_log_named::what_text)
+     * @return change with a change log entry of removing the user view overwrite
+     */
+    function log_word_remove_view(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_table(change_tables::WORD_USR);
+        $chg->set_field(fields::FLD_VIEW);
+        $chg->new_value = '';
         return $chg;
     }
 
@@ -777,6 +811,8 @@ class test_log
         $log_lst->add($this->log_word_add_description());
         $log_lst->add($this->log_word_update_protection());
         $log_lst->add($this->log_word_add_user_id());
+        $log_lst->add($this->log_word_add_view());
+        $log_lst->add($this->log_word_remove_view());
         return $log_lst;
     }
 

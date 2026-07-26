@@ -114,7 +114,7 @@ class change_log_link_list extends list_db_read
         } elseif ($name == 'value') {
             $table_ids = [
                 $cng_tbl->id(change_tables::VALUE), $cng_tbl->id(change_tables::VALUE_USR),
-                $cng_tbl->id(change_tables::VALUE_LINK)];
+                $cng_tbl->id(change_tables::VALUE_LINK), $cng_tbl->id(change_tables::VALUE_LINK_USR)];
             $sql_row = '(c.old_from_id = ' . $id . ' OR c.new_from_id = ' . $id . ') AND ';
         } elseif ($name == 'formula') {
             $table_ids = [

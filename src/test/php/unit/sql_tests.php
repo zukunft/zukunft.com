@@ -39,6 +39,8 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -76,6 +78,33 @@ class sql_tests
         $created = $sc->count_sql();
         $expected = file_get_contents(test_files::USER_COUNT);
         $t->assert_sql($test_name, $created, $expected);
+
+        // del_sql_list_without_log deletes all rows of a class whose id is in the given list, used
+        // e.g. to remove the formula elements of a list or the change log during the test cleanup
+        $t->subheader($ts . 'delete list without log');
+
+        // TODO Prio 1 use sql files instead of a fixed text
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $sc->del_sql_list_without_log(element::class, element::FLD_ID, [1, 2, 3]);
+        $test_name = ' delete elements by id list postgres';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE element_delete_by_ids (bigint[]) AS DELETE FROM elements WHERE element_id = ANY ($1);');
+
+        $test_name = ' delete elements by id list query name';
+        $t->assert($test_name, $qp->name, 'element_delete_by_ids');
+
+        $test_name = ' delete elements by id list passes the ids as an array parameter';
+        $t->assert($test_name, implode(',', $qp->par), '{1,2,3}');
+
+        // postgres uses a numbered array parameter with ANY, not the mysql question mark with IN
+        $test_name = ' the postgres delete by id list has no mysql question mark parameter';
+        $t->assert_text_not_contains($test_name, $qp->sql, '?');
+
+        $sc->reset(sql_db::MYSQL);
+        $qp = $sc->del_sql_list_without_log(element::class, element::FLD_ID, [1, 2, 3]);
+        $test_name = ' delete elements by id list mysql';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE element_delete_by_ids FROM 'DELETE FROM elements WHERE element_id IN (?)';");
 
     }
 

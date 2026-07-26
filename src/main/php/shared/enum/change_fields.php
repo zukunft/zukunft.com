@@ -40,7 +40,9 @@ enum change_fields: string
     // *_NAME is the name as used in the program or as it has been used in a previous program version
     // *_NAME_DSP is the description that should be shown to the user
     const string FLD_TABLE = 'table_id';
-    // TODO add the user_id to the field list because the owner can change and this should be included in the log
+    // the owner of a user sandbox object; a change of it is shown as 'set owner to' with the owner
+    // name instead of the raw user id (see web/log/change_log_named::what_text)
+    const string FLD_USER_ID = 'user_id';
     const string FLD_WORD_NAME = 'word_name';
     const int FLD_WORD_NAME_ID = 10;
     const string FLD_WORD_NAME_COM = '';

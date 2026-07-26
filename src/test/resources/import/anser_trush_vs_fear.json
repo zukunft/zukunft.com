@@ -1,0 +1,859 @@
+{
+  "version": "0.0.3",
+  "time": "2021-05-25 23:09:45",
+  "user": "timon",
+  "description": "Does the near-universal availability of answers on the internet produce more trust or more fear? Measured values from survey and meta-analytic evidence, plus assumed values for the causal decomposition. v0.0.2 adds the moderator decomposition: under which conditions an answer terminates a question (trust) versus leaves it open (fear). v0.0.3 adds the relationship dimension: what an available human answerer supplies that an information system cannot, decomposed into co-regulation, case context and accountability. v0.0.4 derives indications and contraindications for a traceable knowledge system from the values already in this file, and treats dose as the amount of possibility space shown at once. v0.0.5 adds the channel dimension: fear of losing the answer infrastructure itself, its observed near-absence, and the disconnection resilience of a provenance chain. v0.0.6 evaluates deliberate worst-case drills as a remedy, and proposes the explanation probe as the correctly targeted alternative.",
+  "words": [
+    {
+      "name": "trust in news",
+      "description": "share of survey respondents saying they trust most news most of the time (Reuters Institute Digital News Report definition)"
+    },
+    {
+      "name": "trust in AI chatbot answers",
+      "description": "share of respondents saying they trust news answers delivered by AI chatbots; distinct from trust in news overall"
+    },
+    {
+      "name": "news avoidance",
+      "description": "share of respondents saying they sometimes or often actively try to avoid the news"
+    },
+    {
+      "name": "AI chatbot news use",
+      "description": "share of respondents using AI chatbots as a source of news in a given week"
+    },
+    {
+      "name": "cyberchondria",
+      "description": "excessive or repeated online searching for health information that is itself distressing or anxiety-provoking; measured with the Cyberchondria Severity Scale"
+    },
+    {
+      "name": "health anxiety",
+      "description": "frequency and intensity of health-related worry and reassurance-seeking behaviour, e.g. Short Health Anxiety Inventory"
+    },
+    {
+      "name": "online health information seeking",
+      "description": "frequency of searching the internet for health information; distinct from cyberchondria, which adds the distress criterion"
+    },
+    {
+      "name": "correlation coefficient",
+      "description": "Pearson r from a random-effects meta-analysis; unitless, range -1 to 1"
+    },
+    {
+      "name": "self-assessed internal knowledge",
+      "description": "a person's rating of their own ability to explain something, as opposed to their measured ability"
+    },
+    {
+      "name": "illusion of explanatory depth",
+      "description": "conflation of access to external information with personal understanding of it; a transactive-memory failure"
+    },
+    {
+      "name": "verification cost",
+      "description": "time or effort required to trace a claim back to its source and check it, as opposed to accepting it"
+    },
+    {
+      "name": "prior probability weighting",
+      "description": "assignment of relative likelihood to the alternatives in an answer set; absent from ranked search results"
+    },
+    {
+      "name": "answer abundance",
+      "description": "condition in which a plausible answer to almost any well-formed lookup question is retrievable at near-zero cost"
+    },
+    {
+      "name": "irreducible uncertainty",
+      "description": "the portion of uncertainty that remains after learning; distinct from estimation uncertainty, which shrinks with evidence"
+    },
+    {
+      "name": "acute stress response",
+      "description": "composite of subjective stress rating, pupil diameter, skin conductance and salivary cortisol"
+    },
+    {
+      "name": "efficacy statement",
+      "description": "component of a message specifying a concrete action the recipient can take, and its expected effect"
+    },
+    {
+      "name": "fear appeal effectiveness",
+      "description": "effect of a threat-depicting message on attitudes, intentions and behaviour, as Cohen's d against a comparison group"
+    },
+    {
+      "name": "termination criterion",
+      "description": "condition under which a person is entitled to stop asking; the stopping rule of an inquiry"
+    },
+    {
+      "name": "possibility space",
+      "description": "set of outcomes a person regards as live after receiving an answer"
+    },
+    {
+      "name": "action space",
+      "description": "set of actions a person regards as available to them after receiving an answer"
+    },
+    {
+      "name": "source contradiction",
+      "description": "state in which two accessible sources give incompatible answers, converting an object-level question into a meta-level one about credibility"
+    },
+    {
+      "name": "self-initiated question",
+      "description": "question the person posed themselves, as opposed to an answer delivered unprompted by a feed"
+    },
+    {
+      "name": "social buffering",
+      "description": "attenuation of a threat response by the presence or physical contact of another person"
+    },
+    {
+      "name": "spousal hand-holding",
+      "description": "physical contact with a partner during threat exposure; the specific manipulation in Coan et al."
+    },
+    {
+      "name": "stranger hand-holding",
+      "description": "physical contact with an unfamiliar person during threat exposure; the comparison condition"
+    },
+    {
+      "name": "toucher familiarity",
+      "description": "whether the person administering touch is a partner, family member or friend versus a health care professional"
+    },
+    {
+      "name": "robot administered touch",
+      "description": "touch delivered by an object or machine rather than a human"
+    },
+    {
+      "name": "touch intervention benefit",
+      "description": "effect of a touch versus no-touch control on physical or mental health outcomes, as Hedges' g"
+    },
+    {
+      "name": "case context conditioning",
+      "description": "ability of an answerer to condition their answer on the particular history and circumstances of the asker"
+    },
+    {
+      "name": "answerer accountability",
+      "description": "extent to which the answerer bears consequences for a wrong answer and remains reachable afterwards"
+    },
+    {
+      "name": "parasocial availability",
+      "description": "simulated closeness of a creator or influencer to an audience, without reciprocal obligation or accountability"
+    },
+    {
+      "name": "creator news use",
+      "description": "share of respondents obtaining news from individual creators or influencers"
+    },
+    {
+      "name": "asking cost",
+      "description": "social price of putting a question to another person: exposure of ignorance, obligation, reciprocity"
+    },
+    {
+      "name": "information dose",
+      "description": "how much of the possibility space a knowledge system presents at once; the tunable quantity, distinct from the underlying data"
+    },
+    {
+      "name": "therapeutic window",
+      "description": "range of doses and contexts in which an intervention helps rather than harms"
+    },
+    {
+      "name": "contraindication",
+      "description": "stated condition under which a system should not be used, published by its builder"
+    },
+    {
+      "name": "indication",
+      "description": "stated condition under which a system is the appropriate instrument"
+    },
+    {
+      "name": "declarative accountability",
+      "description": "accountability asserted in text, e.g. a printed warning, without any change to system behaviour"
+    },
+    {
+      "name": "structural accountability",
+      "description": "accountability enacted by the system: refusing, routing elsewhere or degrading output when a contraindication holds"
+    },
+    {
+      "name": "traceable knowledge system",
+      "description": "a system binding each number to a word, triple and source chain; the class of system under evaluation here"
+    },
+    {
+      "name": "connectivity loss",
+      "description": "interruption of internet access for a population, from any cause"
+    },
+    {
+      "name": "government directed shutdown",
+      "description": "deliberate suspension of public internet access ordered by a state authority"
+    },
+    {
+      "name": "grid dependency",
+      "description": "reliance of connectivity on the electrical supply; connectivity as a derived rather than primary dependency"
+    },
+    {
+      "name": "physical infrastructure attack",
+      "description": "kinetic damage to network or data-centre facilities"
+    },
+    {
+      "name": "infrastructure dependency awareness",
+      "description": "extent to which a person represents the possibility of losing the answer infrastructure and prepares for it"
+    },
+    {
+      "name": "exposure fear",
+      "description": "fear that an event would reveal a prior self-assessment to have been false, as distinct from fear of the loss itself"
+    },
+    {
+      "name": "provenance portability",
+      "description": "ability of a claim's source chain to survive disconnection, e.g. by being printed"
+    },
+    {
+      "name": "offline staleness",
+      "description": "divergence of a local copy from the current state of its sources while the provenance chain still appears authoritative"
+    },
+    {
+      "name": "safety behaviour",
+      "description": "an action that reduces anxiety in the short term and maintains it in the long term by preventing disconfirmation"
+    },
+    {
+      "name": "exposure with response prevention",
+      "description": "clinical treatment for anxiety maintained by safety behaviour: contact with the feared situation while the reassurance-seeking action is withheld"
+    },
+    {
+      "name": "announced drill",
+      "description": "planned failure exercise with known start, end and duration"
+    },
+    {
+      "name": "scoped failure drill",
+      "description": "deliberate, bounded-blast-radius failure injection whose primary output is an inventory of unknown dependencies"
+    },
+    {
+      "name": "shutdown capability",
+      "description": "the technical and organisational ability to switch off connectivity for a population; held by the same party that would run a national drill"
+    },
+    {
+      "name": "explanation probe",
+      "description": "asking a person to rate their understanding, produce a step-by-step mechanistic explanation, then re-rate; the Rozenblit-Keil paradigm"
+    },
+    {
+      "name": "calibration gap",
+      "description": "difference between a stated expectation and the value subsequently revealed; usable as a feedback signal"
+    },
+    {
+      "name": "global",
+      "description": "aggregate across all markets surveyed"
+    },
+    {
+      "name": "2017"
+    },
+    {
+      "name": "2026"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Reuters Institute Digital News Report 2026",
+      "url": "https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2026/dnr-executive-summary",
+      "description": "Online survey, ca. 97,520 respondents across 48 markets, fieldwork January-February 2026, nationally representative quotas for age and gender. 15th edition."
+    },
+    {
+      "name": "Edelman summary of Reuters Institute Digital News Report 2026",
+      "url": "https://www.edelman.com/reuters-institute-digital-news-report-2026",
+      "description": "Secondary summary reporting the platform-level trust breakdown from the same survey."
+    },
+    {
+      "name": "McMullan et al. 2019",
+      "url": "https://doi.org/10.1016/j.jad.2018.11.037",
+      "description": "McMullan RD, Berle D, Arnaez S, Starcevic V. The relationships between health anxiety, online health information seeking, and cyberchondria: systematic review and meta-analysis. Journal of Affective Disorders 245:270-278. 20 studies, 7373 participants, random-effects model. DOI verified."
+    },
+    {
+      "name": "Vismara et al. 2021 JMIR",
+      "url": "https://www.jmir.org/2021/11/e27835",
+      "description": "Conceptualizations of cyberchondria and relations to the anxiety spectrum: systematic review and meta-analysis. 25 studies qualitative, 7 studies (3069 individuals) quantitative. Independent replication of the McMullan effect size."
+    },
+    {
+      "name": "Fisher, Goddu & Keil 2015",
+      "url": "https://doi.org/10.1037/xge0000070",
+      "description": "Searching for explanations: How the internet inflates estimates of internal knowledge. Journal of Experimental Psychology: General 144(3):674-687. Nine experiments. DOI verified."
+    },
+    {
+      "name": "de Berker et al. 2016",
+      "url": "https://doi.org/10.1038/ncomms10996",
+      "description": "de Berker AO, Rutledge RB, Mathys C, Marshall L, Cross GF, Dolan RJ, Bestmann S. Computations of uncertainty mediate acute stress responses in humans. Nature Communications 7:10996. n=45 participants under probabilistic shock threat; skin conductance n=45, pupillometry n=22; hierarchical Bayesian learning model; salivary cortisol as manipulation check. DOI verified."
+    },
+    {
+      "name": "Tannenbaum et al. 2015",
+      "url": "https://doi.org/10.1037/a0039729",
+      "description": "Tannenbaum MB, Hepler J, Zimmerman RS, Saul L, Jacobs S, Wilson K, Albarracin D. Appealing to fear: a meta-analysis of fear appeal effectiveness and theories. Psychological Bulletin 141(6):1178-1204. 127 papers (9% unpublished), 248 independent samples, N=27,372. DOI verified."
+    },
+    {
+      "name": "Coan et al. 2006",
+      "url": "https://doi.org/10.1111/j.1467-9280.2006.01832.x",
+      "description": "Coan JA, Schaefer HS, Davidson RJ. Lending a hand: social regulation of the neural response to threat. Psychological Science 17(12):1032-1039. fMRI, 16 married women under threat of electric shock in three conditions: husband's hand, stranger's hand, no hand. Small sample; predates current power standards. DOI verified."
+    },
+    {
+      "name": "Packheiser et al. 2024",
+      "url": "https://doi.org/10.1038/s41562-024-01841-8",
+      "description": "Packheiser J, Hartmann H, Fredriksen K, Gazzola V, Keysers C, Michon F. A systematic review and multivariate meta-analysis of the physical and mental health benefits of touch interventions. Nature Human Behaviour 8(6):1088-1107. Pre-registered (PROSPERO CRD42022304281); 137 studies in the meta-analysis plus 75 in the systematic review, n=12,966. Authors flag small-study bias and the impossibility of blinding. DOI verified."
+    },
+    {
+      "name": "Cloudflare Radar Q1 2026 disruption summary",
+      "url": "https://blog.cloudflare.com/q1-2026-internet-disruption-summary/",
+      "description": "Belson D, Cloudflare, 28 April 2026. Traffic-observation based review of confirmed internet disruptions in Q1 2026, explicitly described by its author as a summary rather than an exhaustive list. Vendor-published; observational, not a survey of public attitudes."
+    },
+    {
+      "name": "Rozenblit & Keil 2002",
+      "url": "https://doi.org/10.1207/s15516709cog2605_1",
+      "description": "Rozenblit L, Keil F. The misunderstood limits of folk science: an illusion of explanatory depth. Cognitive Science 26(5):521-562. Twelve studies. Participants rate understanding, produce a step-by-step mechanistic explanation, then re-rate. An older Elsevier DOI, 10.1016/S0364-0213(02)00078-2, points to the same article; the Wiley DOI given here is the one on the publisher's article page. Both verified."
+    },
+    {
+      "name": "BABS annual siren test",
+      "url": "https://www.babs.admin.ch/de/sirenentest",
+      "description": "Swiss Federal Office for Civil Protection, description of the national siren test held on the first Wednesday of February. Primary official source; a procedural description, not a study."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "trust in news",
+        "global",
+        "2026"
+      ],
+      "number": 0.37,
+      "unit": "share",
+      "source": "Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Lowest level since measurement began in 2015; down 3pp after three years flat at 40%. Trust fell significantly in 29 of 48 markets."
+    },
+    {
+      "words": [
+        "news avoidance",
+        "global",
+        "2026"
+      ],
+      "number": 0.42,
+      "unit": "share",
+      "source": "Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Essentially flat year-on-year. Four markets (Bulgaria, Croatia, Greece, Turkey) at 60% or above."
+    },
+    {
+      "words": [
+        "news avoidance",
+        "global",
+        "2017"
+      ],
+      "number": 0.29,
+      "unit": "share",
+      "source": "Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Baseline year in which the avoidance question was first asked; the 13pp rise to 2026 is the key trend line."
+    },
+    {
+      "words": [
+        "trust in AI chatbot answers",
+        "global",
+        "2026"
+      ],
+      "number": 0.20,
+      "unit": "share",
+      "source": "Edelman summary of Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Lowest of the intermediary types measured: search engines 32%, social media 22%, AI chatbots 20%. The source that always answers is trusted least."
+    },
+    {
+      "words": [
+        "AI chatbot news use",
+        "global",
+        "2026"
+      ],
+      "number": 0.10,
+      "unit": "share",
+      "source": "Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Up from 7% the previous year. The report attributes the low absolute level partly to low trust."
+    },
+    {
+      "words": [
+        "health anxiety",
+        "cyberchondria",
+        "correlation coefficient"
+      ],
+      "number": 0.62,
+      "source": "McMullan et al. 2019",
+      "type": "measured value",
+      "description": "Random-effects meta-analysis, 95% CI 0.52-0.71, p < .0001. Participant age partly explains heterogeneity. Limitation stated by the authors: over-reliance on a single instrument (CSS)."
+    },
+    {
+      "words": [
+        "health anxiety",
+        "online health information seeking",
+        "correlation coefficient"
+      ],
+      "number": 0.34,
+      "source": "McMullan et al. 2019",
+      "type": "measured value",
+      "description": "95% CI 0.20-0.48, p < .0001. The gap to 0.62 is the informative part: it is not searching as such that tracks anxiety, but distressing repeated searching."
+    },
+    {
+      "words": [
+        "health anxiety",
+        "cyberchondria",
+        "correlation coefficient"
+      ],
+      "number": 0.63,
+      "source": "Vismara et al. 2021 JMIR",
+      "type": "measured value",
+      "description": "Independent meta-analysis, 7 studies, 3069 individuals. Near-identical to McMullan et al., which raises confidence that the association is robust rather than instrument-specific."
+    },
+    {
+      "words": [
+        "self-assessed internal knowledge",
+        "illusion of explanatory depth"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Fisher, Goddu & Keil 2015",
+      "type": "measured value",
+      "description": "Qualitative direction rather than a pooled effect size: across nine experiments, prior internet search raised self-rated ability to explain unrelated questions. Effect survived controls for time, content, search autonomy, dependent-measure misreading and general overconfidence; driven specifically by querying search engines."
+    },
+    {
+      "words": [
+        "answer abundance",
+        "trust in news",
+        "correlation coefficient"
+      ],
+      "number": -0.3,
+      "confidence": 0.25,
+      "type": "assumed value",
+      "description": "Conjecture. The trust decline is co-determined by political polarization, platformisation and election cycles; the share attributable to answer abundance as such is not separately identified by any source here. Low confidence, stated only to make the unmeasured term explicit rather than to hide it."
+    },
+    {
+      "words": [
+        "verification cost",
+        "prior probability weighting"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.6,
+      "type": "assumed value",
+      "description": "Conjecture: traceability lowers verification cost but does not by itself supply prior probability weighting, and an answer set without priors is anxiogenic regardless of how well each element is sourced. Testable prediction: a sourced-but-unranked answer set should produce anxiety comparable to an unsourced one, while a ranked estimate with an explicit likelihood should not."
+    },
+    {
+      "words": [
+        "acute stress response",
+        "irreducible uncertainty"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "de Berker et al. 2016",
+      "type": "measured value",
+      "description": "Subjective stress, pupil diameter and skin conductance all tracked irreducible uncertainty rather than the probability of the aversive outcome. Certainty of shock was less stressful than a small chance of it. Key consequence for answer design: an answer calms in proportion to the uncertainty it removes, not in proportion to how favourable its content is."
+    },
+    {
+      "words": [
+        "fear appeal effectiveness"
+      ],
+      "number": 0.27,
+      "unit": "cohens d",
+      "source": "Tannenbaum et al. 2015",
+      "type": "measured value",
+      "description": "Fixed-effects composite across attitudes, intentions and behaviours. Note: at least one secondary summary reports d = 0.29; 0.27 is the figure in the authors' own abstract and is used here. No conditions were identified under which fear appeals backfired."
+    },
+    {
+      "words": [
+        "efficacy statement",
+        "fear appeal effectiveness"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Tannenbaum et al. 2015",
+      "type": "measured value",
+      "description": "Moderation analysis: effectiveness increased when the message included efficacy statements, depicted high susceptibility and severity, and recommended a one-time rather than repeated action. Threat information without an action component is the degenerate case."
+    },
+    {
+      "words": [
+        "termination criterion",
+        "source contradiction"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.65,
+      "type": "assumed value",
+      "description": "Conjecture: contradiction between accessible sources converts an object-level question into the meta-level question of credibility, which has no natural stopping rule. The resulting regress, not the volume of information, is proposed as the dominant anxiogenic factor under answer abundance. Testable against the DNR trust series: markets with higher measured source disagreement should show higher avoidance at equal news volume."
+    },
+    {
+      "words": [
+        "self-initiated question",
+        "termination criterion"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.5,
+      "type": "assumed value",
+      "description": "Conjecture: an answer to a question the person posed can terminate that question; an answer pushed by a feed adds threat load without a corresponding question to close, so it cannot terminate. Predicts that search and feed differ in affective outcome even at identical content."
+    },
+    {
+      "words": [
+        "possibility space",
+        "action space",
+        "termination criterion"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Summary conjecture integrating the three measured moderators: an answer produces trust when it narrows the possibility space and widens the action space, and fear when it widens the possibility space and leaves the action space unchanged. Online symptom search is the canonical instance of the second case. Caveat: narrowing the possibility space is also the mechanism of the Fisher et al. illusion, so closure is necessary but not sufficient for calibration."
+    },
+    {
+      "words": [
+        "spousal hand-holding",
+        "stranger hand-holding",
+        "social buffering"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Coan et al. 2006",
+      "type": "measured value",
+      "description": "Pervasive attenuation of activation in threat-processing systems during spousal hand-holding; a more limited attenuation with a stranger's hand. Attenuation scaled with self-reported marital quality in right anterior insula, superior frontal gyrus and hypothalamus for spousal but not stranger contact. Identity of the toucher therefore matters for acute threat response."
+    },
+    {
+      "words": [
+        "touch intervention benefit"
+      ],
+      "number": 0.5,
+      "unit": "hedges g",
+      "source": "Packheiser et al. 2024",
+      "type": "measured value",
+      "description": "Approximate medium-sized effect, comparable for mental and physical health outcomes. Strongest for cortisol regulation and weight gain in newborns and for reduction of pain, depression and anxiety in adults."
+    },
+    {
+      "words": [
+        "toucher familiarity",
+        "touch intervention benefit"
+      ],
+      "number": 0.02,
+      "unit": "hedges g difference",
+      "source": "Packheiser et al. 2024",
+      "type": "measured value",
+      "description": "Null result in adults: familiar toucher 0.51 (95% CI 0.29-0.73) versus health care professional 0.50 (95% CI 0.38-0.61), t(99)=0.12, p=0.905, CI of the difference -0.27 to 0.24. In newborns parental touch was superior (0.69 versus 0.39, p=0.041). Tension with Coan et al. is real and probably a construct difference: acute neural threat response with a specific person present versus cumulative health outcomes of touch sessions. Unresolved."
+    },
+    {
+      "words": [
+        "robot administered touch",
+        "touch intervention benefit"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "source": "Packheiser et al. 2024",
+      "type": "measured value",
+      "description": "Touch delivered by objects or robots produced comparable physical but lower mental health benefits than human touch. The mechanical component transfers to a machine; the meaning-bearing component does not."
+    },
+    {
+      "words": [
+        "creator news use",
+        "global",
+        "2026"
+      ],
+      "number": 0.27,
+      "unit": "share",
+      "source": "Edelman summary of Reuters Institute Digital News Report 2026",
+      "type": "measured value",
+      "description": "Creators rank high on ease of understanding, entertainment value and relatability, and markedly lower on trustworthiness and impartiality. Only 3% rely on creators as their sole news source. Read here as the market's revealed answer to the demand for an available human: proximity without accountability."
+    },
+    {
+      "words": [
+        "answerer accountability",
+        "case context conditioning",
+        "social buffering"
+      ],
+      "number": 3,
+      "unit": "count",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Conjecture: what an available human answerer supplies decomposes into exactly these three functions. Only accountability is fully engineerable into an information system, case context partially, co-regulation not at all. Consequence: source traceability is a surrogate for accountability, since it records provenance but not who bears the cost of being wrong. Durable named authorship is the closer substitute."
+    },
+    {
+      "words": [
+        "parasocial availability",
+        "answerer accountability"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.6,
+      "type": "assumed value",
+      "description": "Conjecture: creator-mediated news satisfies the demand for an available answerer while removing the accountability that made the available answerer trustworthy. Predicts that creator reliance rises fastest in markets with the largest declines in institutional trust."
+    },
+    {
+      "words": [
+        "asking cost",
+        "answerer accountability"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.55,
+      "type": "assumed value",
+      "description": "Conjecture: the social price of asking a person (exposed ignorance, obligation, reciprocity) is both the reason search displaced asking and the reason a human answer carries weight. The two cannot be separated: an answer that costs nothing to obtain commits nobody. Counter-consideration against over-valuing proximate human answerers: familiarity optimises affective calibration, not accuracy, and confidently wrong advice from a trusted proximate source is a well-documented misinformation channel."
+    },
+    {
+      "words": [
+        "traceable knowledge system",
+        "contraindication",
+        "irreducible uncertainty"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Derived from de Berker et al.: a system that enumerates the possibility space enlarges it. Under acute arousal with irreducible uncertainty, its output is structurally equivalent to symptom search. Contraindicated. A demonstrated contraindication is a result, not a cost to the project."
+    },
+    {
+      "words": [
+        "traceable knowledge system",
+        "contraindication",
+        "efficacy statement"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Derived from Tannenbaum et al.: threat magnitude without an available action produces avoidance rather than action. Contraindicated where the user holds no lever over the modelled quantity."
+    },
+    {
+      "words": [
+        "traceable knowledge system",
+        "contraindication",
+        "verification cost"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.75,
+      "type": "assumed value",
+      "description": "Contraindicated where verification cost exceeds decision value: cheap, reversible, low-stakes decisions. Tracing is net negative there."
+    },
+    {
+      "words": [
+        "traceable knowledge system",
+        "contraindication",
+        "case context conditioning"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.6,
+      "type": "assumed value",
+      "description": "Contraindicated where an accountable human with case knowledge is available and better conditioned on the particular situation, and where the question does not decompose into number-bound triples (grief, loyalty, aesthetic judgement)."
+    },
+    {
+      "words": [
+        "traceable knowledge system",
+        "indication"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "The complement of the contraindications: irreversible, contested, multi-party decisions where the disagreement runs over numbers, where the parties need to locate the exact point of divergence, and where no single accountable person has jurisdiction. Narrower than 'decision infrastructure' but sharply bounded."
+    },
+    {
+      "words": [
+        "contraindication",
+        "structural accountability",
+        "declarative accountability"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.65,
+      "type": "assumed value",
+      "description": "Conjecture answering the accountability gap identified in v0.0.3: a published contraindication list states where the builder accepts failure, is falsifiable and carries reputational cost, which a source chain does not. But declared warnings are cheap. It counts as accountability only when the system acts on it, by refusing, routing elsewhere or degrading to 'ask a person'. Structural, not declarative."
+    },
+    {
+      "words": [
+        "information dose",
+        "possibility space",
+        "therapeutic window"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.65,
+      "type": "assumed value",
+      "description": "Operationalisation of dose for a knowledge system: the amount of possibility space presented at once. The same underlying data yields the full branched model for a deliberating body and a single figure with error bars plus one next step for an individual under pressure. Two doses of one thing, not two products."
+    },
+    {
+      "words": [
+        "government directed shutdown",
+        "connectivity loss",
+        "2026"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Cloudflare Radar Q1 2026 disruption summary",
+      "type": "measured value",
+      "description": "Uganda: domestic traffic at the national exchange point fell from approximately 72 Gbps to 1 Gbps ahead of the January presidential election. Iran: two nationwide shutdowns, traffic near zero from 8 January, still largely in place in late April, described as among the longest sustained disruptions observed in recent years. Republic of Congo: near-total shutdown for about 60 hours around the March election."
+    },
+    {
+      "words": [
+        "grid dependency",
+        "connectivity loss",
+        "2026"
+      ],
+      "number": 3,
+      "unit": "count",
+      "source": "Cloudflare Radar Q1 2026 disruption summary",
+      "type": "measured value",
+      "description": "Three separate collapses of Cuba's national electric system in March 2026, each cutting traffic (by roughly half, 65% and 77%), with comparable events in 2023, 2024 and 2025. Also Portugal after storm Kristin: traffic down as much as 70% in Leiria, with thousands still without power more than three weeks later. Connectivity failed as a consequence of power, not of the network."
+    },
+    {
+      "words": [
+        "physical infrastructure attack",
+        "connectivity loss",
+        "2026"
+      ],
+      "number": 3,
+      "unit": "count",
+      "source": "Cloudflare Radar Q1 2026 disruption summary",
+      "type": "measured value",
+      "description": "Drone strikes directly struck two AWS facilities in the United Arab Emirates (me-central-1) and damaged one in Bahrain (me-south-1) on 1-2 March 2026, with a further Bahrain disruption on 23 March. AWS advised customers to back up or migrate. Cloudflare characterises kinetic damage to hyperscaler infrastructure as an unprecedented escalation."
+    },
+    {
+      "words": [
+        "infrastructure dependency awareness",
+        "acute stress response"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.6,
+      "type": "assumed value",
+      "description": "Conjecture, and a prediction the existing values already generate: fear of losing the answer infrastructure should be largely absent despite near-total dependency. Two mechanisms converge. Per de Berker, stress tracks represented uncertainty, and most people hold no distribution over this event. Per Tannenbaum, threat without an available action produces avoidance rather than preparation, and an individual has no lever over a cable cut or a state shutdown. Predicts high dependency with near-zero private mitigation, which is what is observed."
+    },
+    {
+      "words": [
+        "exposure fear",
+        "illusion of explanatory depth",
+        "connectivity loss"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.5,
+      "type": "assumed value",
+      "description": "Conjecture: the affectively loaded component is not loss of a tool but retroactive falsification of self-assessed knowledge, given the Fisher et al. finding that access is conflated with understanding. Disconnection would reveal the misattribution. Predicts avoidance of the topic rather than worry about it, and that the effect is strongest in those who search most."
+    },
+    {
+      "words": [
+        "provenance portability",
+        "traceable knowledge system"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.75,
+      "type": "assumed value",
+      "description": "A source chain is printable; a search ranking is not. Design consequence following the structural accountability criterion in v0.0.4: a knowledge system that cannot state what it knows without a server has made its users' knowledge conditional on its own uptime, which institutionalises the Fisher effect rather than correcting it."
+    },
+    {
+      "words": [
+        "offline staleness",
+        "provenance portability"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Counter-cost, stated against the preceding value: a stale local model is more dangerous than none, because the provenance chain continues to look authoritative after its sources have moved. Offline capability trades currency for availability. A dosing question, not a free gain."
+    },
+    {
+      "words": [
+        "cyberchondria",
+        "safety behaviour"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Vismara et al. 2021 JMIR",
+      "type": "measured value",
+      "description": "Cyberchondria is best conceptualised as a safety behaviour, related to health anxiety, obsessive-compulsive symptoms, intolerance of uncertainty and anxiety sensitivity. This places it in the class of behaviours for which exposure with response prevention is the indicated treatment, which is what makes deliberate disconnection a coherent proposal rather than an eccentric one."
+    },
+    {
+      "words": [
+        "explanation probe",
+        "illusion of explanatory depth"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "Rozenblit & Keil 2002",
+      "type": "measured value",
+      "description": "Self-rated understanding drops after producing a step-by-step mechanistic explanation. The illusion is markedly stronger for explanatory knowledge than for facts, procedures or narratives, and strongest where the environment supports real-time explanation with visible mechanisms. Twelve studies."
+    },
+    {
+      "words": [
+        "announced drill",
+        "connectivity loss"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "source": "BABS annual siren test",
+      "type": "measured value",
+      "description": "The Swiss national drill tests the sirens for one minute on the first Wednesday of February and explicitly requires no protective measures from the population: the mechanism is tested, not the population's endurance. Noted alongside it: the civil protection office's principal preparedness recommendation on the day is to install and keep current a smartphone alerting app, routing preparedness through the infrastructure whose loss would constitute the emergency."
+    },
+    {
+      "words": [
+        "announced drill",
+        "irreducible uncertainty"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.75,
+      "type": "assumed value",
+      "description": "Conjecture against the annual-shutdown proposal, derived from de Berker: an announced drill has zero uncertainty about onset, duration and end, and therefore trains the one case that is not the problem. Real disruptions are of unbounded duration; the Iranian shutdown ran from 8 January to at least late April. Habituation to a bounded outage does not transfer to an unbounded one."
+    },
+    {
+      "words": [
+        "announced drill",
+        "shutdown capability",
+        "government directed shutdown"
+      ],
+      "number": -1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Conjecture: at national scale, the party able to run the drill is the party the resilience is needed against. The two most complete national outages observed in Q1 2026 were state-ordered. An institutionalised annual shutdown normalises and rehearses the capability; population and apparatus are trained together and only one benefits. Additional cost: emergency calls, medical telemetry, payments and socially isolated people make a national outage an incident with casualties rather than an exercise."
+    },
+    {
+      "words": [
+        "scoped failure drill",
+        "infrastructure dependency awareness"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.7,
+      "type": "assumed value",
+      "description": "Conjecture: at organisational and individual scale the proposal holds, but its yield is the dependency inventory rather than emotional habituation. Bounded drills therefore find more unknown dependencies per unit of harm than total ones, which inverts the intuition that a bigger drill teaches more."
+    },
+    {
+      "words": [
+        "explanation probe",
+        "exposure fear",
+        "exposure with response prevention"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.65,
+      "type": "assumed value",
+      "description": "Conjecture: for exposure fear specifically, disconnection is the wrong instrument. The misattribution is 'I know this' versus 'I can retrieve this', and the Rozenblit-Keil probe targets it directly, costs minutes, requires no infrastructure and can be run while online, therefore often. Disconnection tests availability; explanation tests possession."
+    },
+    {
+      "words": [
+        "explanation probe",
+        "calibration gap",
+        "traceable knowledge system"
+      ],
+      "number": 1,
+      "unit": "direction",
+      "confidence": 0.6,
+      "type": "assumed value",
+      "description": "Buildable design consequence: require the user to state an expected order of magnitude before the source chain is revealed, and show the gap. This is the annual drill run continuously at zero blast radius, and it is the mechanism by which a traceable system can avoid institutionalising the Fisher effect rather than merely not causing it. Untested: eliciting a guess first may also anchor the user on their own estimate, which would work against calibration."
+    }
+  ],
+  "open_questions": [
+    "Direction of causality between online health searching and anxiety is not established by the meta-analyses; both are cross-sectional in the main.",
+    "No source here measures whether people who can trace a claim to its source actually do so more often than people who cannot.",
+    "Whether 'life questions' resist lookup answering in kind or only in degree is a conceptual claim in this dialogue, not a measured one.",
+    "The de Berker paradigm uses an immediate physical stressor over minutes; transfer to slow, diffuse informational threat (climate, geopolitics) is assumed here, not demonstrated.",
+    "Tannenbaum et al. measure persuasion outcomes, not affective burden. A message can be more behaviourally effective and more distressing at once; the two outcome families are not identified separately in that meta-analysis.",
+    "No source here measures whether an explicit order-of-magnitude estimate with error bars reduces residual anxiety relative to a sourced but unranked answer set. This is the central testable claim of the Fermi approach and it is currently unmeasured.",
+    "The Coan and Packheiser results disagree on whether the identity of the other person matters in adults. Whether this is a construct difference (acute threat response versus cumulative intervention outcome) or a power problem in the n=16 study is not resolved by either source.",
+    "Whether accountability alone, without physical presence, reproduces any of the anxiety-reducing effect of an available human answerer is untested. This is the sharpest open question for any traceability-based system.",
+    "No source here measures the accuracy of proximate human answerers against internet sources on the same questions. The claim that familiarity trades accuracy for calibration is asserted, not measured.",
+    "The indication and contraindication set in v0.0.4 is derived from measured moderators but has not itself been tested. Each item is a falsifiable prediction about when a traceable model helps or harms, and none has been run.",
+    "The dose-response curve for possibility space is assumed monotonic in the contraindicated direction and is probably not. There is likely an inverted-U: too few branches conceals the uncertainty, too many enlarges it. The optimum is unmeasured.",
+    "Whether a system that refuses on contraindication is trusted more or less than one that always answers is unknown, and the two effects plausibly run in opposite directions for expert and lay users.",
+    "No source here measures public concern about connectivity loss. The claim that the fear is largely absent is inferred from revealed preference (near-zero private mitigation) and from the model's own predictions, not from any attitude survey. A single question in a general population survey would settle it.",
+    "The Cloudflare figures are traffic observations from a vendor with a commercial interest in resilience, and the author states the list is not exhaustive. They establish that severe disruptions occurred, not their base rate or trend.",
+    "Almost every disruption recorded in Q1 2026 was regional and caused by state action or power failure rather than by failure of the network itself. Whether the correctly specified threat model is 'the network breaks', 'the grid fails' or 'a jurisdiction switches me off' changes the mitigation entirely, and this file does not distinguish their probabilities.",
+    "Whether habituation from a bounded, announced outage transfers at all to an unbounded, unannounced one is asserted here on theoretical grounds and has not been tested for this stimulus class.",
+    "The proposed pre-reveal estimate has an untested downside: asking for a guess first may anchor the user on their own number, so the calibration gain could be offset by an anchoring loss. This is directly testable with an A/B design and should be run before the feature is built.",
+    "Chaos engineering's benefit is documented for systems, not for the humans operating them. Whether a dependency inventory changes individual behaviour, or merely produces a document, is not established by anything in this file."
+  ]
+}

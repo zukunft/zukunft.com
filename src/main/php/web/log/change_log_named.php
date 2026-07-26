@@ -75,6 +75,11 @@ class change_log_named extends change_log
     // configured char limit, to indicate that the full text is shown in the mouseover popup
     const string MORE_INDICATOR = '...';
 
+    // the translated suffix of a reference (id) field name that is dropped when only the field itself
+    // is named (not its value), e.g. 'view id' -> 'view' in 'remove user overwrite for view'
+    // TODO Prio 2 detect by an const array of the db id field names not a text pattern
+    const string FIELD_ID_SUFFIX = ' id';
+
 
     /*
      * object vars
@@ -167,6 +172,11 @@ class change_log_named extends change_log
         } else {
             $txt_fld .= $this->table_name() . ' ' . $this->field_description();
         }
+        // adding an empty value in the user sandbox removes the user's overwrite for that field, so
+        // show 'remove user overwrite for view' in the field column (the old and new value are empty)
+        if ($this->is_user_overwrite_removal()) {
+            $txt_fld = $this->user_overwrite_removal_txt();
+        }
 
         // create the description for the old and new field value for the user
         $txt_old = $this->old_value;
@@ -201,7 +211,13 @@ class change_log_named extends change_log
         $txt_new = $html->esc($txt_new);
         $html_text .= $html->td($time_text);
         if ($condensed) {
-            $html_text .= $html->td($txt_fld . ': ' . $txt_new);
+            // the overwrite removal has no value to show, so show only 'remove user overwrite for
+            // view' without the trailing ': ' that a normal condensed field / value change uses
+            if ($this->is_user_overwrite_removal()) {
+                $html_text .= $html->td($txt_fld);
+            } else {
+                $html_text .= $html->td($txt_fld . ': ' . $txt_new);
+            }
         } else {
 
             // display the change
@@ -324,6 +340,23 @@ class change_log_named extends change_log
     }
 
     /**
+     * the translated name of the changed field on its own (no value), with the reference (id) suffix
+     * dropped so a reference field reads naturally, e.g. 'view_id' -> 'view'; used to name the field
+     * when only the field is shown e.g. 'remove user overwrite for view'
+     * @return string the lower-cased translated field name without a trailing ' id' e.g. 'view'
+     */
+    private function field_name(): string
+    {
+        global $mtr;
+        $name = lcfirst($mtr->text_db_field($this->field()));
+        $result = $name;
+        if (str_ends_with($name, self::FIELD_ID_SUFFIX)) {
+            $result = substr($name, 0, -strlen(self::FIELD_ID_SUFFIX));
+        }
+        return $result;
+    }
+
+    /**
      * the value to show for the old or new value of a change: for a type field the type name resolved
      * from the type id, so the user sees the type name instead of the type number; the type id is taken
      * from the reference id if set (a change logged via sql_par_field_list::add_type_field) and else
@@ -398,14 +431,20 @@ class change_log_named extends change_log
         if ($usr_name <> '') {
             $result .= $usr_name . ' ';
         }
+        // a change in the user sandbox is prefixed with a translatable 'user' before the action
+        // (see action_txt), so a user sandbox add shows e.g. 'zukunft.com system user added "Zurich"'
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $new_value . '"';
+                $result .= $this->action_txt(msg_id::LOG_UPDATE) . ' "' . $old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $new_value . '"';
             } else {
-                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $old_value . '"';
+                $result .= $this->action_txt(msg_id::LOG_DEL) . ' "' . $old_value . '"';
             }
+        } elseif ($this->is_user_overwrite_removal()) {
+            // adding an empty value in the user sandbox removes the user's overwrite for that field,
+            // so instead of '... user added ""' show '... remove user overwrite for view'
+            $result .= $this->user_overwrite_removal_txt();
         } else {
-            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
+            $result .= $this->action_txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
         }
         return $result;
     }
@@ -443,22 +482,89 @@ class change_log_named extends change_log
     function what_text(): string
     {
         global $mtr;
-        // the translated field name (e.g. 'description ') unless the object's own prime field changed
-        $fld = $this->field_name_prefix();
         // for a type field show the type name instead of the type id (see value_to_show)
-        $old = $this->value_to_show($this->old_id, $this->old_value);
         $new = $this->value_to_show($this->new_id, $this->new_value);
-        if ($this->old_value <> '') {
-            if ($this->new_value <> '') {
-                $result = $mtr->txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
-                    . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
+        if ($this->field() == change_fields::FLD_USER_ID) {
+            // a change of the owner (user_id) shows 'set owner to' instead of 'added user id'; the new
+            // owner is often the change author, whose name is already resolved (and shown in the who
+            // column), so reuse that name instead of the raw user id, otherwise keep the quoted id
+            if ($this->usr != null and $new === (string)$this->usr->id()) {
+                $result = $this->action_txt(msg_id::LOG_SET_OWNER) . ' ' . $this->usr->name();
             } else {
-                $result = $mtr->txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
+                $result = $this->action_txt(msg_id::LOG_SET_OWNER) . ' "' . $new . '"';
             }
         } else {
-            $result = $mtr->txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+            // the translated field name (e.g. 'description ') unless the object's own prime field changed
+            $fld = $this->field_name_prefix();
+            $old = $this->value_to_show($this->old_id, $this->old_value);
+            if ($this->old_value <> '') {
+                if ($this->new_value <> '') {
+                    $result = $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
+                        . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
+                } else {
+                    $result = $this->action_txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
+                }
+            } elseif ($this->is_user_overwrite_removal()) {
+                // adding an empty value in the user sandbox removes the user's overwrite for that
+                // field, so instead of 'user added view id ""' show 'remove user overwrite for view'
+                $result = $this->user_overwrite_removal_txt();
+            } else {
+                $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
+            }
         }
         return $result;
+    }
+
+    /**
+     * the translated change action, prefixed with a translatable 'user' for a change in the user
+     * sandbox (a *_usr overlay table) e.g. 'user added' instead of 'added'; shared by the change log
+     * table (what_text) and the changes tab / system change-log text (entry)
+     *
+     * @param msg_id $action the change action message id e.g. msg_id::LOG_ADD
+     * @return string the translated action, with the 'user' prefix for a user sandbox change
+     */
+    private function action_txt(msg_id $action): string
+    {
+        global $mtr;
+        $result = $mtr->txt($action);
+        if ($this->is_user_sandbox_change()) {
+            $result = $mtr->txt(msg_id::LOG_USER) . ' ' . $result;
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this change is logged to a user sandbox (overlay) table, i.e. it is a
+     *              user-specific change and not a change of the shared standard object
+     */
+    private function is_user_sandbox_change(): bool
+    {
+        return in_array($this->table_name(), change_tables::USER_TABLES, true);
+    }
+
+    /**
+     * @return bool true if this change adds an empty value in the user sandbox, i.e. it removes the
+     *              user's overwrite for that field (shown as 'remove user overwrite for ...')
+     */
+    private function is_user_overwrite_removal(): bool
+    {
+        $result = false;
+        if ($this->is_user_sandbox_change() and $this->old_value == '' and $this->new_value == '') {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * the text shown when a user sandbox change removes the user's overwrite for a field, e.g.
+     * 'remove user overwrite for view'; shared by the change log table (what_text) and the changes
+     * tab / system change-log text (entry)
+     * @return string the translated 'remove user overwrite for' message and the field name
+     */
+    private function user_overwrite_removal_txt(): string
+    {
+        global $mtr;
+        return $mtr->txt(msg_id::LOG_REMOVE_USER_OVERWRITE) . ' ' . $this->field_name();
     }
 
     /**
