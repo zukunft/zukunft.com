@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -215,7 +216,9 @@ class change_log_tests
         $log_lst = new change_log_list();
         // TODO Prio 2 activate
         //$t->assert_sql_by_user($sc, $log_lst);
-        //$this->assert_sql_list_last(word::class, word_fields::FLD_NAME, $log_lst, $db_con, $t);
+        // the last-change query must use its own prepared name (change_by_wrd_last), because the
+        // all-changes query of a word (change_by_wrd) selects with one more parameter
+        $this->assert_sql_list_last(word::class, 1, $log_lst, $db_con, $t);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
@@ -282,6 +285,15 @@ class change_log_tests
         $log = new change_link($t->usr1);
         $this->assert_sql_link_by_table($t, $db_con, $log);
 
+        // sql to delete the value change log of a value during the test cleanup
+        $this->assert_value_change_log_del_qp($t, $db_con);
+
+        // sql to delete the change log of already deleted test rows during the test cleanup
+        $this->assert_change_log_deleted_qp($t, $db_con);
+
+        // sql to delete the change log of a time series value during the test cleanup
+        $this->assert_value_time_series_change_log_del_qp($t, $db_con);
+
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
@@ -316,6 +328,126 @@ class change_log_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * TODO Prio 2 use sql files instead of fixed text to use the ide syntax check
+     * check the sql statement creation of test_base::value_change_log_del_qp, which the test cleanup
+     * uses to delete the change log of a value from one value change table
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_value_change_log_del_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // a norm value group has a text group id, so the delete of the change_values_norm change log
+        // declares a text parameter (the change table name is resolved via the sql creator like the
+        // test cleanup does in test_base::delete_value_change_log)
+        $db_con->db_type = sql_db::POSTGRES;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_norm::class);
+        $tbl_norm = $sc->get_table();
+        $qp = $t->value_change_log_del_qp($sc, change_values_norm::class, $tbl_norm, 'system_test_group_id');
+        $test_name = 'delete value change log of a norm group (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_values_norm_del_by_grp (text) AS DELETE FROM change_values_norm WHERE group_id = $1;');
+
+        $test_name = 'delete value change log query name';
+        $t->assert($test_name, $qp->name, 'change_values_norm_del_by_grp');
+
+        $test_name = 'delete value change log passes the group id as the parameter';
+        $t->assert($test_name, implode(',', $qp->par), 'system_test_group_id');
+
+        // the same delete for mysql uses the question mark parameter (fresh creator per statement)
+        $db_con->db_type = sql_db::MYSQL;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_norm::class);
+        $qp = $t->value_change_log_del_qp($sc, change_values_norm::class, $tbl_norm, 'system_test_group_id');
+        $test_name = 'delete value change log of a norm group (mysql)';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE change_values_norm_del_by_grp FROM 'DELETE FROM change_values_norm WHERE group_id = ?';");
+
+        // a prime value group has an integer group id, so the delete declares a bigint parameter and
+        // targets the change_values_prime table
+        $db_con->db_type = sql_db::POSTGRES;
+        $sc = $db_con->sql_creator();
+        $sc->set_class(change_values_prime::class);
+        $tbl_prime = $sc->get_table();
+        $qp = $t->value_change_log_del_qp($sc, change_values_prime::class, $tbl_prime, 1);
+        $test_name = 'delete value change log of a prime group (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_values_prime_del_by_grp (bigint) AS DELETE FROM change_values_prime WHERE group_id = $1;');
+
+        // the prime delete declares a bigint parameter, not the text parameter of a norm group
+        $test_name = 'the prime value change log delete declares a bigint not a text parameter';
+        $t->assert_text_not_contains($test_name, $qp->sql, '(text)');
+    }
+
+    /**
+     * check the sql statement creation of test_base::change_log_deleted_qp, which the test cleanup
+     * uses to delete the change log of already deleted test rows by the reserved test name part
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_change_log_deleted_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // an already deleted test row is detected by the reserved test name part in the old or new
+        // value, so the delete of the changes table declares two text like parameters
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $t->change_log_deleted_qp($db_con->sql_creator());
+        $test_name = 'delete change log of deleted test rows (postgres)';
+        $t->assert_sql($test_name, $qp->sql,
+            'PREPARE change_del_by_test_name (text, text) AS DELETE FROM changes WHERE old_value LIKE $1 OR new_value LIKE $2;');
+
+        $test_name = 'delete change log of deleted test rows query name';
+        $t->assert($test_name, $qp->name, 'change_del_by_test_name');
+
+        // both parameters are the reserved test name part followed by a wildcard
+        $like = test_cleanup::TEST_ROW_NAME_PART . '%';
+        $test_name = 'delete change log of deleted test rows passes the test name pattern as both parameters';
+        $t->assert($test_name, implode(',', $qp->par), $like . ',' . $like);
+
+        // the postgres statement uses numbered parameters, not the mysql question mark
+        $test_name = 'the postgres deleted test row delete has no mysql question mark parameter';
+        $t->assert_text_not_contains($test_name, $qp->sql, '?');
+
+        // the same delete for mysql uses the question mark parameters
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $t->change_log_deleted_qp($db_con->sql_creator());
+        $test_name = 'delete change log of deleted test rows (mysql)';
+        $t->assert_sql($test_name, $qp->sql,
+            "PREPARE change_del_by_test_name FROM 'DELETE FROM changes WHERE old_value LIKE ? OR new_value LIKE ?';");
+    }
+
+    /**
+     * check the sql statement creation of test_base::value_time_series_change_log_del_qp, which the
+     * test cleanup uses to delete the change log of a time series value from the changes table
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_value_time_series_change_log_del_qp(test_cleanup $t, sql_db $db_con): void
+    {
+        // a time series value logs to the changes table keyed by its value_time_series_id, so the
+        // delete removes the changes of that row whose field belongs to one of the time series tables;
+        // the sample table ids must be inlined into the subquery (see resources/db/log/changes_del_by_ts_id.sql)
+        $tbl_ids = [1, 2];
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $t->value_time_series_change_log_del_qp($db_con->sql_creator(), 1, $tbl_ids);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        $test_name = 'delete time series change log passes the value time series id as the parameter';
+        $t->assert($test_name, implode(',', $qp->par), '1');
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $t->value_time_series_change_log_del_qp($db_con->sql_creator(), 1, $tbl_ids);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

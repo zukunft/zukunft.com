@@ -37,6 +37,15 @@ class def
 {
 
     /*
+     * general
+     */
+
+    // TODO Prio 1 use this for all named test rows and add a post cleanup check that now change log of a test is remaining
+    // general prefix for named test objects that should never be used for any real object
+    const string TEST_PREFIX = 'zukunft.com System TesT ';
+
+
+    /*
      * fallback
      */
 

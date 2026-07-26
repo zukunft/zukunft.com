@@ -60,7 +60,7 @@ change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
 change_link: $chg, $log, $log_empty
-change_log_link_list: $cl_lst, $log_link_ui, $lst
+change_log_link_list: $cl_lst, $link_lst, $log_link_ui, $lst
 change_log_list: $chg_lst, $chg_lst_lng_ui, $chg_lst_ui, $log, $log_lst, $log_rem_ui, $log_ui, $lst, $result
 change_log_named: $chg_rem_ui, $chg_ui, $chg_usr_ui, $log_ui
 change_table_field: $tbl_fld
@@ -111,7 +111,7 @@ formula_link_type: $frm_lnk_typ
 formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
 formula_type: $frm_typ
 formula_type_list: $lst
-group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj
+group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj, $typ
 group_link: $grp_lnk
 group_list: $grp_lst, $lst, $phr_grp_lst_val
 html_base: $html, $html_base, $url

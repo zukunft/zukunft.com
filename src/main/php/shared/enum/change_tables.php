@@ -54,6 +54,7 @@ enum change_tables: string
     const string VALUE = 'values';
     const string VALUE_USR = 'user_values';
     const string VALUE_LINK = 'value_links';
+    const string VALUE_LINK_USR = 'user_value_links';
     const string FORMULA = 'formulas';
     const string FORMULA_USR = 'user_formulas';
     const string FORMULA_LINK = 'formula_links';
@@ -88,6 +89,7 @@ enum change_tables: string
         self::WORD_USR,
         self::TRIPLE_USR,
         self::VALUE_USR,
+        self::VALUE_LINK_USR,
         self::FORMULA_USR,
         self::FORMULA_LINK_USR,
         self::VIEW_USR,

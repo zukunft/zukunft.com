@@ -9,6 +9,16 @@ add an entry to the user changelog test data, so that here src/test/resources/we
 if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
 
 
+review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. a $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
+
+for the url tests like src/test/php/unit_workflow/word_url_tests.php and src/test/php/unit_write_workflow/word_write_url_tests.php split the read (url_to_html) and write (url_to_action) tests
+
+create script that lists all global vars and add them to docs/code_object_name_exceptions.md and include the script in the unit tests
+
+
+create a script that lists all function that does not jet have at least two unit tests. The simple condition is that in src/test/php/unit the function id called '*->function_name(*' between '$test_name = *' and '$t->assert*' or '$this->aaser*' without empty line. So loop over the code and collect all function calls after $test_name = up to an empty line. All function calls up to $t->assert are considered to have a test.    
+
+
 find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
 
 fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)

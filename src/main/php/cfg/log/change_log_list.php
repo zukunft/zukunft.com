@@ -47,6 +47,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -436,6 +438,13 @@ class change_log_list extends list_db_read
         } elseif ($class == component::class) {
             $result = $field_name . '_of_cmp';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
+        } elseif ($class == ref::class) {
+            if ($field_name != '') {
+                $result = $field_name . '_of_ref';
+                log_info('field name ' . $field_name . ' not expected for table ' . $class);
+            } else {
+                $result = 'ref';
+            }
         } else {
             log_err('table name ' . $class . ' not expected');
         }
@@ -565,6 +574,11 @@ class change_log_list extends list_db_read
                 $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
             }
         }
+        // add 'last' to the query name because this query selects by the row id only (3 parameters),
+        // whereas load_sql_obj_fld without a field name shares the base name but filters additionally
+        // by the change table (4 parameters); a shared prepared name with different parameters makes
+        // the database reject the second bind
+        $query_ext .= sql::NAME_SEP . 'last';
         $qp = $log_named->load_sql($sc, $query_ext);
         if ($class == value::class) {
             $sc->add_where(group_fields::FLD_ID, $id);
