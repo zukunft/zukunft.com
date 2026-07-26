@@ -40,6 +40,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use ReflectionClass;
@@ -92,6 +94,10 @@ class coding_rule_tests
         $test_name = 'check that the docs with all function is updated';
         $md_txt = $this->php_function_tree();
         $fnc_upd = $t->assert_file($test_name, $md_txt, test_files::DOCS_FUNCTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        $test_name = 'check that the docs with the unit test coverage is updated';
+        $md_txt = new code_test_coverage()->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
 
         $this->php_class_name_check($t);
 
