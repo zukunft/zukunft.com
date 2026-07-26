@@ -325,7 +325,7 @@ class a_selected_test extends all_unit_tests
             //new component_link_write_tests()->run($this);
 
             // the only active main test: read each main object type via a REST api get call
-            new api_write_tests()->run($this);
+            //new api_write_tests()->run($this);
             //new import_write_tests()->run($this);
             //new xbrl_write_tests()->run($this);
             //new wikidata_write_tests()->run($this);

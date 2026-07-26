@@ -121,6 +121,11 @@
       "name": "2026-06-20",
       "description": "the date 20 June 2026.",
       "type": "measure"
+    },
+    {
+      "name": "2026-07-25",
+      "description": "the date 25 July 2026.",
+      "type": "measure"
     }
   ],
   "triples": [
@@ -381,6 +386,32 @@
         "substantive reply count forecast",
         "substantive reply count"
       ]
+    },
+    {
+      "name": "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
+      "from": "zeit.de zukunftcom post",
+      "verb": "of",
+      "to": "2026-07-25",
+      "description": "building-block post of 25 July 2026: reply to an ironic wildfire comment, reframing climate protection as a carbon-tariff calculability problem and inviting collaborators. Replace ref URL with the real post URL and platform.",
+      "refs": [
+        {
+          "name": "https://REPLACE-with-real-post-url#sarcasm-reply",
+          "ref_type": "general"
+        }
+      ]
+    },
+    {
+      "name": "zeit.de zukunftcom post 2026-07-25 insurance reply",
+      "from": "zeit.de zukunftcom post",
+      "verb": "of",
+      "to": "2026-07-25",
+      "description": "building-block post of 25 July 2026: reply to a wildfire/insurability comment, reframing the premium as a mispriced carbon-damage price and inviting collaborators on the carbon-tariff platform. Replace ref URL with the real post URL and platform.",
+      "refs": [
+        {
+          "name": "https://REPLACE-with-real-post-url#insurance-reply",
+          "ref_type": "general"
+        }
+      ]
     }
   ],
   "values": [
@@ -419,6 +450,42 @@
         "assumed value"
       ],
       "number": "0.01"
+    },
+    {
+      "words": [
+        "substantive reply count forecast",
+        "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "0.02"
+    },
+    {
+      "words": [
+        "star reaction count forecast",
+        "zeit.de zukunftcom post 2026-07-25 sarcasm reply",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "substantive reply count forecast",
+        "zeit.de zukunftcom post 2026-07-25 insurance reply",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "0.04"
+    },
+    {
+      "words": [
+        "star reaction count forecast",
+        "zeit.de zukunftcom post 2026-07-25 insurance reply",
+        "thread fit",
+        "assumed value"
+      ],
+      "number": "1"
     }
   ],
   "calc-validation": [

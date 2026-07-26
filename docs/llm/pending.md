@@ -4,19 +4,19 @@
 
 ## high prio
 
-if in the change log 'added user id "1"' is shown, shown instead of the user id the username. And 'added user' should be replace with a translatable 'set owner to'
-
-add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added view id ""' is shown
-
-if in the change log the entry is 'id' try to show the name instead if given in the change log
-
-if in the change log the entry is caused by a change in the user sandbox add a translatable 'user' before the translated action, so the result should be 'user added view id ""'
-
-if a user change log entry adds an empty field like 'user added view id ""' show it as a 'remove user overwrite for', so that the entry is 'remove user overwrite for view'   
-
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
 
 if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
+
+
+review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. a $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
+
+for the url tests like src/test/php/unit_workflow/word_url_tests.php and src/test/php/unit_write_workflow/word_write_url_tests.php split the read (url_to_html) and write (url_to_action) tests
+
+create script that lists all global vars and add them to docs/code_object_name_exceptions.md and include the script in the unit tests
+
+
+create a script that lists all function that does not jet have at least two unit tests. The simple condition is that in src/test/php/unit the function id called '*->function_name(*' between '$test_name = *' and '$t->assert*' or '$this->aaser*' without empty line. So loop over the code and collect all function calls after $test_name = up to an empty line. All function calls up to $t->assert are considered to have a test.    
 
 
 find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix

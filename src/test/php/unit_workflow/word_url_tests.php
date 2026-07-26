@@ -78,7 +78,7 @@ class word_url_tests extends url_test_base
         $ts = $this->ts;
 
 
-        $t->subheader($ts . 'workflow');
+        $t->subheader($ts . 'url_to_html');
 
         $test_name = 'show edit view';
         $url_arr = [];
@@ -86,13 +86,11 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::ID] = word_names::MATH_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
         $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
-        // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
-        // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = 'add request via url without name should return a missing error message';
@@ -113,40 +111,6 @@ class word_url_tests extends url_test_base
         $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD), $t::TIMEOUT_LIMIT_PAGE_LONG);
-
-        // remove any test word left over from an aborted earlier run before the add below;
-        // without this purge a leftover standard row owned by another user (e.g. the system user
-        // of runs before the usr1 message user) would not be deleted by the usr1 delete request
-        // (a non-owner delete only excludes) and the following add would resurrect the old row
-        // together with its old change log entries instead of creating a fresh row owned by usr1
-        $wrd_pre = new word($t->usr1);
-        $t->write_named_cleanup($wrd_pre, word_names::TEST_ADD);
-        $t->write_named_cleanup_one($wrd_pre, $t->usr_system, word_names::TEST_ADD);
-
-        // a create or delete request is executed by url_to_action (not url_to_html, which only
-        // renders), so use the combined execute and render call and check the database result
-        $req = new user_request($t->usr1, $usr_msg, $ui->dto, true, true);
-
-        $test_name = '... if confirmed the word is added';
-        $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
-        $ui->execute_and_next($url_arr, $req);
-        $wrd_chk = new word($t->usr1);
-        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
-
-        $test_name = '... so it can be deleted';
-        $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $ui->execute_and_next($url_arr, $req);
-        $wrd_chk = new word($t->usr1);
-        $wrd_chk->load_by_name(word_names::TEST_ADD);
-        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
-        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
-
-        // recreate the word deleted above, because the change and del word workflows below run on it
-        $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
-        $ui->execute_and_next($url_arr, $req);
-
-
-        $t->subheader($ts . 'change save url');
 
         // the 'Change word' edit form must post the url vars the url mapper understands
         // (e.g. name="k" for the name) and never the translated label (name="Name"),
@@ -204,12 +168,48 @@ class word_url_tests extends url_test_base
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_KEY_MISSING));
 
 
+        $t->subheader($ts . 'url_to_action & next url');
+
+        // remove any test word left over from an aborted earlier run before
+        // never use read test objects e.g. like math in this section
+        $wrd_pre = new word($t->usr1);
+        $t->write_named_cleanup($wrd_pre, word_names::TEST_ADD);
+        $t->write_named_cleanup_one($wrd_pre, $t->usr_system, word_names::TEST_ADD);
+
+        // a create or delete request is executed by url_to_action (not url_to_html, which only
+        // renders), so use the combined execute and render call and check the database result
+        $req = new user_request($t->usr1, $usr_msg, $ui->dto, true, true);
+
+        $test_name = '... if confirmed the word is added';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
+        $url_arr[url_var::NAME] = word_names::TEST_ADD;
+        $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
+
+        $test_name = '... so it can be deleted';
+        $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
+        $ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
+        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+
+        // recreate the word deleted above, because the change and del word workflows below run on it
+        $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
+        $ui->execute_and_next($url_arr, $req);
+
+
         $t->subheader($ts . 'confirm change');
 
         // simulate the user pressing save on the 'Change word' edit form:
         // url_user_reaction routes the still unconfirmed change (step = STEP_CONFIRM) to the
         // confirm change view (views::CONFIRM_EDIT) built by url_to_action, which shows the
         // pending change before it is written to the database (docs/llm/state-and-messages.md)
+        // never use read test objects e.g. like math in this section
         $test_name = 'pressing save shows the confirm change view with the pending change';
         $usr_msg->usr = $usr_ui;
         // build the edit form url array from a test word instead of hard-coding the field keys;
@@ -253,6 +253,9 @@ class word_url_tests extends url_test_base
          */
 
 
+
+        $t->subheader($ts . 'workflow');
+
         // the snapshot unit test only renders the steps
         // for the write tests the same workflows are used the do_it = true
         // the fail step are before the real step to leave the database in a correct state
@@ -272,13 +275,11 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
         $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
-        // the assert follows the word find view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, 'def', $t::TIMEOUT_LIMIT_PAGE_LONG);
 
 
         $t->subheader($ts . 'cleanup');
 
-        // cleanup - fallback delete
         $wrd = new word($t->usr1);
         foreach (word_names::TEST_WORDS as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);

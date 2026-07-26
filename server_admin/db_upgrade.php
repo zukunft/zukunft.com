@@ -31,21 +31,25 @@ include_once PHP_PATH . 'init.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
-$app = new frontend();
+// init global objects for the database connection
 global $sys;
-$db_con = $app->start("db_upgrade");
+
+// init global frontend objects
+$msg = new user_message();
+
+// open database
+$app = new frontend();
+$db_con = $app->start("db_upgrade", $msg);
 
 // recreate the code linked database rows and run the pending upgrades
-$db_chk = new db_check();
-$usr_msg = $db_chk->db_check($db_con);
-
-if ($usr_msg->is_ok()) {
+if (new db_check()->db_check($db_con, $msg)) {
     echo "database upgrade ok\n";
     $app->end($db_con);
     exit(0);
 } else {
-    fwrite(STDERR, $usr_msg->all_message_text() . "\n");
+    fwrite(STDERR, $msg->text() . "\n");
     $app->end($db_con);
     exit(1);
 }

@@ -69,7 +69,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
@@ -78,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -85,7 +88,12 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
@@ -110,6 +118,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -134,7 +143,9 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
@@ -165,6 +176,9 @@ include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_LOG . 'change_log_link_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
@@ -388,6 +402,11 @@ class test_base
 
     // add this to the object name to test if it can be renamed
     const string EXT_RENAME = ' renamed';
+
+    // the text part that every reserved test object name contains (e.g. 'System Test Word'); used to
+    // detect the change log entry of an already deleted test row, whose related row can no longer be
+    // loaded to check via the const arrays that it was a test row (see cleanup_change_log_deleted)
+    const string TEST_ROW_NAME_PART = 'System Test ';
 
 
     /*
@@ -3710,6 +3729,372 @@ class test_base
             }
         }
         $obj->del($usr_msg, $this->usr_admin);
+    }
+
+    /**
+     * remove the change log entries of the named test objects before the test rows are deleted, so
+     * that no change log entry keeps pointing to a deleted test row (which would grow the log forever)
+     *
+     * the still existing related row of a test object is loaded by its reserved test name (passed as a
+     * const array by cleanup_objects) to confirm it is a test row before its change log is removed;
+     * an already deleted test row can no longer be loaded, so its change log entries are detected by
+     * the reserved test name part they contain (see cleanup_change_log_deleted)
+     *
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named test object e.g. a word
+     * @param array $names the reserved test names to clean up (a const array e.g. word_names::TEST_WORDS)
+     * @return void
+     */
+    function cleanup_change_log(
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        array                                                             $names
+    ): void
+    {
+        foreach ($names as $name) {
+            $this->cleanup_change_log_of_row($sbx, $name);
+        }
+        $this->cleanup_change_log_deleted();
+    }
+
+    /**
+     * remove the change log entries of one still existing named test row
+     * the row is loaded by the system user so that a user overlay exclusion does not hide it
+     *
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named test object e.g. a word
+     * @param string $name the reserved test name of the row whose change log should be removed
+     * @return void
+     */
+    private function cleanup_change_log_of_row(
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        string                                                            $name
+    ): void
+    {
+        $sbx->set_user($this->usr_system);
+        $sbx->load_by_name($name);
+        if ($sbx->id() != 0) {
+            $this->delete_change_log_of_obj($sbx::class, $sbx->id());
+        }
+    }
+
+    /**
+     * delete all change log entries of one test object using the change log entry ids
+     * the entries are loaded via the model so they are correctly filtered by the object's table and row
+     *
+     * @param string $class the class of the test object e.g. word::class, ref::class or group::class
+     * @param int|string $id the database (or group) id of the test object whose change log to remove
+     * @return void
+     */
+    private function delete_change_log_of_obj(string $class, int|string $id): void
+    {
+        global $db_con;
+        $log_lst = new change_log_list();
+        // raise the default page limit so all change log entries of the test row are removed at once
+        $log_lst->limit = sql_db::ROW_MAX;
+        $log_lst->load_by_obj_fld($class, $id, $this->usr_system);
+        // a value logs to a change_values_* table and a named object to the changes table, so group the
+        // change log ids by their change log class and delete each group from its own table
+        $ids_by_class = [];
+        foreach ($log_lst->lst() as $chg) {
+            if ($chg->id() != 0) {
+                $ids_by_class[$chg::class][] = $chg->id();
+            }
+        }
+        foreach ($ids_by_class as $chg_class => $ids) {
+            $usr_msg = new user_message($this->usr_system);
+            $qp = $db_con->sql_creator()->del_sql_list_without_log($chg_class, change_log::FLD_ID, $ids);
+            $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $usr_msg);
+        }
+    }
+
+    /**
+     * remove the change log entries of already deleted test rows
+     * such a row can no longer be loaded to confirm via the const arrays that it was a test row, so
+     * the entries are detected by the reserved test name part that the logged value must contain
+     *
+     * @return void
+     */
+    private function cleanup_change_log_deleted(): void
+    {
+        global $db_con;
+        $usr_msg = new user_message($this->usr_system);
+        $qp = $this->change_log_deleted_qp($db_con->sql_creator());
+        $db_con->delete($qp, 'cleanup change log of deleted test rows', $usr_msg);
+    }
+
+    /**
+     * build the sql statement to delete the change log entries of already deleted test rows, i.e.
+     * the entries whose old or new value starts with the reserved test name part e.g. 'System Test '
+     * public only so that the sql creation can be checked by a unit test (see change_log_tests)
+     *
+     * @param sql_creator $sc the sql creator with the target db type set
+     * @return sql_par the delete statement, its name and the parameter list
+     */
+    function change_log_deleted_qp(sql_creator $sc): sql_par
+    {
+        $lib = new library();
+        $sc->set_class(change::class);
+        $tbl = $sc->name_sql_esc($lib->class_to_table(change::class));
+        $like = self::TEST_ROW_NAME_PART . '%';
+        $qp = new sql_par(change::class, new sql_type_list([sql_type::DELETE]));
+        $qp->name = $lib->class_to_name(change::class) . '_del_by_test_name';
+        // register both like parameters via add_where so the prepared statement declares their types
+        $sc->add_where(change::FLD_OLD_VALUE, $like, sql_par_type::TEXT);
+        $sc->add_where(change::FLD_NEW_VALUE, $like, sql_par_type::TEXT);
+        $sql = sql::DELETE . ' ' . $tbl
+            . ' ' . sql::WHERE . ' ' . change::FLD_OLD_VALUE . ' ' . sql::LIKE . ' ' . $sc->par_name(1)
+            . ' ' . sql::OR . ' ' . change::FLD_NEW_VALUE . ' ' . sql::LIKE . ' ' . $sc->par_name(2);
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::TEXT, sql_par_type::TEXT]);
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * remove the change log entries of a test value before the value is deleted, but only if at least
+     * one phrase of the value is a test row (so a value on real phrases is never touched)
+     *
+     * @param group $grp the phrase group that identifies the value whose change log should be removed
+     * @param phrase_list $phr_lst the phrases of the value, checked to contain at least one test row
+     * @return void
+     */
+    function cleanup_change_log_value(group $grp, phrase_list $phr_lst): void
+    {
+        if ($this->phrase_list_has_test_row($phr_lst)) {
+            if ($grp->id() != 0 and $grp->id() != '') {
+                $this->delete_value_change_log($grp->id());
+                $this->delete_value_link_change_log($grp->id());
+                $this->delete_value_time_series_change_log($grp);
+            }
+        }
+    }
+
+    /**
+     * remove the value link change log entries of a value from the change_links table
+     * the link change loader filters on the numeric from_id, so it can only match a prime value's
+     * integer group id; a norm / big value has no integer id that a value link could reference
+     *
+     * @param int|string $grp_id the group id of the value whose value link change log to remove
+     * @return void
+     */
+    private function delete_value_link_change_log(int|string $grp_id): void
+    {
+        global $db_con;
+        if (is_int($grp_id)) {
+            $link_lst = new change_log_link_list();
+            $link_lst->load_by_obj(value::class, $grp_id, $this->usr_system, sql_db::ROW_MAX);
+            $ids = $link_lst->ids();
+            if (count($ids) > 0) {
+                $usr_msg = new user_message($this->usr_system);
+                $qp = $db_con->sql_creator()->del_sql_list_without_log(change_link::class, change_link::FLD_ID, $ids);
+                $db_con->delete($qp, 'cleanup value link change log', $usr_msg);
+            }
+        }
+    }
+
+    /**
+     * remove the change log entries of a value time series and of its time series data points
+     * unlike a numeric value a time series extends sandbox_value and logs to the changes table keyed
+     * by its own value_time_series_id (not the group id), which is also the row id of the value_ts_data
+     * changes, so both are removed via that id (loaded from the group)
+     *
+     * @param group $grp the phrase group of the value whose time series change log to remove
+     * @return void
+     */
+    private function delete_value_time_series_change_log(group $grp): void
+    {
+        global $db_con, $sys;
+        $vts = new value_time_series($this->usr_system);
+        $vts->load_by_grp($grp);
+        $vts_id = $vts->id();
+        if (is_int($vts_id) and $vts_id != 0) {
+            $cng_tbl = $sys->typ_lst->cng_tbl;
+            $tbl_ids = [
+                $cng_tbl->id(change_tables::VALUE_TIME_SERIES),
+                $cng_tbl->id(change_tables::VALUE_TS_DATA)
+            ];
+            $usr_msg = new user_message($this->usr_system);
+            $qp = $this->value_time_series_change_log_del_qp($db_con->sql_creator(), $vts_id, $tbl_ids);
+            $db_con->delete($qp, 'cleanup value time series change log', $usr_msg);
+        }
+    }
+
+    /**
+     * build the sql statement to delete the change log entries of a time series, i.e. the changes of
+     * the time series row (row_id = value_time_series_id) whose field belongs to the values_time_series
+     * or value_ts_data table
+     * public only so that the sql creation can be checked by a unit test (see change_log_tests)
+     *
+     * @param sql_creator $sc the sql creator with the target db type set
+     * @param int $vts_id the value_time_series_id of the time series value
+     * @param array $tbl_ids the change table ids of the time series tables
+     * @return sql_par the delete statement, its name and the parameter list
+     */
+    function value_time_series_change_log_del_qp(sql_creator $sc, int $vts_id, array $tbl_ids): sql_par
+    {
+        $lib = new library();
+        $sc->set_class(change::class);
+        $changes_tbl = $sc->name_sql_esc($lib->class_to_table(change::class));
+        $fields_tbl = $sc->name_sql_esc($lib->class_to_table(change_field::class));
+        $qp = new sql_par(change::class, new sql_type_list([sql_type::DELETE]));
+        $qp->name = 'changes_del_by_ts_id';
+        // register the row id parameter via add_where so the prepared statement declares its type; the
+        // field of a time series change belongs to one of the time series tables, so keep only the
+        // changes of this row whose field is in that table set (the table ids are internal, not input)
+        $sc->add_where(change_log::FLD_ROW_ID, $vts_id, sql_par_type::INT);
+        $sql = sql::DELETE . ' ' . $changes_tbl
+            . ' ' . sql::WHERE . ' ' . change_log::FLD_ROW_ID . ' = ' . $sc->par_name(1)
+            . ' ' . sql::AND . ' ' . change::FLD_FIELD_ID . ' ' . sql::IN . ' ('
+            . sql::SELECT . ' ' . change_field::FLD_ID . ' ' . sql::FROM . ' ' . $fields_tbl
+            . ' ' . sql::WHERE . ' ' . change_field::FLD_TABLE . ' ' . sql::IN . ' (' . implode(',', $tbl_ids) . '))';
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * remove the change log entries of a value from all value change tables of the group's size
+     * a value logs its change to the numeric change_values_* table and, for a typed value, to the
+     * matching time / text / geo sub-table, all keyed by the group id (see change_log::LOG_CLASSES)
+     *
+     * @param int|string $grp_id the group id of the value whose change log should be removed
+     * @return void
+     */
+    private function delete_value_change_log(int|string $grp_id): void
+    {
+        global $db_con;
+        $size = $this->value_change_log_size($grp_id);
+        foreach (change_log::LOG_CLASSES as $chg_class) {
+            if (is_subclass_of($chg_class, change_value::class)) {
+                // resolve the table via the sql creator, which knows the typed sub-table names that
+                // library::class_to_table does not, and keep only the tables of the group's size
+                $sc = $db_con->sql_creator();
+                $sc->set_class($chg_class);
+                $tbl = $sc->get_table();
+                if (str_ends_with($tbl, $size)) {
+                    $usr_msg = new user_message($this->usr_system);
+                    $qp = $this->value_change_log_del_qp($sc, $chg_class, $tbl, $grp_id);
+                    $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $usr_msg);
+                }
+            }
+        }
+    }
+
+    /**
+     * the size suffix of the value change tables for a group id, i.e. the tail of the table name
+     * @param int|string $grp_id the group id of the value
+     * @return string the size suffix 'prime', 'norm' or 'big' (table_type returns MOST for 'norm')
+     */
+    private function value_change_log_size(int|string $grp_id): string
+    {
+        $typ = new group_id()->table_type($grp_id);
+        if ($typ == sql_type::PRIME) {
+            $result = sql_type::PRIME->value;
+        } elseif ($typ == sql_type::BIG) {
+            $result = sql_type::BIG->value;
+        } else {
+            $result = sql_type::NORM->value;
+        }
+        return $result;
+    }
+
+    /**
+     * build the sql statement to delete the change log entries of one value change table for one group
+     * public only so that the sql creation can be checked by a unit test (see change_log_tests)
+     *
+     * @param sql_creator $sc the sql creator with the class already set
+     * @param string $chg_class the value change class e.g. change_values_time_norm::class
+     * @param string $tbl the resolved change table name e.g. 'change_values_time_norm'
+     * @param int|string $grp_id the group id (int for a prime group, else a string) to remove
+     * @return sql_par the delete statement, its name and the parameter list
+     */
+    function value_change_log_del_qp(sql_creator $sc, string $chg_class, string $tbl, int|string $grp_id): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par($chg_class, new sql_type_list([sql_type::DELETE]));
+        $qp->name = $lib->class_to_name($chg_class) . '_del_by_grp';
+        $par_type = is_int($grp_id) ? sql_par_type::INT : sql_par_type::TEXT;
+        // register the parameter via add_where so the prepared statement declares its type (bigint for
+        // a prime group id, text otherwise), like the rest of the sql creation in the code base
+        $sc->add_where(change_value::FLD_GROUP_ID, $grp_id, $par_type);
+        $sql = sql::DELETE . ' ' . $sc->name_sql_esc($tbl)
+            . ' ' . sql::WHERE . ' ' . change_value::FLD_GROUP_ID . ' = ' . $sc->par_name(1);
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [$par_type]);
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * remove the change log entries of a test ref before the ref is deleted, but only if the ref's
+     * phrase is a test row (so a ref of a real phrase is never touched)
+     *
+     * @param ref $ref the ref object used to load the test ref by its external key
+     * @param string $name the external key of the test ref whose change log should be removed
+     * @return void
+     */
+    function cleanup_change_log_ref(ref $ref, string $name): void
+    {
+        $ref->set_user($this->usr_system);
+        $ref->load_by_name($name);
+        if ($ref->id() != 0) {
+            // a loaded ref only carries the phrase id, so load the phrase to get its name to check
+            $usr_msg = new user_message($this->usr_system);
+            $ref->reload_objects($usr_msg);
+            if ($this->is_test_phrase_name($ref->phrase_name())) {
+                $this->delete_change_log_of_obj(ref::class, $ref->id());
+            }
+        }
+    }
+
+    /**
+     * remove the change log entries of a test group before the group is deleted, but only if at least
+     * one phrase of the group is a test row (so a group of real phrases is never touched)
+     *
+     * @param group $grp the group object used to derive the group id from its phrases
+     * @param array $group_spec the group test spec [group name, [phrase names]] (e.g. groups::TEST_GROUPS_CREATE)
+     * @return void
+     */
+    function cleanup_change_log_group(group $grp, array $group_spec): void
+    {
+        $phr_names = $group_spec[1] ?? [];
+        $phr_lst = new phrase_list($this->usr_system);
+        $phr_lst->load_by_names($phr_names);
+        if ($this->phrase_list_has_test_row($phr_lst)) {
+            $grp->set_user($this->usr_system);
+            $grp->set_phrase_list($phr_lst);
+            if ($grp->id() != 0 and $grp->id() != '') {
+                $this->delete_change_log_of_obj(group::class, $grp->id());
+            }
+        }
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases to check
+     * @return bool true if at least one phrase of the list is a reserved test row
+     */
+    private function phrase_list_has_test_row(phrase_list $phr_lst): bool
+    {
+        $result = false;
+        foreach ($phr_lst->lst() as $phr) {
+            if ($this->is_test_phrase_name($phr->name())) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $name the phrase name to check against the reserved test names
+     * @return bool true if the name is a reserved test word or triple, or contains the test name part
+     */
+    private function is_test_phrase_name(?string $name): bool
+    {
+        $result = false;
+        if ($name != null) {
+            if (in_array($name, words::RESERVED_NAMES)
+                or in_array($name, triples::RESERVED_NAMES)
+                or str_contains($name, self::TEST_ROW_NAME_PART)) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

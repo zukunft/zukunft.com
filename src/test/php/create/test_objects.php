@@ -93,6 +93,11 @@ class test_objects
         $lib = new library();
         $class = $lib->class_to_name($obj::class);
         $this->env->subheader($ts . 'cleanup ' . $class);
+        // for a named object remove the change log entries of the test rows before the rows themselves
+        // are deleted below, so that no change log entry keeps pointing to a deleted test row
+        if (in_array($obj::class, def::NAME_CLASSES)) {
+            $this->env->cleanup_change_log($obj, $obj_names);
+        }
         foreach ($obj_names as $obj_name) {
             if (in_array($obj::class, def::NAME_CLASSES)) {
                 $this->env->write_named_cleanup($obj, $obj_name);
@@ -102,10 +107,20 @@ class test_objects
                 if (!$phr_lst->is_empty()) {
                     $grp = new group($obj->get_user());
                     $grp->set_phrase_list($phr_lst);
+                    // remove the value's change log before the value is deleted, but only if at least
+                    // one phrase of the value is a test row (see cleanup_change_log_value)
+                    $this->env->cleanup_change_log_value($grp, $phr_lst);
                     $this->env->write_value_cleanup($obj, $grp);
                 }
             } elseif ($obj::class == ref::class) {
+                // remove the ref's change log before the ref is deleted, but only if the ref's phrase
+                // is a test row (see cleanup_change_log_ref)
+                $this->env->cleanup_change_log_ref($obj, $obj_name);
                 $this->env->write_named_cleanup($obj, $obj_name);
+            } elseif ($obj::class == group::class) {
+                // the group test spec is [name, [phrase names]]; remove the group's change log if at
+                // least one phrase is a test row (see cleanup_change_log_group)
+                $this->env->cleanup_change_log_group($obj, $obj_name);
             } elseif ($obj instanceof type_object) {
                 $this->env->write_named_cleanup($obj, $obj_name);
             } else {
