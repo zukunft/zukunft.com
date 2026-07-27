@@ -72,7 +72,7 @@ class ui_log
     function system_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
     {
         // the pure change log table below uses the same prepared list, so both are sorted equally
-        return $this->prepared_change_log($dbo, $log_lst)->dsp(null, false, false, $test_mode);
+        return $this->prepared_change_log($dbo, $log_lst, $test_mode)->dsp(null, false, false, $test_mode);
     }
 
     /**
@@ -89,7 +89,7 @@ class ui_log
     {
         // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
         // table is sorted with the same parameters as the previously used change log
-        $log_lst = $this->prepared_change_log($dbo, $log_lst);
+        $log_lst = $this->prepared_change_log($dbo, $log_lst, $test_mode);
         // the max number of chars of the what column and the max number of rows both come from the
         // frontend config (config.yaml > ... > change log > what limit / row limit)
         global $ui_sys;
@@ -113,9 +113,10 @@ class ui_log
      *
      * @param db_object $dbo the word or triple whose change log is shown
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to sort the change time at whole-second resolution so the snapshot stays stable
      * @return change_log_list the filtered, sorted and row-limited change log ready to render
      */
-    private function prepared_change_log(db_object $dbo, change_log_list $log_lst): change_log_list
+    private function prepared_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): change_log_list
     {
         // a word or triple loaded for its page carries its recent changes directly (like the
         // related values, formulas and references); otherwise use the given change log or, if
@@ -134,8 +135,9 @@ class ui_log
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
         // newest change first; same-time changes are sorted ascending by the what text so the
-        // display order never depends on the api/db row order (see docs/llm/frontend.md)
-        $log_lst->sort_by_time_and_what();
+        // display order never depends on the api/db row order (see docs/llm/frontend.md); in test
+        // mode the time is bucketed to the whole second so sub-second write jitter cannot reorder rows
+        $log_lst->sort_by_time_and_what($test_mode);
         // the number of change rows to show comes from the frontend config (like the values list)
         global $ui_sys;
         $limit = def::FALLBACK_DB_PAGE_ROWS;

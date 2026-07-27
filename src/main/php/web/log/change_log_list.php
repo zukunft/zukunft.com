@@ -204,14 +204,29 @@ class change_log_list extends ListBase
      * the what column, without the user) so the display order is deterministic and independent of
      * the db/api row order
      *
-     * TODO Prio 1  try to find the reason why the wrting order of the changes due to the full test run changes
+     * in test mode the change time is bucketed to the whole second so the sub-second write jitter
+     * of a full test run cannot reorder changes that happen within the same second; the what text
+     * then gives a stable order inside the bucket, which keeps the workflow change log snapshots
+     * deterministic (the displayed times are relabeled per row position, see
+     * url_test_base::normalize_change_log_time)
+     *
+     * TODO Prio 1 this neutralises the sub-second write-order jitter of a full test run; if changes
+     *      still flip across a whole-second boundary, find why the write order itself changes
+     *
+     * @param bool $test_mode true to compare the change time at whole-second resolution
      * @return void
      */
-    function sort_by_time_and_what(): void
+    function sort_by_time_and_what(bool $test_mode = false): void
     {
         $lst = $this->lst();
-        usort($lst, fn(change_log_named $a, change_log_named $b) => $b->change_time <=> $a->change_time
-            ?: strcmp($a->what_text(), $b->what_text()));
+        usort($lst, function (change_log_named $a, change_log_named $b) use ($test_mode) {
+            if ($test_mode) {
+                $cmp = $b->change_time->getTimestamp() <=> $a->change_time->getTimestamp();
+            } else {
+                $cmp = $b->change_time <=> $a->change_time;
+            }
+            return $cmp ?: strcmp($a->what_text(), $b->what_text());
+        });
         $this->set_lst($lst);
     }
 
