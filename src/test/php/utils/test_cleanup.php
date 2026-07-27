@@ -443,6 +443,10 @@ class test_cleanup extends test_api
         echo_timestamped($db_con->seq_reset(component_link::class));
         echo_timestamped($db_con->seq_reset(source::class));
 
+        // the deletes above write change log entries naming the test rows themselves,
+        // so remove them by the reserved test name pattern as the last cleanup step
+        $this->cleanup_change_log_deleted();
+
         if ($result == '') {
             return true;
         } else {
@@ -456,7 +460,7 @@ class test_cleanup extends test_api
      */
 
     /**
-     * test with general queries if there are any test rows left in the database.
+     * test with general queries if there are any test rows left in the database incl. the change log.
      * reports what has been left over so that the issue can be fixed.
      * removes any remaining the test datasets from the database using different methods
      * @param user_message $usr_msg with the user messages that occurred until now
@@ -464,6 +468,10 @@ class test_cleanup extends test_api
      */
     function check_cleanup(user_message $usr_msg): bool
     {
+        // the test cleanups delete the test rows via del(), which itself writes change log entries
+        // naming the test rows, so purge them by the reserved test name pattern before the overall
+        // check that no test row is left in any table incl. the change log
+        $this->cleanup_change_log_deleted();
         if (!$this->cleanup_check_queries($usr_msg)) {
             $msg_start = 'there are ';
             $msg_text = 'unexpected system test rows in the database that could ';

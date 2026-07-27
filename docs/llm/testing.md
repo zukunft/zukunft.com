@@ -83,6 +83,40 @@ future run.
   row a cleanup missed, or a `/tmp/probe.php` that opens the DB to inspect a
   table.
 
+## A deleted test object takes its change log entries with it
+
+Every write test changes rows through the model, so every change is recorded in
+the change log. When a cleanup deletes a test row, the change log entries of
+that row are deleted too — otherwise they keep pointing to a row that no longer
+exists and stay as noise in the change log of every database a test has run on.
+
+The helpers live in `test_base` and load the entries via the model
+(`change_log_list`), so each entry is removed from its correct `change*` table
+(the shared core is `test_base::delete_change_log_of_obj`):
+
+- `cleanup_change_log($sbx, $names)` for named objects (word, triple, ...) and
+  type rows (e.g. a sys log function)
+- `cleanup_change_log_value(...)` / `cleanup_change_log_ref(...)` /
+  `cleanup_change_log_group(...)` for the id-based objects; they only act if a
+  related phrase is a reserved test row, so real data is never touched
+- `cleanup_change_log_deleted()` for entries whose row is already gone
+
+The generic `test_objects::cleanup_objects()` already calls them; a new cleanup
+path does the same **before** the `del()` of the row, because after the delete
+the row can no longer be loaded to confirm by its reserved name that it was a
+test row.
+
+As the overall safety net `test_cleanup::check_cleanup` verifies at the end of a
+test run via `resources/db/cleanup/test_changes.sql` that no change log entry
+with the reserved test name pattern is left — after purging the entries that the
+cleanup `del()` calls themselves have written about the test rows.
+
+- **Right**: the cleanup first calls `$t->cleanup_change_log($wrd, $names)` and
+  then deletes the test words via `del()`.
+- **Wrong**: the cleanup only deletes the rows and leaves `changes` entries
+  pointing to the deleted test words — or removes the entries with a manual
+  `DELETE`.
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,

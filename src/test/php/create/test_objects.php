@@ -93,9 +93,9 @@ class test_objects
         $lib = new library();
         $class = $lib->class_to_name($obj::class);
         $this->env->subheader($ts . 'cleanup ' . $class);
-        // for a named object remove the change log entries of the test rows before the rows themselves
-        // are deleted below, so that no change log entry keeps pointing to a deleted test row
-        if (in_array($obj::class, def::NAME_CLASSES)) {
+        // for a named object or a type row remove the change log entries of the test rows before the
+        // rows themselves are deleted below, so that no change log entry keeps pointing to a deleted test row
+        if (in_array($obj::class, def::NAME_CLASSES) or $obj instanceof type_object) {
             $this->env->cleanup_change_log($obj, $obj_names);
         }
         foreach ($obj_names as $obj_name) {

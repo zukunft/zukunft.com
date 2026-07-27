@@ -145,6 +145,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - The negative test asserts the *reported* outcome (`msg_id` / empty / `false`), never merely "no exception thrown".
 - Pick the tier by what the function does: pure → `unit/`; DB read → `unit_read/`; DB write/REST/cache → `unit_write/`.
 - Never create temp scripts (`psql`, ad-hoc PHP probes, ...) that read or write database data; the database is accessed only via the standard model interface and the existing scripts in `/test`. → `docs/llm/testing.md`
+- When a cleanup deletes a test row it first deletes the row's change log entries via the `test_base` `cleanup_change_log*` helpers (core: `delete_change_log_of_obj`); a change log entry must never point to a deleted test row. → `docs/llm/testing.md`
 - Never run the predefined test scripts in `/test/*` (especially `test/test.php`): they need a local deployment, which is never an LLM task; the developer runs them and reports the results. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
 - The user of a test comes from the test environment (`$t->usr1`, `$t->usr2`, `$t->usr_admin`, … resp. `$this->env->usr1` in a factory, `test_users::*` in a static one); never `global $usr`. → `docs/llm/testing.md`

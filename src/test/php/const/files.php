@@ -266,6 +266,7 @@ class files
     const string CLEAN_CHECK_FORMULAS = test_paths::DB_CLEANUP . 'test_formulas.sql';
     const string CLEAN_CHECK_VIEWS = test_paths::DB_CLEANUP . 'test_views.sql';
     const string CLEAN_CHECK_COMPONENTS = test_paths::DB_CLEANUP . 'test_components.sql';
+    const string CLEAN_CHECK_CHANGES = test_paths::DB_CLEANUP . 'test_changes.sql';
     const array CLEAN_CHECKS = array(
         self::CLEAN_CHECK_WORDS,
         self::CLEAN_CHECK_VERBS,
@@ -276,5 +277,6 @@ class files
         self::CLEAN_CHECK_FORMULAS,
         self::CLEAN_CHECK_VIEWS,
         self::CLEAN_CHECK_COMPONENTS,
+        self::CLEAN_CHECK_CHANGES,
     );
 }

@@ -3768,7 +3768,10 @@ class test_base
         string                                                            $name
     ): void
     {
-        $sbx->set_user($this->usr_system);
+        // a type row has no user overlay, so only a sandbox row is loaded as the system user
+        if (!$sbx instanceof type_object) {
+            $sbx->set_user($this->usr_system);
+        }
         $sbx->load_by_name($name);
         if ($sbx->id() != 0) {
             $this->delete_change_log_of_obj($sbx::class, $sbx->id());
@@ -3809,10 +3812,11 @@ class test_base
      * remove the change log entries of already deleted test rows
      * such a row can no longer be loaded to confirm via the const arrays that it was a test row, so
      * the entries are detected by the reserved test name part that the logged value must contain
+     * protected because test_cleanup uses it to purge the delete entries before the overall check
      *
      * @return void
      */
-    private function cleanup_change_log_deleted(): void
+    protected function cleanup_change_log_deleted(): void
     {
         global $db_con;
         $usr_msg = new user_message($this->usr_system);

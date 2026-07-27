@@ -43,6 +43,7 @@ include_once paths::MODEL_LOG . 'changes_norm.php';
 include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
@@ -234,6 +236,9 @@ class change_log_tests
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
+        // a type row e.g. a sys log function logs to the changes table like the named objects,
+        // so the test cleanup can remove the change log of a type test row via the same list load
+        $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
 
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');

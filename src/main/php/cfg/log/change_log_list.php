@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_SYSTEM . 'list_db_read.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::DB . 'sql.php';
@@ -63,6 +64,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -444,6 +446,16 @@ class change_log_list extends list_db_read
                 log_info('field name ' . $field_name . ' not expected for table ' . $class);
             } else {
                 $result = 'ref';
+            }
+        } elseif (is_subclass_of($class, type_object::class)) {
+            // a type row e.g. a sys log function logs to the changes table like the named objects
+            // (used by the test cleanup to remove the change log of a type test row); type changes
+            // are rare, so the query name is simply based on the class name
+            $lib = new library();
+            if ($field_name != '') {
+                $result = $field_name . '_of_' . $lib->class_to_name($class);
+            } else {
+                $result = $lib->class_to_name($class);
             }
         } else {
             log_err('table name ' . $class . ' not expected');

@@ -4,6 +4,13 @@
 
 ## high prio
 
+
+check that after each writing section (e.g. the run function of a test class) of test objects the cleanup and check_cleanup function is called
+
+
+add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific a
+
+
 add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
 
 if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
