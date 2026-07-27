@@ -71,6 +71,9 @@ class phrase_write_tests
         // start the test section (ts)
         $ts = 'db write phrase ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (triples first because they link words)
+        $t_trp->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company

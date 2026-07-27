@@ -95,6 +95,9 @@ class value_write_tests
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (values first because they use words)
+        $t_val->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepare');
         $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);

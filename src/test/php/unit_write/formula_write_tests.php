@@ -626,6 +626,9 @@ class formula_write_tests
         // cleanup - fallback delete
         $t_frm->cleanup($ts);
 
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
+
     }
 
     function run_list(test_cleanup $t): void
