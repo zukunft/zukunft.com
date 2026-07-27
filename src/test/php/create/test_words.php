@@ -346,7 +346,15 @@ class test_words extends test_objects
      */
     function word_filled_add(): word
     {
-        $wrd = $this->word_filled();
+        $t_msk = new test_views($this->env);
+        $wrd = $this->word_add();
+        $wrd->description = word_names::TEST_CHANGE_COM;
+        $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
+        $wrd->set_code_id(word_names::TEST_ADD, $this->env->usr_system);
+        $wrd->plural = word_names::TEST_ADD_PLURAL;
+        $wrd->view = $t_msk->view_math();
+        $wrd->usage = test_const::DUMMY_USAGE_WORD;
+        $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(word_names::TEST_ADD);

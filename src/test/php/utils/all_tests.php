@@ -50,7 +50,6 @@
     element_group.php
     formula_list.php
     formula_link_list.php
-    parameter_type.php
     figure.php
     figure_list.php
     selector.php
