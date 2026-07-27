@@ -295,6 +295,7 @@ class word_names
     // replaces the volatile id in workflow snapshots so the test result does not change every run
     const int TEST_ADD_ID = 999;
     const string TEST_ADD_CODE_ID = 'System Test Word code id';
+    const string TEST_ADD_PLURAL = 'System Test Words';
     const string TEST_ADD_COM = 'test description added to the word via import';
     // the new description posted by the confirm change workflow to change the test word description
     const string TEST_CHANGE_COM = 'a confirm change test description';
