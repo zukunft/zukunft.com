@@ -42,6 +42,7 @@ include_once paths::SHARED_ENUM . 'language_forms.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -55,12 +56,16 @@ if ($db_con->is_open()) {
     // get the parameters
     $lan_typ_id = $_GET[url_var::ID] ?? 0;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -70,7 +75,7 @@ if ($db_con->is_open()) {
             $lan_typ->load_by_id($lan_typ_id);
             $result = $lan_typ->api_json();
         } else {
-            $msg = 'language form id is missing';
+            $msg->add_message_text('language form id is missing');
         }
     }
 

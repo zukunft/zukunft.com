@@ -2481,7 +2481,6 @@ class sandbox extends db_object_seq_id_user
      */
     function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'save_id_fields',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -2500,7 +2499,6 @@ class sandbox extends db_object_seq_id_user
      */
     function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): string
     {
-        $usr_msg = new user_message();
         $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'save_id_fields_link',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -3983,12 +3981,6 @@ class sandbox extends db_object_seq_id_user
                     foreach ($fld_lst_ex_log as $fld) {
                         $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
                     }
-                    $sc_update = clone $sc;
-                    $sc_par_lst_upd = $sc_par_lst;
-                    $sc_par_lst_upd->add(sql_type::UPDATE);
-                    $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-                    $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-                    $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
                     if ($this->is_link_obj()) {
                         $update_fvt_lst->del($this->from_field());
                         $update_fvt_lst->del($this->type_field());
@@ -3997,11 +3989,21 @@ class sandbox extends db_object_seq_id_user
                             $update_fvt_lst->add($fvt_lst->get($this->name_field(), $usr_msg));
                         }
                     }
-
-                    $qp_update->sql = $sc_update->create_sql_update(
-                        $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-                    // add the insert row to the function body
-                    $sql .= ' ' . $qp_update->sql . ' ';
+                    // the insert already sets the key field, so an object with only the key (e.g. a
+                    // word added with just its name) has no field left to update; skip the update
+                    // instead of building an invalid "UPDATE ... WHERE" without a set clause
+                    if (!$update_fvt_lst->is_empty()) {
+                        $sc_update = clone $sc;
+                        $sc_par_lst_upd = $sc_par_lst;
+                        $sc_par_lst_upd->add(sql_type::UPDATE);
+                        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+                        $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+                        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+                        $qp_update->sql = $sc_update->create_sql_update(
+                            $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+                        // add the insert row to the function body
+                        $sql .= ' ' . $qp_update->sql . ' ';
+                    }
                 }
             }
 
@@ -4052,7 +4054,6 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
-        $usr_msg = new user_message();
         $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'sql_insert_key_field',
             msg_id::VAR_CLASS_NAME => $this::class

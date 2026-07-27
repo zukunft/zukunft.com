@@ -41,6 +41,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -59,7 +60,12 @@ if ($db_con->is_open()) {
 
     // load the session user parameters
     $usr = new user;
-    $msg = $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     $result = ''; // reset the json message string
 
@@ -77,7 +83,7 @@ if ($db_con->is_open()) {
         $lst->load_all();
         $result = $lst->api_json([api_types::HEADER], $usr);
     } else {
-        $msg = 'not permitted';
+        $msg->add_message_text('not permitted');
     }
 
     $ctrl = new controller();

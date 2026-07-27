@@ -76,7 +76,6 @@ class figure extends combine_named
      */
     function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_ui = new result();

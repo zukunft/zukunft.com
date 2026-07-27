@@ -40,6 +40,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -60,12 +61,16 @@ if ($db_con->is_open()) {
     $wrd_id = $_GET[url_var::WORD] ?? 0;
     $wrd_fld = $_GET[url_var::LOG_FIELD] ?? '';
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -88,7 +93,7 @@ if ($db_con->is_open()) {
                 $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
                 $result = $lst->api_json();
             } else {
-                $msg = 'word id missing';
+                $msg->add_message_text('word id missing');
             }
         }
     }

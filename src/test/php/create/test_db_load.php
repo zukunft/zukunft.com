@@ -78,6 +78,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
+//include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'formula_link_write_tests.php';
@@ -125,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\formula_link_write_tests;
@@ -476,7 +478,7 @@ class test_db_load
     {
         $trp = $this->load_triple($from_name, $verb_code_id, $to_name);
         if ($trp->id() <> 0) {
-            $trp->del(new user_message());
+            $trp->del(new user_message($this->env->usr1));
             return true;
         } else {
             return false;
@@ -488,7 +490,7 @@ class test_db_load
         $trp = new triple($this->env->usr1);
         $trp->load_by_name($name);
         if ($trp->id() <> 0) {
-            $trp->del(new user_message());
+            $trp->del(new user_message($this->env->usr1));
             return true;
         } else {
             return false;
@@ -683,7 +685,7 @@ class test_db_load
             // TODO check if type name is the code id or really the name
             $ref->set_predicate_id($sys->typ_lst->ref_typ->id($type_name));
             $ref->set_external_key($external_key);
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($this->env->usr1);
             if (!$ref->save($usr_msg)) {
                 log_err('add ref failed due to: ' . $usr_msg->get_last_message());
             }
@@ -808,7 +810,7 @@ class test_db_load
      */
     function del_phrase_group(string $phrase_group_name): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         $phr_grp = $this->load_phrase_group_by_name($phrase_group_name);
         return $phr_grp->del($usr_msg);
     }
@@ -864,7 +866,7 @@ class test_db_load
                 $val->set_grp($phr_grp);
             }
             $val->set_number($target);
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($this->env->usr1);
             if (!$val->save($usr_msg)) {
                 log_err('add value failed due to: ' . $usr_msg->get_last_message());
             }
@@ -894,7 +896,7 @@ class test_db_load
         if (!$val->is_saved()) {
             $val->set_grp($phr_grp);
             $val->set_number($target);
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($this->env->usr1);
             if (!$val->save($usr_msg)) {
                 log_err('add value by group failed due to: ' . $usr_msg->get_last_message());
             }
@@ -914,7 +916,7 @@ class test_db_load
     function del_value_by_phr_grp(group $phr_grp): bool
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         return $val->del($usr_msg);
     }
 
@@ -935,8 +937,7 @@ class test_db_load
         $src = $this->load_source($src_name);
         if ($src->id() == 0) {
             $src->set_name($src_name);
-            $usr_msg = new user_message();
-            $usr_msg->usr = $this->env->usr1;
+            $usr_msg = new user_message($this->env->usr1);
             if (!$src->save($usr_msg)) {
                 log_err('add source failed due to: ' . $usr_msg->get_last_message());
             }
@@ -1149,7 +1150,7 @@ class test_db_load
 
     function test_component_unlink(string $dsp_name, string $cmp_name): string
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         if ($msk->id() > 0 and $cmp->id() > 0) {
@@ -1161,7 +1162,7 @@ class test_db_load
     function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string
     {
         $result = '';
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
 
         $frm = new formula($this->env->usr1);
         $frm->load_by_name($formula_name);
@@ -1213,10 +1214,10 @@ class test_db_load
      * use the ... function
      * the db rows used for unit testing does not need to be removed after testing
      *
-     * @param all_tests $t the test object to collect the errors and calculate the execution times
+     * @param all_tests|a_selected_test $t the test object to collect the errors and calculate the execution times
      * @return void
      */
-    function create_test_db_entries(all_tests $t): void
+    function create_test_db_entries(all_tests|a_selected_test $t): void
     {
         new word_write_tests()->create_test_words($t);
         new triple_write_tests()->create_test_triples($t);

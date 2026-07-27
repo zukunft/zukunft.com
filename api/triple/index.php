@@ -37,6 +37,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -49,12 +50,16 @@ $db_con = $app->start_api("triple", "", false);
 
 if ($db_con->is_open()) {
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -79,7 +84,7 @@ if ($db_con->is_open()) {
             $trp->load_by_name($trp_name);
             $result = $trp->api_json($typ_lst, $load_usr);
         } else {
-            $msg = 'triple id or name is missing';
+            $msg->add_message_text('triple id or name is missing');
         }
     }
 
@@ -87,7 +92,7 @@ if ($db_con->is_open()) {
     // message as a missing id so the response does not confirm the object exists
     if ($result != '' and !$trp->is_readable_by($usr)) {
         $result = '';
-        $msg = 'triple id or name is missing';
+        $msg->add_message_text('triple id or name is missing');
     }
 
     $ctrl = new controller();

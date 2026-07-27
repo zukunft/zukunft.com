@@ -28,13 +28,13 @@ user: $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $exis
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
-value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $val_add1, $val_add2, $val_added, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_phr, $val_protected, $val_ui, $val_usr, $val_usr2, $wrd_val
+value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_phr, $val_protected, $val_ui, $val_usr, $val_usr2, $wrd_val
 verb: $dbo, $dbo_ui, $obj, $vrb_id, $vrb_time_step
 view: $cld, $dbo, $dbo_ui, $msk_cols, $msk_db, $msk_new, $msk_old, $msk_plain, $msk_reloaded, $msk_renamed, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $sc, $trp_view, $usr_ui, $view_obj, $wrd_view
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_power, $wrd_pre, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $billion, $country, $dbo, $dbo_ui, $from, $htp, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $trillion, $usd, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_auto, $wrd_back, $wrd_changer, $wrd_chf, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_empty, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_high, $wrd_ip, $wrd_low, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_or_trp, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_power, $wrd_pre, $wrd_read_ui, $wrd_renamed, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 

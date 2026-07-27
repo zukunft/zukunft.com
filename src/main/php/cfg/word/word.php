@@ -1975,8 +1975,6 @@ class word extends sandbox_code_id
      */
     function del_links(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
         //$grp_lst = new group_list($this->get_user());

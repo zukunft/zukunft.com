@@ -37,6 +37,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -51,12 +52,16 @@ if ($db_con->is_open()) {
     $cmp_id = $_GET[url_var::MASK] ?? '';
     $pattern = $_GET[url_var::PATTERN] ?? '';
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -76,7 +81,7 @@ if ($db_con->is_open()) {
             $lst->filter_readable_by($usr);
             $result = $lst->api_json();
         } else {
-            $msg = 'view id and pattern missing';
+            $msg->add_message_text('view id and pattern missing');
         }
     }
 

@@ -235,6 +235,43 @@ class result_list extends sandbox_list_value
 
 
     /*
+     * sort
+     */
+
+    /**
+     * sort this result list in place so that the result with the highest number is first and the
+     * order is always deterministic, so the html order never depends on the api/db row order
+     * (see docs/llm/frontend.md); number first, then the group name so results with the same number
+     * keep a stable order that does not depend on the volatile result (group) id (which is packed
+     * from the phrase db ids and shifts between database rebuilds), mirroring value_list::sort_by_impact
+     * @return void
+     */
+    function sort_by_number(): void
+    {
+        $lst = $this->lst();
+        usort($lst, fn(result $a, result $b) => $b->number() <=> $a->number()
+            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+        $this->set_lst($lst);
+    }
+
+    /**
+     * the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
+     * result list shown in a view (e.g. via ui_list) does not depend on the api/db row order
+     */
+    function list(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string      $back = '',
+        string      $style = '',
+        ?int        $limit = null,
+        ?int        $page = null
+    ): string
+    {
+        $this->sort_by_number();
+        return parent::list($context_phr_lst, $back, $style, $limit, $page);
+    }
+
+
+    /*
      * display
      */
 
@@ -244,6 +281,7 @@ class result_list extends sandbox_list_value
      */
     function display(): string
     {
+        $this->sort_by_number();
         $results = array();
         foreach ($this->lst() as $res) {
             $results[] = $res->display();
@@ -268,6 +306,8 @@ class result_list extends sandbox_list_value
      */
     protected function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
+        // sort first so the limited subset and its order do not depend on the api/db row order
+        $this->sort_by_number();
         $result = array();
         $i = 0;
         foreach ($this->lst() as $res) {
@@ -285,6 +325,9 @@ class result_list extends sandbox_list_value
     function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
+
+        // sort so the highest number is shown first and the row order is always deterministic
+        $this->sort_by_number();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;

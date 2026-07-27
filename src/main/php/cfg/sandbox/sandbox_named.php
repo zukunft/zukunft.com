@@ -889,6 +889,14 @@ class sandbox_named extends sandbox
 
         global $db_con;
 
+        // the change log records who created the object, and changes.user_id is not null and
+        // references users, so an insert by an unloaded user (id 0) can never be logged; report
+        // the missing user instead of letting the db raise a raw foreign key error
+        if ($this->get_user_id() <= 0) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            return false;
+        }
+
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         if ($msg->is_ok()) {

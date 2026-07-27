@@ -37,6 +37,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -52,12 +53,16 @@ if ($db_con->is_open()) {
     $val_id = $_GET[url_var::ID] ?? 0;
     $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
-    $msg = '';
     $result = ''; // reset the api message
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -76,14 +81,14 @@ if ($db_con->is_open()) {
             // do not disclose another user's private/personal value loaded by id (idor); the same
             // neutral message as a missing id, so the response does not confirm the value exists
             if (!$val->is_readable_by($usr)) {
-                $msg = 'value id is missing';
+                $msg->add_message_text('value id is missing');
             } elseif ($with_phr == url_var::TRUE) {
                 $result = $val->api_json([api_types::INCL_PHRASES]);
             } else {
                 $result = $val->api_json();
             }
         } else {
-            $msg = 'value id is missing';
+            $msg->add_message_text('value id is missing');
         }
     }
 

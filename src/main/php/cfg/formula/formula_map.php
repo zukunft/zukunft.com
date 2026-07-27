@@ -1330,7 +1330,6 @@ class formula_map extends sandbox_code_id
      */
     function unlink_phrase(phrase $phr, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if ($this->get_user() != null) {
             log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->get_user()->dsp_id());
             $frm_lnk = new formula_link($this->get_user());

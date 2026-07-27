@@ -872,7 +872,6 @@ class db_object_seq_id extends db_object
 
     function del(user_message $msg): bool
     {
-        $msg = new user_message();
         $msg->add(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'del in db_object_seq_id',
             msg_id::VAR_CLASS_NAME => $this::class

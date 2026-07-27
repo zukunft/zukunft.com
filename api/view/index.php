@@ -37,6 +37,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -52,12 +53,16 @@ if ($db_con->is_open()) {
     $dsp_name = $_GET[url_var::NAME] ?? '';
     $cmp_lvl = $_GET[url_var::LEVELS] ?? 0;
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -80,14 +85,14 @@ if ($db_con->is_open()) {
             }
             $result = $msk->api_json();
         } else {
-            $msg = 'view id or name is missing';
+            $msg->add_message_text('view id or name is missing');
         }
     }
 
     // do not disclose another user's private view loaded by id/name (idor); neutral message
     if ($result != '' and !$msk->is_readable_by($usr)) {
         $result = '';
-        $msg = 'view id or name is missing';
+        $msg->add_message_text('view id or name is missing');
     }
 
     $ctrl = new controller();

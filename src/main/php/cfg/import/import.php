@@ -359,8 +359,9 @@ class import
         $decode_per_sec = $cfg->get_by([words::DECODE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
         $store_per_sec = $cfg->get_by([triples::OBJECT_STORING, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
 
-        $msg = new user_message();
-
+        // the message of this import carries the user who has requested the import,
+        // so the save path knows who is changing the data (docs/llm/state-and-messages.md)
+        $msg = new user_message($this->usr);
 
         // parse the yaml
         $size = strlen($yaml_str);

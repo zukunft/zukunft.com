@@ -286,7 +286,8 @@ class a_selected_test extends all_unit_tests
 
             // run the selected db write tests
             //run_system_test($this);
-            //new user_write_tests()->run($this);
+            $t_db->create_test_db_entries($this);
+            new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 

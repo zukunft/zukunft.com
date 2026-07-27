@@ -229,6 +229,16 @@ class user_write_tests
         $ts = 'db validate test words ';
         $t->header($ts);
 
+        foreach (word_names::WORDS_SCALING as $word_name) {
+            $t_db->test_word($word_name, phrase_type_shared::SCALING);
+        }
+        foreach (word_names::WORDS_SCALING_HIDDEN as $word_name) {
+            $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
+        }
+        foreach (word_names::WORDS_PERCENT as $word_name) {
+            $t_db->test_word($word_name, phrase_type_shared::PERCENT);
+        }
+
         foreach (word_names::TEST_WORDS_CREATE as $word_name) {
             $t_db->test_word($word_name);
         }
@@ -237,12 +247,6 @@ class user_write_tests
         }
         foreach (word_names::TEST_WORDS_SCALING as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::SCALING);
-        }
-        foreach (word_names::TEST_WORDS_SCALING_HIDDEN as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
-        }
-        foreach (word_names::TEST_WORDS_PERCENT as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::PERCENT);
         }
         $prev_word_name = null;
         foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {

@@ -206,7 +206,6 @@ class group extends sandbox_named
                 }
             }
         } else {
-            $msg = new user_message();
             // create phrase group based on the phrase list as fallback
             foreach ($json_array as $phr_json) {
                 $this->set_phrase_from_json_array($phr_json);

@@ -2948,8 +2948,6 @@ class triple extends sandbox_link_named
      */
     function del_links(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all phrase groups where this triple is used
         // TODO Prio 2 activate
         //$grp_lst = new group_list($this->get_user());

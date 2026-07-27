@@ -230,7 +230,7 @@ class test_triples extends test_objects
         // overwrite the 'math const' given name of the filled base triple with the reserved test
         // given name so the workflow urls never carry seeded data
         $trp->name_given = triple_names::SYSTEM_TEST_ADD_GIVEN;
-        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr1);
         $trp->set_from($t_wrd->word_filled_add()->phrase());
         $trp->set_to($t_wrd->word_filled_add_to()->phrase());
         return $trp;
@@ -396,7 +396,7 @@ class test_triples extends test_objects
         $trp->id = 0;
         $trp->include();
         $trp->set_name(triple_names::SYSTEM_TEST_ADD);
-        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr_system);
+        $trp->set_code_id(triple_names::SYSTEM_TEST_ADD_CODE_ID, $this->env->usr1);
         $trp->weight = 0.5;
         $trp->set_view_id(views::MATH_CONST_ID);
         $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;

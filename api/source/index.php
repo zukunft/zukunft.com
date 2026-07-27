@@ -39,6 +39,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -55,9 +56,13 @@ if ($db_con->is_open()) {
     $src_code_id = $_GET[url_var::CODE_ID] ?? '';
 
     // load the session user parameters
-    $msg = '';
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     $ctrl = new controller();
     $result = ''; // reset the json message string
@@ -82,13 +87,13 @@ if ($db_con->is_open()) {
             $src->load_by_code_id($src_code_id);
             $result = $src->api_json([api_types::HEADER], $load_usr);
         } else {
-            $msg = 'Cannot load source because id, name and code id is missing';
+            $msg->add_message_text('Cannot load source because id, name and code id is missing');
         }
 
         // do not disclose another user's private source loaded by id/name/code (idor); neutral message
         if ($result != '' and !$src->is_readable_by($usr)) {
             $result = '';
-            $msg = 'Cannot load source because id, name and code id is missing';
+            $msg->add_message_text('Cannot load source because id, name and code id is missing');
         }
 
         // add, update or delete the source
