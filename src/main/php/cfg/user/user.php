@@ -3115,8 +3115,7 @@ class user extends db_id_object_non_sandbox
         log_debug($this->dsp_id());
 
         // always return a user message and if everything is fine, it is just empty
-        $msg = new user_message();
-        $msg->usr = $usr_req;
+        $msg = new user_message($usr_req);
 
         // use the signup system user for standard accounts if no requesting user is given
         if ($usr_req->id == 0) {
@@ -3164,8 +3163,7 @@ class user extends db_id_object_non_sandbox
         log_debug($this->dsp_id());
 
         // always return a user message and if everything is fine, it is just empty
-        $msg = new user_message();
-        $msg->usr = $usr_req;
+        $msg = new user_message($usr_req);
 
         if ($this->can_be_changed_by($msg)) {
             // the sql creator is used more than once, so create it upfront

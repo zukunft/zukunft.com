@@ -71,7 +71,11 @@ use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\words as shared_words;
 use DateTime;
 
 class value_tests
@@ -111,6 +115,38 @@ class value_tests
         $test_name = 'create a geolocation value object';
         $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
+
+        $t->subheader($ts . 'union row mapping');
+        // a value list is loaded with one union query over the prime, most and big value tables
+        // (see value_list::load_sql_by_phr), so a prime row arrives with an empty group_id and
+        // the phrase ids in the phrase_id_* columns; the mapper must build the group from these
+        // columns, because e.g. the deletion of a linked word excludes the value via its group
+        $test_name = 'a prime union row is mapped to a value with the phrases of the group';
+        $val = new value($t->usr1);
+        $id_flds = $val->id_fields_prime();
+        $db_row = [
+            group_fields::FLD_ID => '',
+            $id_flds[0] => word_names::MATH_ID,
+            $id_flds[1] => shared_words::CHF_ID,
+            $id_flds[2] => null,
+            $id_flds[3] => null,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::EARNINGS_PER_SHARE,
+            source_fields::FLD_ID => null,
+            fields::FLD_LAST_UPDATE => null,
+        ];
+        $val->row_mapper_sandbox_multi($db_row, '');
+        $t->assert($test_name, $val->phrase_list()->count(), 2);
+        $test_name = '... and the group id of the prime union row value is set';
+        $t->assert_true($test_name, $val->id() != 0);
+        // negative: a corrupted row without any group information leaves the value id unset,
+        // which value_list::rows_mapper_multi uses to skip and report the row
+        $test_name = 'a union row without any group information leaves the value id unset';
+        $val_bad = new value($t->usr1);
+        $db_row[$id_flds[0]] = null;
+        $db_row[$id_flds[1]] = null;
+        $val_bad->row_mapper_sandbox_multi($db_row, '');
+        $t->assert_true($test_name, $val_bad->id() == 0 or $val_bad->id() == '');
 
         $t->subheader($ts . 'scaling');
         $test_name = 'scale the Swiss inhabitants from millions to one';

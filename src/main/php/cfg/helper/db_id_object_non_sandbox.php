@@ -231,8 +231,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
         global $db_con;
 
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr_req;
+        $usr_msg = new user_message($usr_req);
 
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
@@ -483,7 +482,6 @@ class db_id_object_non_sandbox extends db_object_seq_id
     {
         $msg_txt = 'import_mapper used but not overwritten in ' . $this::class;
         log_err($msg_txt);
-        $msg = new user_message();
         $msg->add_message_text($msg_txt);
         return $msg->is_ok();
     }

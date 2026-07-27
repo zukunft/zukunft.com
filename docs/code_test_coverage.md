@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1106 of 5460 public functions have at least 2 unit test calls; the 4354 functions below do not
+1108 of 5462 public functions have at least 2 unit test calls; the 4354 functions below do not
 
 ## main backend
 
@@ -1638,7 +1638,6 @@ so same-named functions of several classes share their test calls
     \-- owner_id - 0 unit test calls
     \-- protection_type_code_id - 0 unit test calls
     \-- protection_type_name - 0 unit test calls
-    \-- row_mapper_sandbox_multi - 0 unit test calls
     \-- row_mapper_std - 0 unit test calls
     \-- row_mapper_usr - 0 unit test calls
     \-- save_field_excluded_log - 0 unit test calls
@@ -1743,7 +1742,7 @@ so same-named functions of several classes share their test calls
     \-- id_field_list - 0 unit test calls
     \-- id_fields_both - 0 unit test calls
     \-- id_fields_main - 0 unit test calls
-    \-- id_fields_prime - 0 unit test calls
+    \-- id_fields_prime - 1 unit test calls
     \-- id_fvt_lst - 0 unit test calls
     \-- id_lst - 1 unit test calls
     \-- impact - 0 unit test calls
@@ -2736,7 +2735,6 @@ so same-named functions of several classes share their test calls
     \-- phr_lst - 0 unit test calls
     \-- phr_names - 0 unit test calls
     \-- res_lst_depending - 0 unit test calls
-    \-- row_mapper_sandbox_multi - 0 unit test calls
     \-- save_field_trigger_update - 0 unit test calls
     \-- save_from_api_msg - 0 unit test calls
     \-- save_set_log_id - 0 unit test calls
@@ -3951,10 +3949,12 @@ so same-named functions of several classes share their test calls
     \-- filter - 0 unit test calls
     \-- frm_links_html - 0 unit test calls
     \-- get_by_formula - 0 unit test calls
+    \-- list - 0 unit test calls
     \-- load_by - 0 unit test calls
     \-- load_by_formula - 0 unit test calls
     \-- load_by_formula_and_group_list - 0 unit test calls
     \-- load_by_group - 0 unit test calls
+    \-- sort_by_number - 0 unit test calls
     \-- table - 0 unit test calls
 \-- sandbox
     \-- api_array - 1 unit test calls

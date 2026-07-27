@@ -578,10 +578,9 @@ function log_msg(string  $msg_text,
                     $sys_log_fnc = new sys_log_function();
                     $sys_log_fnc->name = $function_name;
                     $sys_log_fnc->code_id = $function_name;
-                    $msg->usr = $sys->user_log();
-                    // for saving a new function name a system user is needed
-                    $sys_msg = clone $msg;
-                    $sys_msg->usr = $sys->system_user();
+                    // saving a new function name is a system action, so use a local message
+                    // with the system user instead of touching the user of the log message
+                    $sys_msg = new user_message($sys->system_user());
                     $sys_log_fnc->save($sys_msg);
                     $msg->merge($sys_msg);
                     $sys->typ_lst->sys_log_fnc->add($sys_log_fnc, false);

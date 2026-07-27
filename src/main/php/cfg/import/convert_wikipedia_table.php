@@ -193,8 +193,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr;
+        $usr_msg = new user_message($usr);
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked

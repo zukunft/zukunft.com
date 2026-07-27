@@ -153,7 +153,6 @@ class db_object extends TextIdObject
      */
     function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = new user_message();
         // keep the '8'-prefixed opening db values so the edit view, when re-rendered after a save
         // error, re-emits the original db snapshot instead of the just changed value (see url_var::PRE)
         foreach ($url_array as $key => $val) {

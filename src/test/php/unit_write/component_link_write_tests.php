@@ -307,7 +307,7 @@ class component_link_write_tests
 
     }
 
-    function create_test_component_links(test_cleanup $t): void
+    function create_test_component_links(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
 

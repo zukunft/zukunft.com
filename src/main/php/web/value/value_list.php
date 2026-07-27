@@ -489,8 +489,14 @@ class value_list extends ListBase
         $title = $html->div($header->name_link(), styles::VALUE_GROUP_TITLE);
         $ctx = clone $context_phr_lst;
         $ctx->add_phrase($header);
+        // sort the group members by the same deterministic key as the rest of the list so the item
+        // order never depends on the api/db row order (see docs/llm/frontend.md); the members are
+        // bucketed in pool order by time_groups / relevant_phrase_groups, which is not stable
+        $val_lst = new value_list();
+        $val_lst->set_lst($members);
+        $val_lst->sort_by_impact();
         $items = '';
-        foreach ($members as $val) {
+        foreach ($val_lst->lst() as $val) {
             $items .= $this->value_item($val, $ctx, $back);
         }
         $result = $html->div($title . $html->list_unsorted($items, styles::VALUE_ITEMS), styles::VALUE_GROUP);
@@ -582,6 +588,9 @@ class value_list extends ListBase
         $result = '';
 
         if (!$this->is_empty()) {
+            // sort so the highest impact value is shown first and the order (and the limited subset)
+            // never depends on the api/db row order (see docs/llm/frontend.md), like list() and table()
+            $this->sort_by_impact();
             if ($limit == null) {
                 global $ui_sys;
                 if ($ui_sys?->cfg !== null) {
