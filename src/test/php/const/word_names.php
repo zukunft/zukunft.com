@@ -290,11 +290,18 @@ class word_names
     const int CURRENCY_ID = 2397;
     const string US = 'US';
     const string GAAP = 'GAAP';
+
+    const array WORDS_SCALING = array(self::MIO, self::MIO_SHORT);
+    const array WORDS_SCALING_HIDDEN = array(self::ONE);
+    const array WORDS_PERCENT = array(shared_words::PCT);
+
     const string TEST_ADD = 'System Test Word';
     // the database id of the 'System Test Word' is assigned dynamically on insert; this fixed id
     // replaces the volatile id in workflow snapshots so the test result does not change every run
     const int TEST_ADD_ID = 999;
     const string TEST_ADD_CODE_ID = 'System Test Word code id';
+    // the plural of the filled 'System Test Word' so the fill test does not borrow the math word's
+    // plural "mathematics" and the System Test Word change log reads as its own word
     const string TEST_ADD_PLURAL = 'System Test Words';
     const string TEST_ADD_COM = 'test description added to the word via import';
     // the new description posted by the confirm change workflow to change the test word description
@@ -340,6 +347,9 @@ class word_names
     const string TEST_PRICE = 'System Test Word Share Price';
     const string TEST_EARNING = 'System Test Word Earnings';
     const string TEST_PE = 'System Test Word PE Ratio';
+    const string TEST_FORMULA_PE = 'System Test Formula PE Ratio';
+    const string TEST_FORMULA_SECTOR = 'System Test Formula sector';
+    const string TEST_MEASURE_CHF = 'System Test Measure Word e.g. CHF';
     const string TEST_IN_K = 'System Test Scaling Word e.g. thousands';
     const string TEST_BIL = 'System Test Scaling Word e.g. billions';
     const string TEST_TOTAL = 'System Test Word Total';
@@ -391,6 +401,9 @@ class word_names
         self::TEST_PRICE,
         self::TEST_EARNING,
         self::TEST_PE,
+        self::TEST_FORMULA_PE,
+        self::TEST_FORMULA_SECTOR,
+        self::TEST_MEASURE_CHF,
         self::TEST_IN_K,
         self::TEST_BIL,
         self::TEST_TOTAL,
@@ -442,9 +455,7 @@ class word_names
         self::TEST_UPD_API
     );
     const array TEST_WORDS_MEASURE = array(self::TEST_CHF);
-    const array TEST_WORDS_SCALING_HIDDEN = array(self::ONE);
-    const array TEST_WORDS_SCALING = array(self::TEST_IN_K, self::MIO, self::MIO_SHORT, self::TEST_BIL);
-    const array TEST_WORDS_PERCENT = array(shared_words::PCT);
+    const array TEST_WORDS_SCALING = array(self::TEST_IN_K, self::TEST_BIL);
 
     // the time words must be in correct order because the following is set during creation
     const array TEST_WORDS_TIME_YEAR = array(

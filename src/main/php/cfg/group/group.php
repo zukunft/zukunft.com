@@ -446,7 +446,7 @@ class group extends sandbox_multi
                 }
             } else {
                 $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
-                    msg_id::VAR_VALUE => $this->dsp_id()
+                    msg_id::VAR_VALUE => $this->dsp_id_and_phrases()
                 ]);
             }
         } else {
@@ -473,10 +473,19 @@ class group extends sandbox_multi
             }
         } else {
             $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
-                msg_id::VAR_VALUE => $this->dsp_id()
+                msg_id::VAR_VALUE => $this->dsp_id_and_phrases()
             ]);
         }
         return $fvt_lst;
+    }
+
+    /**
+     * @return string the group identification plus the phrase ids for the missing group id
+     *                message, because dsp_id() hides the phrases if the group name is set
+     */
+    private function dsp_id_and_phrases(): string
+    {
+        return $this->dsp_id() . ' with phrase ids ' . implode(',', $this->phrase_list()->id_lst());
     }
 
     /**

@@ -202,10 +202,10 @@ class group_write_tests
      * create some fixed group names that are used for db read unit testing
      * these words are not expected to be changed and cannot be changed by the normal users
      *
-     * @param all_tests $t the test object with the test settings
+     * @param all_tests|a_selected_test $t the test object with the test settings
      * @return void
      */
-    function create_test_groups(all_tests $t): void
+    function create_test_groups(all_tests|a_selected_test $t): void
     {
         global $sys;
         $t_db = new test_db_load($t);
@@ -218,12 +218,12 @@ class group_write_tests
         // 'Pi (math)' (groups::TN_READ) pass group::check_preserved and can be added;
         // this is only permitted because test.php is run by an admin user
         $usr_req_prev = $sys->usr_req;
-        $sys->usr_req = $t->usr_system;
+        $sys->usr_req = $t->usr1;
 
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
-            $t_db->test_group($phr_names, $grp_name, $t->usr_system);
+            $t_db->test_group($phr_names, $grp_name, $t->usr1);
         }
 
         // restore the previous requesting user so later tests are not affected

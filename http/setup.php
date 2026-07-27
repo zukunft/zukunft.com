@@ -54,7 +54,12 @@ $db_con = $app->start("setup");
 
 // load the session user parameters
 $usr = new user;
-$result = $usr->get();
+$msg = new user_message();
+$msg->add_message_text($usr->get());
+// store the requesting user on the single message of this request as early as possible,
+// so every function below reads the requesting user from $msg->usr
+// (docs/llm/state-and-messages.md)
+$msg->usr = $usr;
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -66,7 +71,6 @@ if ($usr->id() > 0) {
         // with the check the tables will be created and the system data will be loaded
         // the check is requested by the admin user, so the changes are done in his name
         // TODO compare with test_recreate.php
-        $msg = new user_message($usr);
         if (!$db_chk->db_check($db_con, $msg)) {
             echo $msg->all_message_text();
         }

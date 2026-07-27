@@ -44,6 +44,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
@@ -59,9 +60,13 @@ $db_con = $app->start_api("word", "", false);
 if ($db_con->is_open()) {
 
     // load the session user parameters
-    $msg = '';
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     $ctrl = new controller();
     $rest_ctrl = new rest_call();
@@ -125,7 +130,7 @@ if ($db_con->is_open()) {
                 $wrd->load_by_name($wrd_name);
                 $result = $wrd->api_json($typ_lst, $load_usr);
             } else {
-                $msg = 'word id or name is missing';
+                $msg->add_message_text('word id or name is missing');
             }
 
             // do not disclose another user's private word loaded by id/name (idor); the same
@@ -134,18 +139,18 @@ if ($db_con->is_open()) {
             // the browsing user who must be able to see the own private words
             if ($result != '' and !$wrd->is_readable_by($load_usr)) {
                 $result = '';
-                $msg = 'word id or name is missing';
+                $msg->add_message_text('word id or name is missing');
             }
 
             // return either the api json to fill the frontend object
             // or the message why the api json could not be created
             $ctrl->get_json($result, $msg);
         } elseif ($method === rest_ctrl::POST) {
-            $ctrl->post_json($json_body, $wrd, $usr, $msg);
+            $ctrl->post_json($json_body, $wrd, $msg);
         } elseif ($method === rest_ctrl::PUT) {
-            $ctrl->put_json(basename($uri), $json_body, $wrd, $usr, $msg);
+            $ctrl->put_json(basename($uri), $json_body, $wrd, $msg);
         } elseif ($method === rest_ctrl::DELETE) {
-            $ctrl->delete(basename($uri), $wrd, $usr, $msg);
+            $ctrl->delete(basename($uri), $wrd, $msg);
         }
 
     } else {

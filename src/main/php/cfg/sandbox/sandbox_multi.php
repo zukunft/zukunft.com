@@ -690,9 +690,10 @@ class sandbox_multi extends db_object_multi_user
         if (!$this->row_mapper_sandbox_multi(
             $db_row, $qp->ext, true, false)) {
             $lib = new library();
+            // include the requested id because the object is reset if no db row has been found
             $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_NAME => $this->dsp_id() . ' requested by id ' . $id,
             ]);
         }
         return $msg->is_ok();
@@ -1263,8 +1264,6 @@ class sandbox_multi extends db_object_multi_user
     ): bool
     {
         global $sys;
-
-        $msg = new user_message();
 
         $this->import_mapper($in_ex_json, $msg);
 
@@ -2830,16 +2829,19 @@ class sandbox_multi extends db_object_multi_user
     /**
      * central ip user change block for the multi-user object branch (values), matching the
      * sandbox::save/del guard so a data change without login is refused on every write path
-     * (frontend, api and import), not only per entry point; the requesting user is taken from
-     * the message or, if not set, from the object owner (like sandbox::set_requesting_user)
+     * (frontend, api and import), not only per entry point; the requesting user is read from
+     * the message where the entry point has set it (docs/llm/state-and-messages.md)
      *
-     * @param user_message $msg the user who has requested the change; the reject reason is added here
+     * @param user_message $msg with the user who has requested the change; the reject reason is added here
      * @return bool true if the change is blocked and the caller must abort the save or delete
      */
     protected function change_blocked(user_message $msg): bool
     {
+        // a missing or empty requesting user means an entry point has missed the assignment,
+        // which is an internal inconsistency and not a user error
         if ($msg->usr == null or $msg->usr->id() <= 0) {
-            $msg->usr = $this->get_user();
+            log_err('requesting user missing on the message for the change of ' . $this->dsp_id(),
+                'change_blocked');
         }
         $blocked = false;
         if ($msg->usr != null and $msg->usr->is_blocked()) {
@@ -3077,6 +3079,15 @@ class sandbox_multi extends db_object_multi_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
+        // an object without a group id can never be addressed in the database, so there is
+        // nothing to delete; report the inconsistency to the admin and let the caller continue
+        // e.g. with the deletion of a linked word instead of failing the complete request
+        if ($this->id() == 0 or $this->id() == '') {
+            log_err('delete of ' . $class_name . ' ' . $this->dsp_id()
+                . ' skipped, because the group of the object is not set');
+            return $usr_msg->is_ok();
+        }
+
         global $db_con;
         $msg = '';
 
@@ -3103,8 +3114,9 @@ class sandbox_multi extends db_object_multi_user
                     }
                 }
                 // check if the object simply can be deleted, because it has never been used
+                // del_exe reports any problem on $usr_msg, so the bool return can be ignored here
                 if (!$this->used_by_someone_else()) {
-                    $msg .= $this->del_exe($usr_msg);
+                    $this->del_exe($usr_msg);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id() == $this->get_user()->id) {
@@ -3142,6 +3154,13 @@ class sandbox_multi extends db_object_multi_user
                         $this->del_exe($usr_msg);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
+                        // the exclude save below can only work with the reloaded id, so report
+                        // an id lost e.g. by the owner change as internal inconsistency
+                        if ($this->id() != $reloaded_id) {
+                            log_err('id of ' . $class_name . ' ' . $this->dsp_id()
+                                . ' changed during delete from ' . $reloaded_id
+                                . ' to ' . $this->id());
+                        }
                         $this->exclude();
 
                         // simple version TODO combine with save function

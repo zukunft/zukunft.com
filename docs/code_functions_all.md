@@ -5553,6 +5553,8 @@
     \-- add_result - section for function add_result not yet defined that it should be modify in /result/result_list.php
     \-- get_by_formula - section for function get_by_formula is expected to be set and get in /result/result_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /result/result_list.php
+    \-- sort_by_number - section for function sort_by_number not yet defined that it should be sort in /result/result_list.php
+    \-- list - section for function list not yet defined that it should be sort in /result/result_list.php
     \-- display - section for function display not yet defined that it should be display in /result/result_list.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result_list.php
     \-- table - section for function table not yet defined that it should be display in /result/result_list.php

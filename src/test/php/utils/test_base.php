@@ -519,6 +519,25 @@ class test_base
         $this->usr_signup = new user();
         $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
 
+        // fail fast if an essential test user is missing (id 0): otherwise a write test creates data
+        // owned by a non-existent user and only fails ~200 seconds later deep in create_test_words with
+        // a changes.user_id foreign key error (see docs/llm/coding.md, never fail silently). the usual
+        // cause is a database not set up from an empty users table, so the system user (id 1) was never
+        // created, because user::create_system_user only runs while the users table is still empty
+        $essential_users = [
+            users::SYSTEM_TEST_NAME => $this->usr1,
+            users::SYSTEM_TEST_PARTNER_NAME => $this->usr2,
+            users::SYSTEM_ADMIN_NAME => $this->usr_admin,
+            users::SYSTEM_NAME => $this->usr_system,
+            users::SYSTEM_TEST_NORMAL_NAME => $this->usr_normal,
+        ];
+        foreach ($essential_users as $usr_name => $usr) {
+            if ($usr->id <= 0) {
+                log_err('essential test user "' . $usr_name . '" not found in the database; '
+                    . 'recreate the test database from an empty users table so the system users get their fixed ids');
+            }
+        }
+
         $msg = new user_message();
         $msg->usr = $this->usr_admin;
 
@@ -693,7 +712,11 @@ class test_base
             $comment .= 'result of test ' . $test_name . ' has been null';
         }
 
-        // do the compare depending on the type
+        // do the compare depending on the type; a mismatch of a large html snapshot
+        // triggers an expensive diff, so book the compare time to its own section
+        // instead of inflating not_specified in the time report
+        global $sys;
+        $sys->times->switch(system_time_type::TEST_DIFF);
         if ($test_type == self::TEST_TYPE_CONTAINS) {
             $msg = $lib->explain_missing($result, $target);
         } elseif ($test_type == self::TEST_TYPE_NOT) {
@@ -701,6 +724,7 @@ class test_base
         } else {
             $msg = $lib->diff_msg($result, $target);
         }
+        $sys->times->switch();
 
         // remove html colors to avoid misleading check display colors
         $msg = $this->test_remove_color($msg);
@@ -4163,13 +4187,13 @@ class test_base
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
-            $sbx->del($usr_msg);
             // a delete by a user that cannot change the standard row only writes an exclusion
             // to the overlay row, so remove the overlay row too for a complete cleanup
             // (only sandbox objects have user overlay rows, e.g. a verb has none)
             if ($sbx instanceof sandbox and $sbx->has_usr_cfg()) {
                 $sbx->del_usr_cfg($usr_msg);
             }
+            $sbx->del($usr_msg);
         } else {
             // an excluded overlay row of a previous run hides the object from the load above,
             // so it would survive every cleanup: find the object via the system user view
@@ -4253,9 +4277,10 @@ class test_base
 
     /**
      * remove remaining test users
+     * by the way: the llm did not find the previous bug in the function
      *
      * @param string $name the name of the test user that should be removed
-     * @param user $usr the user used to remove the users
+     * @param user $usr_sys the system user used to remove the users
      * @param bool $check if true, an error message is created if the object needs to be removed
      *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
@@ -4263,18 +4288,19 @@ class test_base
     public
     function write_named_cleanup_user(
         string $name,
-        user   $usr,
+        user   $usr_sys,
         bool   $check = false
     ): void
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr_sys);
+        $usr = new user();
         $usr->load_by_name($name);
         if ($check) {
             if ($usr->id() != 0) {
                 log_warning('Unexpected cleanup of ' . $usr->dsp_id());
             }
         }
-        $usr->del($usr_msg);
+        $usr->del($msg);
     }
 
     /**
@@ -5657,6 +5683,7 @@ function zu_test_time_setup(test_cleanup $t): string
         $end_year = $this_year + $test_years;
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
+            // here the system user is used, because the year are not test words that are removed after the test
             $t_db->test_word(strval($this_year), null, $t->usr_system);
             $wrd_lnk = $t_db->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
             $result = $wrd_lnk->name();

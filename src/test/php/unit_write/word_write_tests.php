@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -81,8 +82,8 @@ class word_write_tests
         global $sys;
 
         // init
-        $lib = new library();
         $t_wrd = new test_words($t);
+        $t_frm = new test_formulas($t);
         $t_db = new test_db_load($t);
         $usr_msg = new user_message($t->usr1);
         $t->name = 'word db write->';
@@ -558,6 +559,12 @@ class word_write_tests
         $result = $wrd_usr1_reloaded->name_dsp();
         $t->assert('but the word "' . word_names::TEST_RENAMED . '" is still the same for user 1', $result, $target);
 
+        $test_name = 'delete the word also for user 1';
+        $wrd_usr1_reloaded->del($usr_msg);
+        $wrd_usr1_deleted = new word($t->usr1);
+        $wrd_usr1_deleted->load_by_name(word_names::TEST_RENAMED);
+        $t->assert($test_name, $wrd_usr1_deleted->id(), 0);
+
         // TODO test the creation of a new scaling word e.g. dozen for 12
         //      and adding a related formula and calculating values based on the added formula
         // TODO test the creation of a new time word e.g. year 2042
@@ -591,8 +598,20 @@ class word_write_tests
         $t->assert('word->main_wrd_from_txt', $result, $target);
         */
 
+        // controlled deletion of the share test word before the fallback cleanup: it is created by the
+        // normal user (see create_test_words), so load it as that owner and request the deletion as that
+        // owner, then assert the row is really gone instead of leaving it for the fallback cleanup below
+        $test_name = 'delete word "' . word_names::TEST_SHARE . '"';
+        $wrd_share = $t_db->load_word(word_names::TEST_SHARE);
+        $wrd_share->del($usr_msg);
+        $wrd_share_deleted = new word($t->usr1);
+        $wrd_share_deleted->load_by_name(word_names::TEST_SHARE);
+        $t->assert($test_name, $wrd_share_deleted->id(), 0);
+
         // cleanup - fallback delete
         $t_wrd->cleanup($ts);
+        // cleanup - including related formulas
+        $t_frm->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
         $t->check_cleanup($usr_msg);
@@ -603,10 +622,10 @@ class word_write_tests
      * create some fixed words that are used for db read unit testing
      * these words are not expected to be changed and cannot be changed by the normal users
      *
-     * @param all_tests $t
+     * @param all_tests|a_selected_test $t
      * @return void
      */
-    function create_test_words(all_tests $t): void
+    function create_test_words(all_tests|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
 
@@ -614,25 +633,31 @@ class word_write_tests
         $ts = 'db create test words ';
         $t->header($ts);
 
-        foreach (word_names::TEST_WORDS_CREATE as $word_name) {
-            $t_db->test_word($word_name, null, $t->usr_system);
-        }
-        foreach (word_names::TEST_WORDS_MEASURE as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::MEASURE, $t->usr_system);
-        }
-        foreach (word_names::TEST_WORDS_SCALING as $word_name) {
+        // Check words with types
+        // TODO Prio 2 move outside create_test_words
+        foreach (word_names::WORDS_SCALING as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::SCALING, $t->usr_system);
         }
-        foreach (word_names::TEST_WORDS_SCALING_HIDDEN as $word_name) {
+        foreach (word_names::WORDS_SCALING_HIDDEN as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN, $t->usr_system);
         }
-        foreach (word_names::TEST_WORDS_PERCENT as $word_name) {
+        foreach (word_names::WORDS_PERCENT as $word_name) {
             $t_db->test_word($word_name, phrase_type_shared::PERCENT, $t->usr_system);
+        }
+
+        foreach (word_names::TEST_WORDS_CREATE as $word_name) {
+            $t_db->test_word($word_name, null, $t->usr1);
+        }
+        foreach (word_names::TEST_WORDS_MEASURE as $word_name) {
+            $t_db->test_word($word_name, phrase_type_shared::MEASURE, $t->usr1);
+        }
+        foreach (word_names::TEST_WORDS_SCALING as $word_name) {
+            $t_db->test_word($word_name, phrase_type_shared::SCALING, $t->usr1);
         }
         $prev_word_name = null;
         foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {
             $t_db->test_triple($word_name, verbs::IS, words::YEAR_CAP);
-            $t_db->test_word($word_name, phrase_type_shared::TIME, $t->usr_system);
+            $t_db->test_word($word_name, phrase_type_shared::TIME, $t->usr1);
             if ($prev_word_name != null) {
                 $t_db->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
             }

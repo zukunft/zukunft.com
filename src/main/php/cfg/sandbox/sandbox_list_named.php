@@ -1319,7 +1319,6 @@ class sandbox_list_named extends sandbox_list
         sandbox_list_named|list_db_write|null $db_lst = null
     ): sql_par_list
     {
-        $usr_msg = new user_message();
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             if ($db_lst != null) {

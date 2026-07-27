@@ -182,7 +182,7 @@ class test_formulas extends test_objects
         $frm = new formula($this->env->usr1);
         $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
         // TODO Prio 1 activate
-        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
+        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr1);
         $frm->set_user_text(formula_names::SCALE_TO_SEC_EXP, $t_trm->term_list_time());
         // TODO Prio 1 activate
         //$frm->set_owner_id($this->env->usr1->id());
@@ -228,7 +228,7 @@ class test_formulas extends test_objects
         global $sys;
         $frm = $this->formula_add();
         // TODO Prio 1 activate
-        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr_system);
+        //$frm->set_code_id(formula_names::SCALE_TO_SEC_CODE_ID, $this->env->usr1);
         //$frm->set_owner_id($this->env->usr1->id());
         $frm->description = formula_names::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;

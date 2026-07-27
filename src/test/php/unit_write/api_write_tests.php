@@ -99,6 +99,9 @@ class api_write_tests
         $t_usr = new test_users($t);
         $t->assert_api_write_blocked_for_ip_user(word::class, $t_usr->user_ip_loaded(), $t);
 
+        // a request without a requesting user on the message must be refused the same way
+        $t->assert_api_write_blocked_without_user(word::class, $t);
+
         $t->subheader($ts . ' api login');
 
         // TODO Prio 1 add an api login

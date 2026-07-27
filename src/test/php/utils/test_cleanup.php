@@ -404,14 +404,17 @@ class test_cleanup extends test_api
         $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
         $wrd = $t_db->load_word(word_names::TEST_ADD);
         if ($wrd->id() > 0) {
-            $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
+            $wrd->del($usr_msg);
+            // assert via the message, so a failing delete shows the reason instead of a bare false
+            $this->assert_msg($test_name, $usr_msg, self::TIMEOUT_LIMIT_DB);
         }
 
         $test_name = 'request to delete the renamed test word  of "' . word_names::TEST_RENAMED . '"';
         $wrd = $t_db->load_word(word_names::TEST_RENAMED);
         if ($wrd->id() > 0) {
             $usr_msg->reset(true);
-            $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
+            $wrd->del($usr_msg);
+            $this->assert_msg($test_name, $usr_msg, self::TIMEOUT_LIMIT_DB);
         }
 
         $test_name_loop = 'request to delete the added test words';
@@ -426,7 +429,8 @@ class test_cleanup extends test_api
                     // reload the word as owner
                     // TODO Prio 1 also reload the other objects as owner before trying to delete them
                     $wrd = $t_db->load_word($wrd_name, $owner);
-                    $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
+                    $wrd->del($usr_msg);
+                    $this->assert_msg($test_name, $usr_msg, self::TIMEOUT_LIMIT_DB);
                 }
             } else {
                 log_info(' ... but keep the read only test word ' . word_names::MATH);

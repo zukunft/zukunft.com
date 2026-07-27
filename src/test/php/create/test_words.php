@@ -188,7 +188,7 @@ class test_words extends test_objects
         $wrd->set(word_names::MATH_ID, word_names::MATH);
         $wrd->description = word_names::MATH_COM;
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
-        $wrd->set_code_id(word_names::MATH, $this->env->usr_system);
+        $wrd->set_code_id(word_names::MATH, $this->env->usr1);
         $wrd->plural = word_names::MATH_PLURAL;
         $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
@@ -358,7 +358,11 @@ class test_words extends test_objects
         $wrd->include();
         $wrd->id = 0;
         $wrd->set_name(word_names::TEST_ADD);
-        $wrd->set_code_id(word_names::TEST_ADD_CODE_ID, $this->env->usr_system);
+        $wrd->set_code_id(word_names::TEST_ADD_CODE_ID, $this->env->usr1);
+        // give the reserved 'System Test Word' its own name-bearing fields instead of the math word's,
+        // so its change log does not read as the math word (plural "mathematics", math description)
+        $wrd->plural = word_names::TEST_ADD_PLURAL;
+        $wrd->description = word_names::TEST_ADD_COM;
         return $wrd;
     }
 

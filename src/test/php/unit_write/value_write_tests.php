@@ -483,7 +483,7 @@ class value_write_tests
 
     }
 
-    function create_test_values(test_cleanup $t): void
+    function create_test_values(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
 

@@ -40,6 +40,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -58,12 +59,16 @@ if ($db_con->is_open()) {
     // and the latex terms (links of the expression_latex_link component)
     $typ_lst = api_type_list::from_url_array($_GET);
 
-    $msg = '';
     $result = ''; // reset the json message string
 
     // load the session user parameters
     $usr = new user;
-    $msg .= $usr->get();
+    $msg = new user_message();
+    $msg->add_message_text($usr->get());
+    // store the requesting user on the single message of this request as early as possible,
+    // so every function below reads the requesting user from $msg->usr
+    // (docs/llm/state-and-messages.md)
+    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -80,14 +85,14 @@ if ($db_con->is_open()) {
             $frm->load_by_name($frm_name);
             $result = $frm->api_json($typ_lst, $load_usr);
         } else {
-            $msg = 'formula id or name is missing';
+            $msg->add_message_text('formula id or name is missing');
         }
     }
 
     // do not disclose another user's private formula loaded by id/name (idor); neutral message
     if ($result != '' and !$frm->is_readable_by($usr)) {
         $result = '';
-        $msg = 'formula id or name is missing';
+        $msg->add_message_text('formula id or name is missing');
     }
 
     $ctrl = new controller();

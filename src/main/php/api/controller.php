@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
-include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -48,7 +48,6 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -70,18 +69,18 @@ class controller
      * return a json that has been requested by a GET request to the
      * REST controller
      *
-     * @param string $api_json
-     * @param string $msg
+     * @param string $api_json the api json message that should be returned
+     * @param user_message $msg the message of this request with the requesting user
      * @return void
      */
-    function get_json(string $api_json, string $msg): void
+    function get_json(string $api_json, user_message $msg): void
     {
         // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response($api_json, $msg);
+        if ($msg->is_ok()) {
+            $this->get_response($api_json, '');
         } else {
             // tell the user e.g. that no products found
-            $this->get_response('', $msg);
+            $this->get_response('', $msg->all_message_text());
         }
     }
 
@@ -92,45 +91,38 @@ class controller
      *
      * @param array $api_json the api json message
      * @param db_object_seq_id $dbo the database object that should be used to add the database row
-     * @param user $usr the session user who has started the request
-     * @param string $msg the message text collected until now
+     * @param user_message $msg the message of this request with the requesting user
      * @return void
      */
     function post_json(
         array            $api_json,
         db_object_seq_id $dbo,
-        user             $usr,
-        string           $msg
+        user_message     $msg
     ): void
     {
-        if (!$this->change_permitted($usr, $msg)) {
+        if (!$this->change_permitted($msg)) {
             return;
         }
 
         $result = ''; // reset the json message string
-        $usr_msg = new user_message($usr);
-
-        $dbo->api_mapper($api_json, $usr_msg);
+        $dbo->api_mapper($api_json, $msg);
 
         // add the db object e.g. word
-        $dbo->save($usr_msg);
+        $dbo->save($msg);
 
         // if update was fine ...
-        if ($usr_msg->is_ok()) {
-            $id = $usr_msg->get_row_id();
+        if ($msg->is_ok()) {
+            $id = $msg->get_row_id();
             if ($id == 0) {
                 $id = $dbo->id();
             }
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_types::HEADER], $usr);
-        } else {
-            // ... or in case of a problem prepare to show the message
-            $msg .= $usr_msg->all_message_text();
+            $result = $dbo->api_json([api_types::HEADER], $msg->usr);
         }
         // return either the api json with the id of the created db object e.g. word
         // or the message why the adding has failed
         $ctrl = new controller();
-        $ctrl->curl_response($result, $msg, rest_ctrl::POST, 0, $dbo);
+        $ctrl->curl_response($result, $msg->all_message_text(), rest_ctrl::POST, 0, $dbo);
     }
 
     /**
@@ -143,43 +135,36 @@ class controller
      * @param int $id the unique id of the db row that should be deleted of excluded
      * @param array $api_json the api json message
      * @param db_object_seq_id $dbo the database object that should be used to add the database row
-     * @param user $usr the session user who has started the request
-     * @param string $msg the message text collected until now
+     * @param user_message $msg the message of this request with the requesting user
      * @return void
      */
     function put_json(
         int              $id,
         array            $api_json,
         db_object_seq_id $dbo,
-        user             $usr,
-        string           $msg
+        user_message     $msg
     ): void
     {
-        if (!$this->change_permitted($usr, $msg)) {
+        if (!$this->change_permitted($msg)) {
             return;
         }
 
         $result = ''; // reset the json message string
-        $usr_msg = new user_message($usr);
-
-        $dbo->api_mapper($api_json, $usr_msg);
+        $dbo->api_mapper($api_json, $msg);
         $dbo->id = $id;
 
         // update the db object e.g. word
-        $dbo->save($usr_msg);
+        $dbo->save($msg);
 
         // if update was fine ...
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_types::HEADER], $usr);
-        } else {
-            // ... or in case of a problem prepare to show the message
-            $msg .= $usr_msg->all_message_text();
+            $result = $dbo->api_json([api_types::HEADER], $msg->usr);
         }
         // return either the api json with the id of the created word
         // or the message why the adding of the word has failed
         $ctrl = new controller();
-        $ctrl->curl_response($result, $msg, rest_ctrl::PUT, $id, $dbo);
+        $ctrl->curl_response($result, $msg->all_message_text(), rest_ctrl::PUT, $id, $dbo);
     }
 
     /**
@@ -190,50 +175,47 @@ class controller
      *
      * @param int $id the unique id of the db row that should be deleted of excluded
      * @param db_object_seq_id $dbo the database object that should be used to add the database row
-     * @param user $usr the session user who has started the request
-     * @param string $msg the message text collected until now
+     * @param user_message $msg the message of this request with the requesting user
      * @return void
      */
     function delete(
         int              $id,
         db_object_seq_id $dbo,
-        user             $usr,
-        string           $msg
+        user_message     $msg
     ): void
     {
-        if (!$this->change_permitted($usr, $msg)) {
+        if (!$this->change_permitted($msg)) {
             return;
         }
 
         $result = ''; // reset the json message string
-        $usr_msg = new user_message($usr);
-
         if ($id > 0) {
             $dbo->load_by_id($id);
 
             // delete or exclude the word
-            $dbo->del($usr_msg);
+            $dbo->del($msg);
 
-            if ($usr_msg->is_ok()) {
-                $result = $dbo->api_json([api_types::HEADER], $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $usr_msg->all_message_text();
+            if ($msg->is_ok()) {
+                $result = $dbo->api_json([api_types::HEADER], $msg->usr);
             }
         } else {
             $lib = new library();
-            $msg = $lib->class_to_name($dbo::class) . ' id is missing';
+            $msg->add_message_text($lib->class_to_name($dbo::class) . ' id is missing');
         }
 
         // add, update or delete the word
         $ctrl = new controller();
-        $ctrl->curl_response($result, $msg, rest_ctrl::DELETE, $id, $dbo);
+        $ctrl->curl_response($result, $msg->all_message_text(), rest_ctrl::DELETE, $id, $dbo);
     }
 
-    function not_permitted(string $msg): void
+    /**
+     * @param user_message $msg the message of this request with the reason why the request is refused
+     * @return void
+     */
+    function not_permitted(user_message $msg): void
     {
         $this->set_response_code(401);
-        $this->curl_response('', $msg, rest_ctrl::GET);
+        $this->curl_response('', $msg->all_message_text(), rest_ctrl::GET);
     }
 
     /**
@@ -243,11 +225,10 @@ class controller
      * is the same as in the model (sandbox->save and sandbox->del) but done before the api json is
      * mapped, so a user without login gets a clear rejection instead of a change that fails later
      *
-     * @param user $usr the session user who has started the request
-     * @param string $msg the message text collected until now
+     * @param user_message $msg the message of this request with the requesting user
      * @return bool false if the write is a suspected csrf or the user may not change data in this pod
      */
-    private function change_permitted(user $usr, string $msg): bool
+    private function change_permitted(user_message $msg): bool
     {
         $permitted = true;
 
@@ -256,23 +237,21 @@ class controller
         // stopped; a same-origin call or a non-browser server-to-server call (no such header) passes
         if (!server_guard::same_origin()) {
             $permitted = false;
-            $usr_msg = new user_message($usr);
-            $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
-            $this->not_permitted($msg . $usr_msg->all_message_text());
+            $msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $this->not_permitted($msg);
         } elseif (!server_guard::csrf_token_valid()) {
             // require the per-session csrf token in the X-CSRF-Token header (synchronizer token,
             // closes the same_origin both-headers-absent fail-open); a forged cross-site write
             // cannot supply it. see server_guard::csrf_token_valid
             $permitted = false;
-            $usr_msg = new user_message($usr);
-            $usr_msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
-            $this->not_permitted($msg . $usr_msg->all_message_text());
-        } elseif ($usr->is_blocked()) {
+            $msg->add(msg_id::CHANGE_BLOCKED_CROSS_ORIGIN, []);
+            $this->not_permitted($msg);
+        } elseif ($msg->usr == null or $msg->usr->is_blocked()) {
             $permitted = false;
-            // tell the user why the change has been rejected and how to solve it
-            $usr_msg = new user_message($usr);
-            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
-            $this->not_permitted($msg . $usr_msg->all_message_text());
+            // tell the user why the change has been rejected and how to solve it;
+            // an unknown requesting user (null) may never change data
+            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $this->not_permitted($msg);
         }
 
         return $permitted;

@@ -189,6 +189,44 @@ the result depend on whichever session happens to run the test, so the same test
 can pass locally and fail in a clean run, and a sandbox test cannot tell the two
 users apart.
 
+### Never create a test object as the system user — use `$t->usr1`
+
+A test object (a word, triple, value, source, view, …) is **created by the
+normal user `$t->usr1`** — that is the standard owner for all test data. Reach
+for a different user only for a specific reason:
+
+- `$t->usr2` — to test a second user's sandbox (overlay, exclude, the change is
+  private to one user).
+- `$t->usr_admin` — only when the create genuinely needs a privilege a normal
+  user lacks (e.g. an admin-only function under test). Note this is *not* the
+  case for `set_code_id`: `user::can_set_code_id()` allows the system, test, log
+  and dev profiles but **not** admin, and `$t->usr1` carries the test profile, so
+  the normal user already sets a `code_id` — pass `$t->usr1` there too.
+
+Never create a test object as **`$t->usr_system`**. The system user (id 1) is for
+exercising *system-level functions*, not for owning ordinary test data. A word
+owned by the system user cannot be removed by the normal-user fallback cleanup
+(a non-owner delete only writes a private exclusion, leaving the base row), so it
+surfaces as a `check_cleanup` leftover; and because the system user is a
+bootstrap identity, an aliasing bug that resets `$t->usr_system` to id 0 turns
+every such create into a `changes.user_id` foreign-key failure deep in the run.
+
+- **Right**: `$wrd = $t_db->test_word(word_names::TEST_EARNING);` (defaults to `$t->usr1`)
+- **Wrong**: `$wrd = $t_db->test_word(word_names::TEST_EARNING, null, $t->usr_system);`
+
+The rule targets *ephemeral* test objects — the ones a test creates and the
+cleanup removes afterwards. **Permanent fixture data** that is deliberately never
+cleaned up (the years `2013`…, alongside the imported fundamental words like
+`mathematics`) may be system-owned, exactly like those fundamentals: there is no
+per-test cleanup to block, so the reason for the rule does not apply. Keep that a
+narrow, commented exception (see `zu_test_time_setup`), not a habit — if the
+object is ever deleted by a cleanup, it is ephemeral and belongs to `$t->usr1`.
+
+Two related uses are also *not* covered by this rule, because the system user is
+not the owner of a sandbox object there: the actor/author field of a `change` or
+`sys_log` fixture (a fixed system actor for a log-rendering test), and the
+requesting user of a delete of a protected class a normal user may not remove.
+
 ### Populated list / collection fixtures come from a factory too
 
 A test that builds a populated list inline —

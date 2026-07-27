@@ -134,7 +134,6 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // create the test dataset to check the basic write functions
                 $t->set_users();
-                $t_db->create_test_db_entries($t);
                 // creating the complete test dataset is a known one-time heavy operation, so reset the
                 // section timer to avoid charging its duration to the first write test as a false timeout
                 $t->reset_section_timer();
@@ -147,6 +146,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 //new horizontal_write_tests()->run($t);
 
                 // run object specific db write tests
+                $t_db->create_test_db_entries($t);
                 new word_write_tests()->run($t);
                 new word_list_write_tests()->run($t);
                 // TODO Prio 1 activate

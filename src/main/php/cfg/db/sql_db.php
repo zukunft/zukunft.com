@@ -1215,10 +1215,16 @@ class sql_db
             $this->reset_config();
             $this->import_system_users();
 
-            // use the system user for the database updates
-            $usr = new user;
-            $usr->load_by_id(users::SYSTEM_ID);
-            $msg->usr = $usr;
+            // use the requesting user of the message for the database updates: the entry point
+            // resp. the calling system function has set it (the virtual system user for a system
+            // call, see the function docblock), so a missing user here is an internal
+            // inconsistency and never overwritten mid-request (docs/llm/state-and-messages.md)
+            $usr = $msg->usr;
+            if ($usr == null) {
+                log_err('requesting user missing on the message for the database setup',
+                    'sql_db->setup_db');
+                $usr = user::system();
+            }
             $sys->usr_req = $usr;
 
             // recreate the code link database rows
@@ -1510,23 +1516,18 @@ class sql_db
         $result = false;
         $lib = new library();
         $typ_lst = new type_list();
-        $msg = new user_message();
+        // the local message of this pre initial load carries the virtual system user, because no
+        // user exists in the database yet and no request message is threaded to this system call;
+        // the system profile is set (see user::system) because the default profile of a new user
+        // is the ip user profile and an ip user is not permitted to change the database
+        // if the pod config does not allow it
+        $msg = new user_message(user::system());
         $table_name = $lib->class_to_table($class);
         $typ_obj = $typ_lst->class_to_type_object($class);
         if ($typ_obj::class == type_object::class) {
             log_err('probably mapping for ' . $class . ' is missing in function class_to_type_object');
         }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
-
-        // create a dummy system user for pre initial load
-        // the system profile must be set explicit because the default profile of a new user is the ip user profile
-        // and an ip user is not permitted to change the database if the pod config does not allow it
-        // TODO Prio 3 review
-        $usr_sys = new user;
-        $usr_sys->id = users::SYSTEM_ID;
-        $usr_sys->name = users::SYSTEM_NAME;
-        $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
-        $msg->usr = $usr_sys;
 
         // load the csv
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
@@ -4808,7 +4809,6 @@ class sql_db
 
         $sys->times->switch(system_time_type::DB_WRITE);
         // exe traces the write at url_var::DEBUG_LEVEL_DB_WRITE (from '&debug=6' upward) using this description
-        $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, '',
@@ -5912,8 +5912,9 @@ class sql_db
     ): void
     {
         if ($name != '' and $pw != '' and $mail != '') {
-            $sys_msg = clone $msg;
-            $sys_msg->usr = $req_usr;
+            // a local buffer for this single user add, so the warning below reports
+            // only the messages of this save and the requesting user stays on the buffer
+            $sys_msg = new user_message($req_usr);
             $usr = new user($name, $mail);
             $usr->set_profile($profile, $sys_msg);
             $usr->set_password($pw, $msg);
@@ -5954,8 +5955,7 @@ class sql_db
      */
     function create_internal_words(user $usr): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr;
+        $usr_msg = new user_message($usr);
 
         global $sys;
 

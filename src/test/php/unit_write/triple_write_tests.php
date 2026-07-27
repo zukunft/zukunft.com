@@ -326,7 +326,7 @@ class triple_write_tests
 
     }
 
-    function create_test_triples(all_tests $t): void
+    function create_test_triples(all_tests|a_selected_test $t): void
     {
 
         // start the test section (ts)
@@ -373,7 +373,7 @@ class triple_write_tests
         //$trp->save($usr_msg);
     }
 
-    function create_base_times(test_cleanup $t): void
+    function create_base_times(test_cleanup|a_selected_test $t): void
     {
         // start the test section (ts)
         $ts = 'db create test words ';
