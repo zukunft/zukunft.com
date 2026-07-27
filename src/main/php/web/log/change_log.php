@@ -115,4 +115,35 @@ class change_log extends sandbox
         return $msg->is_ok();
     }
 
+
+    /*
+     * info
+     */
+
+    /**
+     * @return string the change field code id (the change table id followed by the field name)
+     *                from the preloaded type cache or '' if the field is unknown
+     */
+    function field_code_id(): string
+    {
+        global $ui_sys;
+        $result = '';
+        if ($this->field_id != null) {
+            $field = $ui_sys?->typ_lst_cache?->cng_fld?->get($this->field_id);
+            if ($field != null) {
+                $result = $field->code_id ?? '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the pure field name of the change e.g. 'impact',
+     *                i.e. the change field code id without the leading change table id
+     */
+    function field_name(): string
+    {
+        return ltrim($this->field_code_id(), '0123456789');
+    }
+
 }

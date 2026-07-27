@@ -24,7 +24,7 @@ source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_usr2, $src_usr2_r
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $term, $trm_back, $trm_by_obj_id, $trp, $vrb, $wrd
 triple: $bare_trp_ui, $base, $db_trp, $dbo, $dbo_ui, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_back, $trp_by_id, $trp_chk, $trp_del, $trp_gone, $trp_in, $trp_ins, $trp_load, $trp_old, $trp_owner, $trp_owner_load, $trp_problem, $trp_sec, $trp_ui, $trp_undo_chk, $trp_usr, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
-user: $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $existing, $fail_usr, $init_usr, $json_usr, $local_usr, $new_usr, $obj, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_usr, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_req, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
+user: $adm_usr_ui, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $existing, $fail_usr, $init_usr, $json_usr, $local_usr, $new_usr, $obj, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sim, $solver, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_req, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst

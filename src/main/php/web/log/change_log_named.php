@@ -42,6 +42,7 @@ include_once html_paths::LOG . 'change_log.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -287,16 +289,6 @@ class change_log_named extends change_log
     }
 
     /**
-     * @return string the name of the change field code id for if tests
-     */
-    private function field_code_id(): string
-    {
-        global $ui_sys;
-        $field = $ui_sys->typ_lst_cache->cng_fld->get($this->field_id);
-        return $field->code_id;
-    }
-
-    /**
      * @return string the name of the change field name to show it to the user
      */
     private function field_description(): string
@@ -345,7 +337,7 @@ class change_log_named extends change_log
      * when only the field is shown e.g. 'remove user overwrite for view'
      * @return string the lower-cased translated field name without a trailing ' id' e.g. 'view'
      */
-    private function field_name(): string
+    function field_name(): string
     {
         global $mtr;
         $name = lcfirst($mtr->text_db_field($this->field()));
@@ -380,6 +372,29 @@ class change_log_named extends change_log
             if ($type_id !== null) {
                 $result = $typ_lst->name($type_id);
             }
+        }
+        // a view reference that carries only the view id (e.g. logged by a save that only knows
+        // the id, see word::set_view_id) shows the view name resolved from the cache
+        if ($result == '' and $ref_id != null and $this->field() == fields::FLD_VIEW) {
+            $result = $this->view_name_from_cache($ref_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the database id of the view
+     * @return string the view name from the system or user view cache or '' if unknown
+     */
+    private function view_name_from_cache(int $msk_id): string
+    {
+        global $ui_sys;
+        $result = '';
+        $msk = $ui_sys?->typ_lst_cache?->msk_sys?->get($msk_id);
+        if ($msk == null) {
+            $msk = $ui_sys?->msk_lst?->get($msk_id);
+        }
+        if ($msk != null) {
+            $result = $msk->name() ?? '';
         }
         return $result;
     }

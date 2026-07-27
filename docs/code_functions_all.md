@@ -5365,6 +5365,8 @@
     \-- calc_sheet - section for function calc_sheet missing in /html/sheet.php
 \-- change_log
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log.php
+    \-- field_code_id - section for function field_code_id not yet defined that it should be info in /log/change_log.php
+    \-- field_name - section for function field_name not yet defined that it should be info in /log/change_log.php
 \-- change_log_link
     \-- tr - section for function tr not yet defined that it should be table in /log/change_log_link.php
     \-- th - section for function th not yet defined that it should be helpers in /log/change_log_link.php
@@ -5374,6 +5376,7 @@
 \-- change_log_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_list.php
     \-- filter - section for function filter not yet defined that it should be filter in /log/change_log_list.php
+    \-- filter_admin_fields - section for function filter_admin_fields not yet defined that it should be filter in /log/change_log_list.php
     \-- sort_by_time_and_what - section for function sort_by_time_and_what not yet defined that it should be list in /log/change_log_list.php
     \-- head - section for function head not yet defined that it should be list in /log/change_log_list.php
     \-- dsp - section for function dsp not yet defined that it should be list in /log/change_log_list.php
@@ -5382,6 +5385,7 @@
 \-- change_log_named
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /log/change_log_named.php
     \-- tr - section for function tr not yet defined that it should be table in /log/change_log_named.php
+    \-- field_name - section for function field_name not yet defined that it should be helpers in /log/change_log_named.php
     \-- entry - section for function entry not yet defined that it should be helpers in /log/change_log_named.php
     \-- what - section for function what not yet defined that it should be helpers in /log/change_log_named.php
     \-- what_text - section for function what_text not yet defined that it should be helpers in /log/change_log_named.php
@@ -6218,6 +6222,10 @@
         \-- component - @return bool true if the component is a system form button or a hidden form element
     \-- default_id
         \-- formula_list - get the default formula
+    \-- field_code_id
+        \-- change_log - @return string the change field code id (the change table id followed by the field name)
+    \-- field_name
+        \-- change_log - @return string the pure field name of the change e.g. 'impact',
     \-- has_percent
         \-- phrase_list - @return bool true if one of the phrases is of type percent
     \-- common_phrases
@@ -7264,6 +7272,8 @@
         \-- formula_list - select the references that are linked to the given phrase
     \-- filter
         \-- change_log_list - @return change_log_list with the most often used phrases as a frontend fallback list
+    \-- filter_admin_fields
+        \-- change_log_list - exclude the changes of the admin-only fields (the cached impact and usage numbers,
     \-- measure_list
         \-- phrase_list - @return phrase_list list of the measure / unit phrases e.g. m/s
     \-- ex_measure_list
@@ -7639,6 +7649,8 @@
 \-- helpers
     \-- th
         \-- change_log_link - @return string with the html table header to show the link changes
+    \-- field_name
+        \-- change_log_named - the translated name of the changed field on its own (no value), with the reference (id) suffix
     \-- entry
         \-- change_log_named - the human-readable text of this change without the change time, also used to sort changes
     \-- what

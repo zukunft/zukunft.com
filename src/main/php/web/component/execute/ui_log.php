@@ -133,6 +133,10 @@ class ui_log
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);
+        // hide the changes of the admin-only fields (the cached impact and usage numbers)
+        // from users without admin or system rights
+        global $ui_sys;
+        $log_lst = $log_lst->filter_admin_fields($ui_sys->usr ?? null);
         // newest change first; same-time changes are sorted ascending by the what text so the
         // display order never depends on the api/db row order (see docs/llm/frontend.md)
         $log_lst->sort_by_time_and_what();
