@@ -135,9 +135,9 @@ class test_app
     function open_db(string $code_name): sql_db
     {
 
-        global $sys;       // the global system time control including the preloaded types
+        global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
         global $db_con;    // the database connection
-        global $cac;       // the global user data cache including the system views
+        global $cac;       // the backend cache of user-specific data_object
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 

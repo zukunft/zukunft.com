@@ -42,7 +42,7 @@
 */
 
 // add as first step a global debug level var to allow also interactive debugging
-global $debug;
+global $debug; // to activate additional logging levels
 
 // check php version
 $version = explode('.', PHP_VERSION);

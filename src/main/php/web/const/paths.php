@@ -45,6 +45,10 @@ class paths
     // path of the pure html frontend objects
     const string WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
 
+    // path of the html frontend entry scripts and the deprecated predecessor scripts
+    const string HTTP = ROOT_PATH . 'http' . DIRECTORY_SEPARATOR;
+    const string HTTP_OLD = ROOT_PATH . 'http_old' . DIRECTORY_SEPARATOR;
+
     const string COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
     const string SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
     const string EXECUTE = self::COMPONENT . 'execute' . DIRECTORY_SEPARATOR;

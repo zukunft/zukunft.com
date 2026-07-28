@@ -467,9 +467,9 @@ class frontend
     private function open_db(string $code_name): sql_db
     {
 
-        global $db_con;    // the global database connection
-        global $sys;       // the backend system control object with the preloaded types
-        global $cac;       // the global user data cache including the system views
+        global $db_con;    // the database connection
+        global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
+        global $cac;       // the backend cache of user-specific data_object
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 

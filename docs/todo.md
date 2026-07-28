@@ -22,7 +22,7 @@ A proper issue ticket should be created for these TODOs notes:
                 and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
          - $cfg for the user configuration numbers that changes more often than the types and the system views  
-         - $cac for the backend cache of user-specific data_object
+         - $cac the backend cache of user-specific data_object
          - $ui_sys for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
