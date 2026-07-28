@@ -1175,11 +1175,11 @@ class frontend
                 // the refresh job is a backend write for the requesting user, so it needs the
                 // backend user object (with the profile for the job type permission), which the
                 // frontend message does not carry; until the job is requested via the api the
-                // backend requesting user is taken from the system object of this request
+                // backend requesting user is taken from the db connection of this request
                 // TODO Prio 1 request the job via the api instead of the direct backend call
-                global $sys;
-                if ($sys->usr_req != null) {
-                    $this->request_page_refresh($cac_page, $sys->usr_req);
+                global $db_con;
+                if ($db_con->usr_req != null) {
+                    $this->request_page_refresh($cac_page, $db_con->usr_req);
                 } else {
                     log_err('page refresh for ' . $url_key . ' skipped,'
                         . ' because the backend requesting user is missing');

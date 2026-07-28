@@ -1278,9 +1278,8 @@ class group extends sandbox_multi
      */
     protected function check_preserved(user_message $msg): bool
     {
-        global $sys;
         global $mtr;
-        $usr = $sys?->usr_req;
+        $usr = $this->get_user();
 
         // init
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);

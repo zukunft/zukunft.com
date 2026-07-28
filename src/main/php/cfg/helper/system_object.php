@@ -97,9 +97,6 @@ class system_object
     // TODO Prio check where this is used and make sure it is only used for system testing
     public user_list $sys_usr_lst;
 
-    // the session user that has requested the current action (set once the user data is loaded)
-    public ?user $usr_req = null;
-
     // the preloaded system views (mask cache) used to link code to the views by code id
     public ?view_sys_list $msk_cac = null;
 
