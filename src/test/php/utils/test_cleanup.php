@@ -88,6 +88,15 @@ class test_cleanup extends test_api
 {
 
     /*
+     * object vars
+     */
+
+    // the ids of the test values added during the write tests (see value_write_tests),
+    // so that the cleanup can remove them even if a test has failed before its own cleanup
+    public array $test_val_ids = [];
+
+
+    /*
      * execute
      */
 
@@ -148,8 +157,6 @@ class test_cleanup extends test_api
     {
         global $db_con;
 
-        global $test_val_lst;
-
         $t_db = new test_db_load($this);
 
         $result = ''; // the combine error message of all cleanup actions
@@ -159,8 +166,8 @@ class test_cleanup extends test_api
         $ts = 'db cleanup ';
         $this->header($ts);
 
-        if ($test_val_lst != null) {
-            foreach ($test_val_lst as $val_id) {
+        if ($this->test_val_ids != []) {
+            foreach ($this->test_val_ids as $val_id) {
                 if ($val_id > 0) {
                     // request to delete the added test value
                     $val = new value($this->usr1);

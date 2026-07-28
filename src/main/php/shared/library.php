@@ -2821,6 +2821,7 @@ class library
             'Zukunft\ZukunftCom\main\php\web' => 'html_paths::WEB',
             'Zukunft\ZukunftCom\main\php\web\html' => 'html_paths::HTML',
             'Zukunft\ZukunftCom\main\php\web\log' => 'html_paths::LOG',
+            'Zukunft\ZukunftCom\main\php\web\log_text' => 'html_paths::LOG_TEXT',
             'Zukunft\ZukunftCom\main\php\web\const' => 'html_paths::CONST',
             'Zukunft\ZukunftCom\main\php\web\user' => 'html_paths::USER',
             'Zukunft\ZukunftCom\main\php\web\element' => 'html_paths::ELEMENT',

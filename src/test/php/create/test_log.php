@@ -300,6 +300,34 @@ class test_log
     }
 
     /**
+     * an insert change log entry for the cached impact number of a named user sandbox object;
+     * the initial impact of an added object is zero, so the change log table pure
+     * shows 'added impact "0"'
+     * @return change with a change log entry of adding the word impact as a sample
+     */
+    function log_word_add_impact(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_IMPACT);
+        $chg->new_value = '0';
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the cached usage counter of a named user sandbox object;
+     * like the impact the usage is a system internal, so the change log table pure
+     * shows 'added usage "0"' to admin users only
+     * @return change with a change log entry of adding the word usage as a sample
+     */
+    function log_word_add_usage(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_USAGE);
+        $chg->new_value = '0';
+        return $chg;
+    }
+
+    /**
      * an insert change log entry for the protection type of a named user sandbox object;
      * the protection is logged with the numeric type id as the value (like sandbox_multi::add_field,
      * not add_type_field), so the change log table pure must resolve the id to the protection name
@@ -344,6 +372,21 @@ class test_log
         $chg->set_field(fields::FLD_VIEW);
         $chg->new_value = views::WORD_NAME;
         $chg->new_id = views::WORD_ID;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for the default view of a named object where only the view id is
+     * logged (like a save that only carries the view id, see word::set_view_id); the change log
+     * display resolves the view name from the cache so that not an empty value is shown to the user
+     * @return change with a change log entry of setting the word view by id as a sample
+     */
+    function log_word_add_view_id(): change
+    {
+        $chg = $this->log_word_add();
+        $chg->set_field(fields::FLD_VIEW);
+        $chg->new_value = null;
+        $chg->new_id = views::START_ID;
         return $chg;
     }
 
@@ -799,9 +842,9 @@ class test_log
     }
 
     /**
-     * @return change_log_list the changes of one word (name, phrase type, description and
-     *                         protection type), used e.g. to show the change log table pure
-     *                         with a deterministic row per change field type
+     * @return change_log_list the changes of one word (name, phrase type, description, impact,
+     *                         usage and protection type), used e.g. to show the change log table
+     *                         pure with a deterministic row per change field type
      */
     function log_list_word_changes(): change_log_list
     {
@@ -809,9 +852,12 @@ class test_log
         $log_lst->add($this->log_word_add());
         $log_lst->add($this->log_word_update_type());
         $log_lst->add($this->log_word_add_description());
+        $log_lst->add($this->log_word_add_impact());
+        $log_lst->add($this->log_word_add_usage());
         $log_lst->add($this->log_word_update_protection());
         $log_lst->add($this->log_word_add_user_id());
         $log_lst->add($this->log_word_add_view());
+        $log_lst->add($this->log_word_add_view_id());
         $log_lst->add($this->log_word_remove_view());
         return $log_lst;
     }

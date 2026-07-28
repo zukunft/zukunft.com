@@ -37,10 +37,8 @@ $start_time = microtime(true);
 
 include_once 'const.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
 // load the main frontend class
-include_once paths::WEB . 'frontend.php';
+include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;

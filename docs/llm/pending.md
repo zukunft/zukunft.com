@@ -4,19 +4,13 @@
 
 ## high prio
 
+restore $t->usr1 after the tests that replace it: src/test/php/unit/horizontal_tests.php:107 and src/test/php/unit_ui/system_view_ui_tests.php:165 swap $t->usr1 to test_users::user_sys_test() (test profile, needed for the reserved-name / ui cache imports) and never set it back, so every later test sees a system-tier usr1 instead of the normal email profile user (is_system() counts the test profile); this made the sys_log_ui_tests normal-user filter asserts fail until they switched to $t->usr_normal; restore the saved usr1 at the end of both run() functions, then check whether later tests silently depended on the leaked privileged usr1 (full test.php run needed)
 
-check that after each writing section (e.g. the run function of a test class) of test objects the cleanup and check_cleanup function is called
+design and apply the "write only the changed fields" save flow in one deliberate change (the display side of the phantom 'added view id ""' rows is already fixed by resolving the view name from the cache in change_log_named::value_to_show): a description-only word edit still writes a view assignment because (1) word::view_selector preselects the default view (d=90) for a word without a stored view and fabricates the '8'-prefixed baseline from the same value, (2) ui_preview::popup_changes re-posts every field but drops the '8'-prefixed baselines, so action_crud cannot tell "unchanged" from "chosen" and the backend compares the full posted object against the db row; the fix needs an agreed null convention first: in a save request null must mean "field not carried, keep the stored value" while the user must still be able to set a value back to null with the normal save (e.g. an explicit empty string as the clear request that the write converts to null), and before changing anything the import null handling must be audited (import_mapper maps missing fields to null; the no_update re-import round-trips and sandbox::save fill/get_similar rely on the current compare semantics), then carry the '8' baselines through the confirm submit, drop the unchanged fields before the write, add the matching null guards to db_fields_changed (description, usage, plural, impact, view) plus positive and negative unit tests per field, and check the same pattern for triple, source, view and component edit forms
 
+review src/test/php/unit_workflow/word_url_tests.php and word_url_write_tests.php and move all tests, that change the database to the write test
 
-add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific a
-
-
-add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
-
-if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
-
-
-review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. a $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
+review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
 
 for the url tests like src/test/php/unit_workflow/word_url_tests.php and src/test/php/unit_write_workflow/word_write_url_tests.php split the read (url_to_html) and write (url_to_action) tests
 
@@ -40,6 +34,58 @@ create an admin view with the system errors
 if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible.
 
 Add to admin yaml a list of term that should be added on start to the document route. Add a "en" folder with static pages that store each request to a file that is read, executed and cleaned by the sceduled job runner. For non en languages use e.g de subfolder
+
+### complete the frontend backend split — implementation steps
+
+the goal (docs/llm/frontend.md): frontend (web/ and http/) and backend (cfg/ and api/) are two
+independent apps talking only over the api; code needed by both lives in shared/. the temporary
+bridges are the backend paths include at the top of web/const/paths.php and the html_paths::MODEL_*
+/ DB / API_OBJECT copies in the same file — they fall step by step with the prompts below. done so
+far: env.php moved from cfg/const to shared/const (read by both apps); api/word/index.php reads the
+request body via the backend controller::request_json instead of the frontend rest_call class. run
+the steps one at a time, each as its own commit with tests written first:
+
+1. move the pure text logging classes cfg/log_text/text_log.php, text_log_format.php and
+   text_log_level.php to shared/log_text (check first that they have no db or model dependency);
+   web/log_text/text_log.php then extends the shared class; the model-dependent
+   text_log_functions.php (log_err writes to sys_log in the db) stays in the backend for now
+
+2. give the frontend its own error reporting: the web/ code calls log_err / log_warning / log_debug
+   from cfg/log_text/text_log_functions.php, which is backend code (db write to sys_log); create
+   frontend log functions that report problems via the existing sys_log api endpoint (rest_call)
+   and echo to standard io, then remove the text_log_functions include from web/init_ui.php
+
+3. replace the backend $sys usage in web/ with a frontend-owned equivalent on $ui_sys: the timing
+   (web/helper/config.php load($sys) and the api call timing TODO in web/html/rest_call.php) and
+   the preloaded type list access (web/system/sys_log.php $sys->typ_lst->sys_log_sta) move to
+   $ui_sys; then web/init_ui.php no longer creates the cfg system_object and $sys becomes a
+   backend-only global in docs/code_object_name_exceptions.md
+
+4. after steps 1-3 remove the remaining cfg includes from web/init_ui.php, remove the backend paths
+   include from the top of web/const/paths.php and drop every html_paths::MODEL_* copy that only
+   web/init_ui.php used; add the coded check to unit/coding_rule_tests.php that web/init_ui.php and
+   web/const/paths.php include no cfg file
+
+5. replace the deprecated direct-db bootstrap of web/frontend.php (start / open_db / end /
+   load_cache) with api calls per the TODO in coding_rule_tests::php_web_only_allowed_globals_tests;
+   then remove the 'frontend.php' exception from that rule, remove the db and model includes from
+   frontend.php and drop the html_paths::DB and now unused html_paths::MODEL_* copies
+
+6. move the reserved test name consts that production web code includes (test_paths::CONST
+   formula_names.php / triple_names.php / word_names.php in web/frontend.php,
+   web/formula/formula_list.php and web/component/execute/system_form.php - included "to avoid that
+   names used for testing are used in production") to shared/const so production code never
+   includes test code; then remove the test path block from http/const.php (its TODO Prio 2) and
+   the test_paths use from the web files
+
+7. migrate the remaining direct-db web files to api calls or delete the deprecated functions:
+   web/log/user_log_display.php and web/user/user_display_old.php create their own sql_db, and
+   web/word/word.php still builds sql; afterwards no web file references sql_db and the
+   html_paths::DB copy falls if not already removed in step 5
+
+8. extend coding_rule_tests::php_cfg_no_web_tests to also scan paths::API, paths::API_OBJECT and
+   the /api scripts, so a backend file using a web class (like the api/word/index.php rest_call
+   use fixed above) is caught by the unit tests
 
 ### requesting user lives on $msg — implementation steps
 
@@ -190,3 +236,5 @@ into exe(); finish deprecating sql_db::sf() in favour of bound parameters.
 ### Prio 2
 
 allow at least admin users to overwrite the impact and usage via GUI 
+
+add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific selections

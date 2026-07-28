@@ -47,18 +47,15 @@
 
 namespace Zukunft\ZukunftCom\main\php\web;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once paths::WEB_CONST . 'paths.php';
-
 // get library that is shared between the backend and the html frontend
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'library.php';
 
 // get the api const that are shared between the backend and the html frontend
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
@@ -125,37 +122,34 @@ include_once html_paths::WORD . 'word.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
-include_once paths::SHARED_CONST . 'files.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'users.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'languages.php';
-include_once paths::SHARED_ENUM . 'language_codes.php';
-include_once paths::SHARED_HELPER . 'Message.php';
-include_once paths::SHARED_HELPER . 'Translator.php';
-include_once paths::SHARED_TYPES . 'system_time_type.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'users.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'languages.php';
+include_once html_paths::SHARED_ENUM . 'language_codes.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_HELPER . 'Translator.php';
+include_once html_paths::SHARED_TYPES . 'system_time_type.php';
 
 // TODO Prio 1 deprecate
-include_once paths::DB . 'db_check.php';
-include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_HELPER . 'config_numbers.php';
-include_once paths::MODEL_HELPER . 'data_object.php';
+include_once html_paths::DB . 'db_check.php';
+include_once html_paths::DB . 'sql_creator.php';
+include_once html_paths::DB . 'sql_db.php';
+include_once html_paths::MODEL_HELPER . 'config_numbers.php';
+include_once html_paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
-include_once paths::MODEL_HELPER . 'server_guard.php';
-include_once paths::MODEL_HELPER . 'db_cache_page.php';
-include_once paths::SHARED_TYPES . 'db_cache_types.php';
-include_once paths::MODEL_IMPORT . 'import.php';
-include_once paths::MODEL_LOG . 'change_log.php';
-include_once paths::MODEL_SYSTEM . 'job.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_TYPES . 'job_types.php';
+include_once html_paths::MODEL_HELPER . 'server_guard.php';
+include_once html_paths::MODEL_HELPER . 'db_cache_page.php';
+include_once html_paths::SHARED_TYPES . 'db_cache_types.php';
+include_once html_paths::MODEL_IMPORT . 'import.php';
+include_once html_paths::MODEL_LOG . 'change_log.php';
+include_once html_paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::MODEL_SYSTEM . 'sys_log.php';
+include_once html_paths::MODEL_USER . 'user.php';
+include_once html_paths::MODEL_USER . 'user_message.php';
+include_once html_paths::SHARED_TYPES . 'job_types.php';
 
 // cfg group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
@@ -467,9 +461,9 @@ class frontend
     private function open_db(string $code_name): sql_db
     {
 
-        global $db_con;    // the global database connection
-        global $sys;       // the backend system control object with the preloaded types
-        global $cac;       // the global user data cache including the system views
+        global $db_con;    // the database connection
+        global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
+        global $cac;       // the backend cache of user-specific data_object
         global $cfg;       // the user configuration values
         global $mtr;       // the translation object
 

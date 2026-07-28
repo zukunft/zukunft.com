@@ -7,7 +7,7 @@ and the last assert of the same block (a block ends at the next empty line)
 in a test file of src/test/php/unit; the count is by function name,
 so same-named functions of several classes share their test calls
 
-1124 of 5462 public functions have at least 2 unit test calls; the 4338 functions below do not
+1108 of 5465 public functions have at least 2 unit test calls; the 4357 functions below do not
 
 ## main backend
 
@@ -1866,6 +1866,7 @@ so same-named functions of several classes share their test calls
     \-- get_fields - 0 unit test calls
     \-- get_order - 0 unit test calls
     \-- get_page - 0 unit test calls
+    \-- get_par - 0 unit test calls
     \-- get_par_types - 0 unit test calls
     \-- get_sql_par_type - 0 unit test calls
     \-- get_table - 0 unit test calls
@@ -1892,6 +1893,7 @@ so same-named functions of several classes share their test calls
     \-- prepare_sql - 0 unit test calls
     \-- select_by_id_not_owner - 0 unit test calls
     \-- set_db_type - 0 unit test calls
+    \-- set_fields - 0 unit test calls
     \-- set_fields_date_dummy - 0 unit test calls
     \-- set_fields_dummy - 0 unit test calls
     \-- set_fields_num_dummy - 0 unit test calls
@@ -1909,7 +1911,10 @@ so same-named functions of several classes share their test calls
     \-- set_order_text - 0 unit test calls
     \-- set_page - 0 unit test calls
     \-- set_par_list - 0 unit test calls
+    \-- set_usr - 0 unit test calls
+    \-- set_usr_fields - 0 unit test calls
     \-- set_usr_geo_fields - 0 unit test calls
+    \-- set_usr_num_fields - 0 unit test calls
     \-- set_usr_only_fields - 0 unit test calls
     \-- set_usr_query - 0 unit test calls
     \-- sql - 0 unit test calls
@@ -1974,6 +1979,7 @@ so same-named functions of several classes share their test calls
     \-- get_internal - 0 unit test calls
     \-- get_name_field - 0 unit test calls
     \-- get_old - 0 unit test calls
+    \-- get_par - 0 unit test calls
     \-- get_prepared - 0 unit test calls
     \-- get_table_name - 0 unit test calls
     \-- get_table_name_esc - 0 unit test calls
@@ -2022,26 +2028,35 @@ so same-named functions of several classes share their test calls
     \-- select_by_field - 0 unit test calls
     \-- select_by_field_list - 0 unit test calls
     \-- select_by_id_not_owner - 0 unit test calls
+    \-- select_by_set_id - 0 unit test calls
     \-- select_union - 0 unit test calls
     \-- select_value_by_id_not_owner - 0 unit test calls
     \-- seq_reset - 0 unit test calls
     \-- set_all - 0 unit test calls
     \-- set_default_owner - 0 unit test calls
+    \-- set_fields - 0 unit test calls
     \-- set_id_field - 0 unit test calls
     \-- set_join_fields - 0 unit test calls
     \-- set_join_usr_count_fields - 0 unit test calls
     \-- set_join_usr_fields - 0 unit test calls
     \-- set_join_usr_num_fields - 0 unit test calls
+    \-- set_link_fields - 0 unit test calls
     \-- set_order - 0 unit test calls
     \-- set_order_text - 0 unit test calls
     \-- set_page_par - 0 unit test calls
     \-- set_user_join - 0 unit test calls
+    \-- set_usr - 0 unit test calls
     \-- set_usr_bool_fields - 0 unit test calls
     \-- set_usr_count_fields - 0 unit test calls
+    \-- set_usr_fields - 0 unit test calls
+    \-- set_usr_num_fields - 0 unit test calls
     \-- set_usr_only_fields - 0 unit test calls
     \-- set_where - 0 unit test calls
     \-- set_where_id - 0 unit test calls
+    \-- set_where_link_no_fld - 0 unit test calls
     \-- set_where_name - 0 unit test calls
+    \-- set_where_std - 0 unit test calls
+    \-- set_where_text - 0 unit test calls
     \-- setup - 0 unit test calls
     \-- setup_db - 0 unit test calls
     \-- setup_db_zukunft_user_via_db_admin - 0 unit test calls
@@ -3241,6 +3256,7 @@ so same-named functions of several classes share their test calls
     \-- str_word_len_normal - 0 unit test calls
     \-- term_id - 0 unit test calls
     \-- time_to_url - 0 unit test calls
+    \-- trim - 0 unit test calls
     \-- trim_all_spaces - 0 unit test calls
     \-- trim_html - 0 unit test calls
     \-- trim_json - 0 unit test calls
@@ -3315,6 +3331,9 @@ so same-named functions of several classes share their test calls
     \-- un_filter - 0 unit test calls
     \-- undo - 0 unit test calls
     \-- yes_no - 0 unit test calls
+\-- change_log
+    \-- field_code_id - 0 unit test calls
+    \-- field_name - 0 unit test calls
 \-- change_log_link
     \-- th - 0 unit test calls
     \-- tr - 0 unit test calls
@@ -3325,6 +3344,7 @@ so same-named functions of several classes share their test calls
 \-- change_log_list
     \-- dsp - 0 unit test calls
     \-- filter - 0 unit test calls
+    \-- filter_admin_fields - 0 unit test calls
     \-- head - 0 unit test calls
     \-- load_api_by_object_field - 0 unit test calls
     \-- load_by_object_field - 0 unit test calls
@@ -3335,6 +3355,7 @@ so same-named functions of several classes share their test calls
 \-- change_log_named
     \-- dsp - 0 unit test calls
     \-- entry - 0 unit test calls
+    \-- field_name - 0 unit test calls
     \-- tr - 0 unit test calls
     \-- tr_when_who_what - 0 unit test calls
     \-- what - 0 unit test calls
@@ -3914,7 +3935,6 @@ so same-named functions of several classes share their test calls
     \-- api_post - 0 unit test calls
     \-- api_put - 0 unit test calls
     \-- class_to_api_name - 0 unit test calls
-    \-- request_json - 0 unit test calls
 \-- result
     \-- api_array - 1 unit test calls
     \-- btn_add - 0 unit test calls

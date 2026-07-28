@@ -67,6 +67,8 @@ class word_list_write_tests
         // start the test section (ts)
         $ts = 'db write word list ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run
+        $t_wrd->cleanup($ts);
 
         /*
          * prepare

@@ -2,7 +2,7 @@
 
 /*
 
-    model/const/env.php - read the environment and fill up missing const with default values
+    shared/const/env.php - read the environment and fill up missing const with default values
     -------------------
 
 

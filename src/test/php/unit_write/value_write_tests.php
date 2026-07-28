@@ -80,8 +80,6 @@ class value_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $test_val_lst;
-
         // init
         $t->name = 'value->';
         $t_val = new test_values($t);
@@ -95,6 +93,9 @@ class value_write_tests
         // start the test section (ts)
         $ts = 'db write value ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (values first because they use words)
+        $t_val->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepare');
         $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
@@ -268,7 +269,7 @@ class value_write_tests
         $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
-        $test_val_lst[] = $add_val->id();
+        $t->test_val_ids[] = $add_val->id();
 
 
         // ... check if the value adding has been logged
@@ -293,7 +294,7 @@ class value_write_tests
         $t->assert(', value->load the value previous saved for "' . $phr_grp->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $added_val_id = $added_val->id();
-        $test_val_lst[] = $added_val->id();
+        $t->test_val_ids[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
         $phr_grp2 = $t_db->load_phrase_group(array(word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019));
@@ -333,7 +334,7 @@ class value_write_tests
         $target = self::NUMBER_ADD2;
         $t->assert(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
-        $test_val_lst[] = $added_val2->id();
+        $t->test_val_ids[] = $added_val2->id();
 
         // check if the value can be changed
         $added_val = new value($t->usr1);

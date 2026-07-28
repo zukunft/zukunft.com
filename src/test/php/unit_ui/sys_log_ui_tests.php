@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_ui_tests
@@ -119,6 +120,15 @@ class sys_log_ui_tests
         $test_page .= 'change log table pure limited to ' . self::ROW_LIMIT_SAMPLE . ' rows (longer than the limit)<br>';
         $test_page .= $chg_tbl_limited . '<br>';
 
+        // the same word changes as seen by a normal user: the rows of the admin-only fields
+        // (the cached impact and usage numbers) are hidden (see fields::LOG_ADMIN_ONLY);
+        // $t->usr_normal is used because earlier tests (e.g. system_view_ui_tests) replace
+        // $t->usr1 with a test profile user, and the test profile counts as a system user
+        $usr_ui = new user_ui($t->usr_normal->api_json());
+        $chg_tbl_usr = $chg_lst_ui->filter_admin_fields($usr_ui)->tbl_when_who_what($what_max, 0, true);
+        $test_page .= 'change log table pure for a normal user (admin-only rows hidden)<br>';
+        $test_page .= $chg_tbl_usr . '<br>';
+
         $t->subheader($ts . 'change log table pure');
 
         // the prime field (the word name) is shown without a field name prefix,
@@ -133,6 +143,33 @@ class sys_log_ui_tests
 
         $test_name = 'description change shows the translated field name';
         $t->assert_text_contains($test_name, $chg_tbl, 'description "' . word_names::MATH_COM . '"');
+
+        // the cached impact number is logged like any other field and shown with the field name
+        $test_name = 'an impact change shows the field name and the value';
+        $t->assert_text_contains($test_name, $chg_tbl, 'added impact "0"');
+
+        // the cached impact and usage numbers are system internals, so their change rows are
+        // shown to an admin but hidden from a normal user (see fields::LOG_ADMIN_ONLY)
+        $adm_usr_ui = new user_ui($t->usr_admin->api_json());
+        $chg_tbl_admin = $chg_lst_ui->filter_admin_fields($adm_usr_ui)->tbl_when_who_what($what_max, 0, true);
+        $test_name = 'an admin sees the impact change row';
+        $t->assert_text_contains($test_name, $chg_tbl_admin, 'added impact "0"');
+
+        // the system user covers the is_system branch of the filter
+        $t_usr = new test_users();
+        $sys_usr_prof_ui = new user_ui($t_usr->system_user()->api_json());
+        $chg_tbl_sys_usr = $chg_lst_ui->filter_admin_fields($sys_usr_prof_ui)->tbl_when_who_what($what_max, 0, true);
+        $test_name = 'a system user sees the impact change row';
+        $t->assert_text_contains($test_name, $chg_tbl_sys_usr, 'added impact "0"');
+
+        $test_name = 'a normal user does not see the impact change row';
+        $t->assert_text_not_contains($test_name, $chg_tbl_usr, 'added impact');
+
+        $test_name = 'a normal user does not see the usage change row';
+        $t->assert_text_not_contains($test_name, $chg_tbl_usr, 'added usage');
+
+        $test_name = 'a normal user still sees the other change rows';
+        $t->assert_text_contains($test_name, $chg_tbl_usr, 'added "' . word_names::MATH . '"');
 
         // the protection is logged with the numeric type id, so the table must show the type name, not the number
         $test_name = 'protection type change shows the type name instead of the type number';
@@ -155,6 +192,13 @@ class sys_log_ui_tests
         // is shown as 'remove user overwrite for view' instead of 'user added view id ""'
         $test_name = 'an empty user sandbox change shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $chg_tbl, 'remove user overwrite for view');
+
+        // a view change that only carries the view id (like the backend save that only knows the id)
+        // resolves the view name from the cache instead of showing an empty value
+        $test_name = 'a view change logged with only the id shows the view name';
+        $t->assert_text_contains($test_name, $chg_tbl, 'added view id "' . views::START_NAME . '"');
+        $test_name = 'no change row shows an empty view value';
+        $t->assert_text_not_contains($test_name, $chg_tbl, 'view id ""');
 
         // the long description change is shortened with '...' and the full change text is kept as a
         // mouseover popup (title) so the user can still read the whole change
@@ -191,7 +235,7 @@ class sys_log_ui_tests
         $test_name = 'no forward button is shown when all changes fit';
         $t->assert_text_not_contains($test_name, $chg_tbl, icons::PAGE_FORWARD);
 
-        $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
+        $t->html_page_test($test_page, 'sys_log', 'sys_log');
     }
 
 }

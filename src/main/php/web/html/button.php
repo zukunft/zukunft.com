@@ -36,16 +36,15 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::PHRASE . 'phrase_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
@@ -59,10 +58,10 @@ class button
     const string IMG_ADD_FA = "fa-plus-square";
     const string IMG_EDIT_FA = "fa-edit";
     const string IMG_DEL_FA = "fa-times-circle";
-    const string IMG_UNDO = paths::REL_IMAGE . 'button_undo.svg';
-    const string IMG_FIND = paths::REL_IMAGE . 'button_find.svg';
-    const string IMG_UN_FILTER = paths::REL_IMAGE . 'button_filter_off.svg';
-    const string IMG_BACK = paths::REL_IMAGE . 'button_back.svg';
+    const string IMG_UNDO = html_paths::REL_IMAGE . 'button_undo.svg';
+    const string IMG_FIND = html_paths::REL_IMAGE . 'button_find.svg';
+    const string IMG_UN_FILTER = html_paths::REL_IMAGE . 'button_filter_off.svg';
+    const string IMG_BACK = html_paths::REL_IMAGE . 'button_back.svg';
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over

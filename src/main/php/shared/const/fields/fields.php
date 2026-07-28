@@ -78,6 +78,8 @@ class fields
     const string FLD_USAGE = 'usage';          // field name for the usage counter (phrase, term, source, ...)
     const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const string FLD_IMPACT = 'impact';        // field name for the impact value (phrase, term, word)
+    // the change log rows of these cached internal fields are only shown to admin or system users
+    const array LOG_ADMIN_ONLY = [self::FLD_USAGE, self::FLD_IMPACT];
 
     // all sandbox
     const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
