@@ -94,6 +94,17 @@ class test_views extends test_objects
         return $msk;
     }
 
+    /**
+     * @return view the default view for a word
+     */
+    function word(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::WORD_ID, views::WORD);
+        $msk->description = views::WORD_COM;
+        return $msk;
+    }
+
     function view_math(): view
     {
         $msk = new view($this->env->usr1);

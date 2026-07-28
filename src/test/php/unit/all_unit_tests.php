@@ -205,11 +205,11 @@ class all_unit_tests extends test_cleanup
     {
         global $sys;
 
-        // create a dummy admin user for unit testing
+        // create a dummy admin user for unit testing with the admin profile
         $usr_admin = new user;
         $usr_admin->id = users::SYSTEM_ADMIN_ID;
         $usr_admin->name = users::SYSTEM_ADMIN_NAME;
-        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
+        $usr_admin->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         $this->usr_admin = $usr_admin;
 
         $msg = new user_message();

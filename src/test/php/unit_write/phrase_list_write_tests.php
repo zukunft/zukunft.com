@@ -72,6 +72,9 @@ class phrase_list_write_tests
         // start the test section (ts)
         $ts = 'db write phrase list ';
         $t->header($ts);
+        // cleanup any leftovers of a previous failed test run (triples first because they link words)
+        $t_trp->cleanup($ts);
+        $t_wrd->cleanup($ts);
 
         // TODO make prepare not needed any more
         $t_db->test_word(words::CHF, phrase_type_shared::MEASURE);

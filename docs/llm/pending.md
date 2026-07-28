@@ -4,19 +4,13 @@
 
 ## high prio
 
+restore $t->usr1 after the tests that replace it: src/test/php/unit/horizontal_tests.php:107 and src/test/php/unit_ui/system_view_ui_tests.php:165 swap $t->usr1 to test_users::user_sys_test() (test profile, needed for the reserved-name / ui cache imports) and never set it back, so every later test sees a system-tier usr1 instead of the normal email profile user (is_system() counts the test profile); this made the sys_log_ui_tests normal-user filter asserts fail until they switched to $t->usr_normal; restore the saved usr1 at the end of both run() functions, then check whether later tests silently depended on the leaked privileged usr1 (full test.php run needed)
 
-check that after each writing section (e.g. the run function of a test class) of test objects the cleanup and check_cleanup function is called
+design and apply the "write only the changed fields" save flow in one deliberate change (the display side of the phantom 'added view id ""' rows is already fixed by resolving the view name from the cache in change_log_named::value_to_show): a description-only word edit still writes a view assignment because (1) word::view_selector preselects the default view (d=90) for a word without a stored view and fabricates the '8'-prefixed baseline from the same value, (2) ui_preview::popup_changes re-posts every field but drops the '8'-prefixed baselines, so action_crud cannot tell "unchanged" from "chosen" and the backend compares the full posted object against the db row; the fix needs an agreed null convention first: in a save request null must mean "field not carried, keep the stored value" while the user must still be able to set a value back to null with the normal save (e.g. an explicit empty string as the clear request that the write converts to null), and before changing anything the import null handling must be audited (import_mapper maps missing fields to null; the no_update re-import round-trips and sandbox::save fill/get_similar rely on the current compare semantics), then carry the '8' baselines through the confirm submit, drop the unchanged fields before the write, add the matching null guards to db_fields_changed (description, usage, plural, impact, view) plus positive and negative unit tests per field, and check the same pattern for triple, source, view and component edit forms
 
+review src/test/php/unit_workflow/word_url_tests.php and word_url_write_tests.php and move all tests, that change the database to the write test
 
-add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific a
-
-
-add an entry to the user changelog test data, so that here src/test/resources/web/html/object_pages/sys_log.html the entry 'added impact "0"' is shown
-
-if the change log contains an entry of the fields impact or usage and the user is not an admin used, simple don't show the change log row to the user
-
-
-review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. a $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
+review src/test/php/unit_workflow/word_url_tests.php and create the $url_arr always based on a e.g. $t_wrd function and the to_url_array function. And add to /docs/llm/* that for test data the preferred way is to use a function from to_url_array for easy because central check which tests objects are used for what
 
 for the url tests like src/test/php/unit_workflow/word_url_tests.php and src/test/php/unit_write_workflow/word_write_url_tests.php split the read (url_to_html) and write (url_to_action) tests
 
@@ -184,3 +178,5 @@ into exe(); finish deprecating sql_db::sf() in favour of bound parameters.
 ### Prio 2
 
 allow at least admin users to overwrite the impact and usage via GUI 
+
+add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific selections
