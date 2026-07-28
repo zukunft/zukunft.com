@@ -17,7 +17,6 @@ $debug: to activate additional logging levels (additional in ListOfIdObjects, co
 $log_txt: the frontend log object for standard io logging (incl. the html header display) (additional in init.php)
 $mtr: the translation object (additional in Message, library, messages.php)
 $sys: the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes (additional in config, db_cl, init.php, library)
-$test_val_lst: description missing
 
 
 ## Classes with a suggested var name created with a different name

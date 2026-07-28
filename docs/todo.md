@@ -16,6 +16,7 @@ A proper issue ticket should be created for these TODOs notes:
          access the databases with the $db_car and $db_arc connection vars
          use the functions move_to_archive and move_to_caratane to move data
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
+    TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
 
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
@@ -37,19 +38,14 @@ A proper issue ticket should be created for these TODOs notes:
            - use the global vars if not a test scenario is needed
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
-    TODO add a source-phrases table for the properties of a source e.g. 'in review' or 'is peer reviewed' that is used to calculate the impact of a source
 
     TODO create a formula "good enougth" default view
     TODO create the main workflows including unit and write tests
-    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
     TODO add unit test for all frontend components
-    TODO add a 'no change' parameter to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
-    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
-    TODO review the CHF page
-         add the values with the highest impact
     TODO review the start page and base it purely on database values
     TODO create a useful default view for each link in the start page
     TODO create a workflow test for each add, edit or delete view reachable from the start page
+
     TODO add data for the next level of the start page so the definition of the problem, that leading and lagging causes, a list of the possible solutions and the ranking of the solution based on risk and reward
     TODO review all system views and make sure that at least all components used in the pages return a reasonable result
     TODO add phrase_id for the additional selection to the component link so that 
@@ -107,6 +103,12 @@ A proper issue ticket should be created for these TODOs notes:
          $pus = new push_message() // to push an update message to the frontend f9r data cached in frontend
          This implies that the frontend confirm cached elements in the backend
          The question is how? Assume that everything is cached until cache deletion is confirmed and end session confirms complete delete
+
+    TODO add a source-phrases table for the properties of a source e.g. 'in review' or 'is peer reviewed' that is used to calculate the impact of a source
+    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
+    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
+    TODO review the CHF page
+         add the values with the highest impact
 
     TODO create a job that moves values and formulas from the symbol word to the main phrase
 
