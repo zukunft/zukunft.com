@@ -268,6 +268,7 @@ class views
     const string WORD = 'word_default';
     const int WORD_ID = 90;
     const string WORD_NAME = 'Word';
+    const string WORD_COM = 'The default view for words';
     const string VERB = 'verb_default';
     const int VERB_ID = 91;
     const string VERB_NAME = 'Verb';

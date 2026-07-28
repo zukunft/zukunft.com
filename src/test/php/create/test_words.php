@@ -352,7 +352,7 @@ class test_words extends test_objects
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
         $wrd->set_code_id(word_names::TEST_ADD, $this->env->usr_system);
         $wrd->plural = word_names::TEST_ADD_PLURAL;
-        $wrd->view = $t_msk->view_math();
+        $wrd->view = $t_msk->word();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;
         $wrd->impact = test_const::DUMMY_IMPACT;
         $wrd->include();

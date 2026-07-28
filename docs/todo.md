@@ -108,6 +108,8 @@ A proper issue ticket should be created for these TODOs notes:
          This implies that the frontend confirm cached elements in the backend
          The question is how? Assume that everything is cached until cache deletion is confirmed and end session confirms complete delete
 
+    TODO create a job that moves values and formulas from the symbol word to the main phrase
+
     TODO fix bug that the same triple with another name is not detected as similar triple
          steps to reproduce:
          1. create a triple "gross profit" with a json import file
