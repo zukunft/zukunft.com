@@ -519,10 +519,9 @@ class import
                 }
             }
         }
-        // if no user is defined in the json to import use the active user
+        // if no user is defined in the json to import use the requesting user from the message
         if ($usr_import == null) {
-            global $sys;
-            $usr_import = $sys->usr_req;
+            $usr_import = $msg->usr;
         }
 
         // remember the usr_msg and view that should be validated after the import

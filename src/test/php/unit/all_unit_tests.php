@@ -93,7 +93,7 @@ class all_unit_tests extends test_cleanup
         // create the testing users
         $this->subheader($ts . 'prepare');
         $this->set_users();
-        $sys->usr_req = $this->usr1;
+        $db_con->usr_req = $this->usr1;
 
         $t_typ = new test_types($this);
 

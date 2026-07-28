@@ -293,18 +293,17 @@ class import_write_tests
         user|null                                         $usr_req = null
     ): void
     {
-        global $sys;
+        global $db_con;
 
         if ($usr_req == null) {
             $usr_req = $t->usr1;
         }
 
-        // some preserved-name gates (e.g. verb::check_preserved) read $sys->usr_req
-        // directly instead of taking the user as a parameter, so the requested user
-        // is swapped in for the import duration and restored on exit
-        $prev_usr_req = $sys?->usr_req;
-        if ($sys !== null) {
-            $sys->usr_req = $usr_req;
+        // set_class takes the default query user from the db connection (sql_db::usr_req), so the
+        // requesting user is swapped in on the connection for the import duration and restored on exit
+        $prev_usr_req = $db_con?->usr_req;
+        if ($db_con !== null) {
+            $db_con->usr_req = $usr_req;
         }
 
         $lib = new library();
@@ -352,8 +351,8 @@ class import_write_tests
         $sbx->load_by_name($add_name);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);
 
-        if ($sys !== null) {
-            $sys->usr_req = $prev_usr_req;
+        if ($db_con !== null) {
+            $db_con->usr_req = $prev_usr_req;
         }
     }
 

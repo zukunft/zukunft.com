@@ -646,6 +646,7 @@ class sql_db
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
+    public ?user $usr_req = null;                   // the user requesting the current changes on this connection, set once by the entry point; read by set_class as the default query user (moved off the retired $sys->usr_req)
     private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
 
     private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
@@ -1225,7 +1226,7 @@ class sql_db
                     'sql_db->setup_db');
                 $usr = user::system();
             }
-            $sys->usr_req = $usr;
+            $this->usr_req = $usr;
 
             // recreate the code link database rows
             $log_txt->echo_text_log('Create the code links');
@@ -1645,8 +1646,8 @@ class sql_db
      */
     function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        // the requesting user is a connection-level fact set once by the entry point
+        $usr = $this->usr_req;
 
         $lib = new library();
         $this->reset();

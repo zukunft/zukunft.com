@@ -612,8 +612,10 @@ class sql_creator
      */
     function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): bool
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        // the requesting user comes from the connection (sql_db), which the entry point sets;
+        // read here so both factory-built and directly-built sql_creators use the same default user
+        global $db_con;
+        $usr = $db_con?->usr_req;
 
         $this->reset();
         $this->class = $class;

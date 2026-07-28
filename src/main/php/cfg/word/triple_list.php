@@ -993,8 +993,7 @@ class triple_list extends sandbox_list_named
         bool                           $report_missing = true
     ): void
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        $usr = $this->get_user();
         if ($phr->id() == 0 and $phr->name($fill_all) != '') {
             $db_obj = $db_lst->get_by_name($phr->name($fill_all), $fill_all);
             if ($db_obj != null) {

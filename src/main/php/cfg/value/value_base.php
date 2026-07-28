@@ -2102,8 +2102,7 @@ class value_base extends sandbox_value
      */
     function save_field_trigger_update($db_con): string
     {
-        global $sys;
-        $usr = $sys?->usr_req;
+        $usr = $this->get_user();
 
         $result = '';
         $usr_msg = new user_message($usr);

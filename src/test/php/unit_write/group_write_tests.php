@@ -207,7 +207,7 @@ class group_write_tests
      */
     function create_test_groups(all_tests|a_selected_test $t): void
     {
-        global $sys;
+        global $db_con;
         $t_db = new test_db_load($t);
 
         // start the test section (ts)
@@ -216,9 +216,10 @@ class group_write_tests
 
         // request as the system test user so that reserved group names such as
         // 'Pi (math)' (groups::TN_READ) pass group::check_preserved and can be added;
-        // this is only permitted because test.php is run by an admin user
-        $usr_req_prev = $sys->usr_req;
-        $sys->usr_req = $t->usr1;
+        // this is only permitted because test.php is run by an admin user; the requesting user is
+        // set on the db connection because set_class takes the default query user from there
+        $usr_req_prev = $db_con->usr_req;
+        $db_con->usr_req = $t->usr1;
 
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
@@ -227,7 +228,7 @@ class group_write_tests
         }
 
         // restore the previous requesting user so later tests are not affected
-        $sys->usr_req = $usr_req_prev;
+        $db_con->usr_req = $usr_req_prev;
     }
 
     /**
