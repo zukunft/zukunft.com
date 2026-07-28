@@ -32,9 +32,7 @@
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::HTML . 'rest_call.php';
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -47,7 +45,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -69,7 +66,6 @@ if ($db_con->is_open()) {
     $msg->usr = $usr;
 
     $ctrl = new controller();
-    $rest_ctrl = new rest_call();
     $result = ''; // reset the json message string
 
     // read the http method and request body of a real web request; array_key_exists (not in_array)
@@ -82,7 +78,7 @@ if ($db_con->is_open()) {
         // only a write (post/put/delete) carries a json body; a GET has none, so reading php://input
         // for a GET would be pointless (and used to be unreachable while the method detection was broken)
         if ($method !== rest_ctrl::GET) {
-            $json_body = $rest_ctrl->request_json();
+            $json_body = $ctrl->request_json();
         } else {
             $json_body = [];
         }

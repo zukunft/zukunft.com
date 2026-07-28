@@ -34,10 +34,8 @@ $start_time = microtime(true);
 include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::WEB . 'frontend.php';
-include_once html_paths::HTML . 'html_base.php';
+include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;

@@ -17,20 +17,13 @@ if (getenv('ZUKUNFT_ALLOW_SETUP') !== '1') {
 
 $start_time = microtime(true);
 
-// standard start for all php code that can be called
-// keep the requested url debug level untrusted until the environment is known,
-// then honor it only in dev so sql and the call graph never leak elsewhere
-global $debug;
-$debug_requested = $_GET['debug'] ?? 0;
-$debug = 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
-if (getenv(ENVIRONMENT) == ENV_DEV) {
-    $debug = $debug_requested;
-}
+// standard start for all http frontend scripts; also loads the test path const
+// that the frontend include chain still needs (see the TODO in const.php)
+include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
+
+include_once WEB . 'frontend.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;

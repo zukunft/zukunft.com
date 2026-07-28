@@ -66,6 +66,20 @@ class controller
      */
 
     /**
+     * read the json body of the current write request (post/put/delete)
+     *
+     * @return array the decoded json body or an empty array for a missing or malformed body
+     */
+    function request_json(): array
+    {
+        $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
+        $result = json_decode($request_text, true);
+        // an empty or malformed body decodes to null; return an empty array so the : array return
+        // type never fatals and the caller (a write with no/invalid body) maps nothing
+        return is_array($result) ? $result : [];
+    }
+
+    /**
      * return a json that has been requested by a GET request to the
      * REST controller
      *

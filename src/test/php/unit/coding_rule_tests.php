@@ -688,6 +688,10 @@ class coding_rule_tests
      * bootstrap (start/open_db/end/load_cache) still needs the backend globals
      * $sys/$cac/$cfg; see the TODO below
      *
+     * web/init_ui.php is excluded because it is the frontend bootstrap that
+     * creates the shared globals ($debug, $sys and $log_txt) for the ui scripts,
+     * like init.php does for the backend scripts
+     *
      * @param test_cleanup $t the test harness used for the assertion
      * @return void
      */
@@ -702,7 +706,7 @@ class coding_rule_tests
             paths::WEB,
             ['ui_sys', 'mtr'],
             'web/ must declare only $ui_sys and $mtr as globals',
-            ['frontend.php']
+            ['frontend.php', 'init_ui.php']
         );
     }
 
@@ -944,7 +948,15 @@ class coding_rule_tests
                         $path_incl = $include[1];
                         if ($class == $class_incl) {
                             $path_conv = $lib->php_path_convert($path);
-                            if ($path_conv == $path_incl or $path_conv == '') {
+                            // a frontend file may include a backend class via the html_paths
+                            // copy of the backend path const, which has the same const name
+                            // (e.g. html_paths::MODEL_HELPER for paths::MODEL_HELPER)
+                            $path_alias = str_starts_with($path_conv, 'paths::')
+                                ? 'html_' . $path_conv
+                                : '';
+                            if ($path_conv == $path_incl
+                                or $path_alias == $path_incl
+                                or $path_conv == '') {
                                 $found = true;
                             }
                         }

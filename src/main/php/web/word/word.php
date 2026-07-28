@@ -50,7 +50,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
@@ -74,29 +73,29 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::VIEW . 'view_list.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_WORD . 'word_db.php';
+include_once html_paths::DB . 'sql_db.php';
+include_once html_paths::MODEL_WORD . 'word_db.php';
 // phrase.php is loaded elsewhere (kept as a commented placeholder like cfg word_db) to avoid
 // pulling the whole phrase class graph into the frontend just for the phrase_type_id field name
-//include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::SHARED_CONST . 'def.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_types.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
+//include_once html_paths::MODEL_PHRASE . 'phrase.php';
+include_once html_paths::MODEL_SANDBOX . 'sandbox.php';
+include_once html_paths::API_OBJECT . 'api_message.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'word_fields.php';
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;

@@ -31,7 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
@@ -43,10 +42,10 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_TYPES . 'phrase_types.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;

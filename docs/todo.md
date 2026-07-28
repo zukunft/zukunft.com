@@ -45,21 +45,18 @@ A proper issue ticket should be created for these TODOs notes:
     TODO review the start page and base it purely on database values
     TODO create a useful default view for each link in the start page
     TODO create a workflow test for each add, edit or delete view reachable from the start page
-
     TODO add data for the next level of the start page so the definition of the problem, that leading and lagging causes, a list of the possible solutions and the ranking of the solution based on risk and reward
     TODO review all system views and make sure that at least all components used in the pages return a reasonable result
     TODO add phrase_id for the additional selection to the component link so that 
          e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
          for a sorted phrase list solution
-
     TODO create a useful page e.g. for currencies
     TODO add links for the values in the frontend page 
-    TODO fill the workflox unit tests
+    TODO fill the workflow unit tests with all workflows of the main objects
     TODO fix to bugs in the component types so that all component type returns a nice result
-    TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
+    TODO add unit test for all system pages including the login page to be able to use the view.php script also for the login page
     TODO deprecate the old $back parameter and use instead back prefixed parameters
-    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
-    TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
+
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
@@ -70,7 +67,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Include the user overwrites in the usage and include the usage in the csv compare
     TODO add a test that the initial data load does not change any fields to avoid changes test conditions e.g. as it happed for the description of USD 
     TODO create a coded unit test for all possible coding rules e.g. that in frontend only the global vars $ui_sys and $mtr should be used
-
     TODO review the base import files:
          in src/test/resources/import/fermi_estimates.json add a description to the words and try to fimd a wikipedia / wikidata ref
          add to src/test/resources/import/fermi_estimates.json some results that should be checked on import
@@ -110,6 +106,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO review the CHF page
          add the values with the highest impact
 
+    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
     TODO create a job that moves values and formulas from the symbol word to the main phrase
 
     TODO fix bug that the same triple with another name is not detected as similar triple
