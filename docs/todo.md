@@ -16,13 +16,14 @@ A proper issue ticket should be created for these TODOs notes:
          access the databases with the $db_car and $db_arc connection vars
          use the functions move_to_archive and move_to_caratane to move data
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
+    TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
 
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
                 and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
          - $cfg for the user configuration numbers that changes more often than the types and the system views  
-         - $cac for the backend cache of user-specific data_object
+         - $cac the backend cache of user-specific data_object
          - $ui_sys for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
@@ -37,16 +38,10 @@ A proper issue ticket should be created for these TODOs notes:
            - use the global vars if not a test scenario is needed
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
-    TODO add a source-phrases table for the properties of a source e.g. 'in review' or 'is peer reviewed' that is used to calculate the impact of a source
 
     TODO create a formula "good enougth" default view
     TODO create the main workflows including unit and write tests
-    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
     TODO add unit test for all frontend components
-    TODO add a 'no change' parameter to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
-    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
-    TODO review the CHF page
-         add the values with the highest impact
     TODO review the start page and base it purely on database values
     TODO create a useful default view for each link in the start page
     TODO create a workflow test for each add, edit or delete view reachable from the start page
@@ -55,15 +50,13 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add phrase_id for the additional selection to the component link so that 
          e.g. for the global warming problem the phrases "definition", "size" and "solutions" can be used 
          for a sorted phrase list solution
-
     TODO create a useful page e.g. for currencies
     TODO add links for the values in the frontend page 
-    TODO fill the workflox unit tests
+    TODO fill the workflow unit tests with all workflows of the main objects
     TODO fix to bugs in the component types so that all component type returns a nice result
-    TODO add unti test for all system pages including the login page to be able to use the view.php script also for the login page
+    TODO add unit test for all system pages including the login page to be able to use the view.php script also for the login page
     TODO deprecate the old $back parameter and use instead back prefixed parameters
-    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
-    TODO test for add word workflow: add the function "url_to_action_and_next_step" in the workflow class
+
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
@@ -74,7 +67,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Include the user overwrites in the usage and include the usage in the csv compare
     TODO add a test that the initial data load does not change any fields to avoid changes test conditions e.g. as it happed for the description of USD 
     TODO create a coded unit test for all possible coding rules e.g. that in frontend only the global vars $ui_sys and $mtr should be used
-
     TODO review the base import files:
          in src/test/resources/import/fermi_estimates.json add a description to the words and try to fimd a wikipedia / wikidata ref
          add to src/test/resources/import/fermi_estimates.json some results that should be checked on import
@@ -108,6 +100,13 @@ A proper issue ticket should be created for these TODOs notes:
          This implies that the frontend confirm cached elements in the backend
          The question is how? Assume that everything is cached until cache deletion is confirmed and end session confirms complete delete
 
+    TODO add a source-phrases table for the properties of a source e.g. 'in review' or 'is peer reviewed' that is used to calculate the impact of a source
+    TODO check that all json import files that are needed for the db read and write tests are within on const array and make sure that these files are imported before the config
+    TODO move the database ids used for unit and db read tests before the database ids of the system config so that a change in the system config does not break the unit or db read tests because additional data for unit tests are less probable than addidional config values
+    TODO review the CHF page
+         add the values with the highest impact
+
+    TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
     TODO create a job that moves values and formulas from the symbol word to the main phrase
 
     TODO fix bug that the same triple with another name is not detected as similar triple

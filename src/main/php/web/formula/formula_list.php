@@ -31,7 +31,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -45,8 +44,8 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once test_paths::CONST . 'formula_names.php';
-include_once paths::SHARED_CONST . 'formulas.php';
-include_once paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'formulas.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;

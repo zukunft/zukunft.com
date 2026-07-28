@@ -31,13 +31,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;

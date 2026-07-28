@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 // including off child objects deactivated to avoid loops in including
@@ -54,8 +53,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::WORD . 'word_list.php';
 //include_once html_paths::WORD . 'triple_list.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;

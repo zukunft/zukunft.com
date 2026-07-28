@@ -35,6 +35,58 @@ if the cache type (with or without phrases / context) or the message type (with 
 
 Add to admin yaml a list of term that should be added on start to the document route. Add a "en" folder with static pages that store each request to a file that is read, executed and cleaned by the sceduled job runner. For non en languages use e.g de subfolder
 
+### complete the frontend backend split — implementation steps
+
+the goal (docs/llm/frontend.md): frontend (web/ and http/) and backend (cfg/ and api/) are two
+independent apps talking only over the api; code needed by both lives in shared/. the temporary
+bridges are the backend paths include at the top of web/const/paths.php and the html_paths::MODEL_*
+/ DB / API_OBJECT copies in the same file — they fall step by step with the prompts below. done so
+far: env.php moved from cfg/const to shared/const (read by both apps); api/word/index.php reads the
+request body via the backend controller::request_json instead of the frontend rest_call class. run
+the steps one at a time, each as its own commit with tests written first:
+
+1. move the pure text logging classes cfg/log_text/text_log.php, text_log_format.php and
+   text_log_level.php to shared/log_text (check first that they have no db or model dependency);
+   web/log_text/text_log.php then extends the shared class; the model-dependent
+   text_log_functions.php (log_err writes to sys_log in the db) stays in the backend for now
+
+2. give the frontend its own error reporting: the web/ code calls log_err / log_warning / log_debug
+   from cfg/log_text/text_log_functions.php, which is backend code (db write to sys_log); create
+   frontend log functions that report problems via the existing sys_log api endpoint (rest_call)
+   and echo to standard io, then remove the text_log_functions include from web/init_ui.php
+
+3. replace the backend $sys usage in web/ with a frontend-owned equivalent on $ui_sys: the timing
+   (web/helper/config.php load($sys) and the api call timing TODO in web/html/rest_call.php) and
+   the preloaded type list access (web/system/sys_log.php $sys->typ_lst->sys_log_sta) move to
+   $ui_sys; then web/init_ui.php no longer creates the cfg system_object and $sys becomes a
+   backend-only global in docs/code_object_name_exceptions.md
+
+4. after steps 1-3 remove the remaining cfg includes from web/init_ui.php, remove the backend paths
+   include from the top of web/const/paths.php and drop every html_paths::MODEL_* copy that only
+   web/init_ui.php used; add the coded check to unit/coding_rule_tests.php that web/init_ui.php and
+   web/const/paths.php include no cfg file
+
+5. replace the deprecated direct-db bootstrap of web/frontend.php (start / open_db / end /
+   load_cache) with api calls per the TODO in coding_rule_tests::php_web_only_allowed_globals_tests;
+   then remove the 'frontend.php' exception from that rule, remove the db and model includes from
+   frontend.php and drop the html_paths::DB and now unused html_paths::MODEL_* copies
+
+6. move the reserved test name consts that production web code includes (test_paths::CONST
+   formula_names.php / triple_names.php / word_names.php in web/frontend.php,
+   web/formula/formula_list.php and web/component/execute/system_form.php - included "to avoid that
+   names used for testing are used in production") to shared/const so production code never
+   includes test code; then remove the test path block from http/const.php (its TODO Prio 2) and
+   the test_paths use from the web files
+
+7. migrate the remaining direct-db web files to api calls or delete the deprecated functions:
+   web/log/user_log_display.php and web/user/user_display_old.php create their own sql_db, and
+   web/word/word.php still builds sql; afterwards no web file references sql_db and the
+   html_paths::DB copy falls if not already removed in step 5
+
+8. extend coding_rule_tests::php_cfg_no_web_tests to also scan paths::API, paths::API_OBJECT and
+   the /api scripts, so a backend file using a web class (like the api/word/index.php rest_call
+   use fixed above) is caught by the unit tests
+
 ### requesting user lives on $msg — implementation steps
 
 the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry point sets the requesting user on the request's user_message once, as early as possible, and every function below takes $msg as a parameter and reads $msg->usr — never a second requesting-user parameter, never a global, never $_SESSION. http/view.php is done; run the steps below one at a time, each as its own commit with tests written first:

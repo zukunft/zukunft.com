@@ -35,15 +35,57 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\const;
 
+// until the frontend backend split is done load also the backend path const class,
+// because the backend code that the frontend still includes uses it internally
+include_once PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR . 'paths.php';
+
 class paths
 {
 
     // path of the const and classes that are shared between the backend and the html frontend
     const string SHARED = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
+    const string SHARED_CALC = self::SHARED . 'calc' . DIRECTORY_SEPARATOR;
+    const string SHARED_CONST = self::SHARED . 'const' . DIRECTORY_SEPARATOR;
+    const string SHARED_CONST_FIELDS = self::SHARED_CONST . 'fields' . DIRECTORY_SEPARATOR;
+    const string SHARED_ENUM = self::SHARED . 'enum' . DIRECTORY_SEPARATOR;
+    const string SHARED_HELPER = self::SHARED . 'helper' . DIRECTORY_SEPARATOR;
     const string SHARED_TYPES = self::SHARED . 'types' . DIRECTORY_SEPARATOR;
 
+    // path of the backend code that the frontend still needs until the frontend backend split is done
+    // (copies of the same named const in main/php/cfg/const/paths.php)
+    const string MODEL = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR;
+    const string API_OBJECT = PHP_PATH . 'api' . DIRECTORY_SEPARATOR;
+    const string DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
+    const string MODEL_CONST = self::MODEL . 'const' . DIRECTORY_SEPARATOR;
+    const string MODEL_FORMULA = self::MODEL . 'formula' . DIRECTORY_SEPARATOR;
+    const string MODEL_GROUP = self::MODEL . 'group' . DIRECTORY_SEPARATOR;
+    const string MODEL_HELPER = self::MODEL . 'helper' . DIRECTORY_SEPARATOR;
+    const string MODEL_IMPORT = self::MODEL . 'import' . DIRECTORY_SEPARATOR;
+    const string MODEL_LOG = self::MODEL . 'log' . DIRECTORY_SEPARATOR;
+    const string MODEL_LOG_TEXT = self::MODEL . 'log_text' . DIRECTORY_SEPARATOR;
+    const string MODEL_PHRASE = self::MODEL . 'phrase' . DIRECTORY_SEPARATOR;
+    const string MODEL_REF = self::MODEL . 'ref' . DIRECTORY_SEPARATOR;
+    const string MODEL_SANDBOX = self::MODEL . 'sandbox' . DIRECTORY_SEPARATOR;
+    const string MODEL_SYSTEM = self::MODEL . 'system' . DIRECTORY_SEPARATOR;
+    const string MODEL_USER = self::MODEL . 'user' . DIRECTORY_SEPARATOR;
+    const string MODEL_VERB = self::MODEL . 'verb' . DIRECTORY_SEPARATOR;
+    const string MODEL_VIEW = self::MODEL . 'view' . DIRECTORY_SEPARATOR;
+    const string MODEL_WORD = self::MODEL . 'word' . DIRECTORY_SEPARATOR;
+
+    // relative resource paths for the html pages
+    // (copies of the same named const in main/php/cfg/const/paths.php)
+    const string REL_RES = DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR;
+    const string REL_IMAGE = self::REL_RES . 'images' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_BS = DIRECTORY_SEPARATOR . 'external_lib' . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR;
+    const string EXT_LIB_BS_JS = self::EXT_LIB_BS . 'js' . DIRECTORY_SEPARATOR;
+
     // path of the pure html frontend objects
-    const string WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
+    // (the leading backslash selects the global const of the entry scripts, not this class const)
+    const string WEB = \WEB;
+
+    // path of the html frontend entry scripts and the deprecated predecessor scripts
+    const string HTTP = ROOT_PATH . 'http' . DIRECTORY_SEPARATOR;
+    const string HTTP_OLD = ROOT_PATH . 'http_old' . DIRECTORY_SEPARATOR;
 
     const string COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
     const string SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;

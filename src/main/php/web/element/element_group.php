@@ -32,7 +32,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -47,9 +46,9 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_TYPES . 'api_types.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_TYPES . 'api_types.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;

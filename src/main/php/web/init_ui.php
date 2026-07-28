@@ -2,17 +2,17 @@
 
 /*
 
-    init.php - for initial loading of the needed php scripts
-    --------
+    web/init_ui.php - for initial loading of the php scripts needed by the html frontend
+    ---------------
 
     the target start process has these steps
     1. set the start time in the script called by the user
        1.1 set the const path and code files with const.php in the same folder
-       1.2 set the basis system vars with this init.php in the main backend or test folder
-           (the frontend scripts use web/init_ui.php instead)
+       1.2 set the basis system vars with this init_ui.php for the frontend scripts
+           (the backend and test scripts use init.php in the main php folder instead)
     2. load the environment that can only be changed by the server admin and a change requires a restart
-       2.1 done by application.php, frontend.php or test_app.php
-       2.2 these script open the database connection, the api connection or both for testing
+       2.1 done by frontend.php
+       2.2 which opens the api connection (and, until the frontend backend split is done, the database)
     3. load the system config which can be changed by the admin user online
     4. get the user and its permissions / role
     5. load the user configuration from cache if possible
@@ -53,42 +53,29 @@ if ($version[0] < 8) {
     }
 }
 
-// set all path for the backend program code here at once
-const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
-include_once CONST_PATH . 'paths.php';
+// set all path for the frontend program code here at once
+const WEB_CONST = WEB . 'const' . DIRECTORY_SEPARATOR;
+include_once WEB_CONST . 'paths.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+// load the backend path const that e.g. frontend.php still uses until the frontend backend split is done
+include_once html_paths::CONST . 'paths.php';
 
 // global vars for system control
-include_once paths::MODEL_HELPER . 'system_object.php';
+include_once html_paths::MODEL_HELPER . 'system_object.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 global $sys;
 $sys = new system_object('init');
 
 // text logging to standard io
-include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
+include_once html_paths::MODEL_LOG_TEXT . 'text_log_functions.php';
+include_once html_paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once html_paths::MODEL_LOG_TEXT . 'text_log_level.php';
+include_once html_paths::LOG_TEXT . 'text_log.php';
+use Zukunft\ZukunftCom\main\php\web\log_text\text_log;
+global $log_txt; // the frontend log object for standard io logging (incl. the html header display)
+$log_txt = new text_log();
 
-// the main global vars to shorten the code by avoiding them in many function calls as parameter
-global $db_con; // the database connection
-
-// TODO check if "sudo apt-get install php-curl" is done for testing
-//phpinfo();
-
-// database links
-include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'db_check.php';
-
-
-// include all other libraries that are usually needed
-include_once paths::SHARED_CONST . 'env.php';
-include_once paths::SERVICE . 'db_cl.php';
-include_once paths::SERVICE . 'config.php';
-
-// to avoid circle include
-include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_LOG . 'change_link.php';
-
-
-
+// load the environment settings e.g. to know if this is a dev, test or prod pod
+// (env.php is in shared/const because the environment is read by the frontend and the backend)
+include_once html_paths::SHARED_CONST . 'env.php';

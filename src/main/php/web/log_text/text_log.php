@@ -35,11 +35,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log_text;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::MODEL_LOG_TEXT . 'text_log.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once html_paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once html_paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once html_paths::HTML . 'html_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log as text_log_base;

@@ -36,7 +36,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\def;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -77,16 +76,16 @@ include_once html_paths::TYPES . 'position_type_list.php';
 //include_once html_paths::WORD . 'triple.php';
 //include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'ref_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'component_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;

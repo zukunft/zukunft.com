@@ -31,19 +31,18 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_FORMULA . 'formula_db.php';
-include_once paths::MODEL_FORMULA . 'formula_link.php';
-include_once paths::MODEL_GROUP . 'group_db.php';
-include_once paths::MODEL_REF . 'source.php';
-include_once paths::MODEL_REF . 'source_db.php';
-include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_VERB . 'verb_db.php';
-include_once paths::MODEL_VIEW . 'view_db.php';
-include_once paths::MODEL_WORD . 'triple_db.php';
+include_once html_paths::DB . 'sql_db.php';
+include_once html_paths::MODEL_FORMULA . 'formula_db.php';
+include_once html_paths::MODEL_FORMULA . 'formula_link.php';
+include_once html_paths::MODEL_GROUP . 'group_db.php';
+include_once html_paths::MODEL_REF . 'source.php';
+include_once html_paths::MODEL_REF . 'source_db.php';
+include_once html_paths::MODEL_USER . 'user_db.php';
+include_once html_paths::MODEL_VERB . 'verb_db.php';
+include_once html_paths::MODEL_VIEW . 'view_db.php';
+include_once html_paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_link.php';
@@ -61,11 +60,11 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VIEW . 'view.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'triple_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;

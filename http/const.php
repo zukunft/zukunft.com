@@ -39,12 +39,13 @@ global $debug;
 $debug_requested = $_GET['debug'] ?? 0;
 $debug = 0;
 
-// set the path const for the initial backend and frontend settings
+// set the path const for the initial frontend settings
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+const WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
+include_once WEB . 'init_ui.php';
 
-// init.php has loaded the environment from .env, so the url debug level can now
+// init_ui.php has loaded the environment from .env, so the url debug level can now
 // be honored - but only in the dev environment; any other environment stays
 // silent to avoid leaking sql, table and column names or the call graph
 if (getenv(ENVIRONMENT) == ENV_DEV) {

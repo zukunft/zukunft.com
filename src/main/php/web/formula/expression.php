@@ -35,7 +35,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::ELEMENT . 'element.php';
 include_once html_paths::ELEMENT . 'element_list.php';
@@ -44,9 +43,9 @@ include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CALC . 'expression.php';
-include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CALC . 'expression.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
+include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\element\element;
 use Zukunft\ZukunftCom\main\php\web\element\element_list;

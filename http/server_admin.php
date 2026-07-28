@@ -65,7 +65,7 @@ const SESSION_TTL = 1800;
  * ------------------------------------------------------------------------ */
 
 /**
- * minimal .env reader, same comment handling as src/main/php/cfg/const/env.php
+ * minimal .env reader, same comment handling as src/main/php/shared/const/env.php
  * @return array<string,string>
  */
 function read_env(string $file): array
@@ -365,7 +365,7 @@ session_start();
 
 // prefer the .env copy one level above the docroot (out of the web root) so the secrets cannot be
 // served even if the web server ever ignores the .htaccess rules; fall back to the docroot copy for
-// the dev / docker setup that keeps .env in the repo root - same resolution as cfg/const/env.php
+// the dev / docker setup that keeps .env in the repo root - same resolution as shared/const/env.php
 $env_file = ROOT . '..' . DIRECTORY_SEPARATOR . '.env';
 if (!is_readable($env_file)) {
     $env_file = ROOT . '.env';

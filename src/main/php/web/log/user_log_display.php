@@ -32,11 +32,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::DB . 'sql.php';
-include_once paths::DB . 'sql_db.php';
+include_once html_paths::DB . 'sql.php';
+include_once html_paths::DB . 'sql_db.php';
 // change_log_link_list (same namespace) is loaded by the frontend bootstrap (component_exe.php);
 // it must not be included here because that would close an include cycle via change_log -> user
 //include_once html_paths::HTML . 'button.php';
@@ -48,12 +47,12 @@ include_once paths::DB . 'sql_db.php';
 //include_once html_paths::VALUE . 'value.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'change_tables.php';
-include_once paths::SHARED_ENUM . 'change_fields.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_ENUM . 'change_tables.php';
+include_once html_paths::SHARED_ENUM . 'change_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
