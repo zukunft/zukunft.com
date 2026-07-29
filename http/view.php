@@ -61,7 +61,7 @@ global $debug;
 global $sys;
 
 // init global frontend objects
-global $ui_sys;
+global $ui_sys; // the frontend cache of this request incl. the preloaded types and the user configuration
 global $mtr;
 $mtr = new Translator();
 $msg = new user_message();

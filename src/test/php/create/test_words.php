@@ -188,7 +188,7 @@ class test_words extends test_objects
         $wrd->set(word_names::MATH_ID, word_names::MATH);
         $wrd->description = word_names::MATH_COM;
         $wrd->set_type(phrase_types::SCALING, $this->env->usr1);
-        $wrd->set_code_id(word_names::MATH, $this->env->usr1);
+        $wrd->set_code_id(word_names::MATH, $this->env->usr_dev);
         $wrd->plural = word_names::MATH_PLURAL;
         $wrd->view = $t_msk->view_math();
         $wrd->usage = test_const::DUMMY_USAGE_WORD;

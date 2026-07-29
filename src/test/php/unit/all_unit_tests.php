@@ -205,7 +205,9 @@ class all_unit_tests extends test_cleanup
     {
         global $sys;
 
-        // create a dummy admin user for unit testing with the admin profile
+        // system users that might create log entries show to the user
+
+        // create a local admin user that can be used script based admin changes
         $usr_admin = new user;
         $usr_admin->id = users::SYSTEM_ADMIN_ID;
         $usr_admin->name = users::SYSTEM_ADMIN_NAME;
@@ -214,6 +216,9 @@ class all_unit_tests extends test_cleanup
 
         $msg = new user_message();
         $msg->usr = $this->usr_admin;
+
+
+        // test users that are not expected create log entries show to the user
 
         // create a dummy user for testing
         $usr = new user;
@@ -242,7 +247,7 @@ class all_unit_tests extends test_cleanup
         $usr_sys->name = users::SYSTEM_NAME;
         $this->usr_system = $usr_sys;
 
-        $t_usr = new test_users($this);
+        $t_usr = new test_users();
         $this->usr_dev = $t_usr->user_dev($msg);
         $this->usr_normal = $t_usr->user_filled($this);
 
