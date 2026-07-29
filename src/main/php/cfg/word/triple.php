@@ -408,23 +408,23 @@ class triple extends sandbox_link_named
      * map a triple api json to this model triple object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::FROM, $api_json)) {
-            $phr = $this->phrase_from_api_json($api_json[json_fields::FROM], $usr_msg, msg_id::TRIPLE_FROM_PHRASE_MISSING);
+            $phr = $this->phrase_from_api_json($api_json[json_fields::FROM], $msg, msg_id::TRIPLE_FROM_PHRASE_MISSING);
             $this->set_from($phr);
         }
         if (array_key_exists(json_fields::VERB, $api_json)) {
-            $vrb = $this->verb_from_api_json($api_json[json_fields::VERB], $usr_msg);
+            $vrb = $this->verb_from_api_json($api_json[json_fields::VERB], $msg);
             $this->set_verb($vrb);
         }
         if (array_key_exists(json_fields::TO, $api_json)) {
-            $phr = $this->phrase_from_api_json($api_json[json_fields::TO], $usr_msg, msg_id::TRIPLE_TO_PHRASE_MISSING);
+            $phr = $this->phrase_from_api_json($api_json[json_fields::TO], $msg, msg_id::TRIPLE_TO_PHRASE_MISSING);
             $this->set_to($phr);
         }
         if (array_key_exists(json_fields::WEIGHT, $api_json)) {
@@ -432,7 +432,7 @@ class triple extends sandbox_link_named
         }
 
         if (key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
+            $this->set_type_id($api_json[json_fields::TYPE], $msg->usr);
         }
 
         if (array_key_exists(fields::FLD_IMPACT, $api_json)) {
@@ -456,7 +456,7 @@ class triple extends sandbox_link_named
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -911,7 +911,7 @@ class triple extends sandbox_link_named
      * @param string $name the name of the phrase
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name, user_message $usr_msg): phrase
+    private function import_phrase(string $name, user_message $msg): phrase
     {
         global $db_con;
 
@@ -922,8 +922,8 @@ class triple extends sandbox_link_named
                 // if there is no word or triple with the name yet, automatically create a word
                 $wrd = new word($this->get_user());
                 $wrd->set_name($name);
-                if ($usr_msg->is_ok()) {
-                    $wrd->save($usr_msg);
+                if ($msg->is_ok()) {
+                    $wrd->save($msg);
                     if ($wrd->id() == 0) {
                         log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
                     } else {
@@ -1734,7 +1734,7 @@ class triple extends sandbox_link_named
      */
     function fill(triple|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         // TODO use set and get function to enable phrase fill
         $trp = null;
         if ($obj::class == triple::class) {
@@ -1814,7 +1814,7 @@ class triple extends sandbox_link_named
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -2631,12 +2631,12 @@ class triple extends sandbox_link_named
      * for these named objects check if the user has requested to use a preserved name
      * and if yes return a message and a suggested solution to the user
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if no preserved triple name is used and the triple can be saved to the database
      */
-    protected function check_save(user_message $usr_msg): bool
+    protected function check_save(user_message $msg): bool
     {
-        return $this->check_preserved($usr_msg);
+        return $this->check_preserved($msg);
     }
 
     /**
@@ -2737,7 +2737,7 @@ class triple extends sandbox_link_named
     function log_link_add(): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::TRIPLE);
@@ -2745,7 +2745,7 @@ class triple extends sandbox_link_named
         $log->new_link = $this->get_verb();
         $log->new_to = $this->get_to();
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -2773,7 +2773,7 @@ class triple extends sandbox_link_named
     function log_del_link(): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::TRIPLE);
@@ -2781,7 +2781,7 @@ class triple extends sandbox_link_named
         $log->old_link = $this->get_verb();
         $log->old_to = $this->get_to();
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -2943,10 +2943,10 @@ class triple extends sandbox_link_named
     /**
      * delete the phrase groups which where this triple is used
      *
-     * @param user_message $usr_msg the message for the user why deleting the triple links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the triple links has failed and a suggested solution
      * @return bool true if the triple links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all phrase groups where this triple is used
         // TODO Prio 2 activate
@@ -2959,14 +2959,14 @@ class triple extends sandbox_link_named
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $val_lst->del($usr_msg);
+            $val_lst->del($msg);
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
         // TODO Prio 2 activate
         //$grp_lst->del($usr_msg);
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

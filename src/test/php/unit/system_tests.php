@@ -307,10 +307,10 @@ class system_tests
 
         $t->subheader($ts . 'user message');
 
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $test_name = 'message is translated';
-        $usr_msg->add_id(msg_id::CHECK);
-        $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
+        $msg->add_id(msg_id::CHECK);
+        $t->assert($test_name, $msg->all_message_text(), msg_id::CHECK->value);
 
 
         $t->subheader($ts . 'system config sql');
@@ -436,11 +436,11 @@ class system_tests
 
         $t->subheader($ts . 'list db write');
 
-        $usr_msg->reset();
+        $msg->reset();
         $test_name = 'database delete calls based on element list';
         $sc = $db_con->sql_creator();
         $elm_lst = $t_frm->element_list();
-        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $usr_msg);
+        $del_calls = $elm_lst->sql_delete_call_with_par($sc, $msg);
         $target = 'element_delete_log: "DELETE FROM elements  WHERE element_id = ?;" with the parameters (1)';
         $t->assert($test_name, $del_calls->dsp_id(), $target);
 

@@ -53,7 +53,7 @@ class formula_trigger_tests
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula trigger ';
@@ -79,13 +79,13 @@ class formula_trigger_tests
         $val_add1 = new value($t->usr1);
         $val_add1->set_grp($phr_lst1->get_grp_id());
         $val_add1->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $t->assert_true($test_name, $val_add1->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $val_add1->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add second number ' . values::CH_INHABITANTS_2020_IN_MIO . ' for 2020';
         $val_add2 = new value($t->usr1);
         $val_add2->set_grp($phr_lst2->get_grp_id());
         $val_add2->set_number(values::CH_INHABITANTS_2020_IN_MIO);
-        $t->assert_true($test_name, $val_add2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $val_add2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the first number have been saved correctly
         $added_val = new value($t->usr1);
@@ -136,8 +136,8 @@ class formula_trigger_tests
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
-        $val_add1->del($usr_msg);
-        $val_add2->del($usr_msg);
+        $val_add1->del($msg);
+        $val_add2->del($msg);
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

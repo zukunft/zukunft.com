@@ -72,19 +72,19 @@ class sandbox_typed extends sandbox_named
     /**
      * set the vars of this object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::TYPE, $url_array)) {
             $this->set_type_id($url_array[url_var::TYPE]);
         } else {
             $this->set_type_id();
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

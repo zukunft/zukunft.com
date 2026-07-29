@@ -89,14 +89,14 @@ class term_view extends sandbox_link
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 $this->set_view_id($url_array[url_var::VIEW]);
             }
@@ -107,7 +107,7 @@ class term_view extends sandbox_link
                 $this->description = $url_array[url_var::DESCRIPTION];
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

@@ -379,12 +379,12 @@ class word extends sandbox_code_id
      * TODO add a test case to check if an import of a pure name overwrites the existing type setting
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // it is expected that the code id is set via import by an admin not via api
 
@@ -408,7 +408,7 @@ class word extends sandbox_code_id
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1362,7 +1362,7 @@ class word extends sandbox_code_id
      */
     function fill(word|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->plural === null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
@@ -1372,7 +1372,7 @@ class word extends sandbox_code_id
         if ($this->view === null and $obj->view != null) {
             $this->view = $obj->view;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1464,10 +1464,10 @@ class word extends sandbox_code_id
      * add a child word to this word
      * e.g. Zurich (child) is a canton (Parent)
      * @param word $child the word that should be added as a child
-     * @param user_message $usr_msg
+     * @param user_message $msg
      * @return bool
      */
-    function add_child(word $child, user_message $usr_msg): bool
+    function add_child(word $child, user_message $msg): bool
     {
         global $sys;
 
@@ -1477,9 +1477,9 @@ class word extends sandbox_code_id
             $wrd_lnk->set_from($child->phrase());
             $wrd_lnk->set_verb($sys->typ_lst->vrb->get_verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
-            $wrd_lnk->save($usr_msg);
+            $wrd_lnk->save($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1876,7 +1876,7 @@ class word extends sandbox_code_id
     function log_upd_view($view_id): change
     {
         log_debug($this->dsp_id() . ' for user ' . $this->get_user()->name);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $msk_new = new view($this->get_user());
         $msk_new->load_by_id($view_id);
 
@@ -1896,7 +1896,7 @@ class word extends sandbox_code_id
         $log->new_value = $msk_new->name();
         $log->new_id = $msk_new->id();
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1914,28 +1914,28 @@ class word extends sandbox_code_id
     {
 
         global $db_con;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if ($this->id() > 0 and $view_id > 0 and $view_id <> $this->get_view_id()) {
             $this->set_view_id($view_id);
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->get_user()->id;
-                if ($this->can_change($usr_msg)) {
-                    $this->update('view of word', $usr_msg);
+                if ($this->can_change($msg)) {
+                    $this->update('view of word', $msg);
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
-                            $usr_msg->add_id(msg_id::ADD_USER_CONFIG_FAILED);
+                            $msg->add_id(msg_id::ADD_USER_CONFIG_FAILED);
                         }
                     }
-                    if ($usr_msg == '') {
-                        $this->update('user view of word', $usr_msg);
+                    if ($msg == '') {
+                        $this->update('user view of word', $msg);
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1970,10 +1970,10 @@ class word extends sandbox_code_id
      * delete the references to this word
      * which includes the phrase groups, the triples and values
      *
-     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the word links has failed and a suggested solution
      * @return bool true if the word links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
@@ -1990,19 +1990,19 @@ class word extends sandbox_code_id
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $val_lst->del($usr_msg);
+            $val_lst->del($msg);
         }
 
         // if there are still triples, ask if they really should be deleted
         if ($trp_lst->has_values()) {
-            $trp_lst->del($usr_msg);
+            $trp_lst->del($msg);
         }
 
         // delete the phrase groups
         // TODO Prio 2 activate
         //$grp_lst->del($usr_msg);
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

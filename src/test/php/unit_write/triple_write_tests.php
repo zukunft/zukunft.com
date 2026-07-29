@@ -334,14 +334,14 @@ class triple_write_tests
         $t->header($ts);
 
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // activate the excluded objects to check the setup
         $trp = new triple($t->usr2);
         $trp->load_by_name(triple_names::SYSTEM_TEST_EXCLUDED);
         if ($trp->id() != 0) {
             $trp->excluded = false;
-            $trp->save($usr_msg);
+            $trp->save($msg);
         }
 
         // check if the standard samples for triples still exist and if not, create the samples

@@ -3051,7 +3051,7 @@ class sql_db
      */
     function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3059,22 +3059,22 @@ class sql_db
                 $result = pg_query($this->postgres_link, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $usr_msg->set_url($trace_link);
+                $msg->set_url($trace_link);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             try {
                 $result = mysqli_query($this->mysql, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $usr_msg->set_url($trace_link);
+                $msg->set_url($trace_link);
             }
         } else {
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $usr_msg->add_message_text(pg_last_error($this->postgres_link));
+            $msg->add_message_text(pg_last_error($this->postgres_link));
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -3460,20 +3460,20 @@ class sql_db
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      *
      * @param string $sql the sql statement to get the db row
-     * @param user_message $usr_msg to enrich with the messages that should be shown to the user
+     * @param user_message $msg to enrich with the messages that should be shown to the user
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values used for the precompiled SQL statement
      * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      */
     private function fetch_first(
         string       $sql,
-        user_message $usr_msg,
+        user_message $msg,
         string       $sql_name = '',
         array        $sql_array = array(),
         string       $debug_txt = ''
     ): array|false|null
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, false, $debug_txt);
+        return $this->fetch($sql, $msg, $sql_name, $sql_array, false, $debug_txt);
     }
 
     /**
@@ -3481,13 +3481,13 @@ class sql_db
      */
     private function fetch_all(
         string       $sql,
-        user_message $usr_msg,
+        user_message $msg,
         string       $sql_name = '',
         array        $sql_array = array(),
         string       $debug_txt = ''
     ): array|false
     {
-        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true, $debug_txt);
+        return $this->fetch($sql, $msg, $sql_name, $sql_array, true, $debug_txt);
     }
 
     private
@@ -3507,9 +3507,9 @@ class sql_db
      */
     function get_old(string $sql, string $sql_name = '', array $sql_array = array()): array
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $usr_msg, $sql_name, $sql_array);
+        return $this->fetch_all($sql, $msg, $sql_name, $sql_array);
     }
 
     /**
@@ -3521,9 +3521,9 @@ class sql_db
      */
     function get(sql_par $qp, string $debug_txt = ''): array|false
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $this->debug_msg($qp->sql, 'get');
-        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par, $debug_txt);
+        return $this->fetch_all($qp->sql, $msg, $qp->name, $qp->par, $debug_txt);
     }
 
     /**
@@ -3535,8 +3535,8 @@ class sql_db
      */
     function get_internal(string $sql): array
     {
-        $usr_msg = new user_message();
-        return $this->fetch_all($sql, $usr_msg);
+        $msg = new user_message();
+        return $this->fetch_all($sql, $msg);
     }
 
     /**
@@ -3545,13 +3545,13 @@ class sql_db
      * only for internal use where no parameter can be influenced by a user
      *
      * @param string $sql the sql statement to get the db row
-     * @param user_message $usr_msg to enrich the message object with the messages that should be shown to the user
+     * @param user_message $msg to enrich the message object with the messages that should be shown to the user
      * @param string $debug_txt the text that should be shown in the debug message
      * @return array|null the database row or null
      */
     function get1_internal(
         string       $sql,
-        user_message $usr_msg = new user_message(),
+        user_message $msg = new user_message(),
         string       $debug_txt = ''
     ): ?array
     {
@@ -3567,7 +3567,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $usr_msg, '', array(), $debug_txt);
+        return $this->fetch_first($sql, $msg, '', array(), $debug_txt);
     }
 
     /**
@@ -3621,7 +3621,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -3636,7 +3636,7 @@ class sql_db
         $sql_name = 'get_' . $field_name . '_from_' . $this->table . '_where_' . $id1_name . '_and_' . $id2_name;
         $sql_array = array($id1, $id2);
 
-        $sql_row = $this->fetch_first($sql, $usr_msg, $sql_name, $sql_array);
+        $sql_row = $this->fetch_first($sql, $msg, $sql_name, $sql_array);
 
         if ($sql_row != false) {
             if (count($sql_row) > 0) {
@@ -4696,7 +4696,7 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
      * @param bool $is_val if true, the row to be added to the database is a value, result or group and is using the group id, so no database id needs to be returned
      * @return true if the database has been updated
@@ -4704,7 +4704,7 @@ class sql_db
     function insert(
         sql_par      $qp,
         string       $description,
-        user_message $usr_msg,
+        user_message $msg,
         bool         $usr_tbl = false,
         bool         $is_val = false
     ): bool
@@ -4722,7 +4722,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4738,19 +4738,19 @@ class sql_db
                 if ($db_id == 0 or $db_id == '') {
                     if (!$is_val) {
                         log_err($err_msg);
-                        $usr_msg->add_message_text($err_msg);
+                        $msg->add_message_text($err_msg);
                     }
                 } else {
-                    $usr_msg->set_db_row_id($db_id);
+                    $msg->set_db_row_id($db_id);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -4762,10 +4762,10 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @return bool true if the database has been updated
      */
-    function update(sql_par $qp, string $description, user_message $usr_msg): bool
+    function update(sql_par $qp, string $description, user_message $msg): bool
     {
         global $sys;
 
@@ -4780,16 +4780,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -4801,10 +4801,10 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @return user_message
      */
-    function delete(sql_par $qp, string $description, user_message $usr_msg): user_message
+    function delete(sql_par $qp, string $description, user_message $msg): user_message
     {
         global $sys;
 
@@ -4819,16 +4819,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message_text($err_msg);
+                    $msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message_text($trace_link);
+            $msg->add_message_text($trace_link);
         }
         $sys->times->switch();
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -5311,7 +5311,7 @@ class sql_db
      */
     function del_field(string $table_name, string $field_name): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // adjust the parameters to the used database used
         $table_name = $this->get_table_name($table_name);
@@ -5322,10 +5322,10 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $usr_msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -5822,7 +5822,7 @@ class sql_db
     function import_system_users(): bool
     {
         $result = false;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
@@ -5841,7 +5841,7 @@ class sql_db
                 // create the main system user upfront direct from the code
                 // but only if needed and allowed which is only the case directly after the database structure creation
                 $init_usr = new user();
-                if ($init_usr->create_system_user($usr_msg)) {
+                if ($init_usr->create_system_user($msg)) {
                     // reload the system user if adding has been successful
                     $usr->load_by_id(users::SYSTEM_ID);
                 }
@@ -5956,7 +5956,7 @@ class sql_db
      */
     function create_internal_words(user $usr): user_message
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
 
         global $sys;
 
@@ -5966,7 +5966,7 @@ class sql_db
                 $wrd->set_name($name);
                 $wrd->set_code_id($name, $usr);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $wrd->save($usr_msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
@@ -5974,7 +5974,7 @@ class sql_db
                 $wrd->set_code_id($name, $usr);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
-                $wrd->save($usr_msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
                 $wrd = new word($usr);
@@ -5986,7 +5986,7 @@ class sql_db
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
                 $wrd->set_code_id($name, $usr);
-                $wrd->save($usr_msg);
+                $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
@@ -6004,7 +6004,7 @@ class sql_db
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $trp->save($usr_msg);
+                $trp->save($msg);
             }
             foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
@@ -6021,11 +6021,11 @@ class sql_db
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $trp->save($usr_msg);
+                $trp->save($msg);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     function import_system_views(user $usr): bool

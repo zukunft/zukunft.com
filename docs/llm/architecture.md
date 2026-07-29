@@ -406,3 +406,27 @@ docblock, on its own line immediately after the one-line description:
 The abbreviation matches the 3-letter prefix convention (`$wrd` word, `$frm`
 formula, `$msk` view/mask). For compound names combine the parts: `$sbx_lnk`
 sandbox_link, `$frm_lnk` formula_link, `$cmp_lnk` component_link.
+
+### Use the suggested var name — deviations are the exception
+
+Once a class declares its suggested var name, **every** variable holding an
+instance of that class uses it. Deviate only for a genuinely good reason — the
+common one is that **two instances of the same class share a scope** (`$src1` and
+`$src2`, `$frm_this` and `$frm_next`, a `$db_rec` reload compared against the
+object), where a second, meaningful name is clearer than `$src` / `$src2`. "It
+read fine at the time" is not a reason; reach for the suggested name first.
+
+The check `coding_rule_tests::php_class_name_check` scans the source and writes
+every deviation to the generated `docs/code_object_name_exceptions.md` (never edit
+that file by hand — it is regenerated from the code). That list is the scoreboard:
+it must stay **short**, and a rename that removes a line from it is the right
+direction. A class whose exception list is long signals variables that should be
+renamed back to the suggested name.
+
+A `user_message` is always **`$msg`** — the single most-passed object in the code
+(the append-only message threaded from the entry point, see
+[state-and-messages.md](state-and-messages.md)). Do not introduce `$usr_msg`,
+`$sys_msg`, `$db_msg` and the like for a lone message in a scope; use `$msg`. A
+second message buffer that genuinely coexists with `$msg` in one function (a local
+buffer merged back into the threaded `$msg`) is the sanctioned deviation and keeps
+a distinct name.

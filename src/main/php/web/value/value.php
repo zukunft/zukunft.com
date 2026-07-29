@@ -121,21 +121,21 @@ class value extends sandbox_value
      * set the vars of this value frontend object bases on the url array
      * TODO do the mapping always on normal, long and pod vars
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::SOURCE, $url_array)) {
                 if ($url_array[url_var::SOURCE] != null) {
                     $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -619,11 +619,11 @@ class value extends sandbox_value
      */
     private function reload(): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->is_id_set()) {
             $this->load_by_id($this->id());
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -633,11 +633,11 @@ class value extends sandbox_value
      */
     private function reload_if_needed(): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if (!$this->is_loaded()) {
-            $usr_msg = $this->reload();
+            $msg = $this->reload();
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

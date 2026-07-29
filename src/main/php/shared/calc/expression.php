@@ -189,18 +189,18 @@ class expression
      * get and set the reference text based on the user formula expression
      * TODO Prio 2 do not call it from the frontend
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @param user_message $usr_msg to enrich with problems and suggested solution
+     * @param user_message $msg to enrich with problems and suggested solution
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
     function ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                $usr_msg = new user_message()
+        user_message                $msg = new user_message()
     ): ?string
     {
         // TODO Prio 0 use the ref text check functions that includes the user message
         if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
-            $new_ref_txt = $this->get_ref_text($trm_lst, $usr_msg);
-            if ($usr_msg->is_ok()) {
+            $new_ref_txt = $this->get_ref_text($trm_lst, $msg);
+            if ($msg->is_ok()) {
                 $this->ref_text = $new_ref_txt;
                 $this->ref_text_dirty = false;
             }

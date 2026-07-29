@@ -316,14 +316,14 @@ class api_tests
      */
     function test_api_write_no_rest(sandbox $sbx, array $add_data, array $upd_data, test_cleanup $t): void
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // create a new object via api call and remember the id
-        $id = $t->assert_api_no_rest($sbx, 0, $add_data, $usr_msg);
+        $id = $t->assert_api_no_rest($sbx, 0, $add_data, $msg);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
         $t->assert_api_get($sbx::class, $id, 0, $add_data, true);
         // update the previous created test object
-        $id = $t->assert_api_no_rest($sbx, $id, $upd_data, $usr_msg);
+        $id = $t->assert_api_no_rest($sbx, $id, $upd_data, $msg);
         // remove the previous created test object
         $t->assert_api_del_no_rest($sbx::class, $id);
         // check the previous created test object really has been removed

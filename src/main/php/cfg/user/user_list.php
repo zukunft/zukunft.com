@@ -808,7 +808,7 @@ class user_list
             foreach ($this->lst() as $usr) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $usr_msg = $usr_msg_all->clone_reset();
+                $msg = $usr_msg_all->clone_reset();
                 // actual save the user to the database
                 if ($usr->excluded === true) {
                     if ($usr->id == 0 and $usr->name() != '') {
@@ -816,10 +816,10 @@ class user_list
                     }
                     $usr->del($usr_msg_all, $usr_req);
                 } else {
-                    $usr->save_user($usr_msg, $usr_req);
+                    $usr->save_user($msg, $usr_req);
                 }
                 // collect the user message for a consolidated list for the user
-                $usr_msg_all->merge($usr_msg);
+                $usr_msg_all->merge($msg);
             }
         }
     }

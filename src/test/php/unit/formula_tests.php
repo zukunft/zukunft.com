@@ -169,10 +169,10 @@ class formula_tests
         $frm_upd->set($frm_db->id(), $frm_db->name());
         $frm_upd->set_type_id($frm_db->type_id());
         $frm_upd->description = 'a new formula description';
-        $usr_msg = new user_message();
-        $chg_lst = $frm_upd->db_fields_changed($frm_db, $usr_msg);
+        $msg = new user_message();
+        $chg_lst = $frm_upd->db_fields_changed($frm_db, $msg);
         $test_name = 'a formula update without an expression is not blocked';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
         $test_name = 'a formula update without an expression keeps the stored expression';
         $t->assert_false($test_name, $chg_lst->has_name(formula_fields::FLD_FORMULA_TEXT));
         $test_name = 'a formula update still applies the changed description';
@@ -193,11 +193,11 @@ class formula_tests
         $frm_base = $t_frm->formula_filled();
         $frm_base->ref_text = '{w1}=1';
         $frm_base->need_all_val = false;
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $par_lst = new sql_type_list([sql_type::INSERT, sql_type::LOG, sql_type::USER]);
         $sc->reset(sql_db::POSTGRES);
-        $chg_lst = $frm_on->db_fields_changed($frm_base, $usr_msg, $par_lst);
-        $qp = $frm_on->sql_insert_switch($sc, $chg_lst, $frm_on->db_fields_all(), $usr_msg, $par_lst);
+        $chg_lst = $frm_on->db_fields_changed($frm_base, $msg, $par_lst);
+        $qp = $frm_on->sql_insert_switch($sc, $chg_lst, $frm_on->db_fields_all(), $msg, $par_lst);
         $test_name = 'the change log function declares the all_values_needed old parameter it uses';
         $t->assert_text_contains($test_name, $qp->sql, '_all_values_needed_old smallint');
 

@@ -59,7 +59,7 @@ class db_cache_page_write_tests
     {
 
         // init
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write db_cache_page ';
@@ -74,7 +74,7 @@ class db_cache_page_write_tests
 
         // caching an html page for a new url creates a database row
         $test_name = 'caching an html page for a new url is saved without error';
-        $t->assert_true($test_name, $cac_page->save_html(self::TV_URL, self::TV_HTML, $usr_msg));
+        $t->assert_true($test_name, $cac_page->save_html(self::TV_URL, self::TV_HTML, $msg));
         $page_id = $cac_page->id();
 
         // the cached html page can be retrieved by the url
@@ -84,7 +84,7 @@ class db_cache_page_write_tests
 
         // caching the same url again replaces the html page instead of adding a row
         $test_name = 'caching the same url again is saved without error';
-        $t->assert_true($test_name, $cac_page->save_html(self::TV_URL, self::TV_HTML_RENEWED, $usr_msg));
+        $t->assert_true($test_name, $cac_page->save_html(self::TV_URL, self::TV_HTML_RENEWED, $msg));
         $test_name = 'the renewed html page is returned for the url';
         $t->assert($test_name, $cac_check->html_by_url(self::TV_URL), self::TV_HTML_RENEWED);
         $test_name = 'the renewed html page has replaced the db row instead of adding one';

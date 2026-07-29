@@ -104,11 +104,11 @@ class phrase_list extends sandbox_list_named
      * the comma-separated phrase ids are read from the CONTEXT field;
      * the sign of each id encodes the class (positive = word, negative = triple)
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         if (array_key_exists(url_var::CONTEXT, $url_array)) {
             $id_csv = $url_array[url_var::CONTEXT];
@@ -127,7 +127,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

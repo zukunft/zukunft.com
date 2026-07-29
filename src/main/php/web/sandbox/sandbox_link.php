@@ -83,21 +83,21 @@ class sandbox_link extends sandbox
     /**
      * set the vars of this sandbox link object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             // the linked objects are set in the child object
             // e.g. the view is set in the view_relation class
             if (array_key_exists(url_var::TYPE, $url_array)) {
                 $this->predicate_id = $url_array[url_var::TYPE];
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

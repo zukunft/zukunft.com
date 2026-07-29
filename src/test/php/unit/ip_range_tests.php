@@ -110,13 +110,13 @@ class ip_range_tests
 
         $t->subheader($ts . 'im- and export');
 
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($t->usr1);
         // use the system user for the import
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($t->usr_system), $t);
+        $ip_range->import_obj($json_in, $msg, new data_object($t->usr_system), $t);
         $json_ex = $ip_range->export_json([]);
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);

@@ -96,7 +96,7 @@ class import_file
     {
         global $cfg;
 
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -135,22 +135,22 @@ class import_file
 
         if (!$json_str) {
             log_err('import file ' . $filename . ' cannot be loaded');
-            $this->read_error($filename, file_types::JSOM, $usr_msg);
+            $this->read_error($filename, file_types::JSOM, $msg);
         } else {
             if ($json_str == '') {
-                $usr_msg->add_id(msg_id::FAILED_MESSAGE_EMPTY);
+                $msg->add_id(msg_id::FAILED_MESSAGE_EMPTY);
             } else {
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $imp->put_json_direct($json_str, $usr_msg);
+                    $imp->put_json_direct($json_str, $msg);
                 } else {
-                    $imp->put_json($json_str, $usr_msg);
+                    $imp->put_json($json_str, $msg);
                 }
 
                 // show the summery to the user
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add_info_text(' done ('
+                if ($msg->is_ok()) {
+                    $msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
                         . $imp->triples_done . ' triples, '
@@ -164,14 +164,14 @@ class import_file
                         . $imp->calc_validations_done . ' results validated, '
                         . $imp->view_validations_done . ' views validated)');
                     if ($imp->users_done > 0) {
-                        $usr_msg->add_info_text(' ... and ' . $imp->users_done . ' $users');
+                        $msg->add_info_text(' ... and ' . $imp->users_done . ' $users');
                     }
                     if ($imp->system_done > 0) {
-                        $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
+                        $msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
                     // TODO Prio 1 move to calling function and include save
-                    $err_msg = 'import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text();
+                    $err_msg = 'import of ' . $filename . ' failed due to ' . $msg->all_message_text();
                     if (!$ignore_errors) {
                         log_err($err_msg);
                     } else {
@@ -181,7 +181,7 @@ class import_file
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -193,28 +193,28 @@ class import_file
      */
     function yaml_file(string $filename, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $yaml_str = file_get_contents($filename);
         if (!$yaml_str) {
-            $this->read_error($filename, file_types::YAML, $usr_msg);
+            $this->read_error($filename, file_types::YAML, $msg);
         } else {
             if ($yaml_str == '') {
-                $this->empty_warning($filename, $usr_msg);
+                $this->empty_warning($filename, $msg);
             } else {
                 $imp = new import($filename);
                 $imp->usr = $usr;
                 $import_result = $imp->put_yaml($yaml_str);
                 if ($import_result->is_ok()) {
-                    $this->done($imp->summary(), $usr_msg);
+                    $this->done($imp->summary(), $msg);
                 } else {
-                    $this->failed($import_result->all_message_text(), $usr_msg);
+                    $this->failed($import_result->all_message_text(), $msg);
                 }
-                $usr_msg->merge($import_result);
+                $msg->merge($import_result);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**

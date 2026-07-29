@@ -1216,13 +1216,13 @@ class test_base
         if ($usr == null) {
             $usr = $usr_obj->get_user();
         }
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
         // TODO move to a lib function that fills an usr_msg object
         if ($json_in !== null) {
-            $dto = new data_object($usr_msg->usr);
-            $usr_obj->import_obj($json_in, $usr_msg, $dto);
+            $dto = new data_object($msg->usr);
+            $usr_obj->import_obj($json_in, $msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
             $json_ex = $usr_obj->export_json([], false);
             // TODO Prio 2 remove exception
@@ -1249,13 +1249,13 @@ class test_base
      */
     function assert_ex_and_import(object $obj, user $usr_req): bool
     {
-        $usr_msg = new user_message($usr_req);
+        $msg = new user_message($usr_req);
         $json_before = $obj->api_json([api_types::TEST_MODE]);
         $json_ex = $obj->export_json([], false);
         $new_obj = $obj->clone_all();
         $new_obj->reset(true);
         $dto = new data_object($usr_req);
-        $new_obj->import_obj($json_ex, $usr_msg, $dto);
+        $new_obj->import_obj($json_ex, $msg, $dto);
         $json_after = $obj->api_json([api_types::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);
@@ -1672,23 +1672,23 @@ class test_base
         array       $sc_par_lst_in = []
     ): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         $sc_par_lst->add(sql_type::INSERT);
         $sc_par_lst->add(sql_type::NO_ID_RETURN);
         $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
+        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1705,11 +1705,11 @@ class test_base
      */
     function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_obj::class == user::class) {
-            $usr_msg->usr = $this->usr_admin;
+            $msg->usr = $this->usr_admin;
         } else {
-            $usr_msg->usr = $this->usr1;
+            $msg->usr = $this->usr1;
         }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
@@ -1717,7 +1717,7 @@ class test_base
         if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
             $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
         } else {
-            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert($sc, $msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1727,7 +1727,7 @@ class test_base
             if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
                 $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
             } else {
-                $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
+                $qp = $usr_obj->sql_insert($sc, $msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1752,11 +1752,11 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         $test_name = 'if a mandatory parameter in a ' . $class . ' object is not set an error message should be returned';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
-        return $this->assert_false($test_name, $usr_msg->is_ok());
+        $qp = $usr_obj->sql_insert($sc, $msg, $sc_par_lst);
+        return $this->assert_false($test_name, $msg->is_ok());
     }
 
     /**
@@ -1776,22 +1776,22 @@ class test_base
         array                                                           $sql_type_array = []
     ): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_obj::class == user::class) {
-            $usr_msg->usr = $this->usr_admin;
+            $msg->usr = $this->usr_admin;
         } else {
-            $usr_msg->usr = $this->usr1;
+            $msg->usr = $this->usr1;
         }
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+        $qp = $usr_obj->sql_update($sc, $db_obj, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1814,7 +1814,7 @@ class test_base
         array                                                           $sql_type_array = []
     ): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $sc_par_lst = new sql_type_list($sql_type_array);
 
         $usr_obj = $db_obj->clone_all();
@@ -1822,13 +1822,13 @@ class test_base
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+        $qp = $usr_obj->sql_update($sc, $db_obj, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1845,19 +1845,19 @@ class test_base
      */
     function assert_sql_delete(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // use the system user for the sql creation test because otherwise no statement would be created e.g. to delete a verb
-        $usr_msg->usr = $this->usr_system;
+        $msg->usr = $this->usr_system;
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
+        $qp = $usr_obj->sql_delete($sc, $msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_delete($sc, $msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -3144,12 +3144,12 @@ class test_base
      */
     function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx): bool
     {
-        $usr_msg = new user_message($this->usr1);
+        $msg = new user_message($this->usr1);
         // add the named object and remember the name
         $name = $sbx->name();
-        $sbx->save($usr_msg);
+        $sbx->save($msg);
         // reset the user_message because we don't care if the object already existed before saving it,
-        $usr_msg = new user_message($this->usr1);
+        $msg = new user_message($this->usr1);
         $sbx->reset(true);
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -3168,7 +3168,7 @@ class test_base
         // update the name
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
-            $sbx->save($usr_msg);
+            $sbx->save($msg);
             $sbx->reset(true);
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -3187,7 +3187,7 @@ class test_base
 
         if ($result) {
             // delete the name
-            $sbx->del($usr_msg);
+            $sbx->del($msg);
         }
 
         // check the log
@@ -3745,14 +3745,14 @@ class test_base
      */
     function write_cleanup(user|db_id_object_non_sandbox $obj, string $key, string $key_name, bool $check = false): void
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $obj->load_by_key($key, $key_name);
         if ($check) {
             if ($obj->id() != 0) {
                 log_warning('Unexpected cleanup of ' . $obj->dsp_id());
             }
         }
-        $obj->del($usr_msg, $this->usr_admin);
+        $obj->del($msg, $this->usr_admin);
     }
 
     /**
@@ -3826,9 +3826,9 @@ class test_base
             }
         }
         foreach ($ids_by_class as $chg_class => $ids) {
-            $usr_msg = new user_message($this->usr_system);
+            $msg = new user_message($this->usr_system);
             $qp = $db_con->sql_creator()->del_sql_list_without_log($chg_class, change_log::FLD_ID, $ids);
-            $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $usr_msg);
+            $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $msg);
         }
     }
 
@@ -3843,9 +3843,9 @@ class test_base
     protected function cleanup_change_log_deleted(): void
     {
         global $db_con;
-        $usr_msg = new user_message($this->usr_system);
+        $msg = new user_message($this->usr_system);
         $qp = $this->change_log_deleted_qp($db_con->sql_creator());
-        $db_con->delete($qp, 'cleanup change log of deleted test rows', $usr_msg);
+        $db_con->delete($qp, 'cleanup change log of deleted test rows', $msg);
     }
 
     /**
@@ -3910,9 +3910,9 @@ class test_base
             $link_lst->load_by_obj(value::class, $grp_id, $this->usr_system, sql_db::ROW_MAX);
             $ids = $link_lst->ids();
             if (count($ids) > 0) {
-                $usr_msg = new user_message($this->usr_system);
+                $msg = new user_message($this->usr_system);
                 $qp = $db_con->sql_creator()->del_sql_list_without_log(change_link::class, change_link::FLD_ID, $ids);
-                $db_con->delete($qp, 'cleanup value link change log', $usr_msg);
+                $db_con->delete($qp, 'cleanup value link change log', $msg);
             }
         }
     }
@@ -3938,9 +3938,9 @@ class test_base
                 $cng_tbl->id(change_tables::VALUE_TIME_SERIES),
                 $cng_tbl->id(change_tables::VALUE_TS_DATA)
             ];
-            $usr_msg = new user_message($this->usr_system);
+            $msg = new user_message($this->usr_system);
             $qp = $this->value_time_series_change_log_del_qp($db_con->sql_creator(), $vts_id, $tbl_ids);
-            $db_con->delete($qp, 'cleanup value time series change log', $usr_msg);
+            $db_con->delete($qp, 'cleanup value time series change log', $msg);
         }
     }
 
@@ -3997,9 +3997,9 @@ class test_base
                 $sc->set_class($chg_class);
                 $tbl = $sc->get_table();
                 if (str_ends_with($tbl, $size)) {
-                    $usr_msg = new user_message($this->usr_system);
+                    $msg = new user_message($this->usr_system);
                     $qp = $this->value_change_log_del_qp($sc, $chg_class, $tbl, $grp_id);
-                    $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $usr_msg);
+                    $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $msg);
                 }
             }
         }
@@ -4063,8 +4063,8 @@ class test_base
         $ref->load_by_name($name);
         if ($ref->id() != 0) {
             // a loaded ref only carries the phrase id, so load the phrase to get its name to check
-            $usr_msg = new user_message($this->usr_system);
-            $ref->reload_objects($usr_msg);
+            $msg = new user_message($this->usr_system);
+            $ref->reload_objects($msg);
             if ($this->is_test_phrase_name($ref->phrase_name())) {
                 $this->delete_change_log_of_obj(ref::class, $ref->id());
             }
@@ -4180,7 +4180,7 @@ class test_base
         bool                                                               $check = false
     ): void
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_name($name);
         if ($sbx->id() != 0) {
@@ -4191,9 +4191,9 @@ class test_base
             // to the overlay row, so remove the overlay row too for a complete cleanup
             // (only sandbox objects have user overlay rows, e.g. a verb has none)
             if ($sbx instanceof sandbox and $sbx->has_usr_cfg()) {
-                $sbx->del_usr_cfg($usr_msg);
+                $sbx->del_usr_cfg($msg);
             }
-            $sbx->del($usr_msg);
+            $sbx->del($msg);
         } else {
             // an excluded overlay row of a previous run hides the object from the load above,
             // so it would survive every cleanup: find the object via the system user view
@@ -4205,7 +4205,7 @@ class test_base
                 $sbx_std->load_by_name($name);
                 if ($sbx_std->id() != 0) {
                     $sbx_std->set_user($usr);
-                    $sbx_std->del_usr_cfg($usr_msg);
+                    $sbx_std->del_usr_cfg($msg);
                 }
             }
         }
@@ -4230,18 +4230,18 @@ class test_base
     {
         global $db_con;
 
-        $usr_msg = new user_message($this->usr_admin);
+        $msg = new user_message($this->usr_admin);
         $typ->load_by_name($name);
         if ($typ->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $typ->dsp_id());
             }
             $sc = $db_con->sql_creator();
-            $qp = $typ->sql_delete($sc, $usr_msg, new sql_type_list());
+            $qp = $typ->sql_delete($sc, $msg, new sql_type_list());
             if ($qp == null) {
                 log_warning('cleanup of type row ' . $typ->dsp_id() . ' is not allowed');
-            } elseif ($usr_msg->is_ok()) {
-                $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $usr_msg);
+            } elseif ($msg->is_ok()) {
+                $db_con->delete($qp, 'cleanup ' . $typ->dsp_id(), $msg);
             }
         }
     }
@@ -4264,14 +4264,14 @@ class test_base
         bool                     $check = false
     ): void
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_grp($grp);
         if ($sbx->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
-            $sbx->del($usr_msg);
+            $sbx->del($msg);
         }
     }
 
@@ -4314,7 +4314,7 @@ class test_base
      */
     function write_link_cleanup(sandbox_link $lnk, int $id, bool $check = false): void
     {
-        $usr_msg = new user_message($this->usr1);
+        $msg = new user_message($this->usr1);
         $lnk->set_user($this->usr1);
         $lnk->load_by_id($id);
         if ($check) {
@@ -4322,7 +4322,7 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del($usr_msg);
+        $lnk->del($msg);
         $lnk->set_user($this->usr2);
         $lnk->load_by_id($id);
         if ($check) {
@@ -4330,9 +4330,9 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del($usr_msg);
-        if (!$usr_msg->is_ok()) {
-            log_warning('link cleanup failed due to ' . $usr_msg->all_message_text());
+        $lnk->del($msg);
+        if (!$msg->is_ok()) {
+            log_warning('link cleanup failed due to ' . $msg->all_message_text());
         }
     }
 
@@ -4352,12 +4352,12 @@ class test_base
     function write_add(user|ip_range $obj, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $class = $lib->class_to_name($obj::class);
         $name = $obj->unique_value();
         $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
         // TODO maybe add if ($obj::class = user::class) {
-        if ($this->assert_true($test_name, $obj->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $obj->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $obj->id();
         } else {
             return 0;
@@ -4376,12 +4376,12 @@ class test_base
     function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message($this->usr1);
+        $msg = new user_message($this->usr1);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
         $sbx->set_name($name);
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -4392,7 +4392,7 @@ class test_base
     function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -4405,7 +4405,7 @@ class test_base
         $sbx->set_tob($tob);
         $sbx->set_name($name);
         $sbx->set_predicate_id($ori->predicate_id());
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -4416,7 +4416,7 @@ class test_base
     function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -4432,7 +4432,7 @@ class test_base
             $sbx->set_tob($tob);
         }
         $sbx->set_predicate_id($ori->predicate_id());
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -4559,7 +4559,7 @@ class test_base
     private
     function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
         $name = $sbx->name();
@@ -4568,7 +4568,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
         $sbx->set_name($new_name);
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             $sbx->reset(true);
             $sbx->load_by_name($new_name);
             if ($sbx->id() == $id) {
@@ -4588,7 +4588,7 @@ class test_base
     private
     function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -4596,7 +4596,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, fields::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
@@ -4606,7 +4606,7 @@ class test_base
     private
     function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -4615,7 +4615,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $sbx->description = $new_description;
-        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
                 fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
@@ -4657,7 +4657,7 @@ class test_base
     private
     function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -4666,7 +4666,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' order number to ' . $new_order_nbr;
         $lnk->order_nbr = $new_order_nbr;
-        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 formula_link::FLD_ORDER, $new_order_nbr, msg_id::LOG_UPDATE->value, $old_order_nbr);
         } else {
@@ -4693,7 +4693,7 @@ class test_base
     private
     function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -4702,7 +4702,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $lnk->description = $new_description;
-        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
@@ -4752,7 +4752,7 @@ class test_base
     private
     function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $id = $sbx->id();
         $name = $sbx->name();
         $sbx->set_user($usr);
@@ -4760,7 +4760,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'del ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
-        if ($this->assert_true($test_name, $sbx->del($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->del($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_DEL->value);
         } else {
             return false;
@@ -4881,11 +4881,11 @@ class test_base
      */
     function assert_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' is db_ready';
-        return $this->assert_true($test_name, $sbx->db_ready($usr_msg));
+        return $this->assert_true($test_name, $sbx->db_ready($msg));
     }
 
     /**
@@ -4895,13 +4895,13 @@ class test_base
      */
     function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_multi|verb|user $sbx): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' is not db_ready';
-        $this->assert_false($test_name, $sbx->db_ready($usr_msg));
+        $this->assert_false($test_name, $sbx->db_ready($msg));
         $test_name = $class . ' message is is not db_ready';
-        return $this->assert_not($test_name, $usr_msg->all_message_text(), '');
+        return $this->assert_not($test_name, $msg->all_message_text(), '');
     }
 
     /**
@@ -4921,21 +4921,21 @@ class test_base
         $usr_sys = $this->user_system();
 
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $class = $lib->class_to_name($base::class);
         $test_name = 'empty ' . $class . ' differs from filled object and the no_diff function works';
-        $this->assert_false($test_name, $base->no_diff($filled, $usr_msg));
+        $this->assert_false($test_name, $base->no_diff($filled, $msg));
         $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty = $base->clone_reset();
         $empty->fill($filled, $usr_sys);
         $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';
-        if (!$empty->no_diff($filled, $usr_msg)) {
-            $fvt_lst = $empty->db_fields_changed($filled, $usr_msg);
+        if (!$empty->no_diff($filled, $msg)) {
+            $fvt_lst = $empty->db_fields_changed($filled, $msg);
             //$fvt_lst = $fvt_lst->is_empty_except_internal_fields();
             $diff_msg = implode(",", $fvt_lst->names());
             $this->assert($test_name, $diff_msg, '');
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $test_name = $class . ' fill empty object and test via api json';
             $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
             return $this->assert_json_string($test_name, $filled_json, $original_json);
@@ -4955,7 +4955,7 @@ class test_base
     ): bool
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $class = $lib->class_to_name($filled::class);
         $msg_txt = '';
 
@@ -4963,7 +4963,7 @@ class test_base
         $empty = $filled->clone_reset();
         $delta = $filled->clone_all();
         $delta = $empty->delta($filled, $delta);
-        if (!$empty->no_non_id_diff($delta, $usr_msg)) {
+        if (!$empty->no_non_id_diff($delta, $msg)) {
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }
@@ -4974,7 +4974,7 @@ class test_base
         $empty = $filled->clone_reset();
         $delta = $filled->clone_all();
         $delta = $base->delta($filled, $delta);
-        if (!$base->no_non_id_diff($delta, $usr_msg)) {
+        if (!$base->no_non_id_diff($delta, $msg)) {
             $diff_msg = $empty->diff_msg($delta);
             $msg_txt = 'diff: ' . $diff_msg->text();
         }

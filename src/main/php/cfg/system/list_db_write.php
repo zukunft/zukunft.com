@@ -176,15 +176,15 @@ class list_db_write extends list_db_read
     /**
      * get a list of all sql function names that are needed to add all objects of this list to the database
      *
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return sql_par_list with the sql function names
      */
-    function sql_insert_call_with_par(sql_creator $sc, user_message $usr_msg): sql_par_list
+    function sql_insert_call_with_par(sql_creator $sc, user_message $msg): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready($usr_msg)) {
+            if ($sbx->db_ready($msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 $sc_par_lst->add(sql_type::LOG);
@@ -194,8 +194,8 @@ class list_db_write extends list_db_read
                     $qp->obj_name = $sbx->name();
                     $sql_list->add($qp);
                 } else {
-                    $usr_msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $usr_msg->all_message_text());
+                    $msg->merge($ins_usr_msg);
+                    log_err('Internal import error: ' . $msg->all_message_text());
                 }
             }
         }
@@ -205,15 +205,15 @@ class list_db_write extends list_db_read
     /**
      * get a list of all sql function names that are needed to add all objects of this list to the database
      *
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return sql_par_list with the sql function names
      */
-    function sql_insert_no_log(sql_creator $sc, user_message $usr_msg): sql_par_list
+    function sql_insert_no_log(sql_creator $sc, user_message $msg): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready($usr_msg)) {
+            if ($sbx->db_ready($msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $ins_usr_msg = new user_message();
@@ -222,8 +222,8 @@ class list_db_write extends list_db_read
                     $qp->obj_name = $sbx->name();
                     $sql_list->add($qp);
                 } else {
-                    $usr_msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $usr_msg->all_message_text());
+                    $msg->merge($ins_usr_msg);
+                    log_err('Internal import error: ' . $msg->all_message_text());
                 }
             }
         }
@@ -234,13 +234,13 @@ class list_db_write extends list_db_read
      * get a list of all sql function names that are needed to delete all objects of this list from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param list_db_write|null $db_lst the list of delete statements that are already in the database
      * @return sql_par_list with the sql function names
      */
     function sql_delete_call_with_par(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         list_db_write|null $db_lst = null
     ): sql_par_list
     {
@@ -255,8 +255,8 @@ class list_db_write extends list_db_read
                 $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
             } else {
-                $usr_msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $usr_msg->all_message_text());
+                $msg->merge($ins_usr_msg);
+                log_err('Internal import error: ' . $msg->all_message_text());
             }
         }
         return $sql_list;
@@ -266,13 +266,13 @@ class list_db_write extends list_db_read
      * get a list of all sql function names that are needed to delete all objects of this list from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @param list_db_write|null $db_lst the list of delete statements that are already in the database
      * @return sql_par_list with the sql function names
      */
     function sql_delete_no_log(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         list_db_write|null $db_lst = null
     ): sql_par_list
     {
@@ -286,8 +286,8 @@ class list_db_write extends list_db_read
                 $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
             } else {
-                $usr_msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $usr_msg->all_message_text());
+                $msg->merge($ins_usr_msg);
+                log_err('Internal import error: ' . $msg->all_message_text());
             }
         }
         return $sql_list;

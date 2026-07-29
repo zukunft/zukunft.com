@@ -1049,14 +1049,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_show(
         string       $class,
         int          $msk_id,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
@@ -1160,7 +1160,7 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     /**
@@ -1168,14 +1168,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_add(
         string       $class,
         int          $msk_id,
         string       $type = url_var::MASK_HUMAN,
-        user_message $usr_msg = new user_message()
+        user_message $msg = new user_message()
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
@@ -1304,7 +1304,7 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_CREATE, true];
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     /**
@@ -1313,14 +1313,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_edit(
         string       $class,
         int          $msk_id,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
@@ -1445,7 +1445,7 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_UPDATE, true];
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     /**
@@ -1454,14 +1454,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_del(
         string       $class,
         int          $msk_id,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_array = [];
@@ -1580,7 +1580,7 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_DELETE, true];
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     /**
@@ -1588,14 +1588,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_step(
         string       $class,
         int          $msk_id,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_array = [];
@@ -1631,7 +1631,7 @@ class test_mappers
             default:
                 log_err('no filled url object defined for step action ' . $class);
         }
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     /**
@@ -1639,14 +1639,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the search mask
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message $msg to enhance with messages to the user
      * @return string url with mask id, optional object name, and context phrase ids
      */
     function class_to_url_search(
         string       $class,
         int          $msk_id,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_array = [];
@@ -1700,20 +1700,20 @@ class test_mappers
             default:
                 log_err('no filled url object defined for search action ' . $class);
         }
-        return $this->array_to_url_type($url_array, $type, $usr_msg);
+        return $this->array_to_url_type($url_array, $type, $msg);
     }
 
     private function array_to_url_type(
         array        $url_array,
         string       $type,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         $url_map = new url_mapper();
         if ($type == url_var::MASK_HUMAN) {
-            $url = $url_map->standard_url_to_human($url_array, $usr_msg);
+            $url = $url_map->standard_url_to_human($url_array, $msg);
         } elseif ($type == url_var::MASK_POD) {
-            $url = $url_map->standard_url_to_pod($url_array, $usr_msg);
+            $url = $url_map->standard_url_to_pod($url_array, $msg);
         } else {
             $url = $url_map->array_to_url($url_array);
         }

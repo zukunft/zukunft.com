@@ -81,21 +81,21 @@ class sandbox_code_id extends sandbox_typed
      * the type; if an ip-only or name-only user actually changes it a warning is shown the usual way
      * and the change is not confirmed (mirrors the backend can_set_type_id permission)
      *
-     * @param user_message $usr_msg with the requesting user and to enrich with a warning per invalid field
+     * @param user_message $msg with the requesting user and to enrich with a warning per invalid field
      * @param string $action the crud action of the change; a delete needs no type
      * @param array $url_array the pending change url with the new phrase type and its '8'-prefixed old value
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE) {
             $old = $url_array[url_var::PRE . url_var::PHRASE_TYPE] ?? null;
             $new = $url_array[url_var::PHRASE_TYPE] ?? null;
             if ($new != $old) {
-                $usr = $usr_msg->usr;
+                $usr = $msg->usr;
                 if ($usr == null or !$usr->can_set_type_id()) {
-                    $usr_msg->add_warning_with_vars(msg_id::TYPE_CHANGE_NOT_ALLOWED, [
+                    $msg->add_warning_with_vars(msg_id::TYPE_CHANGE_NOT_ALLOWED, [
                         msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                     ]);
                     $result = false;

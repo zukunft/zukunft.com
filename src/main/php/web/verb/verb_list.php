@@ -89,14 +89,14 @@ class verb_list extends type_list
      */
     function set_from_json_array(array $json_array, string $class = verb::class): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone new verb();
-            if ($new->api_mapper($value, $usr_msg)) {
+            if ($new->api_mapper($value, $msg)) {
                 $this->add_obj($new);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     function list(string $class, string $title = ''): string

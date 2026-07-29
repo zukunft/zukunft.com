@@ -59,7 +59,7 @@ class expression_tests
 
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $lib = new library();
 
         // init
@@ -76,7 +76,7 @@ class expression_tests
         $test_name = 'get all terms needed calculating an expression';
         $frm = $t_frm->formula();
         $exp = $frm->expression();
-        $trm_id_lst = $exp->term_id_list($usr_msg);
+        $trm_id_lst = $exp->term_id_list($msg);
         $result = $trm_id_lst->dsp_id();
         $target = word_names::MINUTE_ID * 2 - 1;
         $t->assert($test_name, $result, $target);
@@ -84,43 +84,43 @@ class expression_tests
         $test_name = 'reference text is invalid because a symbol is too short';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
         $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
+        $exp->term_id_list($msg);
+        $result = $msg->all_message_text();
         $target = 'the formula expression symbol "{w}" is too short';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         $test_name = 'reference text is invalid because the id is not a number';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
         $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
+        $exp->term_id_list($msg);
+        $result = $msg->all_message_text();
         $target = 'the formula expression id wO is no a valid integer number';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         $test_name = 'reference text is invalid because the term type is not supported';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
         $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
+        $exp->term_id_list($msg);
+        $result = $msg->all_message_text();
         $target = 'the formula expression symbol "d" is not valid. only word, triple, verb and formula are expected.';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         $test_name = 'reference text is invalid because it is an empty string';
         $frm->ref_text = '';
         $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
+        $exp->term_id_list($msg);
+        $result = $msg->all_message_text();
         $target = 'the expression of formula "scale minute to sec" is empty';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         $test_name = 'get the phrase id that should be added to the results';
         $frm = $t_frm->formula();
         $exp = $frm->expression();
-        $trm_id_lst = $exp->phrase_id_list($usr_msg);
+        $trm_id_lst = $exp->phrase_id_list($msg);
         $result = $trm_id_lst->dsp_id();
         $target = 'phrase_id ' . triple_names::SECOND_ID * -1 . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
         $t->assert($test_name, $result, $target);
@@ -128,16 +128,16 @@ class expression_tests
         $test_name = 'phrase id is invalid because the id is not a number';
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID;
         $exp = $frm->expression();
-        $exp->phrase_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
+        $exp->phrase_id_list($msg);
+        $result = $msg->all_message_text();
         $target = 'the formula expression id wO is no a valid integer number';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         $test_name = 'get all terms including the phrases for the result';
         $frm = $t_frm->formula();
         $exp = $frm->expression();
-        $trm_id_lst = $exp->term_id_list_all($usr_msg);
+        $trm_id_lst = $exp->term_id_list_all($msg);
         $result = $trm_id_lst->dsp_id();
         $target = '"","" (' . triple_names::SECOND_ID * -2 + 1 . ',' . word_names::MINUTE_ID * 2 - 1 . ')';
         $t->assert($test_name, $result, $target);
@@ -146,11 +146,11 @@ class expression_tests
         $frm = $t_frm->formula();
         $exp = $frm->expression();
         $trm_lst = $t_trm->term_list_all();
-        $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
+        $id_lst = $exp->terms_missing($msg, $trm_lst);
         $t->assert_true($test_name, $id_lst->is_empty());
         $test_name = 'id list of missing terms is returning the missing term id';
         $trm_lst->unset_by_id(words::SECOND_ID);
-        $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
+        $id_lst = $exp->terms_missing($msg, $trm_lst);
         $t->assert($test_name, $result, $target);
 
 
@@ -192,8 +192,8 @@ class expression_tests
         //$trm_names = $exp->get_usr_names();
         //$trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
-        $usr_msg->reset();
-        $phr_lst = $exp->terms($usr_msg, $trm_lst)->phrase_list();
+        $msg->reset();
+        $phr_lst = $exp->terms($msg, $trm_lst)->phrase_list();
         $result = $phr_lst->dsp_id();
         $target = '"' . word_names::CIRCUMFERENCE . '","'
             . word_names::PI . '" (phrase_id '
@@ -215,8 +215,8 @@ class expression_tests
         // the phrase list for the calc part should be empty, because it contains only formulas
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
-        $usr_msg->reset();
-        $phr_lst = $exp->terms($usr_msg, $trm_lst_rev)->phrase_list();
+        $msg->reset();
+        $phr_lst = $exp->terms($msg, $trm_lst_rev)->phrase_list();
         $result = $phr_lst->dsp_id();
         $target = '';
         $t->assert($test_name, $result, $target);
@@ -239,10 +239,10 @@ class expression_tests
             . ') for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
+        $msg->reset();
 
         // test the element list of the right side
-        $elm_grp_lst = $exp->element_list($usr_msg, $trm_lst);
+        $elm_grp_lst = $exp->element_list($msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts","of","total" (element_id '
             . word_names::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
@@ -271,7 +271,7 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula element list';
-        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        $elm_lst = $exp->element_list($msg, $trm_lst);
         $result = $elm_lst->dsp_id();
         $target = '"' . formula_names::THIS_NAME . '","'
             . formula_names::PRIOR . '","'
@@ -279,7 +279,7 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
-        $trm_lst = $exp->terms($usr_msg, $trm_lst);
+        $trm_lst = $exp->terms($msg, $trm_lst);
         $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
             . formula_names::PRIOR . '","'
@@ -287,8 +287,8 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         // element_special_following
-        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
-        $follow_lst = $exp->terms_following($usr_msg, $trm_lst);
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst));
+        $follow_lst = $exp->terms_following($msg, $trm_lst);
         $result = $follow_lst->dsp_name();
         $target = '"' . formula_names::PRIOR . '","' . formula_names::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);

@@ -524,24 +524,24 @@ class triple_list extends sandbox_list_named
      * import a triple list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $value) {
             $trp = new triple($this->get_user());
-            if ($trp->import_obj($value, $usr_msg, $dto)) {
+            if ($trp->import_obj($value, $msg, $dto)) {
                 $this->add_by_key($trp);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -584,15 +584,15 @@ class triple_list extends sandbox_list_named
 
     /**
      * delete all loaded triples e.g. to delete all the triples linked to a word
-     * @param user_message $usr_msg the message for the user why deleting the triples has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the triples has failed and a suggested solution
      * @return bool true if all triples has been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         foreach ($this->lst() as $trp) {
-            $trp->del($usr_msg);
+            $trp->del($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -766,10 +766,10 @@ class triple_list extends sandbox_list_named
      * with a different name would drop a duplicate-link insert and keep the old name
      * (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
      * the id of a renamed triple is set from the original so it is excluded from the insert step
-     * @param user_message $usr_msg to collect the messages of the triggered rename
+     * @param user_message $msg to collect the messages of the triggered rename
      * @return void
      */
-    function rename_link_conflicts(user_message $usr_msg): void
+    function rename_link_conflicts(user_message $msg): void
     {
         foreach ($this->lst() as $trp) {
             if ($trp->id() == 0 and $trp->from_id() != 0 and $trp->to_id() != 0) {
@@ -777,7 +777,7 @@ class triple_list extends sandbox_list_named
                 $db_trp->load_by_link_id($trp->from_id(), $trp->predicate_id(), $trp->to_id());
                 if ($db_trp->id() > 0 and $db_trp->name() != $trp->name()) {
                     $db_trp->set_name($trp->name());
-                    $db_trp->save($usr_msg);
+                    $db_trp->save($msg);
                     $trp->id = $db_trp->id();
                 }
             }
@@ -794,12 +794,12 @@ class triple_list extends sandbox_list_named
      * starting with the $cache that contains the words
      * add the triples that does not yet have a database id
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the filename and the estimated time of arrival
      * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
      * @return bool true if everything has been fine
      */
-    function save_with_cache(user_message $usr_msg, import $imp, phrase_list $cache): bool
+    function save_with_cache(user_message $msg, import $imp, phrase_list $cache): bool
     {
         global $cfg;
 
@@ -817,7 +817,7 @@ class triple_list extends sandbox_list_named
             // name so the original triple is updated instead of dropping a duplicate-link insert
             // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
             $this->fill_by_name($cache, true);
-            $this->rename_link_conflicts($usr_msg);
+            $this->rename_link_conflicts($msg);
 
             // repeat filling the database id to the triple list
             // and adding missing triples to the database
@@ -909,11 +909,11 @@ class triple_list extends sandbox_list_named
             }
 
             // add the user_messages to the last try
-            $usr_msg->merge($lst_usr_msg);
+            $msg->merge($lst_usr_msg);
 
 
             // create any missing sql update functions and update the triples
-            $usr_msg->merge($this->update($db_lst_all, $imp, triple::class, $upd_per_sec));
+            $msg->merge($this->update($db_lst_all, $imp, triple::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -922,15 +922,15 @@ class triple_list extends sandbox_list_named
             $this->fill_by_name($db_lst_all, true);
 
             // report missing triples
-            $this->report_missing($usr_msg);
+            $this->report_missing($msg);
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->merge($this->delete($db_lst_all, $imp, triple::class, $del_per_sec));
+            $msg->merge($this->delete($db_lst_all, $imp, triple::class, $del_per_sec));
 
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -948,17 +948,17 @@ class triple_list extends sandbox_list_named
         bool                           $report_missing = true
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $trp) {
-            $this->fill_triple_by_name($db_lst, $trp, $usr_msg, $fill_all, $report_missing);
+            $this->fill_triple_by_name($db_lst, $trp, $msg, $fill_all, $report_missing);
             if ($trp->needs_from()) {
-                $this->fill_triple_by_name($db_lst, $trp->get_from(), $usr_msg, $fill_all, $report_missing);
+                $this->fill_triple_by_name($db_lst, $trp->get_from(), $msg, $fill_all, $report_missing);
             }
-            $this->fill_triple_by_name($db_lst, $trp->get_to(), $usr_msg, $fill_all, $report_missing);
+            $this->fill_triple_by_name($db_lst, $trp->get_to(), $msg, $fill_all, $report_missing);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     private function report_missing(user_message $msg): void

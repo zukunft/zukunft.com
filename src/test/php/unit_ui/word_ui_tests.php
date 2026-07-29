@@ -297,11 +297,11 @@ class word_ui_tests
         $test_name = 'word->input_valid for a word with an empty name';
         $wrd_empty = new word($t_wrd->word()->api_json());
         $wrd_empty->set_name('');
-        $usr_msg = new user_message();
-        $t->assert_false($test_name, $wrd_empty->input_valid($usr_msg));
+        $msg = new user_message();
+        $t->assert_false($test_name, $wrd_empty->input_valid($msg));
 
         $test_name = 'word->input_valid reports the empty name';
-        $t->assert_true($test_name, $usr_msg->has_msg_id(msg_id::NAME_EMPTY));
+        $t->assert_true($test_name, $msg->has_msg_id(msg_id::NAME_EMPTY));
 
         $test_name = 'word->input_valid allows an empty name when the word is deleted';
         $t->assert_true($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));

@@ -211,11 +211,11 @@ class element extends db_object_seq_id_user
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
@@ -226,28 +226,28 @@ class element extends db_object_seq_id_user
         } else {
             $this->id = $api_json[json_fields::ID];
             $frm = new formula($this->get_user());
-            if ($frm->api_mapper($api_json[json_fields::FORMULA], $usr_msg)) {
+            if ($frm->api_mapper($api_json[json_fields::FORMULA], $msg)) {
                 $this->frm = $frm;
             }
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                if ($wrd->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($wrd->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                if ($trp->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($trp->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
                 // TODO Prio 1 use verb_id
                 $vrb = new verb();
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
-                if ($frm->api_mapper($api_json[json_fields::TERM], $usr_msg)) {
+                if ($frm->api_mapper($api_json[json_fields::TERM], $msg)) {
                     $this->obj = $frm;
                 }
             } else {
@@ -256,7 +256,7 @@ class element extends db_object_seq_id_user
             $this->typ_id = $api_json[json_fields::TYPE];
             $this->validate_type();
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -653,13 +653,13 @@ class element extends db_object_seq_id_user
      * all fields are always included in the query to be able to remove by overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -673,10 +673,10 @@ class element extends db_object_seq_id_user
         $sc_par_lst_used->add(sql_type::INSERT);
 
         // get the field names, values and parameter types that have been changed
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst_used);
 
         // prepare the sql statement
-        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst_used);
+        $qp = $this->sql_prepare($sc, $fvt_lst, $msg, sql_type::INSERT, $sc_par_lst_used);
 
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
@@ -689,18 +689,18 @@ class element extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param element|db_object_seq_id $db_row the word with the database values before the update
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         element|db_object_seq_id $db_row,
-        user_message             $usr_msg,
+        user_message             $msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_update($usr_msg)) {
+        if ($this->can_update($msg)) {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
 
@@ -711,10 +711,10 @@ class element extends db_object_seq_id_user
             // and that needs to be updated in the database
             // the db_* child function call the corresponding parent function
             // including the sql parameters for logging
-            $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
+            $fvt_lst = $this->db_fields_changed($db_row, $msg);
 
             // prepare the sql statement
-            $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst_used);
+            $qp = $this->sql_prepare($sc, $fvt_lst, $msg, sql_type::UPDATE, $sc_par_lst_used);
 
             $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
             $qp->par = $fvt_lst->db_values();
@@ -730,7 +730,7 @@ class element extends db_object_seq_id_user
     function sql_prepare(
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type           $sql_type,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
@@ -746,7 +746,7 @@ class element extends db_object_seq_id_user
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
@@ -760,13 +760,13 @@ class element extends db_object_seq_id_user
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {

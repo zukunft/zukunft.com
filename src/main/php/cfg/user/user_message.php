@@ -5,6 +5,8 @@
     model/user/user_message.php - a complex object that functions can return
     ---------------------------
 
+    $msg is the suggested var name
+
     class function are should return on of
     1. boolean if a failure does not need any user action
     2. string if the user just needs to be informed about the result
@@ -122,7 +124,18 @@ class user_message extends Message
         }
     }
 
-    function reset(bool $keep_usr = false): void
+    /**
+     * clear the accumulated messages so the object can be reused for the next change request
+     *
+     * the requesting user is kept by default because it lives on the message for the whole
+     * change request (docs/llm/state-and-messages.md); pass $keep_usr = false only to build a
+     * fresh message for a different user, never to drop the user mid request
+     *
+     * @param bool $keep_usr true to keep the requesting user (the normal case), false to reset it
+     *                       to an empty user with the profile of a not logged-in visitor
+     * @return void
+     */
+    function reset(bool $keep_usr = true): void
     {
         if (!$keep_usr) {
             $this->usr = new user();
@@ -145,9 +158,9 @@ class user_message extends Message
      */
     function clone_reset(): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr;
-        return $usr_msg;
+        $msg = new user_message();
+        $msg->usr = $this->usr;
+        return $msg;
     }
 
 
@@ -300,9 +313,9 @@ class user_message extends Message
         }
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
-            $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER], $usr_msg);
-            if ($usr_msg->is_ok()) {
+            $msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER], $msg);
+            if ($msg->is_ok()) {
                 $this->usr = $usr;
             }
         }

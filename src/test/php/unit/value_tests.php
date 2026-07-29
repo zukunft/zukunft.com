@@ -86,7 +86,7 @@ class value_tests
 
 
         // init
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $tl = new test_lib();
@@ -150,59 +150,59 @@ class value_tests
 
         $t->subheader($ts . 'scaling');
         $test_name = 'scale the Swiss inhabitants from millions to one';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
         $trm_lst_scale = $t_trm->term_list_scale_mio();
-        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $msg, $trm_lst_scale);
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
         $test_name = '... and the scaling reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
 
         $test_name = 'if "mio" of the value is not a scaling word ask the user to set the type';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch_unscaled();
-        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($t_phr->inhabitant_one_phrase_list(), $msg, $trm_lst_scale);
         $target = 'to scale a value one word of ' . $val->phrase_list()->dsp_name()
             . ' needs to be of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'if "one" of the target list is not a scaling word ask the user to set the type';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
         $trg_phr_lst = $t_phr->inhabitant_one_unscaled_phrase_list();
-        $result = $val->scale_new($trg_phr_lst, $usr_msg, $trm_lst_scale);
+        $result = $val->scale_new($trg_phr_lst, $msg, $trm_lst_scale);
         $target = 'to scale a value one word of ' . $trg_phr_lst->dsp_name()
             . ' needs to be of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'scale the Swiss inhabitants to one based on a preloaded data object';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_mio(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_mio(), $msg);
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO * 1000000);
         $test_name = '... and the scaling reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
 
         $test_name = 'if "one" of the formula result is not a scaling word report the problem';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_mio_unscaled(), $msg);
         $target = 'the result part of the scaling formula ' . formula_names::SCALE_MIO
             . ' does not contain exactly one word of type scaling';
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $test_name = 'if the data object has no formula for the scaling word report the problem';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val = $t_val->value_ch();
-        $result = $val->scale_calc($t_trm->dto_scale_none(), $usr_msg);
+        $result = $val->scale_calc($t_trm->dto_scale_none(), $msg);
         $target = 'no scaling formula found for the word ' . word_names::MIO_SHORT;
-        $t->assert($test_name, $usr_msg->all_message_text(), $target);
+        $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
@@ -321,49 +321,49 @@ class value_tests
         $protect_denied = 'Only an admin'; // stable start of both protection warning translations
 
         $test_name = 'a normal user cannot reduce the value protection level';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val_imp = $t_val->value();
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $val_imp->check_protection_change($val_db, $t->usr_normal, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value reduction is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can reduce the value protection level';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val_imp = $t_val->value();
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_admin, $usr_msg);
+        $val_imp->check_protection_change($val_db, $t->usr_admin, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $test_name = 'the admin value reduction is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
 
         $test_name = 'a normal user cannot raise the value protection to no change';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val_imp = $t_val->value();
         $val_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $usr_msg);
+        $val_imp->check_protection_change($val_db, $t->usr_normal, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value raise is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'a normal user cannot set the admin protection on a new value';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val_new = $t_val->value();
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_normal, $usr_msg);
+        $val_new->check_protection_change(null, $t->usr_normal, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
         $test_name = 'the denied protection of the new value is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), $protect_denied);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can set the admin protection on a new value';
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $val_new = $t_val->value();
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_admin, $usr_msg);
+        $val_new->check_protection_change(null, $t->usr_admin, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         $test_name = 'the admin protection of the new value is not reported';
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $t->assert($test_name, $msg->all_message_text(), '');
 
         $t->subheader($ts . 'read access (share)');
         // a non-public value must not be disclosed to another user loaded by id (idor);
@@ -508,7 +508,7 @@ class value_tests
         $trm_lst = $t_phr->ch_inhabitants_in_mio_2019()->term_list();
         $res_phr_lst = $t_phr->phrase_list_one();
         $mio_val = $t_val->value_ch();
-        $result = $mio_val->scale_new($res_phr_lst, $usr_msg, $trm_lst);
+        $result = $mio_val->scale_new($res_phr_lst, $msg, $trm_lst);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         //$t->assert($test_name, $result, $target);
 
@@ -556,18 +556,18 @@ class value_tests
     ): bool
     {
         $sc = $db_con->sql_creator();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $fields = array(fields::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $val->sql_update($sc, $db_val, $usr_msg);
+        $qp = $val->sql_update($sc, $db_val, $msg);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $val->sql_update($sc, $db_val, $usr_msg);
+            $qp = $val->sql_update($sc, $db_val, $msg);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

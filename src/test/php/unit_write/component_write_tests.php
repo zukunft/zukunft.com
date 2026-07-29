@@ -61,7 +61,7 @@ class component_write_tests
 
         // init
         $t_cmp = new test_components($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write component ';
@@ -107,7 +107,7 @@ class component_write_tests
         $cmp = new component($t->usr1);
         $cmp->set_name(components::TEST_ADD_NAME);
         $cmp->description = components::TEST_ADD_COM;
-        $t->assert_true($test_name, $cmp->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $cmp->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component name has been saved
         $test_name = 'component->load the added "' . components::TEST_ADD_NAME . '"';
@@ -125,8 +125,8 @@ class component_write_tests
         // check if adding the same component again creates a correct error message
         $cmp = new component($t->usr1);
         $cmp->set_name(components::TEST_ADD_NAME);
-        $cmp->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $cmp->save($msg);
+        $result = $msg->get_last_message();
         // in case of other settings
         $target = 'A view component with the name "' . components::TEST_ADD_NAME . '" already exists. Please use another name.';
         // for the standard settings
@@ -138,7 +138,7 @@ class component_write_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(components::TEST_ADD_NAME);
         $cmp->set_name(components::TEST_RENAMED_NAME);
-        $t->assert_true($test_name, $cmp->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $cmp->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component renaming was successful
         $cmp_renamed = new component($t->usr1);
@@ -162,7 +162,7 @@ class component_write_tests
         $cmp_renamed->load_by_name(components::TEST_RENAMED_NAME);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
         $cmp_renamed->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::PHRASE_NAME);
-        $t->assert_true($test_name, $cmp_renamed->save($usr_msg), $t::TIMEOUT_LIMIT_LONG);
+        $t->assert_true($test_name, $cmp_renamed->save($msg), $t::TIMEOUT_LIMIT_LONG);
 
         // check if the component parameters have been added
         $cmp_reloaded = new component($t->usr1);
@@ -197,7 +197,7 @@ class component_write_tests
         $cmp_usr2->load_by_name(components::TEST_RENAMED_NAME);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::FORMULAS);
-        $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $cmp_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
@@ -224,7 +224,7 @@ class component_write_tests
         $cmp_usr2->load_by_name(components::TEST_RENAMED_NAME);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
         $cmp_usr2->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::PHRASE_NAME);
-        $t->assert_true($test_name, $cmp_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $cmp_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
@@ -250,7 +250,7 @@ class component_write_tests
     function create_test_components(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db create test components ';
@@ -266,7 +266,7 @@ class component_write_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(components::TEST_EXCLUDED_NAME);
         $cmp->excluded = true;
-        $cmp->save($usr_msg);
+        $cmp->save($msg);
 
     }
 

@@ -66,7 +66,7 @@ class user_write_tests
 
         // init
         $t_usr = new test_users($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $t->name = 'user db write->';
 
         // start the test section (ts)
@@ -88,11 +88,11 @@ class user_write_tests
         // make sure the starting point is "not yet using the sandbox"
         if ($usr_db->uses_sandbox) {
             $usr_db->uses_sandbox = false;
-            $usr_db->save_user($usr_msg, $t->usr1);
+            $usr_db->save_user($msg, $t->usr1);
         }
 
         // switch the user to sandbox usage which should store the flag in the database
-        $usr_db->set_uses_sandbox($usr_msg);
+        $usr_db->set_uses_sandbox($msg);
 
         // reload the user by id to check that the flag has really been written to the database
         $usr_reload = new user();
@@ -105,7 +105,7 @@ class user_write_tests
         // flag correctly stays on, so the assert checks the contract of check_sandbox_usage
         // (the stored flag mirrors the remaining sandbox rows) instead of assuming zero rows
         global $db_con;
-        $usr_reload->check_sandbox_usage($db_con, $usr_msg);
+        $usr_reload->check_sandbox_usage($db_con, $msg);
         $usr_check = new user();
         $usr_check->load_by_id($usr_db->id());
         $usr_lst = new user_list($usr_check);
@@ -210,7 +210,7 @@ class user_write_tests
         $t_usr->cleanup($ts, $t);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

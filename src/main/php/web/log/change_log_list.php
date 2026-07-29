@@ -107,13 +107,13 @@ class change_log_list extends ListBase
         int        $page = 0
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $size, $page);
         $actual = json_decode($json, true);
 
         $this->set_from_json($actual);
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**

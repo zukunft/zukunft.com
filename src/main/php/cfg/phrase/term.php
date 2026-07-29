@@ -1337,13 +1337,13 @@ class term extends combine_named
      * set the vars of this term object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -1354,27 +1354,27 @@ class term extends combine_named
             $class = $in_ex_json[json_fields::OBJECT_CLASS];
             if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $wrd->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($wrd);
             } elseif ($class == json_fields::CLASS_VERB) {
                 $vrb = new verb();
-                $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
+                $vrb->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($vrb);
             } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $trp->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($trp);
             } elseif ($class == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
-                $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+                $frm->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($frm);
             } else {
                 // TODO Prio 0 review
-                $usr_msg->add_err(msg_id::IMPORT_FAILED, []);
+                $msg->add_err(msg_id::IMPORT_FAILED, []);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

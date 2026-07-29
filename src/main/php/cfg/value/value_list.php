@@ -190,7 +190,7 @@ class value_list extends sandbox_value_list
 
     function set_grp_ids(): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
@@ -201,7 +201,7 @@ class value_list extends sandbox_value_list
                 //$usr_msg->add_message_text('');
             }
         }
-        return $usr_msg;
+        return $msg;
 
     }
 
@@ -1086,7 +1086,7 @@ class value_list extends sandbox_value_list
         value $val,
         phrase_list $phr_lst,
         bool $do_save,
-        user_message $usr_msg
+        user_message $msg
     ): user_message
     {
         global $db_con;
@@ -1105,7 +1105,7 @@ class value_list extends sandbox_value_list
         if ($grp != null) {
             $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
             if ($db_con->is_open()) {
-                $val_to_add->save($usr_msg);
+                $val_to_add->save($msg);
                 $this->add_obj($val_to_add);
             } else {
                 // TODO Prio 2 maybe use add_by_phr_names
@@ -1115,7 +1115,7 @@ class value_list extends sandbox_value_list
             // TODO Prio 0 review error
             log_warning('');
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1303,11 +1303,11 @@ class value_list extends sandbox_value_list
 
     function fill_phrase_ids_by_names(phrase_list $phr_lst): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($this->lst() as $val) {
-            $usr_msg->merge($val->set_group_id_by_phrase_list($phr_lst));
+            $msg->merge($val->set_group_id_by_phrase_list($phr_lst));
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1642,15 +1642,15 @@ class value_list extends sandbox_value_list
 
     /**
      * delete all loaded values e.g. to delete all the values linked to a phrase
-     * @param user_message $usr_msg the message for the user why deleting the values has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the values has failed and a suggested solution
      * @return bool true if all values has been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         foreach ($this->lst() as $val) {
-            $val->del($usr_msg);
+            $val->del($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

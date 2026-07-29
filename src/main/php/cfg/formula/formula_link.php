@@ -268,35 +268,35 @@ class formula_link extends sandbox_link
     /**
      * map a formula link api json to this model formula link object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(
         array        $api_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
-            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $usr_msg, $dto);
+            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $msg, $dto);
         }
         if (array_key_exists(json_fields::FORMULA, $api_json)) {
-            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $usr_msg);
+            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $msg);
         }
         if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
-            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $usr_msg, $dto);
+            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $msg, $dto);
         }
         if (array_key_exists(json_fields::PHRASE, $api_json)) {
-            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $usr_msg);
+            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $msg);
         }
         if (array_key_exists(json_fields::PRIORITY, $api_json)) {
             $this->order_nbr = $api_json[json_fields::PRIORITY];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -901,11 +901,11 @@ class formula_link extends sandbox_link
      */
     function fill(formula_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

@@ -245,12 +245,12 @@ class view extends sandbox_code_id
      * map a view api json to this model view object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // it is expected that the code id is set via import by an admin not via api
 
@@ -258,7 +258,7 @@ class view extends sandbox_code_id
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -981,15 +981,15 @@ class view extends sandbox_code_id
     /**
      * link this view to the given term and save to the database
      * @param term $trm the term that should be linked
-     * @param user_message $usr_msg with the message to the user if something has gone wrong and the suggested solutions
+     * @param user_message $msg with the message to the user if something has gone wrong and the suggested solutions
      * @return bool true if the term has been added
      */
-    function add_term_db(term $trm, user_message $usr_msg): bool
+    function add_term_db(term $trm, user_message $msg): bool
     {
         $lnk = new term_view($this->get_user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
-        return $lnk->save($usr_msg);
+        return $lnk->save($msg);
     }
 
     /**
@@ -1022,10 +1022,10 @@ class view extends sandbox_code_id
      */
     function del_term(term $trm): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // TODO implement
-        $usr_msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
-        return $usr_msg;
+        $msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
+        return $msg;
     }
 
 
@@ -1069,11 +1069,11 @@ class view extends sandbox_code_id
      */
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_style_id() === null and $obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1172,12 +1172,12 @@ class view extends sandbox_code_id
 
     /**
      * add or update the component links of this view in the database or create a user view
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save_component_links(user_message $usr_msg): bool
+    function save_component_links(user_message $msg): bool
     {
-        return $this->cmp_lnk_lst->save($usr_msg);
+        return $this->cmp_lnk_lst->save($msg);
     }
 
     /**
@@ -1224,10 +1224,10 @@ class view extends sandbox_code_id
     /**
      * delete the view component links of linked to this view
      *
-     * @param user_message $usr_msg the message for the user why deleting the view links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the view links has failed and a suggested solution
      * @return bool true if the view links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->get_user());
@@ -1236,7 +1236,7 @@ class view extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $lnk_lst->del($usr_msg);
+            $lnk_lst->del($msg);
         }
 
         // collect all view relations where this view is used
@@ -1246,9 +1246,9 @@ class view extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$mrl_lst->is_empty()) {
-            $mrl_lst->del($usr_msg);
+            $mrl_lst->del($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

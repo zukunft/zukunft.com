@@ -162,19 +162,19 @@ class sandbox_code_id extends sandbox_typed
      * @param user_message ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
         // the code id links a database row to system program code, so only a system / developer user
         // may set it - route through the privilege-checked set_code_id (not the raw set_code_id_db)
         // so a normal user's request is refused and reported on $usr_msg, matching import_mapper. the
         // previous `if (get_code_id() == null)` guard was always true for a new (POST) object, which
         // let any user plant an arbitrary code_id. the null-user guard fails closed if no requesting
         // user is set on the message
-        if (array_key_exists(json_fields::CODE_ID, $api_json) and $usr_msg->usr != null) {
-            $usr_msg->merge($this->set_code_id($api_json[json_fields::CODE_ID], $usr_msg->usr));
+        if (array_key_exists(json_fields::CODE_ID, $api_json) and $msg->usr != null) {
+            $msg->merge($this->set_code_id($api_json[json_fields::CODE_ID], $msg->usr));
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -460,11 +460,11 @@ class sandbox_code_id extends sandbox_typed
      */
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
-            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+            $msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

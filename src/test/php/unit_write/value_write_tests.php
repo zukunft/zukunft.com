@@ -87,7 +87,7 @@ class value_write_tests
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $usr_msg_ui = new user_message_ui();
 
         // start the test section (ts)
@@ -211,10 +211,10 @@ class value_write_tests
         $dest_phr_lst->load_by_names(array(word_names::INHABITANTS, word_names::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $result = $mio_val->scale($dest_phr_lst, $usr_msg);
+        $result = $mio_val->scale($dest_phr_lst, $msg);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
-        $t->assert_true(', value->val_scaling reports no problem', $usr_msg->is_ok());
+        $t->assert_true(', value->val_scaling reports no problem', $msg->is_ok());
 
         // test the figure object creation
         $phr_lst = $t_db->load_phrase_list(array(word_names::CANTON, word_names::ZH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
@@ -265,8 +265,8 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
-        $add_val->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $add_val->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $t->test_val_ids[] = $add_val->id();
@@ -301,8 +301,8 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
-        $add_val2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $add_val2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -340,8 +340,8 @@ class value_write_tests
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id);
         $added_val->set_number(self::NUMBER_ADD);
-        $added_val->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $added_val->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -369,8 +369,8 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(self::NUMBER_CHANGED);
-        $val_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $val_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -404,8 +404,8 @@ class value_write_tests
         $added_val_usr2 = new value($t->usr2);
         $added_val_usr2->load_by_grp($phr_grp);
         $added_val_usr2->set_number(self::NUMBER_ADD);
-        $added_val_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $added_val_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert($ts . $test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -477,7 +477,7 @@ class value_write_tests
         $t_wrd->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

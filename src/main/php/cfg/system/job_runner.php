@@ -254,21 +254,21 @@ class job_runner
     private function run_sweep(job_exe $handler): bool
     {
         $result = true;
-        $usr_msg = new user_message($this->usr);
+        $msg = new user_message($this->usr);
         $type = $handler->type_code_id();
 
         try {
-            $count = $handler->execute($usr_msg);
+            $count = $handler->execute($msg);
             $this->out('sweep ' . $type . ' processed ' . $count . ' item(s)');
         } catch (Throwable $e) {
             $result = false;
             log_err('sweep ' . $type . ' failed: ' . $e->getMessage(), 'job_runner->run_sweep');
             $this->err('sweep ' . $type . ' failed: ' . $e->getMessage());
         }
-        if (!$usr_msg->is_ok()) {
+        if (!$msg->is_ok()) {
             $result = false;
-            log_err('sweep ' . $type . ' reported: ' . $usr_msg->all_message_text(), 'job_runner->run_sweep');
-            $this->err('sweep ' . $type . ' reported: ' . $usr_msg->all_message_text());
+            log_err('sweep ' . $type . ' reported: ' . $msg->all_message_text(), 'job_runner->run_sweep');
+            $this->err('sweep ' . $type . ' reported: ' . $msg->all_message_text());
         }
 
         return $result;
@@ -318,12 +318,12 @@ class job_runner
     private function set_status(job $job, string $status_code_id): void
     {
         global $sys;
-        $usr_msg = new user_message($this->usr);
+        $msg = new user_message($this->usr);
         $job->status_id = $sys->typ_lst->job_sta->id($status_code_id);
-        $saved = $job->save($usr_msg);
+        $saved = $job->save($msg);
         if (!$saved) {
             log_err('cannot save status ' . $status_code_id . ' for ' . $job->dsp_id()
-                . ': ' . $usr_msg->all_message_text(), 'job_runner->set_status');
+                . ': ' . $msg->all_message_text(), 'job_runner->set_status');
             $this->err('cannot save status ' . $status_code_id . ' for ' . $job->dsp_id());
         }
     }

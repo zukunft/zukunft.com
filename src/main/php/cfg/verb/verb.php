@@ -234,16 +234,16 @@ class verb extends type_object
     /**
      * map a verb api json to this model verb object
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg, $trusted);
+        parent::api_mapper($api_json, $msg, $trusted);
 
         // TODO add user to request new verbs via api
 
-        $this->common_mapper($api_json, $usr_msg);
+        $this->common_mapper($api_json, $msg);
 
         // the usage and impact var is not expected to be changed via api
         // but is restored from a trusted source e.g. the db cached types json
@@ -252,7 +252,7 @@ class verb extends type_object
             $this->impact = $api_json[json_fields::IMPACT] ?? null;
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -290,7 +290,7 @@ class verb extends type_object
         return $msg->is_ok();
     }
 
-    function common_mapper(array $json, user_message $usr_msg): bool
+    function common_mapper(array $json, user_message $msg): bool
     {
         // TODO move plural to language forms
 
@@ -314,7 +314,7 @@ class verb extends type_object
                 $this->frm_name = $json[json_fields::NAME_IN_FORMULA];
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -833,7 +833,7 @@ class verb extends type_object
      */
     function fill(verb|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->plural == null and $obj->plural != null) {
             $this->plural = $obj->plural;
         }
@@ -852,7 +852,7 @@ class verb extends type_object
         if ($this->impact == null and $obj->impact != null) {
             $this->impact = $obj->impact;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -949,7 +949,7 @@ class verb extends type_object
     private function log_del(): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::VERB);
@@ -957,7 +957,7 @@ class verb extends type_object
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }

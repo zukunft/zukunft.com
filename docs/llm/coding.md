@@ -75,6 +75,7 @@ detail file. Order is by how often they fire, not importance.
 - Variable names are the 3-letter abbreviations (or combinations); only `$i` may be single-char. → `docs/llm/architecture.md`
 - Function names are spelled out in full (`load_by_phrase_list`, not `load_by_phr_lst`); the abbreviations are for variables only. → `docs/llm/architecture.md`
 - Every class file declares its suggested `$abbr` var name in the opening docblock. → `docs/llm/architecture.md`
+- Use a class's suggested var name everywhere an instance of it is held; deviate only for a strong reason (e.g. two instances of the same class live in one scope). The generated `docs/code_object_name_exceptions.md` lists every deviation and must stay short — a `user_message` is always `$msg`. → `docs/llm/architecture.md`
 - Every parameter gets a `@param` line stating its purpose and the effect of each meaningful value.
 - `@param` / `@return` descriptions stay on one line where possible; longer rationale belongs in a `docs/` file the docblock can point to.
 
@@ -154,6 +155,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
 - Named test objects use only `RESERVED_NAMES` consts; DB ids in tests are `*_ID` consts; add the const + reserved entry before writing the test if none fits.
 - `$test_name` is a named variable declared first (top of the block), reused before each later assertion.
+- A test block reads top-to-bottom as name → prepare → call → assert: `$test_name` is its first line and an `assert*()` its last; the fixture prep and the call of the function under test sit in between, and nothing follows the assert except the next block's `$test_name`. → `docs/llm/testing.md`
 - Keep `$test_name` short but unique; don't repeat context the enclosing `$t->subheader(...)` (or `$t->name`) already shows.
 - Pass only `$test_name` to `$t->assert*()`; let the helper prepend `$t->name` — don't concatenate it.
 - Use the specific `assert_*` variant (`assert_text_contains`, ...), not a generic `assert_true(str_contains(...))`.

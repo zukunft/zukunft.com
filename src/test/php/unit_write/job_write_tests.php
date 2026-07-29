@@ -58,7 +58,7 @@ class job_write_tests
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write job ';
@@ -88,7 +88,7 @@ class job_write_tests
         $job = new job($t->usr1);
         $job->row_id = $val->id();
         $job->set_type(job_types::VALUE_UPDATE, $t->usr1);
-        $result = $job->save($usr_msg);
+        $result = $job->save($msg);
         if ($result > 0) {
             $target = $result;
         }

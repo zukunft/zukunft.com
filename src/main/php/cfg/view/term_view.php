@@ -223,13 +223,13 @@ class term_view extends sandbox_link
      * fill the vars with this link type view link object based on the given api json array
      * basically use the json field type instead of predicate and
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
 
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (key_exists(json_fields::VIEW_ID, $api_json)) {
             // TODO Prio 1 get from dto cache if possible
@@ -251,7 +251,7 @@ class term_view extends sandbox_link
             $this->description = $api_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -520,11 +520,11 @@ class term_view extends sandbox_link
      */
     function fill(term_view|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /*

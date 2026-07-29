@@ -1197,7 +1197,7 @@ class result extends sandbox_value
      */
     function fill(result|sandbox_value|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->src_grp_id() == 0 and $obj->src_grp_id() != 0) {
             $this->set_src_grp($obj->source_group());
         }
@@ -1207,7 +1207,7 @@ class result extends sandbox_value
         if ($this->get_value() === null and $obj->get_value() != null) {
             $this->set_value($obj->get_value());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1252,7 +1252,7 @@ class result extends sandbox_value
         global $db_con;
 
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->get_user()->name . ")");
 
         $result = array();
@@ -1320,11 +1320,11 @@ class result extends sandbox_value
     // TODO Prio 0 review
     private function save_without_time(): string
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
-        $res_no_time->save($usr_msg);
-        return $usr_msg->get_last_message();
+        $res_no_time->save($msg);
+        return $msg->get_last_message();
     }
 
 
@@ -1350,7 +1350,7 @@ class result extends sandbox_value
     {
         global $debug;
         $result = true;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // don't save the result if some needed numbers are missing
         if ($this->val_missing) {
@@ -1448,7 +1448,7 @@ class result extends sandbox_value
                     }
 
                     // save the result
-                    $this->save($usr_msg);
+                    $this->save($msg);
                     $res_id = $this->id();
 
                     if ($debug > 0) {
@@ -1579,17 +1579,17 @@ class result extends sandbox_value
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value|result $sbx the same value sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|result $sbx,
-        user_message                       $usr_msg,
+        user_message                       $msg,
         sql_type_list                      $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $msg, $sc_par_lst);
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(

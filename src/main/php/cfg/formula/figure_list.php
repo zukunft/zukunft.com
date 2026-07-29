@@ -80,19 +80,19 @@ class figure_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->get_user());
-            if ($fig->api_mapper($json_phr, $usr_msg)) {
+            if ($fig->api_mapper($json_phr, $msg)) {
                 $this->add($fig);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -213,15 +213,15 @@ class figure_list extends sandbox_list
      */
     function add(?figure $fig_to_add): bool
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // check parameters
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
             if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
-                parent::add_obj($fig_to_add, false, $usr_msg);
+                parent::add_obj($fig_to_add, false, $msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

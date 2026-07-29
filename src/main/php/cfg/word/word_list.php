@@ -502,24 +502,24 @@ class word_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $value) {
             $wrd = new word($this->get_user());
-            if ($wrd->import_obj($value, $usr_msg, $dto)) {
+            if ($wrd->import_obj($value, $msg, $dto)) {
                 $this->add_by_key($wrd);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1604,12 +1604,12 @@ class word_list extends sandbox_list_named
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
-        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->get_user()), $usr_msg);
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->get_user()), $msg);
     }
 
 }

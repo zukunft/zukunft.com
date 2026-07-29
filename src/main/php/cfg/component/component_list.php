@@ -298,24 +298,24 @@ class component_list extends sandbox_list_named
      * import a list of components from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->get_user());
-            if ($cmp->import_obj($dsp_json, $usr_msg, $dto)) {
+            if ($cmp->import_obj($dsp_json, $msg, $dto)) {
                 $this->add($cmp);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -345,10 +345,10 @@ class component_list extends sandbox_list_named
      * similar to triple_list->save_with_cache but using the term_list
      *
      * @param import|null $imp the import object with the filename and the estimated time of arrival
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
         global $cfg;
 
@@ -371,7 +371,7 @@ class component_list extends sandbox_list_named
             $add_lst = new component_list($this->get_user());
             while ($frm_added and $level < $max_frm_levels) {
                 $frm_added = false;
-                $usr_msg->unset_added_depending();
+                $msg->unset_added_depending();
 
                 // get the components that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -394,7 +394,7 @@ class component_list extends sandbox_list_named
                 $load_lst->fill_by_name($db_lst, true, false);
 
                 // select the components that are ready to be added to the database
-                $load_lst = $load_lst->get_ready($usr_msg, $imp->file_name);
+                $load_lst = $load_lst->get_ready($msg, $imp->file_name);
 
                 // get the components that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -405,9 +405,9 @@ class component_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, component::class, $add_lst->count(), $step_time);
-                    $usr_msg->merge($add_lst->insert($db_lst_all, $imp, component::class));
+                    $msg->merge($add_lst->insert($db_lst_all, $imp, component::class));
                     if ($add_lst->count() > 0) {
-                        $usr_msg->set_added_depending();
+                        $msg->set_added_depending();
                         $frm_added = true;
                     }
                     $imp->step_end($add_lst->count(), $save_per_sec);
@@ -421,7 +421,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql update functions and update the components
-            $usr_msg->merge($this->update($db_lst_all, $imp, component::class, $upd_per_sec));
+            $msg->merge($this->update($db_lst_all, $imp, component::class, $upd_per_sec));
 
 
             // fill up the main list with the components to check if anything is missing
@@ -429,11 +429,11 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->merge($this->delete($db_lst_all, $imp, component::class, $del_per_sec));
+            $msg->merge($this->delete($db_lst_all, $imp, component::class, $del_per_sec));
 
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

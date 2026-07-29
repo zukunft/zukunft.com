@@ -212,11 +212,11 @@ class type_object extends db_object_seq_id
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @param bool $trusted true if the api_json is from the cache
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
     {
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
@@ -240,7 +240,7 @@ class type_object extends db_object_seq_id
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -279,12 +279,12 @@ class type_object extends db_object_seq_id
     /**
      * set the vars of this type object based on json string from the frontend object
      * @param string $api_json with the api message created by the frontend
-     * @param user_message $usr_msg with problems and suggested solutions for the user
+     * @param user_message $msg with problems and suggested solutions for the user
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_api(string $api_json, user_message $usr_msg): bool
+    function set_from_api(string $api_json, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
+        return $this->api_mapper(json_decode($api_json, true), $msg);
     }
 
     function set_name(string $name): void
@@ -742,13 +742,13 @@ class type_object extends db_object_seq_id
      */
     function no_diff(
         type_object   $db_typ,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): bool
     {
         // for the check it is not relevant if only the user differs
         $chk_obj = clone $this;
-        $fvt_lst = $chk_obj->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        $fvt_lst = $chk_obj->db_fields_changed($db_typ, $msg, $sc_par_lst);
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
@@ -761,11 +761,11 @@ class type_object extends db_object_seq_id
      */
     function no_non_id_diff(
         type_object   $db_typ,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): bool
     {
-        $fvt_lst = $this->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_typ, $msg, $sc_par_lst);
         return $fvt_lst->is_empty_except_id_and_internal_fields();
     }
 
@@ -817,7 +817,7 @@ class type_object extends db_object_seq_id
      */
     function fill(type_object|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() == null and $obj->get_code_id() != null) {
             $this->set_code_id($obj->get_code_id(), $usr_req);
         }
@@ -827,7 +827,7 @@ class type_object extends db_object_seq_id
         if ($this->description == null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -894,14 +894,14 @@ class type_object extends db_object_seq_id
      * all fields are always included in the query to be able to remove overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write(
         sql_creator      $sc,
         db_object_seq_id $db_row,
-        user_message     $usr_msg,
+        user_message     $msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -911,12 +911,12 @@ class type_object extends db_object_seq_id
         $fld_lst_all = $this->db_fields_all();
 
         // get the list of all fields that can be changed by the user
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst);
 
         // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -957,7 +957,7 @@ class type_object extends db_object_seq_id
         if ($sc_par_lst->is_insert()) {
             // create sql to set the prime key upfront to get the sequence id
             $qp_id = clone $qp;
-            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
             $par_lst_out->add($qp_id->par_fld);
             $sql .= $qp_id->sql;
         }
@@ -970,12 +970,12 @@ class type_object extends db_object_seq_id
         // add the user to the field list so that the id can be used for the log
         $fvt_lst->add_field(
             user_db::FLD_ID,
-            $usr_msg->usr->id(),
+            $msg->usr->id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $this->sql_write_log($sc, $usr_msg, $fvt_lst, $fld_lst_log, $sc_par_lst_sub);
+        $qp_log = $this->sql_write_log($sc, $msg, $fvt_lst, $fld_lst_log, $sc_par_lst_sub);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -996,7 +996,7 @@ class type_object extends db_object_seq_id
 
         // add the update row SQL to the function body
         $sql_upd = $this->sql_write_update(
-            $sc, $usr_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_log, $sc_par_lst);
+            $sc, $msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_log, $sc_par_lst);
         if ($sql_upd != '') {
             $sql .= ' ' . $sql_upd . ' ';
         }
@@ -1013,7 +1013,7 @@ class type_object extends db_object_seq_id
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -1022,7 +1022,7 @@ class type_object extends db_object_seq_id
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -1032,7 +1032,7 @@ class type_object extends db_object_seq_id
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
         if ($fvt_insert == null) {
             log_err('name field is missing for ' . $this->dsp_id());
         }

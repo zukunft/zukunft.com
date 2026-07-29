@@ -45,7 +45,7 @@ class view_link_write_tests
 
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write view link ';
@@ -53,7 +53,7 @@ class view_link_write_tests
 
         $t->subheader($ts . 'sandbox for ' . views::TEST_ADD_NAME);
         $msk_lnk = $t_msk->term_view();
-        $msk_lnk->save($usr_msg);
+        $msk_lnk->save($msg);
         // TODO Prio 2 activate (set object id instead of id)
         //$t->assert_write_link($t_msk->view_link_filled_add());
 
@@ -71,10 +71,10 @@ class view_link_write_tests
     {
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $msk_lnk = $t_msk->term_view_filled_add();
-        $msk_lnk->save($usr_msg);
+        $msk_lnk->save($msg);
     }
 
 }

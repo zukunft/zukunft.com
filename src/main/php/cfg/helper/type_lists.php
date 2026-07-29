@@ -342,10 +342,10 @@ class type_lists
         if (!$cac->is_outdated()) {
             if (is_array($cac->data)) {
                 $api_json = $cac->data[json_fields::BODY] ?? $cac->data;
-                $usr_msg = new user_message(user::system());
-                $result = $this->fill_from_api_json($api_json, $usr_msg);
-                if (!$usr_msg->is_ok()) {
-                    log_warning('cached types json rejected: ' . $usr_msg->all_message_text());
+                $msg = new user_message(user::system());
+                $result = $this->fill_from_api_json($api_json, $msg);
+                if (!$msg->is_ok()) {
+                    log_warning('cached types json rejected: ' . $msg->all_message_text());
                     $result = false;
                 }
             }
@@ -356,15 +356,15 @@ class type_lists
     /**
      * fill all type lists from the api json of the cached types message
      * @param array $api_json the body of the types api message with one entry per type list
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @return bool true if all type lists have been filled
      */
-    function fill_from_api_json(array $api_json, user_message $usr_msg): bool
+    function fill_from_api_json(array $api_json, user_message $msg): bool
     {
         $result = true;
         foreach (self::API_LISTS as $json_key => $lst_var) {
             if ($result) {
-                $result = $this->$lst_var->fill_from_api_rows($api_json[$json_key] ?? [], $usr_msg);
+                $result = $this->$lst_var->fill_from_api_rows($api_json[$json_key] ?? [], $msg);
             }
         }
         return $result;

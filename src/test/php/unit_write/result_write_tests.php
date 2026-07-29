@@ -56,7 +56,7 @@ class result_write_tests
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write result ';
@@ -70,13 +70,13 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_names::SYSTEM_TEST_ADD);
         $frm->usr_text = formula_names::INCREASE_EXP;
-        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'rename formula to ' . formula_names::SYSTEM_TEST_RENAMED;
         // check if the formula can be renamed
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $frm->set_name(formula_names::SYSTEM_TEST_RENAMED);
-        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // test load result without time
@@ -187,16 +187,16 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
-        $frm->del($usr_msg);
+        $frm->del($msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD);
-        $frm->del($usr_msg);
+        $frm->del($msg);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED);
-        $frm->del($usr_msg);
+        $frm->del($msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formula_names::SYSTEM_TEST_RENAMED);
-        $frm->del($usr_msg);
+        $frm->del($msg);
 
 
     }

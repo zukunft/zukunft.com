@@ -188,12 +188,12 @@ class view_relation extends sandbox_link
     /**
      * map a view related api json to this model component link object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -219,7 +219,7 @@ class view_relation extends sandbox_link
             $this->description = $api_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -574,14 +574,14 @@ class view_relation extends sandbox_link
      */
     function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->start_pos === null and $obj->start_pos != null) {
             $this->start_pos = $obj->start_pos;
         }
         if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

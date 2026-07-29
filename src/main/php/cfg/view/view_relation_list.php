@@ -211,17 +211,17 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * delete all loaded view relations e.g. to delete all the links assigned to a view
-     * @param user_message $usr_msg the message for the user why deleting this view relation has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting this view relation has failed and a suggested solution
      * @return bool true if the view relations have been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $dsp_cmp_lnk->del($usr_msg);
+                $dsp_cmp_lnk->del($msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -274,15 +274,15 @@ class view_relation_list extends sandbox_link_list
      * simple but slow function to add of update all list items in the database
      * TODO faster mass db update
      *
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         foreach ($this->lst() as $sbx) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $msk_rel_usr_msg = $usr_msg->clone_reset();
+            $msk_rel_usr_msg = $msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
@@ -293,9 +293,9 @@ class view_relation_list extends sandbox_link_list
             // save the link of the view to the component
             $sbx->save($msk_rel_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($msk_rel_usr_msg);
+            $msg->merge($msk_rel_usr_msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

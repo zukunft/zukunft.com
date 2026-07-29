@@ -123,10 +123,10 @@ class sandbox_value_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_val) {
             if (array_key_exists(json_fields::NUMBER, $json_val)) {
@@ -139,16 +139,16 @@ class sandbox_value_list extends sandbox_list
                 $val = new value_geo($this->get_user());
             } else {
                 $val = new value($this->get_user());
-                $usr_msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
+                $msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
                     msg_id::VAR_JSON_TEXT => $json_val
                 ]);
             }
-            if ($val->api_mapper($json_val, $usr_msg)) {
+            if ($val->api_mapper($json_val, $msg)) {
                 $this->add($val);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

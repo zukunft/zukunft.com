@@ -210,15 +210,15 @@ class user_tests
         // without a database id the flag is only changed in memory e.g. for this unit test
         $test_name = 'adding a sandbox row switches the user to sandbox usage';
         $usr = new user();
-        $usr_msg = new user_message($t->usr_admin);
-        $usr->set_uses_sandbox($usr_msg);
+        $msg = new user_message($t->usr_admin);
+        $usr->set_uses_sandbox($msg);
         $t->assert_true($test_name, $usr->uses_sandbox);
         $test_name = 'switching to sandbox usage reports no problem';
-        $t->assert_true($test_name, $usr_msg->is_ok());
+        $t->assert_true($test_name, $msg->is_ok());
         $test_name = 'a user already using the sandbox is not saved again';
         $usr = $t_usr->sandbox_user();
-        $usr->set_uses_sandbox($usr_msg);
-        $t->assert_true($test_name, $usr->uses_sandbox and $usr_msg->is_ok());
+        $usr->set_uses_sandbox($msg);
+        $t->assert_true($test_name, $usr->uses_sandbox and $msg->is_ok());
 
         // the flag is part of the api json, so that an admin can switch it via the frontend
         $test_name = 'the sandbox usage flag reaches the frontend via the api json';
@@ -226,12 +226,12 @@ class user_tests
         $t->assert_true($test_name, $api_json[json_fields::USES_SANDBOX]);
         $test_name = 'the sandbox usage flag is mapped from the api json';
         $usr = new user();
-        $usr_msg = new user_message($t->usr_admin);
-        $usr->api_mapper([json_fields::USES_SANDBOX => 1], $usr_msg);
+        $msg = new user_message($t->usr_admin);
+        $usr->api_mapper([json_fields::USES_SANDBOX => 1], $msg);
         $t->assert_true($test_name, $usr->uses_sandbox);
         $test_name = 'an api json without the flag maps to not use the sandbox';
         $usr = new user();
-        $usr->api_mapper([], $usr_msg);
+        $usr->api_mapper([], $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
 
 
@@ -240,14 +240,14 @@ class user_tests
         // the api json never carries the logon secrets, so in a user rebuilt from it the
         // password and the activation key are null, meaning "not loaded", never "clear";
         // a save of such a user e.g. via set_uses_sandbox must keep the stored values
-        $usr_msg = new user_message($t->usr_admin);
+        $msg = new user_message($t->usr_admin);
         $db_usr = $t_usr->sandbox_user();
         $db_usr->set_password_hash(user::DUMMY_PW_HASH);
         $db_usr->activation_key = 'dummy activation key hash for unit test';
         $upd_usr = $t_usr->sandbox_user();
         $upd_usr->uses_sandbox = true;
         $db_usr->uses_sandbox = false;
-        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'the sandbox usage switch is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_USES_SANDBOX));
         $test_name = 'a not loaded password never overwrites the stored hash';
@@ -257,14 +257,14 @@ class user_tests
 
         // a real password change (a new hash is set) is still detected and written
         $upd_usr->set_password_hash('changed dummy password hash for unit test');
-        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'a new password hash is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_PASSWORD));
 
         // a used activation key is cleared with '' (see frontend::action_login_activate),
         // so the clearing is still detected and written
         $upd_usr->activation_key = '';
-        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'clearing a used activation key is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_ACTIVATION_KEY));
 
@@ -273,9 +273,9 @@ class user_tests
 
         // api_mapper keeps a missing type and status null (not specified), so a save of a
         // json-born user keeps the stored values instead of resetting them to guest and active
-        $usr_msg = new user_message($t->usr_admin);
+        $msg = new user_message($t->usr_admin);
         $json_usr = new user();
-        $json_usr->api_mapper([json_fields::USES_SANDBOX => 1], $usr_msg);
+        $json_usr->api_mapper([json_fields::USES_SANDBOX => 1], $msg);
         $test_name = 'a missing type in the api json maps to null';
         $t->assert_true($test_name, $json_usr->type_id === null);
         $test_name = 'a missing status in the api json maps to null';
@@ -283,7 +283,7 @@ class user_tests
         $db_usr = $t_usr->non_sandbox_user();
         $db_usr->type_id = 2;
         $db_usr->status_id = 3;
-        $chg_lst = $json_usr->db_fields_changed($db_usr, $usr_msg);
+        $chg_lst = $json_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'a not specified type never overwrites the stored type';
         $t->assert_false($test_name, $chg_lst->has_name(user_db::FLD_TYPE_ID));
         $test_name = 'a not specified status never overwrites the stored status';
@@ -293,10 +293,10 @@ class user_tests
         // and the status survives the api round trip (sent under json_fields::STATUS)
         $api_json = [json_fields::TYPE => 4, json_fields::STATUS => 5];
         $upd_usr = new user();
-        $upd_usr->api_mapper($api_json, $usr_msg);
+        $upd_usr->api_mapper($api_json, $msg);
         $test_name = 'the status is mapped from the api json';
         $t->assert_true($test_name, $upd_usr->status_id == 5);
-        $chg_lst = $upd_usr->db_fields_changed($db_usr, $usr_msg);
+        $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'a changed type is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_TYPE_ID));
         $test_name = 'a changed status is saved';
@@ -330,23 +330,23 @@ class user_tests
         $admin_profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         $test_name = 'api_mapper maps the requested profile faithfully';
         $usr = new user();
-        $usr_msg = new user_message($t->usr_normal);
-        $usr->api_mapper([json_fields::PROFILE_ID => $admin_profile_id], $usr_msg);
+        $msg = new user_message($t->usr_normal);
+        $usr->api_mapper([json_fields::PROFILE_ID => $admin_profile_id], $msg);
         $t->assert($test_name, $usr->profile_id, $admin_profile_id);
 
         // a normal user cannot raise a user record from the normal to the admin profile
         $test_name = 'a normal user cannot set the admin profile';
         $allowed = $usr->enforce_profile_privilege(
-            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_normal, $usr_msg);
+            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_normal, $msg);
         $t->assert($test_name, $allowed, user_profiles::NORMAL_ID);
         $test_name = 'the profile escalation attempt is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), 'cannot be updated due to missing privileges');
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'cannot be updated due to missing privileges');
 
         // an admin may legitimately set the admin profile
         $test_name = 'an admin can set the admin profile';
-        $usr_msg = new user_message($t->usr_admin);
+        $msg = new user_message($t->usr_admin);
         $allowed = $usr->enforce_profile_privilege(
-            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_admin, $usr_msg);
+            $admin_profile_id, user_profiles::NORMAL_ID, $t->usr_admin, $msg);
         $t->assert($test_name, $allowed, $admin_profile_id);
 
         // fill takes the flag from the given object, because false also means not yet set
@@ -361,20 +361,20 @@ class user_tests
 
         // a changed flag is detected as a difference e.g. to select the fields to save
         $test_name = 'a changed sandbox usage is detected as a diff';
-        $usr_msg = new user_message($t->usr_admin);
-        $t->assert_false($test_name, $t_usr->sandbox_user()->no_diff($t_usr->non_sandbox_user(), $usr_msg));
+        $msg = new user_message($t->usr_admin);
+        $t->assert_false($test_name, $t_usr->sandbox_user()->no_diff($t_usr->non_sandbox_user(), $msg));
         $test_name = 'an unchanged sandbox usage is no diff';
-        $t->assert_true($test_name, $t_usr->sandbox_user()->no_diff($t_usr->sandbox_user(), $usr_msg));
+        $t->assert_true($test_name, $t_usr->sandbox_user()->no_diff($t_usr->sandbox_user(), $msg));
 
         // the flag can be moved to another pod via im- and export
         $test_name = 'the sandbox usage flag is mapped from an import json';
         $usr = new user();
-        $usr_msg = new user_message($t->usr_admin);
-        $usr->import_mapper([json_fields::USES_SANDBOX => true], $usr_msg);
+        $msg = new user_message($t->usr_admin);
+        $usr->import_mapper([json_fields::USES_SANDBOX => true], $msg);
         $t->assert_true($test_name, $usr->uses_sandbox);
         $test_name = 'an import json without the flag maps to not use the sandbox';
         $usr = new user();
-        $usr->import_mapper([], $usr_msg);
+        $usr->import_mapper([], $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
         $test_name = 'the sandbox usage flag is part of the export json';
         $t->assert_true($test_name, $t_usr->sandbox_user()->export_json()[json_fields::USES_SANDBOX] ?? false);
@@ -428,22 +428,22 @@ class user_tests
 
         // the diff message tells a human which fields differ e.g. to explain a rejected update
         $test_name = 'equal users have no diff message';
-        $usr_msg = $t_usr->sandbox_user()->diff_msg($t_usr->sandbox_user());
-        $t->assert($test_name, $usr_msg->all_message_text(), '');
+        $msg = $t_usr->sandbox_user()->diff_msg($t_usr->sandbox_user());
+        $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = 'the diff message names the changed field';
-        $usr_msg = $t_usr->sandbox_user()->diff_msg($t_usr->non_sandbox_user());
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), user_db::FLD_USES_SANDBOX);
+        $msg = $t_usr->sandbox_user()->diff_msg($t_usr->non_sandbox_user());
+        $t->assert_text_contains($test_name, $msg->all_message_text(), user_db::FLD_USES_SANDBOX);
         $test_name = 'the diff message contains the email change';
         $usr_chg = $t_usr->sandbox_user();
         $usr_chg->email = users::TEST_USER_MAIL_UPDATED;
-        $usr_msg = $usr_chg->diff_msg($t_usr->sandbox_user());
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), users::TEST_USER_MAIL_UPDATED);
+        $msg = $usr_chg->diff_msg($t_usr->sandbox_user());
+        $t->assert_text_contains($test_name, $msg->all_message_text(), users::TEST_USER_MAIL_UPDATED);
         $test_name = 'a changed password is never part of the diff message';
         $usr_chg = $t_usr->sandbox_user();
         $usr_chg->set_password_hash(users::TEST_USER_PASSWORD_FIX_HASH);
-        $usr_msg = $usr_chg->diff_msg($t_usr->sandbox_user());
+        $msg = $usr_chg->diff_msg($t_usr->sandbox_user());
         $t->assert_false($test_name, str_contains(
-            $usr_msg->all_message_text(), users::TEST_USER_PASSWORD_FIX_HASH));
+            $msg->all_message_text(), users::TEST_USER_PASSWORD_FIX_HASH));
 
     }
 

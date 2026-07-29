@@ -520,12 +520,12 @@ class sandbox_multi extends db_object_multi_user
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_api(string $api_json, user_message $usr_msg): bool
+    function set_from_api(string $api_json, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
+        return $this->api_mapper(json_decode($api_json, true), $msg);
     }
 
     /**
@@ -905,12 +905,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function load_objects(): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_objects',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -990,7 +990,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function fill(sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
         if ($this->excluded === null and $obj->excluded != null) {
             $this->set_excluded($obj->is_excluded());
@@ -1004,7 +1004,7 @@ class sandbox_multi extends db_object_multi_user
         if ($this->protection_id() === null and $obj->protection_id() != null) {
             $this->set_protection_id($obj->protection_id());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1440,14 +1440,14 @@ class sandbox_multi extends db_object_multi_user
      * if the user is an admin the user can force to be the owner of this object
      * TODO review
      */
-    function take_ownership(user_message $usr_msg): bool
+    function take_ownership(user_message $msg): bool
     {
         $result = false;
         log_debug($this->dsp_id());
 
         if ($this->get_user()->is_admin()) {
             // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->get_user()->id, $usr_msg); // TODO remove double getting of the user object
+            $result = $this->set_owner($this->get_user()->id, $msg); // TODO remove double getting of the user object
             // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
 
@@ -1463,30 +1463,30 @@ class sandbox_multi extends db_object_multi_user
      * @param bool $must_exist if false no error message is created if the value or result does not exist
      * @return bool true if the owner is succesful set
      */
-    function set_owner(int $new_owner_id, user_message $usr_msg, bool $must_exist = true): bool
+    function set_owner(int $new_owner_id, user_message $msg, bool $must_exist = true): bool
     {
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
         if ($this->has_id() > 0 and $new_owner_id > 0) {
             // load the standard db row
             $std = $this->clone_reset();
-            $get_msg = clone $usr_msg;
+            $get_msg = clone $msg;
             $std->load_standard($this->id(), $get_msg);
 
             if ($get_msg->is_ok() or $must_exist) {
 
                 // set the owner and save
                 $std->owner_id = $new_owner_id;
-                $std->save($usr_msg);
+                $std->save($msg);
 
                 // update the current object
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     $this->owner_id = $new_owner_id;
                 }
             }
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     // true if no other user has modified the object
@@ -1782,7 +1782,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
+    protected function add_usr_cfg(user_message $msg, string $class = self::class): bool
     {
         global $db_con;
         $result = true;
@@ -1823,13 +1823,13 @@ class sandbox_multi extends db_object_multi_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->get_user()->id);
-                $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
-                $db_con->insert($qp, 'add user-specific value', $usr_msg);
-                if (!$usr_msg->is_ok()) {
+                $qp = $this->sql_insert($db_con->sql_creator(), $msg, new sql_type_list([sql_type::USER]));
+                $db_con->insert($qp, 'add user-specific value', $msg);
+                if (!$msg->is_ok()) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
                 } else {
-                    $this->usr_cfg_id = $usr_msg->get_row_id();
+                    $this->usr_cfg_id = $msg->get_row_id();
                 }
             }
         }
@@ -1950,13 +1950,13 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to add a new value or result to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
@@ -1970,7 +1970,7 @@ class sandbox_multi extends db_object_multi_user
         $sbx_empty->set_user($this->get_user()->clone_reset());
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $sbx_empty, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $sbx_empty, $all_fields, $msg, $sc_par_lst_used);
     }
 
 
@@ -2000,14 +2000,14 @@ class sandbox_multi extends db_object_multi_user
     protected function log_add_common(change|change_value $log): change|change_value
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $log->set_action(change_actions::ADD);
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
         return $log;
     }
 
@@ -2181,8 +2181,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function log_del_link(): change_link
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'log_del_link',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2244,14 +2244,14 @@ class sandbox_multi extends db_object_multi_user
     private function log_del_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = $this->name();
         $log->new_value = null;
         $log->row_id = 0;
         $log->set_action(change_actions::DELETE);
-        $log->add($usr_msg);
+        $log->add($msg);
         return $log;
     }
 
@@ -2312,12 +2312,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'save_fields',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
     /**
@@ -2362,13 +2362,13 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if can be moved to sandbox_value object
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2584,12 +2584,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function name_field(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
     /**
@@ -2646,8 +2646,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_id_updated(sandbox_multi $db_rec): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2693,8 +2693,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same_std(object $obj_to_check): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'is_same_std',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -2811,19 +2811,19 @@ class sandbox_multi extends db_object_multi_user
     /**
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
      *
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -3206,14 +3206,14 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_multi $db_obj the database record before the saving
      * @param sandbox_multi $norm_obj the database record defined as standard because it is used by most users
-     * @param user_message $usr_msg with the description of any problems for the user and the suggested solution
+     * @param user_message $msg with the description of any problems for the user and the suggested solution
      * @return bool true if everything has been fine
      */
     function save_fields_func(
         sql_db        $db_con,
         sandbox_multi $db_obj,
         sandbox_multi $norm_obj,
-        user_message  $usr_msg = new user_message()
+        user_message  $msg = new user_message()
     ): bool
     {
         // the sql creator is used more than once, so create it upfront
@@ -3232,28 +3232,28 @@ class sandbox_multi extends db_object_multi_user
             // TODO get a list of all user that have used the standard more than the threshold
             // TODO create a user db row for all these users that undo the expected changes of the standard db row
             // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $usr_msg)) {
+            if ($this->no_diff($norm_obj, $msg)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER]));
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
+                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 }
             } else {
                 // apply the changes directly to the norm db record
                 // TODO maybe check of other user have used the object and if yes keep or inform
-                $fvt_lst = $this->db_fields_changed($db_obj, $usr_msg, $sc_par_lst);
+                $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
                 if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
-                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $usr_msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $usr_msg);
+                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
+                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
-                        $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
-                        $db_con->delete($qp, 'del user ' . $obj_name, $usr_msg);
+                        $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
+                        $db_con->delete($qp, 'del user ' . $obj_name, $msg);
                     }
                 }
             }
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 // check if some user overwrites can be removed
                 $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
             }
@@ -3261,21 +3261,21 @@ class sandbox_multi extends db_object_multi_user
             $sc_par_lst->add(sql_type::USER);
             // TODO review if $this or $db_obj must be used here because in sandbox $this is used
             if ($db_obj->has_usr_cfg()) {
-                if ($this->no_diff($norm_obj, $usr_msg)) {
-                    $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER]));
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
+                if ($this->no_diff($norm_obj, $msg)) {
+                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     // for a new user record compare with the norm db_row
                     // TODO compare sql_write with sql_update_switch
-                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $usr_msg, $sc_par_lst);
+                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                     if ($qp != null) {
-                        $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
+                        $db_con->update($qp, 'update user ' . $obj_name, $msg);
                     }
                 }
             } else {
-                if (!$this->no_diff($norm_obj, $usr_msg)) {
+                if (!$this->no_diff($norm_obj, $msg)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
                     // because one user can link a value to more than one source the source id is part of the user value prime key
@@ -3286,15 +3286,15 @@ class sandbox_multi extends db_object_multi_user
                         $this->set_source($src);
                     }
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
-                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $usr_msg, $sc_par_lst);
+                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                     // TODO compare sql_write with sql_insert_switch
-                    $db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true);
+                    $db_con->insert($qp, 'add user ' . $obj_name, $msg, true);
                 }
             }
         }
 
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -3305,7 +3305,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_multi|null $db_obj the user sandbox object with the database values before the update or the standard db_row
      * @param array $fld_lst_all list of field names of the given object
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -3313,7 +3313,7 @@ class sandbox_multi extends db_object_multi_user
         sql_creator        $sc,
         sandbox_multi|null $db_obj,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
@@ -3328,7 +3328,7 @@ class sandbox_multi extends db_object_multi_user
         // clone to keep the db key list unchanged
         $fvt_lst = clone $fvt_lst_id;
         // add the list of the changed fields to the id list
-        $fvt_lst->add_list($this->db_fields_changed($db_obj, $usr_msg, $sc_par_lst));
+        $fvt_lst->add_list($this->db_fields_changed($db_obj, $msg, $sc_par_lst));
         // get the list of all fields that can be changed by the user
         $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
         // get the changed fields
@@ -3337,7 +3337,7 @@ class sandbox_multi extends db_object_multi_user
         if (count($chg_lst_ex_id) > 0) {
             // make the query name unique based on the changed fields
             $lib = new library();
-            $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id, $usr_msg);
+            $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id, $msg);
 
             // create the main query parameter object and set the query name
             $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
@@ -3351,7 +3351,7 @@ class sandbox_multi extends db_object_multi_user
             if ($sc_par_lst->incl_log()) {
                 // log functions must always use named parameters
                 $sc_par_lst->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $usr_msg, $sc_par_lst);
+                $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $msg, $sc_par_lst);
             } else {
                 if ($sc_par_lst->is_insert()) {
                     $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -3376,7 +3376,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par_field_list $fvt_lst_id list of id field names, values and sql types additional to the standard id fields
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -3386,7 +3386,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par_field_list $fvt_lst_id,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -3448,7 +3448,7 @@ class sandbox_multi extends db_object_multi_user
 
         // ... and log the value parameter changes if needed
         if (count($fld_lst_ex_id_and_val) > 0) {
-            $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $usr_msg, $sc_par_lst_log, $this);
+            $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $msg, $sc_par_lst_log, $this);
             $sql .= ' ' . $qp_log->sql;
             $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -3481,37 +3481,37 @@ class sandbox_multi extends db_object_multi_user
         }
         if ($sc_par_lst->is_insert()) {
             foreach ($fvt_lst_id->names() as $fld) {
-                $fvt_lst_write->add($fvt_lst_all->get($fld, $usr_msg));
+                $fvt_lst_write->add($fvt_lst_all->get($fld, $msg));
             }
         }
         // add the changed group fields
         if ($this::class == group::class) {
             foreach ($fld_lst_ex_id as $fld) {
-                $fvt_lst_write->add($fvt_lst_all->get($fld, $usr_msg));
+                $fvt_lst_write->add($fvt_lst_all->get($fld, $msg));
             }
         }
         // add the user id only if a new user sandbox row is created
         if (!$sc_par_lst->is_standard()) {
             if ($fvt_lst_all->has_name(user_db::FLD_ID)) {
                 if ($sc_par_lst->is_insert()) {
-                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
+                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $msg));
                 } elseif ($sc_par_lst->is_update()
                     and $fvt_lst_all->get_old_id(user_db::FLD_ID) != $fvt_lst_all->get_id(user_db::FLD_ID))  {
                     // ... or if the owner is updated
-                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $usr_msg));
+                    $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID, $msg));
                 }
             }
         }
         if ($this->is_numeric()) {
-            $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, $usr_msg, true);
+            $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, $msg, true);
         } elseif ($this->is_time_value()) {
-            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_TIME, $usr_msg, true);
+            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_TIME, $msg, true);
         } elseif ($this->is_text_value()) {
-            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_TEXT, $usr_msg, true);
+            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_TEXT, $msg, true);
         } elseif ($this->is_geo_value()) {
-            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_GEO, $usr_msg, true);
+            $val_fld = $fvt_lst_all->get(value_fields::FLD_VALUE_GEO, $msg, true);
         } else {
-            $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, $usr_msg, true);
+            $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, $msg, true);
         }
         if ($val_fld != null) {
             $fvt_lst_write->add($val_fld);
@@ -3523,18 +3523,18 @@ class sandbox_multi extends db_object_multi_user
         // skip it for the user table where the source id is part of the unique key and therefore
         // used in the WHERE clause instead of the SET clause
         if (!in_array(source_fields::FLD_ID, $fvt_lst_id->names())) {
-            $src_fld = $fvt_lst_all->get(source_fields::FLD_ID, $usr_msg, true);
+            $src_fld = $fvt_lst_all->get(source_fields::FLD_ID, $msg, true);
             if ($src_fld != null) {
                 $fvt_lst_write->add($src_fld);
             }
         }
 
         // sandbox fields
-        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_SHARE, $usr_msg, true));
-        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_PROTECT, $usr_msg, true));
+        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_SHARE, $msg, true));
+        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_PROTECT, $msg, true));
 
         if (!$sc_par_lst->is_standard()) {
-            $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_LAST_UPDATE, $usr_msg, true));
+            $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_LAST_UPDATE, $msg, true));
         }
 
         if ($sc_par_lst->is_insert()) {
@@ -3576,8 +3576,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'id_fvt_lst',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -3588,12 +3588,12 @@ class sandbox_multi extends db_object_multi_user
      * detects if this object has be changed compared to the given object
      *
      * @param sandbox_multi $db_obj the user database or standard record for compare
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @return bool true if any of the fields does not match
      */
     function no_diff(
         sandbox_multi $db_obj,
-        user_message  $usr_msg
+        user_message  $msg
     ): bool
     {
         // for the check it is not relevant if only the user differs
@@ -3603,7 +3603,7 @@ class sandbox_multi extends db_object_multi_user
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
         }
-        $fvt_lst = $chk_obj->db_fields_changed($db_obj, $usr_msg);
+        $fvt_lst = $chk_obj->db_fields_changed($db_obj, $msg);
         return $fvt_lst->is_empty_except_internal_fields();
     }
 
@@ -3616,11 +3616,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function no_non_id_diff(
         sandbox_multi $db_obj,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): bool
     {
-        $fvt_lst = $this->db_fields_changed($db_obj, $usr_msg, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
         return $fvt_lst->is_empty_except_id_and_internal_fields();
     }
 
@@ -3650,13 +3650,13 @@ class sandbox_multi extends db_object_multi_user
      * dummy function overwritten by the child object
      *
      * @param sandbox_multi $sbx the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi $sbx,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -3701,7 +3701,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -3709,12 +3709,12 @@ class sandbox_multi extends db_object_multi_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -3722,7 +3722,7 @@ class sandbox_multi extends db_object_multi_user
         if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $usr_msg, $sc_par_lst);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $msg, $sc_par_lst);
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -3740,7 +3740,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
@@ -3748,13 +3748,13 @@ class sandbox_multi extends db_object_multi_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -3763,7 +3763,7 @@ class sandbox_multi extends db_object_multi_user
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
             $sc_par_lst->add(sql_type::NO_ID_RETURN);
-            $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $usr_msg, $sc_par_lst);
+            $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $msg, $sc_par_lst);
         } else {
             if ($sc_par_lst->is_usr_tbl()) {
                 $qp->sql = $sc->create_sql_update(
@@ -3785,7 +3785,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc sql creator with the target db_type already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -3794,7 +3794,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -3827,7 +3827,7 @@ class sandbox_multi extends db_object_multi_user
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
         if (!$usr_tbl) {
-            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
             $par_lst_out->add($qp_id->par_fld);
             $sql .= $qp_id->sql;
         }
@@ -3852,7 +3852,7 @@ class sandbox_multi extends db_object_multi_user
         ]);
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log, $this);
+        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $msg, $sc_par_lst_log, $this);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -3872,7 +3872,7 @@ class sandbox_multi extends db_object_multi_user
                 // update the fields excluding the unique id
                 $update_fvt_lst = new sql_par_field_list();
                 foreach ($fld_lst_ex_log as $fld) {
-                    $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
+                    $update_fvt_lst->add($fvt_lst->get($fld, $msg));
                 }
                 $sc_update = clone $sc;
                 $sc_par_lst_upd = $sc_par_lst;
@@ -3920,7 +3920,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
@@ -3929,7 +3929,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -4045,7 +4045,7 @@ class sandbox_multi extends db_object_multi_user
         // update the fields excluding the unique id
         $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
-            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
+            $update_fvt_lst->add($fvt_lst->get($fld, $msg));
         }
         $sc_update = clone $sc;
         $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
@@ -4087,7 +4087,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -4096,7 +4096,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -4106,7 +4106,7 @@ class sandbox_multi extends db_object_multi_user
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
@@ -4235,12 +4235,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function del_links(): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -4330,12 +4330,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function type_name(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
 

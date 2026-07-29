@@ -357,12 +357,12 @@ class element_list extends sandbox_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
-        $usr_msg->add_message_text(
+        $msg->add_message_text(
             $db_con->exe_try('del elements', $qp->sql, $qp->name, $qp->par, sys_log_levels::FATAL_ID));
-        return $usr_msg;
+        return $msg;
     }
 
     /**

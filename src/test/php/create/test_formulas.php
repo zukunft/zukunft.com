@@ -536,11 +536,11 @@ class test_formulas extends test_objects
     function element_list(): element_list
     {
         $t_trm = new test_terms($this->env);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
         $frm = $this->formula();
         $exp = $frm->expression($trm_lst);
-        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        $elm_lst = $exp->element_list($msg, $trm_lst);
         return $this->add_seq_number_to_element_list($elm_lst);
     }
 

@@ -266,11 +266,11 @@ class value extends value_base
      */
     function fill(value|sandbox_multi|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->number === null and $obj->number != null) {
             $this->number = $obj->number;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

@@ -221,16 +221,16 @@ class expression extends shared_expression
     /**
      * get a term list with all term ids used in the formula expression
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return term_list with all term ids used in the formula expression
      */
-    function term_id_list(user_message $usr_msg): term_list
+    function term_id_list(user_message $msg): term_list
     {
         $trm_lst = new term_list($this->usr);
         $exp_part = $this->r_part();
-        $sym_lst = $this->symbol_list($usr_msg, $exp_part);
+        $sym_lst = $this->symbol_list($msg, $exp_part);
         foreach ($sym_lst as $sym) {
-            $trm = $this->term_from_symbol($sym, $usr_msg);
+            $trm = $this->term_from_symbol($sym, $msg);
             if ($trm != null) {
                 $trm_lst->add($trm);
             }
@@ -242,16 +242,16 @@ class expression extends shared_expression
     /**
      * get a phrase list with all phrase ids used for the formula result
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return phrase_list with all phrase ids used for the formula result
      */
-    function phrase_id_list(user_message $usr_msg): phrase_list
+    function phrase_id_list(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $exp_part = $this->res_part();
-        $sym_lst = $this->symbol_list($usr_msg, $exp_part, true);
+        $sym_lst = $this->symbol_list($msg, $exp_part, true);
         foreach ($sym_lst as $sym) {
-            $phr = $this->phrase_from_symbol($sym, $usr_msg);
+            $phr = $this->phrase_from_symbol($sym, $msg);
             if ($phr != null) {
                 $phr_lst->add($phr);
             }
@@ -263,13 +263,13 @@ class expression extends shared_expression
     /**
      * get a term list with all term ids used in the formula expression including the result phrases
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return term_list with all term ids used in the formula expression
      */
-    function term_id_list_all(user_message $usr_msg): term_list
+    function term_id_list_all(user_message $msg): term_list
     {
-        $trm_lst = $this->term_id_list($usr_msg);
-        $trm_lst->merge($this->phrase_id_list($usr_msg)->term_list());
+        $trm_lst = $this->term_id_list($msg);
+        $trm_lst->merge($this->phrase_id_list($msg)->term_list());
         return $trm_lst;
     }
 
@@ -285,31 +285,31 @@ class expression extends shared_expression
      * don't use it for number retrieval, use element_grp_lst instead,
      * to separate expression processing from data retrieval
      *
-     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param user_message $msg to collect the error messages e.g. missing terms
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return element_list a list of all formula elements
      */
-    function element_list(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    function element_list(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        return $this->element_part_list($this->r_part(), $usr_msg, $trm_lst);
+        return $this->element_part_list($this->r_part(), $msg, $trm_lst);
     }
 
     /**
      * get an element list with all formula elements
      * plus the phrases that should be added to the result as elements
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst cache of the terns to avoid multiple db loading
      * @return element_list all formula elements including the result phrases
      */
     function elements_incl_result_phrases(
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list $trm_lst = null
     ): element_list
     {
 
-        $lst = $this->element_list($usr_msg, $trm_lst);
-        $lst->merge($this->result_phrases($usr_msg, $trm_lst));
+        $lst = $this->element_list($msg, $trm_lst);
+        $lst->merge($this->result_phrases($msg, $trm_lst));
         return $lst;
     }
 
@@ -317,27 +317,27 @@ class expression extends shared_expression
      * get a list of the phrases that should be added to the result
      * and report any missing phrases
      *
-     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param user_message $msg to collect the error messages e.g. missing terms
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return element_list a list of all formula elements
      */
-    function result_phrases(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    function result_phrases(user_message $msg, ?term_list $trm_lst = null): element_list
     {
-        return $this->element_part_list($this->res_part(), $usr_msg, $trm_lst, true, true);
+        return $this->element_part_list($this->res_part(), $msg, $trm_lst, true, true);
     }
 
     /**
      * get a term list with all term ids used in the formula expression
      * including the result phrases
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst cache of the terns to avoid multiple db loading
      * @return term_list with all terms used in this expression
      */
-    function terms(user_message $usr_msg, ?term_list $trm_lst = null): term_list
+    function terms(user_message $msg, ?term_list $trm_lst = null): term_list
     {
-        $lst = $this->element_list($usr_msg, $trm_lst)->term_list();
-        $lst->merge($this->result_phrases($usr_msg, $trm_lst)->term_list());
+        $lst = $this->element_list($msg, $trm_lst)->term_list();
+        $lst->merge($this->result_phrases($msg, $trm_lst)->term_list());
         return $lst;
     }
 
@@ -350,13 +350,13 @@ class expression extends shared_expression
      * get the phrases that are user to calculate the expression result
      * used to detect if the phrases should trigger predefined function e.g. to scale the values
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @returns phrase_list with the phrases from a given formula text and load the phrases
      */
-    function phrases(user_message $usr_msg, ?term_list $trm_lst = null): phrase_list
+    function phrases(user_message $msg, ?term_list $trm_lst = null): phrase_list
     {
-        $elm_lst = $this->element_list($usr_msg, $trm_lst)->term_list();
+        $elm_lst = $this->element_list($msg, $trm_lst)->term_list();
         return $elm_lst->phrase_list();
     }
 
@@ -392,25 +392,25 @@ class expression extends shared_expression
 
     /**
      * array with all term symbols use in the formula
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return array with all element / term symbols of the formula expression and of the result phrases
      */
-    function symbols(user_message $usr_msg = new user_message()): array
+    function symbols(user_message $msg = new user_message()): array
     {
         return array_merge(
-            $this->symbol_list($usr_msg, $this->r_part()),
-            $this->symbol_list($usr_msg, $this->res_part(), true));
+            $this->symbol_list($msg, $this->r_part()),
+            $this->symbol_list($msg, $this->res_part(), true));
     }
 
     /**
      * get a term id of terms that are not part of the given term list
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst_in list of terms already loaded
      * @return trm_ids
      */
-    function terms_missing(user_message $usr_msg, term_list|null $trm_lst_in = null): trm_ids
+    function terms_missing(user_message $msg, term_list|null $trm_lst_in = null): trm_ids
     {
-        $trm_lst = $this->term_id_list($usr_msg);
+        $trm_lst = $this->term_id_list($msg);
         $id_lst = $trm_lst->ids();
         if ($trm_lst_in != null) {
             if (!$trm_lst_in->is_empty()) {
@@ -427,9 +427,9 @@ class expression extends shared_expression
      * @param term_list|null $trm_lst_in a list of preloaded terms that should be preferred used for the conversion
      * @return term_list a list of all formulas words that are using hardcoded functions
      */
-    function terms_following(user_message $usr_msg, ?term_list $trm_lst_in = null): term_list
+    function terms_following(user_message $msg, ?term_list $trm_lst_in = null): term_list
     {
-        $elm_lst = $this->element_list($usr_msg, $trm_lst_in);
+        $elm_lst = $this->element_list($msg, $trm_lst_in);
         return $elm_lst->predefined_following()->term_list();
     }
 
@@ -737,19 +737,19 @@ class expression extends shared_expression
     /**
      * similar to element_special_following, but returns the formula and not the word
      *
-     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param user_message $msg to collect the error messages e.g. missing terms
      * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return formula_list a list of all formulas that are using hardcoded functions
      */
     function element_special_following_frm(
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst = null
     ): formula_list
     {
         $lib = new library();
 
         $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_list($usr_msg, $trm_lst);
+        $elm_lst = $this->element_list($msg, $trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {
@@ -867,14 +867,14 @@ class expression extends shared_expression
     function element_part_list_old(
         string       $exp_part,
         element_list $elm_lst,
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst = null
     ): bool
     {
         $lib = new library();
         $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
-            $elm = $this->element_from_symbol($obj_sym, $usr_msg, $trm_lst);
+            $elm = $this->element_from_symbol($obj_sym, $msg, $trm_lst);
             $elm->frm = $this->frm;
             $elm_lst->add($elm);
             $exp_part = $lib->str_right_of($exp_part, chars::TERM_END);
@@ -974,7 +974,7 @@ class expression extends shared_expression
         log_debug('get ' . $type . ' out of "' . $this->ref_text() . '" for user ' . $this->usr->name);
 
         $lib = new library();
-        $usr_msg = new user_message($this->usr);
+        $msg = new user_message($this->usr);
 
         // init result and work vars
         $lst = array();
@@ -1006,7 +1006,7 @@ class expression extends shared_expression
                 // to list the elements from left to right, set it to the right most position at the beginning of each replacement
                 $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
                 if ($obj_sym != '') {
-                    $elm = $this->element_from_symbol($obj_sym, $usr_msg, $trm_lst);
+                    $elm = $this->element_from_symbol($obj_sym, $msg, $trm_lst);
 
                     // filter the elements if requested
                     if ($type == self::SELECT_PHRASE) {
@@ -1040,7 +1040,7 @@ class expression extends shared_expression
 
                         // group the references if needed
                         if ($group_it) {
-                            $elm_grp->add_obj($elm, true, $usr_msg);
+                            $elm_grp->add_obj($elm, true, $msg);
                             log_debug('new group element "' . $elm->name() . '"');
 
                             // find the next term reference

@@ -95,12 +95,12 @@ class wikidata_write_tests
         // get the property json via the general property getter and store it in the same way as the entities
         $test_name = 'store the wikidata property json for ' . self::PRICE_PROPERTY;
         $json = $imp->get_property_json(self::PRICE_PROPERTY);
-        $usr_msg = $imp->store_text(self::PRICE_PROPERTY, $json);
-        $t->assert_true($test_name . ' ' . $usr_msg->all_message_text(), $usr_msg->is_ok());
+        $msg = $imp->store_text(self::PRICE_PROPERTY, $json);
+        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         // and the captured json file contains the requested property id
         // only checked if wikidata could be reached so that an offline test run continues with a warning
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $test_name = 'the captured wikidata property json for ' . self::PRICE_PROPERTY . ' contains the property id';
             $file = test_paths::IMPORT_WIKIDATA . self::PRICE_PROPERTY . import_wikidata::JSON_EXTENSION;
             $t->assert_text_contains($test_name, file_get_contents($file), self::PRICE_PROPERTY);
@@ -152,12 +152,12 @@ class wikidata_write_tests
     {
         // store the wikidata json as a test fixture
         $test_name = 'store the wikidata json for ' . $wikidata_id;
-        $usr_msg = $imp->store_json($wikidata_id);
-        $t->assert_true($test_name . ' ' . $usr_msg->all_message_text(), $usr_msg->is_ok());
+        $msg = $imp->store_json($wikidata_id);
+        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
 
         // and the captured json file contains the requested entity id
         // only checked if wikidata could be reached so that an offline test run continues with a warning
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $test_name = 'the captured wikidata json for ' . $wikidata_id . ' contains the entity id';
             $file = test_paths::IMPORT_WIKIDATA . $wikidata_id . import_wikidata::JSON_EXTENSION;
             $t->assert_text_contains($test_name, file_get_contents($file), $wikidata_id);

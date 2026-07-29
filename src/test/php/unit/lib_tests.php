@@ -955,21 +955,21 @@ class lib_tests
 
         $t->subheader($ts . 'user message');
 
-        $usr_msg = new user_message();
-        $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
+        $msg = new user_message();
+        $t->assert("user_message - default ok", $msg->is_ok(), true);
 
-        $usr_msg = new user_message();
-        $usr_msg->add_message_text('first message text');
-        $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
-        $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
+        $msg = new user_message();
+        $msg->add_message_text('first message text');
+        $t->assert("construct with message", $msg->get_message(), 'first message text');
+        $t->assert("if a message text is given, the result is by default NOT ok", $msg->is_ok(), false);
 
-        $usr_msg->add_message_text('second message text');
-        $t->assert("after adding a message the first message stays the same", $usr_msg->get_message(), 'first message text');
-        $t->assert("... and the second message can be shown", $usr_msg->get_message(2), 'second message text');
-        $t->assert("... which is also the last message", $usr_msg->get_last_message(), 'second message text');
+        $msg->add_message_text('second message text');
+        $t->assert("after adding a message the first message stays the same", $msg->get_message(), 'first message text');
+        $t->assert("... and the second message can be shown", $msg->get_message(2), 'second message text');
+        $t->assert("... which is also the last message", $msg->get_last_message(), 'second message text');
         // TODO Prio 1 activate
         //$t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), 'user message position 2 not found');
-        $t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), '');
+        $t->assert("a too high position simply returns an empty message", $msg->get_message(3), '');
 
         $msg_2 = new user_message();
         $msg_2->add_message_text('');
@@ -977,8 +977,8 @@ class lib_tests
         $msg_2->add_message_text('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
-        $usr_msg->merge($msg_2);
-        $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
+        $msg->merge($msg_2);
+        $t->assert("last message of the combined message should be from msg_2", $msg->get_last_message(), 'error text');
     }
 
     private function assert_sql_format(string $test_name, string $file_name, all_tests $t): void

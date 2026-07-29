@@ -157,16 +157,16 @@ class db_object_seq_id extends db_object
     /**
      * fill the vars with this database id object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -888,13 +888,13 @@ class db_object_seq_id extends db_object
      * create the sql statement to add a new row to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -911,10 +911,10 @@ class db_object_seq_id extends db_object
             $row_empty->reset(true);
         }
         if ($sc_par_lst_used->do_log()) {
-            return $this->sql_write($sc, $row_empty, $usr_msg, $sc_par_lst_used);
+            return $this->sql_write($sc, $row_empty, $msg, $sc_par_lst_used);
         } else {
             $sc_par_lst_used->add(sql_type::NO_ID_FIELD);
-            return $this->sql_write_no_log($sc, $row_empty, $usr_msg, $sc_par_lst_used);
+            return $this->sql_write_no_log($sc, $row_empty, $msg, $sc_par_lst_used);
         }
     }
 
@@ -923,26 +923,26 @@ class db_object_seq_id extends db_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param type_object $db_row the sandbox object with the database values before the update
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator      $sc,
         db_object_seq_id $db_row,
-        user_message     $usr_msg,
+        user_message     $msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_update($usr_msg)) {
+        if ($this->can_update($msg)) {
             // clone the parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
             $sc_par_lst_used->add(sql_type::UPDATE);
             if ($sc_par_lst_used->do_log()) {
-                return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
+                return $this->sql_write($sc, $db_row, $msg, $sc_par_lst_used);
             } else {
-                return $this->sql_write_no_log($sc, $db_row, $usr_msg, $sc_par_lst_used);
+                return $this->sql_write_no_log($sc, $db_row, $msg, $sc_par_lst_used);
             }
         } else {
             return null;
@@ -954,18 +954,18 @@ class db_object_seq_id extends db_object
      * but only if it does not have a code_id and is never used
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
         $qp = null;
-        if ($this->can_delete($usr_msg)) {
+        if ($this->can_delete($msg)) {
 
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
@@ -983,12 +983,12 @@ class db_object_seq_id extends db_object
                 $sbx_empty = $this->clone_reset(true);
                 // to get the list of the changed fields,
                 // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-                $fvt_lst = $sbx_empty->db_fields_changed($this, $usr_msg, $sc_par_lst_used);
+                $fvt_lst = $sbx_empty->db_fields_changed($this, $msg, $sc_par_lst_used);
                 // actual create the sql statement to delete the type object
                 // and log who has deleted it and when
                 $sc_par_lst_used->add(sql_type::NAMED_PAR);
 
-                $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $usr_msg, $sc_par_lst_used);
+                $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $msg, $sc_par_lst_used);
             } else {
                 $qp = $this->sql_delete_no_log($sc, $qp, $sc_par_lst_used);
             }
@@ -1001,7 +1001,7 @@ class db_object_seq_id extends db_object
      * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
@@ -1009,7 +1009,7 @@ class db_object_seq_id extends db_object
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1042,7 +1042,7 @@ class db_object_seq_id extends db_object
         // add the user_id to log who requested the deletion
         $fvt_lst_out->add_field(
             user_db::FLD_ID,
-            $usr_msg->usr->id(),
+            $msg->usr->id(),
             sql_par_type::INT);
 
         // add the change_action_id if needed
@@ -1065,7 +1065,7 @@ class db_object_seq_id extends db_object
 
         // create the insert log statement
         $sc_log = clone $sc;
-        $log = new change($usr_msg->usr);
+        $log = new change($msg->usr);
         $log->set_class($this::class);
         $log->set_field($name_fld);
         $log->old_value = $this->name();
@@ -1149,17 +1149,17 @@ class db_object_seq_id extends db_object
      * split
      * sql_write_add_key - create the sql to add the db row and add the main sql_write_add_key
      *
-     * review check($usr_msg) - create an error if a mandatory field is missing
+     * review check($msg) - create an error if a mandatory field is missing
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write(
         sql_creator      $sc,
         db_object_seq_id $db_row,
-        user_message     $usr_msg,
+        user_message     $msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1169,12 +1169,12 @@ class db_object_seq_id extends db_object
         $fld_lst_all = $this->db_fields_all();
 
         // get the list of all fields that can be changed by the user
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst);
 
         // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -1215,8 +1215,8 @@ class db_object_seq_id extends db_object
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
         if ($sc_par_lst->is_insert()) {
-            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
-            if ($usr_msg->is_ok()) {
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
+            if ($msg->is_ok()) {
                 $par_lst_out->add($qp_id->par_fld);
                 $sql .= $qp_id->sql;
             }
@@ -1230,21 +1230,21 @@ class db_object_seq_id extends db_object
         // add the user to the field list so that the id can be used for the log
         $fvt_lst->add_field(
             user_db::FLD_ID,
-            $usr_msg->usr->id(),
+            $msg->usr->id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
         // create the query parameters for the log entries for the single fields
-        if ($usr_msg->is_ok()) {
-            $qp_log = $this->sql_write_log($sc, $usr_msg, $fvt_lst, $fld_lst_chg, $sc_par_lst_sub);
+        if ($msg->is_ok()) {
+            $qp_log = $this->sql_write_log($sc, $msg, $fvt_lst, $fld_lst_chg, $sc_par_lst_sub);
             $sql .= ' ' . $qp_log->sql;
             $par_lst_out->add_list($qp_log->par_fld_lst);
         }
 
         // add the update row SQL to the function body
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $sql_upd = $this->sql_write_update(
-                $sc, $usr_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_chg, $sc_par_lst);
+                $sc, $msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_chg, $sc_par_lst);
             if ($sql_upd != '') {
                 $sql .= ' ' . $sql_upd . ' ';
             }
@@ -1256,7 +1256,7 @@ class db_object_seq_id extends db_object
 
     function sql_write_log(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_chg,
         sql_type_list      $sc_par_lst = new sql_type_list()
@@ -1272,9 +1272,9 @@ class db_object_seq_id extends db_object
 
         // create the query parameters for the log entries for the single fields
         if ($sc_par_lst->is_insert()) {
-            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $usr_msg, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $msg, $sc_par_lst_log);
         } else {
-            $qp_log = $sc->sql_func_log_update($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
+            $qp_log = $sc->sql_func_log_update($this::class, $msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
         }
         return $qp_log;
     }
@@ -1286,7 +1286,7 @@ class db_object_seq_id extends db_object
      * the SQL statement is used to update a db row but also as part of the insert SQL statement
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param string $id_fld the inner part of sql statement
      * @param string $var_name_row_id the name of the id field
      * @param sql_par_field_list $fvt_lst fields with parameters in order of usage in the query function
@@ -1296,7 +1296,7 @@ class db_object_seq_id extends db_object
      */
     function sql_write_update(
         sql_creator        $sc,
-        user_message       $usr_msg,
+        user_message       $msg,
         string             $id_fld,
         string             $var_name_row_id,
         sql_par_field_list $fvt_lst,
@@ -1315,7 +1315,7 @@ class db_object_seq_id extends db_object
         // collect the field values and types for the update statement
         $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
-            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
+            $update_fvt_lst->add($fvt_lst->get($fld, $msg));
         }
 
         if (!$update_fvt_lst->is_empty()) {
@@ -1388,25 +1388,25 @@ class db_object_seq_id extends db_object
      * all fields are always included in the query to be able to remove overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write_no_log(
         sql_creator      $sc,
         db_object_seq_id $db_row,
-        user_message     $usr_msg,
+        user_message     $msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // get a list of all fields that could potentially be updated
         $fld_lst_all = $this->db_fields_all();
         // get the list of all fields that can be changed by the user
-        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst);
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -1433,7 +1433,7 @@ class db_object_seq_id extends db_object
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -1442,7 +1442,7 @@ class db_object_seq_id extends db_object
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -1451,7 +1451,7 @@ class db_object_seq_id extends db_object
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
@@ -1566,29 +1566,29 @@ class db_object_seq_id extends db_object
      * a user without login (an ip user) is blocked if this pod does not permit the changes of an ip user
      * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
      *
-     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the change and the object to collect the potential reject messages
      * @param string $action the requested change used for the log message e.g. 'adding'
      * @return bool true if the user is permitted to change data
      */
-    private function user_can_change(user_message $usr_msg, string $action): bool
+    private function user_can_change(user_message $msg, string $action): bool
     {
         $can_change = false;
         $lib = new library();
         $class = $lib->class_to_name($this::class);
 
-        if ($usr_msg->usr == null) {
+        if ($msg->usr == null) {
             // TODO Prio 2 set the requesting user in all calls of db_add and db_update and turn this into a log_err
             log_err('user missing while ' . $action . ' of ' . $class);
-            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
-        } elseif ($usr_msg->usr->is_blocked()) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif ($msg->usr->is_blocked()) {
             global $sys;
             // tell the user why the change has been rejected and how to solve it
-            $usr_msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
             // the block can only be caused by the user profile matching the ip profile, so both
             // ids are logged to make an unexpected block (e.g. a wrong profile row) analysable
             log_warning($action . ' of ' . $class . ' ' . $this->dsp_id()
-                . ' by user ' . $usr_msg->usr->dsp_id() . ' is blocked'
-                . ' (user profile id ' . ($usr_msg->usr->profile_id ?? 'null')
+                . ' by user ' . $msg->usr->dsp_id() . ' is blocked'
+                . ' (user profile id ' . ($msg->usr->profile_id ?? 'null')
                 . ' = ip profile id ' . $sys->typ_lst->usr_pro->id(user_profiles::IP_ONLY, false) . ')');
         } else {
             $can_change = true;
@@ -1600,63 +1600,63 @@ class db_object_seq_id extends db_object
     /**
      * true if the requesting user is allowed to add this object
      *
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @return bool true if the is allowed to add the object
      */
-    function can_be_added_by(user_message $usr_msg): bool
+    function can_be_added_by(user_message $msg): bool
     {
         // any user that is not blocked can add data
-        return $this->user_can_change($usr_msg, self::ACTION_ADD);
+        return $this->user_can_change($msg, self::ACTION_ADD);
     }
 
     /**
      * true if the requesting user is allowed to change this object
      *
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @return bool true if the is allowed to change the object
      */
-    function can_be_changed_by(user_message $usr_msg): bool
+    function can_be_changed_by(user_message $msg): bool
     {
-        return $this->can_be_modified_by($usr_msg, self::ACTION_CHANGE);
+        return $this->can_be_modified_by($msg, self::ACTION_CHANGE);
     }
 
     /**
      * true if the requesting user is allowed to delete or exclude this object
      * a delete needs the same permissions as a change of an existing object
      *
-     * @param user_message $usr_msg the user who has requested the deletion and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the deletion and the object to collect the potential reject messages
      * @return bool true if the is allowed to delete the object
      */
-    function can_be_deleted_by(user_message $usr_msg): bool
+    function can_be_deleted_by(user_message $msg): bool
     {
-        return $this->can_be_modified_by($usr_msg, self::ACTION_DELETE);
+        return $this->can_be_modified_by($msg, self::ACTION_DELETE);
     }
 
     /**
      * true if the requesting user is allowed to change or delete an existing object
      *
-     * @param user_message $usr_msg the user who has requested the change and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the change and the object to collect the potential reject messages
      * @param string $action the requested change used for the log message e.g. 'deleting'
      * @return bool true if the user is allowed to change the existing object
      */
-    private function can_be_modified_by(user_message $usr_msg, string $action): bool
+    private function can_be_modified_by(user_message $msg, string $action): bool
     {
         $can_change = false;
         $lib = new library();
         $class = $lib->class_to_name($this::class);
 
-        if ($this->user_can_change($usr_msg, $action)) {
+        if ($this->user_can_change($msg, $action)) {
             // an existing row can be changed by a user with a login (so with a unique id e.g. the email)
             // or by an ip user, if this pod permits the changes of an ip user (checked by user_can_change)
-            if ($usr_msg->usr->is_unique() or $usr_msg->usr->is_ip_user()) {
+            if ($msg->usr->is_unique() or $msg->usr->is_ip_user()) {
                 $can_change = true;
-                log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $usr_msg->usr->dsp_id());
+                log_info($class . ' ' . $this->dsp_id() . ' is change by user ' . $msg->usr->dsp_id());
             } else {
-                $usr_msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
+                $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                     msg_id::VAR_CLASS_NAME => $class,
                     msg_id::VAR_NAME => $this->dsp_id(),
-                    msg_id::VAR_USER_NAME => $usr_msg->usr->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_msg->usr->profile_name()
+                    msg_id::VAR_USER_NAME => $msg->usr->name(),
+                    msg_id::VAR_USER_PROFILE => $msg->usr->profile_name()
                 ]);
             }
         }

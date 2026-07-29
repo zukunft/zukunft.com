@@ -212,10 +212,10 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             // testing cleanup to remove any remaining test records
-            $usr_msg = new user_message($usr);
-            $t->cleanup($usr_msg);
+            $msg = new user_message($usr);
+            $t->cleanup($msg);
             // final check that no test row is left in any table incl. the change log
-            $t->check_cleanup($usr_msg);
+            $t->check_cleanup($msg);
 
             // start the integration tests by loading the base and sample data
             // TODO Prio 1 activate

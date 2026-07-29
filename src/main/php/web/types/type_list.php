@@ -90,11 +90,11 @@ class type_list
      */
     function set_from_json_array(array $json_array, string $class = ''): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($json_array as $value) {
             if ($class == verb::class) {
                 $vrb = new verb();
-                $vrb->api_mapper($value, $usr_msg);
+                $vrb->api_mapper($value, $msg);
                 $this->add_obj($vrb);
             } elseif ($class == ref_type::class) {
                 $ref_typ = new ref_type(
@@ -126,7 +126,7 @@ class type_list
                 $this->add_obj($lan);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
-                    $usr_msg->add_error_text('code id is missing for ' . implode(',', $value));
+                    $msg->add_error_text('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
                     $typ = new type_object(
@@ -145,7 +145,7 @@ class type_list
                 $this->add_obj($typ);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -319,15 +319,15 @@ class type_list
      */
     protected function add_obj(object $obj): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
             $this->hash[$obj->code_id] = $obj->id();
         } else {
-            $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+            $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

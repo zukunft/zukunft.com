@@ -369,28 +369,28 @@ class phrase extends combine_named
     /**
      * map a phrase api json to this model phrase object
      * @param array $api_json the api array with the phrase values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
         } else {
             if ($api_json[json_fields::ID] > 0) {
                 $wrd = new word($this->get_user());
-                if ($wrd->api_mapper($api_json, $usr_msg)) {
+                if ($wrd->api_mapper($api_json, $msg)) {
                     $this->obj = $wrd;
                 }
             } else {
                 $trp = new triple($this->get_user());
                 $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-                if ($trp->api_mapper($api_json, $usr_msg)) {
+                if ($trp->api_mapper($api_json, $msg)) {
                     $this->obj = $trp;
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -894,13 +894,13 @@ class phrase extends combine_named
      * set the vars of this phrase object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -911,19 +911,19 @@ class phrase extends combine_named
             $class = $in_ex_json[json_fields::OBJECT_CLASS];
             if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
-                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $wrd->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($wrd);
             } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
-                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $trp->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_obj($trp);
             } else {
                 // TODO Prio 0 review
-                $usr_msg->add_err(msg_id::IMPORT_FAILED, []);
+                $msg->add_err(msg_id::IMPORT_FAILED, []);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function export_json(): array
@@ -1746,10 +1746,10 @@ class phrase extends combine_named
      */
 
     /**
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         global $sys;
 
@@ -1775,7 +1775,7 @@ class phrase extends combine_named
                 $wrd = new word($this->get_user());
                 $wrd->set_name($this->name());
                 $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
-                $wrd->save($usr_msg);
+                $wrd->save($msg);
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
                 } else {
@@ -1784,38 +1784,38 @@ class phrase extends combine_named
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * delete either a word or triple
-     * @param user_message $usr_msg an empty string if deleting has been successful
+     * @param user_message $msg an empty string if deleting has been successful
      * @return bool true if the phrase has been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         // direct delete if the object is loaded
         if ($this->is_triple()) {
             $lnk = $this->triple();
-            $lnk?->del($usr_msg);
+            $lnk?->del($msg);
         } elseif ($this->is_word()) {
             $wrd = $this->word();
-            $wrd?->del($usr_msg);
+            $wrd?->del($msg);
         } else {
             log_err('Unknown object type of ' . $this->dsp_id());
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * @param string $name the name of the phrase
-     * @param user_message $usr_msg if something fails the explanation for the user what has happened
+     * @param user_message $msg if something fails the explanation for the user what has happened
      *                              and the possible solutions with a suggestion
      * @return bool true if the phrase has been added
      */
-    function get_or_add(string $name, user_message $usr_msg): bool
+    function get_or_add(string $name, user_message $msg): bool
     {
         // load the word or triple if it exists
         $this->load_by_name($name);
@@ -1823,9 +1823,9 @@ class phrase extends combine_named
             // add a simple word if it does not yet exist
             $wrd = new word($this->get_user());
             $wrd->set_name($name);
-            $wrd->save($usr_msg);
+            $wrd->save($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

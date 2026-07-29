@@ -120,6 +120,10 @@ class coding_rule_tests
         $t->subheader($ts . 'frontend config cache');
         $this->php_web_config_from_cache_tests($t);
 
+        $t->subheader($ts . 'requesting user on the message');
+        $this->php_user_message_param_shadow_tests($t);
+        $this->php_user_message_user_write_tests($t);
+
         $t->subheader($ts . 'backend globals');
         $this->php_cfg_only_allowed_globals_tests($t);
 
@@ -751,6 +755,452 @@ class coding_rule_tests
         // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
         $test_name = 'web/ config from cache checked in ' . $files_checked . ' files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no function overwrites its own user_message parameter with a fresh new user_message():
+     * the message is append-only, so resetting a $msg parameter silently drops every error collected so
+     * far and the requesting user that lives on it (docs/llm/state-and-messages.md); 11 such shadows
+     * (word/triple/source del_links, figure/group api_mapper, db_object url_mapper, sandbox save_id
+     * stubs, formula_map unlink_phrase, sandbox_multi import_obj, sql_db delete) each dropped errors
+     * until they were fixed
+     *
+     * a token parser (not a line grep) is required because a grep cannot tell a parameter shadow
+     * ($msg is a user_message parameter) from a legitimate local buffer ($msg is a fresh local);
+     * the guarded null-init of a *nullable* parameter (import_convert_xbrl::build_data does
+     * "if ($msg == null) { $msg = new user_message(); }") is the one allowed reset and is tolerated
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces the summary assertion only
+     *
+     * positive (test fires when it should): "$msg = new user_message();" in a function with a
+     *     "user_message $msg" parameter flags the rule violation
+     * negative (test tolerates good code): a local buffer "$msg = new user_message();" (not a
+     *     parameter), a default value "user_message $msg = new user_message()" in the signature, and
+     *     the guarded null-init of a nullable "?user_message $msg = null" parameter all pass
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_param_shadow_tests(test_cleanup $t): void
+    {
+        // the library code below the entry points: backend model, api objects, frontend and shared
+        foreach ([paths::MODEL, paths::API_OBJECT, html_paths::WEB, paths::SHARED] as $base_path) {
+            $this->php_msg_shadow_scan($t, $base_path);
+        }
+    }
+
+    /**
+     * scan every php file under $base_path and assert one failure per user_message parameter shadow
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::MODEL
+     * @return void
+     */
+    private function php_msg_shadow_scan(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $files_checked++;
+            $lines = file($base_path . $code_file);
+            $shadows = $this->msg_param_shadows(implode('', $lines), $code_file);
+            foreach ($shadows as $shadow) {
+                $test_name = 'a function must not overwrite its user_message parameter'
+                    . ' with a fresh new user_message() (append-only), but $' . $shadow['var']
+                    . ' is reset in ' . $shadow['code_file'] . ':' . $shadow['line'];
+                // the offending line is the actual result and no hit is the target
+                $t->assert($test_name, trim($lines[$shadow['line'] - 1]));
+            }
+        }
+        // one summary assertion per scanned tree so that a clean tree also produces a visible pass;
+        // scanning and tokenising the whole source tree takes clearly longer than a normal unit
+        // function, so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'user_message param shadows checked in ' . $files_checked . ' files of ' . $base_path;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * find every function in the php source that overwrites its own user_message parameter with a
+     * fresh new user_message(); every top-level and nested function is walked, a nested closure body
+     * is attributed to its own scope so its parameters do not leak into the enclosing function
+     *
+     * @param string $src the full php source of the file
+     * @param string $code_file the file path used in the violation message
+     * @return array<int,array{code_file:string,line:int,var:string}> one entry per shadow found
+     */
+    private function msg_param_shadows(string $src, string $code_file): array
+    {
+        $tokens = token_get_all($src);
+        $n = count($tokens);
+        $out = [];
+        $i = 0;
+        while ($i < $n) {
+            if (is_array($tokens[$i]) and $tokens[$i][0] == T_FUNCTION) {
+                $open = $i + 1;
+                while ($open < $n and $tokens[$open] !== '(') {
+                    $open++;
+                }
+                $close = $open;
+                $params = $this->msg_params_of($tokens, $open, $close);
+                $body = $close + 1;
+                while ($body < $n and $tokens[$body] !== '{' and $tokens[$body] !== ';') {
+                    $body++;
+                }
+                if ($body < $n and $tokens[$body] === '{') {
+                    $body_end = $this->brace_end($tokens, $body);
+                    $this->scan_msg_shadow($tokens, $body + 1, $body_end - 1, $params, $code_file, $out);
+                }
+            }
+            $i++;
+        }
+        return $out;
+    }
+
+    /**
+     * parse the parameter list of a function from the '(' at $open to its matching ')'
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $open the index of the opening '(' of the parameter list
+     * @param int $close set by reference to the index of the matching ')'
+     * @return array<string,array{is_msg:bool,nullable:bool}> the params keyed by variable name (no $),
+     *         each flagged whether its type is user_message and whether it is nullable
+     */
+    private function msg_params_of(array $tokens, int $open, int &$close): array
+    {
+        $n = count($tokens);
+        $name_tokens = [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED];
+        $params = [];
+        $depth = 0;
+        $type = '';        // accumulated type text before the variable of the current segment
+        $var = '';         // the parameter variable name of the current segment
+        $nullable = false; // a '?' prefix or a '= null' default makes the parameter nullable
+        $done = false;
+        $i = $open;
+        while ($i < $n and !$done) {
+            $tok = $tokens[$i];
+            if ($tok === '(') {
+                $depth++;
+            } elseif ($tok === ')') {
+                $depth--;
+                if ($depth == 0) {
+                    $close = $i;
+                    $done = true;
+                }
+            } elseif ($depth == 1 and $tok === ',') {
+                $this->add_msg_param($params, $type, $var, $nullable);
+                $type = '';
+                $var = '';
+                $nullable = false;
+            } elseif ($depth >= 1 and is_array($tok) and $tok[0] == T_VARIABLE and $var === '') {
+                $var = ltrim($tok[1], '$');
+            } elseif ($depth >= 1 and is_array($tok) and in_array($tok[0], $name_tokens)) {
+                if ($var === '') {
+                    $type .= $tok[1];
+                } elseif (strtolower($tok[1]) == 'null') {
+                    $nullable = true;
+                }
+            } elseif ($depth >= 1 and $tok === '?' and $var === '') {
+                $nullable = true;
+            }
+            $i++;
+        }
+        // add the last segment, which has no trailing comma to close it
+        $this->add_msg_param($params, $type, $var, $nullable);
+        return $params;
+    }
+
+    /**
+     * append one parsed parameter to the param map, skipping an empty segment (e.g. a trailing comma)
+     *
+     * @param array $params the param map being built, keyed by variable name
+     * @param string $type the accumulated type text of the segment
+     * @param string $var the variable name of the segment (empty for no parameter)
+     * @param bool $nullable true if the parameter is nullable
+     * @return void
+     */
+    private function add_msg_param(array &$params, string $type, string $var, bool $nullable): void
+    {
+        if ($var !== '') {
+            $params[$var] = [
+                'is_msg' => str_contains($type, 'user_message'),
+                'nullable' => $nullable
+            ];
+        }
+    }
+
+    /**
+     * return the index of the '}' that matches the '{' at $open
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $open the index of the opening '{'
+     * @return int the index of the matching '}' (or the last token if unbalanced)
+     */
+    private function brace_end(array $tokens, int $open): int
+    {
+        $n = count($tokens);
+        $depth = 0;
+        $end = $n - 1;
+        $found = false;
+        $i = $open;
+        while ($i < $n and !$found) {
+            if ($tokens[$i] === '{') {
+                $depth++;
+            } elseif ($tokens[$i] === '}') {
+                $depth--;
+                if ($depth == 0) {
+                    $end = $i;
+                    $found = true;
+                }
+            }
+            $i++;
+        }
+        return $end;
+    }
+
+    /**
+     * return the index of the next code token at or after $i, skipping whitespace and comments
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the start index
+     * @return int the index of the next code token
+     */
+    private function next_code_idx(array $tokens, int $i): int
+    {
+        $n = count($tokens);
+        $skip = [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT];
+        while ($i < $n and is_array($tokens[$i]) and in_array($tokens[$i][0], $skip)) {
+            $i++;
+        }
+        return $i;
+    }
+
+    /**
+     * scan a function body (tokens $start..$end) for a "$p = new user_message(...)" assignment to one
+     * of the function's user_message parameters; a nested closure body is skipped so its assignments
+     * are attributed to its own scope by the outer walk in msg_param_shadows
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $start the first body token index (after the opening '{')
+     * @param int $end the last body token index (before the closing '}')
+     * @param array $params the parameter map of the enclosing function
+     * @param string $code_file the file path used in the violation entry
+     * @param array $out the violation list being collected
+     * @return void
+     */
+    private function scan_msg_shadow(
+        array  $tokens,
+        int    $start,
+        int    $end,
+        array  $params,
+        string $code_file,
+        array  &$out
+    ): void
+    {
+        $i = $start;
+        while ($i <= $end) {
+            $tok = $tokens[$i];
+            if (is_array($tok) and $tok[0] == T_FUNCTION) {
+                // skip the nested closure; the outer walk visits it later with its own parameters
+                $i = $this->skip_function($tokens, $i, $end);
+            } else {
+                if ($this->is_msg_shadow($tokens, $i, $end, $params)) {
+                    $var = ltrim($tok[1], '$');
+                    // the guarded null-init of a nullable parameter is the one sanctioned reset
+                    $guarded = ($params[$var]['nullable']
+                        && $this->has_null_guard($tokens, $start, $end, $var));
+                    if (!$guarded) {
+                        $out[] = ['code_file' => $code_file, 'line' => $tok[2], 'var' => $var];
+                    }
+                }
+                $i++;
+            }
+        }
+    }
+
+    /**
+     * return the token index just past a nested function/closure: its body if it has one, else the
+     * token after its ';' (an abstract or interface method stub)
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the index of the nested T_FUNCTION token
+     * @param int $end the last token index that may be inspected
+     * @return int the index just past the nested function
+     */
+    private function skip_function(array $tokens, int $i, int $end): int
+    {
+        $open = $i + 1;
+        while ($open <= $end and $tokens[$open] !== '(') {
+            $open++;
+        }
+        $close = $open;
+        $this->msg_params_of($tokens, $open, $close);
+        $body = $close + 1;
+        while ($body <= $end and $tokens[$body] !== '{' and $tokens[$body] !== ';') {
+            $body++;
+        }
+        $next = $body + 1;
+        if ($body <= $end and $tokens[$body] === '{') {
+            $next = $this->brace_end($tokens, $body) + 1;
+        }
+        return $next;
+    }
+
+    /**
+     * true if the token at $i is a user_message parameter variable immediately assigned a
+     * new user_message(...) — the shadow pattern "$p = new user_message"
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $i the candidate T_VARIABLE index
+     * @param int $end the last body token index
+     * @param array $params the parameter map of the enclosing function
+     * @return bool true if the assignment shadows a user_message parameter
+     */
+    private function is_msg_shadow(array $tokens, int $i, int $end, array $params): bool
+    {
+        $hit = false;
+        $tok = $tokens[$i];
+        if (is_array($tok) and $tok[0] == T_VARIABLE) {
+            $var = ltrim($tok[1], '$');
+            if (isset($params[$var]) and $params[$var]['is_msg']) {
+                $eq = $this->next_code_idx($tokens, $i + 1);
+                if ($eq <= $end and $tokens[$eq] === '=') {
+                    $new = $this->next_code_idx($tokens, $eq + 1);
+                    if ($new <= $end and is_array($tokens[$new]) and $tokens[$new][0] == T_NEW) {
+                        $cls = $this->next_code_idx($tokens, $new + 1);
+                        $name = is_array($tokens[$cls] ?? '') ? $tokens[$cls][1] : '';
+                        // strip any namespace qualifier and compare the short class name
+                        $short = strtolower(substr(strrchr('\\' . $name, '\\'), 1));
+                        $hit = ($short == 'user_message');
+                    }
+                }
+            }
+        }
+        return $hit;
+    }
+
+    /**
+     * true if the function body between $start and $end guards $var against null before use
+     * (a "$var == null" / "$var === null" comparison or a "$var ??" coalesce), which marks the
+     * sanctioned null-init of a nullable parameter (import_convert_xbrl::build_data)
+     *
+     * @param array $tokens the token_get_all output of the file
+     * @param int $start the first body token index
+     * @param int $end the last body token index
+     * @param string $var the parameter variable name to check (no $)
+     * @return bool true if a null guard on $var is present
+     */
+    private function has_null_guard(array $tokens, int $start, int $end, string $var): bool
+    {
+        $guarded = false;
+        $i = $start;
+        while ($i <= $end) {
+            $tok = $tokens[$i];
+            if (is_array($tok) and $tok[0] == T_VARIABLE and ltrim($tok[1], '$') == $var) {
+                $op = $this->next_code_idx($tokens, $i + 1);
+                $nxt = $tokens[$op] ?? '';
+                if (is_array($nxt) and in_array($nxt[0], [T_COALESCE, T_COALESCE_EQUAL])) {
+                    $guarded = true;
+                } elseif (is_array($nxt) and in_array($nxt[0], [T_IS_EQUAL, T_IS_IDENTICAL])) {
+                    $val = $this->next_code_idx($tokens, $op + 1);
+                    $null_tok = $tokens[$val] ?? '';
+                    if (is_array($null_tok) and strtolower($null_tok[1]) == 'null') {
+                        $guarded = true;
+                    }
+                }
+            }
+            $i++;
+        }
+        return $guarded;
+    }
+
+    /**
+     * check that no php file below the entry points writes the requesting user onto a user_message
+     * with a post-hoc $msg->usr assignment: the requesting user is set once by the entry point
+     * (the http scripts and the api index.php scripts) and every function below reads it from
+     * $msg->usr, never re-sets it
+     * (docs/llm/state-and-messages.md, the "requesting user lives on $msg" migration); the only
+     * sanctioned writers are the user_message classes themselves (skipped as a whole) and the single
+     * "$msg->usr = $usr_ui;" login user switch in web/frontend.php (the one allowed change of the
+     * requesting user after the entry point, see frontend::url_to_action) — that exact line is
+     * tolerated while the rest of web/frontend.php stays under the rule
+     *
+     * user_message variables follow the $..msg.. / $..message.. naming convention, so a
+     * "$<msg>->usr =" write is the machine-detectable violation; a comment line is skipped
+     *
+     * each violation produces one failing assertion identifying the file and line;
+     * a clean tree produces the summary assertion only
+     *
+     * positive (test fires when it should): "$msg->usr = $sys_usr;" below the entry points flags the
+     *     rule violation
+     * negative (test tolerates good code): setting the user through the constructor
+     *     "$msg = new user_message($sys_usr);" passes, and a comparison "$msg->usr == ..." is not a write
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_user_write_tests(test_cleanup $t): void
+    {
+        // the library code below the entry points: backend model, api objects, frontend and shared
+        foreach ([paths::MODEL, paths::API_OBJECT, html_paths::WEB, paths::SHARED] as $base_path) {
+            $this->php_msg_user_write_scan($t, $base_path);
+        }
+    }
+
+    /**
+     * scan every php file under $base_path and assert one failure per post-hoc user_message->usr write;
+     * the user_message class files and web/frontend.php (the sanctioned login switch) are skipped
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @param string $base_path the source dir to scan e.g. paths::MODEL
+     * @return void
+     */
+    private function php_msg_user_write_scan(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $code_files = $lib->array_to_path($lib->dir_to_array($base_path));
+        // a "$<var>->usr =" write where the var name carries the message convention (msg / message);
+        // the negative lookahead excludes the == / === comparisons and the => arrow
+        $pattern = '#\$[a-z0-9_]*(msg|message)[a-z0-9_]*->usr\s*=(?![=>])#i';
+        // the frontend login user switch is the one sanctioned change of the requesting user after
+        // the entry point assignment (frontend::url_to_action), so exactly this line is tolerated
+        // while the rest of web/frontend.php stays under the rule
+        $frontend_login_switch = '$msg->usr = $usr_ui;';
+        $files_checked = 0;
+        foreach ($code_files as $code_file) {
+            $full = str_replace('\\', '/', $base_path . $code_file);
+            // the user_message classes are the sanctioned home of the ->usr assignment
+            if (str_ends_with($full, '/user_message.php')) {
+                continue;
+            }
+            $files_checked++;
+            $ctrl_code = file($base_path . $code_file);
+            foreach ($ctrl_code as $line_idx => $line) {
+                // skip comment lines so a docblock that cites the anti-pattern is not flagged
+                $head = ltrim($line);
+                if ($head === '' or $head[0] === '*'
+                    or str_starts_with($head, '//') or str_starts_with($head, '/*')) {
+                    continue;
+                }
+                // tolerate only the exact sanctioned frontend login switch, nothing else
+                if ($code_file == '/frontend.php' and trim($line) == $frontend_login_switch) {
+                    continue;
+                }
+                if (preg_match($pattern, $line)) {
+                    $test_name = 'the requesting user lives on $msg from the entry point;'
+                        . ' a function below must not write $msg->usr, but found one in '
+                        . $code_file . ':' . ($line_idx + 1);
+                    // the offending line is the actual result and no hit is the target
+                    $t->assert($test_name, trim($line));
+                }
+            }
+        }
+        // one summary assertion per scanned tree so that a clean tree also produces a visible pass;
+        // scanning the whole source tree takes clearly longer than a normal unit function, so a
+        // generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'user_message->usr writes checked in ' . $files_checked . ' files of ' . $base_path;
+        $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**

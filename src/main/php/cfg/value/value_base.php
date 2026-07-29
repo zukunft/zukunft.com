@@ -1020,14 +1020,14 @@ class value_base extends sandbox_value
      */
     function fill(value_base|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_source() === null and $obj->get_source() != null) {
             $this->set_source($obj->get_source());
         }
         if ($this->get_value() === null and $obj->get_value() != null) {
             $this->set_value($obj->get_value());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1266,11 +1266,11 @@ class value_base extends sandbox_value
      * e.g. scale the inhabitants of Switzerland from millions to one
      *
      * @param phrase_list $phr_lst list of phrases that defines the target scaling e.g. "one"
-     * @param user_message $usr_msg to collect the problems and the suggested solutions for the user to select
+     * @param user_message $msg to collect the problems and the suggested solutions for the user to select
      * @param term_list $trm_lst cache of the terms that are used to scale the value towards the target phrases
      * @return float|null the scaled number or the unscaled number if scaling is not possible
      */
-    function scale_new(phrase_list $phr_lst, user_message $usr_msg, term_list $trm_lst): ?float
+    function scale_new(phrase_list $phr_lst, user_message $msg, term_list $trm_lst): ?float
     {
         $lib = new library();
 
@@ -1283,11 +1283,11 @@ class value_base extends sandbox_value
         $trg_scale_lst = $phr_lst->scaling_lst();
 
         if ($src_scale_lst->is_empty()) {
-            $usr_msg->add(msg_id::SCALING_WORD_MISSING, [
+            $msg->add(msg_id::SCALING_WORD_MISSING, [
                 msg_id::VAR_WORD_NAME => $this->phrase_list()->dsp_name()
             ]);
         } elseif ($trg_scale_lst->is_empty()) {
-            $usr_msg->add(msg_id::SCALING_WORD_MISSING, [
+            $msg->add(msg_id::SCALING_WORD_MISSING, [
                 msg_id::VAR_WORD_NAME => $phr_lst->dsp_name()
             ]);
         } else {
@@ -1511,7 +1511,7 @@ class value_base extends sandbox_value
      */
     function import_phrase_value(string $phr_name, float $value, ?object $test_obj = null): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug();
 
         if ($test_obj) {
@@ -1524,12 +1524,12 @@ class value_base extends sandbox_value
         $phr_lst = new phrase_list($this->get_user());
         $phr = new phrase($this->get_user());
         if ($do_save) {
-            $phr->get_or_add($phr_name, $usr_msg);
+            $phr->get_or_add($phr_name, $msg);
         } else {
             $phr->set_name($phr_name);
         }
 
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $phr_lst->add($phr);
             $phr_grp = $phr_lst->get_grp_id($do_save);
             $this->set_grp($phr_grp);
@@ -1537,11 +1537,11 @@ class value_base extends sandbox_value
 
             // save the value in the database
             if ($do_save) {
-                $this->save($usr_msg);
+                $this->save($msg);
             }
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1899,9 +1899,9 @@ class value_base extends sandbox_value
 
     /**
      * create a database record to save a user-specific value
-     * @param user_message $usr_msg to collect the problem and suggested solutions
+     * @param user_message $msg to collect the problem and suggested solutions
      */
-    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
+    protected function add_usr_cfg(user_message $msg, string $class = self::class): bool
     {
         global $db_con;
 
@@ -1919,11 +1919,11 @@ class value_base extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
-                $db_con->insert($qp, 'add user-specific value', $usr_msg);
+                $qp = $this->sql_insert($db_con->sql_creator(), $msg, new sql_type_list([sql_type::USER]));
+                $db_con->insert($qp, 'add user-specific value', $msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -2105,7 +2105,7 @@ class value_base extends sandbox_value
         $usr = $this->get_user();
 
         $result = '';
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
@@ -2128,7 +2128,7 @@ class value_base extends sandbox_value
             $job = new job($this->get_user());
             $job->set_type(job_types::VALUE_UPDATE, $usr);
             $job->row_id = $this->id();
-            $job->save($usr_msg);
+            $job->save($msg);
         } else {
             $result = 'initiating of value update job failed';
         }
@@ -2153,23 +2153,23 @@ class value_base extends sandbox_value
 
     /**
      * add a new value
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug();
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, false, true);
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -2315,13 +2315,13 @@ class value_base extends sandbox_value
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value|value_base $sbx the same value sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|value_base $sbx,
-        user_message                           $usr_msg,
+        user_message                           $msg,
         sql_type_list                          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -2329,7 +2329,7 @@ class value_base extends sandbox_value
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $msg, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
         // so a source change (including a source-only change of an existing value) must be written too

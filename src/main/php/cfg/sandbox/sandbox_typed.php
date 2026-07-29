@@ -140,21 +140,21 @@ class sandbox_typed extends sandbox_named
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (key_exists(json_fields::TYPE, $api_json)) {
             // the requesting user normally comes from the message, but the frontend write bridge
             // (MapObject::convertToDb) maps with a message that has no user set, so fall back to
             // the object's own user (the requesting user the object was created with); set_type_id
             // needs a non-null user for the permission check
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr ?? $this->get_user());
+            $this->set_type_id($api_json[json_fields::TYPE], $msg->usr ?? $this->get_user());
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -390,12 +390,12 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'type_name',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
 
@@ -519,11 +519,11 @@ class sandbox_typed extends sandbox_named
      */
     function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->type_id() === null and $obj->type_id() != null) {
             $this->set_type_id($obj->type_id(), $usr_req);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 }
