@@ -58,7 +58,7 @@ class all_api_tests
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    function run_api_tests(test_cleanup $t, user $usr, user_message $usr_msg): bool
+    function run_api_tests(test_cleanup $t, user $usr, user_message $msg): bool
     {
 
         // start the test section (ts)
@@ -76,7 +76,7 @@ class all_api_tests
             new type_list_ui($api_msg);
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

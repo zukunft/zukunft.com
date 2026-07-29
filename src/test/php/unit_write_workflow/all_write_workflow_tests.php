@@ -60,7 +60,7 @@ class all_write_workflow_tests
      * @param user $usr the user for whom the workflow should be tested
      * @return bool true if all tests are fine
      */
-    function run(test_cleanup|test_base $t, user $usr, user_message $usr_msg): bool
+    function run(test_cleanup|test_base $t, user $usr, user_message $msg): bool
     {
 
         // start the test section (ts)
@@ -84,7 +84,7 @@ class all_write_workflow_tests
              */
 
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

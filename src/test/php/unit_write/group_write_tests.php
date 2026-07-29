@@ -249,14 +249,14 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if (!$grp->is_saved()) {
             $phr_lst->add($wrd->phrase());
             $grp->set_phrase_list($phr_lst);
             $grp->set_name($grp_name);
-            $grp->save($usr_msg);
+            $grp->save($msg);
             $grp->reset();
             $grp->load_by_name($grp_name);
             $t->assert_true($test_name, $grp->isset());
@@ -281,7 +281,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($old_name);
         if ($grp->is_saved()) {
@@ -292,7 +292,7 @@ class group_write_tests
                 $grp->set_user($t->usr1);
             }
             $grp->set_name($new_name);
-            $grp->save($usr_msg);
+            $grp->save($msg);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $new_name);
@@ -313,12 +313,12 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if ($grp->is_saved()) {
             $id = $grp->id();
-            $grp->del($usr_msg);
+            $grp->del($msg);
             $grp->reset();
             $grp->load_by_id($id);
             // the delete and reload above write to and read from the database, so a db timeout is used

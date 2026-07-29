@@ -192,8 +192,8 @@ class formula extends formula_map
     private function symbol_map(?term_list $trm_lst = null): array
     {
         $map = [];
-        $usr_msg = new user_message();
-        $phr_lst = $this->expression($trm_lst)->phrases($usr_msg, $trm_lst);
+        $msg = new user_message();
+        $phr_lst = $this->expression($trm_lst)->phrases($msg, $trm_lst);
         foreach ($phr_lst->lst() as $phr) {
             $map[$phr->name()] = $this->phrase_symbol($phr) ?? $phr->name();
         }
@@ -722,13 +722,13 @@ class formula extends formula_map
      * so that the calculation itself (to_num_new) does not need to retrieve any data
      *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
-     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param user_message $msg to collect the problems and solution for the user to pick
      * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
      * @return data_object the cache with the terms needed for the calculation
      */
     function load_data_for_calc(
         phrase_list  $phr_lst,
-        user_message $usr_msg,
+        user_message $msg,
         ?phrase_list $pre_phr_lst = null
     ): data_object
     {
@@ -741,7 +741,7 @@ class formula extends formula_map
         $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
 
         // reload missing terms from the database (the data retrieval part of to_num)
-        $trm_lst = $this->load_exp_terms($usr_msg, $pre_trm_lst, $exp);
+        $trm_lst = $this->load_exp_terms($msg, $pre_trm_lst, $exp);
         $dto->set_term_list($trm_lst);
 
         return $dto;
@@ -757,9 +757,9 @@ class formula extends formula_map
      */
     function calc_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
     {
-        $usr_msg = new user_message($this->get_user());
-        $dto = $this->load_data_for_calc($phr_lst, $usr_msg, $pre_phr_lst);
-        return $this->to_num_new($phr_lst, $usr_msg, $dto);
+        $msg = new user_message($this->get_user());
+        $dto = $this->load_data_for_calc($phr_lst, $msg, $pre_phr_lst);
+        return $this->to_num_new($phr_lst, $msg, $dto);
     }
 
     /**
@@ -768,13 +768,13 @@ class formula extends formula_map
      * TODO move the value retrieval (element_group::figures) into load_data_for_calc as well
      *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
-     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param user_message $msg to collect the problems and solution for the user to pick
      * @param data_object $dto the cache filled by load_data_for_calc with the terms for the calculation
      * @return result_list all results of the formula for the given phrase list
      */
     function to_num_new(
         phrase_list  $phr_lst,
-        user_message $usr_msg,
+        user_message $msg,
         data_object  $dto
     ): result_list
     {
@@ -1083,13 +1083,13 @@ class formula extends formula_map
      * based on the given phrase list
      *
      * @param phrase_list $phr_lst with the calculation context
-     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param user_message $msg to collect the problems and solution for the user to pick
      * @param term_list|null $trm_lst list of terms that are already loaded
      * @return term_list list of all terms that are needed to calculate the formula
      */
     function load_all_terms(
         phrase_list  $phr_lst,
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst
     ): term_list
     {
@@ -1102,13 +1102,13 @@ class formula extends formula_map
      * based on the context on the given phrase list
      *
      * @param phrase_list $phr_lst with the calculation context
-     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param user_message $msg to collect the problems and solution for the user to pick
      * @param term_list|null $trm_lst list of terms that are already loaded
      * @return value_list list of all values that are needed to calculate the formula
      */
     function load_values(
         phrase_list  $phr_lst,
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst
     ): value_list
     {
@@ -1329,16 +1329,16 @@ class formula extends formula_map
     /**
      * refresh the formula expression
      *
-     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param user_message $msg to collect the problems and solution for the user to pick
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return expression the formula expression as an expression element
      */
-    function expression_new(user_message $usr_msg, ?term_list $trm_lst = null): expression
+    function expression_new(user_message $msg, ?term_list $trm_lst = null): expression
     {
         $exp = new expression($this);
-        if ($this->ref_exp_is_valid($usr_msg)
-            and $this->user_exp_is_valid($usr_msg)
-            and $this->expression_may_match($usr_msg)) {
+        if ($this->ref_exp_is_valid($msg)
+            and $this->user_exp_is_valid($msg)
+            and $this->expression_may_match($msg)) {
             $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
         } else {
             $exp->set_ref_text($this->ref_text, $trm_lst);
@@ -1399,9 +1399,9 @@ class formula extends formula_map
     function term_list(term_list $cache): term_list
     {
         $trm_lst = new term_list($this->get_user());
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $exp = $this->expression($cache);
-        $elm_lst = $exp->element_list($usr_msg, $cache);
+        $elm_lst = $exp->element_list($msg, $cache);
         foreach ($elm_lst->lst() as $elm) {
             $trm_lst->add($elm->term());
         }

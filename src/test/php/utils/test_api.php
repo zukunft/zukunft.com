@@ -191,7 +191,7 @@ class test_api extends test_base
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
-        $usr_msg = new user_message($usr_obj->get_user());
+        $msg = new user_message($usr_obj->get_user());
 
         // is excluded api json empty?
         $test_name = $class_api . ' excluded json is empty';
@@ -236,7 +236,7 @@ class test_api extends test_base
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->api_mapper(json_decode($json_api, true), $usr_msg);
+            $clone_obj->api_mapper(json_decode($json_api, true), $msg);
             $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
@@ -344,10 +344,10 @@ class test_api extends test_base
      * @param sandbox $sbx the sandbox object that should be tested
      * @param int $id the id of the object that should be updated
      * @param array $data the database id of the db row that should be used for testing
-     * @param user_message $usr_msg to collect the messages for the user
+     * @param user_message $msg to collect the messages for the user
      * @return int the id of the created db row
      */
-    function assert_api_no_rest(sandbox $sbx, int $id, array $data, user_message $usr_msg): int
+    function assert_api_no_rest(sandbox $sbx, int $id, array $data, user_message $msg): int
     {
         // check input values
         if ($data == []) {
@@ -361,13 +361,13 @@ class test_api extends test_base
             $sbx->load_by_id($id);
         }
         // apply the payload to the backend object (add switch)
-        $sbx->api_mapper($request_body, $usr_msg);
-        if ($usr_msg->is_ok()) {
-            $sbx->save($usr_msg);
+        $sbx->api_mapper($request_body, $msg);
+        if ($msg->is_ok()) {
+            $sbx->save($msg);
         }
         // if no row id is returned report the problem
-        if ($usr_msg->is_ok()) {
-            return $usr_msg->get_row_id();
+        if ($msg->is_ok()) {
+            return $msg->get_row_id();
         } else {
             $this->assert_fail('api write test without REST call of ' . $sbx::class . ' failed');
             return 0;
@@ -388,23 +388,23 @@ class test_api extends test_base
         $class = $this->class_to_api($class);
 
         // apply the payload to the backend object (add more switches)
-        $usr_msg = new user_message();
+        $msg = new user_message();
         switch ($class) {
             case word::class:
                 $wrd = new word($this->usr1);
                 $wrd->id = $id;
-                $wrd->del($usr_msg);
+                $wrd->del($msg);
                 break;
             case source::class:
                 $src = new source($this->usr1);
                 $src->id = $id;
-                $src->del($usr_msg);
+                $src->del($msg);
                 break;
             default:
                 log_err($class . ' not yet mapped in assert_api_del_no_rest');
         }
         // if no row id is returned report the problem
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             return true;
         } else {
             $this->assert_fail('api write del test without REST call of ' . $class . ' failed');
@@ -709,13 +709,13 @@ class test_api extends test_base
         string $filename = ''
     ): string
     {
-        $usr_msg = new user_message_ui();
+        $msg = new user_message_ui();
         $lib = new library();
         $url_map = new url_mapper();
         $name = $lib->class_to_name($class);
         if ($class == phrase_list::class) {
             if ($filename == '' and $id_fld != url_var::ID_LST) {
-                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $file_by_name = $url_map->name_to_human($id_fld, $msg);
                 $filename = $name . '_without_link' . '_by_' . $file_by_name;
             } else {
                 $filename = $name . '_without_link';
@@ -724,7 +724,7 @@ class test_api extends test_base
 
         if ($filename == '') {
             if ($id_fld != url_var::ID_LST) {
-                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $file_by_name = $url_map->name_to_human($id_fld, $msg);
                 $filename = $name . '_by_' . $file_by_name;
             } else {
                 $filename = $name;

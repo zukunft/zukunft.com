@@ -67,7 +67,7 @@ class phrase_list_write_tests
         $t_db = new test_db_load($t);
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write phrase list ';
@@ -170,7 +170,7 @@ class phrase_list_write_tests
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

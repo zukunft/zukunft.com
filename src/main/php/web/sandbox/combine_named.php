@@ -161,12 +161,12 @@ class combine_named extends combine_object
     function load_by_name(string $name): bool
     {
         $result = false;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body, $usr_msg);
+            $this->api_mapper($json_body, $msg);
             if ($this->obj_id() != 0) {
                 $result = true;
             }

@@ -151,8 +151,8 @@ class phrase_list_tests
         $test_name = 'get this year from a list of years';
         $phr_lst = $t_phr->years();
         $fix_now = new DateTime(test_const::DUMMY_DATETIME);
-        $usr_msg = new user_message();
-        $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $usr_msg, $fix_now);
+        $msg = new user_message();
+        $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
         $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
         // TODO mix it with months and quarters to select the best matching and automatic estimations
 

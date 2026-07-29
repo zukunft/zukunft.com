@@ -216,18 +216,18 @@ class group extends sandbox_named
     /**
      * set the vars of this group frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         // even if the group is added set already the id
         if (array_key_exists(url_var::ID, $url_array)) {
             $this->set_id($url_array[url_var::ID]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -238,14 +238,14 @@ class group extends sandbox_named
      */
     private function set_phrase_from_json_array(array $phr_json): void
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $wrd_or_trp = new word();
         if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
             if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $wrd_or_trp = new triple();
             }
         }
-        $wrd_or_trp->api_mapper($phr_json, $usr_msg);
+        $wrd_or_trp->api_mapper($phr_json, $msg);
         $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;

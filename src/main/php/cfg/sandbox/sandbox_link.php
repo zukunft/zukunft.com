@@ -207,19 +207,19 @@ class sandbox_link extends sandbox
     /**
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
 
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::PREDICATE_ID, $api_json)) {
             $this->predicate_id = $api_json[json_fields::PREDICATE_ID];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1125,7 +1125,7 @@ class sandbox_link extends sandbox
      */
     function fill(sandbox|sandbox_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         // fill to link objects
         if ($this->from_empty()) {
             if (!$obj->from_empty()) {
@@ -1150,7 +1150,7 @@ class sandbox_link extends sandbox
         }
 
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1189,7 +1189,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $log = new change_link($this->get_user());
         $log->new_from = $this->fob;
@@ -1200,7 +1200,7 @@ class sandbox_link extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1213,7 +1213,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
@@ -1223,7 +1223,7 @@ class sandbox_link extends sandbox
         $log->old_to = $this->tob();
 
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1468,7 +1468,7 @@ class sandbox_link extends sandbox
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -1477,7 +1477,7 @@ class sandbox_link extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -1493,9 +1493,9 @@ class sandbox_link extends sandbox
         }
 
         // get the parameters used for the table key
-        $fvt_from = $fvt_lst->get($this->from_field(), $usr_msg, $from_can_be_missing);
-        $fvt_type = $fvt_lst->get($this->type_field(), $usr_msg);
-        $fvt_to = $fvt_lst->get($this->to_field(), $usr_msg);
+        $fvt_from = $fvt_lst->get($this->from_field(), $msg, $from_can_be_missing);
+        $fvt_type = $fvt_lst->get($this->type_field(), $msg);
+        $fvt_to = $fvt_lst->get($this->to_field(), $msg);
 
         // create the list of parameters in order of the function usage
         $fvt_insert_list = new sql_par_field_list();
@@ -1689,10 +1689,10 @@ class sandbox_link extends sandbox
      * deleting the references of links is usually needed
      * so no action is done and just true is returned
      *
-     * @param user_message $usr_msg the message object just to allow overwrites e.g. for triples
+     * @param user_message $msg the message object just to allow overwrites e.g. for triples
      * @return bool true because a link usually does not have references
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         return true;
     }
@@ -1954,12 +1954,12 @@ class sandbox_link extends sandbox
      * this function is overwritten by the triple object
      * because that some triples are reserved for system testing and should never be used by a user
      *
-     * @param user_message $usr_msg the message object why the link is reserved and which alternative names can be used
+     * @param user_message $msg the message object why the link is reserved and which alternative names can be used
      *                              of the internal error that an overwrite is missing to interrupt the workflow
      * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
     protected
-    function check_save(user_message $usr_msg): bool
+    function check_save(user_message $msg): bool
     {
         return true;
     }
@@ -1992,13 +1992,13 @@ class sandbox_link extends sandbox
      * TODO check first the query name and skip the sql building if not needed
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2036,11 +2036,11 @@ class sandbox_link extends sandbox
             $lnk_empty = $this->set_link_objects($lnk_empty);
         }
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($lnk_empty, $usr_msg, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($lnk_empty, $msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all($sc_par_lst_used);
         // create either the prepared sql query or a sql function that includes the logging of the changes
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $msg, $sc_par_lst_used);
     }
 
     /**
@@ -2048,18 +2048,18 @@ class sandbox_link extends sandbox
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox|db_object_seq_id $db_row the word with the database values before the update
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator              $sc,
         sandbox|db_object_seq_id $db_row,
-        user_message             $usr_msg,
+        user_message             $msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_update($usr_msg)) {
+        if ($this->can_update($msg)) {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
@@ -2068,10 +2068,10 @@ class sandbox_link extends sandbox
             // and that needs to be updated in the database
             // the db_* child function call the corresponding parent function
             // including the sql parameters for logging
-            $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
+            $fld_lst = $this->db_fields_changed($db_row, $msg, $sc_par_lst_used);
             $all_fields = $this->db_fields_all($sc_par_lst_used);
             // unlike the db_* function the sql_update_* parent function is called directly
-            return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+            return $this::sql_update_switch($sc, $fld_lst, $all_fields, $msg, $sc_par_lst_used);
         } else {
             return null;
         }

@@ -46,7 +46,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class Workflow
 {
-    function next_url(array $url_arr, user_message $usr_msg): string
+    function next_url(array $url_arr, user_message $msg): string
     {
         return '';
     }

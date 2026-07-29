@@ -193,7 +193,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
@@ -201,7 +201,7 @@ class convert_wikipedia_table
         $ignore_names = []; // list of phrase names that indicate a columns should not be included in the result
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
-            $phr_lst->import_context(json_decode($context, true), $usr_msg);
+            $phr_lst->import_context(json_decode($context, true), $msg);
             $list_of_symbols = $phr_lst->get_names_by_type(phrase_types::SYMBOL);
             $rank_names = $phr_lst->get_names_by_type(phrase_types::RANK);
             $ignore_names = $phr_lst->get_names_by_type(phrase_types::IGNORE);

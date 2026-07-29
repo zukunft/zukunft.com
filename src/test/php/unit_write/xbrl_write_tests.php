@@ -64,7 +64,7 @@ class xbrl_write_tests
     {
 
         // init
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write xbrl ';
@@ -78,7 +78,7 @@ class xbrl_write_tests
             test_paths::IMPORT_XBRL,
             ''
         );
-        $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), test_base::TEST_TIMESTAMP, $usr_msg);
+        $json_path = $conv_xbrl->convert_folder_to_file($folder, $conv_xbrl->instance_file_name('2013'), test_base::TEST_TIMESTAMP, $msg);
         $t->assert($test_name, $json_path, test_files::IMPORT_XBRL_ABB_2013);
 
         // import the created json file into the database
@@ -165,10 +165,10 @@ class xbrl_write_tests
      *
      * @param test_cleanup $t the test environment with the test user
      * @param array $json_array the imported json as array to know what has been added
-     * @param user_message $usr_msg to collect problems of the cleanup
+     * @param user_message $msg to collect problems of the cleanup
      * @return void
      */
-    private function cleanup(test_cleanup $t, array $json_array, user_message $usr_msg): void
+    private function cleanup(test_cleanup $t, array $json_array, user_message $msg): void
     {
         $test_name = 'cleanup the imported XBRL data';
 
@@ -178,7 +178,7 @@ class xbrl_write_tests
             if (!$val->is_id_set()) {
                 continue;
             }
-            $val->del($usr_msg);
+            $val->del($msg);
         }
 
         // remove the formula
@@ -186,7 +186,7 @@ class xbrl_write_tests
             $frm = new formula($t->usr1);
             $frm->load_by_name($frm_json[json_fields::NAME]);
             if ($frm->id() > 0) {
-                $frm->del($usr_msg);
+                $frm->del($msg);
             }
         }
 
@@ -195,7 +195,7 @@ class xbrl_write_tests
             $src = new source($t->usr1);
             $src->load_by_name($src_json[json_fields::NAME]);
             if ($src->id() > 0) {
-                $src->del($usr_msg);
+                $src->del($msg);
             }
         }
 
@@ -204,7 +204,7 @@ class xbrl_write_tests
         foreach ($json_array[json_fields::TRIPLES] as $trp_json) {
             $trp = $this->load_triple_by_any_name($t, $this->triple_name($trp_json));
             if ($trp->id() != 0 and $trp->owner_id() == $t->usr1->id()) {
-                $trp->del($usr_msg);
+                $trp->del($msg);
             }
         }
 
@@ -213,11 +213,11 @@ class xbrl_write_tests
             $wrd = new word($t->usr1);
             $wrd->load_by_name($wrd_json[json_fields::NAME]);
             if ($wrd->id() > 0 and $wrd->owner_id() == $t->usr1->id()) {
-                $wrd->del($usr_msg);
+                $wrd->del($msg);
             }
         }
 
-        $t->assert_true($test_name . ' ' . $usr_msg->all_message_text(), $usr_msg->is_ok());
+        $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
     }
 
 }

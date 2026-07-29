@@ -87,15 +87,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * fill the vars with this db id object based on the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -117,12 +117,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_api(string $api_json, user_message $usr_msg): bool
+    function set_from_api(string $api_json, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
+        return $this->api_mapper(json_decode($api_json, true), $msg);
     }
 
 
@@ -230,14 +230,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
         global $db_con;
 
-        $usr_msg = new user_message($usr_req);
+        $msg = new user_message($usr_req);
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        $usr_msg->merge($del_msg);
+        $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+        $msg->merge($del_msg);
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -249,17 +249,17 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user with the user set who has requested the deletion
+     * @param user_message $msg collect the messages for the user with the user set who has requested the deletion
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
-        if ($this->can_delete($usr_msg)) {
+        if ($this->can_delete($msg)) {
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
@@ -277,7 +277,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
             if ($sc_par_lst_used->incl_log()) {
                 // log functions must always use named parameters
                 $sc_par_lst_used->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
+                $qp = $this->sql_delete_and_log($sc, $qp, $msg->usr, $sc_par_lst_used);
             } else {
                 $par_lst = [$this->id()];
                 $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);

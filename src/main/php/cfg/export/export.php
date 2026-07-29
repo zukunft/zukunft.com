@@ -94,8 +94,8 @@ class export
 
                 // 1. create the header
                 $export_obj->version = def::PRG_VERSION;
-                $usr_msg = new user_message($usr);
-                $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con, $usr_msg, 'get pod name');
+                $msg = new user_message($usr);
+                $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con, $msg, 'get pod name');
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
                 $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()

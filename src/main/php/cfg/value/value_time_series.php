@@ -311,21 +311,21 @@ class value_time_series extends sandbox_value
 
     /**
      * add a new time series
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug('->add');
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, false, true);
 
         if ($this->id() > 0) {
             // create an empty db_rec element to force saving of all set fields
@@ -334,7 +334,7 @@ class value_time_series extends sandbox_value
             // TODO add the data list saving
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /*

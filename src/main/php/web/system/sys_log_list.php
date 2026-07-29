@@ -105,13 +105,13 @@ class sys_log_list
     {
         $ctrl = new controller();
         $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($json_array as $value) {
             $new = new sys_log();
-            $new->api_mapper($value, $usr_msg);
+            $new->api_mapper($value, $msg);
             $this->add($new);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

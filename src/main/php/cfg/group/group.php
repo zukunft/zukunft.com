@@ -555,8 +555,8 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1134,7 +1134,7 @@ class group extends sandbox_multi
         string      $description = '',
         bool        $do_save = true): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $db_entry_needed = false;
         $this->set_phrase_list($phr_lst);
         if ($name != '' and $name != $this->generic_name()) {
@@ -1156,7 +1156,7 @@ class group extends sandbox_multi
                 log_warning('save of group description not yet implemented');
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1557,14 +1557,14 @@ class group extends sandbox_multi
      */
     function fill(group|db_object_multi $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->name === null and $obj->name() != null) {
             $this->set_name($obj->name());
         }
         if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1614,27 +1614,27 @@ class group extends sandbox_multi
     /**
      * add a new group to the database
      *
-     * @param user_message $usr_msg with status OK
+     * @param user_message $msg with status OK
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         // TODO Prio 1 set the user table based on the exiting db rows link the sandbox add
         $usr_tbl = false;
-        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, $usr_tbl, true)) {
-            $this->id = $usr_msg->get_row_id();
+        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, $usr_tbl, true)) {
+            $this->id = $msg->get_row_id();
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1794,17 +1794,17 @@ class group extends sandbox_multi
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->name = $api_json[json_fields::NAME];
         }
 
-        if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add_message_text($this->save_id());
+        if ($msg->is_ok() and $do_save) {
+            $msg->add_message_text($this->save_id());
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1836,19 +1836,19 @@ class group extends sandbox_multi
      * the word and triple links related to this phrase group are also removed
      * TODO maybe move this to del_exe
      *
-     * @param user_message $usr_msg
+     * @param user_message $msg
      * @param bool $must_exist if false no error message is created if the group has already been deleted
      * @return bool
      */
-    function del(user_message $usr_msg, bool $must_exist = true): bool
+    function del(user_message $msg, bool $must_exist = true): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
 
-        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
+        $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1860,13 +1860,13 @@ class group extends sandbox_multi
      * create the sql statement to add a new group name to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par|null
     {
@@ -1880,7 +1880,7 @@ class group extends sandbox_multi
         $grp_empty->set_user($this->get_user()->clone_reset());
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $grp_empty, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $grp_empty, $all_fields, $msg, $sc_par_lst_used);
     }
 
     /**
@@ -1888,14 +1888,14 @@ class group extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $db_grp
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         group         $db_grp,
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_type_list $sc_par_lst
     ): sql_par|null
     {
@@ -1906,7 +1906,7 @@ class group extends sandbox_multi
         // TODO Prio 1 move db_fields_all to sql_write
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_grp, $all_fields, $usr_msg, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_grp, $all_fields, $msg, $sc_par_lst_used);
     }
 
     /**
@@ -1951,13 +1951,13 @@ class group extends sandbox_multi
      * get a list of database fields that have been updated
      *
      * @param group|sandbox_multi $sbx the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database fields with the parameters that have been updated
      */
     function db_fields_changed(
         group|sandbox_multi $sbx,
-        user_message        $usr_msg,
+        user_message        $msg,
         sql_type_list       $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {

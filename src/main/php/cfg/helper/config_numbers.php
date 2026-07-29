@@ -377,9 +377,9 @@ class config_numbers extends value_list
             $typ->code_id = db_cache_types::SYSTEM_CONFIG;
             $typ->name = db_cache_types::SYSTEM_CONFIG_NAME;
         }
-        $usr_msg = new user_message($usr);
+        $msg = new user_message($usr);
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-        if (!$this->read_cache($typ, $usr, $usr_msg, $phr)) {
+        if (!$this->read_cache($typ, $usr, $msg, $phr)) {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
@@ -396,14 +396,14 @@ class config_numbers extends value_list
                 $this->load_phrases();
             } else {
                 log_warning('no config values loaded');
-                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+                $msg->add_id(msg_id::CONFIG_EMPTY);
             }
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
                 $this->write_cache($typ, $usr, $snap_time, $phr);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -411,23 +411,23 @@ class config_numbers extends value_list
      *
      * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
      * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @param phrase|null $phr to select either the user or frontend configuration values
      * @return bool true if this list has been filled with the cached config values
      */
     private function read_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
-        user_message              $usr_msg,
+        user_message              $msg,
         ?phrase                   $phr = null
     ): bool
     {
         $result = false;
         if ($this->cache_allowed_by_pod($typ->code_id)) {
             if (CACHE_LOCATION == ENV_CACHE_DATABASE) {
-                $result = $this->read_db_cache($typ, $usr, $usr_msg);
+                $result = $this->read_db_cache($typ, $usr, $msg);
             } else {
-                $result = $this->read_file_cache($usr, $usr_msg, $phr);
+                $result = $this->read_file_cache($usr, $msg, $phr);
             }
         }
         return $result;
@@ -438,13 +438,13 @@ class config_numbers extends value_list
      *
      * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
      * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @return bool true if this list has been filled with the cached config values
      */
     private function read_db_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
-        user_message              $usr_msg
+        user_message              $msg
     ): bool
     {
         $result = false;
@@ -463,13 +463,13 @@ class config_numbers extends value_list
      * build the complete config value objects from the cached json
      * needed only if more than the value lookup is used e.g. for the config api message
      *
-     * @param user_message $usr_msg to report the problems of the json mapping
+     * @param user_message $msg to report the problems of the json mapping
      * @return void
      */
-    function fill_from_cache_json(user_message $usr_msg): void
+    function fill_from_cache_json(user_message $msg): void
     {
         if ($this->cache_json !== null and $this->is_empty()) {
-            $this->api_mapper($this->cache_json, $usr_msg);
+            $this->api_mapper($this->cache_json, $msg);
         }
     }
 
@@ -477,13 +477,13 @@ class config_numbers extends value_list
      * read the config part of the given user from the file cache
      *
      * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @param phrase|null $phr to select either the user or frontend configuration values
      * @return bool true if this list has been filled with the cached config values
      */
     private function read_file_cache(
         user         $usr,
-        user_message $usr_msg,
+        user_message $msg,
         ?phrase      $phr = null
     ): bool
     {

@@ -169,7 +169,7 @@ class horizontal_tests
         $t->subheader($ts . 'frontend api');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'frontend of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $usr_msg = new user_message($t->usr1);
+            $msg = new user_message($t->usr1);
             $usr_msg_ui = new user_message_ui();
             $filled_obj = $t_map->class_to_filled_object($class);
             if (in_array($class, def::SANDBOX_CLASSES)) {
@@ -198,7 +198,7 @@ class horizontal_tests
             if ($class == component_link::class) {
                 $api_json_ui = json_encode($t->json_remove_component_fields(json_decode($api_json_ui, true)));
             }
-            $check_obj->set_from_api($ui_json, $usr_msg);
+            $check_obj->set_from_api($ui_json, $msg);
             // build the reference object from the api the backend actually sends
             // (without the unidirectional and the combined child fields) because the
             // diff_msg also covers fields that are only used for the database import
@@ -218,7 +218,7 @@ class horizontal_tests
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
-            $usr_msg = new user_message($t->usr1);
+            $msg = new user_message($t->usr1);
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);
@@ -266,9 +266,9 @@ class horizontal_tests
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
-                $usr_msg->usr = $t->user_system();
+                $msg->usr = $t->user_system();
             }
-            $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
+            $filled_obj->import_mapper($ex_json, $msg, $dto);
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_types::TEST_MODE]);

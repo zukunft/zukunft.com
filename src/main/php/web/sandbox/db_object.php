@@ -134,10 +134,10 @@ class db_object extends TextIdObject
      */
     function __construct(?string $api_json = null)
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         parent::__construct();
         if ($api_json != null) {
-            $this->set_from_json($api_json, $usr_msg);
+            $this->set_from_json($api_json, $msg);
         }
     }
 
@@ -146,11 +146,11 @@ class db_object extends TextIdObject
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         // keep the '8'-prefixed opening db values so the edit view, when re-rendered after a save
         // error, re-emits the original db snapshot instead of the just changed value (see url_var::PRE)
@@ -165,10 +165,10 @@ class db_object extends TextIdObject
                 $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
-                $usr_msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
+                $msg->add_error_text('Mandatory field id missing in form url array ' . json_encode($url_array));
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -188,14 +188,14 @@ class db_object extends TextIdObject
      * gets an orange warning on the edit view (e.g. for an empty name) instead of confirming an
      * invalid change; the base object has no required input, so it reports the input as valid
      *
-     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param user_message $msg to enrich with a warning per invalid field
      * @param string $action the crud action of the change (e.g. url_var::CRUD_DELETE) used to
      *                       skip checks that do not apply, e.g. an empty name when deleting
      * @param array $url_array the pending change url (new values and their '8'-prefixed old values)
      *                         so a check can tell whether a permission-gated field actually changed
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
         return true;
     }
@@ -254,12 +254,12 @@ class db_object extends TextIdObject
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
+        return $this->api_mapper(json_decode($json_api_msg, true), $msg);
     }
 
     /**
@@ -315,7 +315,7 @@ class db_object extends TextIdObject
     function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
     {
         $result = false;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
@@ -325,7 +325,7 @@ class db_object extends TextIdObject
                 $excluded = $json_array[json_fields::EXCLUDED];
             }
             if (!$excluded) {
-                $this->api_mapper($json_array, $usr_msg);
+                $this->api_mapper($json_array, $msg);
                 if ($this->name() != '') {
                     $result = true;
                 }
@@ -639,14 +639,14 @@ class db_object extends TextIdObject
      * save the frontend object in the database
      * TODO Prio 2 should be done via api
      *
-     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function add_via_api(user_message $usr_msg): user_message
+    function add_via_api(user_message $msg): user_message
     {
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
-        if ($usr_msg->usr == null) {
+        if ($msg->usr == null) {
             $result = new user_message();
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
@@ -654,7 +654,7 @@ class db_object extends TextIdObject
         $map = new MapObject();
         // the backend message carries the backend twin of the requesting user,
         // so the backend object created below is owned by the user of this message
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $usr_msg_db = $map->convertMsgToDb($msg);
         $db_obj = $map->convertToDb($this, $usr_msg_db);
         $add_result = $db_obj->save($usr_msg_db);
         // take over the id assigned by the backend save, so the caller can show the added
@@ -676,14 +676,14 @@ class db_object extends TextIdObject
     /**
      * update the frontend object via api in the database
      *
-     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function update(user_message $usr_msg): user_message
+    function update(user_message $msg): user_message
     {
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
-        if ($usr_msg->usr == null) {
+        if ($msg->usr == null) {
             $result = new user_message();
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
@@ -691,7 +691,7 @@ class db_object extends TextIdObject
         $map = new MapObject();
         // the backend message carries the backend twin of the requesting user,
         // so the backend object changed below is changed by the user of this message
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $usr_msg_db = $map->convertMsgToDb($msg);
         $db_obj = $map->convertToDb($this, $usr_msg_db);
         $upd_result = $db_obj->save($usr_msg_db);
         // take over the id of the saved object, because it can differ from the requested id:
@@ -714,14 +714,14 @@ class db_object extends TextIdObject
     /**
      * exclude this frontend object via api from the database
      *
-     * @param user_message $usr_msg the frontend message object with the requesting user that collects the message to the user
+     * @param user_message $msg the frontend message object with the requesting user that collects the message to the user
      * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function del(user_message $usr_msg): user_message
+    function del(user_message $msg): user_message
     {
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
-        if ($usr_msg->usr == null) {
+        if ($msg->usr == null) {
             $result = new user_message();
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
@@ -729,7 +729,7 @@ class db_object extends TextIdObject
         $map = new MapObject();
         // the backend message carries the backend twin of the requesting user,
         // so the backend object excluded below is excluded for the user of this message
-        $usr_msg_db = $map->convertMsgToDb($usr_msg);
+        $usr_msg_db = $map->convertMsgToDb($msg);
         $db_obj = $map->convertToDb($this, $usr_msg_db);
         $del_result = $db_obj->del($usr_msg_db);
         /*
@@ -753,12 +753,12 @@ class db_object extends TextIdObject
      */
     function url(): ?string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'url',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
     /**
@@ -771,12 +771,12 @@ class db_object extends TextIdObject
      */
     private function selector_not_defined(string $function_name): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => $function_name,
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message_translated();
+        return $msg->get_last_message_translated();
     }
 
     /**

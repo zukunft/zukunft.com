@@ -165,12 +165,12 @@ class sandbox_link_named extends sandbox_link
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
@@ -185,9 +185,9 @@ class sandbox_link_named extends sandbox_link
             // (MapObject::convertToDb) maps with a message that has no user set, so fall back to
             // the object's own user (the requesting user the object was created with); set_type_id
             // needs a non-null user for the permission check
-            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr ?? $this->get_user());
+            $this->set_type_id($api_json[json_fields::TYPE], $msg->usr ?? $this->get_user());
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -302,12 +302,12 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'name_field',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
     /**
@@ -817,7 +817,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -826,7 +826,7 @@ class sandbox_link_named extends sandbox_link
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -837,10 +837,10 @@ class sandbox_link_named extends sandbox_link
         // list of parameters actually used in order of the function usage
         $sql = '';
 
-        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $msg, $sc_par_lst_sub);
 
         // create the sql to insert the row
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
         if ($fvt_insert !== null) {
             $fvt_insert_list = new sql_par_field_list();
             $fvt_insert_list->add($fvt_insert);

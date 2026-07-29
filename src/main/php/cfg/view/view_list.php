@@ -290,24 +290,24 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->get_user());
-            if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
+            if ($msk->import_obj($dsp_json, $msg, $dto)) {
                 $this->add($msk);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -315,25 +315,25 @@ class view_list extends sandbox_list_named
      * TODO create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
-        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $usr_msg);
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $msg);
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $cmp_lnk_usr_msg = $usr_msg->clone_reset();
+                $cmp_lnk_usr_msg = $msg->clone_reset();
                 // actual save the component link to the database
                 $msk->save_component_links($cmp_lnk_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->merge($cmp_lnk_usr_msg);
+                $msg->merge($cmp_lnk_usr_msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

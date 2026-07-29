@@ -81,16 +81,16 @@ class element_group extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if (array_key_exists(json_fields::LIST_ELEMENTS, $json_array)) {
-            $usr_msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
+            $msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
         }
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
             $phr_lst = new phrase_list();
-            $usr_msg->merge($phr_lst->api_mapper($json_array[json_fields::PHRASES]));
+            $msg->merge($phr_lst->api_mapper($json_array[json_fields::PHRASES]));
             $this->phr_lst = $phr_lst;
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /*
@@ -156,7 +156,7 @@ class element_group extends ListBase
         $result = '';
 
         $fig_lst = $this->figures();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -165,7 +165,7 @@ class element_group extends ListBase
             log_debug('display figure');
             $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_ui = new figure();
-            $fig_ui->set_from_json($api_json, $usr_msg);
+            $fig_ui->set_from_json($api_json, $msg);
             $result .= $fig_ui->display_linked($back);
         }
 
@@ -406,7 +406,7 @@ class element_group extends ListBase
         $result = '';
 
         $fig_lst = $this->figures();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -415,7 +415,7 @@ class element_group extends ListBase
             log_debug('display figure');
             $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_ui = new figure();
-            $fig_ui->set_from_json($api_json, $usr_msg);
+            $fig_ui->set_from_json($api_json, $msg);
             $result .= $fig_ui->display_linked($back);
         }
 

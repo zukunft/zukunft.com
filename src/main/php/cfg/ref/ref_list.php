@@ -296,12 +296,12 @@ class ref_list extends type_list
     function add_by_name_type_and_key(ref|null $to_add): bool
     {
         // TODO Prio 1 add $usr_msg to the parameters
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $result = false;
         if ($to_add != null) {
             if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
                 // add only objects that have all mandatory values
-                if ($to_add->can_be_ready($usr_msg)) {
+                if ($to_add->can_be_ready($msg)) {
                     $this->add_direct($to_add);
                 }
             }
@@ -318,7 +318,7 @@ class ref_list extends type_list
         $this->key_lst[] = $obj_to_add->get_key();
     }
 
-    function del(user_message $usr_msg): void
+    function del(user_message $msg): void
     {
     }
 
@@ -330,12 +330,12 @@ class ref_list extends type_list
     /**
      * store all references from this list in the database using grouped calls of predefined sql functions
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the estimate of the total save time
      * @param float $est_per_sec the expected number of sources that can be updated in the database per second
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
+    function save(user_message $msg, import $imp, float $est_per_sec = 0.0): bool
     {
         global $cfg;
 
@@ -350,11 +350,11 @@ class ref_list extends type_list
             }
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $ref_usr_msg = $usr_msg->clone_reset();
+            $ref_usr_msg = $msg->clone_reset();
             // actual save the reference to the database
             $ref->save($ref_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($ref_usr_msg);
+            $msg->merge($ref_usr_msg);
         }
         /*
         if ($this->is_empty()) {
@@ -381,7 +381,7 @@ class ref_list extends type_list
         }
         */
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

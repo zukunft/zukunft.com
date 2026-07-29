@@ -223,12 +223,12 @@ class db_object_seq_id_user extends db_object_seq_id
      * user here means an entry point has missed the assignment, which is an internal
      * inconsistency and logged rather than silently patched with the object owner
      *
-     * @param user_message $usr_msg with the user who has requested the change
+     * @param user_message $msg with the user who has requested the change
      * @return void
      */
-    protected function set_requesting_user(user_message $usr_msg): void
+    protected function set_requesting_user(user_message $msg): void
     {
-        if ($usr_msg->usr == null or $usr_msg->usr->id() <= 0) {
+        if ($msg->usr == null or $msg->usr->id() <= 0) {
             log_err('requesting user missing on the message for the change of ' . $this->dsp_id(),
                 'set_requesting_user');
         }
@@ -332,11 +332,11 @@ class db_object_seq_id_user extends db_object_seq_id
      */
     function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_user_id() === null and $obj->get_user_id() != null) {
             $this->set_user($obj->get_user());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

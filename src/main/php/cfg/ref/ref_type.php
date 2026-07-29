@@ -151,9 +151,9 @@ class ref_type extends type_object
      * api
      */
 
-    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg, $trusted);
+        parent::api_mapper($api_json, $msg, $trusted);
 
         // the base url is part of the pod setup, so it is only accepted from a trusted source
         // e.g. the db cached types json and never from an api message of a frontend
@@ -163,7 +163,7 @@ class ref_type extends type_object
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

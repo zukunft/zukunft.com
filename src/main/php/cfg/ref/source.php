@@ -210,18 +210,18 @@ class source extends sandbox_code_id
      * map a source api json to this model source object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::URL, $api_json)) {
             $this->url = $api_json[json_fields::URL];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -457,11 +457,11 @@ class source extends sandbox_code_id
      */
     function fill(source|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->url === null and $obj->url != null) {
             $this->url = $obj->url;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -571,10 +571,10 @@ class source extends sandbox_code_id
     /**
      * delete the references to this source
      *
-     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the word links has failed and a suggested solution
      * @return bool true if the word links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
@@ -589,10 +589,10 @@ class source extends sandbox_code_id
         // if there are still triples, ask if they really should be deleted
         if (!$ref_lst->is_empty()) {
             // TODO Prio 1 activate
-            $ref_lst->del($usr_msg);
+            $ref_lst->del($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

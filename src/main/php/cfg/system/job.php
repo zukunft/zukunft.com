@@ -525,7 +525,7 @@ class job extends db_object_seq_id_user
     /**
      * update all result depending on one value
      */
-    function exe_val_upd(user_message $usr_msg): bool
+    function exe_val_upd(user_message $msg): bool
     {
         log_debug();
 
@@ -546,10 +546,10 @@ class job extends db_object_seq_id_user
         }
 
         $this->end_time = new DateTime();
-        $this->save($usr_msg);
+        $this->save($msg);
 
-        log_debug('done with ' . $usr_msg->all_message_text());
-        return $usr_msg->is_ok();
+        log_debug('done with ' . $msg->all_message_text());
+        return $msg->is_ok();
     }
 
     /**
@@ -558,27 +558,27 @@ class job extends db_object_seq_id_user
      */
     function exe(): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $this->start_time = new DateTime();
-        $this->save($usr_msg);
+        $this->save($msg);
 
         $code_id = $this->type_code_id();
         if ($code_id == job_types::VALUE_UPDATE) {
-            $this->exe_val_upd($usr_msg);
+            $this->exe_val_upd($msg);
         } elseif ($code_id == job_types::CACHE_REFRESH) {
             // the handlers are included here (not at the top) to avoid a circular include with job
             include_once paths::MODEL_SYSTEM . 'job_cache_refresh.php';
-            new job_cache_refresh()->execute($usr_msg);
+            new job_cache_refresh()->execute($msg);
         } elseif ($code_id == job_types::DB_CLEANUP) {
             include_once paths::MODEL_SYSTEM . 'job_db_cleanup.php';
-            new job_db_cleanup()->execute($usr_msg);
+            new job_db_cleanup()->execute($msg);
         } else {
-            $usr_msg->add_err(msg_id::JOB_TYPE_INVALID, [msg_id::VAR_NAME => $this->dsp_id()]);
+            $msg->add_err(msg_id::JOB_TYPE_INVALID, [msg_id::VAR_NAME => $this->dsp_id()]);
             log_err('Job type "' . $code_id . '" not defined.', 'job->exe');
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**

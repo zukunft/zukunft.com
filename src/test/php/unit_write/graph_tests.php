@@ -51,7 +51,7 @@ class graph_tests
 
         // init
         $t_vrb = new test_verbs($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $back = 0;
 
         // start the test section (ts)
@@ -129,7 +129,7 @@ class graph_tests
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
         $trp_lst_ui = new triple_list_ui();
-        $trp_lst_ui->api_mapper($api_json, $usr_msg);
+        $trp_lst_ui->api_mapper($api_json, $msg);
         $result = $trp_lst_ui->tbl($back);
         $t->assert_text_contains($test_name . word_names::CITY, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::CANTON, $result, word_names::COMPANY);

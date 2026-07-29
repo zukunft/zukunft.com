@@ -196,14 +196,14 @@ class word extends sandbox_code_id
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::PLURAL, $url_array)) {
                 $this->plural = $url_array[url_var::PLURAL];
             } else {
@@ -227,7 +227,7 @@ class word extends sandbox_code_id
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -235,17 +235,17 @@ class word extends sandbox_code_id
      * deleted; if the user confirms the deletion of an in-use word a warning is shown the usual way
      * and the deletion is not confirmed (mirrors the backend used_by_someone_else guard)
      *
-     * @param user_message $usr_msg with the requesting user and to enrich with a warning if in use
+     * @param user_message $msg with the requesting user and to enrich with a warning if in use
      * @param string $action the crud action of the change; the in-use check only applies to a delete
      * @param array $url_array the pending change url (unused here, kept for the common signature)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action == url_var::CRUD_DELETE) {
             if ($this->is_in_use()) {
-                $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+                $msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
                     msg_id::VAR_NAME => $this->name()
                 ]);

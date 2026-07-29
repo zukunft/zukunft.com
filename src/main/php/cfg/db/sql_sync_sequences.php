@@ -47,7 +47,7 @@ class sql_sync_sequences
         global $sys;
         $log_txt = $sys->log_txt;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         while ($row = pg_fetch_assoc($result)) {
             $sequence = $row['sequence_name'];
             $table = $row['table_name'];
@@ -79,7 +79,7 @@ class sql_sync_sequences
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     private function sync_mysql($result, sql_db $db_con): user_message
@@ -88,7 +88,7 @@ class sql_sync_sequences
         global $sys;
         $log_txt = $sys->log_txt;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         while ($row = mysqli_fetch_assoc($result)) {
             $table = $row['TABLE_NAME'];
             $column = $row['COLUMN_NAME'];
@@ -120,12 +120,12 @@ class sql_sync_sequences
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     public function sync(sql_db $db_con): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         switch ($db_con->db_type) {
             case sql_db::POSTGRES:
                 $sql = "
@@ -145,7 +145,7 @@ class sql_sync_sequences
                 } catch (Exception $e) {
                     $db_con->log_db_exception('sequence reset', $e, $sql, $log_level);
                 }
-                $usr_msg->merge($this->sync_postgres($result, $db_con));
+                $msg->merge($this->sync_postgres($result, $db_con));
                 break;
             case sql_db::MYSQL:
                 $sql = "
@@ -155,9 +155,9 @@ class sql_sync_sequences
                     AND EXTRA = 'auto_increment';
                 ";
                 $result = mysqli_query($db_con->mysql, $sql);
-                $usr_msg->merge($this->sync_mysql($result, $db_con));
+                $msg->merge($this->sync_mysql($result, $db_con));
         }
-        return $usr_msg;
+        return $msg;
     }
 
 }

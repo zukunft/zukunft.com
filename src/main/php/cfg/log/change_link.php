@@ -368,8 +368,8 @@ class change_link extends change_log
     // TODO Prio 0 this should be dismissed
     function add_link_ref(): bool
     {
-        $usr_msg = new user_message();
-        return $this->add($usr_msg);
+        $msg = new user_message();
+        return $this->add($msg);
     }
 
     /**
@@ -408,10 +408,10 @@ class change_link extends change_log
 
     /**
      * similar to add_link, but additional fix the references as a text for fast displaying
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * $link_text is used for fixed links such as the source for values
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->get_user()->dsp_id());
 
@@ -503,7 +503,7 @@ class change_link extends change_log
         $db_con->set_usr($this->get_user()->id);
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert_log($sc);
-        $db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $usr_msg);
+        $db_con->insert($qp, 'insert log link ' . $this->dsp_id(), $msg);
         $log_id = $this->id();
 
         if ($log_id <= 0) {
@@ -585,11 +585,11 @@ class change_link extends change_log
     ): sql_par
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $fvt_lst = $this->db_field_values_link_types($sc, $sc_par_lst, $sbx);
         $fld_lst_all = $this->db_fields();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         $sc_par_lst->add(sql_type::INSERT);
         // do not use the user extension for the change table name

@@ -612,16 +612,16 @@ class type_list extends ListOfIdNamedCodeObjects
      * e.g. to also restore the code ids that an api message of a frontend must never change
      *
      * @param array $api_rows the api json rows of this list e.g. from the db cached types message
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @return bool true if at least one type has been added
      */
-    function fill_from_api_rows(array $api_rows, user_message $usr_msg): bool
+    function fill_from_api_rows(array $api_rows, user_message $msg): bool
     {
         $class = $this->list_class_to_type($this::class);
         $this->set_lst([]);
         foreach ($api_rows as $api_row) {
             $typ_obj = $this->class_to_type_object($class);
-            $typ_obj->api_mapper($api_row, $usr_msg, true);
+            $typ_obj->api_mapper($api_row, $msg, true);
             $this->add($typ_obj);
         }
         return !$this->is_empty();

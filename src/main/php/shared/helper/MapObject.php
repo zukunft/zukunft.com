@@ -156,34 +156,34 @@ class MapObject
     /**
      * convert a frontend object to a backend object via api json
      * @param db_object_ui $ui_obj the filled frontend object
-     * @param user_message $usr_msg the backend message that carries the requesting user who owns the created backend object
+     * @param user_message $msg the backend message that carries the requesting user who owns the created backend object
      * @return db_object_seq_id|db_object_multi_user|user the backend object filled with the value from the frontend object
      */
-    function convertToDb(db_object_ui $ui_obj, user_message $usr_msg): db_object_seq_id|db_object_multi_user|user
+    function convertToDb(db_object_ui $ui_obj, user_message $msg): db_object_seq_id|db_object_multi_user|user
     {
         // the requesting user of the message becomes the owner of the backend object; without
         // a user only a user object itself can be converted, so report the missing user and
         // return an empty base object instead of a fatal in the backend object constructor
-        $usr = $usr_msg->usr;
+        $usr = $msg->usr;
         if ($usr == null and $ui_obj::class != user_ui::class) {
-            $usr_msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $ui_obj::class]);
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $ui_obj::class]);
             return new db_object_seq_id();
         }
         $db_obj = $this->dbObject($ui_obj, $usr);
-        $db_obj->api_mapper($ui_obj->api_array(), $usr_msg);
+        $db_obj->api_mapper($ui_obj->api_array(), $msg);
         return $db_obj;
     }
 
     /**
      * convert a frontend object to a backend object via api json
      * @param db_object_seq_id|db_object_multi_user|user $obj the backend object filled with the value from the frontend object
-     * @param user_message_ui $usr_msg the frontend user used to define the owner of the backend object
+     * @param user_message_ui $msg the frontend user used to define the owner of the backend object
      * @return db_object_ui|user_ui the filled frontend object
      */
-    function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $usr_msg): db_object_ui|user_ui
+    function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $msg): db_object_ui|user_ui
     {
         $ui_obj = $this->uiObject($obj);
-        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $usr_msg);
+        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg);
         return $ui_obj;
     }
 

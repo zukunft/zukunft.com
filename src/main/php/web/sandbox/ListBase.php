@@ -137,18 +137,18 @@ class ListBase extends ListOfIdObjects
      */
     function api_mapper_list(array $json_array, db_object|IdObject|TextIdObject|CombineObject $dbo): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($json_array as $value) {
             if (is_array($value)) {
                 $new = clone $dbo;
-                $new->api_mapper($value, $usr_msg);
+                $new->api_mapper($value, $msg);
                 $this->add_obj($new, true);
             } else {
                 // e.g. an api error message should not stop the rendering of the other components
                 log_warning('unexpected api message part "' . $value . '" for a ' . $dbo::class . ' list');
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -210,10 +210,10 @@ class ListBase extends ListOfIdObjects
     /**
      * refresh the list by id from the backend via api
      *
-     * @param user_message $usr_msg the list class name that should be loaded e.g. formula_link_list
+     * @param user_message $msg the list class name that should be loaded e.g. formula_link_list
      * @return bool true if the reload has been successful
      */
-    function reload(user_message $usr_msg): bool
+    function reload(user_message $msg): bool
     {
         $id_lst = $this->id_lst();
         /*
@@ -225,7 +225,7 @@ class ListBase extends ListOfIdObjects
             $result = true;
         }
         */
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

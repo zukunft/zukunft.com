@@ -116,9 +116,9 @@ class sandbox_list_named extends sandbox_list
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        $usr_msg = $this->api_mapper(json_decode($json_api_msg, true));
+        $msg = $this->api_mapper(json_decode($json_api_msg, true));
         $this->set_hash_dirty();
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -205,27 +205,27 @@ class sandbox_list_named extends sandbox_list
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param sandbox_named|triple|phrase|term|sandbox_value|value|result|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @param user_message $usr_msg to report which entry is double
+     * @param user_message $msg to report which entry is double
      * @returns bool true the object has been added
      */
     function add(
         triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add,
         bool                                                                                                 $allow_duplicates = false,
-        user_message                                                                                         $usr_msg = new user_message()
+        user_message                                                                                         $msg = new user_message()
     ): bool
     {
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $this->add_obj($to_add, $allow_duplicates, $usr_msg);
+                $this->add_obj($to_add, $allow_duplicates, $msg);
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $this->add_obj($to_add, $allow_duplicates, $usr_msg);
+                        $this->add_obj($to_add, $allow_duplicates, $msg);
                     }
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

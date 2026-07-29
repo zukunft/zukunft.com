@@ -85,7 +85,7 @@ class word_write_tests
         $t_wrd = new test_words($t);
         $t_frm = new test_formulas($t);
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $t->name = 'word db write->';
 
         // start the test section (ts)
@@ -155,7 +155,7 @@ class word_write_tests
 
         // create a parent test word
         $wrd_parent = $t_db->test_word(word_names::TEST_PARENT);
-        $wrd_parent->add_child($wrd_read, $usr_msg);
+        $wrd_parent->add_child($wrd_read, $msg);
 
         // word children, so get all children of a parent
         // e.g. Zurich is s children of canton
@@ -301,18 +301,18 @@ class word_write_tests
         $test_name = 'check if saving a word with an existing name (' . word_names::MATH . ') merges the word and creates an info message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set(word_names::CONST_ID, word_names::MATH);
-        $usr_msg = new user_message($t->usr1);
-        $wrd_new->save($usr_msg);
-        $result = $usr_msg->text();
+        $msg = new user_message($t->usr1);
+        $wrd_new->save($msg);
+        $result = $msg->text();
         $target = 'A word with the name "'.word_names::MATH.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'creating a new word with the name "' . word_names::TEST_ADD . '" does not return any error messages';
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_names::TEST_ADD);
-        $usr_msg = new user_message($t->usr1);
-        $wrd_add->save($usr_msg);
-        $result = $usr_msg->text();
+        $msg = new user_message($t->usr1);
+        $wrd_add->save($msg);
+        $result = $msg->text();
         $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
 
         $test_name = '... check if the word creation with the name "' . word_names::TEST_ADD . '" has been logged';
@@ -326,26 +326,26 @@ class word_write_tests
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_names::TEST_ADD);
         $wrd_add->description = word_names::TEST_ADD_COM;
-        $usr_msg = new user_message($t->usr1);
-        $wrd_add->save($usr_msg);
-        $result = $usr_msg->text();
+        $msg = new user_message($t->usr1);
+        $wrd_add->save($msg);
+        $result = $msg->text();
         $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'trying to create a new word with the name "' . word_names::TEST_ADD . '" again can be used to add a unique id e.g. the code_id "' . word_names::TEST_ADD_CODE_ID . '"';
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_names::TEST_ADD);
         $wrd_add->code_id = word_names::TEST_ADD_CODE_ID;
-        $wrd_add->save($usr_msg);
-        $result = $usr_msg->text();
+        $wrd_add->save($msg);
+        $result = $msg->text();
         $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'trying to create a new word with the name "' . word_names::TEST_ADD . '" again is rejected if an unique key differs';
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_names::TEST_ADD);
         $wrd_add->code_id = words::SYSTEM_CODE_ID;
-        $usr_msg = new user_message($t->usr1);
-        $wrd_add->save($usr_msg);
-        $result = $usr_msg->text();
+        $msg = new user_message($t->usr1);
+        $wrd_add->save($msg);
+        $result = $msg->text();
         $target = 'A word with the name "'.word_names::TEST_ADD.'" already exists. Please use another word name.';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
@@ -353,8 +353,8 @@ class word_write_tests
         $test_name = 'the owner can raise the protection of "' . word_names::TEST_ADD . '" to admin';
         $wrd_prt = $t_db->load_word(word_names::TEST_ADD);
         $wrd_prt->set_protection_by_code_id(protection_types::ADMIN);
-        $usr_msg = new user_message($t->usr1);
-        $wrd_prt->save($usr_msg);
+        $msg = new user_message($t->usr1);
+        $wrd_prt->save($msg);
         $wrd_db = $t_db->load_word(word_names::TEST_ADD);
         $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
 
@@ -362,25 +362,25 @@ class word_write_tests
         $wrd_prt = $t_db->load_word(word_names::TEST_ADD);
         $wrd_prt->set_protection_id(null);
         $wrd_prt->description = word_names::TEST_RENAMED;
-        $usr_msg = new user_message($t->usr1);
-        $wrd_prt->save($usr_msg);
+        $msg = new user_message($t->usr1);
+        $wrd_prt->save($msg);
         $wrd_db = $t_db->load_word(word_names::TEST_ADD);
         $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
         // restore the description so that the later description log tests are not affected
         $wrd_prt = $t_db->load_word(word_names::TEST_ADD);
         $wrd_prt->description = word_names::TEST_ADD_COM;
-        $usr_msg = new user_message($t->usr1);
-        $wrd_prt->save($usr_msg);
+        $msg = new user_message($t->usr1);
+        $wrd_prt->save($msg);
 
         $test_name = 'a normal user cannot reduce the protection level';
         $wrd_prt = $t_db->load_word(word_names::TEST_ADD, $t->usr_normal);
         $wrd_prt->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $usr_msg = new user_message($t->usr_normal);
-        $wrd_prt->save($usr_msg);
+        $msg = new user_message($t->usr_normal);
+        $wrd_prt->save($msg);
         $wrd_db = $t_db->load_word(word_names::TEST_ADD);
         $t->assert($test_name, $wrd_db->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN), $t::TIMEOUT_LIMIT_DB);
         $test_name = '... and the denied reduction is reported to the user';
-        $t->assert_text_contains($test_name, $usr_msg->all_message_text(), word_names::TEST_ADD);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), word_names::TEST_ADD);
 
         // check that the word name cannot be used for a verb, triple or formula any more
         // TODO Prio 0 review
@@ -435,8 +435,8 @@ class word_write_tests
 
         $test_name = 'check if the word "' . word_names::TEST_ADD . '" can be renamed to "' . word_names::TEST_RENAMED . '"';
         $wrd_added->set_name(word_names::TEST_RENAMED);
-        $usr_msg = new user_message($t->usr1);
-        $t->assert_true($test_name, $wrd_added->save($usr_msg), $t::TIMEOUT_LIMIT_DB);
+        $msg = new user_message($t->usr1);
+        $t->assert_true($test_name, $wrd_added->save($msg), $t::TIMEOUT_LIMIT_DB);
 
         // check if the word renaming was successful
         $wrd_renamed = new word($t->usr1);
@@ -452,9 +452,9 @@ class word_write_tests
         $wrd_renamed->plural = word_names::TEST_RENAMED . 's';
         $wrd_renamed->description = word_names::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
-        $usr_msg = new user_message($t->usr1);
-        $wrd_renamed->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $msg = new user_message($t->usr1);
+        $wrd_renamed->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert('word->save all word fields beside the name for "' . word_names::TEST_RENAMED . '"', $result,
             $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -489,7 +489,7 @@ class word_write_tests
         $wrd_usr2->plural = word_names::TEST_RENAMED . 's2';
         $wrd_usr2->description = word_names::TEST_RENAMED . ' description2';
         $wrd_usr2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
-        $t->assert_true($test_name, $wrd_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $wrd_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
@@ -524,7 +524,7 @@ class word_write_tests
         $wrd_usr2->plural = word_names::TEST_RENAMED . 's';
         $wrd_usr2->description = word_names::TEST_RENAMED . ' description';
         $wrd_usr2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
-        $t->assert_true($test_name, $wrd_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $wrd_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
@@ -549,7 +549,7 @@ class word_write_tests
         // check if user 2 can exclude a word without influencing user 1
         $wrd_usr1 = $t_db->load_word(word_names::TEST_RENAMED);
         $wrd_usr2 = $t_db->load_word(word_names::TEST_RENAMED, $t->usr2);
-        $wrd_usr2->del($usr_msg);
+        $wrd_usr2->del($msg);
         $wrd_usr2_reloaded = $t_db->load_word(word_names::TEST_RENAMED, $t->usr2);
         $target = '';
         $result = $wrd_usr2_reloaded->name_dsp();
@@ -560,7 +560,7 @@ class word_write_tests
         $t->assert('but the word "' . word_names::TEST_RENAMED . '" is still the same for user 1', $result, $target);
 
         $test_name = 'delete the word also for user 1';
-        $wrd_usr1_reloaded->del($usr_msg);
+        $wrd_usr1_reloaded->del($msg);
         $wrd_usr1_deleted = new word($t->usr1);
         $wrd_usr1_deleted->load_by_name(word_names::TEST_RENAMED);
         $t->assert($test_name, $wrd_usr1_deleted->id(), 0);
@@ -603,7 +603,7 @@ class word_write_tests
         // owner, then assert the row is really gone instead of leaving it for the fallback cleanup below
         $test_name = 'delete word "' . word_names::TEST_SHARE . '"';
         $wrd_share = $t_db->load_word(word_names::TEST_SHARE);
-        $wrd_share->del($usr_msg);
+        $wrd_share->del($msg);
         $wrd_share_deleted = new word($t->usr1);
         $wrd_share_deleted->load_by_name(word_names::TEST_SHARE);
         $t->assert($test_name, $wrd_share_deleted->id(), 0);
@@ -614,7 +614,7 @@ class word_write_tests
         $t_frm->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

@@ -21,3 +21,4 @@
 !/src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/sample.xml
 # local IDE MCP server config (machine-specific endpoint, see claude code / phpstorm setup)
 /.mcp.json
+/cache/cfg_1.json

@@ -105,9 +105,9 @@ class type_tests
         $typ_lst_all->load_dummy();
         $api_json = $typ_lst_all->api_json_array();
         $typ_lst_cached = new type_lists();
-        $usr_msg = new user_message(user::system());
+        $msg = new user_message(user::system());
         $test_name = 'the type lists are filled from the types api json';
-        $t->assert_true($test_name, $typ_lst_cached->fill_from_api_json($api_json, $usr_msg));
+        $t->assert_true($test_name, $typ_lst_cached->fill_from_api_json($api_json, $msg));
         // building and comparing the complete type list api json takes longer than a normal unit
         // function, so a calculation timeout is used to avoid a false timeout as the type list grows
         $test_name = 'the filled type lists recreate exactly the same types api json';
@@ -120,38 +120,38 @@ class type_tests
         $test_name = 'an api json without the verbs does not fill the type lists';
         $api_json_verbless = $api_json;
         unset($api_json_verbless[json_fields::LIST_VERBS]);
-        $usr_msg = new user_message(user::system());
-        $t->assert_false($test_name, (new type_lists())->fill_from_api_json($api_json_verbless, $usr_msg));
+        $msg = new user_message(user::system());
+        $t->assert_false($test_name, (new type_lists())->fill_from_api_json($api_json_verbless, $msg));
         $test_name = 'an empty api json does not fill the type lists';
-        $usr_msg = new user_message(user::system());
-        $t->assert_false($test_name, (new type_lists())->fill_from_api_json([], $usr_msg));
+        $msg = new user_message(user::system());
+        $t->assert_false($test_name, (new type_lists())->fill_from_api_json([], $msg));
 
         // the code id links program code to the type,
         // so only a trusted source e.g. the db cached types json is allowed to set it
-        $usr_msg = new user_message(user::system());
+        $msg = new user_message(user::system());
         $typ = new type_object('original_code_id', 'type name', null, 1);
-        $typ->api_mapper([json_fields::CODE_ID => 'changed_code_id'], $usr_msg);
+        $typ->api_mapper([json_fields::CODE_ID => 'changed_code_id'], $msg);
         $test_name = 'an untrusted api json cannot change the code id of a type';
         $t->assert($test_name, $typ->get_code_id(), 'original_code_id');
-        $typ->api_mapper([json_fields::CODE_ID => 'cached_code_id'], $usr_msg, true);
+        $typ->api_mapper([json_fields::CODE_ID => 'cached_code_id'], $msg, true);
         $test_name = 'a trusted source e.g. the db cached types json sets the code id';
         $t->assert($test_name, $typ->get_code_id(), 'cached_code_id');
 
         // the same trust rule applies to the reference base url and the verb usage
-        $usr_msg = new user_message(user::system());
+        $msg = new user_message(user::system());
         $ref_typ = new ref_type('wikipedia', 'wikipedia', null, 1);
-        $ref_typ->api_mapper([json_fields::URL => 'https://untrusted.example/'], $usr_msg);
+        $ref_typ->api_mapper([json_fields::URL => 'https://untrusted.example/'], $msg);
         $test_name = 'an untrusted api json cannot change the reference base url';
         $t->assert_null($test_name, $ref_typ->url);
-        $ref_typ->api_mapper([json_fields::URL => 'https://en.wikipedia.org/wiki/'], $usr_msg, true);
+        $ref_typ->api_mapper([json_fields::URL => 'https://en.wikipedia.org/wiki/'], $msg, true);
         $test_name = 'a trusted source e.g. the db cached types json sets the reference base url';
         $t->assert($test_name, $ref_typ->url, 'https://en.wikipedia.org/wiki/');
-        $usr_msg = new user_message(user::system());
+        $msg = new user_message(user::system());
         $vrb = new verb();
-        $vrb->api_mapper([json_fields::USAGE => 7], $usr_msg);
+        $vrb->api_mapper([json_fields::USAGE => 7], $msg);
         $test_name = 'an untrusted api json cannot change the verb usage';
         $t->assert_null($test_name, $vrb->usage);
-        $vrb->api_mapper([json_fields::USAGE => 7], $usr_msg, true);
+        $vrb->api_mapper([json_fields::USAGE => 7], $msg, true);
         $test_name = 'a trusted source e.g. the db cached types json sets the verb usage';
         $t->assert($test_name, $vrb->usage, 7);
 

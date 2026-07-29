@@ -57,7 +57,7 @@ class element_write_tests
         // init
         $back = 0;
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element ';
@@ -65,12 +65,12 @@ class element_write_tests
 
         $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
-        $elm_lst = $exp->element_list($usr_msg);
+        $elm_lst = $exp->element_list($msg);
 
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
@@ -135,10 +135,10 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup formula element write');
-        $usr_msg->reset(true);
-        $usr_msg->usr = $t->usr1;
-        $frm_sector->del($usr_msg);
-        $wrd_total->del($usr_msg);
+        $msg->reset(true);
+        $msg->usr = $t->usr1;
+        $frm_sector->del($msg);
+        $wrd_total->del($msg);
 
     }
 
@@ -146,7 +146,7 @@ class element_write_tests
     {
 
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element list ';
@@ -154,13 +154,13 @@ class element_write_tests
 
         $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
-        $trm_lst = $frm->load_terms($usr_msg);
+        $trm_lst = $frm->load_terms($msg);
         $exp = $frm->expression($trm_lst);
-        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
+        $elm_lst = $exp->element_list($msg, $trm_lst);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
@@ -173,10 +173,10 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup');
-        $usr_msg->reset(true);
-        $usr_msg->usr = $t->usr1;
-        $frm_sector->del($usr_msg);
-        $wrd_total->del($usr_msg);
+        $msg->reset(true);
+        $msg->usr = $t->usr1;
+        $frm_sector->del($msg);
+        $wrd_total->del($msg);
 
     }
 

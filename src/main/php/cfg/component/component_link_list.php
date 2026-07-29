@@ -284,17 +284,17 @@ class component_link_list extends sandbox_link_list
 
     /**
      * delete all loaded view component links e.g. to delete all the links assigned to a view
-     * @param user_message $usr_msg the message for the user why deleting this component links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting this component links has failed and a suggested solution
      * @return bool true if the component links has been deleted
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $dsp_cmp_lnk->del($usr_msg);
+                $dsp_cmp_lnk->del($msg);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -365,20 +365,20 @@ class component_link_list extends sandbox_link_list
      * TODO Prio 0 apply the user_message reset to all lists
      * TODO faster mass db update
      *
-     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         foreach ($this->lst() as $sbx) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $lnk_usr_msg = $usr_msg->clone_reset();
+            $lnk_usr_msg = $msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready($lnk_usr_msg)) {
-                    $cmp->save($usr_msg);
+                    $cmp->save($msg);
                 }
             }
             // save the link of the view to the component
@@ -386,9 +386,9 @@ class component_link_list extends sandbox_link_list
                 $sbx->save($lnk_usr_msg);
             }
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($lnk_usr_msg);
+            $msg->merge($lnk_usr_msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

@@ -161,19 +161,19 @@ class phrase_list extends sandbox_list_named
     /**
      * map a phrase list api json to this model phrase list object
      * @param array $api_json the api array with the phrases that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         foreach ($api_json as $json_phr) {
             $phr = new phrase($this->get_user());
-            if ($phr->api_mapper($json_phr, $usr_msg)) {
+            if ($phr->api_mapper($json_phr, $msg)) {
                 $this->add($phr);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -546,12 +546,12 @@ class phrase_list extends sandbox_list_named
      * TODO replace it with the phrase list save function
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @return bool true if everything was fine
      */
     function import_lst(
         array        $json_obj,
-        user_message $usr_msg
+        user_message $msg
     ): bool
     {
         global $sys;
@@ -560,7 +560,7 @@ class phrase_list extends sandbox_list_named
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
                 $phr = new phrase($this->get_user());
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     if ($db_con->is_open()) {
                         // TODO prevent that this happens at all
                         if (is_array($phr_name)) {
@@ -582,7 +582,7 @@ class phrase_list extends sandbox_list_named
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
                                     $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
-                                    $wrd->save($usr_msg);
+                                    $wrd->save($msg);
                                 }
                                 if ($wrd->id() == 0) {
                                     log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -603,11 +603,11 @@ class phrase_list extends sandbox_list_named
 
         // save the word in the database
         // TODO check why this is needed
-        if ($usr_msg->is_ok() and $db_con->is_open()) {
-            $this->save($usr_msg);
+        if ($msg->is_ok() and $db_con->is_open()) {
+            $this->save($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -648,38 +648,38 @@ class phrase_list extends sandbox_list_named
      */
     function import_names(array $json_obj, ?data_object $dto = null): user_message
     {
-        $usr_msg = $this->import_map_names($json_obj, $dto);
-        $this->save($usr_msg);
+        $msg = $this->import_map_names($json_obj, $dto);
+        $this->save($msg);
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * fill this list with the phrases of the given json without writing to the database
      * @param array $json_array
-     * @param user_message $usr_msg to collect the message and including the requesting user
+     * @param user_message $msg to collect the message and including the requesting user
      * @return bool true if the import context has been mapped
      */
-    function import_context(array $json_array, user_message $usr_msg): bool
+    function import_context(array $json_array, user_message $msg): bool
     {
         foreach ($json_array as $key => $json_obj) {
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
-                    $wrd = new word($usr_msg->usr);
-                    if ($wrd->import_mapper($word, $usr_msg)) {
+                    $wrd = new word($msg->usr);
+                    if ($wrd->import_mapper($word, $msg)) {
                         $this->add_by_key($wrd->phrase());
                     }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
-                    $trp = new triple($usr_msg->usr);
-                    if ($trp->import_mapper($triple, $usr_msg)) {
+                    $trp = new triple($msg->usr);
+                    if ($trp->import_mapper($triple, $msg)) {
                         $this->add_by_key($trp->phrase());
                     }
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -2268,11 +2268,11 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
-     * @param user_message $usr_msg the message that should be shown to the user if something went wrong
+     * @param user_message $msg the message that should be shown to the user if something went wrong
      * @param import|null $imp the import object with the estimate of the total save time
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
         // get the phrase names that are already in the database
         $db_lst = clone $this;
@@ -2299,24 +2299,24 @@ class phrase_list extends sandbox_list_named
         foreach ($add_lst->lst() as $phr) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $phr_usr_msg = $usr_msg->clone_reset();
+            $phr_usr_msg = $msg->clone_reset();
             // actual save the phrase to the database
             $phr->save($phr_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($phr_usr_msg);
+            $msg->merge($phr_usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
-            $phr_usr_msg = $usr_msg->clone_reset();
+            $phr_usr_msg = $msg->clone_reset();
             // actual save the phrase to the database
-            $phr->save($usr_msg);
+            $phr->save($msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->merge($phr_usr_msg);
+            $msg->merge($phr_usr_msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

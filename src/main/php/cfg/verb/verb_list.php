@@ -243,15 +243,15 @@ class verb_list extends type_list
      * to restore all verb fields and a verb from the cache behaves exactly like one from the database
      *
      * @param array $api_rows the api json rows of the verbs e.g. from the db cached types message
-     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param user_message $msg to report the problems of the api mapping
      * @return bool true if at least one verb has been added
      */
-    function fill_from_api_rows(array $api_rows, user_message $usr_msg): bool
+    function fill_from_api_rows(array $api_rows, user_message $msg): bool
     {
         $this->set_lst([]);
         foreach ($api_rows as $api_row) {
             $vrb = new verb();
-            $vrb->api_mapper($api_row, $usr_msg, true);
+            $vrb->api_mapper($api_row, $msg, true);
             $this->add_verb($vrb);
         }
         return !$this->is_empty();
@@ -739,26 +739,26 @@ class verb_list extends type_list
      * simple loop to save all verbs of the list
      * because there are hopefully never many verbs to save
      *
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         if ($this->is_empty()) {
-            $usr_msg->add_info_text('no verbs to save');
+            $msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $vrb_usr_msg = $usr_msg->clone_reset();
+                $vrb_usr_msg = $msg->clone_reset();
                 // actual save the reference to the database
                 $vrb->save($vrb_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->merge($vrb_usr_msg);
+                $msg->merge($vrb_usr_msg);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

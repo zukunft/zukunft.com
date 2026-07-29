@@ -180,9 +180,9 @@ class all_tests extends all_unit_write_tests
         // init
         $sys->errors = 0;
         $t_db = new test_db_load($this);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $map = new MapObject();
-        $usr_msg_ui = $map->convertMsgToUi($usr_msg);
+        $usr_msg_ui = $map->convertMsgToUi($msg);
 
         // start the test section (ts)
         $ts = 'Start of all zukunft.com tests ';
@@ -215,7 +215,7 @@ class all_tests extends all_unit_write_tests
             // database reset is switched off here for better detection of leftovers
             // it can be started via reset_db
             if ($this->db_reset_allowed() and $sys->errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
-                $this->run_db_recreate($usr_msg);
+                $this->run_db_recreate($msg);
             }
 
             // html page creation based on the url

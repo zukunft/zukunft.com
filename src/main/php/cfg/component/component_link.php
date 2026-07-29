@@ -309,12 +309,12 @@ class component_link extends sandbox_link
     /**
      * map a component api json to this model component link object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // TODO Prio 2 get from dto cache if possible
         if (array_key_exists(json_fields::VIEW_ID, $api_json)) {
@@ -335,7 +335,7 @@ class component_link extends sandbox_link
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -911,7 +911,7 @@ class component_link extends sandbox_link
      */
     function fill(component_link|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->order_nbr === null and $obj->order_nbr != null) {
             $this->order_nbr = $obj->order_nbr;
         }
@@ -921,7 +921,7 @@ class component_link extends sandbox_link
         if ($this->style === null and $obj->style != null) {
             $this->style = $obj->style;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1322,7 +1322,7 @@ class component_link extends sandbox_link
     {
         $result = false;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // load any missing parameters
         if ($this->id() > 0) {
@@ -1330,7 +1330,7 @@ class component_link extends sandbox_link
         } elseif ($this->get_view()->id() != 0 and $this->get_component()->id() != 0) {
             $this->load_by_link_id($this->get_view()->id(), 0, $this->get_component()->id(), self::class);
         }
-        $this->reload_objects($usr_msg);
+        $this->reload_objects($msg);
 
         // check the all minimal input parameters
         if ($this->id() <= 0) {
@@ -1360,7 +1360,7 @@ class component_link extends sandbox_link
                                 . ' to ' . $order_nbr . ' in ' . $this->get_view()->dsp_id());
                             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
-                            $cmp_lnk->save($usr_msg)->get_last_message();
+                            $cmp_lnk->save($msg)->get_last_message();
                             $order_number_corrected = true;
                         }
                         log_debug('component_link->move check order numbers checked for '
@@ -1404,12 +1404,12 @@ class component_link extends sandbox_link
                             if (isset($prev_entry)) {
                                 log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->get_view()->dsp_id());
                                 $prev_entry->order_nbr = $order_nbr;
-                                $prev_entry->save($usr_msg);
+                                $prev_entry->save($msg);
                                 $prev_entry = null;
                             }
                             log_debug('component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->get_view()->name() . '"');
                             $cmp_lnk->order_nbr = $order_nbr - 1;
-                            $cmp_lnk->save($usr_msg);
+                            $cmp_lnk->save($msg);
                             $result = true;
                             $prev_entry_down = false;
                         }
@@ -1418,12 +1418,12 @@ class component_link extends sandbox_link
                                 if ($cmp_lnk->order_nbr > 0) {
                                     log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->get_view()->dsp_id());
                                     $cmp_lnk->order_nbr = $order_nbr - 1;
-                                    $cmp_lnk->save($usr_msg);
+                                    $cmp_lnk->save($msg);
                                     $result = true;
                                     if (isset($prev_entry)) {
                                         log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->get_view()->dsp_id());
                                         $prev_entry->order_nbr = $order_nbr;
-                                        $prev_entry->save($usr_msg);
+                                        $prev_entry->save($msg);
                                     }
                                 }
                             } else {

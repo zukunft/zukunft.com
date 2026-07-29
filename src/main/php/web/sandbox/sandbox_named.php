@@ -178,17 +178,17 @@ class sandbox_named extends sandbox
      * besides the base checks a named object requires a non-empty name to be confirmed,
 r     * unless it is being deleted or excluded (soft-deleted) which does not need a name
      *
-     * @param user_message $usr_msg to enrich with a warning per invalid field
+     * @param user_message $msg to enrich with a warning per invalid field
      * @param string $action the crud action of the change; a delete needs no name
      * @param array $url_array the pending change url (passed on to the parent checks)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE and !$this->is_excluded()) {
             if ($this->name == null or $this->name == '') {
-                $usr_msg->add_warning_with_vars(msg_id::NAME_EMPTY, [
+                $msg->add_warning_with_vars(msg_id::NAME_EMPTY, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                 ]);
                 $result = false;
@@ -201,13 +201,13 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
+        parent::url_mapper($url_array, $msg, $dto);
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {
@@ -222,7 +222,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
                 $this->usage = $url_array[url_var::USAGE];
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -254,11 +254,11 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     {
         $result = false;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body, $usr_msg);
+            $this->api_mapper($json_body, $msg);
             if ($this->id() != 0) {
                 $result = true;
             }

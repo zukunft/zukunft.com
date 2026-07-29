@@ -91,10 +91,10 @@ class change_log_link_list extends ListBase
      */
     function load_by_object(string $class, int|string $id = 1, user|null $usr = null): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $json = $this->load_api_by_object($class, $id, $usr);
         $this->set_from_json(json_decode($json, true));
-        return $usr_msg;
+        return $msg;
     }
 
     /**

@@ -380,6 +380,33 @@ $t->assert_text_contains($test_name, $login_html, '<div class="alert alert-warni
 $t->assert_text_contains('login page with failed login shows notification bar', $login_html, '<div ...>');
 ```
 
+### A test block runs name → prepare → call → assert
+
+Every single test reads the same way top to bottom, in four parts and in this
+order:
+
+1. **name** — `$test_name = '…';` is the **first** line of the block.
+2. **prepare** — build the fixtures / input the call needs (from the
+   `create/test_*.php` factories, never inline construction).
+3. **call** — invoke the function under test, capturing its result.
+4. **assert** — an `assert*()` is the **last** line of the block; every block
+   ends on its assertion, and nothing follows it except the next block's
+   `$test_name`.
+
+```php
+// Right — name, then prepare, then call, then assert
+$test_name = 'category subtitle uses the SYMBOL verb name verbatim';   // 1. name first
+$chf_sym = $t_wrd->word_chf_dsp();                                     // 2. prepare
+$title_sym = $form->title_of_named_with_edit_link($chf_sym);          // 3. call under test
+$t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME); // 4. assert last
+```
+
+Keep the four parts in this order so a reader sees the input, the action and the
+expected outcome in one glance. A block that prepares or computes *after* the
+assertion, or asserts *before* the call, hides what it is proving — split it into
+ordered blocks instead, each with its own `$test_name` first and its `assert*()`
+last.
+
 The `$test_name` is declared **first — at the top of the test setup, before any
 test variables are built** — not just before the assertion line. Reassign it
 again right before each later assertion in the same block.

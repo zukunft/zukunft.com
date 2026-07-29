@@ -430,7 +430,7 @@ class base_ui_tests
 
         // test if a simple text component can be created
         $cmp = new component($t->usr1);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
@@ -449,13 +449,13 @@ class base_ui_tests
         $test_name = 'a sandbox object e.g. source change button html code';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=source_edit&amp;id=1&amp;back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t_src->source_reserved()->api_json(), $usr_msg);
+        $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=formula_del&amp;id=1&amp;back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
-        $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
+        $frm->set_from_json($t_frm->formula()->api_json(), $msg);
         $t->assert($test_name, $frm->btn_del('1'), $target);
 
 
@@ -558,31 +558,31 @@ class base_ui_tests
         $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
 
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $url_test = new test_mappers($t);
 
         $t->subheader($ts . 'url mapper');
         $url_map = new url_mapper();
         $test_name = 'add default value of view';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?id=1';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         $test_name = 'add default value of step';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=3&id=1&debug=-1';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $step = $url_array[url_var::STEP];
         $t->assert($test_name, $step, 0);
         $test_name = 'add default value of view for human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&verb_id=3';
-        $url_array = $url_map->url_to_standard($lib->url_array($url), $usr_msg);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $view = $url_array[url_var::MASK];
         $t->assert($test_name, $view, views::START_ID);
         // the human url uses the view code id (the name) for the mask, not the numeric view id, for
         // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $usr_msg));
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
@@ -592,7 +592,7 @@ class base_ui_tests
         // accepted directly now, not only the [key, value] row format produced by url_array_with
         $test_name = 'convert a flat standard url to human-readable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $usr_msg));
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
         $t->assert($test_name, $view, views::WORD_ADD);
@@ -632,7 +632,7 @@ class base_ui_tests
             url_var::NAME => 'x',
             url_var::PRE . url_var::NAME => 'old',
             url_var::BACK . url_var::MASK => views::WORD_ID
-        ], $usr_msg);
+        ], $msg);
         $t->assert_text_contains($test_name, $json, json_fields::URL_ORIGINAL_DATA);
         $t->assert_text_contains($test_name, $json, json_fields::URL_PART_BACK);
         $t->assert_text_contains($test_name, $json, views::WORD_EDIT);
@@ -676,7 +676,7 @@ class base_ui_tests
 
         $test_name = 'convert the standard url to pod interchangeable url';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
-        $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $usr_msg));
+        $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate
         //$view = $url_array[url_var::MASK_POD];
@@ -691,8 +691,8 @@ class base_ui_tests
         //$t->assert($test_name, $view, views::START_CODE);
         $test_name = 'error message if mapping is missing';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=&mapping_missing=3';
-        $url_map->url_to_standard($lib->url_array($url), $usr_msg);
-        $err_msg = $usr_msg->var_message_text();
+        $url_map->url_to_standard($lib->url_array($url), $msg);
+        $err_msg = $msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');
 
     }

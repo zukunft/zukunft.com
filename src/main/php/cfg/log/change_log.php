@@ -993,8 +993,8 @@ class change_log extends db_object_seq_id_user
         ?sandbox_link $sbx = null
     ): sql_par
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'sql_insert_link',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1043,10 +1043,10 @@ class change_log extends db_object_seq_id_user
 
     /**
      * log a user change of a word, value or formula
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @return true if the change has been logged successfully
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -1062,8 +1062,8 @@ class change_log extends db_object_seq_id_user
             }
         }
         $log_id = 0;
-        if ($db_con->insert($qp, 'log change', $usr_msg)) {
-            $log_id = $usr_msg->get_row_id();
+        if ($db_con->insert($qp, 'log change', $msg)) {
+            $log_id = $msg->get_row_id();
         }
 
         if ($log_id <= 0) {

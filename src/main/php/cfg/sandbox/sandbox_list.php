@@ -128,8 +128,8 @@ class sandbox_list extends list_db_write
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'rows_mapper',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -305,7 +305,7 @@ class sandbox_list extends list_db_write
     function load_user_changes(
         sandbox_named|sandbox_link_named|combine_named $sbx,
         user                                           $usr,
-        user_message                                   $usr_msg,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): bool
@@ -317,11 +317,11 @@ class sandbox_list extends list_db_write
         if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
+            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $msg, $limit, $offset);
             $db_lst = $db_con->get($qp, 'sandbox list');
             $result = $this->rows_mapper($db_lst);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -330,7 +330,7 @@ class sandbox_list extends list_db_write
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param user $usr the user whose changes should be loaded (the subject of the load, not the requesting user)
-     * @param user_message $usr_msg to report the problems of the sql creation
+     * @param user_message $msg to report the problems of the sql creation
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the query parameters to load the user changes
@@ -339,7 +339,7 @@ class sandbox_list extends list_db_write
         sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         user                                           $usr,
-        user_message                                   $usr_msg,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): sql_par
@@ -483,15 +483,15 @@ class sandbox_list extends list_db_write
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($obj_to_add->get_user() == null) {
             $obj_to_add->set_user($this->get_user());
-            $usr_msg->add(msg_id::USER_MISSING,
+            $msg->add(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
-                $usr_msg->add(msg_id::LIST_USER_NO_MATCH,
+                $msg->add(msg_id::LIST_USER_NO_MATCH,
                     [
                         msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                         msg_id::VAR_USER_NAME => $obj_to_add->get_user()->name(),
@@ -499,7 +499,7 @@ class sandbox_list extends list_db_write
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -516,7 +516,7 @@ class sandbox_list extends list_db_write
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
     ): user_message|Message
     {
-        $usr_msg = new Message();
+        $msg = new Message();
         if ($obj_to_add->get_user() !== $this->get_user()) {
             if ($obj_to_add->get_user() == null) {
                 $obj_to_add->set_user($this->get_user());
@@ -529,7 +529,7 @@ class sandbox_list extends list_db_write
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

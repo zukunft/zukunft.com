@@ -227,12 +227,12 @@ class sandbox_named extends sandbox
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
@@ -244,7 +244,7 @@ class sandbox_named extends sandbox
         }
         // the usage is set by an internal batch and cannot be set by the api
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -515,7 +515,7 @@ class sandbox_named extends sandbox
      */
     function fill(sandbox_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->name_or_null() === null and $obj->name_or_null() != null) {
             $this->set_name($obj->name());
         }
@@ -525,7 +525,7 @@ class sandbox_named extends sandbox
         if ($this->get_usage() === null and $obj->get_usage() != null) {
             $this->set_usage($obj->get_usage());
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -824,7 +824,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
@@ -836,7 +836,7 @@ class sandbox_named extends sandbox
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -849,7 +849,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
@@ -860,7 +860,7 @@ class sandbox_named extends sandbox
         $log->new_value = null;
 
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -919,12 +919,12 @@ class sandbox_named extends sandbox
      * for these named objects check if the user has requested to use a preserved name
      * and if yes return a message and a suggested solution to the user
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check_save(user_message $usr_msg): bool
+    protected function check_save(user_message $msg): bool
     {
-        return $this->check_preserved($usr_msg);
+        return $this->check_preserved($msg);
     }
 
     /**
@@ -1290,7 +1290,7 @@ class sandbox_named extends sandbox
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -1298,13 +1298,13 @@ class sandbox_named extends sandbox
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -1312,7 +1312,7 @@ class sandbox_named extends sandbox
         if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $usr_msg, $sc_par_lst);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $msg, $sc_par_lst);
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -1330,7 +1330,7 @@ class sandbox_named extends sandbox
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
@@ -1339,7 +1339,7 @@ class sandbox_named extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        user_message       $usr_msg,
+        user_message       $msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -1349,10 +1349,10 @@ class sandbox_named extends sandbox
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+        $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
 
         // create the sql to insert the row
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $fvt_insert_list = new sql_par_field_list();
             $fvt_insert_list->add($fvt_insert);
             $sc_insert = clone $sc;

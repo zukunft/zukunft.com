@@ -766,7 +766,7 @@ class coding_rule_tests
      * until they were fixed
      *
      * a token parser (not a line grep) is required because a grep cannot tell a parameter shadow
-     * ($msg is a user_message parameter) from a legitimate local buffer ($usr_msg is a fresh local);
+     * ($msg is a user_message parameter) from a legitimate local buffer ($msg is a fresh local);
      * the guarded null-init of a *nullable* parameter (import_convert_xbrl::build_data does
      * "if ($msg == null) { $msg = new user_message(); }") is the one allowed reset and is tolerated
      *
@@ -775,7 +775,7 @@ class coding_rule_tests
      *
      * positive (test fires when it should): "$msg = new user_message();" in a function with a
      *     "user_message $msg" parameter flags the rule violation
-     * negative (test tolerates good code): a local buffer "$usr_msg = new user_message();" (not a
+     * negative (test tolerates good code): a local buffer "$msg = new user_message();" (not a
      *     parameter), a default value "user_message $msg = new user_message()" in the signature, and
      *     the guarded null-init of a nullable "?user_message $msg = null" parameter all pass
      *
@@ -1122,7 +1122,7 @@ class coding_rule_tests
      * $msg->usr, never re-sets it
      * (docs/llm/state-and-messages.md, the "requesting user lives on $msg" migration); the only
      * sanctioned writers are the user_message classes themselves (skipped as a whole) and the single
-     * "$usr_msg->usr = $usr_ui;" login user switch in web/frontend.php (the one allowed change of the
+     * "$msg->usr = $usr_ui;" login user switch in web/frontend.php (the one allowed change of the
      * requesting user after the entry point, see frontend::url_to_action) — that exact line is
      * tolerated while the rest of web/frontend.php stays under the rule
      *
@@ -1166,7 +1166,7 @@ class coding_rule_tests
         // the frontend login user switch is the one sanctioned change of the requesting user after
         // the entry point assignment (frontend::url_to_action), so exactly this line is tolerated
         // while the rest of web/frontend.php stays under the rule
-        $frontend_login_switch = '$usr_msg->usr = $usr_ui;';
+        $frontend_login_switch = '$msg->usr = $usr_ui;';
         $files_checked = 0;
         foreach ($code_files as $code_file) {
             $full = str_replace('\\', '/', $base_path . $code_file);
@@ -1184,7 +1184,7 @@ class coding_rule_tests
                     continue;
                 }
                 // tolerate only the exact sanctioned frontend login switch, nothing else
-                if (trim($line) == $frontend_login_switch) {
+                if ($code_file == '/frontend.php' and trim($line) == $frontend_login_switch) {
                     continue;
                 }
                 if (preg_match($pattern, $line)) {

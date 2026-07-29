@@ -67,10 +67,10 @@ class combine_object extends CombineObject
      */
     function __construct(?string $api_json = null)
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         parent::__construct(new word());
         if ($api_json != null) {
-            $this->set_from_json($api_json, $usr_msg);
+            $this->set_from_json($api_json, $msg);
         } else {
             $this->set_obj(new word());
         }
@@ -84,28 +84,28 @@ class combine_object extends CombineObject
     /**
      * set the vars of this combine frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
+        return $this->api_mapper(json_decode($json_api_msg, true), $msg);
     }
 
     /**
      * set the vars of this combine frontend object bases on the api json array
      * dummy function that should be overwritten by the child object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'api_mapper',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -122,12 +122,12 @@ class combine_object extends CombineObject
     function load_by_id(int $id): bool
     {
         $result = false;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $api = new rest_call();
         $json_body = $api->api_call_id($this::class, $id);
         if ($json_body) {
-            $this->api_mapper($json_body, $usr_msg);
+            $this->api_mapper($json_body, $msg);
             $result = true;
         }
         return $result;

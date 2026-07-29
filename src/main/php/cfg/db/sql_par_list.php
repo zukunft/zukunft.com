@@ -119,13 +119,13 @@ class sql_par_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $db_con->insert($qp, 'add ' . $class . ' from list', $usr_msg);
-            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+            $db_con->insert($qp, 'add ' . $class . ' from list', $msg);
+            $msg->add_list_name_id($msg, $qp->obj_name);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -135,14 +135,14 @@ class sql_par_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // TODO Prio 2 execute block wise
         foreach ($this->lst as $qp) {
-            $db_con->exe_direct($qp, $usr_msg);
-            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+            $db_con->exe_direct($qp, $msg);
+            $msg->add_list_name_id($msg, $qp->obj_name);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -152,13 +152,13 @@ class sql_par_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $db_con->update($qp, 'update ' . $class . ' from list', $usr_msg);
-            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+            $db_con->update($qp, 'update ' . $class . ' from list', $msg);
+            $msg->add_list_name_id($msg, $qp->obj_name);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -168,14 +168,14 @@ class sql_par_list
     {
         global $db_con;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $usr_msg);
-            $usr_msg->merge($del_msg);
-            $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
+            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $msg);
+            $msg->merge($del_msg);
+            $msg->add_list_name_id($del_msg, $qp->obj_name);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

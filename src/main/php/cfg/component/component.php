@@ -341,33 +341,33 @@ class component extends sandbox_code_id
     /**
      * map a component api json to this model component object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         // the ui message code ids link a component to a system ui message, so only a system /
         // developer user may set them via the api - route through the privilege-checked setters
         // (not a raw assignment) so a normal user's request is refused and reported on $usr_msg; the
         // null-user guard fails closed if no requesting user is set on the message
         global $mtr;
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json) and $usr_msg->usr != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $usr_msg->usr));
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json) and $msg->usr != null) {
+            $msg->merge($this->set_ui_msg_code_id(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json) and $usr_msg->usr != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_vars(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $usr_msg->usr));
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json) and $msg->usr != null) {
+            $msg->merge($this->set_ui_msg_code_id_vars(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json) and $usr_msg->usr != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_exception(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $usr_msg->usr));
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json) and $msg->usr != null) {
+            $msg->merge($this->set_ui_msg_code_id_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $msg->usr));
         }
-        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $usr_msg->usr != null) {
-            $usr_msg->merge($this->set_ui_msg_value_exception(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $usr_msg->usr));
+        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $msg->usr != null) {
+            $msg->merge($this->set_ui_msg_value_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $msg->usr));
         }
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);
@@ -390,7 +390,7 @@ class component extends sandbox_code_id
         }
         // TODO map e.g. the $row_phrase
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -493,10 +493,10 @@ class component extends sandbox_code_id
      */
     private function formula_from_api_json(int|array $value): formula
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $frm = new formula($this->get_user());
         if (is_array($value)) {
-            $frm->api_mapper($value, $usr_msg);
+            $frm->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache
@@ -1279,18 +1279,18 @@ class component extends sandbox_code_id
      */
     function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->ui_msg_code_id === null and $obj->ui_msg_code_id != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+            $msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
         }
         if ($this->ui_msg_code_id_vars === null and $obj->ui_msg_code_id_vars != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
+            $msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
         }
         if ($this->ui_msg_code_id_exception === null and $obj->ui_msg_code_id_exception != null) {
-            $usr_msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
+            $msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
         }
         if ($this->ui_msg_value_exception === null and $obj->ui_msg_value_exception !== null) {
-            $usr_msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
+            $msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
         }
         if ($this->row_phrase === null and $obj->row_phrase != null) {
             $this->row_phrase = $obj->row_phrase;
@@ -1311,7 +1311,7 @@ class component extends sandbox_code_id
         if ($this->link_type_id === null and $obj->link_type_id != null) {
             $this->link_type_id = $obj->link_type_id;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1442,10 +1442,10 @@ class component extends sandbox_code_id
      * link this component to a view
      * @param view $msk the view object to which this component should be added
      * @param int $order_nbr the position where the component should be added and all existing component should be move one position further
-     * @param user_message $usr_msg the message for the user why adding of the component has failed and the potential solutions
+     * @param user_message $msg the message for the user why adding of the component has failed and the potential solutions
      * @return bool true if the component has been added
      */
-    function link(view $msk, int $order_nbr, user_message $usr_msg): bool
+    function link(view $msk, int $order_nbr, user_message $msg): bool
     {
         $cmp_lnk = new component_link($this->get_user());
         $cmp_lnk->reset(true);
@@ -1454,7 +1454,7 @@ class component extends sandbox_code_id
         $cmp_lnk->order_nbr = $order_nbr;
         $cmp_lnk->set_predicate(component_link_type::DEFAULT);
         $cmp_lnk->set_pos_type(position_types::DEFAULT);
-        return $cmp_lnk->save($usr_msg);
+        return $cmp_lnk->save($msg);
     }
 
     /**
@@ -1462,15 +1462,15 @@ class component extends sandbox_code_id
      * TODO check if the view component is not linked anywhere else
      *        and if yes, delete the view component after confirmation
      * @param view $msk the view from where this component should be removed
-     * @param user_message $usr_msg explain to the user why the component cannot be removed from the view
+     * @param user_message $msg explain to the user why the component cannot be removed from the view
      * @return bool true if the component has been removed from the view
      */
-    function unlink(view $msk, user_message $usr_msg): bool
+    function unlink(view $msk, user_message $msg): bool
     {
         $cmp_lnk_ui = new component_link($this->get_user());
         $cmp_lnk_ui->load_by_link($msk, $this);
-        $cmp_lnk_ui->reload_objects($usr_msg);
-        return $cmp_lnk_ui->del($usr_msg);
+        $cmp_lnk_ui->reload_objects($msg);
+        return $cmp_lnk_ui->del($msg);
     }
 
 
@@ -1502,10 +1502,10 @@ class component extends sandbox_code_id
     /**
      * delete the view component links of linked to this view component
      *
-     * @param user_message $usr_msg the message for the user why deleting the component links has failed and a suggested solution
+     * @param user_message $msg the message for the user why deleting the component links has failed and a suggested solution
      * @return bool true if the component links has been deleted
      */
-    function del_links(user_message $usr_msg): bool
+    function del_links(user_message $msg): bool
     {
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->get_user());
@@ -1514,10 +1514,10 @@ class component extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $lnk_lst->del($usr_msg);
+            $lnk_lst->del($msg);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

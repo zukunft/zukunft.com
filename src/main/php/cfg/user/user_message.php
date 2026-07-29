@@ -5,6 +5,8 @@
     model/user/user_message.php - a complex object that functions can return
     ---------------------------
 
+    $msg is the suggested var name
+
     class function are should return on of
     1. boolean if a failure does not need any user action
     2. string if the user just needs to be informed about the result
@@ -156,9 +158,9 @@ class user_message extends Message
      */
     function clone_reset(): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr;
-        return $usr_msg;
+        $msg = new user_message();
+        $msg->usr = $this->usr;
+        return $msg;
     }
 
 
@@ -311,9 +313,9 @@ class user_message extends Message
         }
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
-            $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER], $usr_msg);
-            if ($usr_msg->is_ok()) {
+            $msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER], $msg);
+            if ($msg->is_ok()) {
                 $this->usr = $usr;
             }
         }

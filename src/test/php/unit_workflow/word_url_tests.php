@@ -76,7 +76,7 @@ class word_url_tests extends url_test_base
         $this->init($t, 'word url->', 'url word ');
         $ui = $this->ui;
         $usr_ui = $this->usr;
-        $usr_msg = $this->usr_msg;
+        $msg = $this->usr_msg;
         $ts = $this->ts;
         // every url array below starts from this factory via to_url_array(), so the factory
         // shows centrally which test objects this test uses (docs/llm/testing.md)
@@ -89,12 +89,12 @@ class word_url_tests extends url_test_base
         $url_arr = $t_wrd->word_dsp()->to_url_array();
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::USER] = users::SYSTEM_ID;
-        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
-        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         $test_name = 'add request via url without name should return a missing error message';
@@ -102,7 +102,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_ADD_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
-        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         // TODO Prio 1 activate
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
@@ -112,7 +112,7 @@ class word_url_tests extends url_test_base
         // the user presses the save button of the add form, which adds the named submit marker;
         // without the marker the same url just renders the add form with the given values
         $url_arr[url_var::POST_SUBMIT] = '';
-        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         // the assert follows a complete view render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $result, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD), $t::TIMEOUT_LIMIT_PAGE_LONG);
 
@@ -122,7 +122,7 @@ class word_url_tests extends url_test_base
         $test_name = 'change word edit form posts url vars not labels';
         $url_arr = $t_wrd->word_dsp()->to_url_array();
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
-        $form = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $form = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         // the first assert follows a complete edit form render via url, so a long page timeout is used
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::NAME . '"', $t::TIMEOUT_LIMIT_PAGE_LONG);
         $t->assert_text_contains($test_name, $form, 'name="' . url_var::DESCRIPTION . '"');
@@ -179,7 +179,7 @@ class word_url_tests extends url_test_base
         // pending change before it is written to the database (docs/llm/state-and-messages.md)
         // never use read test objects e.g. like math in this section
         $test_name = 'pressing save shows the confirm change view with the pending change';
-        $usr_msg->usr = $usr_ui;
+        $msg->usr = $usr_ui;
         // build the edit form url array from a test word instead of hard-coding the field keys;
         // change the description so the confirm view shows it as the pending change.
         // the test word is admin protected, so render it as the system (admin) user
@@ -189,7 +189,7 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
         $url_arr[url_var::BACK] = $wrd_ui->id();
         $usr_backend = $t->usr1;
-        $req = new user_request($usr_backend, $usr_msg, $ui->dto, false, true);
+        $req = new user_request($usr_backend, $msg, $ui->dto, false, true);
         // the 'save' user action sets the confirm step, so url_user_reaction returns the confirm change view
         $url_arr[url_var::STEP] = url_var::ACTION_SAVE;
         $result = $ui->execute_and_next($url_arr, $req);
@@ -202,7 +202,7 @@ class word_url_tests extends url_test_base
         // url_to_action routes the unconfirmed save to the confirm change view url
         $test_name = 'url_to_action routes the unconfirmed save to the confirm change view';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
-        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $usr_msg, $ui->dto, false);
+        $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
 
         /*
@@ -243,7 +243,7 @@ class word_url_tests extends url_test_base
         $url_arr = [];
         $url_arr[url_var::MASK] = views::WORD_FIND_ID;
         $url_arr[url_var::PATTERN_HUMAN] = 'def';
-        $result = $ui->url_to_html($url_arr, $usr_msg, $ui->dto, true);
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, 'def', $t::TIMEOUT_LIMIT_PAGE_LONG);
 
     }

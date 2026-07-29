@@ -195,11 +195,11 @@ class type_object
     /**
      * set the vars of this type frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         if (array_key_exists(url_var::ID, $url_array)) {
             $this->set_id($url_array[url_var::ID]);
@@ -216,7 +216,7 @@ class type_object
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
             $this->set_description($url_array[url_var::DESCRIPTION]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

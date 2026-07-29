@@ -67,7 +67,7 @@ class element_group_write_tests
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
         $tl = new test_lib();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element group ';
@@ -88,7 +88,7 @@ class element_group_write_tests
         //$t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_increase(), $usr_msg));
 
         // load the terms needed for the formula expression
-        $trm_lst = $frm->load_exp_terms($usr_msg);
+        $trm_lst = $frm->load_exp_terms($msg);
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression($trm_lst);
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
@@ -204,7 +204,7 @@ class element_group_write_tests
 
         // test if there are any test leftovers in the database and report which
         // TODO Prio 2 add this test to all db write test blocks (or at least to those that are causing issues)
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

@@ -287,12 +287,12 @@ class ref extends sandbox_link
      * map a ref api json to this model ref object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
             if ($api_json[json_fields::PHRASE_ID] != '' and $api_json[json_fields::PHRASE_ID] != 0) {
@@ -333,7 +333,7 @@ class ref extends sandbox_link
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1121,7 +1121,7 @@ class ref extends sandbox_link
     function log_link_add(): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1140,7 +1140,7 @@ class ref extends sandbox_link
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = 0;
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1151,7 +1151,7 @@ class ref extends sandbox_link
     function log_link_upd($db_rec): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::UPDATE);
         $log->set_table(change_tables::REF);
@@ -1162,7 +1162,7 @@ class ref extends sandbox_link
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1173,7 +1173,7 @@ class ref extends sandbox_link
     function log_link_del(): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1190,7 +1190,7 @@ class ref extends sandbox_link
         $log->old_link = $this->type();
         $log->old_to = $this;
         $log->row_id = $this->id();
-        $log->add($usr_msg);
+        $log->add($msg);
 
         return $log;
     }
@@ -1249,7 +1249,7 @@ class ref extends sandbox_link
      */
     function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj, $usr_req);
+        $msg = parent::fill($obj, $usr_req);
         if ($this->get_url() === null and $obj->get_url() != null) {
             $this->set_url($obj->get_url());
         }
@@ -1270,7 +1270,7 @@ class ref extends sandbox_link
         if ($this->description === null and $obj->description != null) {
             $this->description = $obj->description;
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

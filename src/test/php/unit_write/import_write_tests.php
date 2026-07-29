@@ -78,7 +78,7 @@ class import_write_tests
 
         // init
         $t_usr = new test_users($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write import ';
@@ -101,7 +101,7 @@ class import_write_tests
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_ADD);
         if ($wrd->id() > 0) {
-            $wrd->del($usr_msg);
+            $wrd->del($msg);
         }
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_names::TEST_ADD);
@@ -109,7 +109,7 @@ class import_write_tests
         $wrd_to = new word($t->usr1);
         $wrd_to->load_by_name(word_names::TEST_ADD_TO);
         if ($wrd_to->id() > 0) {
-            $wrd_to->del($usr_msg);
+            $wrd_to->del($msg);
         }
         $wrd_to = new word($t->usr1);
         $wrd_to->load_by_name(word_names::TEST_ADD_TO);
@@ -206,13 +206,13 @@ class import_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED);
         if ($trp->id() > 0) {
-            $trp->del($usr_msg);
+            $trp->del($msg);
         }
         foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
             $wrd = new word($t->usr1);
             $wrd->load_by_name($wrd_name);
             if ($wrd->id() > 0) {
-                $wrd->del($usr_msg);
+                $wrd->del($msg);
             }
         }
 
@@ -254,7 +254,7 @@ class import_write_tests
             $wrd = new word($t->usr1);
             $wrd->load_by_name($wrd_name);
             if ($wrd->id() > 0) {
-                $wrd->del($usr_msg);
+                $wrd->del($msg);
             }
         }
 
@@ -308,7 +308,7 @@ class import_write_tests
 
         $lib = new library();
         $imf = new import_file();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);
@@ -346,7 +346,7 @@ class import_write_tests
             if ($sbx::class == verb::class) {
                 $sbx->set_user($usr_req);
             }
-            $sbx->del($usr_msg);
+            $sbx->del($msg);
         }
         $sbx->load_by_name($add_name);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);
@@ -380,7 +380,7 @@ class import_write_tests
 
         $lib = new library();
         $imf = new import_file();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);
@@ -411,7 +411,7 @@ class import_write_tests
         $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';
         $sbx->load_by_names([$add_name]);
         if ($sbx->id() > 0) {
-            $sbx->del($usr_msg);
+            $sbx->del($msg);
         }
         $sbx->load_by_names([$add_name]);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);

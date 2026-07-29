@@ -1221,7 +1221,7 @@ class user_display_old extends user
         $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // create the databased link
         $db_con->usr_id = $this->id();
@@ -1302,7 +1302,7 @@ class user_display_old extends user
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
                     //$usr_ui->del_usr_cfg();
-                    $usr_ui->del($usr_msg);
+                    $usr_ui->del($msg);
                 } else {
 
                     // format the user source

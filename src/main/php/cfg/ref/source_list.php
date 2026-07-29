@@ -224,7 +224,7 @@ class source_list extends sandbox_list_named
      * @param import|null $imp the import object with the estimate of the total save time
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?import $imp = null): bool
+    function save(user_message $msg, ?import $imp = null): bool
     {
         // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
         return parent::save_block_wise(
@@ -232,7 +232,7 @@ class source_list extends sandbox_list_named
             words::SOURCES,
             source::class,
             new source_list($this->get_user()),
-            $usr_msg
+            $msg
         );
     }
 

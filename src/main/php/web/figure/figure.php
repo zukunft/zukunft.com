@@ -70,27 +70,27 @@ class figure extends combine_named
     /**
      * set the vars of this figure html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_ui = new result();
-                $res_ui->api_mapper($json_array, $usr_msg);
+                $res_ui->api_mapper($json_array, $msg);
                 $this->set_obj($res_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
-                $val->api_mapper($json_array, $usr_msg);
+                $val->api_mapper($json_array, $msg);
                 $this->set_obj($val);
             } else {
-                $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
+                $msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
             }
         } else {
-            $usr_msg->add_error_text('Json class missing, but expected for a figure');
+            $msg->add_error_text('Json class missing, but expected for a figure');
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

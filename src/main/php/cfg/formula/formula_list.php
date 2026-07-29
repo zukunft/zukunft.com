@@ -583,18 +583,18 @@ class formula_list extends sandbox_list_named
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $value) {
             $frm = new formula($this->get_user());
-            if ($frm->import_obj($value, $usr_msg, $dto)) {
+            if ($frm->import_obj($value, $msg, $dto)) {
                 $this->add($frm);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -803,7 +803,7 @@ class formula_list extends sandbox_list_named
     {
         global $cfg;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::FORMULAS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $save_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -931,17 +931,17 @@ class formula_list extends sandbox_list_named
 
             // add the user_messages to the last try
             if (!$ref_usr_msg->is_ok()) {
-                $usr_msg->merge($ref_usr_msg);
+                $msg->merge($ref_usr_msg);
             }
             if (!$lst_usr_msg->is_ok()) {
-                $usr_msg->merge($lst_usr_msg);
+                $msg->merge($lst_usr_msg);
             }
             if (!$trm_usr_msg->is_ok()) {
-                $usr_msg->merge($trm_usr_msg);
+                $msg->merge($trm_usr_msg);
             }
 
             // create any missing sql update functions and update the formulas
-            $usr_msg->merge($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
+            $msg->merge($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -950,22 +950,22 @@ class formula_list extends sandbox_list_named
             $this->fill_by_name($db_lst_all, true);
 
             // report missing formulas
-            $this->report_missing($usr_msg, $trm_lst, $imp->file_name);
+            $this->report_missing($msg, $trm_lst, $imp->file_name);
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->merge($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
+            $msg->merge($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
 
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
 
-    private function refresh_ref_text(term_list $trm_lst, user_message $usr_msg): void
+    private function refresh_ref_text(term_list $trm_lst, user_message $msg): void
     {
         foreach ($this->lst() as $frm) {
-            $frm->generate_ref_text($trm_lst, $usr_msg);
+            $frm->generate_ref_text($trm_lst, $msg);
         }
     }
 
@@ -990,10 +990,10 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    protected function delete_depending(user_message $usr_msg): void
+    protected function delete_depending(user_message $msg): void
     {
         foreach ($this->lst() as $frm) {
-            $frm->del_links($usr_msg);
+            $frm->del_links($msg);
         }
     }
 
@@ -1039,12 +1039,12 @@ class formula_list extends sandbox_list_named
      */
     function save_with_cache_slow(import $imp, term_list $cache): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($this->lst() as $frm) {
-            $frm->save($usr_msg);
+            $frm->save($msg);
             $cache->add($frm->term());
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1082,14 +1082,14 @@ class formula_list extends sandbox_list_named
         bool                            $report_missing = true
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $frm) {
-            $this->fill_triple_by_name($db_lst, $frm, $usr_msg, $fill_all, $report_missing);
+            $this->fill_triple_by_name($db_lst, $frm, $msg, $fill_all, $report_missing);
 
         }
-        return $usr_msg;
+        return $msg;
     }
 
     private function fill_triple_by_name(

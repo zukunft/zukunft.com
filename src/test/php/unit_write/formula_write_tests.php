@@ -88,7 +88,7 @@ class formula_write_tests
         $t->name = 'formula->';
         $back = 0;
         $lib = new library();
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula ';
@@ -112,9 +112,9 @@ class formula_write_tests
 
         // prepare
         $this->create_test_formulas($t);
-        $frm = $t_db->add_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $usr_msg);
+        $frm = $t_db->add_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $msg);
         $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
-        $frm->link_phrase_and_save($phr, $usr_msg);
+        $frm->link_phrase_and_save($phr, $msg);
 
         // test loading of one formula
         $frm = new formula($t->usr1);
@@ -133,8 +133,8 @@ class formula_write_tests
         $test_name = 'remove an element and update the database';
         $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
         $trm_lst = $t_trm->term_list_all();
-        $frm->element_refresh($usr_msg, $trm_lst);
-        $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
+        $frm->element_refresh($msg, $trm_lst);
+        $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'remove an element and update the database ... compare with fixed text';
@@ -143,37 +143,37 @@ class formula_write_tests
 
         $test_name = 'add an element and update the database';
         $frm->set_user_text(formula_names::INCREASE_EXP);
-        $frm->element_refresh($usr_msg, $trm_lst);
-        $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
+        $frm->element_refresh($msg, $trm_lst);
+        $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst = $elm_lst->unique();
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
-        $frm->element_refresh($usr_msg);
-        $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
+        $frm->element_refresh($msg);
+        $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_EXP);
-        $frm->element_refresh($usr_msg, $trm_lst);
-        $elm_lst = $frm->elements_incl_result_phrases($usr_msg, $trm_lst);
+        $frm->element_refresh($msg, $trm_lst);
+        $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst_db = $frm->load_element_list();
         $elm_lst = $elm_lst->unique();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $t->subheader($ts . 'formulas using verb following');
 
-        $usr_msg->reset();
+        $msg->reset();
         $frm = new formula($t->usr1);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, formula::class);
         $exp = $frm->expression();
         $trm_lst = new term_list($t->usr1);
-        $trm_ids = $exp->terms_missing($usr_msg, $trm_lst);
+        $trm_ids = $exp->terms_missing($msg, $trm_lst);
         $trm_lst->load_additional_by_id($trm_ids);
-        $frm_lst = $exp->element_special_following_frm($usr_msg, $trm_lst);
+        $frm_lst = $exp->element_special_following_frm($msg, $trm_lst);
         $phr_lst = new phrase_list($t->usr1);
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {
@@ -188,7 +188,7 @@ class formula_write_tests
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
-                $val = $elm_frm->calc_predefined($phr_lst, $time_phr, $usr_msg);
+                $val = $elm_frm->calc_predefined($phr_lst, $time_phr, $msg);
                 $result = $val->number();
                 $target = word_names::YEAR_2019;
                 // TODO: get the best matching number
@@ -235,14 +235,14 @@ class formula_write_tests
         $t->assert('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $result, $target);
 
         // loading another formula (Price Earning ratio ) to have more test cases
-        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $usr_msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $msg);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_RATIO, word_names::TEST_SHARE);
         $frm_pe = $t_db->load_formula(formula_names::SYSTEM_TEST_RATIO);
 
         $wrd_share = $t_db->test_word(word_names::TEST_SHARE);
         $wrd_chf = $t_db->test_word(word_names::TEST_CHF);
 
-        $frm_pe->assign_phrase($wrd_share->phrase(), $usr_msg);
+        $frm_pe->assign_phrase($wrd_share->phrase(), $msg);
 
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_names::TEST_SHARE, word_names::TEST_CHF));
@@ -404,7 +404,7 @@ class formula_write_tests
         //$t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test formula refresh functions
-        $usr_msg_elm = $usr_msg->clone_reset();
+        $usr_msg_elm = $msg->clone_reset();
         $result = $frm->element_refresh($usr_msg_elm);
         // the element refresh writes the formula elements to the database, so a db timeout is used
         $t->assert('formula->element_refresh for ' . $frm->dsp_id(), $result, true, $t::TIMEOUT_LIMIT_DB);
@@ -416,7 +416,7 @@ class formula_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_names::SYSTEM_TEST_ADD);
         $frm->usr_text = formula_names::INCREASE_EXP;
-        $frm->save($usr_msg);
+        $frm->save($msg);
         if ($frm->id() > 0) {
             $result = $frm->usr_text;
         }
@@ -439,8 +439,8 @@ class formula_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_names::SYSTEM_TEST_ADD);
         $frm->usr_text = formula_names::INCREASE_ALTERNATIVE_EXP;
-        $frm->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $frm->save($msg);
+        $result = $msg->get_last_message();
         // use the next line if system config is non-standard
         //$target = 'A formula with the name "'.formulas::TN_ADD.'" already exists. Please use another name.';
         $target = '';
@@ -449,8 +449,8 @@ class formula_write_tests
         // check if the formula can be renamed
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         $frm->set_name(formula_names::SYSTEM_TEST_RENAMED);
-        $frm->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $frm->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert('formula->save rename "' . formula_names::SYSTEM_TEST_ADD . '" to "' . formula_names::SYSTEM_TEST_RENAMED . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -473,8 +473,8 @@ class formula_write_tests
         $frm_renamed->description = formula_names::SYSTEM_TEST_RENAMED . ' description';
         $frm_renamed->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
-        $frm_renamed->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $frm_renamed->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert('formula->save all formula fields beside the name for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -538,8 +538,8 @@ class formula_write_tests
         $frm_usr2->description = formula_names::SYSTEM_TEST_RENAMED . ' description2';
         $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
-        $frm_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $frm_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert('formula->save all formula fields for user 2 beside the name for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -590,8 +590,8 @@ class formula_write_tests
         $frm_usr2->description = formula_names::SYSTEM_TEST_RENAMED . ' description';
         $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
-        $frm_usr2->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $frm_usr2->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $t->assert('formula->save undo the user formula fields beside the name for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -627,7 +627,7 @@ class formula_write_tests
         $t_frm->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 
@@ -657,7 +657,7 @@ class formula_write_tests
     function create_test_formulas(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db create test formulas ';
@@ -666,20 +666,20 @@ class formula_write_tests
         $t_db->test_word(word_names::TEST_EARNING);
         $t_db->test_word(word_names::TEST_PRICE);
         $t_db->test_word(word_names::TEST_PE);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $usr_msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $msg);
         $t_db->test_word(word_names::TEST_TOTAL);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
         //$t->test_formula(formulas::TN_THIS, formulas::TF_THIS);
         $t_db->test_word(word_names::TEST_THIS);
         $t_db->test_word(word_names::TEST_PRIOR);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $usr_msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_EXCLUDED, formula_names::INCREASE_EXP, $usr_msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_EXCLUDED, formula_names::INCREASE_EXP, $msg);
         $t_db->test_word(word_names::TEST_IN_K);
         $t_db->test_word(word_names::TEST_BIL);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_K, formula_names::SYSTEM_TEST_SCALE_K_EXP, $usr_msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_TO_K, formula_names::SYSTEM_TEST_SCALE_TO_K_EXP, $usr_msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_MIO, formula_names::SYSTEM_TEST_SCALE_MIO_EXP, $usr_msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_BIL, formula_names::SYSTEM_TEST_SCALE_BIL_EXP, $usr_msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_K, formula_names::SYSTEM_TEST_SCALE_K_EXP, $msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_TO_K, formula_names::SYSTEM_TEST_SCALE_TO_K_EXP, $msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_MIO, formula_names::SYSTEM_TEST_SCALE_MIO_EXP, $msg);
+        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_BIL, formula_names::SYSTEM_TEST_SCALE_BIL_EXP, $msg);
 
         // modify the special test cases
         $frm = new formula($t->usr1);
@@ -688,7 +688,7 @@ class formula_write_tests
             log_err('formula ' . formula_names::SYSTEM_TEST_EXCLUDED . ' could not be loaded', 'create_test_formulas');
         } else {
             $frm->excluded = true;
-            $frm->save($usr_msg);
+            $frm->save($msg);
         }
     }
 

@@ -163,9 +163,9 @@ class system_view_ui_tests
         $t->assert_text_contains($test_name,
             $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
         $t->usr1 = $t_usr->user_sys_test();
-        $usr_msg = new user_message();
-        $usr_ui = $map_ui->convertToUi($t->usr1, $usr_msg);
-        $usr_msg->usr = $usr_ui;
+        $msg = new user_message();
+        $usr_ui = $map_ui->convertToUi($t->usr1, $msg);
+        $msg->usr = $usr_ui;
 
 
         // shared frontend instance for all page tests
@@ -521,7 +521,7 @@ class system_view_ui_tests
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
         // loop over the system views
-        $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $usr_msg, $lib);
+        $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $msg, $lib);
 
     }
 
@@ -531,7 +531,7 @@ class system_view_ui_tests
      * @param test_mappers $t_map builds filled test URLs per class and action
      * @param frontend $ui renders HTML from a URL array
      * @param user_ui $usr_sys_ui logged-in user used for views that require a session
-     * @param user_message $usr_msg collects any messages produced during rendering
+     * @param user_message $msg collects any messages produced during rendering
      * @param library $lib converts class names to file-path segments
      */
     private function assert_views_by_id(
@@ -539,7 +539,7 @@ class system_view_ui_tests
         test_mappers $t_map,
         frontend     $ui,
         user_ui      $usr_sys_ui,
-        user_message $usr_msg,
+        user_message $msg,
         library      $lib
     ): void
     {
@@ -563,11 +563,11 @@ class system_view_ui_tests
                 // instead of the anonymous login/signup menu
                 if (in_array($id, views::TEST_LOGIN_VIEW_IDS)
                     or in_array($id, views::ADMIN_MASK_IDS)) {
-                    $usr_msg->usr = $usr_sys_ui;
+                    $msg->usr = $usr_sys_ui;
                 } else {
-                    $usr_msg->usr = null;
+                    $msg->usr = null;
                 }
-                $html = $ui->url_to_html($url_array, $usr_msg, $ui->dto, true);
+                $html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
                 $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
                 $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;

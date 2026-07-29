@@ -183,20 +183,20 @@ class sandbox_link_list extends sandbox_list
         bool                                                $allow_duplicates = false
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // add only objects that have all mandatory values
-        $obj_to_add->can_be_ready($usr_msg);
+        $obj_to_add->can_be_ready($msg);
 
         // add a missing user to the object
         // or check if the object user matches the list user
         // and allow exceptions only for admin users
-        $usr_msg->merge($this->add_user_check($obj_to_add));
+        $msg->merge($this->add_user_check($obj_to_add));
 
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
         if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
             // add only objects that have all mandatory values
-            if ($obj_to_add->can_be_ready($usr_msg)) {
+            if ($obj_to_add->can_be_ready($msg)) {
                 $this->add_direct($obj_to_add);
             }
         } else {
@@ -204,7 +204,7 @@ class sandbox_link_list extends sandbox_list
             $this->add_link($obj_to_add, $allow_duplicates);
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**

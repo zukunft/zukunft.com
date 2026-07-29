@@ -59,7 +59,7 @@ class element_list_tests
         $t->name = 'element_list->';
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
 
         // start the test section (ts)
@@ -84,7 +84,7 @@ class element_list_tests
         // TODO Prio 0 add fail test cases
         $frm = $t_frm->formula();
         $trm_lst = $t_trm->term_list_time();
-        $elm_lst = $frm->elements($usr_msg, $trm_lst);
+        $elm_lst = $frm->elements($msg, $trm_lst);
         $result = $elm_lst->dsp_id();
         $target = '"minute" (element_id 1/103) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);

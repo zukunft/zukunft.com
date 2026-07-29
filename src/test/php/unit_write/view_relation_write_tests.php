@@ -47,7 +47,7 @@ class view_relation_write_tests
 
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write view relation ';
@@ -70,7 +70,7 @@ class view_relation_write_tests
     {
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         $msk_rel = $t_msk->view_relation_filled_add();
         // TODO Prio 0 activate

@@ -55,20 +55,20 @@ class url_mapper
      * get the standard url array from all allowed url formats
      * the url string can be the short form or in human-readable format or in pod independent format
      * @param array $url_array in any possible format of the array keys
-     * @param user_message $usr_msg to enrich with potential errors
+     * @param user_message $msg to enrich with potential errors
      * @return array with the standard keys
      */
-    function url_to_standard(array $url_array, user_message $usr_msg): array
+    function url_to_standard(array $url_array, user_message $msg): array
     {
         // detect the url format and get the view id or code id
         if (array_key_exists(url_var::MASK_HUMAN, $url_array)) {
-            $std_array = $this->human_url_to_standard($url_array, $usr_msg);
+            $std_array = $this->human_url_to_standard($url_array, $msg);
         } elseif (array_key_exists(url_var::MASK_POD, $url_array)) {
-            $std_array = $this->pod_url_to_standard($url_array, $usr_msg);
+            $std_array = $this->pod_url_to_standard($url_array, $msg);
         } else {
             $std_array = $url_array;
         }
-        $std_array = $this->add_url_default($std_array, $usr_msg);
+        $std_array = $this->add_url_default($std_array, $msg);
         // TODO Prio 2 review
         // the standard url always carries the numeric view id; an input that used the view code id
         // (e.g. a human url with mask_id=word_add) is converted to the numeric id so the rendered
@@ -81,41 +81,41 @@ class url_mapper
         return $std_array;
     }
 
-    private function human_url_to_standard(array $url_array, user_message $usr_msg): array
+    private function human_url_to_standard(array $url_array, user_message $msg): array
     {
         return $this->map_url_to_standard(
             $url_array,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD,
             'url_var::HUMAN_TO_STD'
         );
     }
 
-    private function pod_url_to_standard(array $url_array, user_message $usr_msg): array
+    private function pod_url_to_standard(array $url_array, user_message $msg): array
     {
         return $this->map_url_to_standard(
             $url_array,
-            $usr_msg,
+            $msg,
             url_var::POD_TO_STD,
             'url_var::POD_TO_STD'
         );
     }
 
-    function standard_url_to_human(array $url_array, user_message $usr_msg): string
+    function standard_url_to_human(array $url_array, user_message $msg): string
     {
         return $this->array_to_url($this->map_standard_to(
             $url_array,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD,
             'url_var::HUMAN_TO_STD'
         ));
     }
 
-    function standard_url_to_pod(array $url_array, user_message $usr_msg): string
+    function standard_url_to_pod(array $url_array, user_message $msg): string
     {
         return $this->array_to_url($this->map_standard_to(
             $url_array,
-            $usr_msg,
+            $msg,
             url_var::POD_TO_STD,
             'url_var::POD_TO_STD'
         ));
@@ -128,10 +128,10 @@ class url_mapper
      * '9'-prefixed back targets under 'back' (each prefix stripped and the rest human-keyed)
      *
      * @param array $url_array the standard url (flat [key => value]) including the 8- and 9-prefixed vars
-     * @param user_message $usr_msg enriched with a message for each url key that has no human mapping
+     * @param user_message $msg enriched with a message for each url key that has no human mapping
      * @return string the pretty-printed json of the human-readable url
      */
-    function human_url_to_json(array $url_array, user_message $usr_msg): string
+    function human_url_to_json(array $url_array, user_message $msg): string
     {
         $main = [];
         $original = [];
@@ -145,12 +145,12 @@ class url_mapper
                 $main[$key] = $val;
             }
         }
-        $json = $this->to_human_assoc($main, $usr_msg);
+        $json = $this->to_human_assoc($main, $msg);
         if (!empty($original)) {
-            $json[json_fields::URL_ORIGINAL_DATA] = $this->to_human_assoc($original, $usr_msg);
+            $json[json_fields::URL_ORIGINAL_DATA] = $this->to_human_assoc($original, $msg);
         }
         if (!empty($back)) {
-            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back, $usr_msg);
+            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back, $msg);
         }
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
@@ -160,13 +160,13 @@ class url_mapper
      * code id and the step / action values their human text), reusing the standard -> human mapping
      *
      * @param array $flat the standard url part as a flat [key => value] map
-     * @param user_message $usr_msg enriched with a message for each key that has no human mapping
+     * @param user_message $msg enriched with a message for each key that has no human mapping
      * @return array the human-keyed [human_key => value] map
      */
-    private function to_human_assoc(array $flat, user_message $usr_msg): array
+    private function to_human_assoc(array $flat, user_message $msg): array
     {
         $assoc = [];
-        $rows = $this->map_standard_to($flat, $usr_msg, url_var::HUMAN_TO_STD, 'url_var::HUMAN_TO_STD');
+        $rows = $this->map_standard_to($flat, $msg, url_var::HUMAN_TO_STD, 'url_var::HUMAN_TO_STD');
         foreach ($rows as $row) {
             $assoc[$row[0]] = $row[1];
         }
@@ -311,12 +311,12 @@ class url_mapper
 
     private function map_human_action_to_std(
         string       $std_value,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         return $this->map_value_to_std(
             $std_value,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD_ACTIONS_VAL,
             'url_var::HUMAN_TO_STD_ACTIONS_VAL'
         );
@@ -324,12 +324,12 @@ class url_mapper
 
     private function map_human_step_to_std(
         string       $std_value,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         return $this->map_value_to_std(
             $std_value,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD_STEP_VAL,
             'url_var::HUMAN_TO_STD_STEP_VAL'
         );
@@ -337,12 +337,12 @@ class url_mapper
 
     private function map_std_action_to(
         string       $std_value,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         return $this->map_std_value_to(
             $std_value,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD_ACTIONS_VAL,
             'url_var::HUMAN_TO_STD_ACTIONS_VAL'
         );
@@ -350,12 +350,12 @@ class url_mapper
 
     private function map_std_step_to(
         string       $std_value,
-        user_message $usr_msg
+        user_message $msg
     ): string
     {
         return $this->map_std_value_to(
             $std_value,
-            $usr_msg,
+            $msg,
             url_var::HUMAN_TO_STD_STEP_VAL,
             'url_var::HUMAN_TO_STD_STEP_VAL'
         );
@@ -363,12 +363,12 @@ class url_mapper
 
     private function map_value_to_std(
         string       $non_std_value,
-        user_message $usr_msg,
+        user_message $msg,
         array        $map_lst,
         string       $map_name
     ): string
     {
-        return $this->map_std_value_to($non_std_value, $usr_msg, array_flip($map_lst), $map_name . '_REVERSE');
+        return $this->map_std_value_to($non_std_value, $msg, array_flip($map_lst), $map_name . '_REVERSE');
     }
 
     private function map_std_value_to(

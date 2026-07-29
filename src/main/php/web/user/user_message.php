@@ -5,6 +5,8 @@
     web/user/user_message.php - messages created by the frontend for the user
     -------------------------
 
+    $msg is the suggested var name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -138,9 +140,9 @@ class user_message extends Message
         }
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
-            $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER],$usr_msg);
-            if ($usr_msg->is_ok()) {
+            $msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER],$msg);
+            if ($msg->is_ok()) {
                 $this->usr = $usr;
             }
         }

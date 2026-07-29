@@ -88,8 +88,8 @@ class horizontal_ui_tests
         $map = new MapObject();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
-        $usr_msg = new user_message($t->usr1);
-        $msg_ui = $map->convertMsgToUi($usr_msg);
+        $msg = new user_message($t->usr1);
+        $msg_ui = $map->convertMsgToUi($msg);
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
 
@@ -124,7 +124,7 @@ class horizontal_ui_tests
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;
             $refilled_obj->reset(true);
-            $refilled_obj->api_mapper($api_msg, $usr_msg);
+            $refilled_obj->api_mapper($api_msg, $msg);
             // fill the id that is not set by the add url
             $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the crud action

@@ -68,7 +68,7 @@ class view_write_tests
 
         // init
         $t_msk = new test_views($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
         $t->name = 'db write view ';
 
         // start the test section (ts)
@@ -123,7 +123,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->set_name(views::TEST_ADD_NAME);
         $msk->description = 'Just added for testing';
-        $t->assert_true($test_name, $msk->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the view name has been saved for '. views::TEST_ADD_NAME;
         $msk = new view($t->usr1);
@@ -140,8 +140,8 @@ class view_write_tests
         $test_name = 'check if adding a view with name '. views::TEST_ADD_NAME . ' again creates a correct error message';
         $msk = new view($t->usr1);
         $msk->set_name(views::TEST_ADD_NAME);
-        $msk->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $msk->save($msg);
+        $result = $msg->get_last_message();
         // TODO Prio 2 review
         $target = 'A view with the name "' . views::TEST_ADD_NAME . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
@@ -151,7 +151,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->load_by_name(views::TEST_ADD_NAME, view::class);
         $msk->set_name(views::TEST_RENAMED_NAME);
-        $t->assert_true($test_name, $msk->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the view renaming was successful to '. views::TEST_RENAMED_NAME;
         $msk_renamed = new view($t->usr1);
@@ -172,7 +172,7 @@ class view_write_tests
         $test_name = 'check if the view parameters (e.g. type) can be added to '. views::TEST_RENAMED_NAME;
         $msk_renamed->description = 'Just added for testing the user sandbox';
         $msk_renamed->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
-        $t->assert_true($test_name, $msk_renamed->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_renamed->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if the description view parameters have been added to '. views::TEST_RENAMED_NAME;
         $msk_reloaded = new view($t->usr1);
@@ -201,7 +201,7 @@ class view_write_tests
         $msk_usr2->load_by_name(views::TEST_RENAMED_NAME);
         $msk_usr2->description = 'Just changed for testing the user sandbox';
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
-        $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if a user-specific view comment have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
@@ -232,7 +232,7 @@ class view_write_tests
         $msk_usr2->load_by_name(views::TEST_RENAMED_NAME);
         $msk_usr2->description = 'Just added for testing the user sandbox';
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
-        $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $msk_usr2->save($msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check if a user-specific view comment changes have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
@@ -262,34 +262,34 @@ class view_write_tests
     function create_test_views(test_cleanup|a_selected_test $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db create test views ';
         $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t_db->test_view($view_name, $t->usr1, $usr_msg);
+            $t_db->test_view($view_name, $t->usr1, $msg);
         }
 
         // modify the special test cases
         $msk = new view($t->usr1);
         $msk->load_by_name(views::TEST_EXCLUDED_NAME);
         $msk->excluded = true;
-        $msk->save($usr_msg);
+        $msk->save($msg);
     }
 
     function delete_test_views(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db del test views ';
         $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t_db->del_view($view_name, $t->usr1, $usr_msg);
+            $t_db->del_view($view_name, $t->usr1, $msg);
         }
     }
 

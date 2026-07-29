@@ -198,12 +198,12 @@ class test_db_load
         if ($test_usr == null) {
             $test_usr = $this->env->usr1;
         }
-        $usr_msg = new user_message($test_usr);
+        $msg = new user_message($test_usr);
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
-            if (!$wrd->save($usr_msg)) {
-                log_err('add word failed due to: ' . $usr_msg->text());
+            if (!$wrd->save($msg)) {
+                log_err('add word failed due to: ' . $msg->text());
             }
         }
         if ($wrd->id <= 0) {
@@ -212,15 +212,15 @@ class test_db_load
         if ($wrd->id > 0) {
             if ($wrd->excluded) {
                 $wrd->include();
-                if (!$wrd->save($usr_msg)) {
-                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->text());
+                if (!$wrd->save($msg)) {
+                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $msg->text());
                 }
             }
         }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $sys->typ_lst->phr_typ->id($wrd_type_code_id);
-            if (!$wrd->save($usr_msg)) {
-                log_err('add formula failed due to: ' . $usr_msg->text());
+            if (!$wrd->save($msg)) {
+                log_err('add formula failed due to: ' . $msg->text());
             }
         }
         return $wrd;
@@ -275,7 +275,7 @@ class test_db_load
      */
     function assert_db_sandbox_object(sandbox $sbx, ?user $test_usr = null): bool
     {
-        $usr_msg = new user_message($test_usr);
+        $msg = new user_message($test_usr);
         $test_name = 'db ';
         $result = '';
         $target = '';
@@ -287,17 +287,17 @@ class test_db_load
             if ($db_obj->load_by_name($sbx->name())) {
                 if ($sbx->id() == 0) {
                     $sbx->id = $db_obj->id();
-                    $sbx->save($usr_msg);
+                    $sbx->save($msg);
                     $test_name .= ' update ';
                 } elseif ($sbx->id() == $db_obj->id()) {
-                    $sbx->save($usr_msg);
+                    $sbx->save($msg);
                     $test_name .= ' update ';
                 } else {
                     log_err($sbx::class . ' has id ' . $db_obj->id() . ' in the database but not yet supported by assert_db_sandbox_object');
                 }
             } else {
                 $test_name .= ' add ';
-                $sbx->save($usr_msg);
+                $sbx->save($msg);
             }
         } else {
             log_err($sbx::class . ' not yet supported by assert_db_sandbox_object');
@@ -390,7 +390,7 @@ class test_db_load
     {
         global $sys;
 
-        $usr_msg = new user_message($this->env->usr1);
+        $msg = new user_message($this->env->usr1);
         $result = new triple($this->env->usr1);
 
         // load the phrases to link and create words if needed
@@ -427,8 +427,8 @@ class test_db_load
                     if ($name_given <> '' and $trp->name(true) <> $name_given) {
                         $trp->name_given = $name_given;
                         $trp->set_name($name_given);
-                        if (!$trp->save($usr_msg)) {
-                            log_err('save triple failed due to: ' . $usr_msg->get_last_message());
+                        if (!$trp->save($msg)) {
+                            log_err('save triple failed due to: ' . $msg->get_last_message());
                         }
                         $trp->load_by_id($trp->id());
                     }
@@ -450,8 +450,8 @@ class test_db_load
                             $trp->name_given = $name_given;
                             $trp->set_name($name_given);
                         }
-                        if (!$trp->save($usr_msg)) {
-                            log_err('save triple failed due to: ' . $usr_msg->text());
+                        if (!$trp->save($msg)) {
+                            log_err('save triple failed due to: ' . $msg->text());
                         }
                         $trp->load_by_id($trp->id());
                     }
@@ -555,9 +555,9 @@ class test_db_load
             $phr_lst->load_by_names($phr_names);
             $grp = $this->create_group($phr_lst, $test_usr);
             $grp->set_name($grp_name);
-            $usr_msg = new user_message($test_usr);
-            if (!$grp->save($usr_msg)) {
-                log_err('add group failed due to: ' . $usr_msg->text());
+            $msg = new user_message($test_usr);
+            if (!$grp->save($msg)) {
+                log_err('add group failed due to: ' . $msg->text());
             }
         }
         return $grp;
@@ -623,28 +623,28 @@ class test_db_load
     /**
      * get or create a formula
      */
-    function add_formula(string $frm_name, string $frm_text, user_message $usr_msg): formula
+    function add_formula(string $frm_name, string $frm_text, user_message $msg): formula
     {
         $frm = $this->load_formula($frm_name);
         if ($frm->id() == 0) {
             $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
-            $frm->generate_ref_text(null, $usr_msg);
-            $frm->save($usr_msg);
+            $frm->generate_ref_text(null, $msg);
+            $frm->save($msg);
             // TODO add this check to all add functions
-            if (!$usr_msg->is_ok()) {
-                $reason = $usr_msg->all_message_text();
+            if (!$msg->is_ok()) {
+                $reason = $msg->all_message_text();
                 log_warning('add formula failed due to: ' . $reason);
             }
         }
         return $frm;
     }
 
-    function test_formula(string $frm_name, string $frm_text, user_message $usr_msg): formula
+    function test_formula(string $frm_name, string $frm_text, user_message $msg): formula
     {
         // reset the message for each test
-        $usr_msg->reset();
-        $frm = $this->add_formula($frm_name, $frm_text, $usr_msg);
+        $msg->reset();
+        $frm = $this->add_formula($frm_name, $frm_text, $msg);
         // adding the formula writes to the database, so a db timeout is used to avoid a false timeout
         $this->env->assert('formula', $frm->name(), $frm_name, $this->env::TIMEOUT_LIMIT_DB);
         return $frm;
@@ -685,9 +685,9 @@ class test_db_load
             // TODO check if type name is the code id or really the name
             $ref->set_predicate_id($sys->typ_lst->ref_typ->id($type_name));
             $ref->set_external_key($external_key);
-            $usr_msg = new user_message($this->env->usr1);
-            if (!$ref->save($usr_msg)) {
-                log_err('add ref failed due to: ' . $usr_msg->get_last_message());
+            $msg = new user_message($this->env->usr1);
+            if (!$ref->save($msg)) {
+                log_err('add ref failed due to: ' . $msg->get_last_message());
             }
         }
         return $ref;
@@ -810,9 +810,9 @@ class test_db_load
      */
     function del_phrase_group(string $phrase_group_name): bool
     {
-        $usr_msg = new user_message($this->env->usr1);
+        $msg = new user_message($this->env->usr1);
         $phr_grp = $this->load_phrase_group_by_name($phrase_group_name);
-        return $phr_grp->del($usr_msg);
+        return $phr_grp->del($msg);
     }
 
     function load_value_by_id(user $usr, int $id): value
@@ -866,9 +866,9 @@ class test_db_load
                 $val->set_grp($phr_grp);
             }
             $val->set_number($target);
-            $usr_msg = new user_message($this->env->usr1);
-            if (!$val->save($usr_msg)) {
-                log_err('add value failed due to: ' . $usr_msg->get_last_message());
+            $msg = new user_message($this->env->usr1);
+            if (!$val->save($msg)) {
+                log_err('add value failed due to: ' . $msg->get_last_message());
             }
         }
 
@@ -896,9 +896,9 @@ class test_db_load
         if (!$val->is_saved()) {
             $val->set_grp($phr_grp);
             $val->set_number($target);
-            $usr_msg = new user_message($this->env->usr1);
-            if (!$val->save($usr_msg)) {
-                log_err('add value by group failed due to: ' . $usr_msg->get_last_message());
+            $msg = new user_message($this->env->usr1);
+            if (!$val->save($msg)) {
+                log_err('add value by group failed due to: ' . $msg->get_last_message());
             }
         }
 
@@ -916,8 +916,8 @@ class test_db_load
     function del_value_by_phr_grp(group $phr_grp): bool
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
-        $usr_msg = new user_message($this->env->usr1);
-        return $val->del($usr_msg);
+        $msg = new user_message($this->env->usr1);
+        return $val->del($msg);
     }
 
 
@@ -937,9 +937,9 @@ class test_db_load
         $src = $this->load_source($src_name);
         if ($src->id() == 0) {
             $src->set_name($src_name);
-            $usr_msg = new user_message($this->env->usr1);
-            if (!$src->save($usr_msg)) {
-                log_err('add source failed due to: ' . $usr_msg->get_last_message());
+            $msg = new user_message($this->env->usr1);
+            if (!$src->save($msg)) {
+                log_err('add source failed due to: ' . $msg->get_last_message());
             }
         }
         return $src;
@@ -1051,35 +1051,35 @@ class test_db_load
         return $msk;
     }
 
-    function add_view(string $dsp_name, user $test_usr, user_message $usr_msg): view
+    function add_view(string $dsp_name, user $test_usr, user_message $msg): view
     {
         $msk = $this->load_view($dsp_name, $test_usr);
         if ($msk->id() == 0) {
             $msk->set_user($test_usr);
             $msk->set_name($dsp_name);
-            $msk->save($usr_msg);
-            if (!$usr_msg->is_ok()) {
-                log_err('add view failed due to: ' . $usr_msg->get_last_message());
+            $msk->save($msg);
+            if (!$msg->is_ok()) {
+                log_err('add view failed due to: ' . $msg->get_last_message());
             }
         }
         return $msk;
     }
 
-    function test_view(string $dsp_name, user $test_usr, user_message $usr_msg): view
+    function test_view(string $dsp_name, user $test_usr, user_message $msg): view
     {
-        $msk = $this->add_view($dsp_name, $test_usr, $usr_msg);
+        $msk = $this->add_view($dsp_name, $test_usr, $msg);
         $this->env->assert('view', $msk->name(), $dsp_name, test_base::TIMEOUT_LIMIT_DB);
         return $msk;
     }
 
-    function del_view(string $dsp_name, user $test_usr, user_message $usr_msg): bool
+    function del_view(string $dsp_name, user $test_usr, user_message $msg): bool
     {
         $msk = $this->load_view($dsp_name, $test_usr);
         if ($msk->id() != 0) {
-            $msk->del_links($usr_msg);
-            $msk->del($usr_msg);
+            $msk->del_links($msg);
+            $msk->del($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1101,7 +1101,7 @@ class test_db_load
     function add_component(string $cmp_name, user $test_usr, string $type_code_id = ''): component
     {
         global $sys;
-        $usr_msg = new user_message($test_usr);
+        $msg = new user_message($test_usr);
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
@@ -1110,8 +1110,8 @@ class test_db_load
             if ($type_code_id != '') {
                 $cmp->type_id = $sys->typ_lst->cmp_typ->id($type_code_id);
             }
-            if (!$cmp->save($usr_msg)) {
-                log_err('add component failed due to: ' . $usr_msg->get_last_message());
+            if (!$cmp->save($msg)) {
+                log_err('add component failed due to: ' . $msg->get_last_message());
             }
         }
         return $cmp;
@@ -1133,7 +1133,7 @@ class test_db_load
         string $cmp_name,
         int    $pos): component_link
     {
-        $usr_msg = new user_message($this->env->usr1);
+        $msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->env->usr1);
@@ -1141,8 +1141,8 @@ class test_db_load
         $lnk->set_view($msk);
         $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;
-        $lnk->save($usr_msg);
-        $result = $usr_msg->get_last_message();
+        $lnk->save($msg);
+        $result = $msg->get_last_message();
         $target = '';
         $this->env->assert('view component link', $result, $target);
         return $lnk;
@@ -1150,19 +1150,19 @@ class test_db_load
 
     function test_component_unlink(string $dsp_name, string $cmp_name): string
     {
-        $usr_msg = new user_message($this->env->usr1);
+        $msg = new user_message($this->env->usr1);
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         if ($msk->id() > 0 and $cmp->id() > 0) {
-            $cmp->unlink($msk, $usr_msg);
+            $cmp->unlink($msk, $msg);
         }
-        return $usr_msg->get_last_message();
+        return $msg->get_last_message();
     }
 
     function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string
     {
         $result = '';
-        $usr_msg = new user_message($this->env->usr1);
+        $msg = new user_message($this->env->usr1);
 
         $frm = new formula($this->env->usr1);
         $frm->load_by_name($formula_name);
@@ -1180,9 +1180,9 @@ class test_db_load
                 if ($auto_create) {
                     $frm_lnk->set_formula($frm);
                     $frm_lnk->set_phrase($wrd->phrase());
-                    $frm_lnk->save($usr_msg);
-                    if (!$usr_msg->is_ok()) {
-                        log_err('add formula link failed due to: ' . $usr_msg->get_last_message());
+                    $frm_lnk->save($msg);
+                    if (!$msg->is_ok()) {
+                        log_err('add formula link failed due to: ' . $msg->get_last_message());
                     }
                 }
             }

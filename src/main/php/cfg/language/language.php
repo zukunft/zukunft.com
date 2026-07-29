@@ -162,13 +162,13 @@ class language extends type_object
      * map the additional vars of a language api json
      * to this language object
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param bool $trusted true if the api_json is from the cache
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $api_json, user_message $usr_msg, bool $trusted = false): bool
+    function api_mapper(array $api_json, user_message $msg, bool $trusted = false): bool
     {
-        parent::api_mapper($api_json, $usr_msg, $trusted);
+        parent::api_mapper($api_json, $msg, $trusted);
 
         if (array_key_exists(json_fields::WIKI_CODE, $api_json)) {
             if ($api_json[json_fields::WIKI_CODE] <> '') {
@@ -182,7 +182,7 @@ class language extends type_object
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

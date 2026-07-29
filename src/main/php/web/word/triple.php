@@ -187,17 +187,17 @@ class triple extends sandbox_code_id
      * public because it is reused e.g. by the phrase group display object
      *
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $usr_msg, $dto);
-        if ($usr_msg->is_ok()) {
+        parent::url_mapper($url_array, $msg, $dto);
+        if ($msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
                 if ($url_array[url_var::PHRASE_FROM] != null) {
-                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $usr_msg);
+                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $msg);
                 }
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
@@ -205,7 +205,7 @@ class triple extends sandbox_code_id
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
                 if ($url_array[url_var::PHRASE_TO] != null) {
-                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $usr_msg);
+                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $msg);
                 }
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
@@ -235,7 +235,7 @@ class triple extends sandbox_code_id
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -243,21 +243,21 @@ class triple extends sandbox_code_id
      * changed without them; if both the from and the to phrase are missing a warning is shown the usual
      * way instead of confirming the invalid triple (a delete needs no from or to phrase)
      *
-     * @param user_message $usr_msg to enrich with a warning if the from and to phrase are both missing
+     * @param user_message $msg to enrich with a warning if the from and to phrase are both missing
      * @param string $action the crud action of the change; the check does not apply to a delete
      * @param array $url_array the pending change url (unused here, kept for the common signature)
      * @return bool true if the entered data can be confirmed
      */
-    function input_valid(user_message $usr_msg, string $action = '', array $url_array = []): bool
+    function input_valid(user_message $msg, string $action = '', array $url_array = []): bool
     {
-        $result = parent::input_valid($usr_msg, $action, $url_array);
+        $result = parent::input_valid($msg, $action, $url_array);
         if ($action != url_var::CRUD_DELETE) {
             $from = $this->get_from();
             $to = $this->get_to();
             // a triple needs both linked phrases, so the save is also rejected if only one side is
             // missing e.g. because a phrase name posted by the edit form could not be resolved
             if (($from == null or $from->id() == 0) or ($to == null or $to->id() == 0)) {
-                $usr_msg->add_warning_with_vars(msg_id::TRIPLE_PHRASES_MISSING, [
+                $msg->add_warning_with_vars(msg_id::TRIPLE_PHRASES_MISSING, [
                     msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class)
                 ]);
                 $result = false;
@@ -265,7 +265,7 @@ class triple extends sandbox_code_id
         } elseif ($this->is_in_use()) {
             // a triple still linked to by a value, formula or another triple must not be deleted
             // (mirrors word::input_valid); the frontend reads the usage posted with the delete url
-            $usr_msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
+            $msg->add_warning_with_vars(msg_id::DELETE_IN_USE, [
                 msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
                 msg_id::VAR_NAME => $this->name()
             ]);
@@ -547,10 +547,10 @@ class triple extends sandbox_code_id
     function set_from_by_id(
         int|string       $id,
         data_object|null $dto = null,
-        user_message     $usr_msg = new user_message()
+        user_message     $msg = new user_message()
     ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $dto, $usr_msg);
+        $this->from = $this->set_phrase_by_id($id, $dto, $msg);
     }
 
     function set_verb(verb $vrb): void
@@ -573,10 +573,10 @@ class triple extends sandbox_code_id
     function set_to_by_id(
         int|string       $id,
         data_object|null $dto = null,
-        user_message     $usr_msg = new user_message()
+        user_message     $msg = new user_message()
     ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $dto, $usr_msg);
+        $this->to = $this->set_phrase_by_id($id, $dto, $msg);
     }
 
     /**
@@ -586,13 +586,13 @@ class triple extends sandbox_code_id
      *
      * @param int|string $id the phrase id or the phrase name posted by the edit form
      * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
-     * @param user_message $usr_msg to report a phrase name that the user needs to correct
+     * @param user_message $msg to report a phrase name that the user needs to correct
      * @return phrase|null the resolved phrase or null if the name is unknown
      */
     private function set_phrase_by_id(
         int|string       $id,
         data_object|null $dto,
-        user_message     $usr_msg = new user_message()
+        user_message     $msg = new user_message()
     ): phrase|null
     {
         $phr = null;
@@ -607,7 +607,7 @@ class triple extends sandbox_code_id
                     $phr = $phr_loaded;
                 } else {
                     // an unknown phrase name is a user input that the user can correct
-                    $usr_msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
+                    $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
                 }
             }
         } else {

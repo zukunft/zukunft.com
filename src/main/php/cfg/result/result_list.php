@@ -806,24 +806,24 @@ class result_list extends sandbox_value_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         foreach ($json_obj as $res_json) {
             $res = new result($this->get_user());
-            if ($res->import_obj($res_json, $usr_msg, $dto)) {
+            if ($res->import_obj($res_json, $msg, $dto)) {
                 $this->add($res);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1139,7 +1139,7 @@ class result_list extends sandbox_value_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // to inform the user about the progress
         $last_msg_time = microtime(true); // the start time
@@ -1166,9 +1166,9 @@ class result_list extends sandbox_value_list
         $trm_back = new term($this->get_user());
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
-        $trm_lst_back = $frm->load_exp_terms($usr_msg, $trm_lst_back, $exp);
-        $phr_lst_preset_following = $exp->terms_following($usr_msg, $trm_lst_back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
+        $trm_lst_back = $frm->load_exp_terms($msg, $trm_lst_back, $exp);
+        $phr_lst_preset_following = $exp->terms_following($msg, $trm_lst_back);
+        $frm_lst_preset_following = $exp->element_special_following_frm($msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;

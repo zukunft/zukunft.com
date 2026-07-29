@@ -4392,19 +4392,19 @@ class library
      *
      * @param sql_par_field_list $fvt_lst list of fields that have been changed
      * @param array $fld_lst_all list of all fields of the given object
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @return string the query name extension to make the query name
      */
     function sql_field_ext(
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all,
-        user_message       $usr_msg
+        user_message       $msg
     ): string
     {
         $result = '';
         foreach ($fld_lst_all as $fld) {
             if (in_array($fld, $fvt_lst->names())) {
-                $fvt = $fvt_lst->get($fld, $usr_msg);
+                $fvt = $fvt_lst->get($fld, $msg);
                 if ($fvt->id == null) {
                     if ($fvt->old_id == null) {
                         if ($fvt->old == null) {

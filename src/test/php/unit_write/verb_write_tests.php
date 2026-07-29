@@ -55,7 +55,7 @@ class verb_write_tests
         // init
         $t_vrb = new test_verbs($t);
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message($t->usr1);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write verb ';
@@ -72,7 +72,7 @@ class verb_write_tests
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->set_name(verbs::TEST_ADD_NAME);
-        $t->assert_true($test_name, $vrb->save($usr_msg));
+        $t->assert_true($test_name, $vrb->save($msg));
 
         $test_name = '... test if adding the verb is part of the change log';
         $result = $t->log_last_by_user();
@@ -83,7 +83,7 @@ class verb_write_tests
         $vrb->load_by_name(verbs::TEST_ADD_NAME);
         // TODO this setting of the user should actually not be needed
         $vrb->set_user($t->usr1);
-        $t->assert_true($test_name, $vrb->del($usr_msg));
+        $t->assert_true($test_name, $vrb->del($msg));
 
         $test_name = '... test if deleting the verb is part of the change log';
         $result = $t->log_last_by_user();
@@ -102,7 +102,7 @@ class verb_write_tests
         $t_vrb->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($usr_msg);
+        $t->check_cleanup($msg);
 
     }
 

@@ -85,11 +85,11 @@ class phrase extends combine_named
      * dispatches to word::url_mapper or triple::url_mapper depending on the
      * PHRASE_CLASS url field; falls back to a currently set obj if no class is provided
      * @param array $url_array an array based on $_GET from a form submit
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
         // PHRASE_CLASS encodes word vs triple; mirrors the OBJECT_CLASS dispatch in api_mapper
         $class = $url_array[url_var::PHRASE_CLASS] ?? null;
@@ -100,42 +100,42 @@ class phrase extends combine_named
         }
         $obj = $this->obj();
         if ($obj instanceof triple) {
-            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $obj->url_mapper($url_array, $msg, $dto);
             $this->set_id($obj->id());
         } elseif ($obj instanceof word) {
-            $obj->url_mapper($url_array, $usr_msg, $dto);
+            $obj->url_mapper($url_array, $msg, $dto);
         } else {
-            $usr_msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
+            $msg->add_error_text('Phrase class missing in url ' . json_encode($url_array));
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd_ui = new word();
-                $wrd_ui->api_mapper($json_array, $usr_msg);
+                $wrd_ui->api_mapper($json_array, $msg);
                 $this->set_obj($wrd_ui);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp_ui = new triple();
-                $trp_ui->api_mapper($json_array, $usr_msg);
+                $trp_ui->api_mapper($json_array, $msg);
                 $this->set_obj($trp_ui);
                 // switch the phrase id to the object id
                 $this->set_id($trp_ui->id());
             } else {
-                $usr_msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
+                $msg->add_error_text('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
             }
         } else {
-            $usr_msg->add_error_text('Json class missing, but expected for a phrase');
+            $msg->add_error_text('Json class missing, but expected for a phrase');
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -178,12 +178,12 @@ class phrase extends combine_named
     /**
      * set the vars of this phrase html display object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
+        return $this->api_mapper(json_decode($json_api_msg, true), $msg);
     }
 
 

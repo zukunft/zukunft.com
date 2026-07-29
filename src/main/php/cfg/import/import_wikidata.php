@@ -149,19 +149,19 @@ class import_wikidata
      */
     function store_text(string $wikidata_id, string $json, ?string $path = null): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($path === null) {
             $path = test_paths::IMPORT_WIKIDATA;
         }
         if ($json == '') {
-            $usr_msg->add(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => 'no data received from wikidata for ' . $wikidata_id]);
+            $msg->add(msg_id::IMPORT_FAILED, [msg_id::VAR_SUMMARY => 'no data received from wikidata for ' . $wikidata_id]);
         } else {
             $filename = $path . $wikidata_id . self::JSON_EXTENSION;
             if (file_put_contents($filename, $this->pretty_json($json)) === false) {
-                $usr_msg->add(msg_id::FILE_WRITE_FAILED, [msg_id::VAR_FILE_NAME => $filename]);
+                $msg->add(msg_id::FILE_WRITE_FAILED, [msg_id::VAR_FILE_NAME => $filename]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
