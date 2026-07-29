@@ -1731,8 +1731,7 @@ class user extends db_id_object_non_sandbox
                 log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
             } else {
                 // use a temp user message with the system as requesting user to set the admin profile
-                $msg_sys = new user_message();
-                $msg_sys->usr = $sys_usr;
+                $msg_sys = new user_message($sys_usr);
                 // add the local admin user to use it for the import
                 $local_usr = new user();
                 $local_usr->name = users::SYSTEM_ADMIN_NAME;
@@ -2101,9 +2100,11 @@ class user extends db_id_object_non_sandbox
      * TODO Prio 2 add missing fields and user configuration
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $msg with the requesting user and to collect the import messages
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user|null $usr_req the user who has initiated the import, defaults to the requesting user on the message,
+     *                           mainly used to prevent any user from gaining additional rights
      * @return bool true if everything was fine
      */
     function import_obj(
@@ -2823,6 +2824,11 @@ class user extends db_id_object_non_sandbox
         return $msg->is_ok();
     }
 
+    /**
+     * @param user $usr the other user object to compare with this one (the subject of the compare, not the requesting user)
+     * @param user_message $usr_msg to report the problems of the field compare
+     * @return bool true if this user has no field difference to the given user
+     */
     function is_same(user $usr, user_message $usr_msg): bool
     {
         $result = false;

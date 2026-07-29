@@ -433,6 +433,14 @@ class config_numbers extends value_list
         return $result;
     }
 
+    /**
+     * read the config part of the given user from the database cache
+     *
+     * @param db_cache_type|type_object $typ the config cache type e.g. the frontend config
+     * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @return bool true if this list has been filled with the cached config values
+     */
     private function read_db_cache(
         db_cache_type|type_object $typ,
         user                      $usr,
@@ -465,6 +473,14 @@ class config_numbers extends value_list
         }
     }
 
+    /**
+     * read the config part of the given user from the file cache
+     *
+     * @param user $usr for whom the configuration is cached, because each user can overwrite the config values
+     * @param user_message $usr_msg to report the problems of the api mapping
+     * @param phrase|null $phr to select either the user or frontend configuration values
+     * @return bool true if this list has been filled with the cached config values
+     */
     private function read_file_cache(
         user         $usr,
         user_message $usr_msg,

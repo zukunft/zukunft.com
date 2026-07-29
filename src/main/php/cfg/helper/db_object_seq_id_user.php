@@ -215,19 +215,22 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
-     * make sure that the user who has requested the change is set on the message,
+     * verify that the user who has requested the change is set on the message,
      * because the permission checks of save and del are based on the requesting user
      *
-     * the user of the object is used as fallback, because a caller may reset the message
-     * and user_message->reset() sets an empty user, which has the profile of a user without login
+     * the requesting user lives on the message from the entry point onwards
+     * (docs/llm/state-and-messages.md); user_message->reset() keeps it by default, so a missing
+     * user here means an entry point has missed the assignment, which is an internal
+     * inconsistency and logged rather than silently patched with the object owner
      *
-     * @param user_message $usr_msg the message of the change request
+     * @param user_message $usr_msg with the user who has requested the change
      * @return void
      */
     protected function set_requesting_user(user_message $usr_msg): void
     {
         if ($usr_msg->usr == null or $usr_msg->usr->id() <= 0) {
-            $usr_msg->usr = $this->get_user();
+            log_err('requesting user missing on the message for the change of ' . $this->dsp_id(),
+                'set_requesting_user');
         }
     }
 

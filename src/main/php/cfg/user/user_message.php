@@ -122,7 +122,18 @@ class user_message extends Message
         }
     }
 
-    function reset(bool $keep_usr = false): void
+    /**
+     * clear the accumulated messages so the object can be reused for the next change request
+     *
+     * the requesting user is kept by default because it lives on the message for the whole
+     * change request (docs/llm/state-and-messages.md); pass $keep_usr = false only to build a
+     * fresh message for a different user, never to drop the user mid request
+     *
+     * @param bool $keep_usr true to keep the requesting user (the normal case), false to reset it
+     *                       to an empty user with the profile of a not logged-in visitor
+     * @return void
+     */
+    function reset(bool $keep_usr = true): void
     {
         if (!$keep_usr) {
             $this->usr = new user();

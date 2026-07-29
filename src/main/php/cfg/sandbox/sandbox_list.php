@@ -324,6 +324,17 @@ class sandbox_list extends list_db_write
         return $usr_msg->is_ok();
     }
 
+    /**
+     * create the sql to load the changes that the given user has done compared to the standard
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
+     * @param user $usr the user whose changes should be loaded (the subject of the load, not the requesting user)
+     * @param user_message $usr_msg to report the problems of the sql creation
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the query parameters to load the user changes
+     */
     protected function load_sql_user_changes(
         sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,

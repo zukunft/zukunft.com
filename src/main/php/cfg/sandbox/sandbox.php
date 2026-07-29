@@ -1427,6 +1427,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * if the user is an admin the user can force to be the owner of this object
      * TODO review
+     *
+     * @param user $usr the user who shall become the new owner of this object (the subject of the change, not the requesting user)
+     * @param user_message $msg with the requesting user and to report a denied ownership change
+     * @return bool true if the ownership has been taken
      */
     function take_ownership(user $usr, user_message $msg): bool
     {
