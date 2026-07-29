@@ -1,5 +1,6 @@
 [
   {
+    "id": 6657,
     "usr": {
       "id": 1,
       "name": "zukunft.com system"
@@ -7,7 +8,12 @@
     "action_id": 1,
     "table_id": 5,
     "field_id": 10,
-    "row_id": 1,
-    "new_value": "mathematics"
+    "row_id": "1",
+    "old_value": null,
+    "old_id": null,
+    "new_value": "mathematics",
+    "new_id": null,
+    "std_value": null,
+    "std_id": null
   }
 ]

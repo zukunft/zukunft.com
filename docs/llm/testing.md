@@ -248,6 +248,34 @@ $chf->phrases_related = $sym_lst;
 $chf->phrases_related = $t_phr->list_chf_symbol_ui();
 ```
 
+### Test url arrays come from a factory object via to_url_array()
+
+A url test (e.g. `unit_workflow/*_url_tests.php`) never hand-builds the object
+fields of a `$url_arr`: it starts from a factory object's `to_url_array()`
+(`$t_wrd->word_dsp()->to_url_array()`) or a factory url helper
+(`test_words::word_new_url()`, `word_add_url()`, `change_url_array()`, ...) and
+adds only the request context — mask, action, step, back, user. A hand-built key
+list duplicates the object's field mapping in the test body, and the factory
+would no longer show centrally which test objects each test uses; keeping the
+build in the factory also means a field added to the object reaches every url
+test through one change. To vary a field, change it on the factory object
+(`$wrd->set_description(...)`) before calling `to_url_array()`, never by
+patching the array. The only urls built without a factory object are those that
+carry no object at all (e.g. a search pattern url).
+
+- **Wrong**:
+```php
+$url_arr = [];
+$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+$url_arr[url_var::ID] = word_names::MATH_ID;
+$url_arr[url_var::NAME] = word_names::MATH;
+```
+- **Right** — the object fields come from the factory, the test adds the context:
+```php
+$url_arr = $t_wrd->word_dsp()->to_url_array();
+$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+```
+
 ### Factory names don't repeat the object word
 
 Inside a `create/test_*.php` factory the object type is fixed by the class, so

@@ -267,6 +267,17 @@ class change_log_tests
         $api = $log_empty->api_json_array(new api_type_list([]));
         $t->assert_true($test_name, ($api[json_fields::NEW_VALUE] ?? null) === null);
 
+        // the change id is sent to the frontend so that same-second changes
+        // can be sorted in the write order (see change_log_list::sort_by_time_and_what)
+        $test_name = 'the change id is part of the api json';
+        $log_add = $t_log->log_word_add();
+        $api = $log_add->api_json_array(new api_type_list([]));
+        $t->assert($test_name, $api[json_fields::ID] ?? 0, $log_add->id());
+        $test_name = 'a change that is not yet saved sends the change id 0';
+        $log_new = new change($t->usr1);
+        $api = $log_new->api_json_array(new api_type_list([]));
+        $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
+
         // sql to load a log entry by field and row id
         // TODO check that user-specific changes are included in the list of changes
         $log = new change($t->usr1);
