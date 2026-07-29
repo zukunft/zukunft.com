@@ -224,18 +224,18 @@ class change_log_list extends ListBase
 
     /**
      * sort this change list in place so that the newest change is first; changes with the same
-     * time are sorted alphabetically ascending by the what text (the change description shown in
-     * the what column, without the user) so the display order is deterministic and independent of
-     * the db/api row order
+     * time follow the change id descending, so same-second changes keep the order they have been
+     * written to the log (the api time has whole-second resolution, so same-second ties are
+     * common); the what text (the change description shown in the what column, without the user)
+     * is the last resort for entries of cached api messages from before the change id was sent
+     * (all id 0), so the display order is always deterministic and independent of the db/api
+     * row order
      *
      * in test mode the change time is bucketed to the whole second so the sub-second write jitter
-     * of a full test run cannot reorder changes that happen within the same second; the what text
-     * then gives a stable order inside the bucket, which keeps the workflow change log snapshots
+     * of a full test run cannot reorder changes that happen within the same second; the change id
+     * gives the write order inside the bucket, which keeps the workflow change log snapshots
      * deterministic (the displayed times are relabeled per row position, see
      * url_test_base::normalize_change_log_time)
-     *
-     * TODO Prio 1 this neutralises the sub-second write-order jitter of a full test run; if changes
-     *      still flip across a whole-second boundary, find why the write order itself changes
      *
      * @param bool $test_mode true to compare the change time at whole-second resolution
      * @return void
@@ -249,6 +249,7 @@ class change_log_list extends ListBase
             } else {
                 $cmp = $b->change_time <=> $a->change_time;
             }
+            $cmp = $cmp ?: $b->id() <=> $a->id();
             return $cmp ?: strcmp($a->what_text(), $b->what_text());
         });
         $this->set_lst($lst);

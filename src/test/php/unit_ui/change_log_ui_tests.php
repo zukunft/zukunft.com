@@ -141,6 +141,37 @@ class change_log_ui_tests
         $test_name = 'change_log_list->filter keeps all changes of a word despite id 0';
         $t->assert_true($test_name, $log_ui->filter($wrd)->count() > 1);
 
+        $t->subheader($ts . 'sort');
+
+        // two same-second changes whose alphabetical what order equals the write order,
+        // so only the change id can restore the newest first order after the sort
+        $test_name = 'test setup: the alphabetical what order equals the write order';
+        $log_ui = new change_log_list($t_log->log_list_same_second()->api_json($api_typ_lst));
+        $chg_lst = $log_ui->lst();
+        $first = $chg_lst[0];
+        $last = end($chg_lst);
+        $first_what = $first->what_text();
+        $last_what = $last->what_text();
+        $t->assert_true($test_name, strcmp($first_what, $last_what) < 0);
+        $test_name = 'the change id reaches the frontend via the api json';
+        $t->assert_true($test_name, $last->id() > $first->id() and $first->id() > 0);
+        $test_name = 'same-second changes show the last written change first via the change id';
+        $log_ui->sort_by_time_and_what();
+        $t->assert($test_name, $log_ui->lst()[0]->what_text(), $last_what);
+
+        // the newer change comes first even if it has the lower change id
+        $test_name = 'the change time stays the first sort key before the change id';
+        $log_ui = new change_log_list($t_log->log_list_second_apart()->api_json($api_typ_lst));
+        $newer_what = $log_ui->lst()[0]->what_text();
+        $log_ui->sort_by_time_and_what();
+        $t->assert($test_name, $log_ui->lst()[0]->what_text(), $newer_what);
+
+        // an api message from before the change id was added falls back to the what text order
+        $test_name = 'same-second changes without a change id fall back to the what text order';
+        $log_no_id_ui = $t_log->log_list_same_second_no_id_ui();
+        $log_no_id_ui->sort_by_time_and_what();
+        $t->assert($test_name, $log_no_id_ui->lst()[0]->what_text(), $first_what);
+
         // link change history rendering (e.g. the triples added to or removed from a word)
         // the link list classes are loaded here, not at the top of the file, because the frontend
         // change_log_link extends change_log_named which sits at the root of the bootstrap include chain

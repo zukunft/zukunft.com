@@ -24,7 +24,7 @@ $sys: the system time control including the preloaded types and system configura
 MapObject: $map_ui
 Message: $usr_msg
 button: $b, $undo_btn
-change: $chg, $log_named
+change: $chg, $log_named, $log_new
 change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_obj, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_usr2, $cmp_usr2_reloaded, $dbo, $msk, $obj, $usr_ui
 element: $elm_ui

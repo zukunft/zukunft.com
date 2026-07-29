@@ -40,6 +40,8 @@ class test_const
 
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    // one second later, e.g. to test that the change time is the first sort key of the change log
+    const string DUMMY_DATETIME_LATER = '2022-12-26T18:23:46+01:00';
     // usage used for unit testing
     const int DUMMY_USAGE_WORD = 3;
     const int DUMMY_USAGE_VERB = 23;
