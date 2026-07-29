@@ -441,10 +441,10 @@ class test_base
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
-    public user $usr_test_admin; // a second testing user e.g. to test the user sandbox
     public user $usr_normal; // a user with the standard profile to test deny of admin functionality
     public user $usr_signup; // the system user to add new users to the database
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
+    public user $usr_test_admin; // a second testing user e.g. to test the user sandbox
     public user $usr_system; // a user with the system profile to test allow of system functionality
     public user $usr_dev; // a virtual development user that is allowed to set the code id
 
