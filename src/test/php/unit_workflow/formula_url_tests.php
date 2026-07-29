@@ -61,6 +61,23 @@ class formula_url_tests extends url_test_base
         // load the shared frontend run state and print the section header
         $this->init($t, 'formula url->', 'url formula ');
 
+        // this test has no pure read (url_to_html) and no routing-only (url_to_action) tests yet;
+        // when one is added, use the url_to_html_tests / url_to_action_tests split of word_url_tests
+        $this->workflow_tests($t);
+    }
+
+    /**
+     * the combined workflow snapshot tests: every step chains url_to_action (routing, with
+     * do_it false so nothing is written) and url_to_html (render) like a real user request
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function workflow_tests(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'workflow');
+
+        // the snapshot unit test only renders the steps
+        // for the write tests the same workflows are used the do_it = true
         $this->add_formula_workflow(workflows::WF_ADD_FORMULA_NBR);
         $this->change_formula_workflow(workflows::WF_CHANGE_FORMULA_NBR);
         $this->del_formula_workflow(workflows::WF_DEL_FORMULA_NBR);
