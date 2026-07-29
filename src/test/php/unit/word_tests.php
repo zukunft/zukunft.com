@@ -47,6 +47,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_users.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -279,6 +281,7 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api_json($wrd);
         $wrd = $t_wrd->word_filled();
+        $wrd->set_user($t->usr_dev); // use the dev user to check the mapping including the code id
         $t->assert_api_json($wrd);
         $wrd->include();
         $t->assert_api($wrd, 'word_full');
@@ -476,7 +479,7 @@ class word_tests
         $msg = new user_message();
         $wrd_imp = $t_wrd->word_filled();
         $wrd_db = new word($wrd_imp->get_user());
-        $wrd_db->fill($wrd_imp, $t->usr1);
+        $wrd_db->fill($wrd_imp, $t->usr_dev);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
         $t->assert($t->name . 'fill: ' . $test_name, $non_db_fld_names, []);
         $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
@@ -509,7 +512,7 @@ class word_tests
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->set_code_id('test code id', $t->usr1);
+        $wrd_imp->set_code_id('test code id', test_users::user_sys_test());
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $t->usr_normal);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
@@ -526,7 +529,7 @@ class word_tests
         $test_name = 'the api mapper reports the refused code id to the normal user';
         $t->assert_false($test_name, $usr_msg_map->is_ok());
         $test_name = 'the api mapper sets the code id for a system user';
-        $usr_msg_map = new user_message($t->usr1);
+        $usr_msg_map = new user_message(test_users::user_sys_test());
         $wrd_map = $t_wrd->word();
         $wrd_map->set_code_id_db(null);
         $wrd_map->api_mapper([json_fields::CODE_ID => 'allowed code id'], $usr_msg_map);

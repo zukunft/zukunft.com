@@ -104,6 +104,11 @@ class horizontal_tests
         // start the test section (ts)
         $ts = 'unit horizontal ';
         $t->header($ts);
+        // switch usr1 to the system test profile user (needed for the reserved-name imports)
+        // and remember the normal usr1 so the end of this run can restore it - otherwise every
+        // later test would see a system-tier usr1 instead of the normal email profile user
+        // TODO Prio 1 activate
+        //$usr1_saved = $t->usr1;
         $t->usr1 = $t_usr->user_sys_test();
 
         $t->subheader($ts . 'fill');
@@ -275,6 +280,10 @@ class horizontal_tests
             $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
+
+        // restore the normal usr1 so the following tests run with the email profile user again
+        // TODO Prio 1 activate
+        //$t->usr1 = $usr1_saved;
 
     }
 

@@ -5,8 +5,10 @@
     test/php/unit_workflow/word_url_tests.php - render the url based word user workflows read-only
     -----------------------------------------
 
-    renders and snapshots the word workflows without changing the database (do_it false); the same
-    workflows run again with the confirmed steps written to the database in the write twin
+    renders and snapshots the word workflows without changing the database (do_it false), split
+    into the read tests (url_to_html only), the write path routing tests (url_to_action with
+    do_it false) and the combined workflow snapshots; the same workflows run again with the
+    confirmed steps written to the database in the write twin
     test/php/unit_write_workflow/word_write_url_tests.php
 
 
@@ -74,6 +76,27 @@ class word_url_tests extends url_test_base
 
         // load the shared frontend run state and print the section header
         $this->init($t, 'word url->', 'url word ');
+
+        // read: pure page renders via url_to_html, which never changes anything
+        $this->url_to_html_tests($t);
+
+        // write path routing: url_to_action with do_it false, so nothing is written;
+        // the url_to_action tests that write are in the write twin word_write_url_tests
+        $this->url_to_action_tests($t);
+
+        // combined: the workflow snapshots that chain url_to_action and url_to_html per user action
+        $this->workflow_tests($t);
+
+    }
+
+    /**
+     * the read tests: render complete pages via url_to_html and check the html,
+     * without any url_to_action call, so nothing can be changed
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function url_to_html_tests(test_cleanup $t): void
+    {
         $ui = $this->ui;
         $usr_ui = $this->usr;
         $msg = $this->usr_msg;
@@ -81,7 +104,6 @@ class word_url_tests extends url_test_base
         // every url array below starts from this factory via to_url_array(), so the factory
         // shows centrally which test objects this test uses (docs/llm/testing.md)
         $t_wrd = new test_words($t);
-
 
         $t->subheader($ts . 'url_to_html');
 
@@ -167,9 +189,35 @@ class word_url_tests extends url_test_base
         $ui->url_to_html($url_arr, $err_msg, $ui->dto, true);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_KEY_MISSING));
 
-        // the url_to_action tests that execute a confirmed create or delete are in the write twin
-        // word_write_url_tests, because they change the database (see docs/llm/testing.md)
 
+        $t->subheader($ts . 'search');
+
+        // simulates http://localhost/http/view.php?m=67&pattern=def
+        // the find url carries only a search pattern and no test object,
+        // so it is the one url of this test not built via a factory to_url_array
+        $test_name = 'search words by pattern via url';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_FIND_ID;
+        $url_arr[url_var::PATTERN_HUMAN] = 'def';
+        $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
+        $t->assert_text_contains($test_name, $result, 'def', $t::TIMEOUT_LIMIT_PAGE_LONG);
+    }
+
+    /**
+     * the write path routing tests: url_to_action with do_it false, so the routing of a save
+     * to the confirm view is checked without writing anything; the url_to_action tests that
+     * execute a confirmed create or delete are in the write twin word_write_url_tests,
+     * because they change the database (see docs/llm/testing.md)
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function url_to_action_tests(test_cleanup $t): void
+    {
+        $ui = $this->ui;
+        $usr_ui = $this->usr;
+        $msg = $this->usr_msg;
+        $ts = $this->ts;
+        $t_wrd = new test_words($t);
 
         $t->subheader($ts . 'confirm change');
 
@@ -204,24 +252,34 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRM;
         $confirm_url = $ui->url_to_action($url_arr, $usr_backend, $msg, $ui->dto, false);
         $t->assert($test_name, $confirm_url[url_var::MASK], views::CONFIRM_EDIT_ID);
+    }
 
-        /*
-         * The general process for the workflow test steps are
-         * 1. object - create the initial test object using a test/create function e.g. $t_wrd->test_add()
-         * 2. url - create the url based on the test object using a to_url() function
-         * 3. start - add the view and the back path to the url to be able simulate different starting points
-         * 4. view - create the html code using the url_to_html function and check if the code matches the result fixed before using assert_html_by_url that uses the url as parameter
-         * 5. user - simulate a user action by changing the url, which cam be either
-         *    a) edit - change the url values of a field to simulate the user typing or selecting
-         *    b) press - change the url to simulate if the user has pressed a button
-         * 6. action - based on the url call the url_to_action function to execute the request (or just simulate the execution)
-         * 7. repeat - take the url returned by url_to_action and repeat step 4 (view)
-         * the process ends if there is no user action
-         */
+    /*
+     * The general process for the workflow test steps are
+     * 1. object - create the initial test object using a test/create function e.g. $t_wrd->test_add()
+     * 2. url - create the url based on the test object using a to_url() function
+     * 3. start - add the view and the back path to the url to be able simulate different starting points
+     * 4. view - create the html code using the url_to_html function and check if the code matches the result fixed before using assert_html_by_url that uses the url as parameter
+     * 5. user - simulate a user action by changing the url, which cam be either
+     *    a) edit - change the url values of a field to simulate the user typing or selecting
+     *    b) press - change the url to simulate if the user has pressed a button
+     * 6. action - based on the url call the url_to_action function to execute the request (or just simulate the execution)
+     * 7. repeat - take the url returned by url_to_action and repeat step 4 (view)
+     * the process ends if there is no user action
+     */
 
-
-
-        $t->subheader($ts . 'workflow');
+    /**
+     * the combined workflow snapshot tests: every step chains url_to_action (routing, with
+     * do_it false so nothing is written) and url_to_html (render) like a real user request
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function workflow_tests(test_cleanup $t): void
+    {
+        $ui = $this->ui;
+        $msg = $this->usr_msg;
+        $ts = $this->ts;
+        $t->subheader($this->ts . 'workflow');
 
         // the snapshot unit test only renders the steps
         // for the write tests the same workflows are used the do_it = true

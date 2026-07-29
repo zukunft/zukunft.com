@@ -82,34 +82,9 @@ class word_write_url_tests extends word_url_tests
         // description, which would fail the 'has written the word' check
         $this->cleanup_test_words($t);
 
-
-        $t->subheader($this->ts . 'url_to_action & next url');
-
-        // a create or delete request is executed by url_to_action (not url_to_html, which only
-        // renders), so use the combined execute and render call and check the database result
-        // never use read test objects e.g. like math in this section
-        $req = new user_request($t->usr1, $this->usr_msg, $this->ui->dto, true, true);
-
-        $test_name = 'a confirmed add url writes the word to the database';
-        $url_arr = [];
-        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
-        $url_arr[url_var::NAME] = word_names::TEST_ADD;
-        $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
-        $this->ui->execute_and_next($url_arr, $req);
-        $wrd_chk = new word($t->usr1);
-        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
-
-        $test_name = '... so it can be deleted';
-        $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $this->ui->execute_and_next($url_arr, $req);
-        $wrd_chk = new word($t->usr1);
-        $wrd_chk->load_by_name(word_names::TEST_ADD);
-        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
-        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
-
-        // the delete of the just added word can leave an excluded row, so clean up again to
-        // guarantee the add workflow below the same clean start as the cleanup above
-        $this->cleanup_test_words($t);
+        // write: url_to_action executes a confirmed create and delete against the database;
+        // the read (url_to_html) and routing-only (do_it false) tests are in word_url_tests
+        $this->url_to_action_write_tests($t);
 
         // run the same three workflows as word_url_tests but with do_it true so each confirmed step is
         // persisted: add creates the test word, change modifies it, del removes it again - the add must
@@ -139,6 +114,41 @@ class word_write_url_tests extends word_url_tests
         // cleanup - fallback delete in case a workflow did not persist as expected
         $this->cleanup_test_words($t);
 
+    }
+
+    /**
+     * the write tests of url_to_action: a create or delete request is executed by url_to_action
+     * (not url_to_html, which only renders), so use the combined execute and render call and
+     * check the database result; never use read test objects e.g. like math in this function
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function url_to_action_write_tests(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'url_to_action & next url');
+
+        $req = new user_request($t->usr1, $this->usr_msg, $this->ui->dto, true, true);
+
+        $test_name = 'a confirmed add url writes the word to the database';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
+        $url_arr[url_var::NAME] = word_names::TEST_ADD;
+        $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $this->ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
+
+        $test_name = '... so it can be deleted';
+        $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
+        $this->ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
+        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // the delete of the just added word can leave an excluded row, so clean up again to
+        // guarantee the add workflow that follows the same clean start as the cleanup before
+        $this->cleanup_test_words($t);
     }
 
     /**
