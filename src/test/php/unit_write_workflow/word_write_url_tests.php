@@ -41,11 +41,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
+include_once html_paths::HELPER . 'user_request.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
@@ -55,8 +57,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
@@ -76,6 +80,35 @@ class word_write_url_tests extends word_url_tests
         // remove any test word left over from a previous run (including the user sandbox rows) so the
         // add workflow starts from a clean state; an add to an already existing word keeps its old
         // description, which would fail the 'has written the word' check
+        $this->cleanup_test_words($t);
+
+
+        $t->subheader($this->ts . 'url_to_action & next url');
+
+        // a create or delete request is executed by url_to_action (not url_to_html, which only
+        // renders), so use the combined execute and render call and check the database result
+        // never use read test objects e.g. like math in this section
+        $req = new user_request($t->usr1, $this->usr_msg, $this->ui->dto, true, true);
+
+        $test_name = 'a confirmed add url writes the word to the database';
+        $url_arr = [];
+        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
+        $url_arr[url_var::NAME] = word_names::TEST_ADD;
+        $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
+        $this->ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
+
+        $test_name = '... so it can be deleted';
+        $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
+        $this->ui->execute_and_next($url_arr, $req);
+        $wrd_chk = new word($t->usr1);
+        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
+        $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // the delete of the just added word can leave an excluded row, so clean up again to
+        // guarantee the add workflow below the same clean start as the cleanup above
         $this->cleanup_test_words($t);
 
         // run the same three workflows as word_url_tests but with do_it true so each confirmed step is

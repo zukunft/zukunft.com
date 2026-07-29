@@ -683,6 +683,9 @@ class change_log extends db_object_seq_id_user
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
+        // the change id keeps the write order in the frontend display when several
+        // changes share the same second (see change_log_list::sort_by_time_and_what)
+        $vars[json_fields::ID] = $this->id();
         if ($this->get_user() != null) {
             $vars[json_fields::USR] = $this->get_user()->api_json_array_core($typ_lst, $usr);
         }

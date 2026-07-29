@@ -19,3 +19,5 @@
 /src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/*.xsd
 # but keep the hand reduced facts snippet used by the facts converter test
 !/src/test/resources/import/xbrl/abb-2013-xbrl_fileset-20131231/sample.xml
+# local IDE MCP server config (machine-specific endpoint, see claude code / phpstorm setup)
+/.mcp.json

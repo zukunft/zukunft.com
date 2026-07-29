@@ -76,6 +76,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -129,6 +130,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -898,6 +900,48 @@ class test_log
         $log_lst->add($this->log_view_add());
         $log_lst->add($this->log_component_add());
         return $log_lst;
+    }
+
+    /**
+     * @return change_log_list two changes of one word within the same second where the
+     *         alphabetical order of the what texts equals the write order, so that only
+     *         the change id can prove that the sort shows the newest change first
+     */
+    function log_list_same_second(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        // written first: the lower change id and the alphabetically first what text
+        $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_word_add_description());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list two changes of one word one second apart where the newer
+     *         change has the lower change id, to test that the change time stays the
+     *         first sort key before the change id
+     */
+    function log_list_second_apart(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $newer = $this->log_word_add();
+        $newer->set_time_str(test_const::DUMMY_DATETIME_LATER);
+        $log_lst->add($newer);
+        $log_lst->add($this->log_word_add_description());
+        return $log_lst;
+    }
+
+    /**
+     * @return change_log_list_ui the same second changes like an api message from before
+     *         the change id was added (all id 0), to test the what text fallback sort
+     */
+    function log_list_same_second_no_id_ui(): change_log_list_ui
+    {
+        $json = json_decode($this->log_list_same_second()->api_json(), true);
+        foreach (array_keys($json) as $i) {
+            unset($json[$i][json_fields::ID]);
+        }
+        return new change_log_list_ui(json_encode($json));
     }
 
 }
