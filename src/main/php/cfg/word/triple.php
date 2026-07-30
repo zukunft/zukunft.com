@@ -850,10 +850,10 @@ class triple extends sandbox_link_named
         msg_id $missing_msg
     ): phrase
     {
-        $usr_msg = new user_message();
         $phr = new phrase($this->get_user());
         if (is_array($value)) {
-            $phr->api_mapper($value, $usr_msg);
+            // map into the threaded message so an invalid nested from/to phrase surfaces to the user
+            $phr->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use phrase cache
@@ -925,7 +925,7 @@ class triple extends sandbox_link_named
                 if ($msg->is_ok()) {
                     $wrd->save($msg);
                     if ($wrd->id() == 0) {
-                        log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
+                        log_err_msg('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), $msg);
                     } else {
                         $result = $wrd->phrase();
                     }

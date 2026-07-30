@@ -541,6 +541,8 @@ class import
                 }
             } elseif ($key == json_fields::POD) {
                 // TODO set the source pod
+                // a standard export carries these metadata sections; not importing them yet is a known
+                // limitation, so only log it for the admin - do not warn the user on every import
                 log_warning('import of pod details not yet implemented');
             } elseif ($key == json_fields::TIME) {
                 // TODO set the time of the export

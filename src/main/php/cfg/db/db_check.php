@@ -55,6 +55,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
@@ -140,7 +142,8 @@ class db_check
         } elseif ($db_version != def::PRG_VERSION) {
             $do_consistency_check = true;
             if ($lib->prg_version_is_newer($db_version)) {
-                log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
+                // tell the admin to upgrade (and log it) without aborting the startup check
+                $msg->add_warning_with_vars(msg_id::BACKEND_OLDER_THAN_DB, []);
             } else {
                 $diff_txt = match ($db_version) {
                     def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con, $msg),

@@ -311,6 +311,34 @@ function log_err_msg_ui(string $msg_txt, user_message_ui $msg): void
 }
 
 /**
+ * log a warning message and inform the user about it in one call (the warning parallel of log_err_msg)
+ * the user notice is added with ok=true, so it does not fail the operation - use it for a problem the
+ * user should see but that does not abort the request; for a specific user-facing warning prefer
+ * $msg->add_warning_with_vars(msg_id::X, ...) which also logs
+ * @param string $msg_txt the warning message text for the system log (admin)
+ * @param user_message $msg the user message object that collects the messages for the user
+ * @return void
+ */
+function log_warning_msg(string $msg_txt, user_message $msg): void
+{
+    $log_lnk = log_warning($msg_txt);
+    $msg->add(msg_id::INTERNAL_WARNING, [msg_id::VAR_LOG_LINK => $log_lnk], true);
+}
+
+/**
+ * log a warning message via api and inform the user about it in one call (the warning parallel of
+ * log_err_msg_ui); the user notice is added with ok=true, so it does not fail the request
+ * @param string $msg_txt the warning message text for the system log (admin)
+ * @param user_message_ui $msg the frontend user message object that collects the messages for the user
+ * @return void
+ */
+function log_warning_msg_ui(string $msg_txt, user_message_ui $msg): void
+{
+    $log_lnk = log_warning($msg_txt);
+    $msg->add(msg_id::INTERNAL_WARNING, [msg_id::VAR_LOG_LINK => $log_lnk], true);
+}
+
+/**
  * if still possible, write the fatal error message to the database and stop the execution
  * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
