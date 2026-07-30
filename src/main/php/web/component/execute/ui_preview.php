@@ -258,9 +258,18 @@ class ui_preview extends ui_base
             $url_keys = $dbo->db_fld_to_url();
         }
         if ($order != [] and $url_keys != []) {
+            // hide the changes of the admin-only fields (the cached impact and usage numbers)
+            // from users without admin, developer or system rights, like the change log does
+            // (see change_log_list::filter_admin_fields); the values are still carried forward
+            // as hidden inputs by popup_changes so the confirm submit never resets them
+            global $ui_sys;
+            $usr = $ui_sys->usr ?? null;
+            $sees_admin = $usr == null ? false : $usr->sees_admin_fields();
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
-                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    if ($sees_admin or !in_array($db_fld, fields::LOG_ADMIN_ONLY)) {
+                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    }
                 }
             }
         } else {

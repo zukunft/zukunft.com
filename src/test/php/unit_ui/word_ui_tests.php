@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -43,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -342,6 +344,51 @@ class word_ui_tests
         ];
         $usr_no_2 = new user_message(new user_ui($t_usr->user_ip()->api_json()));
         $t->assert_true($test_name, $wrd->input_valid($usr_no_2, '', $type_same));
+
+
+        $t->subheader($ts . 'confirm change preview');
+
+        // the confirm change preview shows the changes of the admin-only fields (the cached
+        // impact and usage numbers, see fields::LOG_ADMIN_ONLY) only to users with admin,
+        // developer or system rights, like the change log (change_log_list::filter_admin_fields)
+        global $ui_sys;
+        $preview = new ui_preview();
+        $wrd_chg = new word($t_wrd->word()->api_json());
+        $chg_url = [
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
+            url_var::PRE . url_var::DESCRIPTION => '',
+            url_var::IMPACT => '5',
+            url_var::PRE . url_var::IMPACT => ''
+        ];
+        $impact_lbl = $mtr->text_db_field(fields::FLD_IMPACT);
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+
+        $test_name = 'an admin sees the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+
+        $test_name = 'a developer sees the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+
+        $test_name = 'a normal user does not see the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $chg_html = $preview->popup_changes($chg_url, $wrd_chg);
+        $t->assert_text_not_contains($test_name, $chg_html, $impact_lbl);
+
+        $test_name = '... but still sees the description change';
+        $t->assert_text_contains($test_name, $chg_html, word_names::TEST_CHANGE_COM);
+
+        $test_name = '... and the impact value is still carried forward as a hidden input';
+        $t->assert_text_contains($test_name, $chg_html, 'name="' . url_var::IMPACT . '"');
+
+        // restore the session user for the following tests
+        if ($usr_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_keep;
+        }
 
     }
 

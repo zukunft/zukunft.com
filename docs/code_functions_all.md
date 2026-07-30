@@ -5785,6 +5785,7 @@
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- last_term - section for function last_term not yet defined that it should be set and get in /user/user.php
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
+    \-- sees_admin_fields - section for function sees_admin_fields not yet defined that it should be info in /user/user.php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be info in /user/user.php
     \-- profile_name - section for function profile_name not yet defined that it should be info in /user/user.php
     \-- navbar_role - section for function navbar_role not yet defined that it should be info in /user/user.php

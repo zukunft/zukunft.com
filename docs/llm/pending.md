@@ -12,25 +12,17 @@ the basic steps to show the start page are
 
 ## main pages
 
-show changes of impact and usage fields in the confirm page only if the user is an admin or developer, so that here /test/resources/web/html/workflow/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save.html
-
 in the confirm pages like /test/resources/web/html/workflow/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save.html show below the changes not only 'impact' but 'impact of this change in ' and if nothing else is set use 'happy time points' as fallback. if no number can be calculated add 'unknown' and 'update' as a link.
 
 ### word and triple
 
-add a 'my' tab additional to the views and changes tabs that is shown if the user logged in and has created some user overwrites. the tab should list the entries of the related "user_" tables e.g. for words the user specific changes from "user_words"
+add a 'my' tab additional to the views and changes tabs e.g. in the word default view that is shown if the user logged in and has created some user overwrites. the tab should list the entries of the related "user_" tables e.g. for words the user specific changes from "user_words"
 
-check why the views tab is sometimes missing
+check why in the word default view the views tab is sometimes missing e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
 "more" should always be a link that shows more values
 
-#### word
-
-add the missing db fields to the word add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
-
-show the missing db fields in the word default view: the phrase type, the language and the share and protection status, e.g. as a small info line next to the description
-
-#### triple
+### triple
 
 add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
 
@@ -93,3 +85,14 @@ add the missing workflows for the main objects e.g. source, ref, view, component
 ## admin
 
 add to the admin menu a page that shows the system errors
+
+# move to Prio 2
+
+## language 
+
+### word
+
+add the missing db fields to the word add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+
+show the missing db fields in the word default view the language e.g. as a small info line next to the description
+

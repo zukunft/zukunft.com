@@ -197,7 +197,7 @@ class change_log_list extends ListBase
 
     /**
      * exclude the changes of the admin-only fields (the cached impact and usage numbers,
-     * see fields::LOG_ADMIN_ONLY) unless the viewing user has admin or system rights,
+     * see fields::LOG_ADMIN_ONLY) unless the viewing user has admin, developer or system rights,
      * because the cached numbers are system internals that would only confuse a normal user
      *
      * @param user|null $usr the user viewing the change log or null e.g. if not logged in
@@ -206,7 +206,7 @@ class change_log_list extends ListBase
     function filter_admin_fields(?user $usr): change_log_list
     {
         $result = $this;
-        if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
+        if ($usr == null or !$usr->sees_admin_fields()) {
             $result = new change_log_list();
             foreach ($this->lst() as $chg) {
                 if (!in_array($chg->field_name(), fields::LOG_ADMIN_ONLY)) {
