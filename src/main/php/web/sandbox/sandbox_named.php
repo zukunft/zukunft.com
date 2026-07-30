@@ -211,6 +211,10 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {
+            // a form can carry the name under NAME_GIVEN ('kg') instead of NAME ('k'), or identify an
+            // existing object by id, so a missing 'k' key is not reliably a user error here - only log
+            // it (the user-facing mandatory-name check lives in api_mapper, which reads the canonical
+            // json name field)
             $this->set_name('');
             log_warning('Mandatory field name missing in form array ' . json_encode($url_array));
         }

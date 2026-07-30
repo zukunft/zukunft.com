@@ -437,6 +437,10 @@ enum messages: string
 
     case INTERNAL = 'an internal system error has occurred that you can track with this link: '
         . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    case INTERNAL_WARNING = 'a system warning has been logged that you can track with this link: '
+        . self::VAR_START . self::VAR_LOG_LINK . self::VAR_END;
+    case BACKEND_OLDER_THAN_DB = 'The zukunft.com backend is older than the database used. '
+        . 'This may cause damage on the database. Please upgrade the backend program.';
 
     case LOAD_FORMULA_ID = 'unexpected formula id '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END

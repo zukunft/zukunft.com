@@ -1739,6 +1739,8 @@ class user extends db_id_object_non_sandbox
                 $local_usr->email = users::SYSTEM_ADMIN_EMAIL;
                 $local_usr->description = users::SYSTEM_ADMIN_COM;
                 $local_usr->set_profile(user_profiles::ADMIN, $msg_sys);
+                // surface a failed admin-profile grant instead of losing it with the temp buffer
+                $msg->merge($msg_sys);
                 $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->excluded = false;
                 $msg->merge($local_usr->save_direct());
@@ -1898,7 +1900,13 @@ class user extends db_id_object_non_sandbox
                 $can_change = true;
                 log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $msg->usr->dsp_id());
             } else {
+                // tell the user why the change was refused instead of only logging it and
+                // returning false (the sibling USER_MISSING branch above also enriches $msg)
                 log_warning('user ' . $msg->usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+                $msg->add(msg_id::USER_NO_UPDATE_PRIVILEGES, [
+                    msg_id::VAR_USER_NAME => $this->name() ?? '',
+                    msg_id::VAR_USER_PROFILE => $msg->usr->name_and_profile() ?? ''
+                ]);
             }
         }
 

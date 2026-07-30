@@ -585,7 +585,7 @@ class phrase_list extends sandbox_list_named
                                     $wrd->save($msg);
                                 }
                                 if ($wrd->id() == 0) {
-                                    log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                                    log_err_msg('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), $msg);
                                 } else {
                                     $phr = $wrd->phrase();
                                 }
