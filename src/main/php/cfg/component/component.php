@@ -385,7 +385,7 @@ class component extends sandbox_code_id
             $this->set_link_type_by_id($api_json[json_fields::LINK_TYPE]);
         }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
-            $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
+            $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID], $msg);
             $this->set_formula($frm);
         }
         // TODO map e.g. the $row_phrase
@@ -487,13 +487,12 @@ class component extends sandbox_code_id
 
     /**
      * get a formula either with the id set or with all fields set based on an api json
-     * TODO Prio 1 add user_message as parameter
      * @param int|array $value either the id itself or an array with the id
+     * @param user_message $msg the threaded message so an invalid nested formula surfaces to the user
      * @return formula with at least the id set
      */
-    private function formula_from_api_json(int|array $value): formula
+    private function formula_from_api_json(int|array $value, user_message $msg): formula
     {
-        $msg = new user_message();
         $frm = new formula($this->get_user());
         if (is_array($value)) {
             $frm->api_mapper($value, $msg);

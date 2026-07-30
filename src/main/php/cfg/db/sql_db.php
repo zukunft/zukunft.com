@@ -5964,14 +5964,14 @@ class sql_db
             foreach (config_numbers::ADMIN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name, $usr);
+                $wrd->set_code_id($name, $msg);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name, $usr);
+                $wrd->set_code_id($name, $msg);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $wrd->save($msg);
@@ -5985,7 +5985,7 @@ class sql_db
                 }
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
-                $wrd->set_code_id($name, $usr);
+                $wrd->set_code_id($name, $msg);
                 $wrd->save($msg);
             }
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {

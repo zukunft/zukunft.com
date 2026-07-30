@@ -871,7 +871,9 @@ class triple_list extends sandbox_list_named
                 $load_lst->fill_by_name($db_lst, true, false);
 
                 // select the triples that are ready to be added to the database
-                $load_lst = $load_lst->get_ready();
+                // pass the buffer (merged into $msg below) and file name so a triple that cannot be
+                // added surfaces to the user instead of being dropped, like formula_list::save_with_cache
+                $load_lst = $load_lst->get_ready($lst_usr_msg, $imp->file_name);
 
                 // get the triples that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here

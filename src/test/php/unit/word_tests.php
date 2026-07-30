@@ -512,7 +512,7 @@ class word_tests
         $t->assert($t->name . 'fill id: ' . $test_name, $non_db_fld_names, [fields::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t_wrd->word();
-        $wrd_imp->set_code_id('test code id', test_users::user_sys_test());
+        $wrd_imp->set_code_id('test code id', new user_message(test_users::user_sys_test()));
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $t->usr_normal);
         $non_db_fld_names = $wrd_db->db_fields_changed($wrd_imp, $msg)->names();
