@@ -449,7 +449,8 @@ class change_log_named extends change_log
         // (see action_txt), so a user sandbox add shows e.g. 'zukunft.com system user added "Zurich"'
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= $this->action_txt(msg_id::LOG_UPDATE) . ' "' . $old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $new_value . '"';
+                // show the new value first because it is the more relevant one: 'changed to "new" from "old"'
+                $result .= $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $new_value . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old_value . '"';
             } else {
                 $result .= $this->action_txt(msg_id::LOG_DEL) . ' "' . $old_value . '"';
             }
@@ -513,8 +514,10 @@ class change_log_named extends change_log
             $old = $this->value_to_show($this->old_id, $this->old_value);
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {
-                    $result = $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $fld . '"' . $old . '" '
-                        . $mtr->txt(msg_id::LOG_TO) . ' "' . $new . '"';
+                    // show the new value first because it is the more relevant one:
+                    // 'changed description to "new" from "old"'
+                    $result = $this->action_txt(msg_id::LOG_UPDATE) . ' ' . $fld . $mtr->txt(msg_id::LOG_TO)
+                        . ' "' . $new . '" ' . $mtr->txt(msg_id::SIDE_FROM) . ' "' . $old . '"';
                 } else {
                     $result = $this->action_txt(msg_id::LOG_DEL) . ' ' . $fld . '"' . $old . '"';
                 }

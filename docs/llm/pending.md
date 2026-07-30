@@ -12,9 +12,9 @@ the basic steps to show the start page are
 
 ## main pages
 
-#### change log
+show changes of impact and usage fields in the confirm page only if the user is an admin or developer, so that here /test/resources/web/html/workflow/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save.html
 
-in the change log flip the 'to' and 'from' so that src/test/resources/web/html/workflow_write/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save_confirm.html shows 'changed description to "a second confirm change test description" from "a confirm change test description" ' instead of 'changed description "a confirm change test description" to "a second confirm change test description" '
+in the confirm pages like /test/resources/web/html/workflow/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save.html show below the changes not only 'impact' but 'impact of this change in ' and if nothing else is set use 'happy time points' as fallback. if no number can be calculated add 'unknown' and 'update' as a link.
 
 ### word and triple
 

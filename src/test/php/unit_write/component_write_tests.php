@@ -153,7 +153,7 @@ class component_write_tests
 
         // check if the component renaming has been logged
         $result = $t->log_last_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "System Test View Component Renamed" from "System Test View Component"';
         $t->assert('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameters can be added
@@ -181,14 +181,14 @@ class component_write_tests
         // TODO Prio 1 fix it
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View Component description" to "Just added for testing the user sandbox"';
+            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "Just added for testing the user sandbox" from "System Test View Component description"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
         // TODO Prio 1 fix it
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';
+            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed to "formulas" from "word name"';
         }
         $t->assert('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
 

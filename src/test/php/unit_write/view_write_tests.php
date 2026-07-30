@@ -166,7 +166,7 @@ class view_write_tests
 
         $test_name = 'check if the view renaming has been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_renamed, view_fields::FLD_NAME, $msk_renamed->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "System Test View Renamed" from "System Test View"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view parameters (e.g. type) can be added to '. views::TEST_RENAMED_NAME;
@@ -188,7 +188,7 @@ class view_write_tests
 
         $test_name = 'check if the description view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
         $result = $t->log_last_by_field($msk_reloaded, fields::FLD_DESCRIPTION, $msk_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed "Just added for testing" to "Just added for testing the user sandbox"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed to "Just added for testing the user sandbox" from "Just added for testing"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view_type view parameter adding have been logged to '. views::TEST_RENAMED_NAME;

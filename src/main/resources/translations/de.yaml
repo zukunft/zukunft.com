@@ -81,6 +81,7 @@ messages:
   about_github_link: "github.com Link"
   link: "Verknüpfung"
   to: "zu"
+  from: "von"
   extends: "erweitert"
   system_sub_title_no_usage: "Nicht verwendet"
   system_db_table_users: "Benutzer"

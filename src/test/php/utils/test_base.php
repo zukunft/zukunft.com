@@ -4461,11 +4461,11 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $usr_req->name() . ' ' . $action . ' "';
+        $target = $usr_req->name() . ' ' . $action . ' ';
         if ($action == msg_id::LOG_UPDATE->value) {
-            $target .= $old_name . '" to "' . $name . '"';
+            $target .= 'to "' . $name . '" from "' . $old_name . '"';
         } else {
-            $target .= $name . '"';
+            $target .= '"' . $name . '"';
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
@@ -4494,11 +4494,11 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' ';
         if ($action == msg_id::LOG_UPDATE->value) {
-            $target .= $old_name . '" to "' . $name . '"';
+            $target .= 'to "' . $name . '" from "' . $old_name . '"';
         } else {
-            $target .= $name . '"';
+            $target .= '"' . $name . '"';
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
@@ -4737,11 +4737,11 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' "';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' ';
         if ($action == msg_id::LOG_UPDATE->value) {
-            $target .= $old_name . '" to "' . $name . '"';
+            $target .= 'to "' . $name . '" from "' . $old_name . '"';
         } else {
-            $target .= $name . '"';
+            $target .= '"' . $name . '"';
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
