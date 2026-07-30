@@ -1808,6 +1808,8 @@ enum messages: string
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
     case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
+    // the tab with the session user's own overwrites (the user_ table rows) of the shown object
+    case FORM_SUB_TITLE_MY = 'system_sub_title_my';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';

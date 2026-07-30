@@ -551,10 +551,11 @@ class change_log_named extends change_log
     }
 
     /**
+     * public because change_log_list::filter_user_overwrites selects the 'my' tab rows with it
      * @return bool true if this change is logged to a user sandbox (overlay) table, i.e. it is a
      *              user-specific change and not a change of the shared standard object
      */
-    private function is_user_sandbox_change(): bool
+    function is_user_sandbox_change(): bool
     {
         return in_array($this->table_name(), change_tables::USER_TABLES, true);
     }

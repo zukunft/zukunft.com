@@ -218,6 +218,28 @@ class change_log_list extends ListBase
         return $result;
     }
 
+    /**
+     * keep only the changes that the given user has written to a user sandbox (overlay) table,
+     * e.g. the user_words rows of a word, so the 'my' tab can list the user's own overwrites
+     * of the shown object (see ui_list::view_tab_box)
+     *
+     * @param user|null $usr the session user or null if not logged in
+     * @return change_log_list only the user sandbox changes of the given user, empty if not logged in
+     */
+    function filter_user_overwrites(?user $usr): change_log_list
+    {
+        $result = new change_log_list();
+        if ($usr != null) {
+            foreach ($this->lst() as $chg) {
+                if ($chg->is_user_sandbox_change() and $chg->usr?->id() == $usr->id()) {
+                    // allow duplicates like filter() because the api change entries carry no own id
+                    $result->add_obj($chg, true);
+                }
+            }
+        }
+        return $result;
+    }
+
     /*
      * list
      */

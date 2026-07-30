@@ -14,9 +14,7 @@ the basic steps to show the start page are
 
 ### word and triple
 
-add a 'my' tab additional to the views and changes tabs e.g. in the word default view that is shown if the user logged in and has created some user overwrites. the tab should list the entries of the related "user_" tables e.g. for words the user specific changes from "user_words"
-
-check why in the word default view the views tab is sometimes missing e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
+check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
 create a phrase_values view that shows all values related to a phrase in up to four columns depending on the screen size like e.g. word default view. For this first read the e.g. 1000 (a config.yaml value) most relevant (high impact) values related to the phrase from the database. Than get for each column a phrase that is often used in the values e.g. for city it could be inhabitants, and use the phrase as a column headline 
 
@@ -24,9 +22,7 @@ add to /docs/llm/3 that "more" should always be a link that shows more. e.g. mor
 
 ### triple
 
-add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
-
-show the missing db fields in the triple default view: the defining link as an explicit from phrase, verb and to phrase line (today only the combined name is shown in the title), the weight, the condition formula, the phrase type, the language and the share and protection status
+show the missing db fields in the triple default view: the weight, the condition formula
 
 ### verb
 
@@ -96,3 +92,6 @@ add the missing db fields to the word add and edit views: a language selection (
 
 show the missing db fields in the word default view the language e.g. as a small info line next to the description
 
+### triple
+
+add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component

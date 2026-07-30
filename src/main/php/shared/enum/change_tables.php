@@ -82,6 +82,9 @@ enum change_tables: string
     const string VALUE_TIME_SERIES = 'values_time_series';
     const string VALUE_TS_DATA = 'value_ts_data';
 
+    // the name prefix of the user sandbox (overlay) tables, e.g. 'words' -> 'user_words'
+    const string USER_PREFIX = 'user_';
+
     // the user sandbox (overlay) tables; a change logged to one of these is a user-specific change and
     // is shown with a translatable 'user' prefix in the change log (see web/log/change_log_named)
     // TODO Prio 2 check if this is not a duplicate and should be moved to a def class

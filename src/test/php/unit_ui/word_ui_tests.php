@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -48,12 +49,14 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -402,6 +405,42 @@ class word_ui_tests
 
         $test_name = 'without a change no impact line is shown';
         $t->assert($test_name, $preview->popup_impact([]), '');
+
+
+        $t->subheader($ts . 'view tab box');
+
+        // the 'my' tab lists the session user's own overwrites (the user_words rows of the
+        // change log fixture) and is only shown if the user is logged in and has overwrites
+        $t_log = new test_log($t);
+        $t_usr_tab = new test_users();
+        $wrd_tab = new word($t_wrd->word()->api_json());
+        $wrd_tab->chg_log = new change_log_list_ui(
+            $t_log->log_list_word_changes()->api_json(new api_type_list([api_types::TEST_MODE])));
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+
+        $test_name = 'the user with overwrites sees the my tab';
+        $ui_sys->usr = new user_ui($t_usr_tab->system_user()->api_json());
+        $tab_html = $list->view_tab_box($wrd_tab, true);
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+
+        $test_name = '... and the my tab lists the user overwrite entries';
+        $t->assert_text_contains($test_name, $tab_html, 'user added view id');
+
+        $test_name = 'a user without overwrites gets no my tab';
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_tab, true), $my_tab_ref);
+
+        $test_name = 'without a logged in user no my tab is shown';
+        unset($ui_sys->usr);
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_tab, true), $my_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
 
     }
 

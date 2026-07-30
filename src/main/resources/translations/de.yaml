@@ -88,6 +88,7 @@ messages:
   update: "aktualisieren"
   extends: "erweitert"
   system_sub_title_no_usage: "Nicht verwendet"
+  system_sub_title_my: "Meine"
   system_db_table_users: "Benutzer"
   system_db_table_values: "Werte"
   system_db_table_user_values: "Benutzer Werte"
