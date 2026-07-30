@@ -135,7 +135,7 @@ class horizontal_ui_tests
             }
             // fill the code id field that should not be set via url
             if (in_array($filled_obj::class, def::CODE_ID_CLASSES)) {
-                $refilled_obj->set_code_id($filled_obj->get_code_id(), $t->usr_system);
+                $refilled_obj->set_code_id($filled_obj->get_code_id(), new user_message($t->usr_system));
             }
             // fill the unidirectional fields for test
             // TODO Prio 1 remove exception

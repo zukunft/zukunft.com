@@ -2160,7 +2160,8 @@ class sandbox extends db_object_seq_id_user
             // make sure that the code id never differs between the standard row and the user row
             if (in_array($this::class, def::CODE_ID_CLASSES)) {
                 if ($this->get_code_id() != $norm_obj->get_code_id()) {
-                    $this->set_code_id($norm_obj->get_code_id(), $this->get_user());
+                    // a local buffer for the permission check; this only syncs the two rows internally
+                    $this->set_code_id($norm_obj->get_code_id(), new user_message($this->get_user()));
                     log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
@@ -4451,13 +4452,12 @@ class sandbox extends db_object_seq_id_user
      * overwrite
      */
 
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = 'code id change has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        $txt = 'code id change has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($txt);
+        $msg->add_warning_text($txt);
+        return false;
     }
 
     function get_code_id(): ?string

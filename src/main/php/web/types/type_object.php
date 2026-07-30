@@ -207,8 +207,13 @@ class type_object
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {
+            // the name may arrive under NAME_GIVEN ('kg') or the object may be identified by id;
+            // only a submit with none of these is a genuine missing name (kept log-only, mirror sandbox_named)
             $this->set_name('');
-            log_warning('Mandatory field name missing in form url array ' . json_encode($url_array));
+            if (!array_key_exists(url_var::NAME_GIVEN, $url_array)
+                and !array_key_exists(url_var::ID, $url_array)) {
+                log_warning('Mandatory field name missing in form url array ' . json_encode($url_array));
+            }
         }
         if (array_key_exists(url_var::CODE_ID, $url_array)) {
             $this->set_code_id($url_array[url_var::CODE_ID]);

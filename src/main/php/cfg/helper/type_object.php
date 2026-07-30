@@ -297,23 +297,26 @@ class type_object extends db_object_seq_id
      *r
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
      * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param string|null $code_id the unique key to select the type used by the system
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the code id has been set, false if the requesting user is not permitted
      */
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_code_id() or $this->code_id == null) {
+        $result = false;
+        if ($msg->usr->can_set_code_id() or $this->code_id == null) {
             $this->code_id = $code_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -819,7 +822,8 @@ class type_object extends db_object_seq_id
     {
         $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() == null and $obj->get_code_id() != null) {
-            $this->set_code_id($obj->get_code_id(), $usr_req);
+            // a local buffer for the permission check; the fill copies a code id already stored
+            $this->set_code_id($obj->get_code_id(), new user_message($usr_req));
         }
         if ($this->name == null and $obj->name != null) {
             $this->name = $obj->name;

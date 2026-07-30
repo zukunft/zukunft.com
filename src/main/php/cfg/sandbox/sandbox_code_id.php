@@ -172,7 +172,7 @@ class sandbox_code_id extends sandbox_typed
         // let any user plant an arbitrary code_id. the null-user guard fails closed if no requesting
         // user is set on the message
         if (array_key_exists(json_fields::CODE_ID, $api_json) and $msg->usr != null) {
-            $msg->merge($this->set_code_id($api_json[json_fields::CODE_ID], $msg->usr));
+            $this->set_code_id($api_json[json_fields::CODE_ID], $msg);
         }
         return $msg->is_ok();
     }
@@ -197,7 +197,7 @@ class sandbox_code_id extends sandbox_typed
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
             }
         }
 
@@ -257,24 +257,25 @@ class sandbox_code_id extends sandbox_typed
      * set the unique id to select a single word by the program
      *
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the code id has been set, false if the requesting user is not permitted
      */
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        $result = false;
+        if ($msg->usr->can_set_code_id()) {
             $this->code_id = $code_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -462,7 +463,9 @@ class sandbox_code_id extends sandbox_typed
     {
         $msg = parent::fill($obj, $usr_req);
         if ($this->get_code_id() === null and $obj->get_code_id() != null) {
-            $msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
+            $code_msg = new user_message($usr_req);
+            $this->set_code_id($obj->get_code_id(), $code_msg);
+            $msg->merge($code_msg);
         }
         return $msg;
     }

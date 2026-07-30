@@ -280,7 +280,7 @@ class verb extends type_object
                 $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             } elseif ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
+                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
                 }
             }
         }

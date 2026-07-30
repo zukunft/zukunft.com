@@ -389,7 +389,8 @@ class triple extends sandbox_link_named
                 $this->set_name_generated($db_row[triple_fields::FLD_NAME_AUTO]);
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id($db_row[fields::FLD_CODE_ID], $this->get_user());
+                // a local buffer for the permission check; on a db load the row user is trusted
+                $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user()));
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
@@ -581,7 +582,7 @@ class triple extends sandbox_link_named
             $this->set_impact($in_ex_json[json_fields::IMPACT]);
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
+            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg);
         }
 
 
@@ -1412,23 +1413,26 @@ class triple extends sandbox_link_named
      *r
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
      * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param string|null $code_id the unique key to select the triple used by the system
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the code id has been set, false if the requesting user is not permitted
      */
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        $result = false;
+        if ($msg->usr->can_set_code_id()) {
             $this->code_id = $code_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**

@@ -667,21 +667,22 @@ class ref extends sandbox_link
         return $this->source;
     }
 
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_code_id(?string $code_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_code_id()) {
+        $result = false;
+        if ($msg->usr->can_set_code_id()) {
             $this->code_id = $code_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => fields::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
