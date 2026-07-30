@@ -1,7 +1,7 @@
 GET
-http://localhost/http/view.php?k=System+Test+Formula&o=System+Test+Formula+Description&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&fa=1&8k=System+Test+Formula&8o=System+Test+Formula+Description&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8y=1&9m=97&m=25&z=1&submit=
-/http/view.php?k=System+Test+Formula&o=System+Test+Formula+Description&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&fa=1&8k=System+Test+Formula&8o=System+Test+Formula+Description&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8y=1&9m=97&m=25&z=1&submit=
-/http/view.php?name=System+Test+Formula&description=System+Test+Formula+Description&type=1&formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&need_all_val=1&8name=System+Test+Formula&8description=System+Test+Formula+Description&8formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8type=1&9mask_id=formula_default&mask_id=formula_edit&step=confirm&
+http://localhost/http/view.php?k=System+Test+Formula&o=System+Test+Formula+Description&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&fa=1&fx=%5Ctext%7Bpercent%7D+%3D+%5Cfrac%7B+%5Ctext%7Bthis%7D+-+%5Ctext%7Bprior%7D+%7D%7B+%5Ctext%7Bprior%7D+%7D&8k=System+Test+Formula&8o=System+Test+Formula+Description&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8y=1&9m=97&m=25&z=1&submit=
+/http/view.php?k=System+Test+Formula&o=System+Test+Formula+Description&y=1&fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&fa=1&fx=%5Ctext%7Bpercent%7D+%3D+%5Cfrac%7B+%5Ctext%7Bthis%7D+-+%5Ctext%7Bprior%7D+%7D%7B+%5Ctext%7Bprior%7D+%7D&8k=System+Test+Formula&8o=System+Test+Formula+Description&8fe=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8y=1&9m=97&m=25&z=1&submit=
+/http/view.php?name=System+Test+Formula&description=System+Test+Formula+Description&type=1&formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&need_all_val=1&latex=%5Ctext%7Bpercent%7D+%3D+%5Cfrac%7B+%5Ctext%7Bthis%7D+-+%5Ctext%7Bprior%7D+%7D%7B+%5Ctext%7Bprior%7D+%7D&8name=System+Test+Formula&8description=System+Test+Formula+Description&8formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9id=996&id=996&8id=996&8type=1&9mask_id=formula_default&mask_id=formula_edit&step=confirm&
 {
     "share": "",
     "protection": "",
@@ -10,6 +10,7 @@ http://localhost/http/view.php?k=System+Test+Formula&o=System+Test+Formula+Descr
     "type": "1",
     "formula_text": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
     "need_all_val": "1",
+    "latex": "\\text{percent} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
     "id": "996",
     "mask_id": "formula_edit",
     "step": "confirm",

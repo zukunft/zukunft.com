@@ -279,6 +279,8 @@ class test_formulas extends test_objects
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::DESCRIPTION] = formula_names::SYSTEM_TEST_ADD_COM;
         $url_arr[url_var::NEED_ALL] = '1';
+        // fill the latex format of the expression, which is empty after the add (like the flag)
+        $url_arr[url_var::LATEX] = formula_names::INCREASE_LATEX;
         $url_arr[url_var::PRE . url_var::NAME] = $url_arr[url_var::NAME];
         $url_arr[url_var::PRE . url_var::DESCRIPTION] = $url_arr[url_var::DESCRIPTION];
         $url_arr[url_var::PRE . url_var::USER_EXPRESSION] = $url_arr[url_var::USER_EXPRESSION];

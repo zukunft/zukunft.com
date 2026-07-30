@@ -209,3 +209,4 @@ component_type_id, type_name, description, code_id
 208, 'show name center', 'show the object name big in the center without link or form field', 'system_show_field_name_big'
 209, 'admin form field user uses sandbox', 'checkbox in the admin form so that an admin can switch if the pages for the user must be created from the user sandbox', 'admin_form_field_user_uses_sandbox'
 210, 'change log table pure', 'a borderless change log table with the three columns when, who and what limited to a config char count', 'invisible_change_log_table'
+211, 'system form field latex', 'the form field for the formula in the latex format', 'system_form_field_formula_latex'

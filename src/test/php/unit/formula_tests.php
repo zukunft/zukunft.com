@@ -158,6 +158,17 @@ class formula_tests
         $t->assert_contains_not($test_name, array_keys($url_arr), url_var::NEED_ALL);
         $t->assert_contains_not($test_name, array_keys($url_arr), url_var::IMPACT);
 
+        // the confirm change preview labels a pending change with the changed db field, which
+        // needs a complete db field to url var map (see db_fld_to_url)
+        $test_name = 'every user-editable formula db field is mapped to its url var';
+        $fld_to_url = $frm_ui->db_fld_to_url();
+        $unmapped = array_diff($frm_ui->sandbox_fld_order(), array_keys($fld_to_url));
+        $t->assert($test_name, array_values($unmapped), [fields::FLD_LAST_UPDATE]);
+        $test_name = '... e.g. a pending latex change is labeled with the latex db field';
+        $t->assert($test_name, $fld_to_url[formula_fields::FLD_LATEX] ?? '', url_var::LATEX);
+        $test_name = 'the system-set last update time has no url var, because no form may post it';
+        $t->assert_false($test_name, array_key_exists(fields::FLD_LAST_UPDATE, $fld_to_url));
+
         $t->subheader($ts . 'partial update expression handling');
         // the stored formula as loaded from the database, carrying its expression
         $frm_db = $t_frm->formula();

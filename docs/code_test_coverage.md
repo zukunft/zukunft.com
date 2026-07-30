@@ -2358,8 +2358,6 @@ so same-named functions of several classes share their test calls
     \-- log_php_error_timestamped - 0 unit test calls
     \-- log_php_exception_timestamped - 0 unit test calls
     \-- log_warning - 0 unit test calls
-    \-- log_warning_msg - 0 unit test calls
-    \-- log_warning_msg_ui - 0 unit test calls
     \-- php_error_label - 0 unit test calls
     \-- sys_log_insert_allowed - 0 unit test calls
 \-- triple
@@ -3458,7 +3456,7 @@ so same-named functions of several classes share their test calls
     \-- component_selector - 0 unit test calls
     \-- component_style_selector - 0 unit test calls
     \-- component_type_selector - 0 unit test calls
-    \-- db_fld_to_url - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- file_selector - 0 unit test calls
     \-- formula_link_type_selector - 0 unit test calls
     \-- formula_name - 0 unit test calls
@@ -3483,7 +3481,7 @@ so same-named functions of several classes share their test calls
     \-- ref_type_selector - 0 unit test calls
     \-- result_selector - 0 unit test calls
     \-- reverse - 0 unit test calls
-    \-- sandbox_fld_order - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls
     \-- set_from_json - 1 unit test calls
     \-- set_id - 0 unit test calls
     \-- share_type_selector - 0 unit test calls
@@ -3528,7 +3526,7 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- btn_del - 0 unit test calls
     \-- btn_edit - 0 unit test calls
-    \-- db_fld_to_url - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- direct_assigned_phrases - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_hist - 0 unit test calls
@@ -3549,7 +3547,7 @@ so same-named functions of several classes share their test calls
     \-- load_by_id_with_related - 0 unit test calls
     \-- name_link - 0 unit test calls
     \-- need_all - 0 unit test calls
-    \-- sandbox_fld_order - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls
     \-- set_latex - 0 unit test calls
     \-- set_usr_text - 0 unit test calls
     \-- url_mapper - 1 unit test calls
@@ -4015,10 +4013,10 @@ so same-named functions of several classes share their test calls
     \-- calc_sheet - 0 unit test calls
 \-- source
     \-- api_array - 1 unit test calls
-    \-- db_fld_to_url - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- name_link - 0 unit test calls
     \-- name_tip - 1 unit test calls
-    \-- sandbox_fld_order - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls
     \-- source_selector - 0 unit test calls
     \-- source_type_selector - 0 unit test calls
     \-- url - 0 unit test calls
@@ -4100,6 +4098,7 @@ so same-named functions of several classes share their test calls
     \-- form_formula - 0 unit test calls
     \-- form_formula_all_fields - 0 unit test calls
     \-- form_formula_expression - 0 unit test calls
+    \-- form_formula_latex - 0 unit test calls
     \-- form_formula_link_type - 0 unit test calls
     \-- form_formula_type - 0 unit test calls
     \-- form_formulas - 0 unit test calls
@@ -4242,7 +4241,7 @@ so same-named functions of several classes share their test calls
     \-- subheader - 0 unit test calls
 \-- triple
     \-- api_array - 1 unit test calls
-    \-- db_fld_to_url - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- display_linked - 0 unit test calls
     \-- dsp_del - 0 unit test calls
     \-- dsp_r - 0 unit test calls
@@ -4264,7 +4263,7 @@ so same-named functions of several classes share their test calls
     \-- name_link - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls
-    \-- sandbox_fld_order - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls
     \-- set - 0 unit test calls
     \-- set_from_by_id - 1 unit test calls
     \-- set_to_by_id - 0 unit test calls
@@ -4628,7 +4627,7 @@ so same-named functions of several classes share their test calls
     \-- api_array - 1 unit test calls
     \-- btn_unlink - 0 unit test calls
     \-- children - 0 unit test calls
-    \-- db_fld_to_url - 0 unit test calls
+    \-- db_fld_to_url - 1 unit test calls
     \-- dsp_del - 0 unit test calls
     \-- dsp_edit - 0 unit test calls
     \-- dsp_graph - 0 unit test calls
@@ -4656,7 +4655,7 @@ so same-named functions of several classes share their test calls
     \-- parents - 0 unit test calls
     \-- phrase_selector - 0 unit test calls
     \-- phrase_type_selector - 0 unit test calls
-    \-- sandbox_fld_order - 0 unit test calls
+    \-- sandbox_fld_order - 1 unit test calls
     \-- selector_link - 0 unit test calls
     \-- selector_word - 0 unit test calls
     \-- set_type - 1 unit test calls
