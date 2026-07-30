@@ -276,58 +276,64 @@ class job extends db_object_seq_id_user
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the type has been set, false if the requesting user is not permitted
      */
-    function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
+    function set_type_id(?int $type_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr_req->can_set_type_id()) {
+        $result = false;
+        $usr_req = $msg->usr;
+        if ($usr_req != null and $usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
+            $result = true;
         } else {
             // the type of a job can be set once if not defined already
             if ($type_id === null) {
                 $this->type_id = $type_id;
+                $result = true;
             } else {
                 $lib = new library();
                 $msg->add(msg_id::NOT_ALLOWED_TO, [
-                    msg_id::VAR_USER_NAME => $usr_req->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_USER_NAME => $usr_req?->name() ?? '',
+                    msg_id::VAR_USER_PROFILE => $usr_req?->profile_code_id() ?? '',
                     msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                 ]);
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
      * set the database id of the status
      *
      * @param int|null $sta_id the database id of the status
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the status has been set, false if the requesting user is not permitted
      */
-    function set_status_id(?int $sta_id = null, user $usr_req = new user()): user_message
+    function set_status_id(?int $sta_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr_req->can_set_type_id()) {
+        $result = false;
+        $usr_req = $msg->usr;
+        if ($usr_req != null and $usr_req->can_set_type_id()) {
             $this->type_id = $sta_id;
+            $result = true;
         } else {
             // the type of a job can be set once if not defined already
             if ($sta_id === null) {
                 $this->status_id = $sta_id;
+                $result = true;
             } else {
                 $lib = new library();
                 $msg->add(msg_id::NOT_ALLOWED_TO, [
-                    msg_id::VAR_USER_NAME => $usr_req->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_USER_NAME => $usr_req?->name() ?? '',
+                    msg_id::VAR_USER_PROFILE => $usr_req?->profile_code_id() ?? '',
                     msg_id::VAR_NAME => fields::FLD_TYPE_NAME,
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                 ]);
             }
         }
-        return $msg;
+        return $result;
     }
 
     function type_id(): ?int
@@ -343,13 +349,13 @@ class job extends db_object_seq_id_user
     function set_type(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), $usr_req);
+        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req));
     }
 
     function set_status(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), $usr_req);
+        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req));
     }
 
     function type_code_id(): string

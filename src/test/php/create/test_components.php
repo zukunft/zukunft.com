@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_COMPONENT . 'component_list.php';
@@ -61,6 +62,7 @@ include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
@@ -171,7 +173,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
-        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::PHRASE_NAME, new user_message($this->env->usr1));
         $cmp->description = components::WORD_COM;
         return $cmp;
     }
@@ -183,7 +185,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(component_types::PHRASE_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::PHRASE_NAME, new user_message($this->env->usr1));
         $cmp->description = components::FORM_NAME_COM;
         return $cmp;
     }
@@ -200,7 +202,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::MATRIX_NAME);
-        $cmp->set_type(component_types::CALC_SHEET, $this->env->usr1);
+        $cmp->set_type(component_types::CALC_SHEET, new user_message($this->env->usr1));
         $cmp->description = components::MATRIX_COM;
         return $cmp;
     }
@@ -215,7 +217,7 @@ class test_components extends test_objects
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
         $cmp->description = components::WORD_COM;
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id_db(components::FORM_TITLE);
         $cmp->set_usage(test_const::DUMMY_USAGE_COMPONENT);
@@ -265,7 +267,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set_name(components::TEST_ADD_VIA_FUNC_NAME);
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         return $cmp;
     }
 
@@ -273,7 +275,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::FORM_TITLE_NAME);
-        $cmp->set_type(component_types::FORM_TITLE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_TITLE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_TITLE_COM;
         $cmp->set_code_id_db(components::FORM_TITLE);
         return $cmp;
@@ -283,7 +285,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::MATRIX_ID, components::FORM_BACK_NAME);
-        $cmp->set_type(component_types::FORM_HIDDEN_BACK, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_BACK, new user_message($this->env->usr1));
         $cmp->description = components::FORM_BACK_COM;
         $cmp->set_code_id_db(components::FORM_BACK);
         return $cmp;
@@ -293,7 +295,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(3, components::FORM_CONFIRM_NAME);
-        $cmp->set_type(component_types::FORM_HIDDEN_STEP, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_HIDDEN_STEP, new user_message($this->env->usr1));
         $cmp->description = components::FORM_CONFIRM_COM;
         $cmp->set_code_id_db(components::FORM_CONFIRM);
         return $cmp;
@@ -303,7 +305,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_NAME, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_NAME, new user_message($this->env->usr1));
         $cmp->description = components::FORM_NAME_COM;
         $cmp->set_code_id_db(components::FORM_NAME);
         return $cmp;
@@ -313,7 +315,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(5, components::FORM_DESCRIPTION_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_DESCRIPTION, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_DESCRIPTION, new user_message($this->env->usr1));
         $cmp->description = components::FORM_DESCRIPTION_COM;
         $cmp->set_code_id_db(components::FORM_DESCRIPTION);
         return $cmp;
@@ -323,7 +325,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME);
-        $cmp->set_type(component_types::FORM_FIELD_PLURAL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_FIELD_PLURAL, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PLURAL_COM;
         $cmp->set_code_id_db(components::FORM_PLURAL);
         return $cmp;
@@ -333,7 +335,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(6, components::FORM_PHRASE_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_SELECT_PHRASE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SELECT_PHRASE_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
         $cmp->set_code_id_db(components::FORM_PHRASE_TYPE);
         return $cmp;
@@ -343,7 +345,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(7, components::FORM_SHARE_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_SHARE_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_SHARE_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_SHARE_TYPE_COM;
         $cmp->set_code_id_db(components::FORM_SHARE_TYPE);
         return $cmp;
@@ -353,7 +355,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME);
-        $cmp->set_type(component_types::FORM_PROTECTION_TYPE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_PROTECTION_TYPE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_PROTECTION_TYPE_COM;
         $cmp->set_code_id_db(components::FORM_PROTECTION_TYPE);
         return $cmp;
@@ -363,7 +365,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(9, components::FORM_CANCEL_NAME);
-        $cmp->set_type(component_types::FORM_BUTTON_CANCEL, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_CANCEL, new user_message($this->env->usr1));
         $cmp->description = components::FORM_CANCEL_COM;
         $cmp->set_code_id_db(components::FORM_CANCEL);
         return $cmp;
@@ -373,7 +375,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(10, components::FORM_SAVE_NAME);
-        $cmp->set_type(component_types::FORM_BUTTON_SAVE, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_BUTTON_SAVE, new user_message($this->env->usr1));
         $cmp->description = components::FORM_SAVE_COM;
         $cmp->set_code_id_db(components::FORM_SAVE);
         return $cmp;
@@ -383,7 +385,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set(11, components::FORM_END_NAME);
-        $cmp->set_type(component_types::FORM_END, $this->env->usr1);
+        $cmp->set_type(component_types::FORM_END, new user_message($this->env->usr1));
         $cmp->description = components::FORM_END_COM;
         $cmp->set_code_id_db(components::FORM_END);
         return $cmp;
@@ -414,7 +416,7 @@ class test_components extends test_objects
     {
         $cmp = new component($this->env->usr1);
         $cmp->set($id, $name);
-        $cmp->set_type(component_types::TEXT, $this->env->usr1);
+        $cmp->set_type(component_types::TEXT, new user_message($this->env->usr1));
         return $cmp;
     }
 

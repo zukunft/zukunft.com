@@ -88,7 +88,7 @@ class triple_tests
         $trp_excl->excluded = true;
         $t->assert_sql_insert($sc, $trp_excl);
         $trp_excl->description = '';
-        $trp_excl->set_type('');
+        $trp_excl->set_type('', new user_message($t->usr1));
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
         $trp = $t_trp->triple_incomplete();
         $t->assert_sql_insert_fail($sc, $trp, [sql_type::LOG]);

@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -373,7 +374,7 @@ class base_ui_tests
 
         $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
-        $cmp->set_type(comp_type_shared::TEXT, $t->usr1);
+        $cmp->set_type(comp_type_shared::TEXT, new user_message_cfg($t->usr1));
         $cmp_ui = new component_ui($cmp->api_json());
         $t->html_page_test($cmp_ui->html(), '', 'component_text', $t);
 
