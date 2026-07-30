@@ -476,7 +476,7 @@ class word_write_tests
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . word_names::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, fields::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed "' . word_names::TEST_ADD_COM . '" to "' . word_names::TEST_RENAMED . ' description"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "' . word_names::TEST_RENAMED . ' description" from "' . word_names::TEST_ADD_COM . '"';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);

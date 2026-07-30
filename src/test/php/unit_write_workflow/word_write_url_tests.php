@@ -108,6 +108,11 @@ class word_write_url_tests extends word_url_tests
         // never be empty, so the ui object must end up with an id that resolves to the renamed word
         $this->rename_word_by_other_user($t);
 
+        // a non-owner (usr2) fills almost all sandbox fields of the word owned by usr1 in one edit
+        // round, snapshotted as a workflow; the final page snapshot shows the change log entries of
+        // the confirmed change (the read-only twin renders the same steps in word_url_tests)
+        $this->change_word_all_sandbox_fields_write($t);
+
 
         $t->subheader($this->ts . 'cleanup');
 
@@ -149,6 +154,31 @@ class word_write_url_tests extends word_url_tests
         // the delete of the just added word can leave an excluded row, so clean up again to
         // guarantee the add workflow that follows the same clean start as the cleanup before
         $this->cleanup_test_words($t);
+    }
+
+    /**
+     * run the change_word_all_sandbox_fields workflow with do_it true: usr1 creates and owns the
+     * base word with only the name and the original description, then usr2 - who does not own it -
+     * fills almost all sandbox fields via the edit form, confirms and changes the description two
+     * more times, so the writes land in a usr2 user sandbox overlay and the final page snapshot
+     * shows the change log of all confirmed changes (the step sequence and the overlay checks are
+     * in word_url_tests)
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function change_word_all_sandbox_fields_write(test_cleanup $t): void
+    {
+        // start from a clean state so the base word has no leftover overlay of a previous run
+        $this->cleanup_test_words($t);
+
+        // usr1 creates and owns the base word with the original description
+        $base = test_words::add_owned($t->usr1, word_names::TEST_ADD_COM);
+        $owner_msg = new user_message($t->usr1);
+        $base->save($owner_msg);
+        $test_name = 'the base word for the all sandbox fields change is created';
+        $t->assert_msg($test_name, $owner_msg);
+
+        $this->change_word_all_sandbox_fields_workflow(workflows::WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR, true);
     }
 
     /**
