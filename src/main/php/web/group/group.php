@@ -201,13 +201,13 @@ class group extends sandbox_named
             if (array_key_exists(json_fields::PHRASES, $json_array)) {
                 $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
-                    $this->set_phrase_from_json_array($phr_json);
+                    $this->set_phrase_from_json_array($phr_json, $msg);
                 }
             }
         } else {
             // create phrase group based on the phrase list as fallback
             foreach ($json_array as $phr_json) {
-                $this->set_phrase_from_json_array($phr_json);
+                $this->set_phrase_from_json_array($phr_json, $msg);
             }
         }
         return $msg->is_ok();
@@ -232,13 +232,12 @@ class group extends sandbox_named
 
 
     /**
-     * TODO Prio 1 add user_message parameter
      * @param array $phr_json the json array of a phrase
+     * @param user_message $msg the threaded message so an invalid phrase in the group surfaces to the user
      * @return void
      */
-    private function set_phrase_from_json_array(array $phr_json): void
+    private function set_phrase_from_json_array(array $phr_json, user_message $msg): void
     {
-        $msg = new user_message();
         $wrd_or_trp = new word();
         if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
             if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {

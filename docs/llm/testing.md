@@ -476,6 +476,37 @@ Two follow-ons:
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
 
+### Read a `user_message` result with `$msg->text()`, not `all_message_text()`
+
+A `user_message` is append-only and threaded across a whole request, so by the
+time a test inspects it, it can carry messages from **several** operations. Assert
+on **`$msg->text()`** — the single most-useful (last, translated) message — which
+is what the user actually sees. Avoid **`all_message_text()`** (the concatenation
+of every accumulated message) and the raw `get_last_message*()` getters as the
+assertion target: concatenation makes the test brittle, and it couples the test to
+code paths it does not exercise.
+
+This is not hypothetical: an import test asserting the whole message text broke the
+moment an unrelated "not yet supported" notice was added on the same `$msg` — the
+notice shifted the last message and buried the genuine `"Unknown element test"` the
+test was checking. `$msg->text()` would have stayed pinned to the message that
+matters.
+
+```php
+// Right — the one message the user sees; robust to unrelated messages on the same $msg
+$test_name = 'import of an unknown element is reported';
+$imp->put_json_direct($json_str, $msg);
+$t->assert($test_name, $msg->text(), 'Unknown element "test"');
+
+// Wrong — asserts the concatenation of every message, so any unrelated add elsewhere breaks it
+$t->assert($test_name, $msg->all_message_text(), 'Unknown element "test"');
+```
+
+Assert `all_message_text()` only when the test genuinely verifies that a **set** of
+messages is present (e.g. a batch that must report each of several failures), and
+even then prefer `assert_text_contains` on the specific expected fragment over an
+equality on the whole blob.
+
 ### Test subheaders are short but unique
 
 A `$t->subheader(...)` label names the test section in the run output — keep it
