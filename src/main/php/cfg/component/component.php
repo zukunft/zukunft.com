@@ -435,7 +435,7 @@ class component extends sandbox_code_id
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $type_name = $in_ex_json[json_fields::TYPE_NAME];
             if ($type_name != '') {
-                $this->set_type_id($this->type_id_by_code_id($type_name), $msg->usr);
+                $this->set_type_id($this->type_id_by_code_id($type_name), $msg);
             }
         }
 
@@ -573,18 +573,18 @@ class component extends sandbox_code_id
      * set the predefined view component type by the given code id or name
      *
      * @param string $code_id_or_name the code id or name that should be added to this view component
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the component type has been set, false if unknown or not permitted
      */
-    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user_message $msg): bool
     {
         global $sys;
         if ($sys->typ_lst->cmp_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $msg);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $msg);
         }
     }
 

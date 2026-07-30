@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -48,6 +49,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
@@ -80,7 +82,7 @@ class test_sources extends test_objects
     {
         $src = new source($this->env->usr1);
         $src->set(sources::BFS_ID, sources::BFS);
-        $src->set_type(source_types::PDF, $this->env->usr1);
+        $src->set_type(source_types::PDF, new user_message($this->env->usr1));
         $src->description = sources::BFS_COM;
         $src->url = sources::BFS_ULR;
         return $src;
@@ -90,7 +92,7 @@ class test_sources extends test_objects
     {
         $src = new source($this->env->usr1);
         $src->set(sources::SIB_ID, sources::SIB);
-        $src->set_type(source_types::PDF, $this->env->usr1);
+        $src->set_type(source_types::PDF, new user_message($this->env->usr1));
         $src->description = sources::SIB_COM;
         $src->url = sources::SIB_URL;
         return $src;
@@ -156,7 +158,7 @@ class test_sources extends test_objects
     {
         $src = new source($this->env->usr1);
         $src->set(sources::WIKIDATA_ID, sources::WIKIDATA);
-        $src->set_type(source_types::CSV, $this->env->usr1);
+        $src->set_type(source_types::CSV, new user_message($this->env->usr1));
         return $src;
     }
 

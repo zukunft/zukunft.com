@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -52,6 +53,7 @@ include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -140,7 +142,7 @@ class test_views extends test_objects
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
         $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $msk;
     }
@@ -282,7 +284,7 @@ class test_views extends test_objects
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
         $msk->set_style(view_styles::COL_SM_4);
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
@@ -300,7 +302,7 @@ class test_views extends test_objects
         $msk = $this->view_add();
         $msk->set_code_id_db(views::TEST_ADD);
         $msk->description = views::START_COM;
-        $msk->set_type(view_types::ENTRY, $this->env->usr1);
+        $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
         $msk->set_style(view_styles::COL_SM_4);
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();

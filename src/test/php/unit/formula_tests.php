@@ -178,7 +178,7 @@ class formula_tests
         // carries the name but no expression, so ref_text and usr_text stay null
         $frm_upd = new formula($t->usr1);
         $frm_upd->set($frm_db->id(), $frm_db->name());
-        $frm_upd->set_type_id($frm_db->type_id());
+        $frm_upd->set_type_id($frm_db->type_id(), new user_message($t->usr1));
         $frm_upd->description = 'a new formula description';
         $msg = new user_message();
         $chg_lst = $frm_upd->db_fields_changed($frm_db, $msg);

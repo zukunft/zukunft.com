@@ -555,7 +555,7 @@ class word_tests
         $t->assert($t->name . $test_name, $non_db_fld_names, []);
 
         $test_name = '... but a changed phrase type is written to the database';
-        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $t->usr_system);
+        $in_wrd->set_type(phrase_type_shared::SCALING_HIDDEN, new user_message($t->usr_system));
         $non_db_fld_names = $in_wrd->db_fields_changed($db_wrd, $usr_msg)->names();
         $t->assert($t->name . $test_name, $non_db_fld_names, [phrase::FLD_TYPE]);
 
