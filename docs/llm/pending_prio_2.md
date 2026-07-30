@@ -1,6 +1,249 @@
-# pending_next_launch.md
+# pending prio 2
 
-## fine-tuning for the next launch — backlog moved out of pending.md to keep the high-prio list small
+## general code cleanup to prevent future issues
+
+find all '&back=' url parameters and list here the prompts to fix these issues by using instead the url_var::BACK prefix
+
+create the user_message $msg at the entry point and add it as a parameter to all function that might create a message that needs to be shown to the user
+
+fix the user type and status export/import round trip: the export writes the type display name under json_fields::TYPE ('type_id', see user::export_json using type_name()) but import_mapper reads json_fields::TYPE_NAME ('type'), so an exported type is silently ignored on import and the guest default fills it (the unit fixture user_import.json only passes because its value "Guest" equals the default); additionally set_type expects the code_id ('guest') while the export writes the name ("Guest"), so even with matching keys the value would not resolve (user_type_list has usr_can_add = false); decide whether the export switches to the code id under the 'type' key (json format change -> minor version raise and db_check upgrade script per docs/llm/versions.md) or the import accepts both; the status has the same name-vs-code-id issue (status_name() exported, usr_sta->id() on import)
+
+### complete the frontend backend split — implementation steps
+
+the goal (docs/llm/frontend.md): frontend (web/ and http/) and backend (cfg/ and api/) are two
+independent apps talking only over the api; code needed by both lives in shared/. the temporary
+bridges are the backend paths include at the top of web/const/paths.php and the html_paths::MODEL_*
+/ DB / API_OBJECT copies in the same file — they fall step by step with the prompts below. done so
+far: env.php moved from cfg/const to shared/const (read by both apps); api/word/index.php reads the
+request body via the backend controller::request_json instead of the frontend rest_call class. run
+the steps one at a time, each as its own commit with tests written first:
+
+1. move the pure text logging classes cfg/log_text/text_log.php, text_log_format.php and
+   text_log_level.php to shared/log_text (check first that they have no db or model dependency);
+   web/log_text/text_log.php then extends the shared class; the model-dependent
+   text_log_functions.php (log_err writes to sys_log in the db) stays in the backend for now
+
+2. give the frontend its own error reporting: the web/ code calls log_err / log_warning / log_debug
+   from cfg/log_text/text_log_functions.php, which is backend code (db write to sys_log); create
+   frontend log functions that report problems via the existing sys_log api endpoint (rest_call)
+   and echo to standard io, then remove the text_log_functions include from web/init_ui.php
+
+3. replace the backend $sys usage in web/ with a frontend-owned equivalent on $ui_sys: the timing
+   (web/helper/config.php load($sys) and the api call timing TODO in web/html/rest_call.php) and
+   the preloaded type list access (web/system/sys_log.php $sys->typ_lst->sys_log_sta) move to
+   $ui_sys; then web/init_ui.php no longer creates the cfg system_object and $sys becomes a
+   backend-only global in docs/code_object_name_exceptions.md
+
+4. after steps 1-3 remove the remaining cfg includes from web/init_ui.php, remove the backend paths
+   include from the top of web/const/paths.php and drop every html_paths::MODEL_* copy that only
+   web/init_ui.php used; add the coded check to unit/coding_rule_tests.php that web/init_ui.php and
+   web/const/paths.php include no cfg file
+
+5. replace the deprecated direct-db bootstrap of web/frontend.php (start / open_db / end /
+   load_cache) with api calls per the TODO in coding_rule_tests::php_web_only_allowed_globals_tests;
+   then remove the 'frontend.php' exception from that rule, remove the db and model includes from
+   frontend.php and drop the html_paths::DB and now unused html_paths::MODEL_* copies
+
+6. move the reserved test name consts that production web code includes (test_paths::CONST
+   formula_names.php / triple_names.php / word_names.php in web/frontend.php,
+   web/formula/formula_list.php and web/component/execute/system_form.php - included "to avoid that
+   names used for testing are used in production") to shared/const so production code never
+   includes test code; then remove the test path block from http/const.php (its TODO Prio 2) and
+   the test_paths use from the web files
+
+7. migrate the remaining direct-db web files to api calls or delete the deprecated functions:
+   web/log/user_log_display.php and web/user/user_display_old.php create their own sql_db, and
+   web/word/word.php still builds sql; afterwards no web file references sql_db and the
+   html_paths::DB copy falls if not already removed in step 5
+
+8. extend coding_rule_tests::php_cfg_no_web_tests to also scan paths::API, paths::API_OBJECT and
+   the /api scripts, so a backend file using a web class (like the api/word/index.php rest_call
+   use fixed above) is caught by the unit tests
+
+
+
+## to be sorted
+
+fix the last violation of the default-value rule (docs/llm/constants.md "Default values are resolved at the point of use, never fabricated in a mapper"): user::api_mapper still fabricates user_profiles::NORMAL_ID for a missing PROFILE_ID (cfg/user/user.php ~515) and the profile branch in db_fields_changed (~3653) has no null guard, so a json-born user without the profile field saved by an admin requester silently demotes the stored profile to normal (enforce_profile_privilege only blocks unprivileged requesters, an admin passes can_set_profile(normal); the frontend api_array omits PROFILE_ID unless is_profile_valid()). Apply the same treatment as for the type and status: map a missing profile to null in api_mapper, add the !== null guard in db_fields_changed, let enforce_profile_privilege treat null as "keep stored" (its int $req_profile_id parameter needs ?int or an early guard), and add the matching negative and positive tests to the "preserved on save" blocks in src/test/php/unit/user_tests.php; also backfill profile_id in the user exception block of horizontal_ui_tests.php like type_id and status_id, because the add url does not transport the profile and the round trip only passes today because the fabricated normal profile matches the filled test user
+
+cosmetic alignment with the default-value rule (no data-loss risk, round trip is safe): web/user/user.php api_mapper defaults profile_id, type_id and status_id to 0 instead of null (api_array drops them via the >0 and is_profile_valid() checks) and web/component/component.php api_mapper sets pos_type_id to position_types::DEFAULT_ID (the property is declared non-nullable with that default and api_array suppresses the default), so the frontend mirrors cannot express "not specified"; align them to nullable properties mapping to null when the field is missing
+
+fix as many TODO Prio 0 as possible
+
+if the cache type (with or without phrases / context) or the message type (with or without header) changes, clear the complete cache to make sure that the messages from cache are always correct but on the other hand keep the cache read and write as simple as possible.
+
+Add to admin yaml a list of term that should be added on start to the document route. Add a "en" folder with static pages that store each request to a file that is read, executed and cleaned by the sceduled job runner. For non en languages use e.g de subfolder
+
+### requesting user lives on $msg — implementation steps
+
+the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry point sets the requesting user on the request's user_message once, as early as possible, and every function below takes $msg as a parameter and reads $msg->usr — never a second requesting-user parameter, never a global, never $_SESSION. http/view.php is done; run the steps below one at a time, each as its own commit with tests written first:
+
+1. done (web/frontend.php reads the requesting user from $msg->usr; the by-reference user parameters of action_login/signup/activate/logout and the backend user of url_to_action stay until the login user switch goes through the api)
+
+2. done (web/sandbox/db_object.php add_via_api / update / del and shared/helper/MapObject.php convertToDb read the requesting user from the message — the backend twin travels inside the message api json via convertMsgToDb — and user_request no longer carries a separate frontend user; a crud call without a message user reports msg_id::USER_MISSING, see the crud guard tests in unit_ui/word_ui_tests.php; no new backend flag was needed because user::api_json_array already emits uses_sandbox)
+
+3. done (all 33 api/*/index.php and http/setup.php create one backend user_message right after $usr->get() and set $msg->usr = $usr; the controller functions get_json / post_json / put_json / delete / not_permitted / change_permitted take the user_message instead of the string msg and the separate user parameter, and the write path saves directly onto the request message; change_permitted refuses a null message user like an ip user — test helper assert_api_write_blocked_without_user is in the still deactivated "TODO Prio 0 activate" block of unit_write/api_write_tests.php; api/config/index.php also lost its $msg reassignments in favour of merge())
+
+4. done (sandbox_multi::change_blocked and sql_db::setup_db read $msg->usr and log_err a missing user instead of overwriting it; the local bootstrap messages — sql_db load_db_code_link_file / add_user_from_env / create_internal_words, text_log_functions sys_log_fnc save, user::db_insert / db_update_user, db_id_object_non_sandbox::del_exe, convert_wikipedia_table and frontend::action_logout — now set their user via the user_message constructor instead of a post-hoc ->usr assignment; the remaining writers below the entry points are frontend::url_to_action:819 (the sanctioned login user switch), user_message::clone_reset (the class itself) and db_object_seq_id_user::set_requesting_user:230 — the last one guards every sandbox save/del with a documented owner fallback for reset() messages, so it is deferred to step 6)
+
+5. done (import.php and user.php read $msg->usr where the message is already threaded; the query user became a connection-level fact instead of a global — sql_db::$usr_req is set once by the entry point / setup_db and read by sql_db::set_class and sql_creator::set_class as the default query user, so both factory- and directly-built sql_creators default to the same user without threading it through the hundreds of set_class call sites; web/frontend.php url_to_html_cached reads $db_con->usr_req until the refresh job goes via the api; system_object::$usr_req is deleted; the sql-generation test setups all_unit_tests.php / group_write_tests / import_write_tests / sandbox_tests set $db_con->usr_req = $t->usr1 so user-scoped query snapshots stay scoped to usr1)
+
+6. done (user_message::reset() now keeps the requesting user by default (keep_usr = true), so the reset loophole is closed; db_object_seq_id_user::set_requesting_user no longer overwrites $msg->usr — it mirrors change_blocked and log_errs a missing requesting user as an internal inconsistency instead of silently patching it with the object owner; the 20 remaining dual user+user_message signatures (down from 32 as earlier passes trimmed them) are all legitimate and split into three groups: subject-user payloads the function operates on (sql_creator::sql_func_log, config_numbers::read_cache / read_db_cache / read_file_cache, sandbox::take_ownership, sandbox_list::load_user_changes / load_sql_user_changes, job_cache_refresh::invalidate_if_outdated, job_db_cleanup::del_old_jobs, user::no_diff / no_non_id_diff / is_same / check_preserved), the requesting user passed explicitly to a pure permission helper that only reads it (sandbox::check_protection_change ×2 — the callers feed the object's own get_user(), user::enforce_profile_privilege, sql_db::add_user_from_env / add_admin_users_from_env), and an optional requesting-user override that defaults to $msg->usr (user::import_obj / save_user); none is a fallback writer, and each keeper's user @param now states which user it is)
+
+7. done (unit/coding_rule_tests.php now has both coded checks, wired under the 'requesting user on the message' subheader and scanning the library below the entry points — MODEL, API_OBJECT, WEB, SHARED: (a) php_user_message_param_shadow_tests uses a token_get_all parser (msg_param_shadows + helpers) to flag any function that overwrites its own user_message parameter with a fresh new user_message() — the append-only shadow — while tolerating a legitimate local buffer of the same class, a default-value initializer in the signature and the guarded null-init of a nullable parameter (import_convert_xbrl::build_data); a line grep could not tell these apart, so the parser walks each function body, attributes nested-closure bodies to their own scope, and matches $param = new user_message including the namespaced form; validated to catch the del_links-style shadow and to leave the current tree clean; (b) php_user_message_user_write_tests is a line scanner following php_web_config_from_cache_tests that flags a post-hoc $<msg>->usr = write on a message-named variable, skipping comment lines and the sanctioned writers (the user_message class files and web/frontend.php's login user switch); the http and api index.php entry points sit outside the scanned trees; while wiring this, one leftover post-hoc write in user::create_system_user was folded into the user_message constructor so the tree is clean)
+
+All messages to the user should be transported via $msg. Check if there are any e.g. log_warning messages that should better be shown to the user. Use the function that does both in one (log and $msg enrichment if possible)
+
+partly done — audited all 765 log_warning/log_err sites and 263 `= new user_message(` buffers (most are correct: internal-only diagnostics stay off $msg per coding.md 56-57, and ~230 buffers are legitimate per-item buffers that are merge()'d or is_ok()-checked). Fixed the clear, safe cases that need no new user-facing text:
+- user::can_be_changed_by (user.php ~1901) now adds msg_id::USER_NO_UPDATE_PRIVILEGES on the permission-denied branch instead of only log_warning (its sibling USER_MISSING branch already enriched $msg)
+- triple::import_obj (triple.php ~928) and phrase_list::import_lst (phrase_list.php ~588) import save-failures now use log_err_msg($txt, $msg) — the first real uses of the combined log+enrich helper (was 0)
+- triple::phrase_from_api_json (triple.php ~853) dropped its fresh shadow buffer and maps the nested from/to phrase into the threaded $msg, so an invalid nested phrase surfaces
+- user::create_system_user (user.php ~1734) now merges the $msg_sys profile buffer so a failed admin-profile grant at setup is not lost
+  also done (log_warning_msg + new msg_ids):
+- added log_warning_msg / log_warning_msg_ui (text_log_functions.php) — the warning parallel of log_err_msg; adds a generic user notice with a log link at ok=true (non-breaking) plus the technical log; note add_warning_with_vars(msg_id::X, ...) already does log+enrich for a specific warning
+- added msg_ids INTERNAL_WARNING (used by log_warning_msg) and BACKEND_OLDER_THAN_DB
+- wired: db_check.php ~143 backend-older now add_warning_with_vars(BACKEND_OLDER_THAN_DB) (added the msg_id include+use)
+- REVERTED the import.php 544-559 "not yet implemented" surfacing (and removed the IMPORT_PART_NOT_YET_SUPPORTED msg_id): these are standard export metadata sections (pod/time/selection/description/user/users) present in every export, so add_warning_with_vars piled six notices onto $msg on every import — it buried the genuine error in import_tests get_last_message ("Unknown element test") and would spam the user on normal round-trips; a known dev limitation belongs in the admin log (log_warning), not the user message
+- REVERTED the sandbox_named.php ~215 url_mapper surfacing back to log-only: url_mapper only checks url_var::NAME ('k'), but a form can carry the name under url_var::NAME_GIVEN ('kg') or identify an existing object by id, so add(MANDATORY_FIELD_NAME_MISSING) there is a false positive that leaked into the views_by_id snapshot HTML (broke system_view_ui_tests); the user-facing mandatory-name check stays in api_mapper (:143), which reads the canonical json name field
+  still open (need a decision, not just mechanics):
+- web/types/type_object.php ~211 is the twin of sandbox_named ~215 and has the SAME url_mapper false-positive (name may arrive under NAME_GIVEN or the object is identified by id) — do NOT surface it until the url_mapper name check accounts for url_var::NAME_GIVEN ('kg') and id-based edits; the proper fix is to make that check reliable, then surface a genuine no-name-at-all submit. cfg/group/group.php ~1156 group-description-not-saved (candidate for IMPORT_PART_NOT_YET_SUPPORTED-style notice or add_info)
+- buffers whose fix needs a signature change (thread a user_message param, each marked TODO Prio 1): web/group/group.php ~241 set_phrase_from_json_array (void), cfg/component/component.php ~496 formula_from_api_json plus its 5 siblings (742,775,808,841,873); constructors web/sandbox/db_object.php ~137 and web/sandbox/combine_object.php ~70 (optional ?user_message param)
+- leaf buffers to surface via the return value / is_ok() check: cfg/value/value_base.php ~2108 (job enqueue failure lost), cfg/import/convert_wikipedia_table.php ~196, web/element/element_group.php ~159
+- low priority: 7 sandbox base-class "missing override" stubs discard a throwaway $msg (should log_err/return is_ok()); legacy *_old methods; side lead cfg/word/triple_list.php ~874 calls get_ready() with no arg so IMPORT_TRIPLE_NOT_READY drops (formula_list.php ~891 passes a real buffer)
+
+### change log table deterministic order (carry the change id through the api)
+
+the change log table rows still swap between runs: two changes that fall in the same wall-clock second are ordered only by change_log_list::sort_by_time_and_what, whose tie-break is the what text (alphabetical), not the insertion order. e.g. the initial `added "System Test Word"` and the later `added description "..."` flip depending on whether they land in the same second - alphabetical puts the name-add above the description-add even though the description was written later. the whole-second bucketing added for test mode makes this worse because it deliberately collapses the sub-second difference, so the what-text tie-break decides every same-second group. the root cause is that the change entries carry no unique key: change_log::api_json_array (src/main/php/cfg/log/change_log.php ~683) sends action_id, table_id, field_id, row_id and change_time but not the entry's own change_id (change_log::FLD_ID), so the frontend change_log_named entries all have id 0 (see the "api change entries carry no own id" note in change_log_list::head, which is why add() is called with allow-duplicates).
+
+fix: add the change id (change_log::FLD_ID) to change_log::api_json_array, map it into the frontend change_log / change_log_named via api_mapper (into $this->id), and change change_log_list::sort_by_time_and_what to order by the change id descending as the primary key (the change id is monotonic with the db insert, so it is the true insertion order and never collides), keeping change_time only for the display; the test-mode whole-second bucketing and the what-text tie-break then become unnecessary and can be removed, and change_log_list::head can drop the allow-duplicates flag once the entries have real ids so the id-dedup of add() works normally. write the test first: extend the change_word workflow write snapshot so the `added "System Test Word"` and `added description` rows keep the insertion order regardless of the wall-clock second. note the docs/llm/frontend.md deterministic-order rule and the still-open change_log_list TODO Prio 1 about the write order.
+
+### change log table paging (implement the prepared forward/back buttons)
+
+the change log table pure already renders a forward button (icons::PAGE_FORWARD) when the row limit is reached and has a prepared back button (icons::PAGE_BACK) in change_log_list::tr_page_nav; the buttons are only icons so far and do not navigate yet. implement the actual paging with the prompts below in order.
+
+add a change log page url parameter (a new url_var const, '9'-prefix rules do not apply as this is not a back param) that carries the zero-based page number of the change log table pure; read it in http/view.php resp. the word/triple page controller and pass it down as an explicit parameter (never a superglobal) to ui_log::change_log_table_pure.
+
+thread the page number from ui_log::change_log_table_pure into change_log_list::tbl_when_who_what as a new $page parameter (default 0) next to $max_rows; replace the hard coded $first_page = true with $first_page = ($page == 0) and compute $more_rows from the page window (the list has more changes than $page * $max_rows + $max_rows), so the back button shows from page 1 on and the forward button hides on the last page.
+
+show only the rows of the current page: instead of head($max_rows) use an offset+limit slice of the sorted list (add change_log_list::page(int $page, int $max_rows) returning the $max_rows changes starting at $page * $max_rows, mirroring head()); keep the newest-first sort from ui_log::prepared_change_log. note that prepared_change_log currently head()s the list to the 'word changes' row limit (20) before the pure table is rendered, which would cap paging at those 20 rows - remove that head() for the pure table (or raise it) so the paging can reach all changes of the object.
+
+turn the prepared icons in change_log_list::tr_page_nav into real links: the forward button links to the same page with the change log page url param increased by one, the back button decreased by one, built via html_base::url_new / ref like ref::refresh_job_link; add a msg_id + en/de translation for the 'next page' and 'previous page' tooltip and pass it as the ref title.
+
+add a unit workflow snapshot test for the change log paging under unit_ui: render the change log table pure for page 0 (forward only), page 1 (back and forward) and the last page (back only) from a change log longer than two pages, and assert the correct buttons and the correct row window per page; extend src/test/resources/web/html/object_pages/sys_log.html accordingly.
+
+### reduce response time
+
+if no prepared cached page is found, repeat the previous page with a 'processing' message and 'processing since 1 second', 2, 3 ... up to the timeout limit
+
+include in the install.sh script the creation of a crontab job
+
+create a job that checks for some users (the number of users to check should be defined in the config.yaml) if the 'uses_sandbox' is still valid and if not switch off the flag and set the 'last_update' time so that always the least updated users are checked with the next job run
+
+**4. Backend job: sandbox page generation**
+> Implement a backend job (queue-based) that regenerates the sandboxed HTML for a given user+view+object. On completion, write the result to the cache store keyed appropriately for that user's sandbox context, and mark it available for the frontend to fetch on next poll. Include a check to avoid enqueuing a duplicate job if one is already in flight for the same key.
+
+**5. Reactive cache invalidation**
+> Implement reactive invalidation: when a request finds the cached HTML for a view+object is stale (define staleness check — e.g. compare object's last-modified timestamp to cache timestamp), trigger the backend regeneration job instead of serving straight from cache, following the same stale-serve-with-refresh-flag pattern as sandbox users.
+
+**6. Proactive invalidation via object dependency index**
+> Implement a reverse index mapping object_id → list of dependent view cache keys. When an object is updated, look up dependents and enqueue regeneration jobs for each. Add a configurable limit on the number of dependent views invalidated per object update in a single pass, to prevent fan-out overload for widely-referenced objects (e.g. batch/throttle beyond the limit).
+
+**7. Frontend polling with backoff**
+> Implement frontend polling for pages served with the "refresh coming" flag: poll for the updated page with increasing interval (define starting interval and growth factor), up to a configured maximum number of attempts/time limit. On limit reached, fall back to [describe your auto-user/IP-whitelist fallback mechanism here — needs your existing spec, since I don't have those details].
+
+**8. Request logging**
+> Add a lightweight insert into the request log table for each page request, capturing at minimum: user_id, view_id, object_id, timestamp, and whether served from cache or freshly generated/regenerated.
+
+Fill the gap: Compare with the actual spec for your existing "auto user and IP whitelist fallback" mechanism, so prompt 7's fallback description is a placeholder — you'll want to fill that in from your existing plan before comparing.
+
+add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
+
+
+### prepare denial-of-service protection
+
+use the cache for read only pages
+
+limit the number of read requests per time unit by the webbrowser and auto switch to ip whitelist mode
+
+count the number of db write requests by user and ip
+
+add to config.yaml the max age for each db_cache_type
+
+after each write to db_cache check if there are row older than defined in the setting and delete them using a prepared query
+
+### denial of service test
+
+The goal of this block is an end-to-end test that a flood of change requests first blacklists the abusing user and, if the abuse continues from more than one user, automatically raises the pod to user whitelist mode. The current protection is only the manual, file based whitelist in `src/main/php/web/server_guard.php` toggled from `http/server_admin.php` (state in `server_admin/state.json`); the automatic per-user rate limit, the database blacklist and the auto-switch to whitelist mode still have to be wired up. Build the prompts below in order: the first ones add the enforcement and the make-it-testable config knobs, the later ones are the actual DoS test that lowers those knobs, simulates the flood and asserts the reaction.
+
+wire the existing `max change` config (config.yaml at `zukunft.com > system configuration > user > default > backend > max change > daily > ip user`, currently 1000 and only defined) to real enforcement: count the change requests a user has made in the configured period and reject a change that would exceed the limit. Add a second daily limit `logged in user` next to `ip user` so a registered user has its own threshold, and read both through the normal config accessor (the same path used for other `system configuration` values) instead of a hard coded number. Confirm no superglobals are read inside the enforcement method - the requesting user must be passed in as a parameter.
+
+when a user exceeds its `max change` daily limit add that user to the database blacklist (the fallback that `server_guard.php` and `http/server_admin.php` already refer to as "the database based blacklist") and from then on reject every further change request from that user with a clear user_message that tells the user why the change was refused and how to contact the admin. Keep the blacklist in the database, not in the file based `user_whitelist.txt`, so the manual whitelist and the automatic blacklist stay independent.
+
+add a new system configuration knob `user whitelist auto switch` = the number of distinct blacklisted users within the detection period that automatically activates the user whitelist mode (the same `user_whitelist_active` flag in `server_admin/state.json` that the admin page toggles). Default it to a high, production-safe value. When the number of freshly blacklisted users reaches this threshold, set `user_whitelist_active` to true exactly as the admin page would, and log a warning so the admins see why the pod switched to whitelist mode.
+
+write the denial of service test itself (a dedicated test, e.g. under `src/test/php/` following the existing test structure, runnable via `php test_unit.php`, admin via the IP_ADMIN fallback on the CLI). As the first step the test must lower the two knobs to test values and remember the previous values so it can restore them at the end: set the `max change` daily limit for `ip user` and for `logged in user` to a very low number (e.g. 2 changes per period) and set `user whitelist auto switch` to 2 users. Assert that reading the knobs back returns the lowered values before continuing.
+
+in the same test simulate one user that sends more change requests than the lowered `max change` limit in a short period. Assert that after crossing the limit the user is added to the database blacklist, and assert that the next change request from that already-blacklisted user is rejected (the change is not stored and the returned user_message says the request was refused). The user whitelist mode must still be inactive at this point because only one user has been blacklisted (threshold is 2).
+
+extend the test with a second user that also sends too many change requests in a short period. Assert that once the second distinct user is blacklisted the `user whitelist auto switch` threshold of 2 is reached and `user_whitelist_active` in `server_admin/state.json` flips to true automatically. Then assert that an ip user (anonymous, not logged in) change request is now rejected by `server_guard.php` with the `optional/user_reject.html` reject page, and assert that the server admin page (`http/server_admin.php`) reports the user whitelist as active - check the rendered state that the page reads via `read_state()` / shows as "User whitelist: active".
+
+as the final step of the test reset everything to the pre-test state: restore the `max change` daily limits and the `user whitelist auto switch` knob to their remembered default values, clear the two test users from the database blacklist, and switch the user whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle user whitelist` POST action in `http/server_admin.php`), leaving `user_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal change request from a fresh user succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
+
+### distributed denial of service test
+
+This block is the IP based sibling of the denial of service test above: instead of one logged in user flooding change requests, many different IP addresses each send too many requests in a short period, and the pod must blacklist each abusing IP and, once more than one IP is abusing, automatically raise the pod to IP whitelist mode. The existing pieces are the IP branch of `src/main/php/web/server_guard.php` (`ip_whitelist_active`, `server_admin/ip_whitelist.txt`, `ip_allowed()` with CIDR matching, `optional/ip_reject.html`), the IP toggle in `http/server_admin.php`, and the initial `ip_blacklist.json` (see `src/main/php/cfg/const/files.php::IP_BLACKLIST_FILE` and the `ip_ranges` test constants). The automatic per-IP request rate limit and the auto-switch to IP whitelist mode still have to be wired up. Build the prompts below in order, same as for the single-user test: enforcement and testable config knobs first, then the actual distributed test.
+
+add a per-IP request rate limit: count the requests coming from one client IP (`$_SERVER['REMOTE_ADDR']`, passed in as a parameter, never read as a superglobal inside the enforcement method) within a configured period and reject requests from an IP that exceeds the limit. Add the knob to config.yaml next to the existing `max change` values, e.g. `zukunft.com > system configuration > user > default > backend > max requests > per minute > ip` for the raw request flood limit (distinct from `max change` which counts stored changes), and read it through the normal config accessor. Note that a DDoS is about request volume, not only stored changes, so this limit must also cover anonymous read/GET requests that never reach the change logic.
+
+when an IP exceeds its request rate limit add that IP (or its /32 resp. /128 range) to the database IP blacklist that `server_guard.php` and `http/server_admin.php` already refer to as the fallback, reusing the same blacklist storage that `ip_blacklist.json` seeds. From then on reject every further request from that IP early in `server_guard.php` with `optional/ip_reject.html`, the same page an active IP whitelist uses for a non-listed IP. Keep the automatic IP blacklist independent of the file based `ip_whitelist.txt` so the manual whitelist and the automatic blacklist do not overwrite each other.
+
+add a system configuration knob `ip whitelist auto switch` = the number of distinct blacklisted IPs within the detection period that automatically activates the IP whitelist mode (the `ip_whitelist_active` flag in `server_admin/state.json` that the admin page toggles). Default it to a high, production-safe value. When the number of freshly blacklisted IPs reaches the threshold, set `ip_whitelist_active` to true exactly as the admin page would, and log a warning so the admins see why the pod switched to IP whitelist mode. Note that activating an empty IP whitelist locks everyone out (the warning already emitted by `server_guard::warn_if_empty_ip_whitelist`), so on the auto-switch the current admin / server IPs must be seeded into `ip_whitelist.txt` first.
+
+write the distributed denial of service test itself (a dedicated test under `src/test/php/`, runnable via `php test_unit.php`, admin via the IP_ADMIN fallback on the CLI). As the first step lower the two knobs to test values and remember the previous values for restore at the end: set the per-IP `max requests` limit to a very low number (e.g. 2 requests per period) and set `ip whitelist auto switch` to 2 IPs. Assert that reading the knobs back returns the lowered values before continuing. Since the CLI has no real remote address, drive the requests through a helper that lets the test set the client IP per request (the same value `server_guard.php` reads from `REMOTE_ADDR`), so the test can simulate distinct source IPs.
+
+in the same test simulate one IP address that sends more requests than the lowered per-IP limit in a short period. Assert that after crossing the limit that IP is added to the database IP blacklist, and assert that the next request from that already-blacklisted IP is rejected by `server_guard.php` with the `optional/ip_reject.html` page (403). The IP whitelist mode must still be inactive at this point because only one IP has been blacklisted (threshold is 2).
+
+extend the test with a second, different IP address that also sends too many requests in a short period. Assert that once the second distinct IP is blacklisted the `ip whitelist auto switch` threshold of 2 is reached and `ip_whitelist_active` in `server_admin/state.json` flips to true automatically. Then assert that a request from a further, non-whitelisted IP is now rejected with `optional/ip_reject.html`, that a request from an allowed IP in `ip_whitelist.txt` still passes, and that the server admin page (`http/server_admin.php`) reports the IP whitelist as active - check the rendered state it reads via `read_state()` and shows as "IP whitelist: active".
+
+as the final step reset everything to the pre-test state: restore the per-IP `max requests` limit and the `ip whitelist auto switch` knob to their remembered default values, clear the test IPs from the database IP blacklist, and switch the IP whitelist mode off again through the same code path the server admin page uses to deactivate it (the `toggle ip whitelist` POST action in `http/server_admin.php`; note that only a full-access admin may switch the IP whitelist off, restricted admins may not), leaving `ip_whitelist_active` false in `server_admin/state.json`. Assert that after the reset a normal request from a fresh IP succeeds again, so the test is self-cleaning and leaves no active whitelist or blacklist behind.
+
+## fine-tuning for next launch
+
+add to the .env (and sample) parameter for the api to allow the cache (or deny) so that e.g. the api for the config just reads the env file checks the user / token and than returns the message from cache one-to-one. Review the debug call so that &debug=9 basically shows only these main steps
+
+moved to [pending_next_launch.md](pending_next_launch.md) to keep this file small; see also [pending_fermi_live.md](pending_prio_2.md)
+
+### security with low prio
+
+still open (deliberately skipped as too risky / too large to change safely without a test run):
+Content-Security-Policy is not set - needs an audit of the frontend inline styles first (the other
+headers are in place). [the api-write anti-csrf gap and the in_array method detection are now FIXED -
+see "security before go live" 2026-07-21; the api write path is enabled with origin + X-CSRF-Token +
+checked code_id setters, but was previously dead code so it needs an end-to-end write test before
+production.] the bcrypt DUMMY_PW_HASH is pinned at cost 12 while real hashes use the runtime default
+cost - equal on
+php 8.4 (default 12) but diverges on any php where the default is 10, re-opening the timing oracle the
+dummy prevents; derive the dummy from the same cost (skipped: touches auth timing, wants a careful
+test). save_user() has no general can_change() gate (safe today because no write caller passes an
+attacker-influenced target, latent defense-in-depth; skipped: a guard risks breaking a normal user
+saving their own profile without a test run). api/job (api/job/index.php) and api/changeLogList are
+gated only by `id > 0` and leak another user's job / change-history metadata; api/job wants an owner
+filter (skipped: job ownership model unclear), api/changeLogList is largely intended for the public
+graph (needs an explicit access decision). login and the password-reset email have no throttle -
+covered by the planned rate limiter, ensure it also bounds the reset endpoint. informational
+(injection review): sql_par_field_list::par_sql() (line 785) builds inline unescaped sql but only into
+`$qp->call`, the documented never-executed sample string - add a guard/comment so it is never routed
+into exe(); finish deprecating sql_db::sf() in favour of bound parameters.
+
+### Prio 2
+
+allow at least admin users to overwrite the impact and usage via GUI
+
+add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific selections
+
+
+
+### fine-tuning for the next launch — backlog moved out of pending.md to keep the high-prio list small
 
 before the program or database upgrade script are started the actual program version should be check and the execution should be rejected if there is no mathing script or no new version
 
@@ -28,31 +271,17 @@ The main start page shows the "most relevant" global problems with the solution 
 
 If you wonder how the list is calculated you can click on the number to see more details. The calculation is based on many assumptions and yes, they can be wrong.
 
-Ich you create an account and log in, you can change the assumptions. The list is than adjusted based on your personal assumptions, but only for you. 
+Ich you create an account and log in, you can change the assumptions. The list is than adjusted based on your personal assumptions, but only for you.
 
 Other user still see the original list, but they can see, that you have done some changes and they can also use your assumptions if they want.
 
 So each your has its own "sandbox", that never changes, but can see everything that other users have done.
 
-### start page config
-
-the basic steps to show the start page are
-
-- table with 'global issues'
-- sort global issues by impact which is htp
-- get mayor, main and minor columns linked to 'global issues' via triple
-- the order of the column may differ and is relative e.g. 'per cent is after number'
-- the number of rows to show is taken from the config but can be overwritten
-
-### fill the screen 
+### fill the screen
 
 for big screens add more data so that the screen is filled or increase the font size
 
-### more
-
-"more" should always be a link that shows more values
-
-### speed 
+### speed
 
 check why the database loading takes longer if more data ist added and increase the cache usage
 
@@ -84,21 +313,21 @@ reduce the number of load and save calls
 
 why does src/test/resources/web/html/workflow/change_word_wf2/wf2_show.html contain 'the name of the word must not be empty'? I guess this should not be the case.
 
-check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function  
+check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function
 
 check that save() never fails add() silently
 
-in test_triples base the fill_url_array on the a ..._filled() function that returns an object and create the url_array using a object_to_url function. Note 
+in test_triples base the fill_url_array on the a ..._filled() function that returns an object and create the url_array using a object_to_url function. Note
 
 rename the src/test/resources/web/html/workflow/change_word_invalid_wf7 to change_word_fail_wf7 because 'fail' is shorter and it is inline with 'add_word_fail_wf9' and change the 'invalid' to 'fail' within this wf code
 
-for each positiv workflow test create a negativ with the test cases that can fail. Let's start with 'add_word_wf1' and create 'add_word_fail_wf9' that has e.g. the steps 'wf9_edit_no_name_save'. 
+for each positiv workflow test create a negativ with the test cases that can fail. Let's start with 'add_word_wf1' and create 'add_word_fail_wf9' that has e.g. the steps 'wf9_edit_no_name_save'.
 
 add in the word_default view beside the 'view' and 'changes' a 'your' tab with the use overwrite of the shown e.g. word object, so basically the values from the 'user_words' table
 
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
 
-use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes. 
+use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes.
 
 create function like src/main/php/shared/helper/Translator.php::text_db_field for alle types that are part of src/main/resources/db_code_links
 
@@ -106,11 +335,11 @@ see /docs/llm/coding.md and in union queries created by the sql_creator the para
 
 add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
 
-after adding a word the word as it has been saved in the database should be shown. Because the db id is not yet known, that word name should be used to load the word. this implies that the url for /src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save_add_confirmed_url.txt should contain '"url_part_back": {"mask_id": "word_default", "name": "System Test Word"}' using the short url var for the name 'k'  
+after adding a word the word as it has been saved in the database should be shown. Because the db id is not yet known, that word name should be used to load the word. this implies that the url for /src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save_add_confirmed_url.txt should contain '"url_part_back": {"mask_id": "word_default", "name": "System Test Word"}' using the short url var for the name 'k'
 
 update the confirm change view to shows the user changes (based on the '8' prefixed values) and call the page when in the word edit view save is pressed
 
-complete the 'to_url_array' function for all word fields e.g. the sandbox fields and add a TODO that this should be moved the test object because it will probably only be used for testing. But this can only be decided after the workflows are complete 
+complete the 'to_url_array' function for all word fields e.g. the sandbox fields and add a TODO that this should be moved the test object because it will probably only be used for testing. But this can only be decided after the workflows are complete
 
 add a snap timestamp to the change log. The snap timestamp is the time when the user has called the edit view that he used to apply the changes so the db snap that has been the base for the change. Even if live update of the edit view would be possible, this is not recommended not tp break the user workflow. The max would be to show a refresh icon so that the user could refresh the edit view, but this is prio 4.
 
@@ -131,7 +360,7 @@ add a '8' url prefix that is used to include the database values in the url for 
 Add a hidden json to the get request to detect the value changed or use 0 prefix for url vars
 
 use the '8' prefixed values (urlVar::PRE) to create a complex parallel change workflow. To detect the real user change requests and prevent overwriting other user change during the edit view is shown
--> test wordflow 
+-> test wordflow
 1. user_a opens the edit view
 2. user_b open the edit view and changes the phrase type
 3. user_b press save and the changed phrased type is written to the database
@@ -139,7 +368,7 @@ use the '8' prefixed values (urlVar::PRE) to create a complex parallel change wo
 5. the changes of user_a are checked against the status when the edit mask has been opened and only the description is updated
 6. the phrase type is left as user_b has changed it
 
-check that all api interfaces can load user specific data independent of the session user 
+check that all api interfaces can load user specific data independent of the session user
 
 check the open api definition and the openapi check script and suggest updates in the definition and the script
 
@@ -157,15 +386,15 @@ a js frontend can use subscribe to get the updated cache data
 
 additional the cache can be updated by time or by trigger words without frontend request
 
-separate the api $db_con var from the frontend and backend 
+separate the api $db_con var from the frontend and backend
 
 ### word frontend
 
-add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values  
+add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values
 
 add to /docs/llm/* that for all html tags that have open and closing tag e.g. <form...></form> a function in html_base should be used. The html_base function should use a const for the html tag.
 
-apply the use of the html_base  
+apply the use of the html_base
 
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default word and triple views below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
 
@@ -179,7 +408,7 @@ The default view for a word should have four columns for width screens > 2800 pi
 3. a group with the most relevant formulas and results (and later a result charts, just create a TODO) and the position type 'side_or_last_below'
 4. a tab switch for the views with a miniature preview and two buttons: 'view' or 'switch' (see src/main/php/web/html/html_base.php::dsp_link_hist_box)
 5. a second tab with the change log with the latest changes on the top
-second step:
+   second step:
 6. maybe a preselected third tab with the user changes if the user has done some overwrites
    the tab switch has the position type 'side_or_last_below'
 
@@ -409,19 +638,19 @@ are there any database or object fields that are not yet filled or set by one of
 
 add a table licences and add the field licence to the json message header with the possibility to overwrite the licence for each object
 
-add the licence to the subtitle if not the standard cc0 
+add the licence to the subtitle if not the standard cc0
 
 in the footer add dynamically other licences if used
 
 ### backend
 
-in src/main/php/shared/json_fields.php rename 'view-validation' to 'view_validations' and 'calc-validation' to 'calc_validations' and 'value-list' to 'value_list' and 'ip-blacklist' to 'ip_blacklist' to always use '_" instead of '-' for json field names 
+in src/main/php/shared/json_fields.php rename 'view-validation' to 'view_validations' and 'calc-validation' to 'calc_validations' and 'value-list' to 'value_list' and 'ip-blacklist' to 'ip_blacklist' to always use '_" instead of '-' for json field names
 
 create a list CONST array "SAMPLE_VIEW_DATA_FILES" that contains test data for the unit tests of the views. These test data is used for unit tests without using the database id, so these files can be imported in setup_db after the import of the system config. At the moment this const array contains only this file: src/main/resources/messages/base_data/zurich.json . create a function for the import and call it after the config loading
 
 add a config section to the json import format that can be used to overwrite the system and user config for the import and add positive and negative unit tests for the overwrite of the number of decimals
 
-add in the float value object the var 'precision' which defines how accurate the value is. include this field not only in the database (but not for standard values), the api, the frontend and also in the im- end export json 
+add in the float value object the var 'precision' which defines how accurate the value is. include this field not only in the database (but not for standard values), the api, the frontend and also in the im- end export json
 
 add to the json import a 'view_validation' section that contains some relevant screen outputs in the '.md' format based on a given human readable url
 
@@ -476,7 +705,7 @@ fix the '// TODO add json_fields::VIEW_VALIDATION' in src/main/php/cfg/import/im
 4. add data_object::validate_views(user_message) (mirror validate_results): render each imported view to HTML via its *_ui display function, normalise it with html_to_markdown, compare to the expected markdown and on a difference add a translatable msg_id error (new VIEW_VALIDATION_MISMATCH / VIEW_VALIDATION_VIEW_MISSING cases with en/de)
 5. call validate_views at the end of get_data_object next to the validate_results block and count view_validations_done / view_validations_failed
 6. add a small sample import file with a view-validation section and a $dto unit test in import_tests.php: one positive (the rendered view matches) and one negative (a wrong expected ".md" reports the mismatch via $msg)
-open questions for review: render the view against the imported $dto only or the database; which user context; is html_to_markdown the right normalisation or should both text and markdown be supported
+   open questions for review: render the view against the imported $dto only or the database; which user context; is html_to_markdown the right normalisation or should both text and markdown be supported
 
 ### user frontend
 
@@ -531,7 +760,7 @@ check where in the frontend a parameter / configuration values is used that is n
 
 create a script that updates all caches e.g. src/test/resources/api/type_lists/type_lists.json and src/test/resources/api/ui_config/ui_config.json after a change of any parameter in src/main/resources/db_code_links
 
-### remaining potential security issues  
+### remaining potential security issues
 
 add TOTP authentification for SERVER_ADMIN2 and 3, so that the first login can be done with the pure user name and password and than a page shows the QR code e.g. for an App like FreeOTP+ to add a second factor
 
@@ -595,3 +824,120 @@ today (a normal user's edit of an admin-protected system-owned object is routed 
 becomes relevant only when a pod-level config must be read from the system value not the user overlay
 (the pending rate-limiter work); same defense-in-depth character as the save_user() latent item.
 
+### fermi live-adjust (the sign-flip loop)
+
+Goal of this whole block: a visitor changes ONE assumed input value of a Fermi
+estimate and sees the dependent result — and its sign — recompute live, without
+a page reload and without a developer rebuilding anything. Success metric is not
+"feature complete" but "one conversation partner changes the sign-determining
+value and does not stall". Build the smallest path that delivers that loop;
+defer everything generic. Work the prompts in order — each is independently
+shippable and testable, and each starts by writing the unit test first
+(`src/test/php/unit_ui/...` for rendering, `src/test/php/unit_workflow/...` for
+the edit path), per `docs/llm/testing.md`. Use the `fermi_discussion.json`
+import fixture (the status-quo-harm / rollback / VoI chains) as the live data —
+the sign-determining input is the value tagged `overstimulation gap` + `factor`
++ `assumed value`, whose change flips `rollback net balance` between a wash and
+  a clear win.
+
+1. Write a unit test in `src/test/php/unit_ui/fermi_ui_tests.php` that asserts a
+   single result value renders together with its full input chain: build a
+   `result_ui` from a `create/test_result::sign_flip_chain_ui()` factory (do not
+   repeat the class object name in the factory method), positive test asserts
+   the snapshot fragment in `object_pages/fermi_chain.html` shows the result
+   number, the formula name, and each input value with its provenance qualifier
+   (`measured value` / `assumed value`) visible; negative test asserts an empty
+   input chain reports the documented empty result, not just "no exception".
+   Reuse `web/value/value.php::value()` and `web/result/result.php::display()`
+   for the rendering — do not duplicate their html.
+
+2. Add to `web/result/result.php` a `chain_ui(phrase_list $context, string $back = '')`
+   method that returns the html of one result plus the list of input values it
+   was computed from, each input rendered via the existing
+   `value::value_edit($back)` so the input is already a click-to-edit link. Read
+   the "how many inputs to show" limit from `$ui->cfg` (new pod config value,
+   never `new config()`); pass `$size`/`$page` as explicit parameters, never
+   from superglobals. Single-exit: assemble into one `$result` string and return
+   it once. Provenance marker comes from the value's qualifier phrase, taken
+   from the `words` group — never from a free-text note field.
+
+3. Extend the value-edit workflow (the `mask`/`confirm` path already sketched in
+   the "workflow" block above, the `view.php?mask=...&confirm=1` url) so that on
+   confirm of a value that is an INPUT to at least one formula, the affected
+   results are recomputed and their new numbers returned in the same response.
+   Write the workflow test first in
+   `src/test/php/unit_workflow/fermi_recalc_tests.php`: set the `overstimulation
+   gap` input, confirm, assert that `rollback net balance` is recomputed to the
+   expected reproduced number (use the value from the `calc-validation` block of
+   the import fixture as the oracle, so the test fails loudly if the engine and
+   the fixture ever diverge). Recompute uses the existing
+   `web/formula/expression.php` element evaluation against the backend
+   `cfg/formula/formula.php::calc` path — do not write a second evaluator in the
+   frontend. On any reproduction mismatch, route a translatable error via `$msg`
+   (new `msg_id` case in `messages.php` with en/de text), do not silently show a
+   stale number.
+
+4. Add an async (no full page reload) recompute endpoint: a thin arm on the
+   existing `api/value` / `api/resultList` controllers that accepts one changed
+   input value and returns the recomputed dependent results as json (the api
+   json the frontend view-model already consumes). Move any inline SQL out of
+   `web/` into prepared, parameterized statements in the model layer (a
+   string-concatenated `WHERE ... = $id` is an injection risk). Test first:
+   positive asserts the changed input yields the reproduced result number,
+   negative asserts an unknown input phrase returns the documented `$msg` error,
+   not a DB fallback (`import_mapper` rule: resolve only from the passed-in data
+   object, never read the DB to paper over a missing reference).
+
+5. Wire the front-end so editing an `assumed value` input in the `chain_ui`
+   posts to the recompute endpoint and swaps in the new result number and its
+   sign in place. Keep it to the one chain — no four-column layout, no tab
+   switch, no miniature preview (those stay in the generic `word frontend` block
+   and are NOT on this critical path). The only visible state that must change
+   live is: the edited input number, the dependent result number, and a sign
+   indicator (e.g. result styled differently when it crosses zero). Reuse the
+   existing user-vs-standard styling (`styles::STYLE_USER`) so a visitor's
+   override is visually distinct from the stored standard, mirroring
+   `value::value()`.
+
+6. Self-test the loop before inviting anyone: load the imported
+   `fermi_discussion.json`, open the `rollback net balance` chain, and change the
+   `overstimulation gap` input from 100 down through 30 to 10. Assert (manually
+   and as a final workflow test) that the net result moves from ~2.2M HTP toward
+   ~59.8M HTP and that the sign indicator changes as the wash becomes a clear
+   win. If the change is visible and immediate, the live-adjust loop is done —
+   independent of how much of the rest of `pending.md` is finished. If it is not
+   immediate, the latency-killing gap is in one of steps 2–5; fix that before
+   adding any generic feature.
+
+## review
+
+check first if these prompts are still needed
+
+#### general
+
+design and apply the "write only the changed fields" save flow in one deliberate change (the display side of the phantom 'added view id ""' rows is already fixed by resolving the view name from the cache in change_log_named::value_to_show): a description-only word edit still writes a view assignment because (1) word::view_selector preselects the default view (d=90) for a word without a stored view and fabricates the '8'-prefixed baseline from the same value, (2) ui_preview::popup_changes re-posts every field but drops the '8'-prefixed baselines, so action_crud cannot tell "unchanged" from "chosen" and the backend compares the full posted object against the db row; the fix needs an agreed null convention first: in a save request null must mean "field not carried, keep the stored value" while the user must still be able to set a value back to null with the normal save (e.g. an explicit empty string as the clear request that the write converts to null), and before changing anything the import null handling must be audited (import_mapper maps missing fields to null; the no_update re-import round-trips and sandbox::save fill/get_similar rely on the current compare semantics), then carry the '8' baselines through the confirm submit, drop the unchanged fields before the write, add the matching null guards to db_fields_changed (description, usage, plural, impact, view) plus positive and negative unit tests per field, and check the same pattern for triple, source, view and component edit forms
+
+#### formula
+
+add non latex formula to formula view
+
+add the latex field to the formula add and edit views: latex is the only user-editable formula db
+field (formula_db::FLD_LST_USER_CAN_CHANGE) without a form field - the url var (url_var::LATEX
+'fx' / 'latex'), the url mapper read (web/formula/formula.php url_mapper) and to_url_array already
+transport it, but no 'system form field latex' component exists; create the component (unique
+ui_msg_code_id, see docs/llm/json_views.md), add it to the formula_add and formula_edit views in
+src/main/resources/messages/system_views.json after the formula text field, and extend the
+formula workflow tests (fill_url_array already carries every editable url field) plus the
+object_pages snapshots
+
+complete web/formula/formula.php db_fld_to_url: it maps only formula_name, formula_text and
+description, so the confirm change preview cannot label a pending latex, formula type or
+all_values_needed change with the changed db field; add formula_fields::FLD_LATEX,
+formula_fields::FLD_TYPE and formula_fields::FLD_ALL_NEEDED with their url vars and add the
+matching positive and negative unit tests (docs/llm/testing.md)
+
+note for the review: the other formula db fields are absent from the edit view by design -
+formula_text (internal {f1} expression) is derived from the posted user expression on save,
+last_update is set by the calculation, usage is shown read-only as the usage number sub title,
+impact and usage overwrites are the separate admin GUI pending entry, and excluded is handled by
+the delete workflow
