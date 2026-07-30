@@ -962,6 +962,7 @@ class test_mappers
                 $obj = $t_grp->group_filled();
                 break;
             case component_types::FORM_FIELD_FORMULA_EXPRESSION;
+            case component_types::FORM_FIELD_FORMULA_LATEX;
             case component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED;
             case component_types::FORM_LIST_FORMULAS;
             case component_types::FORM_SELECT_FORMULA;

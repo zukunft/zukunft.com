@@ -4911,6 +4911,7 @@
     \-- form_protection_type - section for function form_protection_type not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- form_table_linked_view - section for function form_table_linked_view not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- form_formula_expression - section for function form_formula_expression not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
+    \-- form_formula_latex - section for function form_formula_latex not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- form_formula_all_fields - section for function form_formula_all_fields not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- button_cancel - section for function button_cancel not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
     \-- button_save - section for function button_save not yet defined that it should be optional with show password but without auto fill in /component/execute/system_form.php
@@ -7185,6 +7186,8 @@
         \-- system_form - TODO Prio 0 review
     \-- form_formula_expression
         \-- system_form - create the html code for the form element to enter the formula expression
+    \-- form_formula_latex
+        \-- system_form - create the html code for the form element to enter the formula in the latex format
     \-- form_formula_all_fields
         \-- system_form - create the html code for the form flag to set that the formula needs all fields to be set
     \-- button_cancel

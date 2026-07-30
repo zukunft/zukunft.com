@@ -1860,6 +1860,24 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to enter the formula in the latex format
+     * @param db_object $dbo the frontend formula object with the latex text used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code of the latex input field
+     */
+    function form_formula_latex(db_object $dbo, string $form_name): string
+    {
+        // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
+        // the latex text before the change (see url_var::PRE)
+        return $this->form_field_tracked(
+            url_var::LATEX,
+            msg_id::FORM_FIELD_FORMULA_LATEX,
+            $dbo->get_latex(),
+            view_styles::COL_SM_12,
+            $dbo);
+    }
+
+    /**
      * create the html code for the form flag to set that the formula needs all fields to be set
      * @param db_object $dbo the frontend formula object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name

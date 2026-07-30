@@ -219,14 +219,24 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * @return array the user-editable formula db field names mapped to their url var key
+     * @return array the user-editable formula db field names mapped to their url var key;
+     *               the internal and the user expression both map to the posted user expression,
+     *               because both db fields are derived from it on save; only the system-set
+     *               last_update has no url var, because no form may post it
      */
     function db_fld_to_url(): array
     {
         return [
             formula_fields::FLD_NAME => url_var::NAME,
             formula_fields::FLD_FORMULA_TEXT => url_var::USER_EXPRESSION,
+            formula_fields::FLD_FORMULA_USER_TEXT => url_var::USER_EXPRESSION,
+            formula_fields::FLD_LATEX => url_var::LATEX,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
+            formula_fields::FLD_TYPE => url_var::FORMULA_TYPE,
+            formula_fields::FLD_ALL_NEEDED => url_var::NEED_ALL,
+            fields::FLD_EXCLUDED => url_var::EXCLUDED,
+            fields::FLD_SHARE => url_var::SHARE,
+            fields::FLD_PROTECT => url_var::PROTECTION,
         ];
     }
 

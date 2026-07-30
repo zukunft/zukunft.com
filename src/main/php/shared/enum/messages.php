@@ -1927,6 +1927,7 @@ enum messages: string
     // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
+    case FORM_FIELD_FORMULA_LATEX = 'form_field_formula_latex';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
 
     // view fields

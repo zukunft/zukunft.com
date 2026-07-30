@@ -2,7 +2,42 @@
 
 ## list of planned llm prompts
 
-## high prio
+### high prio
+
+
+
+#### review formula
+
+add non latex formula to formula view
+
+add the latex field to the formula add and edit views: latex is the only user-editable formula db
+field (formula_db::FLD_LST_USER_CAN_CHANGE) without a form field - the url var (url_var::LATEX
+'fx' / 'latex'), the url mapper read (web/formula/formula.php url_mapper) and to_url_array already
+transport it, but no 'system form field latex' component exists; create the component (unique
+ui_msg_code_id, see docs/llm/json_views.md), add it to the formula_add and formula_edit views in
+src/main/resources/messages/system_views.json after the formula text field, and extend the
+formula workflow tests (fill_url_array already carries every editable url field) plus the
+object_pages snapshots
+
+complete web/formula/formula.php db_fld_to_url: it maps only formula_name, formula_text and
+description, so the confirm change preview cannot label a pending latex, formula type or
+all_values_needed change with the changed db field; add formula_fields::FLD_LATEX,
+formula_fields::FLD_TYPE and formula_fields::FLD_ALL_NEEDED with their url vars and add the
+matching positive and negative unit tests (docs/llm/testing.md)
+
+note for the review: the other formula db fields are absent from the edit view by design -
+formula_text (internal {f1} expression) is derived from the posted user expression on save,
+last_update is set by the calculation, usage is shown read-only as the usage number sub title,
+impact and usage overwrites are the separate admin GUI pending entry, and excluded is handled by
+the delete workflow
+
+#### change log
+
+add change log to value default view
+
+add my changes to word and triple view
+
+in the change log flip the 'to' and 'from'
 
 design and apply the "write only the changed fields" save flow in one deliberate change (the display side of the phantom 'added view id ""' rows is already fixed by resolving the view name from the cache in change_log_named::value_to_show): a description-only word edit still writes a view assignment because (1) word::view_selector preselects the default view (d=90) for a word without a stored view and fabricates the '8'-prefixed baseline from the same value, (2) ui_preview::popup_changes re-posts every field but drops the '8'-prefixed baselines, so action_crud cannot tell "unchanged" from "chosen" and the backend compares the full posted object against the db row; the fix needs an agreed null convention first: in a save request null must mean "field not carried, keep the stored value" while the user must still be able to set a value back to null with the normal save (e.g. an explicit empty string as the clear request that the write converts to null), and before changing anything the import null handling must be audited (import_mapper maps missing fields to null; the no_update re-import round-trips and sandbox::save fill/get_similar rely on the current compare semantics), then carry the '8' baselines through the confirm submit, drop the unchanged fields before the write, add the matching null guards to db_fields_changed (description, usage, plural, impact, view) plus positive and negative unit tests per field, and check the same pattern for triple, source, view and component edit forms
 
