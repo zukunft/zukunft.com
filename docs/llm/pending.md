@@ -12,15 +12,15 @@ the basic steps to show the start page are
 
 ## main pages
 
-in the confirm pages like /test/resources/web/html/workflow/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save.html show below the changes not only 'impact' but 'impact of this change in ' and if nothing else is set use 'happy time points' as fallback. if no number can be calculated add 'unknown' and 'update' as a link.
-
 ### word and triple
 
 add a 'my' tab additional to the views and changes tabs e.g. in the word default view that is shown if the user logged in and has created some user overwrites. the tab should list the entries of the related "user_" tables e.g. for words the user specific changes from "user_words"
 
 check why in the word default view the views tab is sometimes missing e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
-"more" should always be a link that shows more values
+create a phrase_values view that shows all values related to a phrase in up to four columns depending on the screen size like e.g. word default view. For this first read the e.g. 1000 (a config.yaml value) most relevant (high impact) values related to the phrase from the database. Than get for each column a phrase that is often used in the values e.g. for city it could be inhabitants, and use the phrase as a column headline 
+
+add to /docs/llm/3 that "more" should always be a link that shows more. e.g. more in the values table should link to the phrase_values view just created
 
 ### triple
 

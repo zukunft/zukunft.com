@@ -390,6 +390,19 @@ class word_ui_tests
             $ui_sys->usr = $usr_keep;
         }
 
+        // below the changes the impact of the pending change is shown in the impact unit
+        // ('happy time points' unless another unit is set); the impact number cannot be
+        // calculated yet, so 'unknown' is shown with an update link to retry the calculation
+        $test_name = 'the impact line shows the unit and the unknown impact with an update link';
+        $impact_html = $preview->popup_impact($chg_url);
+        $t->assert_text_contains($test_name, $impact_html,
+            $mtr->txt(msg_id::POPUP_IMPACT) . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK));
+        $t->assert_text_contains($test_name, $impact_html, $mtr->txt(msg_id::POPUP_IMPACT_UNKNOWN));
+        $t->assert_text_contains($test_name, $impact_html, '>' . $mtr->txt(msg_id::POPUP_IMPACT_UPDATE) . '</a>');
+
+        $test_name = 'without a change no impact line is shown';
+        $t->assert($test_name, $preview->popup_impact([]), '');
+
     }
 
 }

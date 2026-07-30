@@ -46,6 +46,7 @@ include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -380,8 +382,10 @@ class ui_preview extends ui_base
 
     /**
      * show the impact of the pending change centered below the change table:
-     * the translated 'impact' word multiplied by a field factor, which for now is the number of
-     * changed fields as a placeholder until the real result impact of the change is calculated
+     * 'impact of this change in' followed by the impact unit ('happy time points' unless another
+     * unit is set) and the impact number; the real impact number cannot be calculated yet, so
+     * 'unknown' is shown with an update link that re-requests the page to retry the calculation
+     * TODO Prio 2 calculate the real impact of the change and use the configured impact unit
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @return string the html code of the centered impact line, or an empty string if nothing changed
@@ -390,10 +394,14 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $factor = count($this->changed_fields($url_array));
         $result = '';
-        if ($factor > 0) {
-            $result = $html->div($mtr->txt(msg_id::POPUP_IMPACT) . ' × ' . $factor, styles::CHANGE_IMPACT);
+        if (count($this->changed_fields($url_array)) > 0) {
+            $update_url = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
+            $line = $mtr->txt(msg_id::POPUP_IMPACT)
+                . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK)
+                . ': ' . $mtr->txt(msg_id::POPUP_IMPACT_UNKNOWN)
+                . ' ' . $html->ref($update_url, $mtr->txt(msg_id::POPUP_IMPACT_UPDATE));
+            $result = $html->div($line, styles::CHANGE_IMPACT);
         }
         return $result;
     }

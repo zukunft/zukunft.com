@@ -1615,6 +1615,12 @@ enum messages: string
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
     case POPUP_IMPACT = 'popup_impact';
+    // the fallback unit for the impact of a change if no other impact unit is set
+    case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';
+    // shown as the impact number if the impact of the change cannot be calculated (yet)
+    case POPUP_IMPACT_UNKNOWN = 'unknown';
+    // the text of the link to request the recalculation of the impact of the change
+    case POPUP_IMPACT_UPDATE = 'update';
     // the column headers of the change log table pure
     case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
     case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
