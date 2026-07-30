@@ -348,6 +348,7 @@ messages:
   about_github_link: "github.com link"
   link: "link"
   to: "to"
+  from: "from"
   change_tbl_field: "Field"
   change_tbl_from: "From"
   change_tbl_to: "To"

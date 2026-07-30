@@ -139,7 +139,8 @@ class sys_log_ui_tests
         // any other field is prefixed with its translated name before the changed value,
         // and a type field shows the type name (resolved from the id) instead of the type number
         $test_name = 'phrase type change shows the field name and the type name';
-        $t->assert_text_contains($test_name, $chg_tbl, 'phrase type "' . phrase_types::MEASURE_NAME . '"');
+        $t->assert_text_contains($test_name, $chg_tbl,
+            'phrase type to "' . phrase_types::TIME_NAME . '" from "' . phrase_types::MEASURE_NAME . '"');
 
         $test_name = 'description change shows the translated field name';
         $t->assert_text_contains($test_name, $chg_tbl, 'description "' . word_names::MATH_COM . '"');
@@ -173,10 +174,11 @@ class sys_log_ui_tests
 
         // the protection is logged with the numeric type id, so the table must show the type name, not the number
         $test_name = 'protection type change shows the type name instead of the type number';
-        $t->assert_text_contains($test_name, $chg_tbl, 'protection "' . protection_types::NO_PROTECT_NAME . '"');
+        $t->assert_text_contains($test_name, $chg_tbl,
+            'protection to "' . protection_types::ADMIN_NAME . '" from "' . protection_types::NO_PROTECT_NAME . '"');
 
         $test_name = 'protection type change does not show the raw type number';
-        $t->assert_text_not_contains($test_name, $chg_tbl, 'protection "' . protection_types::NO_PROTECT_ID . '"');
+        $t->assert_text_not_contains($test_name, $chg_tbl, 'protection to "' . protection_types::ADMIN_ID . '"');
 
         // an owner (user_id) change set to the change author shows 'set owner to' and the resolved
         // author name (no quotes) instead of the raw user id

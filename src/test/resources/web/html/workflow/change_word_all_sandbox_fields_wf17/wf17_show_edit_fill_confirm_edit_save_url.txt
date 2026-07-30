@@ -1,0 +1,25 @@
+GET
+http://localhost/http/view.php?k=System+Test+Word&o=a+confirm+change+test+description&uu=3&y=7&lp=System+Test+Words&d=90&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=90&9id=999&8o=test+description+added+to+the+word+via+import&m=3&z=1&submit=
+/http/view.php?k=System+Test+Word&o=a+confirm+change+test+description&uu=3&y=7&lp=System+Test+Words&d=90&ui=3.4&id=999&8id=999&8k=System+Test+Word&9m=90&9id=999&8o=test+description+added+to+the+word+via+import&m=3&z=1&submit=
+/http/view.php?name=System+Test+Word&description=a+confirm+change+test+description&usage=3&type=7&plural=System+Test+Words&view_id=90&impact=3.4&id=999&8id=999&8name=System+Test+Word&9mask_id=word_default&9id=999&8description=test+description+added+to+the+word+via+import&mask_id=word_edit&step=confirm&
+{
+    "name": "System Test Word",
+    "description": "a confirm change test description",
+    "usage": "3",
+    "type": "7",
+    "plural": "System Test Words",
+    "view_id": "90",
+    "impact": "3.4",
+    "id": "999",
+    "mask_id": "word_edit",
+    "step": "confirm",
+    "url_part_original_data": {
+        "id": "999",
+        "name": "System Test Word",
+        "description": "test description added to the word via import"
+    },
+    "url_part_back": {
+        "mask_id": "word_default",
+        "id": "999"
+    }
+}

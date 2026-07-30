@@ -288,6 +288,7 @@ class word_url_tests extends url_test_base
         $this->add_word_workflow(workflows::WF_ADD_WORD_NBR, false);
         $this->change_word_fail_workflow(workflows::WF_CHANGE_WORD_FAIL_NBR, false);
         $this->change_word_workflow(workflows::WF_CHANGE_WORD_NBR, false);
+        $this->change_word_all_sandbox_fields_workflow(workflows::WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR, false);
         $this->del_word_fail_workflow(workflows::WF_DEL_WORD_FAIL_NBR, false);
         $this->del_word_workflow(workflows::WF_DEL_WORD_NBR, false);
 
@@ -519,6 +520,127 @@ class word_url_tests extends url_test_base
         if ($do_it) {
             $this->assert_word_filled_in_db('change_word workflow has filled the word',
                 word_names::TEST_ADD, $this->t->usr1, $fill[url_var::PLURAL]);
+        }
+    }
+
+    /**
+     * run the change_word_all_sandbox_fields workflow and snapshot the html after every user action
+     *
+     * the same step sequence serves the snapshot unit test ($do_it false, no write) and the workflow
+     * write test ($do_it true): the changing user usr2 does not own the base word (usr1 does), fills
+     * almost all sandbox fields in one edit round via the filled test word factory and confirms, then
+     * changes the description twice in two more edit rounds, so the confirmed changes land in a usr2
+     * user sandbox overlay while the owner keeps the unchanged base word; each snapshot shows the
+     * page that results from the step's action, so each confirm step snapshot is the word page with
+     * the change log grown by the confirmed change. snapshots go into
+     * src/test/resources/web/html/workflow/change_word_all_sandbox_fields_wf<nbr>/
+     * resp. workflow_write/ for a write run (see docs/llm/testing.md)
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 17 for wf17
+     * @param bool $do_it false to only render the steps, true to also write the usr2 sandbox overlay
+     */
+    protected function change_word_all_sandbox_fields_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        // the changing user is usr2 who does not own the word; a write run loads the changer fresh
+        // so its in-memory profile matches the stored one - the shared $t->usr2 object can carry a
+        // profile that an earlier test left different from the database, which would make the
+        // uses_sandbox flag flip look like a profile escalation and block the whole word save
+        // (see user::enforce_profile_privilege)
+        $changer = $this->t->usr2;
+        if ($do_it) {
+            $changer = new user();
+            $changer->load_by_id($this->t->usr2->id());
+        }
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_WORD_ALL_SANDBOX_FIELDS,
+            $changer, word_names::TEST_ADD_ID, $do_it);
+
+        // the workflow runs on the 'System Test Word' created by the write twin for usr1; resolve
+        // its current database id by name and fall back to the fixed id in a read-only run
+        $t_wrd = new test_words($this->t);
+        $this->wf_id = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+
+        // initial url with the base word; the url carries the current db id of the word so the
+        // rendered buttons and the confirmed write target the real row (the snapshot files
+        // normalize the id back to the fixed test id)
+        $url_arr = test_words::word_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
+        $url_pre = html_base::pre_url_array($url_arr);
+        $url_arr = $url_arr + $url_pre;
+        // add the previous page to the url
+        $url_arr[url_var::BACK . url_var::MASK] = views::WORD_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // show: display the base word in its default word view as seen by the changing user
+        $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
+
+        // edit: open the word edit view
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
+
+        // user 2 fills almost all sandbox fields with the values of the filled test word; the fill
+        // values must win over the factory url values, so the union starts with them (the array
+        // union operator keeps the keys of the first array)
+        $fill = $t_wrd->fill_url_array();
+        $url_arr = $fill + $url_arr;
+
+        // fill: press save with every sandbox field changed which shows the confirm change view
+        $this->assert_step(workflows::FILL, $url_arr, views::WORD_EDIT_ID);
+
+        // confirm: confirm the change; with $do_it true it is written as a usr2 user sandbox
+        // overlay, because usr2 does not own the base word; the resulting page is the word view
+        // with the changed fields and the change log entries of the confirmed change
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // edit: re-open the edit view to change the description a first time (the fill round kept
+        // the base description, see test_words::word_filled_add)
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
+
+        // user 2 is typing the first new description; the '8'-prefixed opening value is the
+        // description the word still has after the fill round, so the confirm view shows the diff
+        $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_ADD_COM;
+
+        // save: press save which shows the confirm change view with the description change
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
+
+        // confirm: confirm the first description change (written with $do_it true)
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // edit: re-open the edit view to change the description a second time
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_EDIT_ID);
+
+        // user 2 is typing the second new description on top of the first one
+        $url_arr[url_var::DESCRIPTION] = word_names::TEST_CHANGE_TWO_COM;
+        $url_arr[url_var::PRE . url_var::DESCRIPTION] = word_names::TEST_CHANGE_COM;
+
+        // save: press save which shows the confirm change view
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_EDIT_ID);
+
+        // confirm: confirm the second description change; the change log on the resulting word
+        // page now shows both description changes on top of the filled fields
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must persist the changes as a per-user overlay: the changing user sees the
+        // filled fields and the latest description, the owner keeps the unchanged base word
+        // without an overlay of their own
+        if ($do_it) {
+            $test_name = 'change_word_all_sandbox_fields has created the user overlay';
+            $wrd_changer = new word($changer);
+            $wrd_changer->load_by_name(word_names::TEST_ADD);
+            $this->t->assert_true($test_name, $wrd_changer->has_usr_cfg());
+            $test_name = '... and the changing user sees the filled plural';
+            $this->t->assert($test_name, $wrd_changer->plural ?? '', $fill[url_var::PLURAL]);
+            $test_name = '... and the changing user sees the second changed description';
+            $this->t->assert($test_name, $wrd_changer->get_description() ?? '', word_names::TEST_CHANGE_TWO_COM);
+            $test_name = '... while the owner still sees the unfilled word';
+            $wrd_owner = new word($this->t->usr1);
+            $wrd_owner->load_by_name(word_names::TEST_ADD);
+            $this->t->assert($test_name, $wrd_owner->plural ?? '', '');
+            $test_name = '... and the owner still sees the original description';
+            $this->t->assert($test_name, $wrd_owner->get_description() ?? '', word_names::TEST_ADD_COM);
+            $test_name = '... and the owner has no user sandbox overlay';
+            $this->t->assert_false($test_name, $wrd_owner->has_usr_cfg());
         }
     }
 

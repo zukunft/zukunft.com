@@ -171,6 +171,13 @@ class workflows
     const string WF_DEL_FORMULA = 'del_formula';
     const int WF_DEL_FORMULA_NBR = 16;
 
+    // the change_word_all_sandbox_fields workflow name used for the snapshot folder and the test
+    // subheader: a user that does not own the word (usr2) fills almost all sandbox fields of the
+    // word in one edit round, so the confirmed change lands in a usr2 user sandbox overlay row
+    const string WF_CHANGE_WORD_ALL_SANDBOX_FIELDS = 'change_word_all_sandbox_fields';
+    // the id of the current change_word_all_sandbox_fields workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR = 17;
+
     /**
      * the user process step that a user reaction action triggers
      *

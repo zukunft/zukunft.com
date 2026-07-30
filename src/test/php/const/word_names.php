@@ -306,6 +306,9 @@ class word_names
     const string TEST_ADD_COM = 'test description added to the word via import';
     // the new description posted by the confirm change workflow to change the test word description
     const string TEST_CHANGE_COM = 'a confirm change test description';
+    // the second new description posted by the change_word_all_sandbox_fields workflow, so the
+    // change log of the test word shows two confirmed description changes
+    const string TEST_CHANGE_TWO_COM = 'a second confirm change test description';
     // words to test the no update import that only fills up empty fields
     const string TEST_NO_UPD = 'System Test Word No Update';
     const string TEST_NO_UPD_COM = 'the original description that a no update import must keep';
