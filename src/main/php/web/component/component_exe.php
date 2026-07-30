@@ -276,6 +276,7 @@ class component_exe extends component
 
             // formulas only fields
             component_types::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
+            component_types::FORM_FIELD_FORMULA_LATEX => $form->form_formula_latex($dbo, $form_name),
             component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
 
             // for export

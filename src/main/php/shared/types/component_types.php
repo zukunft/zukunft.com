@@ -235,6 +235,8 @@ class component_types
     // formulas only fields
     const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
     const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
+    const string FORM_FIELD_FORMULA_LATEX = "system_form_field_formula_latex";
+    const int FORM_FIELD_FORMULA_LATEX_ID = 211;
     const string EXPRESSION = "expression";
     const int EXPRESSION_ID = 62;
     const string EXPRESSION_LATEX_LINK = "expression_latex_link";
@@ -597,6 +599,7 @@ class component_types
         self::FORM_FIELD_URL,
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
+        self::FORM_FIELD_FORMULA_LATEX,
         self::EXPRESSION,
         self::EXPRESSION_LATEX_LINK,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
@@ -782,6 +785,7 @@ class component_types
         [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
+        [self::FORM_FIELD_FORMULA_LATEX, self::FORM_FIELD_FORMULA_LATEX_ID],
         [self::EXPRESSION, self::EXPRESSION_ID],
         [self::EXPRESSION_LATEX_LINK, self::EXPRESSION_LATEX_LINK_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
