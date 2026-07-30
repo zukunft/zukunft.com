@@ -354,20 +354,20 @@ class component extends sandbox_code_id
         // null-user guard fails closed if no requesting user is set on the message
         global $mtr;
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json) and $msg->usr != null) {
-            $msg->merge($this->set_ui_msg_code_id(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $msg->usr));
+            $this->set_ui_msg_code_id(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]), $msg);
         }
         if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $api_json) and $msg->usr != null) {
-            $msg->merge($this->set_ui_msg_code_id_vars(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $msg->usr));
+            $this->set_ui_msg_code_id_vars(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_VARS]), $msg);
         }
         if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $api_json) and $msg->usr != null) {
-            $msg->merge($this->set_ui_msg_code_id_exception(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $msg->usr));
+            $this->set_ui_msg_code_id_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_ID_EXCEPTION]), $msg);
         }
         if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_json) and $msg->usr != null) {
-            $msg->merge($this->set_ui_msg_value_exception(
-                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $msg->usr));
+            $this->set_ui_msg_value_exception(
+                $mtr->get($api_json[json_fields::UI_MSG_CODE_VAL_EXCEPTION]), $msg);
         }
         if (array_key_exists(json_fields::STYLE, $api_json)) {
             $this->set_style_by_id($api_json[json_fields::STYLE]);
@@ -733,24 +733,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -766,24 +767,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id_vars = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_VARS,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -799,24 +801,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param msg_id|null $ui_msg_id the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the ui message code id has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_code_id_exception = $ui_msg_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_ID_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -832,24 +835,25 @@ class component extends sandbox_code_id
      * but only if the requesting user hat the permission to do so
      *
      * @param float|null $ui_msg_value_exception the updated message id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the value has been set, false if the requesting user is not permitted
      */
-    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user $usr): user_message
+    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user_message $msg): bool
     {
-        $msg = new user_message();
-        if ($usr->can_set_ui_msg_id()) {
+        $result = false;
+        if ($msg->usr->can_set_ui_msg_id()) {
             $this->ui_msg_value_exception = $ui_msg_value_exception;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_USER_NAME => $msg->usr->name(),
+                msg_id::VAR_USER_PROFILE => $msg->usr->profile_code_id(),
                 msg_id::VAR_NAME => component_fields::FLD_UI_MSG_VAL_EXCEPTION,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -1279,18 +1283,21 @@ class component extends sandbox_code_id
     function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
+        // a shared buffer for the requesting user's permission checks, merged into $msg once
+        $ui_msg = new user_message($usr_req);
         if ($this->ui_msg_code_id === null and $obj->ui_msg_code_id != null) {
-            $msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+            $this->set_ui_msg_code_id($obj->ui_msg_code_id, $ui_msg);
         }
         if ($this->ui_msg_code_id_vars === null and $obj->ui_msg_code_id_vars != null) {
-            $msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
+            $this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $ui_msg);
         }
         if ($this->ui_msg_code_id_exception === null and $obj->ui_msg_code_id_exception != null) {
-            $msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
+            $this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $ui_msg);
         }
         if ($this->ui_msg_value_exception === null and $obj->ui_msg_value_exception !== null) {
-            $msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
+            $this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $ui_msg);
         }
+        $msg->merge($ui_msg);
         if ($this->row_phrase === null and $obj->row_phrase != null) {
             $this->row_phrase = $obj->row_phrase;
         }

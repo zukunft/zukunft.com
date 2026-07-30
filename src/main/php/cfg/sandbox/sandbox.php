@@ -2167,20 +2167,22 @@ class sandbox extends db_object_seq_id_user
             }
             // make sure that the ui msg code id never differs between the standard row and the user row
             if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
+                // a local buffer for the permission checks; this only syncs the two rows internally
+                $ui_msg = new user_message($this->get_user());
                 if ($this->get_ui_msg_code_id() != $norm_obj->get_ui_msg_code_id()) {
-                    $this->set_ui_msg_code_id($norm_obj->get_ui_msg_code_id(), $this->get_user());
+                    $this->set_ui_msg_code_id($norm_obj->get_ui_msg_code_id(), $ui_msg);
                     log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
                 if ($this->get_ui_msg_code_id_vars() != $norm_obj->get_ui_msg_code_id_vars()) {
-                    $this->set_ui_msg_code_id_vars($norm_obj->get_ui_msg_code_id_vars(), $this->get_user());
+                    $this->set_ui_msg_code_id_vars($norm_obj->get_ui_msg_code_id_vars(), $ui_msg);
                     log_warning('ui variable message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
                 if ($this->get_ui_msg_code_id_exception() != $norm_obj->get_ui_msg_code_id_exception()) {
-                    $this->set_ui_msg_code_id_exception($norm_obj->get_ui_msg_code_id_exception(), $this->get_user());
+                    $this->set_ui_msg_code_id_exception($norm_obj->get_ui_msg_code_id_exception(), $ui_msg);
                     log_warning('ui exception message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
                 if ($this->get_ui_msg_value_exception() !== $norm_obj->get_ui_msg_value_exception()) {
-                    $this->set_ui_msg_value_exception($norm_obj->get_ui_msg_value_exception(), $this->get_user());
+                    $this->set_ui_msg_value_exception($norm_obj->get_ui_msg_value_exception(), $ui_msg);
                     log_warning('ui exception value has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
@@ -4466,13 +4468,12 @@ class sandbox extends db_object_seq_id_user
         return '';
     }
 
-    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = 'frontend message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        $txt = 'frontend message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($txt);
+        $msg->add_warning_text($txt);
+        return false;
     }
 
     function get_ui_msg_code_id(): ?msg_id
@@ -4481,13 +4482,12 @@ class sandbox extends db_object_seq_id_user
         return null;
     }
 
-    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = 'frontend after message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        $txt = 'frontend after message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($txt);
+        $msg->add_warning_text($txt);
+        return false;
     }
 
     function get_ui_msg_code_id_vars(): ?msg_id
@@ -4496,13 +4496,12 @@ class sandbox extends db_object_seq_id_user
         return null;
     }
 
-    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user $usr): user_message
+    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user_message $msg): bool
     {
-        $msg = 'frontend exception message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        $txt = 'frontend exception message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($txt);
+        $msg->add_warning_text($txt);
+        return false;
     }
 
     function get_ui_msg_code_id_exception(): ?msg_id
@@ -4511,13 +4510,12 @@ class sandbox extends db_object_seq_id_user
         return null;
     }
 
-    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user $usr): user_message
+    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user_message $msg): bool
     {
-        $msg = 'frontend exception message value has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
-        log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        $txt = 'frontend exception message value has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($txt);
+        $msg->add_warning_text($txt);
+        return false;
     }
 
     function get_ui_msg_value_exception(): ?float
