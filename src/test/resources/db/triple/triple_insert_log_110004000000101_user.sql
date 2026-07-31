@@ -59,8 +59,8 @@ SELECT triple_insert_log_110004000000101_user (
                null::bigint,
                null::smallint,
                null::bigint,
-               21::smallint,
+               103::smallint,
                1::smallint,
                1::bigint,
-               97::smallint,
+               105::smallint,
                3::smallint);

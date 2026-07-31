@@ -58,8 +58,11 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -317,10 +320,17 @@ class word_write_tests
 
         $test_name = '... check if the word creation with the name "' . word_names::TEST_ADD . '" has been logged';
         if ($wrd_add->id() > 0) {
-            $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
+            $log_ui = $t->log_last_ui_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id());
+            $result = $log_ui->dsp(true);
+            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ';
+            // re-adding a word that a previous test left excluded can land in the user sandbox
+            // row, which the change log shows with 'user' after the action
+            if ($log_ui->is_user_sandbox_change()) {
+                $target .= msg_id::LOG_USER->value . ' ';
+            }
+            $target .= '"' . word_names::TEST_ADD . '"';
+            $t->assert($test_name, $result, $target);
         }
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . word_names::TEST_ADD . '"';
-        $t->assert($test_name, $result, $target);
 
         $test_name = 'trying to create a new word with the name "' . word_names::TEST_ADD . '" again automatically merges the word with existing word if no unique key differs';
         $wrd_add = new word($t->usr1);
@@ -471,16 +481,21 @@ class word_write_tests
         $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '"', $result, $target);
 
-        // check if the word parameter adding have been logged
-        $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . word_names::TEST_RENAMED . 's"';
+        // check if the word parameter adding have been logged; the field changes are written to
+        // the user sandbox row and shown with 'user' after the action if usr1 cannot change the
+        // standard row e.g. because a previous run has left the standard row to another owner;
+        // all three fields are written by the same save, so the marker of the plural row is reused
+        $log_ui = $t->log_last_ui_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"' . word_names::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, fields::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "' . word_names::TEST_RENAMED . ' description" from "' . word_names::TEST_ADD_COM . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "' . word_names::TEST_RENAMED . ' description" from "' . word_names::TEST_ADD_COM . '"';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "differentiator filler"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"differentiator filler"';
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
 
         $test_name = 'check if a user-specific word is created if another user changes the word to ' . word_names::TEST_RENAMED;
@@ -504,11 +519,36 @@ class word_write_tests
         $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '"', $result, $target);
 
+        // ... and the user overwrites for the 'my' tab list the changed field with both values
+        $test_name = 'the user overwrites list the plural with the user and the standard value';
+        $usr_ovr = $wrd_usr2_reloaded->user_overwrites_api_array(new user_message($t->usr2));
+        $ovr_key = array_search(word_fields::FLD_PLURAL, array_column($usr_ovr, json_fields::FIELD));
+        $t->assert_true($test_name, $ovr_key !== false);
+        if ($ovr_key !== false) {
+            $test_name = '... with the user value of the plural';
+            $t->assert($test_name, $usr_ovr[$ovr_key][json_fields::USR_VALUE], word_names::TEST_RENAMED . 's2');
+            $test_name = '... and a standard value that differs from the user value';
+            $t->assert_true($test_name, $usr_ovr[$ovr_key][json_fields::STD_VALUE] != word_names::TEST_RENAMED . 's2');
+        }
+
         // check the word for the original user remains unchanged
         $wrd_reloaded = $t_db->load_word(word_names::TEST_RENAMED);
         $result = $wrd_reloaded->plural;
         $target = word_names::TEST_RENAMED . 's';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" unchanged for user 1', $result, $target);
+
+        // ... and the shared overwrite of user 2 is listed for user 1 in the others tab data
+        $test_name = 'the other overwrites list the plural of the partner user';
+        $oth_ovr = $wrd_reloaded->other_overwrites_api_array(new user_message($t->usr1));
+        $oth_found = false;
+        foreach ($oth_ovr as $oth_row) {
+            if ($oth_row[json_fields::FIELD] == word_fields::FLD_PLURAL
+                and $oth_row[json_fields::USER_NAME] == users::SYSTEM_TEST_PARTNER_NAME
+                and $oth_row[json_fields::USR_VALUE] == word_names::TEST_RENAMED . 's2') {
+                $oth_found = true;
+            }
+        }
+        $t->assert_true($test_name, $oth_found);
         $result = $wrd_reloaded->description;
         $target = word_names::TEST_RENAMED . ' description';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" unchanged for user 1', $result, $target);

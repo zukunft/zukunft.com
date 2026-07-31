@@ -826,6 +826,19 @@ class triple extends sandbox_link_named
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    // the fields the requesting user has overwritten in user_triples with the user
+                    // and the standard value, so the 'my' tab can show the user overwrites, and
+                    // the shared overwrites of the other users for the 'others' tab
+                    if (!$typ_lst->test_mode()) {
+                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        if ($usr_ovr != []) {
+                            $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
+                        }
+                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        if ($oth_ovr != []) {
+                            $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
+                        }
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -3024,7 +3037,7 @@ class triple extends sandbox_link_named
         $do_log = $sc_par_lst->incl_log();
         $is_insert = $sc_par_lst->is_insert();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // should be corresponding with the list of triple object vars
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);

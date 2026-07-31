@@ -83,6 +83,41 @@ class user_ui_tests
         $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, $mtr->txt(msg_id::USER_SYSTEM_ERRORS_NONE));
 
+        $t->subheader($ts . 'profile rights');
+
+        // the admin-only fields (the cached usage and impact numbers) are shown to a developer
+        // but never to a user without an elevated profile (see user::sees_admin_fields)
+        $test_name = 'a developer user has developer rights';
+        $dev_ui = new user_ui($t->usr_dev->api_json());
+        $t->assert_true($test_name, $dev_ui->is_developer());
+
+        $test_name = 'a developer sees the admin-only fields';
+        $t->assert_true($test_name, $dev_ui->sees_admin_fields());
+
+        $test_name = 'an ip only user has no developer rights';
+        $ip_ui = new user_ui($t_usr->user_ip()->api_json());
+        $t->assert_false($test_name, $ip_ui->is_developer());
+
+        $test_name = 'an ip only user does not see the admin-only fields';
+        $t->assert_false($test_name, $ip_ui->sees_admin_fields());
+
+        // the two normal test users carry the test profile only for the backend write privileges;
+        // for the frontend display they act like a normal user (see user::is_system), so most test
+        // pages render without the admin-only fields
+        $test_name = 'the normal test user is not a system user for the display';
+        $usr1_ui = new user_ui($t->usr1->api_json());
+        $t->assert_false($test_name, $usr1_ui->is_system());
+
+        $test_name = 'the normal test user does not see the admin-only fields';
+        $t->assert_false($test_name, $usr1_ui->sees_admin_fields());
+
+        $test_name = 'the system user itself keeps the system rights';
+        $sys_ui = new user_ui($t_usr->system_user()->api_json());
+        $t->assert_true($test_name, $sys_ui->is_system());
+
+        $test_name = 'the system user sees the admin-only fields';
+        $t->assert_true($test_name, $sys_ui->sees_admin_fields());
+
         $t->subheader($ts . 'popup form');
 
         // the popup form class must also accept a user (e.g. of the user settings form),

@@ -48,6 +48,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
@@ -162,7 +164,8 @@ class word_write_url_tests extends word_url_tests
      * fills almost all sandbox fields via the edit form, confirms and changes the description two
      * more times, so the writes land in a usr2 user sandbox overlay and the final page snapshot
      * shows the change log of all confirmed changes (the step sequence and the overlay checks are
-     * in word_url_tests)
+     * in word_url_tests); a third user overwrites the description before the workflow, so the
+     * pages rendered for usr2 also show the 'others' tab with that shared overwrite
      *
      * @param test_cleanup $t the test environment
      */
@@ -178,7 +181,44 @@ class word_write_url_tests extends word_url_tests
         $test_name = 'the base word for the all sandbox fields change is created';
         $t->assert_msg($test_name, $owner_msg);
 
+        // a third user (the normal test user, loaded fresh like the changer in
+        // change_word_by_other_user) overwrites the description, so the workflow pages
+        // rendered for usr2 also show the 'others' tab with this shared overwrite
+        $other = new user();
+        $other->load_by_id($t->usr_normal->id());
+        $wrd_other = new word($other);
+        $wrd_other->load_by_name(word_names::TEST_ADD);
+        $wrd_other->set_description(word_names::TEST_OTHER_COM);
+        $other_msg = new user_message($other);
+        $wrd_other->save($other_msg);
+        $test_name = 'the other user overwrite for the others tab is created';
+        $t->assert_msg($test_name, $other_msg);
+
         $this->change_word_all_sandbox_fields_workflow(workflows::WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR, true);
+
+        // the page data of the changing user must list the other user's overwrite
+        $test_name = 'the others tab data lists the description overwrite of the other user';
+        $wrd_chk = new word($t->usr2);
+        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        $oth_ovr = $wrd_chk->other_overwrites_api_array(new user_message($t->usr2));
+        $oth_found = false;
+        foreach ($oth_ovr as $oth_row) {
+            if (($oth_row[json_fields::USER_NAME] ?? '') == users::SYSTEM_TEST_NORMAL_NAME
+                and ($oth_row[json_fields::USR_VALUE] ?? '') == word_names::TEST_OTHER_COM) {
+                $oth_found = true;
+            }
+        }
+        $t->assert_true($test_name, $oth_found);
+
+        // remove the third user overwrite by setting the description back to the base value,
+        // because the shared cleanup only covers usr1 and usr2 (see change_word_by_other_user)
+        $wrd_undo = new word($other);
+        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->set_description(word_names::TEST_ADD_COM);
+        $undo_msg = new user_message($other);
+        $wrd_undo->save($undo_msg);
+        $test_name = 'the other user overwrite is removed again';
+        $t->assert_msg($test_name, $undo_msg);
     }
 
     /**

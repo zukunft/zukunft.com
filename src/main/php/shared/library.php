@@ -148,6 +148,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -4275,7 +4276,16 @@ class library
 
         $result = [];
 
-        $result[] = $sys->typ_lst->cng_tbl->id($this->class_to_table($class));
+        $tbl = $this->class_to_table($class);
+        $result[] = $sys->typ_lst->cng_tbl->id($tbl);
+        // the changes of an object include the rows of its user sandbox (overlay) table
+        // e.g. user_words for a word, so the user overwrites show on the object page and
+        // are shown on the object page with the 'user' marker after the action; not every
+        // class has an overlay table, so a missing user table is no error
+        $usr_tbl_id = $sys->typ_lst->cng_tbl->id(change_tables::USER_PREFIX . $tbl, false);
+        if ($usr_tbl_id > 0) {
+            $result[] = $usr_tbl_id;
+        }
         // TODO Prio 2 add a test case for a table rename
         //if ($class == word_dsp::class) {
         //    $result[] = 5;

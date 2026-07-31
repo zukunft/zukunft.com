@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -42,13 +43,17 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -56,9 +61,12 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -258,9 +266,18 @@ class ui_preview extends ui_base
             $url_keys = $dbo->db_fld_to_url();
         }
         if ($order != [] and $url_keys != []) {
+            // hide the changes of the admin-only fields (the cached impact and usage numbers)
+            // from users without admin, developer or system rights, like the change log does
+            // (see change_log_list::filter_admin_fields); the values are still carried forward
+            // as hidden inputs by popup_changes so the confirm submit never resets them
+            global $ui_sys;
+            $usr = $ui_sys->usr ?? null;
+            $sees_admin = $usr == null ? false : $usr->sees_admin_fields();
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
-                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    if ($sees_admin or !in_array($db_fld, fields::LOG_ADMIN_ONLY)) {
+                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    }
                 }
             }
         } else {
@@ -370,9 +387,143 @@ class ui_preview extends ui_base
     }
 
     /**
+     * the 'my' tab table of the word or triple page: one row per field that the session user
+     * has overwritten in the user sandbox (overlay) table e.g. user_words, with the translated
+     * field name, the user value ('your'), the value of the standard object ('instead') and an
+     * undo icon that links to the confirm page which sets the field back to the standard value;
+     * an empty string if the user is not logged in or has no overwrites, so the tab is dropped
+     * (tab_box skips tabs without content); the admin-only fields (the cached usage and impact
+     * numbers) are hidden from users without admin or developer rights like in the change log
+     *
+     * @param db_object $dbo the word or triple that should be shown to the user
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function user_overwrites_table(db_object $dbo): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->user_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                if ($this->shows_field($usr, $fld)) {
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    // escape the values (user input rendered raw by the table; stored xss)
+                    $rows .= $html->tr(
+                        $html->td($mtr->text_db_field($fld))
+                        . $html->td($html->esc($your))
+                        . $html->td($html->esc($instead))
+                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr)));
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_YOUR))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD))
+                    . $html->th(''));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the 'others' tab table of the word or triple page: one row per field and user for the
+     * shared overwrites that users other than the session user have done, with the translated
+     * field name, the name of the overwriting user, the value of that user and the value of
+     * the standard object ('instead'); an empty string if the session user is not logged in
+     * or no other user has a shared overwrite, so the tab is dropped
+     *
+     * @param db_object $dbo the word or triple that should be shown to the user
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function other_overwrites_table(db_object $dbo): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->other_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                if ($this->shows_field($usr, $fld)) {
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    // escape the values and the user name (user input rendered raw; stored xss)
+                    $rows .= $html->tr(
+                        $html->td($mtr->text_db_field($fld))
+                        . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
+                        . $html->td($html->esc($val))
+                        . $html->td($html->esc($instead)));
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_USER))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_VALUE))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD)));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user $usr the session user viewing the overwrite table
+     * @param string $fld the db field name of an overwritten field
+     * @return bool true if the field row is shown to the user; the admin-only fields (the cached
+     *              impact and usage numbers) are hidden like in the change log
+     */
+    private function shows_field(user $usr, string $fld): bool
+    {
+        return $usr->sees_admin_fields() or !in_array($fld, fields::LOG_ADMIN_ONLY);
+    }
+
+    /**
+     * the undo icon link of a 'my' tab row: opens the confirm page of the object edit view with
+     * the overwritten field set back to the standard value and the user value as the '8'-prefixed
+     * opening value, so confirming the shown change removes the user overwrite of the field
+     *
+     * @param db_object $dbo the word or triple whose overwrite can be undone
+     * @param string $fld the db field name of the overwritten field
+     * @param array $ovr the overwrite entry with the user and the standard value
+     * @return string the html code of the undo icon link or an empty string if no link can be built
+     */
+    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
+        // only word and triple pages show the tab, but guard the edit view const to avoid a fatal
+        if ($fld_var != '' and $dbo->id() > 0 and defined($dbo::class . '::VIEW_EDIT_ID')) {
+            $url = api::MAIN_SCRIPT . '?' . http_build_query([
+                    url_var::MASK => $dbo::VIEW_EDIT_ID,
+                    url_var::ID => $dbo->id(),
+                    $fld_var => (string)($ovr[json_fields::STD_VALUE] ?? ''),
+                    url_var::PRE . $fld_var => (string)($ovr[json_fields::USR_VALUE] ?? ''),
+                    url_var::STEP => url_var::STEP_CONFIRM,
+                ]);
+            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::UNDO . '"></' . html_base::I . '>';
+            $result = $html->ref($url, $icon, $mtr->txt(msg_id::MY_TBL_UNDO), '', true);
+        }
+        return $result;
+    }
+
+    /**
      * show the impact of the pending change centered below the change table:
-     * the translated 'impact' word multiplied by a field factor, which for now is the number of
-     * changed fields as a placeholder until the real result impact of the change is calculated
+     * 'impact of this change in' followed by the impact unit ('happy time points' unless another
+     * unit is set) and the impact number; the real impact number cannot be calculated yet, so
+     * 'unknown' is shown with an update link that re-requests the page to retry the calculation
+     * TODO Prio 2 calculate the real impact of the change and use the configured impact unit
      *
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @return string the html code of the centered impact line, or an empty string if nothing changed
@@ -381,10 +532,14 @@ class ui_preview extends ui_base
     {
         global $mtr;
         $html = new html_base();
-        $factor = count($this->changed_fields($url_array));
         $result = '';
-        if ($factor > 0) {
-            $result = $html->div($mtr->txt(msg_id::POPUP_IMPACT) . ' × ' . $factor, styles::CHANGE_IMPACT);
+        if (count($this->changed_fields($url_array)) > 0) {
+            $update_url = api::MAIN_SCRIPT . '?' . http_build_query($url_array);
+            $line = $mtr->txt(msg_id::POPUP_IMPACT)
+                . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK)
+                . ': ' . $mtr->txt(msg_id::POPUP_IMPACT_UNKNOWN)
+                . ' ' . $html->ref($update_url, $mtr->txt(msg_id::POPUP_IMPACT_UPDATE));
+            $result = $html->div($line, styles::CHANGE_IMPACT);
         }
         return $result;
     }

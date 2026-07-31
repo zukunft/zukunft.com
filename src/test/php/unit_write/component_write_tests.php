@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
@@ -117,9 +118,12 @@ class component_write_tests
         $target = components::TEST_ADD_COM;
         $t->assert($test_name, $result, $target);
 
-        // check if the component adding has been logged
-        $result = $t->log_last_by_field($cmp, component::FLD_NAME, $cmp->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test View Component"';
+        // check if the component adding has been logged; re-adding a component that a previous run
+        // left excluded can land in the user sandbox row, shown with 'user' after the action
+        $log_ui = $t->log_last_ui_by_field($cmp, component::FLD_NAME, $cmp->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test View Component"';
         $t->assert('component->save adding logged for "' . components::TEST_ADD_NAME . '"', $result, $target);
 
         // check if adding the same component again creates a correct error message
@@ -151,9 +155,12 @@ class component_write_tests
         $target = components::TEST_RENAMED_NAME;
         $t->assert('component->load renamed component "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
-        // check if the component renaming has been logged
-        $result = $t->log_last_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "System Test View Component Renamed" from "System Test View Component"';
+        // check if the component renaming has been logged (with 'user' after the action if the
+        // rename landed in the user sandbox row, like the add above)
+        $log_ui = $t->log_last_ui_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "System Test View Component Renamed" from "System Test View Component"';
         $t->assert('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameters can be added
@@ -177,18 +184,22 @@ class component_write_tests
         // check if the component parameter adding have been logged
         // TODO for testing always use the latest table name
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
-        $result = $t->log_last_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
+        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
         // TODO Prio 1 fix it
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "Just added for testing the user sandbox" from "System Test View Component description"';
+            $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "Just added for testing the user sandbox" from "System Test View Component description"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
-        $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
+        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
         // TODO Prio 1 fix it
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "word name"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"word name"';
         if ($result != $target) {
-            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed to "formulas" from "word name"';
+            $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed ' . $usr_marker . 'to "formulas" from "word name"';
         }
         $t->assert('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
 

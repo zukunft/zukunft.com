@@ -47,8 +47,9 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
-include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'users.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED . 'api.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -444,6 +446,23 @@ class user extends db_object
     }
 
     /**
+     * @returns bool true if the user has developer rights
+     */
+    function is_developer(): bool
+    {
+        global $ui_sys;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::DEV)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user is a system user e.g. the reserved word names can be used
      */
     function is_system(): bool
@@ -458,7 +477,26 @@ class user extends db_object
                 $result = true;
             }
         }
+        // the two normal test users carry the test profile only to be allowed to write the
+        // reserved test names (a backend privilege); for the frontend display they act like a
+        // normal user, so most test pages render without the admin-only fields and only the
+        // few explicit admin, developer and system user tests show them (see sees_admin_fields)
+        if ($this->code_id == users::SYSTEM_TEST_CODE_ID
+            or $this->code_id == users::SYSTEM_TEST_PARTNER_CODE_ID) {
+            $result = false;
+        }
         return $result;
+    }
+
+    /**
+     * @returns bool true if the user is allowed to see the admin-only fields (the cached usage and
+     *               impact numbers, see fields::LOG_ADMIN_ONLY) in the change log and the confirm
+     *               change preview, because the cached numbers are system internals that would
+     *               only confuse a normal user
+     */
+    function sees_admin_fields(): bool
+    {
+        return $this->is_admin() or $this->is_developer() or $this->is_system();
     }
 
     /**

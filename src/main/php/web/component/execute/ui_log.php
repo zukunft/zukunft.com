@@ -39,6 +39,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -89,8 +91,45 @@ class ui_log
         // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
         // table is sorted with the same parameters as the previously used change log
         $log_lst = $this->prepared_change_log($dbo, $log_lst, $test_mode);
-        // the max number of chars of the what column and the max number of rows both come from the
-        // frontend config (config.yaml > ... > change log > what limit / row limit)
+        return $this->table_pure($log_lst, $test_mode);
+    }
+
+    /**
+     * the borderless when / who / what table of the session user's own overwrites of the given
+     * object - the changes the user has written to the user_ overlay tables (e.g. user_words for
+     * a word) - used by the 'my' tab of the view tab box; an empty string if the user is not
+     * logged in or has no overwrites of this object, so the tab is only shown when it has content
+     *
+     * @param db_object $dbo the word or triple whose user overwrites are shown
+     * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function user_overwrites_table_pure(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    {
+        global $ui_sys;
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0) {
+            $my_lst = $this->prepared_change_log($dbo, $log_lst, $test_mode, $usr);
+            if (!$my_lst->is_empty()) {
+                $result = $this->table_pure($my_lst, $test_mode);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * render the prepared change log as the borderless when / who / what table with the char and
+     * row limits from the frontend config (config.yaml > ... > change log > what limit / row limit);
+     * the shared final step of change_log_table_pure and user_overwrites_table_pure
+     *
+     * @param change_log_list $log_lst the filtered, sorted and row-limited change log to render
+     * @param bool $test_mode true to keep the change time deterministic in the snapshots
+     * @return string the html code of the borderless when / who / what change log table
+     */
+    private function table_pure(change_log_list $log_lst, bool $test_mode): string
+    {
         global $ui_sys;
         $what_max_chars = 0;
         $max_rows = 0;
@@ -113,9 +152,15 @@ class ui_log
      * @param db_object $dbo the word or triple whose change log is shown
      * @param change_log_list $log_lst the change log as loaded from the backend, used as fallback
      * @param bool $test_mode true to sort the change time at whole-second resolution so the snapshot stays stable
+     * @param user|null $overwrites_of if set keep only the user sandbox changes of this user (the 'my' tab)
      * @return change_log_list the filtered, sorted and row-limited change log ready to render
      */
-    private function prepared_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): change_log_list
+    private function prepared_change_log(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        bool            $test_mode = false,
+        ?user           $overwrites_of = null
+    ): change_log_list
     {
         // a word or triple loaded for its page carries its recent changes directly (like the
         // related values, formulas and references); otherwise use the given change log or, if
@@ -137,6 +182,11 @@ class ui_log
         // from users without admin or system rights
         global $ui_sys;
         $log_lst = $log_lst->filter_admin_fields($ui_sys->usr ?? null);
+        // for the 'my' tab keep only the user sandbox (user_ table) changes of the session user;
+        // filtered before the row limit so older overwrites are never pushed out by other changes
+        if ($overwrites_of != null) {
+            $log_lst = $log_lst->filter_user_overwrites($overwrites_of);
+        }
         // newest change first; same-time changes are sorted ascending by the what text so the
         // display order never depends on the api/db row order (see docs/llm/frontend.md); in test
         // mode the time is bucketed to the whole second so sub-second write jitter cannot reorder rows

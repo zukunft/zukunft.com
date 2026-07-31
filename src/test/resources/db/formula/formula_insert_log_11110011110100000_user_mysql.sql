@@ -47,10 +47,10 @@ PREPARE formula_insert_log_11110011110100000_user_call FROM
 SELECT formula_insert_log_11110011110100000_user (
                3,
                1,
-               30,
+               119,
                'scale minute to sec',
                1,
-               34,
+               36,
                'to convert times in minutes to seconds and the other way round',
                31,
                1,

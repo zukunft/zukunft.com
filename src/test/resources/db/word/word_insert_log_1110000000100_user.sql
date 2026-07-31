@@ -29,8 +29,8 @@ PREPARE word_insert_log_1110000000100_user_call
 SELECT word_insert_log_1110000000100_user
         (4::bigint,
          1::smallint,
-         10::smallint,
+         88::smallint,
          'company'::text,
          190::bigint,
-         14::smallint,
+         91::smallint,
          1::smallint);

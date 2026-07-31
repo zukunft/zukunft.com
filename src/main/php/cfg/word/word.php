@@ -603,6 +603,19 @@ class word extends sandbox_code_id
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    // the fields the requesting user has overwritten in user_words with the user
+                    // and the standard value, so the 'my' tab can show the user overwrites, and
+                    // the shared overwrites of the other users for the 'others' tab
+                    if (!$typ_lst->test_mode()) {
+                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        if ($usr_ovr != []) {
+                            $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
+                        }
+                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        if ($oth_ovr != []) {
+                            $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
+                        }
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
@@ -2050,7 +2063,7 @@ class word extends sandbox_code_id
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {

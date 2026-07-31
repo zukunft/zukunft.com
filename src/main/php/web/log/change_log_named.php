@@ -445,8 +445,8 @@ class change_log_named extends change_log
         if ($usr_name <> '') {
             $result .= $usr_name . ' ';
         }
-        // a change in the user sandbox is prefixed with a translatable 'user' before the action
-        // (see action_txt), so a user sandbox add shows e.g. 'zukunft.com system user added "Zurich"'
+        // a change in the user sandbox adds a translatable 'user' after the action
+        // (see action_txt), so a user sandbox add shows e.g. 'zukunft.com system added user "Zurich"'
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
                 // show the new value first because it is the more relevant one: 'changed to "new" from "old"'
@@ -456,7 +456,7 @@ class change_log_named extends change_log
             }
         } elseif ($this->is_user_overwrite_removal()) {
             // adding an empty value in the user sandbox removes the user's overwrite for that field,
-            // so instead of '... user added ""' show '... remove user overwrite for view'
+            // so instead of '... added user ""' show '... remove user overwrite for view'
             $result .= $this->user_overwrite_removal_txt();
         } else {
             $result .= $this->action_txt(msg_id::LOG_ADD) . ' "' . $new_value . '"';
@@ -523,7 +523,7 @@ class change_log_named extends change_log
                 }
             } elseif ($this->is_user_overwrite_removal()) {
                 // adding an empty value in the user sandbox removes the user's overwrite for that
-                // field, so instead of 'user added view id ""' show 'remove user overwrite for view'
+                // field, so instead of 'added user view id ""' show 'remove user overwrite for view'
                 $result = $this->user_overwrite_removal_txt();
             } else {
                 $result = $this->action_txt(msg_id::LOG_ADD) . ' ' . $fld . '"' . $new . '"';
@@ -534,7 +534,7 @@ class change_log_named extends change_log
 
     /**
      * the translated change action, prefixed with a translatable 'user' for a change in the user
-     * sandbox (a *_usr overlay table) e.g. 'user added' instead of 'added'; shared by the change log
+     * sandbox (a *_usr overlay table) e.g. 'added user' instead of 'added'; shared by the change log
      * table (what_text) and the changes tab / system change-log text (entry)
      *
      * @param msg_id $action the change action message id e.g. msg_id::LOG_ADD
@@ -545,16 +545,17 @@ class change_log_named extends change_log
         global $mtr;
         $result = $mtr->txt($action);
         if ($this->is_user_sandbox_change()) {
-            $result = $mtr->txt(msg_id::LOG_USER) . ' ' . $result;
+            $result = $result . ' ' . $mtr->txt(msg_id::LOG_USER);
         }
         return $result;
     }
 
     /**
+     * public because the test helpers check with it in which table a change has been logged
      * @return bool true if this change is logged to a user sandbox (overlay) table, i.e. it is a
      *              user-specific change and not a change of the shared standard object
      */
-    private function is_user_sandbox_change(): bool
+    function is_user_sandbox_change(): bool
     {
         return in_array($this->table_name(), change_tables::USER_TABLES, true);
     }

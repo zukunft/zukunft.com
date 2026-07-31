@@ -34,11 +34,11 @@ PREPARE word_insert_log_1110000500001_user_call
 SELECT word_insert_log_1110000500001_user
         (3::bigint,
          1::smallint,
-         10::smallint,
+         88::smallint,
          'company'::text,
          190::bigint,
-         85::smallint,
+         90::smallint,
          null::text,
          101::bigint,
-         87::smallint,
+         93::smallint,
          3::smallint);

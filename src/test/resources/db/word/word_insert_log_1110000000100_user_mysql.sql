@@ -26,8 +26,8 @@ PREPARE word_insert_log_1110000000100_user_call FROM
 SELECT word_insert_log_1110000000100_user
         (4,
          1,
-         10,
+         88,
          'company',
          190,
-         14,
+         91,
          1);

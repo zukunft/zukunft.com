@@ -1023,7 +1023,7 @@ class formula_link extends sandbox_link
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index

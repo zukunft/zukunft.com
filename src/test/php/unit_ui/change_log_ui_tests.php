@@ -82,10 +82,10 @@ class change_log_ui_tests
         $chg_usr_txt = $chg_usr_ui->dsp(true);
         $test_page .= $chg_usr_txt . '<br>';
         $test_name = 'the changes tab prefixes a user sandbox change with user';
-        $t->assert_text_contains($test_name, $chg_usr_txt, 'user added "' . views::WORD_NAME . '"');
+        $t->assert_text_contains($test_name, $chg_usr_txt, 'added user "' . views::WORD_NAME . '"');
 
         // adding an empty value in the user sandbox removes the user's overwrite for that field, so the
-        // changes tab shows 'remove user overwrite for view' instead of '... user added ""'
+        // changes tab shows 'remove user overwrite for view' instead of '... added user ""'
         $chg_rem_ui = new change_log_named($t_log->log_word_remove_view()->api_json());
         $chg_rem_txt = $chg_rem_ui->dsp(true);
         $test_page .= $chg_rem_txt . '<br>';

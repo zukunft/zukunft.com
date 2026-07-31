@@ -28,7 +28,7 @@ SELECT component_link_update_log_000200000_user
 SELECT component_link_update_log_000200000_user
        (3::bigint,
         2::smallint,
-        48::smallint,
+        50::smallint,
         1::bigint,
         2::bigint,
         1::bigint);

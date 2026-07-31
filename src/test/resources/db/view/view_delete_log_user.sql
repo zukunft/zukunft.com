@@ -21,6 +21,6 @@ $$ LANGUAGE plpgsql;
 SELECT view_delete_log_user
        (3::bigint,
         3::smallint,
-        42::smallint,
+        720::smallint,
         'Start view'::text,
         1::bigint);

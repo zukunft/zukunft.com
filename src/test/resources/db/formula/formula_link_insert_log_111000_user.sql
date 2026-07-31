@@ -23,6 +23,6 @@ SELECT formula_link_insert_log_111000_user
 SELECT formula_link_insert_log_111000_user (
                3::bigint,
                1::smallint,
-               700::smallint,
+               712::smallint,
                2::bigint,
                1::bigint);

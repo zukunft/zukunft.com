@@ -532,8 +532,11 @@ class ui_list extends ui_base
 
     /**
      * HTML for the col-4 tab box of the word or triple page: a "Views" tab with the related
-     * views (each a preview placeholder plus the open and switch buttons) and a "Changes" tab
-     * with the change log of the object, latest first
+     * views (each a preview placeholder plus the open and switch buttons), a "Changes" tab
+     * with the change log of the object, latest first, a "My" tab with the session user's
+     * own overwrites (the user_ table rows e.g. of user_words), which is only shown if the
+     * user is logged in and has created overwrites of this object, and an "Others" tab with
+     * the shared overwrites that other users have done on this object
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
      * @param db_object $dbo the word or triple that should be shown to the user
@@ -561,9 +564,18 @@ class ui_list extends ui_base
             // with the three columns when, who and what, latest first (see ui_log)
             $log = new ui_log();
             $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $test_mode);
+            // tab 3: the session user's own overwrites of this object (the current user_ table
+            // row values compared to the standard values); an empty string if the user is not
+            // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
+            $preview = new ui_preview();
+            $my_html = $preview->user_overwrites_table($dbo);
+            // tab 4: the shared overwrites that other users have done on this object
+            $others_html = $preview->other_overwrites_table($dbo);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,
+                $mtr->txt(msg_id::FORM_SUB_TITLE_MY) => $my_html,
+                $mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS) => $others_html,
             ]);
         }
         return $result;

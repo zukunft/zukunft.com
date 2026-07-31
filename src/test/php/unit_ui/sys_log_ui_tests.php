@@ -172,6 +172,17 @@ class sys_log_ui_tests
         $test_name = 'a normal user still sees the other change rows';
         $t->assert_text_contains($test_name, $chg_tbl_usr, 'added "' . word_names::MATH . '"');
 
+        // the 'my' tab of the word and triple page lists only the changes the session user has
+        // written to the user_ overlay tables e.g. user_words (see ui_list::view_tab_box)
+        $test_name = 'the user overwrite filter keeps only the user sandbox rows of the user';
+        $t->assert($test_name, $chg_lst_ui->filter_user_overwrites($sys_usr_ui)->count(), 2);
+
+        $test_name = 'a user without overwrites gets an empty overwrite list';
+        $t->assert_true($test_name, $chg_lst_ui->filter_user_overwrites($usr_ui)->is_empty());
+
+        $test_name = 'without a logged in user the overwrite filter returns an empty list';
+        $t->assert_true($test_name, $chg_lst_ui->filter_user_overwrites(null)->is_empty());
+
         // the protection is logged with the numeric type id, so the table must show the type name, not the number
         $test_name = 'protection type change shows the type name instead of the type number';
         $t->assert_text_contains($test_name, $chg_tbl,
@@ -188,10 +199,10 @@ class sys_log_ui_tests
         // a reference (id) field shows the referenced object's name when the change log carries it
         // (add_link_field stores the name); a change in the user sandbox is prefixed with 'user'
         $test_name = 'a user sandbox view change shows the user prefix and the view name';
-        $t->assert_text_contains($test_name, $chg_tbl, 'user added view id "' . views::WORD_NAME . '"');
+        $t->assert_text_contains($test_name, $chg_tbl, 'added user view id "' . views::WORD_NAME . '"');
 
         // adding an empty value in the user sandbox removes the user's overwrite for that field, so it
-        // is shown as 'remove user overwrite for view' instead of 'user added view id ""'
+        // is shown as 'remove user overwrite for view' instead of 'added user view id ""'
         $test_name = 'an empty user sandbox change shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $chg_tbl, 'remove user overwrite for view');
 

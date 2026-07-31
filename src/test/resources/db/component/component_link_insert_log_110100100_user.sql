@@ -58,8 +58,8 @@ SELECT component_link_insert_log_110100100_user
      null::bigint,
      null::smallint,
      null::bigint,
-     48::smallint,
+     50::smallint,
      1::bigint,
      1::bigint,
-     49::smallint,
+     140::smallint,
      1::smallint);

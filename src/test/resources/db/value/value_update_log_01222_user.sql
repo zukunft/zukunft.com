@@ -43,14 +43,14 @@ PREPARE value_update_log_01222_user_call
 SELECT value_update_log_01222_user
        (3::bigint,
         1::smallint,
-        5::smallint,
+        109::smallint,
         1::smallint,
         null::smallint,
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text,
-        3::smallint,
+        8::smallint,
         3::smallint,
         null::smallint,
-        4::smallint,
+        7::smallint,
         2::smallint,
         null::smallint,
         null::bigint);

@@ -32,8 +32,10 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -42,7 +44,11 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -342,6 +348,153 @@ class word_ui_tests
         ];
         $usr_no_2 = new user_message(new user_ui($t_usr->user_ip()->api_json()));
         $t->assert_true($test_name, $wrd->input_valid($usr_no_2, '', $type_same));
+
+
+        $t->subheader($ts . 'confirm change preview');
+
+        // the confirm change preview shows the changes of the admin-only fields (the cached
+        // impact and usage numbers, see fields::LOG_ADMIN_ONLY) only to users with admin,
+        // developer or system rights, like the change log (change_log_list::filter_admin_fields)
+        global $ui_sys;
+        $preview = new ui_preview();
+        $wrd_chg = new word($t_wrd->word()->api_json());
+        $chg_url = [
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
+            url_var::PRE . url_var::DESCRIPTION => '',
+            url_var::IMPACT => '5',
+            url_var::PRE . url_var::IMPACT => ''
+        ];
+        $impact_lbl = $mtr->text_db_field(fields::FLD_IMPACT);
+        // remember the session user so the changed global can be restored after the checks
+        $usr_keep = $ui_sys->usr ?? null;
+
+        $test_name = 'an admin sees the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+
+        $test_name = 'a developer sees the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_dev->api_json());
+        $t->assert_text_contains($test_name, $preview->popup_changes($chg_url, $wrd_chg), $impact_lbl);
+
+        $test_name = 'a normal user does not see the impact change in the confirm preview';
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $chg_html = $preview->popup_changes($chg_url, $wrd_chg);
+        $t->assert_text_not_contains($test_name, $chg_html, $impact_lbl);
+
+        $test_name = '... but still sees the description change';
+        $t->assert_text_contains($test_name, $chg_html, word_names::TEST_CHANGE_COM);
+
+        $test_name = '... and the impact value is still carried forward as a hidden input';
+        $t->assert_text_contains($test_name, $chg_html, 'name="' . url_var::IMPACT . '"');
+
+        // restore the session user for the following tests
+        if ($usr_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_keep;
+        }
+
+        // below the changes the impact of the pending change is shown in the impact unit
+        // ('happy time points' unless another unit is set); the impact number cannot be
+        // calculated yet, so 'unknown' is shown with an update link to retry the calculation
+        $test_name = 'the impact line shows the unit and the unknown impact with an update link';
+        $impact_html = $preview->popup_impact($chg_url);
+        $t->assert_text_contains($test_name, $impact_html,
+            $mtr->txt(msg_id::POPUP_IMPACT) . ' ' . $mtr->txt(msg_id::POPUP_IMPACT_UNIT_FALLBACK));
+        $t->assert_text_contains($test_name, $impact_html, $mtr->txt(msg_id::POPUP_IMPACT_UNKNOWN));
+        $t->assert_text_contains($test_name, $impact_html, '>' . $mtr->txt(msg_id::POPUP_IMPACT_UPDATE) . '</a>');
+
+        $test_name = 'without a change no impact line is shown';
+        $t->assert($test_name, $preview->popup_impact([]), '');
+
+
+        $t->subheader($ts . 'view tab box');
+
+        // the 'my' tab shows the fields the session user has overwritten in user_words as a
+        // your / field / instead table (the user value, the translated field name and the
+        // standard value) and is only shown if the user is logged in and the api has
+        // delivered overwrites for the requesting user
+        $wrd_json = json_decode($t_wrd->word()->api_json(), true);
+        $wrd_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => word_fields::FLD_PLURAL,
+                json_fields::USR_VALUE => word_names::TEST_ADD_PLURAL,
+                json_fields::STD_VALUE => word_names::MATH_PLURAL,
+            ],
+            [
+                json_fields::FIELD => fields::FLD_IMPACT,
+                json_fields::USR_VALUE => '5',
+                json_fields::STD_VALUE => '3',
+            ],
+        ];
+        $wrd_json[json_fields::OTHER_OVERWRITES] = [
+            [
+                json_fields::FIELD => word_fields::FLD_PLURAL,
+                json_fields::USER_NAME => users::SYSTEM_TEST_PARTNER_NAME,
+                json_fields::USR_VALUE => word_names::TEST_ADD_PLURAL . '2',
+                json_fields::STD_VALUE => word_names::MATH_PLURAL,
+            ],
+        ];
+        $wrd_tab = new word(json_encode($wrd_json));
+        $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
+        $usr_tab_keep = $ui_sys->usr ?? null;
+
+        $test_name = 'the user with overwrites sees the my tab';
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $tab_html = $list->view_tab_box($wrd_tab, true);
+        $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
+
+        $test_name = '... with the your and instead columns';
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_YOUR));
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_INSTEAD));
+
+        $test_name = '... the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL);
+        $t->assert_text_contains($test_name, $tab_html, word_names::MATH_PLURAL);
+
+        // the undo icon links to the confirm page of the word edit view that sets the plural
+        // back to the standard value, with the user value as the '8'-prefixed opening value;
+        // the values are url-encoded in the link (http_build_query), so e.g. a space is a '+'
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html, url_var::PLURAL . '=' . urlencode(word_names::MATH_PLURAL));
+        $t->assert_text_contains($test_name, $tab_html, url_var::PRE . url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL));
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
+
+        $test_name = '... but without the admin-only impact overwrite for a normal user';
+        $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));
+
+        // the 'others' tab lists the shared overwrites of the other users with the
+        // overwriting user name and the value of that user
+        $test_name = 'the others tab shows the overwrite of the other user';
+        $others_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS)) . '"';
+        $t->assert_text_contains($test_name, $tab_html, $others_tab_ref);
+        $t->assert_text_contains($test_name, $tab_html, users::SYSTEM_TEST_PARTNER_NAME);
+        $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL . '2');
+
+        $test_name = 'an admin also sees the admin-only impact overwrite';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, true), $mtr->text_db_field(fields::FLD_IMPACT));
+
+        $test_name = 'without overwrites no my and no others tab is shown';
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
+        $wrd_plain = new word($t_wrd->word()->api_json());
+        $plain_html = $list->view_tab_box($wrd_plain, true);
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+        $t->assert_text_not_contains($test_name, $plain_html, $others_tab_ref);
+
+        $test_name = 'without a logged in user no my and no others tab is shown';
+        unset($ui_sys->usr);
+        $anon_html = $list->view_tab_box($wrd_tab, true);
+        $t->assert_text_not_contains($test_name, $anon_html, $my_tab_ref);
+        $t->assert_text_not_contains($test_name, $anon_html, $others_tab_ref);
+
+        // restore the session user for the following tests
+        if ($usr_tab_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_tab_keep;
+        }
 
     }
 

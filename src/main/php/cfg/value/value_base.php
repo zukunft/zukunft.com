@@ -2327,7 +2327,7 @@ class value_base extends sandbox_value
     {
         global $sys;
         $sc = new sql_creator();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($sbx, $msg, $sc_par_lst);
 

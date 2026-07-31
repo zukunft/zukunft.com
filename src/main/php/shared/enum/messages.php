@@ -1605,16 +1605,32 @@ enum messages: string
     case LOG_TO = 'to';
     // shown for a change of the object owner (the user_id field) instead of 'added user id'
     case LOG_SET_OWNER = 'set owner to';
-    // prefix shown before the action for a change in the user sandbox e.g. 'user added view id ""'
+    // shown after the action for a change in the user sandbox e.g. 'added user view id ""'
     case LOG_USER = 'user';
     // shown when a user sandbox change adds an empty field, i.e. removes the user overwrite for a
-    // field, so 'user added view id ""' becomes 'remove user overwrite for view'
+    // field, so 'added user view id ""' becomes 'remove user overwrite for view'
     case LOG_REMOVE_USER_OVERWRITE = 'remove user overwrite for';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
+    // the 'my' tab table column headers: the user value ('your') and the standard value ('instead')
+    // of an overwritten field; the field column reuses CHANGE_TBL_FIELD
+    case MY_TBL_YOUR = 'my_tbl_your';
+    case MY_TBL_INSTEAD = 'my_tbl_instead';
+    // the tooltip of the undo icon link that sets the overwritten field back to the standard value
+    case MY_TBL_UNDO = 'my_tbl_undo';
+    // the 'others' tab table column headers: the user that has done the overwrite and the value
+    // of that user; the field and 'instead' columns reuse the my tab headers
+    case OTHERS_TBL_USER = 'others_tbl_user';
+    case OTHERS_TBL_VALUE = 'others_tbl_value';
     case POPUP_IMPACT = 'popup_impact';
+    // the fallback unit for the impact of a change if no other impact unit is set
+    case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';
+    // shown as the impact number if the impact of the change cannot be calculated (yet)
+    case POPUP_IMPACT_UNKNOWN = 'unknown';
+    // the text of the link to request the recalculation of the impact of the change
+    case POPUP_IMPACT_UPDATE = 'update';
     // the column headers of the change log table pure
     case CHANGE_LOG_TBL_WHEN = 'change_log_tbl_when';
     case CHANGE_LOG_TBL_WHO = 'change_log_tbl_who';
@@ -1802,6 +1818,10 @@ enum messages: string
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
     case FORM_SUB_TITLE_VIEWS = 'system_sub_title_views';
+    // the tab with the session user's own overwrites (the user_ table rows) of the shown object
+    case FORM_SUB_TITLE_MY = 'system_sub_title_my';
+    // the tab with the shared overwrites that other users have done on the shown object
+    case FORM_SUB_TITLE_OTHERS = 'system_sub_title_others';
 
     // log, im- and export titles
     case FORM_TITLE_ERROR_LOG = 'system_title_error_log';

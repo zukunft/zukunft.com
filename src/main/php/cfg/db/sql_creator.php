@@ -573,12 +573,19 @@ class sql_creator
      * get the preloaded table id for change log entries
      *
      * @param string $class the class name including the namespace
+     * @param sql_type_list $sc_par_lst the parameters of the sql statement creation; a write to
+     *                      the user sandbox (overlay) table is logged to the user table
+     *                      e.g. user_words instead of words
      * @return int the database id of the table selected by the given class
      */
-    function table_id(string $class): int
+    function table_id(string $class, sql_type_list $sc_par_lst = new sql_type_list()): int
     {
         global $sys;
-        return $sys->typ_lst->cng_tbl->id($this->get_table_name($class));
+        $tbl_name = $this->get_table_name($class);
+        if ($sc_par_lst->is_usr_tbl()) {
+            $tbl_name = sql_db::TBL_USER_PREFIX . $tbl_name;
+        }
+        return $sys->typ_lst->cng_tbl->id($tbl_name);
     }
 
 
@@ -2246,9 +2253,13 @@ class sql_creator
     {
         global $sys;
 
-        // get the change table id
+        // get the change table id; a write to the user sandbox (overlay) table is logged
+        // to the user table e.g. user_values instead of values
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
+        if ($sc_par_lst->is_usr_tbl()) {
+            $table_name = sql_db::TBL_USER_PREFIX . $table_name;
+        }
         $table_id = $sys->typ_lst->cng_tbl->id($table_name);
 
         // select which log to use and set the parameters
@@ -5357,10 +5368,6 @@ class sql_creator
         }
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
-        }
-        // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
-        if ($result == 'triple_name') {
-            $result = 'name';
         }
         return $result;
     }

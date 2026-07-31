@@ -293,6 +293,16 @@ class json_fields
     const string STD_VALUE = 'std_value';
     const string STD_ID = 'std_id';
 
+    // the fields that the requesting user has overwritten in the user sandbox (overlay) table
+    // e.g. user_words, each with the db field name, the user value and the standard value,
+    // used by the 'my' tab of the object page
+    const string USER_OVERWRITES = 'user_overwrites';
+    const string FIELD = 'field';
+    const string USR_VALUE = 'usr_value';
+    // the shared overwrites of other users with the name of the overwriting user (USER_NAME),
+    // used by the 'others' tab of the object page
+    const string OTHER_OVERWRITES = 'other_overwrites';
+
     // to review
     const string ACTION = 'action';
     const string USER_NAME = 'user';

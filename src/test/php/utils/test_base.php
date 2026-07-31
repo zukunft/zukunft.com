@@ -4493,8 +4493,16 @@ class test_base
     ): bool
     {
         $lib = new library();
-        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' ';
+        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id());
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ';
+        // a change written to the user sandbox row is logged to the user overlay table and shown
+        // with a translatable 'user' after the action (see change_log_named::action_txt);
+        // e.g. an add of a filled object also creates the user row with the user-only fields
+        $target .= $action . ' ';
+        if ($log_ui->is_user_sandbox_change()) {
+            $target .= msg_id::LOG_USER->value . ' ';
+        }
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= 'to "' . $name . '" from "' . $old_name . '"';
         } else {
@@ -4736,8 +4744,15 @@ class test_base
     ): bool
     {
         $lib = new library();
-        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ' . $action . ' ';
+        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id());
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ';
+        // a change written to the user sandbox row is logged to the user overlay table and shown
+        // with a translatable 'user' after the action (see change_log_named::action_txt)
+        $target .= $action . ' ';
+        if ($log_ui->is_user_sandbox_change()) {
+            $target .= msg_id::LOG_USER->value . ' ';
+        }
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= 'to "' . $name . '" from "' . $old_name . '"';
         } else {
@@ -5545,6 +5560,26 @@ class test_base
         bool                                           $usr_only = false
     ): string
     {
+        return $this->log_last_ui_by_field($sbx, $fld, $id, $usr_only)->dsp($ex_time);
+    }
+
+    /**
+     * the last change of the given field as the frontend log object, so a test can also check
+     * e.g. if the change has been written to the user sandbox (overlay) table
+     *
+     * @param sandbox|sandbox_multi|db_id_object_non_sandbox $sbx the sandbox object that should be used to filter the changes
+     * @param string $fld the name if the field that should be used to filter the changes
+     * @param int|string|null $id the field value if the given field name
+     * @param bool $usr_only true if only user-specific changes should be shown
+     * @return change_log_ui the last log entry that the given user has done on a named object
+     */
+    function log_last_ui_by_field(
+        sandbox|sandbox_multi|db_id_object_non_sandbox $sbx,
+        string                                         $fld = '',
+        int|string|null                                $id = null,
+        bool                                           $usr_only = false
+    ): change_log_ui
+    {
         // TODO maybe use log_object?
         if ($sbx->is_value_obj()) {
             $log = $sbx->log_value_object();
@@ -5552,8 +5587,7 @@ class test_base
             $log = $sbx->log_object();
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        $log_ui = new change_log_ui($log->api_json());
-        return $log_ui->dsp($ex_time);
+        return new change_log_ui($log->api_json());
     }
 
 

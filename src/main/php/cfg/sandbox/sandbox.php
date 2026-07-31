@@ -491,6 +491,98 @@ class sandbox extends db_object_seq_id_user
         return $vars;
     }
 
+    /**
+     * the fields that the user of this object has overwritten in the user sandbox (overlay)
+     * table e.g. user_words, each with the user value and the value of the standard object;
+     * used by the 'my' tab of the object page (see the web ui_preview::user_overwrites_table)
+     *
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field with the db field name, the user value
+     *               and the standard value
+     */
+    function user_overwrites_api_array(user_message $msg): array
+    {
+        $result = [];
+        if ($this->has_usr_cfg()) {
+            $std = clone $this;
+            $std->load_standard($this->id(), $msg);
+            $result = $this->overwrite_rows($std, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the fields that users other than the user of this object have overwritten in the user
+     * sandbox (overlay) table e.g. user_words, each with the name of the overwriting user, the
+     * user value and the value of the standard object; overwrites that the other user does not
+     * share (the personal and private share types) are never included; used by the 'others'
+     * tab of the object page (see the web ui_preview::other_overwrites_table)
+     *
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field and user, sorted by user name and field
+     */
+    function other_overwrites_api_array(user_message $msg): array
+    {
+        $result = [];
+        $std = null;
+        // the user list of changed_by() stays null if no other user has changed the object
+        foreach ($this->changed_by()->lst() ?? [] as $other) {
+            if ($other->id() != $this->get_user()->id()) {
+                $other_obj = clone $this;
+                $other_obj->set_user($other);
+                $other_obj->load_by_id($this->id());
+                // a null share id is the default public share (the default of a nullable field is
+                // resolved at the point of use), so only a set share type can restrict the listing
+                $shr = share_type_shared::PUBLIC;
+                if ($other_obj->share_id() != null) {
+                    $shr = $other_obj->share_type_code_id();
+                }
+                if ($other_obj->has_usr_cfg()
+                    and $shr != share_type_shared::PERSONAL and $shr != share_type_shared::PRIVATE) {
+                    if ($std == null) {
+                        $std = clone $this;
+                        $std->load_standard($this->id(), $msg);
+                    }
+                    foreach ($other_obj->overwrite_rows($std, $msg) as $row) {
+                        $row[json_fields::USER_NAME] = $other->name();
+                        $result[] = $row;
+                    }
+                }
+            }
+        }
+        // sort by user name and field so the html order never depends on the db row order
+        usort($result, fn($a, $b) => [$a[json_fields::USER_NAME], $a[json_fields::FIELD]]
+            <=> [$b[json_fields::USER_NAME], $b[json_fields::FIELD]]);
+        return $result;
+    }
+
+    /**
+     * the overwrite rows of this object compared to the given standard object: one entry per
+     * field that differs with the db field name, the value of this object and the standard
+     * value; the shared row builder of the 'my' and the 'others' overwrite api arrays
+     *
+     * @param sandbox $std the standard object of this object as loaded via load_standard
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field
+     */
+    private function overwrite_rows(sandbox $std, user_message $msg): array
+    {
+        $result = [];
+        $fvt_lst = $this->db_fields_changed($std, $msg);
+        foreach ($fvt_lst->names() as $name) {
+            // the object id and the changing user are keys, not field overwrites
+            if ($name != $this::FLD_ID and $name != user_db::FLD_ID) {
+                $fld = $fvt_lst->get($name, $msg);
+                $result[] = [
+                    json_fields::FIELD => $name,
+                    json_fields::USR_VALUE => $fld?->value,
+                    json_fields::STD_VALUE => $fld?->old,
+                ];
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export
@@ -3486,7 +3578,7 @@ class sandbox extends db_object_seq_id_user
     ): sql_par
     {
         global $sys;
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // set some var names to shorten the code lines
         $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
@@ -3671,7 +3763,7 @@ class sandbox extends db_object_seq_id_user
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
@@ -4205,7 +4297,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->is_excluded() and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
-                    $table_id = $sc->table_id($this::class);
+                    $table_id = $sc->table_id($this::class, $sc_par_lst);
                     $par_lst_out->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
                         $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),

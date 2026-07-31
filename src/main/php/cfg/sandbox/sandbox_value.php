@@ -2034,7 +2034,7 @@ class sandbox_value extends sandbox_multi
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $is_update = $sc_par_lst->is_update();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         /*
          * TODO check if sandbox named function match this logic
