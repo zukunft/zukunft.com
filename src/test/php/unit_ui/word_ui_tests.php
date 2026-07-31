@@ -448,6 +448,12 @@ class word_ui_tests
                 json_fields::USR_VALUE => '5',
                 json_fields::STD_VALUE => '3',
             ],
+            // a null and a zero view id both resolve to 'not set', so this row must be skipped
+            [
+                json_fields::FIELD => fields::FLD_VIEW,
+                json_fields::USR_VALUE => '0',
+                json_fields::STD_VALUE => '',
+            ],
         ];
         $wrd_json[json_fields::OTHER_OVERWRITES] = [
             [
@@ -497,6 +503,9 @@ class word_ui_tests
 
         $test_name = '... but without the admin-only impact overwrite for a normal user';
         $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));
+
+        $test_name = '... and without the row where both values resolve to the same text';
+        $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_VIEW));
 
         // the 'others' tab lists the shared overwrites of the other users with the
         // overwriting user name and the value of that user

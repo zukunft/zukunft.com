@@ -413,12 +413,16 @@ class ui_preview extends ui_base
                 if ($this->shows_field($usr, $fld)) {
                     $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
                     $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
-                    // escape the values (user input rendered raw by the table; stored xss)
-                    $rows .= $html->tr(
-                        $html->td($mtr->text_db_field($fld))
-                        . $html->td($html->esc($your))
-                        . $html->td($html->esc($instead))
-                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                    // e.g. a null and a zero view id both resolve to 'not set', so a row that
+                    // would show the same text on both sides tells the user nothing and is skipped
+                    if ($your != $instead) {
+                        // escape the values (user input rendered raw by the table; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc($your))
+                            . $html->td($html->esc($instead))
+                            . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                    }
                 }
             }
             if ($rows != '') {
@@ -457,12 +461,15 @@ class ui_preview extends ui_base
                 if ($this->shows_field($usr, $fld)) {
                     $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
                     $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
-                    // escape the values and the user name (user input rendered raw; stored xss)
-                    $rows .= $html->tr(
-                        $html->td($mtr->text_db_field($fld))
-                        . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
-                        . $html->td($html->esc($val))
-                        . $html->td($html->esc($instead)));
+                    // like in the my tab a row with the same text on both sides is skipped
+                    if ($val != $instead) {
+                        // escape the values and the user name (user input rendered raw; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
+                            . $html->td($html->esc($val))
+                            . $html->td($html->esc($instead)));
+                    }
                 }
             }
             if ($rows != '') {

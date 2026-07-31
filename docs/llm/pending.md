@@ -14,8 +14,6 @@ the basic steps to show the start page are
 
 ### word and triple
 
-in the 'My' tab if both values are the same e.g. 'not set' the row should not be shown, so the line 'View id 	not set 	not set' in src/test/resources/web/html/workflow_write/change_word_all_sandbox_fields_wf17/wf17_show_edit_fill_confirm_edit_save_confirm_edit_save_confirm.html should not be there
-
 add to 'others' tab a fa-check icon that calls the confirm page to use the change also for the user
 
 check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
