@@ -47,8 +47,9 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
-include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'users.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED . 'api.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -474,6 +476,14 @@ class user extends db_object
                 or $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
+        }
+        // the two normal test users carry the test profile only to be allowed to write the
+        // reserved test names (a backend privilege); for the frontend display they act like a
+        // normal user, so most test pages render without the admin-only fields and only the
+        // few explicit admin, developer and system user tests show them (see sees_admin_fields)
+        if ($this->code_id == users::SYSTEM_TEST_CODE_ID
+            or $this->code_id == users::SYSTEM_TEST_PARTNER_CODE_ID) {
+            $result = false;
         }
         return $result;
     }
