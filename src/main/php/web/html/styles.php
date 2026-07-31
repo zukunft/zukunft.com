@@ -39,6 +39,8 @@ class styles
     const string STYLE_GREY = 'grey';
     // light blue between the grey old value and the link blue to highlight a changed value
     const string STYLE_CHANGED = 'changed';
+    // dark blue navbar person icon to show that a non-ip user is logged in
+    const string USER_LOGGED = 'user-logged';
     // centered change preview table whose width follows the config 'side width' screen breakpoints
     const string CHANGE_PREVIEW = 'change-preview';
     // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view

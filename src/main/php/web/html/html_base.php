@@ -378,7 +378,10 @@ class html_base
         $usr_tooltip = $usr_name !== null
             ? ($usr_role !== null ? $usr_role . ' ' : '') . $usr_name
             : '';
-        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="fas fa-user-circle"'
+        // a non-ip user is logged in when the user name is set, which is shown by the dark blue icon
+        $usr_icon_class = icons::USER_CIRCLE
+            . ($usr_name !== null ? ' ' . styles::USER_LOGGED : '');
+        $usr_icon = '<' . self::I . ' ' . self::CLASS_HTML . '="' . $usr_icon_class . '"'
             . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
             . '></' . self::I . '>';
         $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";

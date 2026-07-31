@@ -68,7 +68,9 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
@@ -222,6 +224,18 @@ class base_ui_tests
         // the target is a pure html frontend, so the tab box must not contain javascript
         $test_name = 'tab_box contains no javascript';
         $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+
+        $t->subheader($ts . 'navbar');
+
+        // the person icon in the top right corner is shown in dark blue (styles::USER_LOGGED)
+        // if a non-ip user is logged in, i.e. if the navbar gets a user name
+        $test_name = 'the person icon shows the logged in state in dark blue';
+        $navbar_logged = $html->navbar(0, [], 'test user');
+        $t->assert_text_contains($test_name, $navbar_logged, icons::USER_CIRCLE . ' ' . styles::USER_LOGGED);
+
+        $test_name = 'without a logged in user the person icon keeps the default color';
+        $navbar_anon = $html->navbar(0, []);
+        $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
 
         $t->subheader($ts . 'login');
 

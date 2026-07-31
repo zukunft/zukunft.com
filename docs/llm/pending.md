@@ -14,6 +14,8 @@ the basic steps to show the start page are
 
 ### word and triple
 
+if the user has logs out e.g. this url http://localhost/http/view.php?m=64&9m=90&9id=347&9z=0 is used to show the logout page, which is fine. If from here the login page is called, the back url should be included, so that after the login not the logout page is shown but instead the page for url '... m=90&9id=347 ...'
+
 check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
 if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged in
