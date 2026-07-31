@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -426,6 +427,14 @@ class word_ui_tests
                 json_fields::STD_VALUE => '3',
             ],
         ];
+        $wrd_json[json_fields::OTHER_OVERWRITES] = [
+            [
+                json_fields::FIELD => word_fields::FLD_PLURAL,
+                json_fields::USER_NAME => users::SYSTEM_TEST_PARTNER_NAME,
+                json_fields::USR_VALUE => word_names::TEST_ADD_PLURAL . '2',
+                json_fields::STD_VALUE => word_names::MATH_PLURAL,
+            ],
+        ];
         $wrd_tab = new word(json_encode($wrd_json));
         $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
         $usr_tab_keep = $ui_sys->usr ?? null;
@@ -455,18 +464,30 @@ class word_ui_tests
         $test_name = '... but without the admin-only impact overwrite for a normal user';
         $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));
 
+        // the 'others' tab lists the shared overwrites of the other users with the
+        // overwriting user name and the value of that user
+        $test_name = 'the others tab shows the overwrite of the other user';
+        $others_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_OTHERS)) . '"';
+        $t->assert_text_contains($test_name, $tab_html, $others_tab_ref);
+        $t->assert_text_contains($test_name, $tab_html, users::SYSTEM_TEST_PARTNER_NAME);
+        $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL . '2');
+
         $test_name = 'an admin also sees the admin-only impact overwrite';
         $ui_sys->usr = new user_ui($t->usr_admin->api_json());
         $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, true), $mtr->text_db_field(fields::FLD_IMPACT));
 
-        $test_name = 'without overwrites no my tab is shown';
+        $test_name = 'without overwrites no my and no others tab is shown';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
         $wrd_plain = new word($t_wrd->word()->api_json());
-        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_plain, true), $my_tab_ref);
+        $plain_html = $list->view_tab_box($wrd_plain, true);
+        $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
+        $t->assert_text_not_contains($test_name, $plain_html, $others_tab_ref);
 
-        $test_name = 'without a logged in user no my tab is shown';
+        $test_name = 'without a logged in user no my and no others tab is shown';
         unset($ui_sys->usr);
-        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_tab, true), $my_tab_ref);
+        $anon_html = $list->view_tab_box($wrd_tab, true);
+        $t->assert_text_not_contains($test_name, $anon_html, $my_tab_ref);
+        $t->assert_text_not_contains($test_name, $anon_html, $others_tab_ref);
 
         // restore the session user for the following tests
         if ($usr_tab_keep == null) {

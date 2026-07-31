@@ -108,6 +108,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO check how to shorten the urls e.g. that www.zukunft.com/login calls www.zukunft.com/http/view.php?m=61 
     TODO create a job that moves values and formulas from the symbol word to the main phrase
+    TODO if a change is above a certain (config.yaml value) level change the background color to indicate the risk
 
     TODO fix bug that the same triple with another name is not detected as similar triple
          steps to reproduce:

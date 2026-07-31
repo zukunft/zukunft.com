@@ -604,11 +604,16 @@ class word extends sandbox_code_id
                             new api_type_list(), $usr);
                     }
                     // the fields the requesting user has overwritten in user_words with the user
-                    // and the standard value, so the 'my' tab can show the user overwrites
+                    // and the standard value, so the 'my' tab can show the user overwrites, and
+                    // the shared overwrites of the other users for the 'others' tab
                     if (!$typ_lst->test_mode()) {
                         $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
                         if ($usr_ovr != []) {
                             $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
+                        }
+                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        if ($oth_ovr != []) {
+                            $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
                         }
                     }
                 }

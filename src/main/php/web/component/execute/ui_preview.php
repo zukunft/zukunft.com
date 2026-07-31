@@ -43,6 +43,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -407,8 +409,7 @@ class ui_preview extends ui_base
             $rows = '';
             foreach ($dbo->user_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
-                // hide the admin-only fields (the cached impact and usage numbers) like the change log
-                if ($usr->sees_admin_fields() or !in_array($fld, fields::LOG_ADMIN_ONLY)) {
+                if ($this->shows_field($usr, $fld)) {
                     $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
                     $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
                     // escape the values (user input rendered raw by the table; stored xss)
@@ -429,6 +430,61 @@ class ui_preview extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * the 'others' tab table of the word or triple page: one row per field and user for the
+     * shared overwrites that users other than the session user have done, with the translated
+     * field name, the name of the overwriting user, the value of that user and the value of
+     * the standard object ('instead'); an empty string if the session user is not logged in
+     * or no other user has a shared overwrite, so the tab is dropped
+     *
+     * @param db_object $dbo the word or triple that should be shown to the user
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function other_overwrites_table(db_object $dbo): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->other_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                if ($this->shows_field($usr, $fld)) {
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    // escape the values and the user name (user input rendered raw; stored xss)
+                    $rows .= $html->tr(
+                        $html->td($mtr->text_db_field($fld))
+                        . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
+                        . $html->td($html->esc($val))
+                        . $html->td($html->esc($instead)));
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_USER))
+                    . $html->th($mtr->txt(msg_id::OTHERS_TBL_VALUE))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD)));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user $usr the session user viewing the overwrite table
+     * @param string $fld the db field name of an overwritten field
+     * @return bool true if the field row is shown to the user; the admin-only fields (the cached
+     *              impact and usage numbers) are hidden like in the change log
+     */
+    private function shows_field(user $usr, string $fld): bool
+    {
+        return $usr->sees_admin_fields() or !in_array($fld, fields::LOG_ADMIN_ONLY);
     }
 
     /**

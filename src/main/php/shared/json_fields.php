@@ -299,6 +299,9 @@ class json_fields
     const string USER_OVERWRITES = 'user_overwrites';
     const string FIELD = 'field';
     const string USR_VALUE = 'usr_value';
+    // the shared overwrites of other users with the name of the overwriting user (USER_NAME),
+    // used by the 'others' tab of the object page
+    const string OTHER_OVERWRITES = 'other_overwrites';
 
     // to review
     const string ACTION = 'action';

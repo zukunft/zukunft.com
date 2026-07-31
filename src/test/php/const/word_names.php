@@ -309,6 +309,9 @@ class word_names
     // the second new description posted by the change_word_all_sandbox_fields workflow, so the
     // change log of the test word shows two confirmed description changes
     const string TEST_CHANGE_TWO_COM = 'a second confirm change test description';
+    // the description overwrite of a third user, so the change_word_all_sandbox_fields workflow
+    // pages rendered for usr2 also show the 'others' tab
+    const string TEST_OTHER_COM = 'a description overwrite of another user';
     // words to test the no update import that only fills up empty fields
     const string TEST_NO_UPD = 'System Test Word No Update';
     const string TEST_NO_UPD_COM = 'the original description that a no update import must keep';

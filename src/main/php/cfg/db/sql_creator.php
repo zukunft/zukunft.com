@@ -5369,10 +5369,6 @@ class sql_creator
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
         }
-        // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
-        if ($result == 'triple_name') {
-            $result = 'name';
-        }
         return $result;
     }
 

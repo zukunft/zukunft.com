@@ -536,6 +536,19 @@ class word_write_tests
         $result = $wrd_reloaded->plural;
         $target = word_names::TEST_RENAMED . 's';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" unchanged for user 1', $result, $target);
+
+        // ... and the shared overwrite of user 2 is listed for user 1 in the others tab data
+        $test_name = 'the other overwrites list the plural of the partner user';
+        $oth_ovr = $wrd_reloaded->other_overwrites_api_array(new user_message($t->usr1));
+        $oth_found = false;
+        foreach ($oth_ovr as $oth_row) {
+            if ($oth_row[json_fields::FIELD] == word_fields::FLD_PLURAL
+                and $oth_row[json_fields::USER_NAME] == users::SYSTEM_TEST_PARTNER_NAME
+                and $oth_row[json_fields::USR_VALUE] == word_names::TEST_RENAMED . 's2') {
+                $oth_found = true;
+            }
+        }
+        $t->assert_true($test_name, $oth_found);
         $result = $wrd_reloaded->description;
         $target = word_names::TEST_RENAMED . ' description';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" unchanged for user 1', $result, $target);
