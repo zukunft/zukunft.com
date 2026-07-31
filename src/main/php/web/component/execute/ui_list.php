@@ -563,10 +563,11 @@ class ui_list extends ui_base
             // with the three columns when, who and what, latest first (see ui_log)
             $log = new ui_log();
             $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $test_mode);
-            // tab 3: the session user's own overwrites of this object (the user_ table rows);
-            // an empty string if the user is not logged in or has no overwrites, which drops
-            // the tab (tab_box skips tabs without content)
-            $my_html = $log->user_overwrites_table_pure($dbo, new change_log_list(), $test_mode);
+            // tab 3: the session user's own overwrites of this object (the current user_ table
+            // row values compared to the standard values); an empty string if the user is not
+            // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
+            $preview = new ui_preview();
+            $my_html = $preview->user_overwrites_table($dbo);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,

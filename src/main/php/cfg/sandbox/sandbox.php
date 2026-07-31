@@ -491,6 +491,37 @@ class sandbox extends db_object_seq_id_user
         return $vars;
     }
 
+    /**
+     * the fields that the user of this object has overwritten in the user sandbox (overlay)
+     * table e.g. user_words, each with the user value and the value of the standard object;
+     * used by the 'my' tab of the object page (see the web ui_preview::user_overwrites_table)
+     *
+     * @param user_message $msg to collect the error messages for the calling user
+     * @return array one entry per overwritten field with the db field name, the user value
+     *               and the standard value
+     */
+    function user_overwrites_api_array(user_message $msg): array
+    {
+        $result = [];
+        if ($this->has_usr_cfg()) {
+            $std = clone $this;
+            $std->load_standard($this->id(), $msg);
+            $fvt_lst = $this->db_fields_changed($std, $msg);
+            foreach ($fvt_lst->names() as $name) {
+                // the object id and the changing user are keys, not field overwrites
+                if ($name != $this::FLD_ID and $name != user_db::FLD_ID) {
+                    $fld = $fvt_lst->get($name, $msg);
+                    $result[] = [
+                        json_fields::FIELD => $name,
+                        json_fields::USR_VALUE => $fld?->value,
+                        json_fields::STD_VALUE => $fld?->old,
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export

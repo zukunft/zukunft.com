@@ -4280,7 +4280,7 @@ class library
         $result[] = $sys->typ_lst->cng_tbl->id($tbl);
         // the changes of an object include the rows of its user sandbox (overlay) table
         // e.g. user_words for a word, so the user overwrites show on the object page and
-        // can fill the 'my' tab (see change_log_list::filter_user_overwrites); not every
+        // are shown on the object page with the 'user' marker after the action; not every
         // class has an overlay table, so a missing user table is no error
         $usr_tbl_id = $sys->typ_lst->cng_tbl->id(change_tables::USER_PREFIX . $tbl, false);
         if ($usr_tbl_id > 0) {

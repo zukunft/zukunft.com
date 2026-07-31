@@ -38,25 +38,24 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
-use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -409,27 +408,51 @@ class word_ui_tests
 
         $t->subheader($ts . 'view tab box');
 
-        // the 'my' tab lists the session user's own overwrites (the user_words rows of the
-        // change log fixture) and is only shown if the user is logged in and has overwrites
-        $t_log = new test_log($t);
-        $t_usr_tab = new test_users();
-        $wrd_tab = new word($t_wrd->word()->api_json());
-        $wrd_tab->chg_log = new change_log_list_ui(
-            $t_log->log_list_word_changes()->api_json(new api_type_list([api_types::TEST_MODE])));
+        // the 'my' tab shows the fields the session user has overwritten in user_words as a
+        // your / field / instead table (the user value, the translated field name and the
+        // standard value) and is only shown if the user is logged in and the api has
+        // delivered overwrites for the requesting user
+        $wrd_json = json_decode($t_wrd->word()->api_json(), true);
+        $wrd_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => word_fields::FLD_PLURAL,
+                json_fields::USR_VALUE => word_names::TEST_ADD_PLURAL,
+                json_fields::STD_VALUE => word_names::MATH_PLURAL,
+            ],
+            [
+                json_fields::FIELD => fields::FLD_IMPACT,
+                json_fields::USR_VALUE => '5',
+                json_fields::STD_VALUE => '3',
+            ],
+        ];
+        $wrd_tab = new word(json_encode($wrd_json));
         $my_tab_ref = 'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"';
         $usr_tab_keep = $ui_sys->usr ?? null;
 
         $test_name = 'the user with overwrites sees the my tab';
-        $ui_sys->usr = new user_ui($t_usr_tab->system_user()->api_json());
+        $ui_sys->usr = new user_ui($t->usr_normal->api_json());
         $tab_html = $list->view_tab_box($wrd_tab, true);
         $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
 
-        $test_name = '... and the my tab lists the user overwrite entries';
-        $t->assert_text_contains($test_name, $tab_html, 'added user view id');
+        $test_name = '... with the your and instead columns';
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_YOUR));
+        $t->assert_text_contains($test_name, $tab_html, $mtr->txt(msg_id::MY_TBL_INSTEAD));
 
-        $test_name = 'a user without overwrites gets no my tab';
+        $test_name = '... the user value and the standard value of the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL);
+        $t->assert_text_contains($test_name, $tab_html, word_names::MATH_PLURAL);
+
+        $test_name = '... but without the admin-only impact overwrite for a normal user';
+        $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));
+
+        $test_name = 'an admin also sees the admin-only impact overwrite';
+        $ui_sys->usr = new user_ui($t->usr_admin->api_json());
+        $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, true), $mtr->text_db_field(fields::FLD_IMPACT));
+
+        $test_name = 'without overwrites no my tab is shown';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
-        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_tab, true), $my_tab_ref);
+        $wrd_plain = new word($t_wrd->word()->api_json());
+        $t->assert_text_not_contains($test_name, $list->view_tab_box($wrd_plain, true), $my_tab_ref);
 
         $test_name = 'without a logged in user no my tab is shown';
         unset($ui_sys->usr);

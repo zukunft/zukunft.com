@@ -353,6 +353,8 @@ messages:
   change_tbl_field: "Field"
   change_tbl_from: "From"
   change_tbl_to: "To"
+  my_tbl_your: "your"
+  my_tbl_instead: "instead"
   change_log_tbl_when: "when"
   change_log_tbl_who: "who"
   change_log_tbl_what: "what"

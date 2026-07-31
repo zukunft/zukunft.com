@@ -551,7 +551,7 @@ class change_log_named extends change_log
     }
 
     /**
-     * public because change_log_list::filter_user_overwrites selects the 'my' tab rows with it
+     * public because the test helpers check with it in which table a change has been logged
      * @return bool true if this change is logged to a user sandbox (overlay) table, i.e. it is a
      *              user-specific change and not a change of the shared standard object
      */

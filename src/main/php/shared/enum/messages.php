@@ -1614,6 +1614,10 @@ enum messages: string
     case CHANGE_TBL_FIELD = 'change_tbl_field';
     case CHANGE_TBL_FROM = 'change_tbl_from';
     case CHANGE_TBL_TO = 'change_tbl_to';
+    // the 'my' tab table column headers: the user value ('your') and the standard value ('instead')
+    // of an overwritten field; the field column reuses CHANGE_TBL_FIELD
+    case MY_TBL_YOUR = 'my_tbl_your';
+    case MY_TBL_INSTEAD = 'my_tbl_instead';
     case POPUP_IMPACT = 'popup_impact';
     // the fallback unit for the impact of a change if no other impact unit is set
     case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';

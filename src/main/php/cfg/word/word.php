@@ -603,6 +603,14 @@ class word extends sandbox_code_id
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $usr);
                     }
+                    // the fields the requesting user has overwritten in user_words with the user
+                    // and the standard value, so the 'my' tab can show the user overwrites
+                    if (!$typ_lst->test_mode()) {
+                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        if ($usr_ovr != []) {
+                            $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
+                        }
+                    }
                 }
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {

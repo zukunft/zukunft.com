@@ -889,7 +889,7 @@ class frontend
 
         // publish the requesting user as the session user of the request cache ($ui_sys->usr),
         // because the renderers that cannot take the message read the session user from there,
-        // e.g. the 'my' tab of the view tab box (ui_log::user_overwrites_table_pure) and the
+        // e.g. the 'my' tab of the view tab box (ui_preview::user_overwrites_table) and the
         // admin-only field filter (change_log_list::filter_admin_fields); without this the
         // cache keeps its empty constructor user and every page renders as not logged in
         if ($usr != null) {

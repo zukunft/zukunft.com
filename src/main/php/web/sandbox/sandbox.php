@@ -76,6 +76,11 @@ class sandbox extends db_object
     // to reactivate an excluded sandbox object also excluded objects are send to the frontend
     public ?bool $excluded = null;
 
+    // the fields that the requesting user has overwritten in the user sandbox (overlay) table
+    // e.g. user_words, each with the db field name, the user value and the standard value;
+    // rendered by the 'my' tab of the object page (see ui_preview::user_overwrites_table)
+    public array $user_overwrites = [];
+
     // the user that has created the standard object
     protected ?user $owner = null;
 
@@ -119,6 +124,11 @@ class sandbox extends db_object
             $this->excluded = $json_array[json_fields::EXCLUDED];
         } else {
             $this->excluded = null;
+        }
+        if (array_key_exists(json_fields::USER_OVERWRITES, $json_array)) {
+            $this->user_overwrites = $json_array[json_fields::USER_OVERWRITES];
+        } else {
+            $this->user_overwrites = [];
         }
         return $msg->is_ok();
     }

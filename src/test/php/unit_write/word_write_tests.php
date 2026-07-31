@@ -58,9 +58,11 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -516,6 +518,18 @@ class word_write_tests
         $result = $wrd_usr2_reloaded->type_id;
         $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '"', $result, $target);
+
+        // ... and the user overwrites for the 'my' tab list the changed field with both values
+        $test_name = 'the user overwrites list the plural with the user and the standard value';
+        $usr_ovr = $wrd_usr2_reloaded->user_overwrites_api_array(new user_message($t->usr2));
+        $ovr_key = array_search(word_fields::FLD_PLURAL, array_column($usr_ovr, json_fields::FIELD));
+        $t->assert_true($test_name, $ovr_key !== false);
+        if ($ovr_key !== false) {
+            $test_name = '... with the user value of the plural';
+            $t->assert($test_name, $usr_ovr[$ovr_key][json_fields::USR_VALUE], word_names::TEST_RENAMED . 's2');
+            $test_name = '... and a standard value that differs from the user value';
+            $t->assert_true($test_name, $usr_ovr[$ovr_key][json_fields::STD_VALUE] != word_names::TEST_RENAMED . 's2');
+        }
 
         // check the word for the original user remains unchanged
         $wrd_reloaded = $t_db->load_word(word_names::TEST_RENAMED);

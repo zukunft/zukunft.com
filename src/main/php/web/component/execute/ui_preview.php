@@ -47,6 +47,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -376,6 +378,50 @@ class ui_preview extends ui_base
             $msk = new view();
             $msk->load_by_id((int)$value);
             $result = $msk->name();
+        }
+        return $result;
+    }
+
+    /**
+     * the 'my' tab table of the word or triple page: one row per field that the session user
+     * has overwritten in the user sandbox (overlay) table e.g. user_words, with the translated
+     * field name, the user value ('your') and the value of the standard object ('instead');
+     * an empty string if the user is not logged in or has no overwrites, so the tab is dropped
+     * (tab_box skips tabs without content); the admin-only fields (the cached usage and impact
+     * numbers) are hidden from users without admin or developer rights like in the change log
+     *
+     * @param db_object $dbo the word or triple that should be shown to the user
+     * @return string the html code of the overwrite table or an empty string if there is nothing to show
+     */
+    function user_overwrites_table(db_object $dbo): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $html = new html_base();
+        $result = '';
+        $usr = $ui_sys->usr ?? null;
+        if ($usr != null and ($usr->id() ?? 0) > 0 and $dbo instanceof sandbox) {
+            $rows = '';
+            foreach ($dbo->user_overwrites as $ovr) {
+                $fld = $ovr[json_fields::FIELD] ?? '';
+                // hide the admin-only fields (the cached impact and usage numbers) like the change log
+                if ($usr->sees_admin_fields() or !in_array($fld, fields::LOG_ADMIN_ONLY)) {
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    // escape the values (user input rendered raw by the table; stored xss)
+                    $rows .= $html->tr(
+                        $html->td($mtr->text_db_field($fld))
+                        . $html->td($html->esc($your))
+                        . $html->td($html->esc($instead)));
+                }
+            }
+            if ($rows != '') {
+                $head = $html->tr(
+                    $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_YOUR))
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD)));
+                $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
+            }
         }
         return $result;
     }

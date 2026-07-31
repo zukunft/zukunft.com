@@ -14,9 +14,7 @@ the basic steps to show the start page are
 
 ### word and triple
 
-base the My tab on the 'user_*' tables not the user change log 
-
-remove 'added impact "0"' and usage from change log tab if the user is not an admin
+create another tab called 'others' similar to the 'My' tab but with an additional column 'user' where the user is shown that has done the overwrite. This tab shows the over writes that other users have done, but not the changes of the logged in user which is shown in the 'My' tab.  
 
 check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
