@@ -425,7 +425,7 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
 
         $test_name = '... and the my tab lists the user overwrite entries';
-        $t->assert_text_contains($test_name, $tab_html, 'user added view id');
+        $t->assert_text_contains($test_name, $tab_html, 'added user view id');
 
         $test_name = 'a user without overwrites gets no my tab';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());

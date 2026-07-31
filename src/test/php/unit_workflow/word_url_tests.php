@@ -114,6 +114,11 @@ class word_url_tests extends url_test_base
         $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
         $t->assert_text_contains($test_name, $result, word_names::MATH, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
+        // the renderers that cannot take the message (e.g. the 'my' tab and the admin-only field
+        // filter) read the session user from the request cache, so the render must publish it
+        $test_name = 'url_to_html publishes the requesting user as the session user';
+        $t->assert($test_name, $ui->dto->usr->id(), $msg->usr->id());
+
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
         $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);

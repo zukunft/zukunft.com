@@ -37,12 +37,12 @@ PREPARE source_insert_log_11110011000_user_call
 SELECT source_insert_log_11110011000_user (
                3::bigint,
                1::smallint,
-               57::smallint,
+               170::smallint,
                'The International System of Units'::text,
                1::bigint,
-               58::smallint,
+               61::smallint,
                'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
-               59::smallint,
+               171::smallint,
                4::smallint,
-               60::smallint,
+               62::smallint,
                'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf'::text);

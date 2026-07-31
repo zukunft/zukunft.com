@@ -719,17 +719,58 @@ class change_log extends db_object_seq_id_user
         $result = false;
 
         $db_con->set_class($class, $usr_only);
-        // TODO the table for the log should never be the user table because from the user point of view the change is always done on the original table
+        // TODO Prio 1 review: maybe the table for the log should never be the user table because from the user point of view the change is always done on the original table
         $this->set_class($class, $usr_only);
         $this->set_field($fld);
         $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
         $db_row = $db_con->get1($qp);
+
+        // a change of a user sandbox row is logged to the user overlay table (e.g. user_words),
+        // so unless the user table is requested anyway also check the user table and use the
+        // newer of the two changes, because the last change of the field can be in either table
+        if (!$usr_only and $this->has_user_table($class)) {
+            $this->set_class($class, true);
+            $this->set_field($fld);
+            $qp_usr = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
+            $db_row = $this->newer_row($db_row, $db_con->get1($qp_usr));
+        }
 
         if ($db_row != null) {
             $this->row_mapper($db_row);
             $result = true;
         }
 
+        return $result;
+    }
+
+    /**
+     * @param string $class the class name including the namespace
+     * @return bool true if the class has a user sandbox (overlay) table registered in the change
+     *              table list, e.g. user_words for a word; checked without auto-adding the table
+     */
+    private function has_user_table(string $class): bool
+    {
+        global $sys;
+        $lib = new library();
+        $usr_tbl = sql_db::TBL_USER_PREFIX . $lib->class_to_table($class);
+        return $sys->typ_lst->cng_tbl->id($usr_tbl, false) > 0;
+    }
+
+    /**
+     * @param array|null $std_row the last matching change of the standard table or null
+     * @param array|null $usr_row the last matching change of the user overlay table or null
+     * @return array|null the newer of the two change rows (by the sequential change id) or null
+     */
+    private function newer_row(?array $std_row, ?array $usr_row): ?array
+    {
+        $result = $std_row;
+        if ($usr_row != null) {
+            if ($std_row == null) {
+                $result = $usr_row;
+            } elseif (($usr_row[self::FLD_ID] ?? 0) > ($std_row[self::FLD_ID] ?? 0)) {
+                $result = $usr_row;
+            }
+        }
         return $result;
     }
 

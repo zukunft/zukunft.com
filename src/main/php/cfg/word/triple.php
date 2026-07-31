@@ -3024,7 +3024,7 @@ class triple extends sandbox_link_named
         $do_log = $sc_par_lst->incl_log();
         $is_insert = $sc_par_lst->is_insert();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // should be corresponding with the list of triple object vars
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);

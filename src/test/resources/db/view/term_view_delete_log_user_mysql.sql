@@ -25,7 +25,7 @@ END;
 SELECT term_view_delete_log_user
     (3,
      3,
-     89,
+     91,
      'Start view',
      'main word',
      'mathematics',

@@ -30,9 +30,9 @@ PREPARE source_update_log_excluded_00000000100_user_call FROM
 SELECT source_update_log_excluded_00000000100_user
        (3,
         2,
-        169,
+        172,
         null,
         1,
         1,
-        57,
+        170,
         'The International System of Units');

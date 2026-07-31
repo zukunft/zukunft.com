@@ -1749,7 +1749,7 @@ class sandbox_link extends sandbox
         $is_insert = $sc_par_lst->is_insert();
         $is_delete = $sc_par_lst->is_delete();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // for insert statements of user sandbox rows user id fields always needs to be included
         if ($usr_tbl and $is_insert) {

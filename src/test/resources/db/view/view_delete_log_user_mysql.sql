@@ -21,6 +21,6 @@ END;
 SELECT view_delete_log_user
        (3,
         3,
-        42,
+        720,
         'Start view',
         1);

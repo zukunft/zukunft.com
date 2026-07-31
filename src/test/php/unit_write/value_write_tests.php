@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -409,14 +410,17 @@ class value_write_tests
         $target = '';
         $t->assert($ts . $test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... check if the value change for the other user has been logged
+        // ... check if the value change for the other user has been logged; the change of the
+        // other user is written to the user values row and shown with 'user' after the action
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
+        $usr_marker = '';
         if ($val_usr2->is_id_set()) {
-            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
-                true);
+            $log_ui = $t->log_last_ui_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id());
+            $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+            $result = $log_ui->dsp(true);
         }
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_CHANGED . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_PARTNER_NAME . ' changed ' . $usr_marker . 'to "' . self::NUMBER_ADD . '" from "' . self::NUMBER_CHANGED . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back

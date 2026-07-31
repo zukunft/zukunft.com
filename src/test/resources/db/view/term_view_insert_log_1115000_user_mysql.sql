@@ -28,9 +28,9 @@ PREPARE term_view_insert_log_1115000_user_call FROM
 SELECT term_view_insert_log_1115000_user (
                3,
                1,
-               727,
+               738,
                'System Test description for a view term link',
                0,
-               726,
+               737,
                'main word',
                1);

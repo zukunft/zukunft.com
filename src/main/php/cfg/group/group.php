@@ -1964,7 +1964,7 @@ class group extends sandbox_multi
         global $sys;
 
         $sc = new sql_creator();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = new sql_par_field_list();
 

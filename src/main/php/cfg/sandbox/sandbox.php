@@ -3484,7 +3484,7 @@ class sandbox extends db_object_seq_id_user
     ): sql_par
     {
         global $sys;
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // set some var names to shorten the code lines
         $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
@@ -3669,7 +3669,7 @@ class sandbox extends db_object_seq_id_user
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
@@ -4203,7 +4203,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->is_excluded() and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
-                    $table_id = $sc->table_id($this::class);
+                    $table_id = $sc->table_id($this::class, $sc_par_lst);
                     $par_lst_out->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
                         $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),

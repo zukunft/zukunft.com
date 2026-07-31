@@ -55,8 +55,8 @@ SELECT component_link_insert_log_110100100_user
         null,
         null,
         null,
-        48,
+        50,
         1,
         1,
-        49,
+        140,
         1);

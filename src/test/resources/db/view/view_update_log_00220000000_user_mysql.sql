@@ -30,10 +30,10 @@ PREPARE view_update_log_00220000000_user_call FROM
 SELECT view_update_log_00220000000_user
        (3,
         2,
-        42,
+        720,
         'Start view',
         'System Test View Renamed',
         1,
-        43,
+        46,
         'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
         null);

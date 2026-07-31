@@ -31,11 +31,11 @@ PREPARE component_insert_log_11110050000000000000_user_call FROM
 SELECT component_insert_log_11110050000000000000_user (
                3,
                1,
-               51,
+               150,
                'Word',
                1,
-               52,
+               54,
                'simply show the word or triple name',
-               53,
+               55,
                'word name',
                8);

@@ -1426,7 +1426,7 @@ class sandbox_named extends sandbox
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // for insert statements of user sandbox rows user id fields always needs to be included
         if ($is_insert and $usr_tbl) {

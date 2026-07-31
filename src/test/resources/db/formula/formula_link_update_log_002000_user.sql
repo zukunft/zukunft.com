@@ -26,7 +26,7 @@ SELECT formula_link_update_log_002000_user
 SELECT formula_link_update_log_002000_user (
                3::bigint,
                2::smallint,
-               700::smallint,
+               712::smallint,
                2::bigint,
                1::bigint,
                1::bigint);

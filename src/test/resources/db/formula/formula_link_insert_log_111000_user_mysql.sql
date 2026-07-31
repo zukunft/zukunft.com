@@ -22,6 +22,6 @@ PREPARE formula_link_insert_log_111000_user_call FROM
 SELECT formula_link_insert_log_111000_user (
                3,
                1,
-               700,
+               712,
                2,
                1);

@@ -21,6 +21,6 @@ END;
 SELECT triple_delete_log_user
        (3,
         3,
-        18,
+        22,
         'mathematical constant',
         1);

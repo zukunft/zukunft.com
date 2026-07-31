@@ -364,7 +364,7 @@ class test_log
      * an insert change log entry for the default view (view_id) of a named object in the user sandbox
      * (the user_words overlay table); the view name is stored as the value and the view id as the
      * reference (like sql_par_field_list::add_link_field), and because it is a user sandbox change the
-     * change log table pure shows 'user added view id "Word"' (see change_log_named::what_text)
+     * change log table pure shows 'added user view id "Word"' (see change_log_named::what_text)
      * @return change with a change log entry of setting the word view in the user sandbox
      */
     function log_word_add_view(): change
@@ -395,7 +395,7 @@ class test_log
     /**
      * an insert change log entry that adds an empty view (view_id) in the user sandbox (user_words);
      * adding an empty value in the sandbox removes the user's overwrite for that field, so the change
-     * log table pure shows 'remove user overwrite for view' instead of 'user added view id ""'
+     * log table pure shows 'remove user overwrite for view' instead of 'added user view id ""'
      * (see change_log_named::what_text)
      * @return change with a change log entry of removing the user view overwrite
      */

@@ -19,6 +19,6 @@ END $$ LANGUAGE plpgsql;
 SELECT formula_delete_log_user
     (3::bigint,
      3::smallint,
-     30::smallint,
+     119::smallint,
      '"one" = "millions" * 1000000'::text,
      1::bigint);

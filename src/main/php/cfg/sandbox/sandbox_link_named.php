@@ -910,7 +910,7 @@ class sandbox_link_named extends sandbox_link
     {
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included

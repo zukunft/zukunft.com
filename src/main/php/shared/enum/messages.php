@@ -1605,10 +1605,10 @@ enum messages: string
     case LOG_TO = 'to';
     // shown for a change of the object owner (the user_id field) instead of 'added user id'
     case LOG_SET_OWNER = 'set owner to';
-    // prefix shown before the action for a change in the user sandbox e.g. 'user added view id ""'
+    // shown after the action for a change in the user sandbox e.g. 'added user view id ""'
     case LOG_USER = 'user';
     // shown when a user sandbox change adds an empty field, i.e. removes the user overwrite for a
-    // field, so 'user added view id ""' becomes 'remove user overwrite for view'
+    // field, so 'added user view id ""' becomes 'remove user overwrite for view'
     case LOG_REMOVE_USER_OVERWRITE = 'remove user overwrite for';
     // the change preview table column headers and the impact label
     case CHANGE_TBL_FIELD = 'change_tbl_field';

@@ -29,7 +29,7 @@ PREPARE value_prime_p1_insert_log_11000_user_call FROM
 SELECT value_prime_p1_insert_log_11000_user
        (3,
         1,
-        1,
+        6,
         3.1415926535898,
         32770,
         -2,

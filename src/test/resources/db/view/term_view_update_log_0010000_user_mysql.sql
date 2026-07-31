@@ -25,7 +25,7 @@ PREPARE term_view_update_log_0010000_user_call FROM
 SELECT term_view_update_log_0010000_user
     (3,
      2,
-     727,
+     738,
      null,
      'System Test description for a view term link',
      0);

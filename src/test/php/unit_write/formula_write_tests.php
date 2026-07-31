@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -429,10 +430,13 @@ class formula_write_tests
         $target = formula_names::INCREASE_EXP;
         $t->assert('formula->load the added "' . $frm->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
-        // ... check the correct logging
-        $result = $t->log_last_by_field($frm, formula_fields::FLD_NAME, $frm->id(), true);
+        // ... check the correct logging; re-adding a formula that a previous run left excluded
+        // can land in the user sandbox row, which is shown with 'user' after the action
+        $log_ui = $t->log_last_ui_by_field($frm, formula_fields::FLD_NAME, $frm->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
         // TODO Prio 1 use user config date format
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test Formula"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test Formula"';
         $t->assert('formula->save adding logged for "' . formula_names::SYSTEM_TEST_ADD . '"', $result, $target);
 
         // check if adding the same formula again creates a correct error message
@@ -463,9 +467,12 @@ class formula_write_tests
         $target = formula_names::SYSTEM_TEST_RENAMED;
         $t->assert('formula->load renamed formula "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
 
-        // ... and if the formula renaming has been logged
-        $result = $t->log_last_by_field($frm_renamed, formula_fields::FLD_NAME, $frm_renamed->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "System Test Formula Renamed" from "System Test Formula"';
+        // ... and if the formula renaming has been logged (with 'user' after the action if the
+        // rename landed in the user sandbox row, like the add above)
+        $log_ui = $t->log_last_ui_by_field($frm_renamed, formula_fields::FLD_NAME, $frm_renamed->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "System Test Formula Renamed" from "System Test Formula"';
         $t->assert('formula->save rename logged for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
 
         // check if the formula parameters can be added
@@ -498,18 +505,21 @@ class formula_write_tests
         $target = True;
         $t->assert('formula->load need_all_val for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
 
-        // ... and if the formula parameter adding have been logged
-        $result = $t->log_last_by_field($frm_reloaded, formula_fields::FLD_FORMULA_USER_TEXT, $frm_reloaded->id(), true);
+        // ... and if the formula parameter adding have been logged; all fields are written by the
+        // same save, so the user sandbox marker of the resolved text row is reused for all fields
+        $log_ui = $t->log_last_ui_by_field($frm_reloaded, formula_fields::FLD_FORMULA_USER_TEXT, $frm_reloaded->id());
+        $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
+        $result = $log_ui->dsp(true);
         // use the next line if system config is non-standard
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to = "' . word_names::THIS_NAME . '" from "' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "= "' . word_names::THIS_NAME . '"" from ""' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to = "' . word_names::THIS_NAME . '" from "' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "= "' . word_names::THIS_NAME . '"" from ""' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )"';
         $t->assert('formula->load resolved_text for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, formula_fields::FLD_FORMULA_TEXT, $frm_reloaded->id(), true);
         // use the next line if system config is non-standard
         // TODO Prio 1 review
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to ={f3} from {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5}';
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "={f' . $frm_this->id() . '}" from "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})"';
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "{w'
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to ={f3} from {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5}';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "={f' . $frm_this->id() . '}" from "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "{w'
             . $wrd_percent->id() . '}=1-({f'
             . $frm_this->id() . '}/{f'
             . $frm_prior->id() . '})" from "{w'
@@ -519,16 +529,16 @@ class formula_write_tests
             . $frm_prior->id() . '}"';
         $t->assert('formula->load formula_text for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, fields::FLD_DESCRIPTION, $frm_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test Formula Renamed description"';
         $t->assert('formula->load description for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, formula_fields::FLD_TYPE, $frm_reloaded->id(), true);
         // TODO review what is correct
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to this from calc';
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "' . word_names::THIS_NAME . '"';
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added "4"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to this from calc';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"' . word_names::THIS_NAME . '"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"4"';
         $t->assert('formula->load formula_type_id for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, formula_fields::FLD_ALL_NEEDED, $frm_reloaded->id(), true);
-        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed to "1" from "0"';
+        $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "1" from "0"';
         $t->assert('formula->load all_values_needed for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
 
         // check if a user-specific formula is created if another user changes the formula

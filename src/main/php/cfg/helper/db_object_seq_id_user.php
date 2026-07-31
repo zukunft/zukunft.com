@@ -379,7 +379,7 @@ class db_object_seq_id_user extends db_object_seq_id
         global $sys;
 
         $sc = new sql_creator();
-        $table_id = $sc->table_id($this::class);
+        $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         // do not include the id field for insert statements
         $sc_par_lst_id = clone $sc_par_lst;
