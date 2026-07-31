@@ -14,8 +14,6 @@ the basic steps to show the start page are
 
 ### word and triple
 
-add to 'others' tab a fa-check icon that calls the confirm page to use the change also for the user
-
 check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
 
 if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged in

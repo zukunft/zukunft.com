@@ -571,7 +571,7 @@ class ui_list extends ui_base
             $preview = new ui_preview();
             $my_html = $preview->user_overwrites_table($dbo, $url_array);
             // tab 4: the shared overwrites that other users have done on this object
-            $others_html = $preview->other_overwrites_table($dbo);
+            $others_html = $preview->other_overwrites_table($dbo, $url_array);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,

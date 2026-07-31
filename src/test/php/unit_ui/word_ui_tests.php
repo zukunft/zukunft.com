@@ -515,6 +515,12 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $tab_html, users::SYSTEM_TEST_PARTNER_NAME);
         $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL . '2');
 
+        // the apply icon links to the confirm page that sets the plural to the other user's value
+        $test_name = '... and an apply link to the confirm page for the other user value';
+        $t->assert_text_contains($test_name, $tab_html, icons::APPLY);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL . '2'));
+
         $test_name = 'an admin also sees the admin-only impact overwrite';
         $ui_sys->usr = new user_ui($t->usr_admin->api_json());
         $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, true), $mtr->text_db_field(fields::FLD_IMPACT));
