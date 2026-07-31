@@ -291,7 +291,7 @@ class view extends sandbox_code_id
             $msg->merge($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $msg->merge($this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg->usr));
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
         }
 
         // TODO get component from the dto object
@@ -585,18 +585,18 @@ class view extends sandbox_code_id
      * set the view type by the given code id or name
      *
      * @param string|null $code_id_or_name the code id or name that should be added to this view
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the view type has been set, false if unknown or not permitted
      */
-    function set_type(?string $code_id_or_name, user $usr_req = new user()): user_message
+    function set_type(?string $code_id_or_name, user_message $msg): bool
     {
         global $sys;
         if ($sys->typ_lst->msk_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $msg);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $msg);
         }
     }
 

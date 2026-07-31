@@ -185,7 +185,7 @@ class sandbox_link_named extends sandbox_link
             // (MapObject::convertToDb) maps with a message that has no user set, so fall back to
             // the object's own user (the requesting user the object was created with); set_type_id
             // needs a non-null user for the permission check
-            $this->set_type_id($api_json[json_fields::TYPE], $msg->usr ?? $this->get_user());
+            $this->set_type_id($api_json[json_fields::TYPE], $msg);
         }
         return $msg->is_ok();
     }
@@ -359,14 +359,17 @@ class sandbox_link_named extends sandbox_link
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message warning message for the user if the permissions are missing
+     * @param user_message $msg with the requesting user; enriched with a warning if the permission is missing
+     * @return bool true if the type has been set, false if the requesting user is not permitted
      */
-    function set_type_id(?int $type_id, user $usr_req): user_message
+    function set_type_id(?int $type_id, user_message $msg): bool
     {
-        $msg = new user_message();
+        $result = false;
+        // fall back to the object user if the message carries no requesting user (e.g. an internal call)
+        $usr_req = $msg->usr ?? $this->get_user();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
+            $result = true;
         } else {
             $lib = new library();
             $msg->add(msg_id::NOT_ALLOWED_TO, [
@@ -376,7 +379,7 @@ class sandbox_link_named extends sandbox_link
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -393,30 +396,31 @@ class sandbox_link_named extends sandbox_link
      * @param string|null $code_id the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the code id is unknown or not permitted
      */
     function set_type_by_code_id(
-        ?string   $code_id,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $code_id,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
-                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+                $result = $this->set_type_id($typ_lst->id($code_id), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**
@@ -427,30 +431,31 @@ class sandbox_link_named extends sandbox_link
      * @param string|null $name the code id that should be added to this view
      * @param type_list $typ_lst the parent object specific preloaded list of types
      * @param msg_id $msg_id the id of the message used to report a missing type
-     * @param user $usr_req the user who wants to change the type
-     * @return user_message a warning if the view type code id is not found
+     * @param user_message $msg with the requesting user; enriched with a missing-type or permission warning
+     * @return bool true if the type has been set, false if the name is unknown or not permitted
      */
     function set_type_by_name(
-        ?string   $name,
-        type_list $typ_lst,
-        msg_id    $msg_id,
-        user      $usr_req = new user()
-    ): user_message
+        ?string      $name,
+        type_list    $typ_lst,
+        msg_id       $msg_id,
+        user_message $msg
+    ): bool
     {
-        $msg = new user_message();
+        $result = true;
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
-                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+                $result = $this->set_type_id($typ_lst->id_by_name($name), $msg);
             } else {
-                $msg->add($msg_id, [
+                $msg->add_warning_with_vars($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
+                $result = false;
             }
         }
-        return $msg;
+        return $result;
     }
 
     /**

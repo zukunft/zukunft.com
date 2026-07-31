@@ -138,7 +138,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_const()->phrase());
         $trp->set_verb($t_vrb->verb_part());
         $trp->set_to($t_wrd->word()->phrase());
-        $trp->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $trp->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
@@ -174,7 +174,7 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::MATH_CONST_ID, triple_names::MATH_CONST);
         $trp->description = triple_names::MATH_CONST_COM;
-        $trp->set_type(phrase_types::MATH_CONST, $this->env->usr1);
+        $trp->set_type(phrase_types::MATH_CONST, new user_message($this->env->usr1));
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $trp;
@@ -449,7 +449,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_pi()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -462,7 +462,7 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::PI_ID, triple_names::PI_NAME);
         $trp->description = triple_names::PI_COM;
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -545,7 +545,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->metre()->phrase());
         $trp->set_verb($t_vrb->verb_per());
         $trp->set_to($t_wrd->second()->phrase());
-        $trp->set_type(phrase_types::MEASURE, $this->env->usr1);
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -558,7 +558,7 @@ class test_triples extends test_objects
         $trp->set_from($t_trp->year_1983()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
-        $trp->set_type(phrase_types::INFO, $this->env->usr1);
+        $trp->set_type(phrase_types::INFO, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -571,7 +571,7 @@ class test_triples extends test_objects
         $trp->set_from($t_trp->year_1967()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
-        $trp->set_type(phrase_types::INFO, $this->env->usr1);
+        $trp->set_type(phrase_types::INFO, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -687,7 +687,7 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_e()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_types::TRIPLE_HIDDEN, $this->env->usr1);
+        $trp->set_type(phrase_types::TRIPLE_HIDDEN, new user_message($this->env->usr1));
         return $trp;
     }
 
@@ -1388,7 +1388,7 @@ class test_triples extends test_objects
         $trp->set_name(word_names::TEST_SPEED_PREFIX . $id);
 
         $type_id = rand(1, $sys->typ_lst->phr_typ->count());
-        $trp->set_type_id($type_id, $this->env->usr1);
+        $trp->set_type_id($type_id, new user_message($this->env->usr1));
         return $trp;
     }
 

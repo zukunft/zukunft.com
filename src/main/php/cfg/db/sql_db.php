@@ -1263,7 +1263,7 @@ class sql_db
             $wrd = new word($usr);
             $wrd->set(word_names::MATH_ID, word_names::MATH);
             $wrd->description = word_names::MATH_COM;
-            $wrd->set_type(phrase_type_shared::NORMAL, $usr);
+            $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr));
             $msk = new view($usr);
             $msk->set(views::START_ID, views::START_NAME);
             $msk->description = views::START_COM;
@@ -5973,7 +5973,7 @@ class sql_db
                 $wrd->set_name($name);
                 $wrd->set_code_id($name, $msg);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
+                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN, $msg);
                 $wrd->save($msg);
             }
             foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
@@ -6002,7 +6002,7 @@ class sql_db
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
+                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN, $msg);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $trp->save($msg);
             }

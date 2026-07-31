@@ -215,7 +215,7 @@ class horizontal_ui_tests
                 $ui_obj = $t_map->class_to_ui_object($obj::class);
                 $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg_ui);
                 $cmp = new component_exe();
-                $cmp->set_type_id($typ->id());
+                $cmp->set_type_id($typ->id(), new user_message($t->usr1));
                 $cmp->code_id = $typ->code_id;
                 // a valid, unique form name per part (no spaces) so the field 'form=' and the
                 // form id stay valid and unique on this multi-part catalog page
