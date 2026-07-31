@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -51,6 +52,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -385,7 +387,8 @@ class ui_preview extends ui_base
     /**
      * the 'my' tab table of the word or triple page: one row per field that the session user
      * has overwritten in the user sandbox (overlay) table e.g. user_words, with the translated
-     * field name, the user value ('your') and the value of the standard object ('instead');
+     * field name, the user value ('your'), the value of the standard object ('instead') and an
+     * undo icon that links to the confirm page which sets the field back to the standard value;
      * an empty string if the user is not logged in or has no overwrites, so the tab is dropped
      * (tab_box skips tabs without content); the admin-only fields (the cached usage and impact
      * numbers) are hidden from users without admin or developer rights like in the change log
@@ -412,16 +415,49 @@ class ui_preview extends ui_base
                     $rows .= $html->tr(
                         $html->td($mtr->text_db_field($fld))
                         . $html->td($html->esc($your))
-                        . $html->td($html->esc($instead)));
+                        . $html->td($html->esc($instead))
+                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr)));
                 }
             }
             if ($rows != '') {
                 $head = $html->tr(
                     $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
                     . $html->th($mtr->txt(msg_id::MY_TBL_YOUR))
-                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD)));
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD))
+                    . $html->th(''));
                 $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the undo icon link of a 'my' tab row: opens the confirm page of the object edit view with
+     * the overwritten field set back to the standard value and the user value as the '8'-prefixed
+     * opening value, so confirming the shown change removes the user overwrite of the field
+     *
+     * @param db_object $dbo the word or triple whose overwrite can be undone
+     * @param string $fld the db field name of the overwritten field
+     * @param array $ovr the overwrite entry with the user and the standard value
+     * @return string the html code of the undo icon link or an empty string if no link can be built
+     */
+    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
+        // only word and triple pages show the tab, but guard the edit view const to avoid a fatal
+        if ($fld_var != '' and $dbo->id() > 0 and defined($dbo::class . '::VIEW_EDIT_ID')) {
+            $url = api::MAIN_SCRIPT . '?' . http_build_query([
+                    url_var::MASK => $dbo::VIEW_EDIT_ID,
+                    url_var::ID => $dbo->id(),
+                    $fld_var => (string)($ovr[json_fields::STD_VALUE] ?? ''),
+                    url_var::PRE . $fld_var => (string)($ovr[json_fields::USR_VALUE] ?? ''),
+                    url_var::STEP => url_var::STEP_CONFIRM,
+                ]);
+            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::UNDO . '"></' . html_base::I . '>';
+            $result = $html->ref($url, $icon, $mtr->txt(msg_id::MY_TBL_UNDO), '', true);
         }
         return $result;
     }

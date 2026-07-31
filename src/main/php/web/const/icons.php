@@ -48,6 +48,8 @@ class icons
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data
     const string REFRESH = 'fas fa-arrows-rotate';
+    // shown in the 'my' tab to undo a user overwrite, i.e. to set the field back to the standard value
+    const string UNDO = 'fas fa-rotate-left';
     // the show / hide password toggle icons (see form_input_password and style_html.css)
     const string PASSWORD_SHOW = 'fas fa-eye';       // shown while the password is masked, click to reveal it
     const string PASSWORD_HIDE = 'fas fa-eye-slash'; // shown while the password is revealed, click to mask it

@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
@@ -441,6 +442,15 @@ class word_ui_tests
         $test_name = '... the user value and the standard value of the overwritten field';
         $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL);
         $t->assert_text_contains($test_name, $tab_html, word_names::MATH_PLURAL);
+
+        // the undo icon links to the confirm page of the word edit view that sets the plural
+        // back to the standard value, with the user value as the '8'-prefixed opening value;
+        // the values are url-encoded in the link (http_build_query), so e.g. a space is a '+'
+        $test_name = '... and an undo link to the confirm page for the overwritten field';
+        $t->assert_text_contains($test_name, $tab_html, icons::UNDO);
+        $t->assert_text_contains($test_name, $tab_html, url_var::PLURAL . '=' . urlencode(word_names::MATH_PLURAL));
+        $t->assert_text_contains($test_name, $tab_html, url_var::PRE . url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL));
+        $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
         $test_name = '... but without the admin-only impact overwrite for a normal user';
         $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));

@@ -91,6 +91,7 @@ messages:
   system_sub_title_my: "Meine"
   my_tbl_your: "deine"
   my_tbl_instead: "anstatt"
+  my_tbl_undo: "deine Überschreibung rückgängig machen"
   system_db_table_users: "Benutzer"
   system_db_table_values: "Werte"
   system_db_table_user_values: "Benutzer Werte"

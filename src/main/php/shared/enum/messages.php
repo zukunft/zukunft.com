@@ -1618,6 +1618,8 @@ enum messages: string
     // of an overwritten field; the field column reuses CHANGE_TBL_FIELD
     case MY_TBL_YOUR = 'my_tbl_your';
     case MY_TBL_INSTEAD = 'my_tbl_instead';
+    // the tooltip of the undo icon link that sets the overwritten field back to the standard value
+    case MY_TBL_UNDO = 'my_tbl_undo';
     case POPUP_IMPACT = 'popup_impact';
     // the fallback unit for the impact of a change if no other impact unit is set
     case POPUP_IMPACT_UNIT_FALLBACK = 'happy_time_points';

@@ -355,6 +355,7 @@ messages:
   change_tbl_to: "To"
   my_tbl_your: "your"
   my_tbl_instead: "instead"
+  my_tbl_undo: "undo your overwrite"
   change_log_tbl_when: "when"
   change_log_tbl_who: "who"
   change_log_tbl_what: "what"
