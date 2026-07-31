@@ -443,7 +443,7 @@ class component_exe extends component
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $cfg, $style_id),
             component_types::VALUE_CHART => $list->value_chart($dbo, $cfg),
-            component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $test_mode),
+            component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $test_mode, $url_array),
             component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related

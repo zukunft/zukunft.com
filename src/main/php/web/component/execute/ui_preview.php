@@ -396,9 +396,10 @@ class ui_preview extends ui_base
      * numbers) are hidden from users without admin or developer rights like in the change log
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function user_overwrites_table(db_object $dbo): string
+    function user_overwrites_table(db_object $dbo, array $url_array = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -417,7 +418,7 @@ class ui_preview extends ui_base
                         $html->td($mtr->text_db_field($fld))
                         . $html->td($html->esc($your))
                         . $html->td($html->esc($instead))
-                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr)));
+                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr, $url_array)));
                 }
             }
             if ($rows != '') {
@@ -490,14 +491,16 @@ class ui_preview extends ui_base
     /**
      * the undo icon link of a 'my' tab row: opens the confirm page of the object edit view with
      * the overwritten field set back to the standard value and the user value as the '8'-prefixed
-     * opening value, so confirming the shown change removes the user overwrite of the field
+     * opening value, so confirming the shown change removes the user overwrite of the field; the
+     * other entries of the current url are kept, so the confirm submit never resets other fields
      *
      * @param db_object $dbo the word or triple whose overwrite can be undone
      * @param string $fld the db field name of the overwritten field
      * @param array $ovr the overwrite entry with the user and the standard value
+     * @param array $url_array the parsed url of the current page that is carried into the link
      * @return string the html code of the undo icon link or an empty string if no link can be built
      */
-    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr): string
+    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr, array $url_array = []): string
     {
         global $mtr;
         $html = new html_base();
@@ -505,13 +508,19 @@ class ui_preview extends ui_base
         $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
         // only word and triple pages show the tab, but guard the edit view const to avoid a fatal
         if ($fld_var != '' and $dbo->id() > 0 and defined($dbo::class . '::VIEW_EDIT_ID')) {
-            $url = api::MAIN_SCRIPT . '?' . http_build_query([
-                    url_var::MASK => $dbo::VIEW_EDIT_ID,
-                    url_var::ID => $dbo->id(),
-                    $fld_var => (string)($ovr[json_fields::STD_VALUE] ?? ''),
-                    url_var::PRE . $fld_var => (string)($ovr[json_fields::USR_VALUE] ?? ''),
-                    url_var::STEP => url_var::STEP_CONFIRM,
-                ]);
+            // keep all entries of the current url except the entry (and the '8'-prefixed opening
+            // value) of the field to undo, which is replaced by the standard value below
+            $url_pars = $url_array;
+            unset($url_pars[$fld_var]);
+            unset($url_pars[url_var::PRE . $fld_var]);
+            $url_pars = array_merge($url_pars, [
+                url_var::MASK => $dbo::VIEW_EDIT_ID,
+                url_var::ID => $dbo->id(),
+                $fld_var => (string)($ovr[json_fields::STD_VALUE] ?? ''),
+                url_var::PRE . $fld_var => (string)($ovr[json_fields::USR_VALUE] ?? ''),
+                url_var::STEP => url_var::STEP_CONFIRM,
+            ]);
+            $url = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
             $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::UNDO . '"></' . html_base::I . '>';
             $result = $html->ref($url, $icon, $mtr->txt(msg_id::MY_TBL_UNDO), '', true);
         }

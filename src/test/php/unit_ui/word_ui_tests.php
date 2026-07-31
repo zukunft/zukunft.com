@@ -408,6 +408,28 @@ class word_ui_tests
         $t->assert($test_name, $preview->popup_impact([]), '');
 
 
+        $t->subheader($ts . 'url mapper');
+
+        // an id-identified url carries only the changed fields (e.g. the my tab undo link), so
+        // the mapper must keep the already known name - a partial url must never overwrite
+        // fields it does not carry - and only clear it for a url without an id
+        $test_name = 'a partial url with an id keeps the object name';
+        $wrd_map = new word($t_wrd->word()->api_json());
+        $map_msg = new user_message();
+        $wrd_map->url_mapper([
+            url_var::ID => (string)$wrd_map->id(),
+            url_var::DESCRIPTION => 'partial url description'
+        ], $map_msg);
+        $t->assert($test_name, $wrd_map->name(), word_names::MATH);
+
+        $test_name = '... and takes the description of the partial url';
+        $t->assert($test_name, $wrd_map->get_description() ?? '', 'partial url description');
+
+        $test_name = 'a url without an id and without a name clears the name';
+        $wrd_map->url_mapper([url_var::DESCRIPTION => 'partial url description'], $map_msg);
+        $t->assert($test_name, $wrd_map->name(), '');
+
+
         $t->subheader($ts . 'view tab box');
 
         // the 'my' tab shows the fields the session user has overwritten in user_words as a
@@ -441,7 +463,13 @@ class word_ui_tests
 
         $test_name = 'the user with overwrites sees the my tab';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
-        $tab_html = $list->view_tab_box($wrd_tab, true);
+        // the current page url with another entry that the undo link must keep and a stale
+        // value of the field to undo that the undo link must replace by the standard value
+        $tab_url = [
+            url_var::DESCRIPTION => 'undo context',
+            url_var::PLURAL => 'stale plural',
+        ];
+        $tab_html = $list->view_tab_box($wrd_tab, true, $tab_url);
         $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
 
         $test_name = '... with the your and instead columns';
@@ -460,6 +488,12 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $tab_html, url_var::PLURAL . '=' . urlencode(word_names::MATH_PLURAL));
         $t->assert_text_contains($test_name, $tab_html, url_var::PRE . url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL));
         $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
+
+        $test_name = '... the undo link keeps the other entries of the current url';
+        $t->assert_text_contains($test_name, $tab_html, url_var::DESCRIPTION . '=' . urlencode('undo context'));
+
+        $test_name = '... but never the current url entry of the field to undo';
+        $t->assert_text_not_contains($test_name, $tab_html, urlencode('stale plural'));
 
         $test_name = '... but without the admin-only impact overwrite for a normal user';
         $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));

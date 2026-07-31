@@ -991,6 +991,14 @@ class frontend
                     $dbo->load_by_id_with_related($id, $usr_id);
                 }
             } else {
+                // a url with object values can be partial (e.g. the my tab undo link carries only
+                // the changed field), so load the object by id first and overlay the url values,
+                // otherwise e.g. the confirm page could not show the object name; in test mode the
+                // page must render without a backend call, so the render uses the url values only
+                if (!$test_mode and $dbo instanceof db_object_ui) {
+                    $usr_id = $usr?->id() ?? 0;
+                    $dbo->load_by_id($id, [], $usr_id);
+                }
                 $dbo->url_mapper($url_array, $usr_msg, $dto);
             }
         } else {
