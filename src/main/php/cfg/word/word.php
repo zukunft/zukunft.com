@@ -114,6 +114,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -176,6 +177,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -749,6 +751,15 @@ class word extends sandbox_code_id
                 $par_wrd = new word($this->get_user());
                 $par_wrd->load_by_id($phr->id());
                 $par_wrd->add_default_view_to($msk_lst);
+            }
+        }
+        // a word without an own default view and without parent views is shown with the system
+        // default word view, so the views tab of the word page offers at least this view
+        if ($msk_lst->is_empty()) {
+            $msk = new view($this->get_user());
+            $msk->load_by_code_id(views_shared::WORD);
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
             }
         }
         $this->views_related = $msk_lst;

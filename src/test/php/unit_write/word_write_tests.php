@@ -318,6 +318,12 @@ class word_write_tests
         $result = $msg->text();
         $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB);
 
+        // a word without an own default view and without parents still offers the system
+        // default word view, so the views tab of the word page is never empty
+        $test_name = '... and the related views fall back to the default word view';
+        $wrd_add->load_views_related();
+        $t->assert_false($test_name, $wrd_add->views_related->is_empty());
+
         $test_name = '... check if the word creation with the name "' . word_names::TEST_ADD . '" has been logged';
         if ($wrd_add->id() > 0) {
             $log_ui = $t->log_last_ui_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id());

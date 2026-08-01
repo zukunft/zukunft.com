@@ -14,8 +14,6 @@ the basic steps to show the start page are
 
 ### word and triple
 
-check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
-
 if a user has been logged in and the person icon is blue never use the page cache. Add a TODO Prio 1 that the page cache should used again as soon as the auto refresh job and setup is fine.
 
 create a phrase_values view that shows all values related to a phrase in up to four columns depending on the screen size like e.g. word default view. For this first read the e.g. 1000 (a config.yaml value) most relevant (high impact) values related to the phrase from the database. Than get for each column a phrase that is often used in the values e.g. for city it could be inhabitants, and use the phrase as a column headline 
