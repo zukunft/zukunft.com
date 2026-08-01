@@ -1094,7 +1094,15 @@ class frontend
         // only a user without own data changes may get the standard cached page; an unknown
         // user (null) has no own data changes, so the shared page is the correct answer
         $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
-        if (!$uses_sandbox) {
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), which the shared cached page does not contain,
+        // so the page of a logged in user is always rendered live; the login state is read
+        // from the session, because this fast path runs before the type cache is loaded
+        // that a profile based check like is_ip_only() would need
+        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
+        //      job and the cache setup handle the user specific parts of the page
+        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
+        if (!$uses_sandbox and !$logged_in) {
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
@@ -1149,10 +1157,17 @@ class frontend
     {
         // an unknown user (null) has no own data changes, so the shared cached page is served
         $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), so it is always rendered live and never stored as
+        // the shared cached page; the login state is read from the session like in
+        // cached_page_or_null, so both cache gates always decide the same way
+        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
+        //      job and the cache setup handle the user specific parts of the page
+        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
         $result = '';
         // an action request is always rendered live because the data has just been changed
         $url_key = '';
-        if (!$is_action) {
+        if (!$is_action and !$logged_in) {
             $url_key = $this->url_cache_key($url_array);
         }
         // get the last cached html page for the url and fill in the reading user's own anti-csrf

@@ -425,6 +425,11 @@ class user extends db_object
         if ($this->profile_id <= 0) {
             return true;
         }
+        // before the type cache is loaded (e.g. in the cached page fast path) the profile
+        // cannot be checked, so assume the most restricted ip only case instead of a fatal
+        if ($ui_sys?->typ_lst_cache?->usr_pro == null) {
+            return true;
+        }
         return $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
     }
 

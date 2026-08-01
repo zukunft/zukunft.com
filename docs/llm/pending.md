@@ -14,13 +14,9 @@ the basic steps to show the start page are
 
 ### word and triple
 
-if a user has been logged in and the person icon is blue never use the page cache. Add a TODO Prio 1 that the page cache should used again as soon as the auto refresh job and setup is fine.
-
 create a phrase_values view that shows all values related to a phrase in up to four columns depending on the screen size like e.g. word default view. For this first read the e.g. 1000 (a config.yaml value) most relevant (high impact) values related to the phrase from the database. Than get for each column a phrase that is often used in the values e.g. for city it could be inhabitants, and use the phrase as a column headline 
 
 add to /docs/llm/3 that "more" should always be a link that shows more. e.g. more in the values table should link to the phrase_values view just created
-
-if user have done some overwrites to an object e.g. there has been some rows in the user_words table the overwrites of others user should be shown in create
 
 ### triple
 

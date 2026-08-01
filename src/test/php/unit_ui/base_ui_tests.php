@@ -153,6 +153,16 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), so it is never served from the shared page cache;
+        // the login state comes from the session, because the cache fast path runs before
+        // the type cache needed for a profile based check is loaded
+        $test_name = 'a logged in user never gets the shared cached page';
+        $_SESSION[url_var::SESSION_LOGGED] = true;
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message()) === null);
+        unset($_SESSION[url_var::SESSION_LOGGED]);
+
         // the debug level only controls out-of-band debug output, not the cached html, so it is
         // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
         $test_name = 'the debug level is ignored for the cache key';
