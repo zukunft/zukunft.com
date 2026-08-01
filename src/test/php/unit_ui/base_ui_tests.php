@@ -237,6 +237,32 @@ class base_ui_tests
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
 
+        // the login link forwards a '9'-prefixed back target of the current page (the logout
+        // page carries the original page as back target, see frontend::action_logout), so after
+        // the login the original page is shown again and not the logout page
+        $test_name = 'the login link forwards the back target of the logout page';
+        $logout_page_url = [
+            url_var::MASK => (string)views::LOGOUT_ID,
+            url_var::BACK . url_var::MASK => (string)views::WORD_ID,
+            url_var::BACK . url_var::ID => '347',
+        ];
+        $navbar_logout_page = $html->navbar(views::LOGOUT_ID, $logout_page_url);
+        $t->assert_text_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+        $t->assert_text_contains($test_name, $navbar_logout_page, url_var::BACK . url_var::ID . '=347');
+
+        $test_name = '... and never the logout page as its own back target';
+        $t->assert_text_not_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::LOGOUT_ID);
+
+        $test_name = 'on a normal page the login link uses the page as the back target';
+        $navbar_normal_page = $html->navbar(views::WORD_ID, [
+            url_var::MASK => (string)views::WORD_ID,
+            url_var::ID => '347',
+        ]);
+        $t->assert_text_contains($test_name, $navbar_normal_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+
         $t->subheader($ts . 'login');
 
         $created_html = $html->about_page();

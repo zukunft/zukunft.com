@@ -815,7 +815,7 @@ class frontend
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg, $usr_backend, $usr_ui, $do_it),
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg, $usr_backend, $usr_ui, $do_it),
             $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg, $do_it, $url_array),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
@@ -1689,7 +1689,8 @@ class frontend
         user_backend &$usr_backend,
         user_ui      &$usr_ui,
         user_message $msg,
-        bool         $do_it
+        bool         $do_it,
+        array        $url_array = []
     ): array
     {
         if ($do_it) {
@@ -1708,7 +1709,15 @@ class frontend
         }
         $usr_backend = new user_backend();
         $usr_ui = new user_ui();
-        return [url_var::MASK => views::LOGOUT_ID];
+        // keep the '9'-prefixed back target of the logout request in the logout page url, so the
+        // logout page (and a login from there) can send the user back to the original page
+        $url = [url_var::MASK => views::LOGOUT_ID];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::BACK)) {
+                $url[$key] = $val;
+            }
+        }
+        return $url;
     }
 
     /**

@@ -426,7 +426,14 @@ class html_base
             $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
-            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $url_array);
+            // a page that itself carries a '9'-prefixed back target (e.g. the logout page, see
+            // frontend::action_logout) forwards that target as the back of the login link, so
+            // that after the login the original page is shown again and not the logout page
+            $login_back = self::url_par_from_back_part($url_array);
+            if ($login_back == []) {
+                $login_back = $url_array;
+            }
+            $url_login = $this->url_with_back(api::LOGIN_SCRIPT, $login_back);
             $result .= $this->list_item($this->ref($url_login, $mtr->txt(msg_id::NAVBAR_LOGIN))) . "\n";
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
