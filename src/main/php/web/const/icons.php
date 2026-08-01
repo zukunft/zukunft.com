@@ -50,6 +50,8 @@ class icons
     const string REFRESH = 'fas fa-arrows-rotate';
     // shown in the 'my' tab to undo a user overwrite, i.e. to set the field back to the standard value
     const string UNDO = 'fas fa-rotate-left';
+    // shown in the 'others' tab to apply the overwrite of another user to the own user values
+    const string APPLY = 'fas fa-rotate-right';
     // the show / hide password toggle icons (see form_input_password and style_html.css)
     const string PASSWORD_SHOW = 'fas fa-eye';       // shown while the password is masked, click to reveal it
     const string PASSWORD_HIDE = 'fas fa-eye-slash'; // shown while the password is revealed, click to mask it

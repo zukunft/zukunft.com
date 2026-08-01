@@ -14,10 +14,6 @@ the basic steps to show the start page are
 
 ### word and triple
 
-check why in the word default view the views tab is sometimes missing and only the changes tab is shown e.g. here src/test/resources/web/html/workflow_write/change_word_wf2/wf2_show_edit_back.html
-
-if user have done some overwrites to an object e.g. there has been some rows in the user_words table the overwrites of others user should be shown in create 
-
 create a phrase_values view that shows all values related to a phrase in up to four columns depending on the screen size like e.g. word default view. For this first read the e.g. 1000 (a config.yaml value) most relevant (high impact) values related to the phrase from the database. Than get for each column a phrase that is often used in the values e.g. for city it could be inhabitants, and use the phrase as a column headline 
 
 add to /docs/llm/3 that "more" should always be a link that shows more. e.g. more in the values table should link to the phrase_values view just created
@@ -85,6 +81,10 @@ add the missing workflows for the main objects e.g. source, ref, view, component
 add to the admin menu a page that shows the system errors
 
 # move to Prio 2
+
+## log in 
+
+if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged in
 
 ## language 
 

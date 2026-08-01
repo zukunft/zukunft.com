@@ -118,6 +118,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
@@ -159,6 +160,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -720,6 +722,15 @@ class triple extends sandbox_link_named
             $msk = new view($this->get_user());
             $msk->load_by_id($this->get_view_id());
             $msk_lst->add($msk);
+        }
+        // a triple without an own default view is shown with the system default triple view,
+        // so the views tab of the triple page offers at least this view
+        if ($msk_lst->is_empty()) {
+            $msk = new view($this->get_user());
+            $msk->load_by_code_id(views_shared::TRIPLE);
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
+            }
         }
         $this->views_related = $msk_lst;
     }

@@ -48,6 +48,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -114,6 +116,10 @@ class word_write_url_tests extends word_url_tests
         // round, snapshotted as a workflow; the final page snapshot shows the change log entries of
         // the confirmed change (the read-only twin renders the same steps in word_url_tests)
         $this->change_word_all_sandbox_fields_write($t);
+
+        // the login - logout - login flow: the back target of the original page survives the
+        // login of user 1, the logout and the login of user 2
+        $this->login_logout_login($t);
 
 
         $t->subheader($this->ts . 'cleanup');
@@ -504,6 +510,72 @@ class word_write_url_tests extends word_url_tests
         // (user::login only sets a token if none is set), so the snapshots stay deterministic
         $this->logout();
         $this->cleanup_test_words($t);
+    }
+
+    /**
+     * the login - logout - login workflow starting from a normal page: the login link of the
+     * page carries the page as the '9'-prefixed back target, the logout action forwards that
+     * target to the logout page url (see frontend::action_logout), and the login link of the
+     * logout page carries the original page again, so after every step of the flow the user
+     * can return to the page the flow started from; ends with the login of a second user
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function login_logout_login(test_cleanup $t): void
+    {
+        $t->subheader($this->ts . 'login logout login');
+
+        // start without a login and make sure both test users can log in
+        $this->logout();
+        $this->ensure_test_password($t, users::SYSTEM_TEST_NAME);
+        $this->ensure_test_password($t, users::SYSTEM_TEST_PARTNER_NAME);
+
+        // the 'normal page' the flow starts from: the default word view of the math word
+        $page_url = [
+            url_var::MASK => views::WORD_ID,
+            url_var::ID => (string)word_names::MATH_ID,
+        ];
+        $login_to_page = api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID;
+
+        $test_name = 'the login link of a normal page carries the page as back target';
+        $html_page = $this->ui->url_to_html($page_url, new user_message_ui(), $this->ui->dto, true);
+        $t->assert_text_contains($test_name, $html_page, $login_to_page, $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // user 1 logs in and the page then shows the logout link with the same back target
+        $usr1 = $this->login_as($t, 'user 1 can log in from the normal page', users::SYSTEM_TEST_NAME);
+        $msg1 = new user_message_ui();
+        $usr1_ui = new user_ui();
+        $usr1_ui->set_from_json($usr1->api_json(), $msg1);
+        $msg1->usr = $usr1_ui;
+        $test_name = '... and after the login the logout link keeps the page as back target';
+        $html_logged = $this->ui->url_to_html($page_url, $msg1, $this->ui->dto, true);
+        $t->assert_text_contains($test_name, $html_logged,
+            api::LOGOUT_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID,
+            $t::TIMEOUT_LIMIT_PAGE_LONG);
+
+        // the logout action forwards the back target to the logout page url; routing only,
+        // because a real session destroy is not possible in the streamed test run (see logout())
+        $test_name = 'the logout action keeps the back target of the original page';
+        $logout_request = [
+            url_var::MASK => views::LOGOUT_ID,
+            url_var::BACK . url_var::MASK => (string)views::WORD_ID,
+            url_var::BACK . url_var::ID => (string)word_names::MATH_ID,
+        ];
+        $next_url = $this->ui->url_to_action($logout_request, $usr1, $msg1, $this->ui->dto, false);
+        $t->assert($test_name, (string)($next_url[url_var::BACK . url_var::MASK] ?? ''), (string)views::WORD_ID);
+        $t->assert($test_name . ' id', (string)($next_url[url_var::BACK . url_var::ID] ?? ''), (string)word_names::MATH_ID);
+        $this->logout();
+
+        // the login link of the logout page carries the original page and not the logout page
+        $test_name = 'the login link of the logout page returns to the original page';
+        $html_logout_page = $this->ui->url_to_html($next_url, new user_message_ui(), $this->ui->dto, true);
+        $t->assert_text_contains($test_name, $html_logout_page, $login_to_page, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $t->assert_text_not_contains($test_name, $html_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::LOGOUT_ID);
+
+        // the second user can log in after the logout
+        $this->login_as($t, 'user 2 can log in after the logout', users::SYSTEM_TEST_PARTNER_NAME);
+        $this->logout();
     }
 
     /**

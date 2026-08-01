@@ -541,9 +541,10 @@ class ui_list extends ui_base
      *
      * @param db_object $dbo the word or triple that should be shown to the user
      * @param bool $test_mode true to create a reproducible result without a backend call
+     * @param array $url_array the parsed url of the current page, carried into the my tab undo links
      * @return string the html code of the tab box or an empty string for an unsupported object
      */
-    function view_tab_box(db_object $dbo, bool $test_mode = false): string
+    function view_tab_box(db_object $dbo, bool $test_mode = false, array $url_array = []): string
     {
         global $mtr;
         $result = '';
@@ -568,9 +569,9 @@ class ui_list extends ui_base
             // row values compared to the standard values); an empty string if the user is not
             // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
             $preview = new ui_preview();
-            $my_html = $preview->user_overwrites_table($dbo);
+            $my_html = $preview->user_overwrites_table($dbo, $url_array);
             // tab 4: the shared overwrites that other users have done on this object
-            $others_html = $preview->other_overwrites_table($dbo);
+            $others_html = $preview->other_overwrites_table($dbo, $url_array);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,

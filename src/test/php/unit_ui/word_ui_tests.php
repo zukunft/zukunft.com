@@ -408,6 +408,28 @@ class word_ui_tests
         $t->assert($test_name, $preview->popup_impact([]), '');
 
 
+        $t->subheader($ts . 'url mapper');
+
+        // an id-identified url carries only the changed fields (e.g. the my tab undo link), so
+        // the mapper must keep the already known name - a partial url must never overwrite
+        // fields it does not carry - and only clear it for a url without an id
+        $test_name = 'a partial url with an id keeps the object name';
+        $wrd_map = new word($t_wrd->word()->api_json());
+        $map_msg = new user_message();
+        $wrd_map->url_mapper([
+            url_var::ID => (string)$wrd_map->id(),
+            url_var::DESCRIPTION => 'partial url description'
+        ], $map_msg);
+        $t->assert($test_name, $wrd_map->name(), word_names::MATH);
+
+        $test_name = '... and takes the description of the partial url';
+        $t->assert($test_name, $wrd_map->get_description() ?? '', 'partial url description');
+
+        $test_name = 'a url without an id and without a name clears the name';
+        $wrd_map->url_mapper([url_var::DESCRIPTION => 'partial url description'], $map_msg);
+        $t->assert($test_name, $wrd_map->name(), '');
+
+
         $t->subheader($ts . 'view tab box');
 
         // the 'my' tab shows the fields the session user has overwritten in user_words as a
@@ -426,6 +448,12 @@ class word_ui_tests
                 json_fields::USR_VALUE => '5',
                 json_fields::STD_VALUE => '3',
             ],
+            // a null and a zero view id both resolve to 'not set', so this row must be skipped
+            [
+                json_fields::FIELD => fields::FLD_VIEW,
+                json_fields::USR_VALUE => '0',
+                json_fields::STD_VALUE => '',
+            ],
         ];
         $wrd_json[json_fields::OTHER_OVERWRITES] = [
             [
@@ -441,7 +469,13 @@ class word_ui_tests
 
         $test_name = 'the user with overwrites sees the my tab';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
-        $tab_html = $list->view_tab_box($wrd_tab, true);
+        // the current page url with another entry that the undo link must keep and a stale
+        // value of the field to undo that the undo link must replace by the standard value
+        $tab_url = [
+            url_var::DESCRIPTION => 'undo context',
+            url_var::PLURAL => 'stale plural',
+        ];
+        $tab_html = $list->view_tab_box($wrd_tab, true, $tab_url);
         $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
 
         $test_name = '... with the your and instead columns';
@@ -461,8 +495,17 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $tab_html, url_var::PRE . url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL));
         $t->assert_text_contains($test_name, $tab_html, url_var::STEP . '=' . url_var::STEP_CONFIRM);
 
+        $test_name = '... the undo link keeps the other entries of the current url';
+        $t->assert_text_contains($test_name, $tab_html, url_var::DESCRIPTION . '=' . urlencode('undo context'));
+
+        $test_name = '... but never the current url entry of the field to undo';
+        $t->assert_text_not_contains($test_name, $tab_html, urlencode('stale plural'));
+
         $test_name = '... but without the admin-only impact overwrite for a normal user';
         $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_IMPACT));
+
+        $test_name = '... and without the row where both values resolve to the same text';
+        $t->assert_text_not_contains($test_name, $tab_html, $mtr->text_db_field(fields::FLD_VIEW));
 
         // the 'others' tab lists the shared overwrites of the other users with the
         // overwriting user name and the value of that user
@@ -471,6 +514,12 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $tab_html, $others_tab_ref);
         $t->assert_text_contains($test_name, $tab_html, users::SYSTEM_TEST_PARTNER_NAME);
         $t->assert_text_contains($test_name, $tab_html, word_names::TEST_ADD_PLURAL . '2');
+
+        // the apply icon links to the confirm page that sets the plural to the other user's value
+        $test_name = '... and an apply link to the confirm page for the other user value';
+        $t->assert_text_contains($test_name, $tab_html, icons::APPLY);
+        $t->assert_text_contains($test_name, $tab_html,
+            url_var::PLURAL . '=' . urlencode(word_names::TEST_ADD_PLURAL . '2'));
 
         $test_name = 'an admin also sees the admin-only impact overwrite';
         $ui_sys->usr = new user_ui($t->usr_admin->api_json());

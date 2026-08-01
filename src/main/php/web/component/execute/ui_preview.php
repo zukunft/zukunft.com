@@ -396,9 +396,10 @@ class ui_preview extends ui_base
      * numbers) are hidden from users without admin or developer rights like in the change log
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function user_overwrites_table(db_object $dbo): string
+    function user_overwrites_table(db_object $dbo, array $url_array = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -412,12 +413,16 @@ class ui_preview extends ui_base
                 if ($this->shows_field($usr, $fld)) {
                     $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
                     $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
-                    // escape the values (user input rendered raw by the table; stored xss)
-                    $rows .= $html->tr(
-                        $html->td($mtr->text_db_field($fld))
-                        . $html->td($html->esc($your))
-                        . $html->td($html->esc($instead))
-                        . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr)));
+                    // e.g. a null and a zero view id both resolve to 'not set', so a row that
+                    // would show the same text on both sides tells the user nothing and is skipped
+                    if ($your != $instead) {
+                        // escape the values (user input rendered raw by the table; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc($your))
+                            . $html->td($html->esc($instead))
+                            . $html->td($this->undo_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                    }
                 }
             }
             if ($rows != '') {
@@ -435,14 +440,16 @@ class ui_preview extends ui_base
     /**
      * the 'others' tab table of the word or triple page: one row per field and user for the
      * shared overwrites that users other than the session user have done, with the translated
-     * field name, the name of the overwriting user, the value of that user and the value of
-     * the standard object ('instead'); an empty string if the session user is not logged in
-     * or no other user has a shared overwrite, so the tab is dropped
+     * field name, the name of the overwriting user, the value of that user, the value of the
+     * standard object ('instead') and an apply icon that links to the confirm page which takes
+     * over the other user's value for the session user; an empty string if the session user is
+     * not logged in or no other user has a shared overwrite, so the tab is dropped
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param array $url_array the parsed url of the current page, carried into the apply links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function other_overwrites_table(db_object $dbo): string
+    function other_overwrites_table(db_object $dbo, array $url_array = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -456,12 +463,16 @@ class ui_preview extends ui_base
                 if ($this->shows_field($usr, $fld)) {
                     $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
                     $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
-                    // escape the values and the user name (user input rendered raw; stored xss)
-                    $rows .= $html->tr(
-                        $html->td($mtr->text_db_field($fld))
-                        . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
-                        . $html->td($html->esc($val))
-                        . $html->td($html->esc($instead)));
+                    // like in the my tab a row with the same text on both sides is skipped
+                    if ($val != $instead) {
+                        // escape the values and the user name (user input rendered raw; stored xss)
+                        $rows .= $html->tr(
+                            $html->td($mtr->text_db_field($fld))
+                            . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
+                            . $html->td($html->esc($val))
+                            . $html->td($html->esc($instead))
+                            . $html->td($this->apply_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                    }
                 }
             }
             if ($rows != '') {
@@ -469,7 +480,8 @@ class ui_preview extends ui_base
                     $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD))
                     . $html->th($mtr->txt(msg_id::OTHERS_TBL_USER))
                     . $html->th($mtr->txt(msg_id::OTHERS_TBL_VALUE))
-                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD)));
+                    . $html->th($mtr->txt(msg_id::MY_TBL_INSTEAD))
+                    . $html->th(''));
                 $result = $html->tbl($head . $rows, styles::STYLE_BORDERLESS_GREY);
             }
         }
@@ -495,9 +507,64 @@ class ui_preview extends ui_base
      * @param db_object $dbo the word or triple whose overwrite can be undone
      * @param string $fld the db field name of the overwritten field
      * @param array $ovr the overwrite entry with the user and the standard value
+     * @param array $url_array the parsed url of the current page that is carried into the link
      * @return string the html code of the undo icon link or an empty string if no link can be built
      */
-    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr): string
+    private function undo_overwrite_link(db_object $dbo, string $fld, array $ovr, array $url_array = []): string
+    {
+        return $this->overwrite_confirm_link($dbo, $fld,
+            (string)($ovr[json_fields::STD_VALUE] ?? ''),
+            (string)($ovr[json_fields::USR_VALUE] ?? ''),
+            $url_array, icons::UNDO, msg_id::MY_TBL_UNDO);
+    }
+
+    /**
+     * the apply icon link of an 'others' tab row: opens the confirm page of the object edit view
+     * with the field set to the other user's value and the session user's current value as the
+     * '8'-prefixed opening value, so confirming the shown change takes over the other user's
+     * overwrite for the session user
+     *
+     * @param db_object $dbo the word or triple shown to the user
+     * @param string $fld the db field name of the field that the other user has overwritten
+     * @param array $ovr the overwrite entry with the other user's value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @return string the html code of the apply icon link or an empty string if no link can be built
+     */
+    private function apply_overwrite_link(db_object $dbo, string $fld, array $ovr, array $url_array = []): string
+    {
+        $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
+        $current = (string)($dbo->to_url_array()[$fld_var] ?? '');
+        return $this->overwrite_confirm_link($dbo, $fld,
+            (string)($ovr[json_fields::USR_VALUE] ?? ''),
+            $current,
+            $url_array, icons::APPLY, msg_id::OTHERS_TBL_APPLY);
+    }
+
+    /**
+     * an icon link to the confirm page of the object edit view that changes one field: the field
+     * is set to the given new value and the given old value is the '8'-prefixed opening value, so
+     * the confirm page shows exactly this one pending change; the other entries of the current
+     * url are kept, so the confirm submit never resets other fields; shared by the undo link of
+     * the 'my' tab and the apply link of the 'others' tab
+     *
+     * @param db_object $dbo the word or triple shown to the user
+     * @param string $fld the db field name of the field to change
+     * @param string $new_val the value that confirming the change saves for the session user
+     * @param string $old_val the '8'-prefixed opening value shown as the current value
+     * @param array $url_array the parsed url of the current page that is carried into the link
+     * @param string $icon_class the css class of the icon shown as the link
+     * @param msg_id $tooltip the message id of the link tooltip
+     * @return string the html code of the icon link or an empty string if no link can be built
+     */
+    private function overwrite_confirm_link(
+        db_object $dbo,
+        string    $fld,
+        string    $new_val,
+        string    $old_val,
+        array     $url_array,
+        string    $icon_class,
+        msg_id    $tooltip
+    ): string
     {
         global $mtr;
         $html = new html_base();
@@ -505,15 +572,21 @@ class ui_preview extends ui_base
         $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
         // only word and triple pages show the tab, but guard the edit view const to avoid a fatal
         if ($fld_var != '' and $dbo->id() > 0 and defined($dbo::class . '::VIEW_EDIT_ID')) {
-            $url = api::MAIN_SCRIPT . '?' . http_build_query([
-                    url_var::MASK => $dbo::VIEW_EDIT_ID,
-                    url_var::ID => $dbo->id(),
-                    $fld_var => (string)($ovr[json_fields::STD_VALUE] ?? ''),
-                    url_var::PRE . $fld_var => (string)($ovr[json_fields::USR_VALUE] ?? ''),
-                    url_var::STEP => url_var::STEP_CONFIRM,
-                ]);
-            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::UNDO . '"></' . html_base::I . '>';
-            $result = $html->ref($url, $icon, $mtr->txt(msg_id::MY_TBL_UNDO), '', true);
+            // keep all entries of the current url except the entry (and the '8'-prefixed opening
+            // value) of the field to change, which is replaced by the given values below
+            $url_pars = $url_array;
+            unset($url_pars[$fld_var]);
+            unset($url_pars[url_var::PRE . $fld_var]);
+            $url_pars = array_merge($url_pars, [
+                url_var::MASK => $dbo::VIEW_EDIT_ID,
+                url_var::ID => $dbo->id(),
+                $fld_var => $new_val,
+                url_var::PRE . $fld_var => $old_val,
+                url_var::STEP => url_var::STEP_CONFIRM,
+            ]);
+            $url = api::MAIN_SCRIPT . '?' . http_build_query($url_pars);
+            $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . $icon_class . '"></' . html_base::I . '>';
+            $result = $html->ref($url, $icon, $mtr->txt($tooltip), '', true);
         }
         return $result;
     }

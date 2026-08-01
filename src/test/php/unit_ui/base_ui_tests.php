@@ -68,7 +68,9 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
@@ -151,6 +153,16 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), so it is never served from the shared page cache;
+        // the login state comes from the session, because the cache fast path runs before
+        // the type cache needed for a profile based check is loaded
+        $test_name = 'a logged in user never gets the shared cached page';
+        $_SESSION[url_var::SESSION_LOGGED] = true;
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message()) === null);
+        unset($_SESSION[url_var::SESSION_LOGGED]);
+
         // the debug level only controls out-of-band debug output, not the cached html, so it is
         // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
         $test_name = 'the debug level is ignored for the cache key';
@@ -222,6 +234,44 @@ class base_ui_tests
         // the target is a pure html frontend, so the tab box must not contain javascript
         $test_name = 'tab_box contains no javascript';
         $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+
+        $t->subheader($ts . 'navbar');
+
+        // the person icon in the top right corner is shown in dark blue (styles::USER_LOGGED)
+        // if a non-ip user is logged in, i.e. if the navbar gets a user name
+        $test_name = 'the person icon shows the logged in state in dark blue';
+        $navbar_logged = $html->navbar(0, [], 'test user');
+        $t->assert_text_contains($test_name, $navbar_logged, icons::USER_CIRCLE . ' ' . styles::USER_LOGGED);
+
+        $test_name = 'without a logged in user the person icon keeps the default color';
+        $navbar_anon = $html->navbar(0, []);
+        $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
+
+        // the login link forwards a '9'-prefixed back target of the current page (the logout
+        // page carries the original page as back target, see frontend::action_logout), so after
+        // the login the original page is shown again and not the logout page
+        $test_name = 'the login link forwards the back target of the logout page';
+        $logout_page_url = [
+            url_var::MASK => (string)views::LOGOUT_ID,
+            url_var::BACK . url_var::MASK => (string)views::WORD_ID,
+            url_var::BACK . url_var::ID => '347',
+        ];
+        $navbar_logout_page = $html->navbar(views::LOGOUT_ID, $logout_page_url);
+        $t->assert_text_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+        $t->assert_text_contains($test_name, $navbar_logout_page, url_var::BACK . url_var::ID . '=347');
+
+        $test_name = '... and never the logout page as its own back target';
+        $t->assert_text_not_contains($test_name, $navbar_logout_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::LOGOUT_ID);
+
+        $test_name = 'on a normal page the login link uses the page as the back target';
+        $navbar_normal_page = $html->navbar(views::WORD_ID, [
+            url_var::MASK => (string)views::WORD_ID,
+            url_var::ID => '347',
+        ]);
+        $t->assert_text_contains($test_name, $navbar_normal_page,
+            api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
 
         $t->subheader($ts . 'login');
 

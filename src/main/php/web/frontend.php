@@ -815,7 +815,7 @@ class frontend
             $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg, $usr_backend, $usr_ui, $do_it),
             $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg, $usr_backend, $usr_ui, $do_it),
             $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg, $do_it, $url_array),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
@@ -991,6 +991,14 @@ class frontend
                     $dbo->load_by_id_with_related($id, $usr_id);
                 }
             } else {
+                // a url with object values can be partial (e.g. the my tab undo link carries only
+                // the changed field), so load the object by id first and overlay the url values,
+                // otherwise e.g. the confirm page could not show the object name; in test mode the
+                // page must render without a backend call, so the render uses the url values only
+                if (!$test_mode and $dbo instanceof db_object_ui) {
+                    $usr_id = $usr?->id() ?? 0;
+                    $dbo->load_by_id($id, [], $usr_id);
+                }
                 $dbo->url_mapper($url_array, $usr_msg, $dto);
             }
         } else {
@@ -1086,7 +1094,15 @@ class frontend
         // only a user without own data changes may get the standard cached page; an unknown
         // user (null) has no own data changes, so the shared page is the correct answer
         $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
-        if (!$uses_sandbox) {
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), which the shared cached page does not contain,
+        // so the page of a logged in user is always rendered live; the login state is read
+        // from the session, because this fast path runs before the type cache is loaded
+        // that a profile based check like is_ip_only() would need
+        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
+        //      job and the cache setup handle the user specific parts of the page
+        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
+        if (!$uses_sandbox and !$logged_in) {
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
@@ -1141,10 +1157,17 @@ class frontend
     {
         // an unknown user (null) has no own data changes, so the shared cached page is served
         $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
+        // the logout link and the my tab), so it is always rendered live and never stored as
+        // the shared cached page; the login state is read from the session like in
+        // cached_page_or_null, so both cache gates always decide the same way
+        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
+        //      job and the cache setup handle the user specific parts of the page
+        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
         $result = '';
         // an action request is always rendered live because the data has just been changed
         $url_key = '';
-        if (!$is_action) {
+        if (!$is_action and !$logged_in) {
             $url_key = $this->url_cache_key($url_array);
         }
         // get the last cached html page for the url and fill in the reading user's own anti-csrf
@@ -1681,7 +1704,8 @@ class frontend
         user_backend &$usr_backend,
         user_ui      &$usr_ui,
         user_message $msg,
-        bool         $do_it
+        bool         $do_it,
+        array        $url_array = []
     ): array
     {
         if ($do_it) {
@@ -1700,7 +1724,15 @@ class frontend
         }
         $usr_backend = new user_backend();
         $usr_ui = new user_ui();
-        return [url_var::MASK => views::LOGOUT_ID];
+        // keep the '9'-prefixed back target of the logout request in the logout page url, so the
+        // logout page (and a login from there) can send the user back to the original page
+        $url = [url_var::MASK => views::LOGOUT_ID];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::BACK)) {
+                $url[$key] = $val;
+            }
+        }
+        return $url;
     }
 
     /**

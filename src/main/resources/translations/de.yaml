@@ -92,6 +92,7 @@ messages:
   system_sub_title_others: "Andere"
   others_tbl_user: "Benutzer"
   others_tbl_value: "Wert"
+  others_tbl_apply: "diese Überschreibung für deine Werte übernehmen"
   my_tbl_your: "deine"
   my_tbl_instead: "anstatt"
   my_tbl_undo: "deine Überschreibung rückgängig machen"
