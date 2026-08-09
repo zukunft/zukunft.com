@@ -131,7 +131,7 @@ class controller
                 $id = $dbo->id();
             }
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_types::HEADER], $msg->usr);
+            $result = $dbo->api_json([api_types::HEADER], $msg);
         }
         // return either the api json with the id of the created db object e.g. word
         // or the message why the adding has failed
@@ -173,7 +173,7 @@ class controller
         // if update was fine ...
         if ($msg->is_ok()) {
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_types::HEADER], $msg->usr);
+            $result = $dbo->api_json([api_types::HEADER], $msg);
         }
         // return either the api json with the id of the created word
         // or the message why the adding of the word has failed
@@ -204,13 +204,13 @@ class controller
 
         $result = ''; // reset the json message string
         if ($id > 0) {
-            $dbo->load_by_id($id);
+            $dbo->load_by_id($id, $msg);
 
             // delete or exclude the word
             $dbo->del($msg);
 
             if ($msg->is_ok()) {
-                $result = $dbo->api_json([api_types::HEADER], $msg->usr);
+                $result = $dbo->api_json([api_types::HEADER], $msg);
             }
         } else {
             $lib = new library();

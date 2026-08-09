@@ -62,9 +62,9 @@ class formula_link_list extends ListBase
      * @param int $id of the component
      * @return bool true if the load has been successful
      */
-    function load_by_formula_id(int $id): bool
+    function load_by_formula_id(int $id, user_message $msg): bool
     {
-        return parent::load_by_id(formula_link_list::class, url_var::FORMULA, $id);
+        return parent::load_by_id(formula_link_list::class, url_var::FORMULA, $id, $msg);
     }
 
 
@@ -92,7 +92,7 @@ class formula_link_list extends ListBase
      * @param phrase_list $cac_lst cache of phrases used to reduce the backend calls
      * @return phrase_list with the phrases of this list
      */
-    function get_phrase_list(phrase_list $cac_lst): phrase_list
+    function get_phrase_list(phrase_list $cac_lst, user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list();
         foreach ($this->lst() as $lnk) {
@@ -102,7 +102,7 @@ class formula_link_list extends ListBase
                 if ($phr_id != 0) {
                     // TODO Prio 2 speed up by loading all phrase at once
                     $to_add = new phrase();
-                    $to_add->load_by_id($phr_id);
+                    $to_add->load_by_id($phr_id, $msg);
                 }
             }
             if ($to_add != null) {
@@ -120,7 +120,7 @@ class formula_link_list extends ListBase
      * @param formula_list|null $cac_lst cache of formulas used to reduce the backend calls
      * @return formula_list with the formulas assigned to the given phrase
      */
-    function get_formula_list(phrase $phr, ?formula_list $cac_lst = null): formula_list
+    function get_formula_list(phrase $phr, user_message $msg, ?formula_list $cac_lst = null): formula_list
     {
         $frm_lst = new formula_list();
         foreach ($this->lst() as $lnk) {
@@ -130,7 +130,7 @@ class formula_link_list extends ListBase
                 if ($to_add == null and $frm_id != 0) {
                     // TODO Prio 2 speed up by loading all formulas at once
                     $to_add = new formula();
-                    $to_add->load_by_id($frm_id);
+                    $to_add->load_by_id($frm_id, $msg);
                 }
                 if ($to_add != null) {
                     $frm_lst->add($to_add);

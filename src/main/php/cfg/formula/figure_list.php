@@ -106,11 +106,11 @@ class figure_list extends sandbox_list
      * @param fig_ids $ids figure ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(fig_ids $ids): bool
+    function load_by_ids(fig_ids $ids, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -119,15 +119,15 @@ class figure_list extends sandbox_list
      * @param bool $load_all force to include also the excluded figures e.g. for admins
      * @return bool true if at least one phrase has been loaded
      */
-    function load(sql_par $qp, bool $load_all = false): bool
+    function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
 
         if ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class);
+            log_err_msg('The query name cannot be created to load a ' . self::class, $msg);
         } else {
-            $db_rows = $db_con->get($qp, 'figure list');
+            $db_rows = $db_con->get($qp, $msg, 'figure list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
@@ -137,7 +137,7 @@ class figure_list extends sandbox_list
                         $res = new result($this->get_user());
                         $fig = new figure($res);
                     }
-                    $fig->row_mapper($db_row, $qp->ext);
+                    $fig->row_mapper($db_row, $msg, $qp->ext);
                     $this->add_obj($fig);
                     $result = true;
                 }
@@ -194,10 +194,10 @@ class figure_list extends sandbox_list
     }
 
     // TODO use cache to improve speed
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         foreach ($this->lst() as $fig) {
-            $fig->obj()->grp()->load_phrases();
+            $fig->obj()->grp()->load_phrases($msg);
         }
     }
 

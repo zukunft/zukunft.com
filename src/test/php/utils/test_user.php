@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -48,6 +49,7 @@ function run_user_test(all_tests $t): void
 
 
     $back = 0;
+    $msg = new user_message();
 
     // test the user display after the word changes to have a sample case
     // start the test section (ts)
@@ -72,7 +74,7 @@ function run_user_test(all_tests $t): void
     $t->subheader($ts . 'permission');
 
     $ip_addr = '2.204.210.217';
-    $result = $t->usr1->ip_check($ip_addr);
+    $result = $t->usr1->ip_check($ip_addr, $msg);
     $target = '';
     $t->assert(', usr->ip_check', $result, $target);
 

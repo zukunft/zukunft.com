@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -48,6 +49,7 @@ include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;

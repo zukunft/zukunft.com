@@ -65,7 +65,8 @@ global $cac;
 
 // open the session, database and load the environment
 $app = new test_app();
-$db_con = $app->start("api tests", true);
+$msg = new user_message();
+$db_con = $app->start("api tests", $msg, true);
 if ($db_con->is_open()) {
 
     // load the session user parameters
@@ -85,9 +86,16 @@ if ($db_con->is_open()) {
             $t->set_users();
             $usr_msg = new user_message();
 
+            // login so that the api calls of the test scripts are permitted
+            // also on a pod that blocks the changes of a user without login
+            $t->api_login();
+
             // run the api tests
             $t_api = new all_api_tests();
             $t_api->run_api_tests($t, $t->usr1, $usr_msg);
+
+            // end the admin session used for the api calls of the test scripts
+            $t->api_logout();
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

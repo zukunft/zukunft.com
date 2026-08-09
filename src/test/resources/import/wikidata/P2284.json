@@ -4,8 +4,8 @@
             "pageid": 23451809,
             "ns": 120,
             "title": "Property:P2284",
-            "lastrevid": 2493600157,
-            "modified": "2026-05-18T06:45:15Z",
+            "lastrevid": 2517383298,
+            "modified": "2026-07-14T12:33:51Z",
             "type": "property",
             "datatype": "quantity",
             "id": "P2284",
@@ -2365,6 +2365,20 @@
                                             "entity-type": "item",
                                             "numeric-id": 193098,
                                             "id": "Q193098"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "95148dc41814474108229b4a334f761d9e96b2ad",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 203722,
+                                            "id": "Q203722"
                                         },
                                         "type": "wikibase-entityid"
                                     },

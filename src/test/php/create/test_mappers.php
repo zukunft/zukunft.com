@@ -33,7 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -62,6 +61,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
@@ -146,7 +146,9 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -169,7 +171,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as view_link_ui;
@@ -234,52 +236,52 @@ class test_mappers
     {
         $obj = null;
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = new user();
                 break;
-            case word::class;
+            case word::class:
                 $obj = new word($usr);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = new verb();
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = new triple($usr);
                 break;
-            case source::class;
+            case source::class:
                 $obj = new source($usr);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = new ref($usr);
                 break;
-            case value::class;
+            case value::class:
                 $obj = new value($usr);
                 break;
-            case group::class;
+            case group::class:
                 $obj = new group($usr);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = new formula($usr);
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = new formula_link($usr);
                 break;
-            case result::class;
+            case result::class:
                 $obj = new result($usr);
                 break;
-            case view::class;
+            case view::class:
                 $obj = new view($usr);
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = new view_relation($usr);
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = new term_view($usr);
                 break;
-            case component::class;
+            case component::class:
                 $obj = new component($usr);
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = new component_link($usr);
                 break;
             default:
@@ -308,53 +310,54 @@ class test_mappers
         $t_res = new test_results($this->env);
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
+        $msg = new user_message();
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_ip();
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word();
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb();
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple();
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source();
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->reference();
                 break;
-            case value::class;
-                $obj = $t_val->value();
+            case value::class:
+                $obj = $t_val->value($msg);
                 break;
-            case group::class;
+            case group::class:
                 $obj = $t_grp->group();
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_rename();
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link();
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result();
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_rename();
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation();
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view();
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_rename();
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link();
                 break;
             default:
@@ -371,58 +374,58 @@ class test_mappers
         $t_frm = new test_formulas($this->env);
         $t_msk = new test_views($this->env);
         switch ($obj::class) {
-            case user::class;
+            case user::class:
                 $obj->name = users::TEST_USER_NAME_UPDATED;
                 break;
-            case word::class;
+            case word::class:
                 $obj->set_name(word_names::TEST_RENAMED);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj->set_name(verbs::TEST_ADD_RENAMED);
                 break;
-            case triple::class;
+            case triple::class:
                 $obj->set_name(triple_names::SYSTEM_TEST_RENAMED);
                 break;
-            case source::class;
+            case source::class:
                 $obj->set_name(sources::SYSTEM_TEST_RENAMED);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj->set_name(refs::SYSTEM_TEST_RENAMED);
                 break;
-            case value::class;
+            case value::class:
                 $obj->set_value(values::SAMPLE_FLOAT);
                 $obj->set_protection_by_code_id(protection_types::USER);
                 break;
-            case group::class;
+            case group::class:
                 $obj->set_name(groups::SYSTEM_TEST_RENAMED);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj->set_name(formula_names::SYSTEM_TEST_RENAMED);
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj->set_formula($t_frm->formula());
                 break;
-            case result::class;
+            case result::class:
                 $obj->set_value(results::TV_FLOAT);
                 $obj->set_protection_by_code_id(protection_types::USER);
                 break;
-            case view::class;
+            case view::class:
                 $obj->set_name(views::TEST_RENAMED_NAME);
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj->set_parent($t_msk->view_word_edit());
                 $obj->set_child($t_msk->view_word_log());
                 $obj->set_protection_by_code_id(protection_types::USER);
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj->set_term($t_wrd->word()->term());
                 $obj->set_view($t_msk->view());
                 $obj->set_protection_by_code_id(protection_types::ADMIN);
                 break;
-            case component::class;
+            case component::class:
                 $obj->set_name(components::TEST_RENAMED_NAME);
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj->set_predicate(component_link_type::ALWAYS);
                 $obj->set_view($t_msk->view());
                 break;
@@ -453,52 +456,52 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled();
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_filled();
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple_filled();
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled();
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->ref_filled();
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 break;
-            case group::class;
+            case group::class:
                 $obj = $t_grp->group_filled();
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link_filled();
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled();
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_filled();
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view_filled();
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link_filled();
                 break;
             default:
@@ -530,16 +533,16 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled_add();
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_filled();
                 break;
-            case triple::class;
+            case triple::class:
                 $wrd = $cac->get_first_word();
                 $vrb = $cac->get_first_verb();
                 $wrd2 = $cac->get_second_word();
@@ -550,28 +553,28 @@ class test_mappers
                     $obj = $t_trp->triple_name_only();
                 }
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled();
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->reference_plus();
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled_add();
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled_add();
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_filled();
                 break;
             default:
@@ -607,16 +610,16 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_add();
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_add();
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_add();
                 break;
-            case triple::class;
+            case triple::class:
                 $wrd = $cac->get_first_word();
                 $vrb = $cac->get_first_verb();
                 $wrd2 = $cac->get_second_word();
@@ -627,43 +630,43 @@ class test_mappers
                     $obj = $t_trp->triple_name_only();
                 }
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_add();
                 break;
-            case ref::class;
+            case ref::class:
                 $wrd = $cac->get_first_word();
                 $obj = $t_ref->reference_add($wrd->phrase());
                 break;
-            case group::class;
+            case group::class:
                 $wrd = $cac->get_first_word();
                 $obj = $t_grp->group_add($wrd->phrase());
                 break;
-            case value::class;
+            case value::class:
                 $wrd = $cac->get_first_word();
                 $obj = $t_val->value_add($wrd->phrase());
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_add();
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link_add();
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_add();
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_add();
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_add();
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view_add();
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_add();
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link_add();
                 break;
             default:
@@ -681,55 +684,55 @@ class test_mappers
     {
         $obj = null;
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = new user_ui();
                 break;
-            case word::class;
+            case word::class:
                 $obj = new word_ui();
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = new verb_ui();
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = new triple_ui();
                 break;
-            case source::class;
+            case source::class:
                 $obj = new source_ui();
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = new ref_ui();
                 break;
-            case value::class;
+            case value::class:
                 $obj = new value_ui();
                 break;
-            case group::class;
+            case group::class:
                 $obj = new group_ui();
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = new formula_ui();
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = new formula_link_ui();
                 break;
-            case result::class;
+            case result::class:
                 $obj = new result_ui();
                 break;
-            case view::class;
+            case view::class:
                 $obj = new view_ui();
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = new view_relation_ui();
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = new view_link_ui();
                 break;
-            case component::class;
+            case component::class:
                 $obj = new component_ui();
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = new component_link_ui();
                 break;
-            case language::class;
+            case language::class:
                 $obj = new language_ui(languages::DEFAULT_ID, languages::DEFAULT);
                 break;
             default:
@@ -744,15 +747,15 @@ class test_mappers
      * @param int $msk_id the id of the mask
      * @param string $action
      * @param string $type the url type that should be created
-     * @param user_message $usr_msg to enhance with messages to the user
+     * @param user_message_ui $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_filled_url(
-        string       $class,
-        int          $msk_id,
-        string       $action,
-        string       $type = url_var::MASK_HUMAN,
-        user_message $usr_msg = new user_message()
+        string          $class,
+        int             $msk_id,
+        string          $action,
+        string          $type = url_var::MASK_HUMAN,
+        user_message_ui $usr_msg = new user_message_ui()
     ): string
     {
         if ($action == change_actions::SHOW) {
@@ -801,231 +804,231 @@ class test_mappers
         $t_msk = new test_views($this->env);
         $t_cmp = new test_components($this->env);
         switch ($typ->code_id) {
-            case component_types::ADMIN_FORM_FIELD_USER_NAME;
-            case component_types::ADMIN_FORM_FIELD_USER_EMAIL;
-            case component_types::ADMIN_FORM_FIELD_USER_PASSWORD;
-            case component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX;
-            case component_types::SYSTEM_BODY_SIGNUP;
-            case component_types::SYSTEM_BODY_LOGIN;
-            case component_types::SYSTEM_BODY_LOGIN_ACTIVATE;
-            case component_types::SYSTEM_BODY_LOGIN_RESET;
-            case component_types::SYSTEM_BODY_LOGOUT;
-            case component_types::SYSTEM_BODY_USER_SETTINGS;
+            case component_types::ADMIN_FORM_FIELD_USER_NAME:
+            case component_types::ADMIN_FORM_FIELD_USER_EMAIL:
+            case component_types::ADMIN_FORM_FIELD_USER_PASSWORD:
+            case component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX:
+            case component_types::SYSTEM_BODY_SIGNUP:
+            case component_types::SYSTEM_BODY_LOGIN:
+            case component_types::SYSTEM_BODY_LOGIN_ACTIVATE:
+            case component_types::SYSTEM_BODY_LOGIN_RESET:
+            case component_types::SYSTEM_BODY_LOGOUT:
+            case component_types::SYSTEM_BODY_USER_SETTINGS:
                 $obj = $t_usr->user_filled($this->env);
                 break;
-            case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL;
-            case component_types::FIELD_LANGUAGE_SYMBOL;
-            case component_types::LANGUAGE_NAME;
-            case component_types::SELECT_LIST;
+            case component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL:
+            case component_types::FIELD_LANGUAGE_SYMBOL:
+            case component_types::LANGUAGE_NAME:
+            case component_types::SELECT_LIST:
                 $obj = $t_lng->language();
                 break;
-            case component_types::SOURCE_NAME;
+            case component_types::SOURCE_NAME:
                 $obj = $t_src->source_filled();
                 break;
-            case component_types::REFERENCE_NAME;
+            case component_types::REFERENCE_NAME:
                 $obj = $t_ref->ref_filled();
                 break;
-            case component_types::EXPRESSION;
+            case component_types::EXPRESSION:
                 $obj = $t_frm->formula_filled();
                 break;
-            case component_types::PHRASE_NAME;
-            case component_types::SELECT_PHRASE;
-            case component_types::PHRASE;
-            case component_types::FORM_TITLE;
-            case component_types::FORM_FIELD_NAME;
-            case component_types::FORM_FIELD_DESCRIPTION;
-            case component_types::FORM_FIELD_SELECTION_NAME;
-            case component_types::FORM_FIELD_SELECTION_DESCRIPTION;
-            case component_types::FORM_FIELD_SELECTION_TEXT;
-            case component_types::FORM_SELECT_PHRASE;
-            case component_types::FORM_SELECT_PHRASES;
-            case component_types::FORM_SELECT_PHRASE_TYPE;
-            case component_types::FORM_SHARE_TYPE;
-            case component_types::FORM_PROTECTION_TYPE;
-            case component_types::FORM_BUTTON_CANCEL;
-            case component_types::FORM_BUTTON_SAVE;
-            case component_types::FORM_BUTTON_DEL;
-            case component_types::FORM_BUTTON_IMPORT;
-            case component_types::FORM_BUTTON_EXPORT;
-            case component_types::FORM_END;
-            case component_types::FORM_HIDDEN_BACK;
-            case component_types::FORM_HIDDEN_STEP;
-            case component_types::FORM_PREVIEW;
-            case component_types::ROW_START;
-            case component_types::ROW_RIGHT;
-            case component_types::ROW_END;
-            case component_types::SHOW_NAME;
-            case component_types::SHOW_DESCRIPTION;
-            case component_types::SHOW_FIELD_USAGE;
-            case component_types::TEXT;
-            case component_types::SYSTEM_CHANGE_LOG;
-            case component_types::SYSTEM_TITLE;
-            case component_types::SYSTEM_SUB_TITLE;
-            case component_types::SYSTEM_SUB_TITLE_VAR;
-            case component_types::SYSTEM_BODY_ABOUT;
-            case component_types::SYSTEM_BODY_SETUP;
-            case component_types::SYSTEM_BODY_SEARCH;
-            case component_types::SYSTEM_BODY_SEARCH_FULL;
-            case component_types::SYSTEM_BODY_SANDBOX;
-            case component_types::SYSTEM_BODY_UNDO;
-            case component_types::SYSTEM_BODY_PROCESS;
-            case component_types::SYSTEM_BODY_PROCESS_PROGRESS;
-            case component_types::SYSTEM_BODY_PROCESS_LIST;
-            case component_types::SYSTEM_BODY_ERROR_LOG;
-            case component_types::SYSTEM_BODY_ERROR_UPDATE;
-            case component_types::LIST_PARENTS_OF_WORD;
-            case component_types::LIST_CHILDREN_OF_WORD;
-            case component_types::LINK_LIST_WORD;
-            case component_types::RANK_PHRASE;
-            case component_types::RANKING_PARAMETERS;
-            case component_types::RANKING_LIST;
-            case component_types::RESULTS_RELATED;
-            case component_types::PHRASES_RELATED;
-            case component_types::MAIN_VALUE;
-            case component_types::BUTTON_REQUEST;
-            case component_types::SYSTEM_ADMIN_URL_DELAY;
-            case component_types::SYSTEM_ADMIN_LOGIN_FAILS;
-            case component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED;
-            case component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX;
-            case component_types::SYSTEM_ADMIN_JOBS_DELAYED;
-            case component_types::USED_IN_AS_TEXT;
-            case component_types::USED_IN_AS_TEXT_WITH_LINK;
-            case component_types::FORM_CLASS;
-            case component_types::FORM_CHANGES;
-            case component_types::FORM_IMPACT;
-            case component_types::SYSTEM_PASTE_TABLE_CONTEXT;
-            case component_types::SYSTEM_PASTE_TABLE_BODY;
-            case component_types::SYSTEM_SELECTION_TEXT;
-            case component_types::SYSTEM_TITLE_OBJECT_NAMED;
-            case component_types::CALC_SHEET;
-            case component_types::WORDS_UP;
-            case component_types::WORDS_DOWN;
-            case component_types::LINK;
-            case component_types::JSON_EXPORT;
-            case component_types::XML_EXPORT;
-            case component_types::CSV_EXPORT;
-            case component_types::ODS_EXPORT;
-            case component_types::FORM_SELECT_FILE;
-            case component_types::FORM_SELECT_FORMAT_EXPORT;
+            case component_types::PHRASE_NAME:
+            case component_types::SELECT_PHRASE:
+            case component_types::PHRASE:
+            case component_types::FORM_TITLE:
+            case component_types::FORM_FIELD_NAME:
+            case component_types::FORM_FIELD_DESCRIPTION:
+            case component_types::FORM_FIELD_SELECTION_NAME:
+            case component_types::FORM_FIELD_SELECTION_DESCRIPTION:
+            case component_types::FORM_FIELD_SELECTION_TEXT:
+            case component_types::FORM_SELECT_PHRASE:
+            case component_types::FORM_SELECT_PHRASES:
+            case component_types::FORM_SELECT_PHRASE_TYPE:
+            case component_types::FORM_SHARE_TYPE:
+            case component_types::FORM_PROTECTION_TYPE:
+            case component_types::FORM_BUTTON_CANCEL:
+            case component_types::FORM_BUTTON_SAVE:
+            case component_types::FORM_BUTTON_DEL:
+            case component_types::FORM_BUTTON_IMPORT:
+            case component_types::FORM_BUTTON_EXPORT:
+            case component_types::FORM_END:
+            case component_types::FORM_HIDDEN_BACK:
+            case component_types::FORM_HIDDEN_STEP:
+            case component_types::FORM_PREVIEW:
+            case component_types::ROW_START:
+            case component_types::ROW_RIGHT:
+            case component_types::ROW_END:
+            case component_types::SHOW_NAME:
+            case component_types::SHOW_DESCRIPTION:
+            case component_types::SHOW_FIELD_USAGE:
+            case component_types::TEXT:
+            case component_types::SYSTEM_CHANGE_LOG:
+            case component_types::SYSTEM_TITLE:
+            case component_types::SYSTEM_SUB_TITLE:
+            case component_types::SYSTEM_SUB_TITLE_VAR:
+            case component_types::SYSTEM_BODY_ABOUT:
+            case component_types::SYSTEM_BODY_SETUP:
+            case component_types::SYSTEM_BODY_SEARCH:
+            case component_types::SYSTEM_BODY_SEARCH_FULL:
+            case component_types::SYSTEM_BODY_SANDBOX:
+            case component_types::SYSTEM_BODY_UNDO:
+            case component_types::SYSTEM_BODY_PROCESS:
+            case component_types::SYSTEM_BODY_PROCESS_PROGRESS:
+            case component_types::SYSTEM_BODY_PROCESS_LIST:
+            case component_types::SYSTEM_BODY_ERROR_LOG:
+            case component_types::SYSTEM_BODY_ERROR_UPDATE:
+            case component_types::LIST_PARENTS_OF_WORD:
+            case component_types::LIST_CHILDREN_OF_WORD:
+            case component_types::LINK_LIST_WORD:
+            case component_types::RANK_PHRASE:
+            case component_types::RANKING_PARAMETERS:
+            case component_types::RANKING_LIST:
+            case component_types::RESULTS_RELATED:
+            case component_types::PHRASES_RELATED:
+            case component_types::MAIN_VALUE:
+            case component_types::BUTTON_REQUEST:
+            case component_types::SYSTEM_ADMIN_URL_DELAY:
+            case component_types::SYSTEM_ADMIN_LOGIN_FAILS:
+            case component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED:
+            case component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX:
+            case component_types::SYSTEM_ADMIN_JOBS_DELAYED:
+            case component_types::USED_IN_AS_TEXT:
+            case component_types::USED_IN_AS_TEXT_WITH_LINK:
+            case component_types::FORM_CLASS:
+            case component_types::FORM_CHANGES:
+            case component_types::FORM_IMPACT:
+            case component_types::SYSTEM_PASTE_TABLE_CONTEXT:
+            case component_types::SYSTEM_PASTE_TABLE_BODY:
+            case component_types::SYSTEM_SELECTION_TEXT:
+            case component_types::SYSTEM_TITLE_OBJECT_NAMED:
+            case component_types::CALC_SHEET:
+            case component_types::WORDS_UP:
+            case component_types::WORDS_DOWN:
+            case component_types::LINK:
+            case component_types::JSON_EXPORT:
+            case component_types::XML_EXPORT:
+            case component_types::CSV_EXPORT:
+            case component_types::ODS_EXPORT:
+            case component_types::FORM_SELECT_FILE:
+            case component_types::FORM_SELECT_FORMAT_EXPORT:
                 $obj = $t_wrd->word_filled();
                 break;
-            case component_types::VERB_NAME;
-            case component_types::FORM_SELECT_VERB;
-            case component_types::FORM_SELECT_VERBS;
-            case component_types::FORM_FIELD_PLURAL;
-            case component_types::FORM_FIELD_REVERSE;
-            case component_types::FORM_FIELD_PLURAL_REVERSE;
-            case component_types::FORM_FIELD_NAME_IN_FORMULAS;
-            case component_types::LIST_TRIPLES_OF_VERB;
-            case component_types::LIST_FORMULAS_OF_VERB;
+            case component_types::VERB_NAME:
+            case component_types::FORM_SELECT_VERB:
+            case component_types::FORM_SELECT_VERBS:
+            case component_types::FORM_FIELD_PLURAL:
+            case component_types::FORM_FIELD_REVERSE:
+            case component_types::FORM_FIELD_PLURAL_REVERSE:
+            case component_types::FORM_FIELD_NAME_IN_FORMULAS:
+            case component_types::LIST_TRIPLES_OF_VERB:
+            case component_types::LIST_FORMULAS_OF_VERB:
                 $obj = $t_vrb->verb_filled();
                 break;
-            case component_types::TRIPLE_NAME;
-            case component_types::FORM_FIELD_WEIGHT;
+            case component_types::TRIPLE_NAME:
+            case component_types::FORM_FIELD_WEIGHT:
                 $obj = $t_trp->triple_filled();
                 break;
-            case component_types::FORM_SELECT_SOURCE;
-            case component_types::FORM_SELECT_SOURCES;
-            case component_types::FORM_SELECT_SOURCE_TYPE;
-            case component_types::LIST_VALUES_BY_SOURCE;
-            case component_types::FORM_FIELD_URL;
+            case component_types::FORM_SELECT_SOURCE:
+            case component_types::FORM_SELECT_SOURCES:
+            case component_types::FORM_SELECT_SOURCE_TYPE:
+            case component_types::LIST_VALUES_BY_SOURCE:
+            case component_types::FORM_FIELD_URL:
                 $obj = $t_src->source_filled();
                 break;
-            case component_types::FORM_SELECT_REF;
-            case component_types::FORM_SELECT_REFS;
-            case component_types::FORM_SELECT_REF_TYPE;
-            case component_types::SYSTEM_SHOW_REF_TYPE;
-            case component_types::SYSTEM_SHOW_REF_KEY;
-            case component_types::SYSTEM_SHOW_REF_URL;
-            case component_types::FORM_FIELD_EXTERNAL_KEY;
-            case component_types::SYSTEM_SHOW_REF_SOURCE;
-            case component_types::LIST_REF;
+            case component_types::FORM_SELECT_REF:
+            case component_types::FORM_SELECT_REFS:
+            case component_types::FORM_SELECT_REF_TYPE:
+            case component_types::SYSTEM_SHOW_REF_TYPE:
+            case component_types::SYSTEM_SHOW_REF_KEY:
+            case component_types::SYSTEM_SHOW_REF_URL:
+            case component_types::FORM_FIELD_EXTERNAL_KEY:
+            case component_types::SYSTEM_SHOW_REF_SOURCE:
+            case component_types::LIST_REF:
                 $obj = $t_ref->ref_filled();
                 break;
-            case component_types::FORM_FIELD_VALUE;
-            case component_types::FORM_SELECT_VALUE;
-            case component_types::FORM_SELECT_VALUES;
-            case component_types::FORM_SELECT_VALUE_TYPE;
-            case component_types::VALUE_NAME;
-            case component_types::VALUE_NUMERIC;
-            case component_types::LIST_VALUES_BY_TRIPLE;
-            case component_types::VALUES_RELATED;
-            case component_types::VALUES_MOST_RELEVANT;
-            case component_types::NUMERIC_VALUE;
-            case component_types::VALUES_ALL;
-            case component_types::SYSTEM_BODY_VALUE_DETAIL;
+            case component_types::FORM_FIELD_VALUE:
+            case component_types::FORM_SELECT_VALUE:
+            case component_types::FORM_SELECT_VALUES:
+            case component_types::FORM_SELECT_VALUE_TYPE:
+            case component_types::VALUE_NAME:
+            case component_types::VALUE_NUMERIC:
+            case component_types::LIST_VALUES_BY_TRIPLE:
+            case component_types::VALUES_RELATED:
+            case component_types::VALUES_MOST_RELEVANT:
+            case component_types::NUMERIC_VALUE:
+            case component_types::VALUES_ALL:
+            case component_types::SYSTEM_BODY_VALUE_DETAIL:
                 $obj = $t_val->value_16_filled();
                 break;
-            case component_types::FORM_FIELD_GROUP;
-            case component_types::FORM_FIELD_GROUP_OR_PHRASES;
-            case component_types::GROUP_NAME;
+            case component_types::FORM_FIELD_GROUP:
+            case component_types::FORM_FIELD_GROUP_OR_PHRASES:
+            case component_types::GROUP_NAME:
                 $obj = $t_grp->group_filled();
                 break;
-            case component_types::FORM_FIELD_FORMULA_EXPRESSION;
-            case component_types::FORM_FIELD_FORMULA_LATEX;
-            case component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED;
-            case component_types::FORM_LIST_FORMULAS;
-            case component_types::FORM_SELECT_FORMULA;
-            case component_types::FORM_SELECT_FORMULAS;
-            case component_types::FORM_SELECT_FORMULA_TYPE;
-            case component_types::LIST_PHRASES_OF_FORMULA;
-            case component_types::LIST_FORMULAS;
-            case component_types::SYSTEM_BODY_FORMULA_TEST;
-            case component_types::LIST_RESULTS;
+            case component_types::FORM_FIELD_FORMULA_EXPRESSION:
+            case component_types::FORM_FIELD_FORMULA_LATEX:
+            case component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED:
+            case component_types::FORM_LIST_FORMULAS:
+            case component_types::FORM_SELECT_FORMULA:
+            case component_types::FORM_SELECT_FORMULAS:
+            case component_types::FORM_SELECT_FORMULA_TYPE:
+            case component_types::LIST_PHRASES_OF_FORMULA:
+            case component_types::LIST_FORMULAS:
+            case component_types::SYSTEM_BODY_FORMULA_TEST:
+            case component_types::LIST_RESULTS:
                 $obj = $t_frm->formula_filled();
                 break;
-            case component_types::FORM_SELECT_FORMULA_LINK_TYPE;
-            case component_types::FORM_SELECT_FORMULA_LINK_PRIORITY;
+            case component_types::FORM_SELECT_FORMULA_LINK_TYPE:
+            case component_types::FORM_SELECT_FORMULA_LINK_PRIORITY:
                 $obj = $t_frm->formula_link_filled();
                 break;
-            case component_types::FORM_SELECT_TERM;
-            case component_types::FORM_SELECT_TERMS;
+            case component_types::FORM_SELECT_TERM:
+            case component_types::FORM_SELECT_TERMS:
                 $obj = $t_msk->term_view_filled();
                 break;
-            case component_types::FORM_FIELD_SOURCE_GROUP;
-            case component_types::FORM_FIELD_SOURCE_GROUP_OR_PHRASES;
-            case component_types::FORM_SELECT_RESULT;
-            case component_types::FORM_SELECT_RESULTS;
-            case component_types::WORD_RESULTS;
-            case component_types::FORMULA_RESULTS;
-            case component_types::SYSTEM_SHOW_RESULT_DIFF;
-            case component_types::SYSTEM_BODY_RESULT_EXPLAIN;
+            case component_types::FORM_FIELD_SOURCE_GROUP:
+            case component_types::FORM_FIELD_SOURCE_GROUP_OR_PHRASES:
+            case component_types::FORM_SELECT_RESULT:
+            case component_types::FORM_SELECT_RESULTS:
+            case component_types::WORD_RESULTS:
+            case component_types::FORMULA_RESULTS:
+            case component_types::SYSTEM_SHOW_RESULT_DIFF:
+            case component_types::SYSTEM_BODY_RESULT_EXPLAIN:
                 $obj = $t_res->result_main_filled();
                 break;
-            case component_types::FORM_SELECT_VIEW;
-            case component_types::FORM_SELECT_VIEWS;
-            case component_types::FORM_SELECT_PARENT_VIEW;
-            case component_types::FORM_SELECT_CHILD_VIEW;
-            case component_types::FORM_SELECT_VIEW_DEFAULT;
-            case component_types::FORM_SELECT_VIEW_TYPE;
-            case component_types::FORM_SELECT_VIEW_STYLE;
-            case component_types::FORM_TABLE_LINKED_VIEWS;
-            case component_types::LIST_VIEWS;
-            case component_types::SELECT_VIEW;
-            case component_types::SYSTEM_SHOW_VIEW_DIFF;
-            case component_types::VIEW_AFTER_CHANGE;
-            case component_types::VIEW_BEFORE_CHANGE;
+            case component_types::FORM_SELECT_VIEW:
+            case component_types::FORM_SELECT_VIEWS:
+            case component_types::FORM_SELECT_PARENT_VIEW:
+            case component_types::FORM_SELECT_CHILD_VIEW:
+            case component_types::FORM_SELECT_VIEW_DEFAULT:
+            case component_types::FORM_SELECT_VIEW_TYPE:
+            case component_types::FORM_SELECT_VIEW_STYLE:
+            case component_types::FORM_TABLE_LINKED_VIEWS:
+            case component_types::LIST_VIEWS:
+            case component_types::SELECT_VIEW:
+            case component_types::SYSTEM_SHOW_VIEW_DIFF:
+            case component_types::VIEW_AFTER_CHANGE:
+            case component_types::VIEW_BEFORE_CHANGE:
                 $obj = $t_msk->view_filled();
                 break;
-            case component_types::SYSTEM_FIELD_PARENT_VIEW;
-            case component_types::SYSTEM_FIELD_CHILD_VIEW;
-            case component_types::SHOW_FIELD_RELATION_TYPE;
-            case component_types::SHOW_FIELD_START_POS;
-            case component_types::FORM_SELECT_VIEW_LINK_TYPE;
-            case component_types::FORM_SELECT_VIEW_LINK_PRIORITY;
-            case component_types::FORM_SELECT_VIEW_RELATION_TYPE;
-            case component_types::FORM_FIELD_VIEW_RELATION_START_POS;
+            case component_types::SYSTEM_FIELD_PARENT_VIEW:
+            case component_types::SYSTEM_FIELD_CHILD_VIEW:
+            case component_types::SHOW_FIELD_RELATION_TYPE:
+            case component_types::SHOW_FIELD_START_POS:
+            case component_types::FORM_SELECT_VIEW_LINK_TYPE:
+            case component_types::FORM_SELECT_VIEW_LINK_PRIORITY:
+            case component_types::FORM_SELECT_VIEW_RELATION_TYPE:
+            case component_types::FORM_FIELD_VIEW_RELATION_START_POS:
                 $obj = $t_msk->view_relation_filled();
                 break;
-            case component_types::FORM_SELECT_COMPONENT;
-            case component_types::FORM_SELECT_COMPONENTS;
-            case component_types::FORM_SELECT_COMPONENT_TYPE;
-            case component_types::FORM_SELECT_COMPONENT_STYLE;
+            case component_types::FORM_SELECT_COMPONENT:
+            case component_types::FORM_SELECT_COMPONENTS:
+            case component_types::FORM_SELECT_COMPONENT_TYPE:
+            case component_types::FORM_SELECT_COMPONENT_STYLE:
                 $obj = $t_cmp->component_filled();
                 break;
-            case component_types::FORM_SELECT_COMPONENT_LINK_TYPE;
-            case component_types::FORM_SELECT_COMPONENT_POS_TYPE;
-            case component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER;
+            case component_types::FORM_SELECT_COMPONENT_LINK_TYPE:
+            case component_types::FORM_SELECT_COMPONENT_POS_TYPE:
+            case component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER:
                 $obj = $t_cmp->component_link_filled();
                 break;
             default:
@@ -1050,16 +1053,17 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg_ui to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_show(
-        string       $class,
-        int          $msk_id,
-        string       $type,
-        user_message $msg
+        string          $class,
+        int             $msk_id,
+        string          $type,
+        user_message_ui $msg_ui
     ): string
     {
+        $msg = new user_message();
         $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users($this->env);
         $t_wrd = new test_words($this->env);
@@ -1076,82 +1080,82 @@ class test_mappers
         $t_lan = new test_languages();
         $t_slg = new test_sys_log($this->env);
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled();
-                $obj_array = self::word_url($obj, $type);
+                $obj_array = self::word_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_is();
                 $obj_array = $this->verb_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple_filled();
-                $obj_array = $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case phrase::class;
+            case phrase::class:
                 $obj = $t_phr->phrase_filled();
                 $obj_array = $this->phrase_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled();
-                $obj_array = $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->reference_plus();
                 $obj_array = $this->ref_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 $obj_array = $this->value_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
-                $obj_array = $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled();
-                $obj_array = $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
-                $obj_array = $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case language::class;
+            case language::class:
                 $obj = $t_lan->language_filled();
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case sys_log::class;
+            case sys_log::class:
                 $obj = $t_slg->sys_log_filled();
                 $obj_array = $this->system_log_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case phrase_list::class;
+            case phrase_list::class:
                 $obj = $t_phr->phrase_list();
                 $obj_array = $this->phrase_list_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case db_object::class;
+            case db_object::class:
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
                 break;
@@ -1161,7 +1165,7 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
-        return $this->array_to_url_type($url_array, $type, $msg);
+        return $this->array_to_url_type($url_array, $type, $msg_ui);
     }
 
     /**
@@ -1169,14 +1173,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg_ui to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_add(
-        string       $class,
-        int          $msk_id,
-        string       $type = url_var::MASK_HUMAN,
-        user_message $msg = new user_message()
+        string          $class,
+        int             $msk_id,
+        string          $type = url_var::MASK_HUMAN,
+        user_message_ui $msg_ui = new user_message_ui()
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
@@ -1194,8 +1198,9 @@ class test_mappers
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
         $t_job = new test_jobs($this->env);
+        $msg = new user_message();
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 // use the field names of the user forms, because e.g. the ip address
                 // is never part of a form url but taken from the request
@@ -1204,92 +1209,92 @@ class test_mappers
                 $url_array[] = [url_var::USER_FIRST_NAME, $obj->first_name];
                 $url_array[] = [url_var::USER_LAST_NAME, $obj->last_name];
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled();
-                $obj_array = self::word_url($obj, $type);
+                $obj_array = self::word_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_filled();
                 $obj_array = $this->verb_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple_filled();
-                $obj_array = $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled();
-                $obj_array = $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->ref_filled();
                 $obj_array = $this->ref_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 $obj_array = $this->value_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case group::class;
+            case group::class:
                 $obj = $t_grp->group_zh_2020();
                 $obj_array = $this->group_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
-                $obj_array = $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link_filled();
                 $obj_array = $this->formula_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled();
-                $obj_array = $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_filled();
                 $obj_array = $this->view_relation_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view_filled();
                 $obj_array = $this->term_view_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
-                $obj_array = $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link_filled();
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case language::class;
+            case language::class:
                 $obj = $t_lan->language_filled();
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case job::class;
+            case job::class:
                 $obj = $t_job->job_filled();
-                $obj_array = $this->job_url($obj, $type);
+                $obj_array = $this->job_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case db_object::class;
+            case db_object::class:
                 if ($msk_id == views::START_ID
                     or in_array($msk_id, views::CONFIRM_MASKS_IDS)) {
                     // for the start page no additional vars in the url are needed
@@ -1305,7 +1310,8 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_CREATE, true];
-        return $this->array_to_url_type($url_array, $type, $msg);
+        $msg_ui->merge($msg);
+        return $this->array_to_url_type($url_array, $type, $msg_ui);
     }
 
     /**
@@ -1314,14 +1320,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg_ui to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_edit(
-        string       $class,
-        int          $msk_id,
-        string       $type,
-        user_message $msg
+        string          $class,
+        int             $msk_id,
+        string          $type,
+        user_message_ui $msg_ui
     ): string
     {
         $url_array[] = [url_var::MASK, $msk_id];
@@ -1340,103 +1346,104 @@ class test_mappers
         $t_lan = new test_languages();
         $t_job = new test_jobs($this->env);
         $t_slg = new test_sys_log($this->env);
+        $msg = new user_message();
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled();
-                $obj_array = self::word_url($obj, $type);
+                $obj_array = self::word_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_is_filled();
                 $obj_array = $this->verb_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple_filled();
-                $obj_array = $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled_included();
-                $obj_array = $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->ref_filled();
                 $obj_array = $this->ref_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 $obj_array = $this->value_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case group::class;
+            case group::class:
                 $obj = $t_grp->group_zh_2020();
                 $obj_array = $this->group_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
-                $obj_array = $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link_filled();
                 $obj_array = $this->formula_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled();
-                $obj_array = $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_filled();
                 $obj_array = $this->view_relation_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view_filled();
                 $obj_array = $this->term_view_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
-                $obj_array = $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link_filled();
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case language::class;
+            case language::class:
                 $obj = $t_lan->language_filled();
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case job::class;
+            case job::class:
                 $obj = $t_job->job_filled();
-                $obj_array = $this->job_url($obj, $type);
+                $obj_array = $this->job_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case sys_log::class;
+            case sys_log::class:
                 $obj = $t_slg->sys_log_filled();
                 $obj_array = $this->system_log_url($obj);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case db_object::class;
+            case db_object::class:
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
                 break;
@@ -1446,7 +1453,8 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_UPDATE, true];
-        return $this->array_to_url_type($url_array, $type, $msg);
+        $msg_ui->merge($msg);
+        return $this->array_to_url_type($url_array, $type, $msg_ui);
     }
 
     /**
@@ -1455,14 +1463,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg_ui to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_del(
-        string       $class,
-        int          $msk_id,
-        string       $type,
-        user_message $msg
+        string          $class,
+        int             $msk_id,
+        string          $type,
+        user_message_ui $msg_ui
     ): string
     {
         $url_array = [];
@@ -1481,97 +1489,98 @@ class test_mappers
         $t_cmp = new test_components($this->env);
         $t_lan = new test_languages();
         $t_job = new test_jobs($this->env);
+        $msg = new user_message();
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case word::class;
+            case word::class:
                 $obj = $t_wrd->word_filled();
-                $obj_array = self::word_url($obj, $type);
+                $obj_array = self::word_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case verb::class;
+            case verb::class:
                 $obj = $t_vrb->verb_is_filled();
                 $obj_array = $this->verb_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case triple::class;
+            case triple::class:
                 $obj = $t_trp->triple_filled();
-                $obj_array = $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case source::class;
+            case source::class:
                 $obj = $t_src->source_filled();
-                $obj_array = $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case ref::class;
+            case ref::class:
                 $obj = $t_ref->ref_filled();
                 $obj_array = $this->ref_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case value::class;
+            case value::class:
                 $obj = $t_val->value_16_filled();
                 $obj_array = $this->value_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case group::class;
+            case group::class:
                 $obj = $t_grp->group_zh_2020();
                 $obj_array = $this->group_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
-                $obj_array = $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula_link::class;
+            case formula_link::class:
                 $obj = $t_frm->formula_link_filled();
                 $obj_array = $this->formula_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case result::class;
+            case result::class:
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view::class;
+            case view::class:
                 $obj = $t_msk->view_filled();
-                $obj_array = $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view_relation::class;
+            case view_relation::class:
                 $obj = $t_msk->view_relation_filled();
                 $obj_array = $this->view_relation_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case term_view::class;
+            case term_view::class:
                 $obj = $t_msk->term_view_filled();
                 $obj_array = $this->term_view_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component::class;
+            case component::class:
                 $obj = $t_cmp->component_filled();
-                $obj_array = $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case component_link::class;
+            case component_link::class:
                 $obj = $t_cmp->component_link_filled();
                 $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case language::class;
+            case language::class:
                 $obj = $t_lan->language_filled();
                 $obj_array = $this->language_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case job::class;
+            case job::class:
                 $obj = $t_job->job_filled();
-                $obj_array = $this->job_url($obj, $type);
+                $obj_array = $this->job_url($obj, $msg, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case db_object::class;
+            case db_object::class:
                 // for the start page no additional vars in the url are needed
                 $obj = new db_object();
                 break;
@@ -1581,7 +1590,8 @@ class test_mappers
         }
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_DELETE, true];
-        return $this->array_to_url_type($url_array, $type, $msg);
+        $msg_ui->merge($msg);
+        return $this->array_to_url_type($url_array, $type, $msg_ui);
     }
 
     /**
@@ -1589,14 +1599,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg_ui to enhance with messages to the user
      * @return string with only a few vars filled
      */
     function class_to_url_step(
-        string       $class,
-        int          $msk_id,
-        string       $type,
-        user_message $msg
+        string          $class,
+        int             $msk_id,
+        string          $type,
+        user_message_ui $msg_ui
     ): string
     {
         $url_array = [];
@@ -1605,34 +1615,36 @@ class test_mappers
         $t_phr = new test_phrases($this->env);
         $t_frm = new test_formulas($this->env);
         $t_job = new test_jobs($this->env);
+        $msg = new user_message();
         switch ($class) {
-            case user::class;
+            case user::class:
                 $obj = $t_usr->user_filled($this->env);
                 $obj_array = $this->user_step_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case formula::class;
+            case formula::class:
                 $obj = $t_frm->formula_filled();
-                $obj_array = $this->formula_url($obj, $msk_id);
+                $obj_array = $this->formula_url($obj, $msg, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case job::class;
+            case job::class:
                 $obj = $t_job->job_filled();
-                $obj_array = $this->job_url($obj, $msk_id);
+                $obj_array = $this->job_url($obj, $msg, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case phrase_list::class;
+            case phrase_list::class:
                 $obj = $t_phr->phrase_list();
                 $obj_array = $this->phrase_list_url($obj, $msk_id);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case db_object::class;
+            case db_object::class:
                 // setup and similar process step views don't need additional url vars
                 break;
             default:
                 log_err('no filled url object defined for step action ' . $class);
         }
-        return $this->array_to_url_type($url_array, $type, $msg);
+        $msg_ui->merge($msg);
+        return $this->array_to_url_type($url_array, $type, $msg_ui);
     }
 
     /**
@@ -1640,14 +1652,14 @@ class test_mappers
      * @param string $class the given main class name
      * @param int $msk_id the id of the search mask
      * @param string $type the url type that should be created
-     * @param user_message $msg to enhance with messages to the user
+     * @param user_message_ui $msg to enhance with messages to the user
      * @return string url with mask id, optional object name, and context phrase ids
      */
     function class_to_url_search(
-        string       $class,
-        int          $msk_id,
-        string       $type,
-        user_message $msg
+        string          $class,
+        int             $msk_id,
+        string          $type,
+        user_message_ui $msg
     ): string
     {
         $url_array = [];
@@ -1657,45 +1669,45 @@ class test_mappers
         $obj_array = $this->phrase_list_url($phr_lst, $type);
         $url_array = array_merge($url_array, $obj_array);
         switch ($class) {
-            case word::class;
+            case word::class:
                 $t_wrd = new test_words($this->env);
                 $obj = $t_wrd->word_filled();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case triple::class;
+            case triple::class:
                 $t_trp = new test_triples($this->env);
                 $obj = $t_trp->triple_filled();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case phrase::class;
+            case phrase::class:
                 $t_phr2 = new test_phrases($this->env);
                 $obj = $t_phr2->phrase();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case verb::class;
+            case verb::class:
                 $t_vrb = new test_verbs($this->env);
                 $obj = $t_vrb->verb_is();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case formula::class;
+            case formula::class:
                 $t_frm = new test_formulas($this->env);
                 $obj = $t_frm->formula_filled();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case term::class;
+            case term::class:
                 $t_trm = new test_terms($this->env);
                 $obj = $t_trm->term();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case language::class;
+            case language::class:
                 $t_lan = new test_languages($this->env);
                 $obj = $t_lan->language_filled();
                 $url_array[] = [url_var::NAME, $obj->name()];
                 break;
-            case phrase_list::class;
+            case phrase_list::class:
                 // phrase list is already encoded as context above
                 break;
-            case db_object::class;
+            case db_object::class:
                 // search views without a specific object need no additional url vars
                 break;
             default:
@@ -1705,9 +1717,9 @@ class test_mappers
     }
 
     private function array_to_url_type(
-        array        $url_array,
-        string       $type,
-        user_message $msg
+        array           $url_array,
+        string          $type,
+        user_message_ui $msg
     ): string
     {
         $url_map = new url_mapper();
@@ -1723,27 +1735,28 @@ class test_mappers
 
 
     static function object_to_url_array(
-        db_object    $dbo,
-        user_message $msg
+        db_object       $dbo,
+        user_message_ui $msg_ui
     ): array
     {
         $url_arr = [];
+        $msg = new user_message();
         switch ($dbo::class) {
-            case word::class;
-                $url_arr = self::word_url_array($dbo);
+            case word::class:
+                $url_arr = self::word_url_array($dbo, $msg);
                 break;
-            case triple::class;
+            case triple::class:
                 $url_arr = self::triple_url_array($dbo);
                 break;
             default:
-                log_err_msg_ui('no url mapper yet defined for ' . library::class_to_name($dbo::class), $msg);
+                log_err_msg_ui('no url mapper yet defined for ' . library::class_to_name($dbo::class), $msg_ui);
         }
         return $url_arr;
     }
 
     // TODO Prio 1 check if all object fields are included e.g. view of source is missing
 
-    private static function word_url(word $wrd, string $type = ''): array
+    private static function word_url(word $wrd, user_message $msg, string $type = ''): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $wrd->name()];
@@ -1751,12 +1764,12 @@ class test_mappers
         // TODO Prio 2 activate
         /*
         if ($type == url_var::MASK_POD) {
-            $url_array[] = [url_var::TYPE, $wrd->type_id()];
+            $url_array[] = [url_var::TYPE, $wrd->type_id($msg)];
         } else {
             $url_array[] = [url_var::TYPE, $wrd->type_name()];
         }
         */
-        $url_array[] = [url_var::TYPE, $wrd->type_id()];
+        $url_array[] = [url_var::TYPE, $wrd->type_id($msg)];
         $url_array[] = [url_var::PLURAL, $wrd->plural];
         $url_array[] = [url_var::SHARE, $wrd->share_id()];
         $url_array[] = [url_var::PROTECTION, $wrd->protection_id()];
@@ -1766,7 +1779,7 @@ class test_mappers
         return $url_array;
     }
 
-    private static function word_url_array(word $wrd): array
+    private static function word_url_array(word $wrd, user_message $msg): array
     {
         $url_array = [];
         $url_array[url_var::NAME] = $wrd->name();
@@ -1774,12 +1787,12 @@ class test_mappers
         // TODO Prio 2 activate
         /*
         if ($type == url_var::MASK_POD) {
-            $url_array[] = [url_var::TYPE, $wrd->type_id()];
+            $url_array[] = [url_var::TYPE, $wrd->type_id($msg)];
         } else {
             $url_array[] = [url_var::TYPE, $wrd->type_name()];
         }
         */
-        $url_array[url_var::TYPE] = $wrd->type_id();
+        $url_array[url_var::TYPE] = $wrd->type_id($msg);
         $url_array[url_var::PLURAL] = $wrd->plural;
         $url_array[url_var::SHARE] = $wrd->share_id();
         $url_array[url_var::PROTECTION] = $wrd->protection_id();
@@ -1804,14 +1817,14 @@ class test_mappers
     }
 
     // TODO Prio 2 deprecate and use triple_url_array
-    static function triple_url(triple $trp, string $type = ''): array
+    static function triple_url(triple $trp, user_message $msg, string $type = ''): array
     {
         $url_array = [];
         $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
         $url_array[] = [url_var::VERB, $trp->get_verb_id()];
         $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
         $url_array[] = [url_var::WEIGHT, $trp->weight];
-        $url_array[] = [url_var::TYPE, $trp->type_id()];
+        $url_array[] = [url_var::TYPE, $trp->type_id($msg)];
         $url_array[] = [url_var::NAME, $trp->name()];
         $url_array[] = [url_var::NAME_GIVEN, $trp->name_given()];
         $url_array[] = [url_var::DESCRIPTION, $trp->get_description()];
@@ -1859,13 +1872,13 @@ class test_mappers
         return $url_array;
     }
 
-    private function source_url(source $src, string $type): array
+    private function source_url(source $src, user_message $msg, string $type): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $src->name()];
         $url_array[] = [url_var::DESCRIPTION, $src->get_description()];
         $url_array[] = [url_var::URL, $src->url];
-        $url_array[] = [url_var::TYPE, $src->type_id()];
+        $url_array[] = [url_var::TYPE, $src->type_id($msg)];
         // TODO Prio 1 activate
         // $url_array[] = [url_var::VIEW, $src->get_view_id()];
         $url_array[] = [url_var::SHARE, $src->share_id()];
@@ -1920,7 +1933,7 @@ class test_mappers
         return $url_array;
     }
 
-    private function formula_url(formula $frm, string $type): array
+    private function formula_url(formula $frm, user_message $msg, string $type): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $frm->name()];
@@ -1929,7 +1942,7 @@ class test_mappers
         $url_array[] = [url_var::NEED_ALL, $frm->need_all_val];
         // all need
         // update
-        $url_array[] = [url_var::TYPE, $frm->type_id()];
+        $url_array[] = [url_var::TYPE, $frm->type_id($msg)];
         $url_array[] = [url_var::VIEW, $frm->get_view_id()];
         $url_array[] = [url_var::SHARE, $frm->share_id()];
         $url_array[] = [url_var::PROTECTION, $frm->protection_id()];
@@ -1963,12 +1976,12 @@ class test_mappers
         return $url_array;
     }
 
-    private function view_url(view $msk, string $type): array
+    private function view_url(view $msk, user_message $msg, string $type): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $msk->name()];
         $url_array[] = [url_var::DESCRIPTION, $msk->get_description()];
-        $url_array[] = [url_var::TYPE, $msk->type_id()];
+        $url_array[] = [url_var::TYPE, $msk->type_id($msg)];
         $url_array[] = [url_var::STYLE, $msk->get_style_id()];
         $url_array[] = [url_var::SHARE, $msk->share_id()];
         $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
@@ -2000,12 +2013,12 @@ class test_mappers
         return $url_array;
     }
 
-    private function component_url(component $cmp, string $type): array
+    private function component_url(component $cmp, user_message $msg, string $type): array
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $cmp->name()];
         $url_array[] = [url_var::DESCRIPTION, $cmp->get_description()];
-        $url_array[] = [url_var::TYPE, $cmp->type_id()];
+        $url_array[] = [url_var::TYPE, $cmp->type_id($msg)];
         $url_array[] = [url_var::STYLE, $cmp->get_style_id()];
         $url_array[] = [url_var::PHRASE_ROW, $cmp->row_phrase->id()];
         $url_array[] = [url_var::PHRASE_COL, $cmp->col_phrase->id()];
@@ -2075,12 +2088,12 @@ class test_mappers
         return $url_array;
     }
 
-    private function job_url(job $job, int $msk_id): array
+    private function job_url(job $job, user_message $msg, int $msk_id): array
     {
         $lib = new library();
         $url_array = [];
         $url_array[] = [url_var::JOB, $job->id()];
-        $url_array[] = [url_var::JOB_TYPE, $job->type_id()];
+        $url_array[] = [url_var::JOB_TYPE, $job->type_id($msg)];
         $url_array[] = [url_var::JOB_STATUS, $job->status_id()];
         $url_array[] = [url_var::JOB_PRIORITY, $job->priority];
         $url_array[] = [url_var::JOB_PARAMETER, $job->parameter];

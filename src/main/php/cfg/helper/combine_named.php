@@ -189,9 +189,9 @@ class combine_named extends combine_object
      * e.g. if the type of the triple "Pi (math)" is not set
      * but the triple is "Pi is a math const" and the type for "math const" is set it is used
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
-        return $this->obj()?->type_id();
+        return $this->obj()?->type_id($msg);
     }
 
     /**

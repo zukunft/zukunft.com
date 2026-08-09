@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'formulas.php';
 
@@ -52,6 +53,7 @@ class formula_read_tests
 
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t_db = new test_db_load($t);
@@ -87,7 +89,7 @@ class formula_read_tests
 
         // load the formula types
         $lst = new formula_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
@@ -96,7 +98,7 @@ class formula_read_tests
         $t->assert('check ' . formula_type::CALC, $result, 1);
 
         // check the estimates for the calculation blocks
-        $calc_blocks = (new formula_list($t->usr1))->calc_blocks($db_con);
+        $calc_blocks = new formula_list($t->usr1)->calc_blocks($db_con, $msg);
         $t->assert_greater_zero('calc_blocks', $calc_blocks);
 
         $t->subheader($ts . 'api');
@@ -128,11 +130,11 @@ class formula_read_tests
         $t->subheader($ts . 'latex terms');
         // the \text{} tokens of the latex are resolved to terms so the frontend can link them
         $test_name = 'the latex terms of the increase formula are loaded';
-        $frm->load_latex_terms();
+        $frm->load_latex_terms($msg);
         $t->assert_greater_zero($test_name, $frm->latex_terms->count());
         // a formula without a latex has no latex terms to link
         $test_name = 'no latex has no latex terms';
-        $frm_empty->load_latex_terms();
+        $frm_empty->load_latex_terms($msg);
         $t->assert($test_name, $frm_empty->latex_terms->is_empty(), true);
     }
 

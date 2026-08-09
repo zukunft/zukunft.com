@@ -69,7 +69,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VIEW_DEL);
+    $msk->load_by_code_id(view_shared::VIEW_DEL, $usr_msg);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the original calling page that should be shown after the change if finished
 
@@ -81,7 +81,7 @@ if ($usr->id > 0) {
 
         // create the view object to have an object to update the parameters
         $cmp_del = new component($usr);
-        $cmp_del->load_by_id($cmp_del_id);
+        $cmp_del->load_by_id($cmp_del_id, $usr_msg);
 
         if ($confirm == 1) {
             $cmp_del->del($usr_msg);

@@ -196,12 +196,13 @@ class term_view extends sandbox_link
      * @return bool true if the view component link is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             if (key_exists(view_fields::FLD_ID, $db_row)) {
                 $msk = new view($this->get_user());
@@ -216,7 +217,7 @@ class term_view extends sandbox_link
                 log_warning('view id missing for ' . $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -362,24 +363,29 @@ class term_view extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($this->get_view()?->id() != 0) {
             if ($typ_lst->include_views()) {
-                $vars[json_fields::VIEW] = $this->get_view()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::VIEW] = $this->get_view()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::VIEW_ID] = $this->get_view()->id();
             }
         }
         if ($this->term()?->id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::TERM] = $this->term()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::TERM] = $this->term()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::TERM_ID] = $this->term()->id();
             }
@@ -658,7 +664,7 @@ class term_view extends sandbox_link
         $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
-                if (!$msk->load_by_name($msk->name())) {
+                if (!$msk->load_by_name($msk->name(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_BY_NAME_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -668,7 +674,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($msk->name() == '') {
-                if (!$msk->load_by_id($msk->id())) {
+                if (!$msk->load_by_id($msk->id(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_BY_ID_FAILED, [
                         msg_id::VAR_VIEW => $this->get_view()->dsp_id()
                     ]);
@@ -679,7 +685,7 @@ class term_view extends sandbox_link
         $trm = $this->term();
         if ($trm->id() == 0) {
             if ($trm->name() != '') {
-                if (!$trm->load_by_name($trm->name())) {
+                if (!$trm->load_by_name($trm->name(), $msg)) {
                     $msg->add(msg_id::LOAD_TERM_BY_NAME_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);
@@ -689,7 +695,7 @@ class term_view extends sandbox_link
             }
         } else {
             if ($trm->name() == '') {
-                if (!$trm->load_by_id($trm->id())) {
+                if (!$trm->load_by_id($trm->id(), $msg)) {
                     $msg->add(msg_id::LOAD_TERM_BY_ID_FAILED, [
                         msg_id::VAR_TERM => $this->term()->dsp_id()
                     ]);
@@ -707,18 +713,19 @@ class term_view extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->get_view()?->name() != null) {
-            $vars[json_fields::VIEW] = $this->get_view()->export_json($exp_typ, $do_load);
+            $vars[json_fields::VIEW] = $this->get_view()->export_json($msg, $exp_typ, $do_load);
         }
         if ($this->term()?->name() != null) {
-            $vars[json_fields::TERM] = $this->term()->export_json($exp_typ, $do_load);
+            $vars[json_fields::TERM] = $this->term()->export_json($msg, $exp_typ, $do_load);
         }
 
         global $sys;

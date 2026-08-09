@@ -42,6 +42,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -196,7 +198,8 @@ class ui_preview extends ui_base
      */
     function popup_changes(
         array                                                 $url_array = [],
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        user_message                                          $msg = new user_message()
     ): string
     {
         global $mtr;
@@ -207,6 +210,14 @@ class ui_preview extends ui_base
         // object id and the process step) are emitted there, and the 8-prefixed old values and
         // 9-prefixed back targets are shown only in the diff, so skip those. the origin mask is kept so
         // the confirm submit tells action_crud which object view to return to after the write
+        // a url array is expected to carry only scalar values, so report a non scalar value
+        // as an internal inconsistency and drop it instead of failing with a fatal on a cast
+        foreach ($url_array as $key => $val) {
+            if (!is_scalar($val) and $val !== null) {
+                log_err('unexpected non scalar url value for key "' . $key . '" in popup_changes');
+                unset($url_array[$key]);
+            }
+        }
         $skip = [url_var::MASK, url_var::ID, url_var::STEP];
         $hidden = '';
         foreach ($url_array as $key => $val) {
@@ -216,7 +227,7 @@ class ui_preview extends ui_base
                 $hidden .= $html->form_hidden($key, (string)$val);
             }
         }
-        $rows = $this->change_rows($url_array, $dbo);
+        $rows = $this->change_rows($url_array, $dbo, $msg);
         $result = $hidden;
         if ($rows != '') {
             $head = $html->thead($html->tr(
@@ -246,7 +257,8 @@ class ui_preview extends ui_base
      */
     private function change_rows(
         array                                                 $url_array,
-        db_object|type_object|combine_named|sandbox_list|null $dbo
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
     ): string
     {
         global $mtr;
@@ -260,7 +272,7 @@ class ui_preview extends ui_base
         if ($order != [] and $url_keys != []) {
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
-                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $db_fld);
+                    $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $msg, $db_fld);
                 }
             }
         } else {
@@ -268,7 +280,7 @@ class ui_preview extends ui_base
             // without the object context the url key cannot be mapped to a real db field code id of
             // change_fields.csv and a guessed code id would trigger a missing translation error
             foreach ($this->changed_fields($url_array) as $url_key) {
-                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key));
+                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key), $msg);
             }
         }
         return $rows;
@@ -307,15 +319,21 @@ class ui_preview extends ui_base
      * @param string $db_fld the db field name, used to show the type name instead of the id for a type field
      * @return string the html table row, or an empty string if the field did not change
      */
-    private function change_row(array $url_array, string $url_key, string $label, string $db_fld = ''): string
+    private function change_row(
+        array        $url_array,
+        string       $url_key,
+        string       $label,
+        user_message $msg,
+        string       $db_fld = ''
+    ): string
     {
         $html = new html_base();
         $result = '';
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
-            $from_text = $this->field_value($db_fld, (string)$old);
-            $to_text = $this->field_value($db_fld, (string)$new);
+            $from_text = $this->field_value($db_fld, (string)$old, $msg);
+            $to_text = $this->field_value($db_fld, (string)$new, $msg);
             $field = $html->td($label);
             $from = $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
             $to = $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
@@ -332,7 +350,7 @@ class ui_preview extends ui_base
      * @param string $value the raw url value of the field (a type id for a type field)
      * @return string the value to show to the user
      */
-    private function field_value(string $db_fld, string $value): string
+    private function field_value(string $db_fld, string $value, user_message $msg): string
     {
         global $ui_sys, $mtr;
         $result = $value;
@@ -345,7 +363,7 @@ class ui_preview extends ui_base
             }
         } elseif ($db_fld == fields::FLD_VIEW) {
             // the view is a sandbox object, not a type, so resolve its id to the view name via the api
-            $result = $this->view_name($value);
+            $result = $this->view_name($value, $msg);
         }
         return $result;
     }
@@ -357,13 +375,13 @@ class ui_preview extends ui_base
      * @param string $value the raw url value of the view field (a view id)
      * @return string the view name to show to the user
      */
-    private function view_name(string $value): string
+    private function view_name(string $value, user_message $msg): string
     {
         global $mtr;
         $result = $mtr->txt(msg_id::NOT_SET);
         if ($value != '' and $value != '0') {
             $msk = new view();
-            $msk->load_by_id((int)$value);
+            $msk->load_by_id((int)$value, $msg);
             $result = $msk->name();
         }
         return $result;

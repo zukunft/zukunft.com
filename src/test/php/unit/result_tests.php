@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -57,6 +58,7 @@ class result_tests
 
 
         // init
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_res = new test_results($t);
@@ -159,15 +161,15 @@ class result_tests
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(results::TV_INT);
-        $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
+        $t->assert('result->val_formatted test big numbers', $res->val_formatted($msg), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
         $res->set_number(results::TV_FLOAT);
-        $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
+        $t->assert('result->val_formatted test small numbers', $res->val_formatted($msg), "12.35");
 
         // ... for percent values
         $res = $t_res->result_pct();
-        $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
+        $t->assert('result->val_formatted test percent formatting', $res->val_formatted($msg), '1.23 %');
 
 
         $t->subheader($ts . 'im- and export');

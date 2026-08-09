@@ -76,6 +76,7 @@ class def
     const int FALLBACK_WIDE_SIDE_WIDTH = 2800;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
+    const string PROJECT_PATH = '/zukunft.com/'; // the default project path used to filter the exception trace
 
 
     /*

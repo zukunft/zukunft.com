@@ -40,6 +40,7 @@ include_once html_paths::SYSTEM . 'job_list.php';
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -49,6 +50,7 @@ class job_ui_tests
     {
         $html = new html_base();
         $t_job = new test_jobs($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html batch job ';
@@ -69,7 +71,7 @@ class job_ui_tests
         $test_page .= 'job list with one open batch job sorted by request_time ascending<br>';
         $test_page .= $page->admin_jobs_delayed($job_lst) . '<br>';
 
-        $t->html_page_test($test_page, 'job', 'job', $t);
+        $t->html_page_test($test_page, 'job', 'job', $msg);
     }
 
 }

@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -49,6 +50,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+$msg = new user_message();
 global $sys;
 $db_con = $app->start("view_add");
 $html = new html_base();
@@ -61,16 +63,16 @@ $msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
-$result .= $usr->get();
+$result .= $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys->msk_cac->id(views::VIEW_ADD));
+    $msk->load_by_id($sys->msk_cac->id(views::VIEW_ADD), $msg);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); //
 
@@ -115,7 +117,7 @@ if ($usr->id() > 0) {
         $wrd = new word($usr);
         //$wrd->type_id = $view_type;
         if ($_GET['word'] > 0) {
-            $wrd->load_by_id($_GET['word']);
+            $wrd->load_by_id($_GET['word'], $msg);
         }
 
         // show the header (in view edit views the view cannot be changed)
@@ -125,7 +127,9 @@ if ($usr->id() > 0) {
 
         // show the form to create a new view
         $msk_add_dsp = new view_ui($msk_add->api_json());
-        $result .= $msk_add_dsp->dsp_edit(0, $wrd, $back);
+        // the frontend display object needs a frontend message object
+        // (frontend and backend are separate apps with separate user_message classes)
+        $result .= $msk_add_dsp->dsp_edit(0, $wrd, $back, new user_message_ui());
     }
 }
 

@@ -50,20 +50,21 @@ include_once html_paths::CONST . 'def.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'language.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
-include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
@@ -154,13 +156,14 @@ class system_form extends component
      * @return string the html code for the page title with the related-phrases and edit links
      */
     function title_named(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB,
-        array     $url_array = []
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
     ): string
     {
         // for a named object the page title is simply its name shown big
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, '', $url_array);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, '', $url_array);
     }
 
     /**
@@ -174,6 +177,7 @@ class system_form extends component
      */
     function title_triple(
         triple|db_object $dbo,
+        user_message     $msg,
         int              $max = def::LIMIT_RELATED_PER_VERB,
         array            $url_array = []
     ): string
@@ -190,7 +194,7 @@ class system_form extends component
                     . $dbo->get_to()->name_link();
             }
         }
-        return $this->subtitle($dbo, $this->esc($dbo->name()), $max, $from_verb_to, $url_array);
+        return $this->subtitle($dbo, $this->esc($dbo->name()), $msg, $max, $from_verb_to, $url_array);
     }
 
     /**
@@ -203,12 +207,13 @@ class system_form extends component
      * @return string the html code for the formula page title
      */
     function title_formula(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB,
-        array     $url_array = []
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
     ): string
     {
-        return $this->title_named($dbo, $max, $url_array);
+        return $this->title_named($dbo, $msg, $max, $url_array);
     }
 
     /**
@@ -222,17 +227,18 @@ class system_form extends component
      * @return string the html code for the value page title
      */
     function title_value(
-        db_object $dbo,
-        int       $max = def::LIMIT_RELATED_PER_VERB,
-        array     $url_array = []
+        db_object    $dbo,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        array        $url_array = []
     ): string
     {
         // the heading shows the related phrases as links with tooltip plus the value
         $heading_content = $this->esc($dbo->name());
         if ($dbo::class == value::class) {
-            $heading_content = $dbo->name_link();
+            $heading_content = $dbo->name_link($msg);
         }
-        return $this->subtitle($dbo, $heading_content, $max, '', $url_array);
+        return $this->subtitle($dbo, $heading_content, $msg, $max, '', $url_array);
     }
 
     /**
@@ -247,11 +253,12 @@ class system_form extends component
      * @return string the html code for the page title
      */
     private function subtitle(
-        db_object $dbo,
-        string    $heading_content,
-        int       $max = def::LIMIT_RELATED_PER_VERB,
-        string    $lead_subtitle = '',
-        array     $url_array = []
+        db_object    $dbo,
+        string       $heading_content,
+        user_message $msg,
+        int          $max = def::LIMIT_RELATED_PER_VERB,
+        string       $lead_subtitle = '',
+        array        $url_array = []
     ): string
     {
         $html = new html_base();
@@ -262,22 +269,22 @@ class system_form extends component
         $cat = $this->category_subtitle($dbo, $max);
 
         // type subtitle with a link to the type page if the object has a non-default type
-        $typ = $this->type_subtitle($dbo);
-        $cat_typ = $html->concat_category_text($cat, $typ);
+        $typ = $this->type_subtitle($dbo, $msg);
+        $cat_typ = $html->concat_category_text($cat, $typ, $msg);
 
         if ($dbo instanceof sandbox) {
             // share and protection subtitle if not default
             $shr = $this->share_subtitle($dbo);
             $ptc = $this->protection_subtitle($dbo);
-            $shr_ptc = $html->concat_entry_text($shr, $ptc);
+            $shr_ptc = $html->concat_entry_text($shr, $ptc, $msg);
         } else {
             $shr_ptc = '';
         }
 
         // join all subtitle parts with the category separator " / "; a triple prepends its
         // from/verb/to links so the whole subtitle stays on one parenthesized line
-        $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc);
-        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt);
+        $sub_txt = $html->concat_category_text($cat_typ, $shr_ptc, $msg);
+        $sub_txt = $html->concat_category_text($lead_subtitle, $sub_txt, $msg);
 
         $heading = '<' . html_base::H4 . ' ' . html_base::CLASS_HTML . '="' . styles::HEADING_INLINE . '">'
             . $heading_content . '</' . html_base::H4 . '>';
@@ -333,14 +340,14 @@ class system_form extends component
      * @param word|db_object $dbo the object whose name is shown as the page title
      * @return string the html link to the type page or '' if the object has the default type
      */
-    private function type_subtitle(word|db_object $dbo): string
+    private function type_subtitle(word|db_object $dbo, user_message $msg): string
     {
         global $ui_sys;
         if (in_array($dbo::class, def_ui::TYPE_CLASSES)) {
             // the type name links to the type page that lists the other phrases of this type
             // and the fixed code rules linked to this phrase type
             // TODO Prio 3 point this to the dedicated phrase type page once it exists
-            return $this->type_link($ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class), $dbo->type_id());
+            return $this->type_link($ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class), $dbo->type_id($msg));
         } else {
             return '';
         }
@@ -616,12 +623,12 @@ class system_form extends component
      * @param word|db_object $dbo the word
      * @return string the user-readable name of the word's phrase type (empty if no type is set)
      */
-    function show_phrase_type(word|db_object $dbo): string
+    function show_phrase_type(word|db_object $dbo, user_message $msg): string
     {
         global $ui_sys;
 
         $result = '';
-        $type_id = $dbo->type_id();
+        $type_id = $dbo->type_id($msg);
         if ($type_id !== null) {
             $result = $this->esc($ui_sys->typ_lst_cache->phr_typ->name($type_id));
         }
@@ -919,10 +926,10 @@ class system_form extends component
      * @param db_object $dbo the object
      * @return string the html code to request a numeric value from the user
      */
-    function form_num_value(db_object $dbo, string $style_text): string
+    function form_num_value(db_object $dbo, string $style_text, user_message $msg): string
     {
         $html = new html_base();
-        $val_txt = $dbo->value();
+        $val_txt = $dbo->value($msg);
         if ($val_txt == null) {
             $val_txt = '';
         }
@@ -1532,9 +1539,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1544,9 +1551,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_parent_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_parent_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst,
+        return $dbo->view_selector($form_name, $msk_lst, $msg,
             url_var::VIEW_PARENT, msg_id::FORM_SELECT_PARENT_VIEW);
     }
 
@@ -1557,9 +1564,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_child_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_child_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst,
+        return $dbo->view_selector($form_name, $msk_lst, $msg,
             url_var::VIEW_CHILD, msg_id::FORM_SELECT_CHILD_VIEW);
     }
 
@@ -1575,9 +1582,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view_default(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view_default(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1587,9 +1594,9 @@ class system_form extends component
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_views(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_views(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**
@@ -1639,9 +1646,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function form_phrase_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_phrase_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->phrase_type_selector($form_name, $typ_lst);
+        return $dbo->phrase_type_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -1651,9 +1658,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    function form_source_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_source_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->source_type_selector($form_name, $typ_lst);
+        return $dbo->source_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1686,9 +1693,9 @@ class system_form extends component
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_formula_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->formula_type_selector($form_name, $typ_lst);
+        return $dbo->formula_type_selector($form_name, $msg, $typ_lst);
     }
 
     /**
@@ -1698,9 +1705,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->view_type_selector($form_name, $typ_lst);
+        return $dbo->view_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1712,9 +1719,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_style(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->style_selector($form_name, $typ_lst);
+        return $dbo->style_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1724,9 +1731,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    function form_component_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_type(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->component_type_selector($form_name, $typ_lst);
+        return $dbo->component_type_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1736,9 +1743,9 @@ class system_form extends component
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component style
      */
-    function form_component_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_style(db_object $dbo, string $form_name, user_message $msg, ?type_lists $typ_lst): string
     {
-        return $dbo->component_style_selector($form_name, $typ_lst);
+        return $dbo->component_style_selector($form_name, $typ_lst, $msg);
     }
 
     /**
@@ -1833,9 +1840,9 @@ class system_form extends component
      * @param view_list|null $msk_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    function form_table_linked_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_table_linked_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst);
+        return $dbo->view_selector($form_name, $msk_lst, $msg);
     }
 
     /**

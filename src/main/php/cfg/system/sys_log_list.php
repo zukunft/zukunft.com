@@ -51,6 +51,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 
 class sys_log_list extends list_db_read
@@ -165,7 +167,7 @@ class sys_log_list extends list_db_read
      * load a list of system errors from the database
      * @return bool true if everything was fine
      */
-    function load(): bool
+    function load(user_message $msg): bool
     {
         log_debug('for user "' . $this->get_user()->name . '"');
 
@@ -173,12 +175,12 @@ class sys_log_list extends list_db_read
         $result = false;
 
         $qp = $this->load_sql($db_con);
-        $db_lst = $db_con->get($qp, 'system log list');
+        $db_lst = $db_con->get($qp, $msg, 'system log list');
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {
                 $log = new sys_log();
-                $log->row_mapper($db_row);
+                $log->row_mapper($db_row, $msg);
                 $this->add_obj($log);
             }
             $result = true;
@@ -191,10 +193,10 @@ class sys_log_list extends list_db_read
      * load a list of all system errors from the database
      * @return bool true if everything was fine
      */
-    function load_all(): bool
+    function load_all(user_message $msg): bool
     {
         $this->dsp_type = self::DSP_ALL;
-        return $this->load();
+        return $this->load($msg);
     }
 
     /**

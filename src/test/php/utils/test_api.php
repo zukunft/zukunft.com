@@ -40,9 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 
@@ -70,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -166,6 +165,11 @@ class test_api extends test_base
         bool                $contains = false
     ): bool
     {
+        $msg = new user_message();
+        // set the requesting user on the message, because e.g. ui_config::api_json reads the
+        // user for the api message header from $msg->usr (see docs/llm/state-and-messages.md);
+        // without it the header lacks the user name and the compare with the expected json fails
+        $msg->usr = $this->usr1;
         // check and norm the parameters
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
@@ -174,7 +178,7 @@ class test_api extends test_base
         $class = $this->class_to_api($usr_obj::class);
 
         // create the api json message and revert it to an array for better compare
-        $actual = json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
+        $actual = json_decode($usr_obj->api_json($typ_lst, $msg, $this->usr1), true);
 
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
@@ -263,10 +267,12 @@ class test_api extends test_base
         bool         $ignore_id = false
     ): int
     {
+        $msg = new user_message();
+
         $t_db = new test_db_load($t);
         // get default data
         if ($data == array()) {
-            $data = $t_db->source_put_json();
+            $data = $t_db->source_put_json($msg);
         }
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
@@ -358,7 +364,7 @@ class test_api extends test_base
         $request_body = $ctrl->check_api_msg($data);
         // load the object before the update
         if ($id != 0) {
-            $sbx->load_by_id($id);
+            $sbx->load_by_id($id, $msg);
         }
         // apply the payload to the backend object (add switch)
         $sbx->api_mapper($request_body, $msg);
@@ -420,11 +426,11 @@ class test_api extends test_base
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
      * @return bool true if the check is fine
      */
-    function assert_api_msg(sql_db $db_con, object $usr_obj, string $filename = '', bool $contains = false): bool
+    function assert_api_msg(sql_db $db_con, object $usr_obj, user_message $msg, string $filename = '', bool $contains = false): bool
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        $api_msg = $usr_obj->api_json([api_types::HEADER], $this->usr1);
+        $api_msg = $usr_obj->api_json([api_types::HEADER], $msg, $this->usr1);
         $actual = json_decode($api_msg, true);
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
@@ -618,13 +624,14 @@ class test_api extends test_base
     /**
      * get the actual api result for a list
      *
-     * @param string $class the class that should be tested e.g. type_lists::class
-     * @param array|string $ids the database ids of the db rows that should be used for testing
-     * @param string $id_fld the field name for the object id e.g. word_id
+     * @param object $usr_obj
+     * @param user_message $msg
+     * @param api_type_list|array $typ_lst
      * @return array the json as an array to avoid differences due to formatting
      */
     function assert_result_api_get(
         object              $usr_obj,
+        user_message        $msg,
         api_type_list|array $typ_lst = []
     ): array
     {
@@ -635,7 +642,8 @@ class test_api extends test_base
         $typ_lst->add(api_types::TEST_MODE);
 
         // create the api json message and revert it to an array for better compare
-        return json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
+        $msg->usr = $this->usr1;
+        return json_decode($usr_obj->api_json($typ_lst, $msg), true);
     }
 
     /**
@@ -644,7 +652,7 @@ class test_api extends test_base
      * @param string $class the class that should be tested e.g. type_lists::class
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. word_id
-     * @return array the json as an array to avoid differences due to formatting
+     * @return array|null the json as an array to avoid differences due to formatting
      */
     function assert_result_api_get_list(
         string       $class,
@@ -797,6 +805,7 @@ class test_api extends test_base
         test_cleanup $t
     ): bool
     {
+        $msg = new user_message();
         $lib = new library();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
@@ -809,7 +818,7 @@ class test_api extends test_base
         //$add_result = $dbo_ui->add_via_api();
 
         // TODO Prio 1 remove reloading and use $add_result instead
-        $dbo->load_by_name($name);
+        $dbo->load_by_name($name, $msg);
         return $this->assert_greater_zero($test_name, $dbo->id());
 
         //return $this->assert_greater_zero($test_name, $add_result->get_row_id());
@@ -831,7 +840,7 @@ class test_api extends test_base
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
-        $usr_msg_ui = new user_message_ui();
+        $msg_ui = new user_message_ui();
         // the requesting user of the simulated api call travels on the message
         $msg = new user_message();
         $msg->usr = $usr;
@@ -840,11 +849,11 @@ class test_api extends test_base
 
         $dbo = $t_map->class_to_add_filled_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        $dbo_ui->set_from_json($dbo->api_json(), $msg_ui);
         // replacement for the api call
         $name = $dbo->name();
-        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
-        $dbo->load_by_name($name);
+        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
+        $dbo->load_by_name($name, $msg);
 
         return $this->assert_greater_zero($test_name, $dbo->id());
     }
@@ -873,12 +882,12 @@ class test_api extends test_base
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
         $dbo = $t_map->class_to_add_filled_object($class);
-        $dbo->load_by_name($dbo->name());
+        $dbo->load_by_name($dbo->name(), $msg);
         $dbo_ui = $t_map->class_to_ui_object($class);
         $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         $ctrl->delete($dbo_ui->id(), $dbo, $msg);
 
-        $dbo->load_by_name($dbo->name());
+        $dbo->load_by_name($dbo->name(), $msg);
         return $this->assert($test_name, $dbo->id(), 0);
     }
 
@@ -902,20 +911,20 @@ class test_api extends test_base
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
-        $usr_msg_ui = new user_message_ui();
+        $msg_ui = new user_message_ui();
         $class_name = $lib->class_to_name($class);
         $blocked_txt = $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER);
 
         $dbo = $t_map->class_to_add_filled_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        $dbo_ui->set_from_json($dbo->api_json(), $msg_ui);
         // the requesting (blocked ip) user of the simulated api calls travels on the message
         $msg = new user_message();
         $msg->usr = $usr;
 
         // simulate the api post (add) call and capture the echoed rejection
         ob_start();
-        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
+        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
         $post_response = ob_get_clean();
         $test_name = 'the api post of a ' . $class_name . ' by an ip user is refused';
         $post_blocked = $this->assert_text_contains($test_name, $post_response, $blocked_txt);
@@ -948,19 +957,19 @@ class test_api extends test_base
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
-        $usr_msg_ui = new user_message_ui();
+        $msg_ui = new user_message_ui();
         $class_name = $lib->class_to_name($class);
         $blocked_txt = $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER);
 
         $dbo = $t_map->class_to_add_filled_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        $dbo_ui->set_from_json($dbo->api_json(), $msg_ui);
         // a message without a requesting user
         $msg = new user_message();
 
         // simulate the api post (add) call and capture the echoed rejection
         ob_start();
-        $ctrl->post_json($dbo_ui->api_array(), $dbo, $msg);
+        $ctrl->post_json($dbo_ui->api_array([], $msg_ui), $dbo, $msg);
         $response = ob_get_clean();
         $test_name = 'the api post of a ' . $class_name . ' without a requesting user is refused';
         return $this->assert_text_contains($test_name, $response, $blocked_txt);
@@ -1083,11 +1092,12 @@ class test_api extends test_base
         test_cleanup $t
     ): array
     {
+        $msg = new user_message();
         $t_db = new test_db_load($t);
         $put_msg = array();
         switch ($class) {
             case source::class:
-                $put_msg = $t_db->source_put_json();
+                $put_msg = $t_db->source_put_json($msg);
                 break;
             default:
                 break;

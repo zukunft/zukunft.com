@@ -221,10 +221,10 @@ class formula_map extends sandbox_code_id
     // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
     // TODO Prio 0 deprecate
-    public ?string $type_cl = '';          // the code id of the formula type
-    public ?word $name_wrd = null;         // the triple object for the formula name:
-    //                                        because values can only be assigned to phrases, also for the formula name a triple must exist
-    public bool $needs_res_upd = false;     // true if the formula results needs to be updated
+    public ?string $type_cl = '';       // the code id of the formula type
+    public ?phrase $name_phr = null;    // the triple object for the formula name:
+    //                                     because values can only be assigned to phrases, also for the formula name a triple must exist
+    public bool $needs_res_upd = false; // true if the formula results needs to be updated
 
 
     /*
@@ -265,7 +265,7 @@ class formula_map extends sandbox_code_id
         $this->lnk_lst = null;
         $this->phr_lst = null;
         $this->type_cl = '';
-        $this->name_wrd = null;
+        $this->name_phr = null;
 
         $this->needs_res_upd = false;
 
@@ -284,16 +284,17 @@ class formula_map extends sandbox_code_id
      * @return bool true if the formula is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = formula_fields::FLD_ID,
-        string $name_fld = formula_fields::FLD_NAME,
-        string $type_fld = formula_fields::FLD_TYPE): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = formula_fields::FLD_ID,
+        string       $name_fld = formula_fields::FLD_NAME,
+        string       $type_fld = formula_fields::FLD_TYPE): bool
     {
         global $sys;
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(formula_fields::FLD_FORMULA_TEXT, $db_row)) {
                 $this->ref_text = $db_row[formula_fields::FLD_FORMULA_TEXT];
@@ -339,7 +340,7 @@ class formula_map extends sandbox_code_id
             }
             */
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -480,16 +481,20 @@ class formula_map extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
 
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
             $vars[json_fields::REF_TEXT] = $this->ref_text;
             $vars[json_fields::LATEX] = $this->latex;
@@ -707,23 +712,22 @@ class formula_map extends sandbox_code_id
      * @param bool $with_automatic_error_fixing to add any missing words automatically
      * @return bool true if the word has been loaded
      */
-    function reload_wrd(bool $with_automatic_error_fixing = true): bool
+    function reload_wrd(user_message $msg, bool $with_automatic_error_fixing = true): bool
     {
         $result = true;
-        $msg = new user_message();
 
         $do_load = true;
-        if (isset($this->name_wrd)) {
-            if ($this->name_wrd->name == $this->name()) {
+        if (isset($this->name_phr)) {
+            if ($this->name_phr->name() == $this->name()) {
                 $do_load = false;
             }
         }
         if ($do_load) {
             log_debug('->load_wrd load ' . $this->dsp_id());
             $name_wrd = new word($this->get_user());
-            $name_wrd->load_by_name($this->name());
+            $name_wrd->load_by_name($this->name(), $msg);
             if ($name_wrd->id() > 0) {
-                $this->name_wrd = $name_wrd;
+                $this->name_phr = $name_wrd->phrase();
             } else {
                 // if the loading of the corresponding triple fails,
                 // try to recreate it and report the internal error
@@ -839,7 +843,7 @@ class formula_map extends sandbox_code_id
         }
         $trm_ids = new trm_ids($id_lst);
         $trm_lst->reset(true);
-        $trm_lst->load_by_ids($trm_ids);
+        $trm_lst->load_by_ids($trm_ids, $msg);
         if ($trm_lst_in != null) {
             $trm_lst->merge($trm_lst_in);
         }
@@ -866,7 +870,7 @@ class formula_map extends sandbox_code_id
         $phr_lst = $exp->phrase_id_list($msg);
         $id_lst = $phr_lst->phrase_ids();
         $phr_lst->reset(true);
-        $phr_lst->load_by_ids($id_lst);
+        $phr_lst->load_by_ids($id_lst, $msg);
         return $phr_lst;
     }
 
@@ -1087,11 +1091,12 @@ class formula_map extends sandbox_code_id
      * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
      *
      * @param formula|CombineObject|IdObject $db_obj the formula as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this formula has infos that should be saved in the database
      */
-    function needs_db_update(formula|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(formula|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->get_ref_text() != null) {
             if ($this->get_ref_text() != $db_obj->get_ref_text()) {
                 $result = true;
@@ -1107,8 +1112,8 @@ class formula_map extends sandbox_code_id
                 $result = true;
             }
         }
-        if ($this->type_id() != null) {
-            if ($this->type_id() != $db_obj->type_id()) {
+        if ($this->type_id($msg) != null) {
+            if ($this->type_id($msg)!= $db_obj->type_id($msg)) {
                 $result = true;
             }
         }
@@ -1194,14 +1199,15 @@ class formula_map extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if the result should be validated again before export
      * *                    use false for a faster export and unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         global $sys;
 
@@ -1224,7 +1230,7 @@ class formula_map extends sandbox_code_id
         // export the assigned phrases by name, consistent with the import:
         // a single phrase via 'assigned_word', several phrases via the 'assigned' json array
         if ($do_load) {
-            $phr_lst = $this->assign_phr_lst_direct();
+            $phr_lst = $this->assign_phr_lst_direct($msg);
             if ($phr_lst != null) {
                 $names = $phr_lst->names();
                 if (count($names) == 1) {
@@ -1315,7 +1321,7 @@ class formula_map extends sandbox_code_id
 
         $phr = new phrase($this->get_user());
         if ($db_con->is_open()) {
-            if ($phr->load_by_name($phr_name)) {
+            if ($phr->load_by_name($phr_name, $msg)) {
                 $this->link_phrase_and_save($phr, $msg);
             }
         }
@@ -1325,26 +1331,26 @@ class formula_map extends sandbox_code_id
     /**
      * unlink this formula from a word or triple
      * @param phrase $phr with at least the id of a phrase that exists already in the database
-     * @param user_message $usr_msg to collect the problems to be able to present solutions to the user
+     * @param user_message $msg to collect the problems to be able to present solutions to the user
      * @return bool true if the link has been removed
      */
-    function unlink_phrase(phrase $phr, user_message $usr_msg): bool
+    function unlink_phrase(phrase $phr, user_message $msg): bool
     {
         if ($this->get_user() != null) {
             log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->get_user()->dsp_id());
             $frm_lnk = new formula_link($this->get_user());
-            if ($frm_lnk->load_by_link($this, $phr)) {
-                $frm_lnk->del($usr_msg);
+            if ($frm_lnk->load_by_link($this, $phr, $msg)) {
+                $frm_lnk->del($msg);
             } else {
-                $msg = 'formula ' . $this->name() . ' is not linked to ' . $phr->name() . ' so link cannot be deactivated';
-                $usr_msg->add_message_text($msg);
+                $msg_txt = 'formula ' . $this->name() . ' is not linked to ' . $phr->name() . ' so link cannot be deactivated';
+                $msg->add_message_text($msg_txt);
             }
         } else {
-            $msg = 'Cannot unlink formula, phrase is not set.';
-            $usr_msg->add_message_text($msg);
-            log_err($msg, 'unlink_phrase');
+            $msg_txt = 'Cannot unlink formula, phrase is not set.';
+            $msg->add_message_text($msg_txt);
+            log_err($msg_txt, 'unlink_phrase');
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function save_links(user_message $msg): void
@@ -1364,7 +1370,7 @@ class formula_map extends sandbox_code_id
      * @param user_message $msg to enrich with messages
      * @return bool true if all phrases have been assigned
      */
-    function assign_phrases(user_message $msg = new user_message()): bool
+    function assign_phrases(user_message $msg): bool
     {
         $phr_lst = $this->phr_lst;
         if ($phr_lst != null) {
@@ -1401,12 +1407,18 @@ class formula_map extends sandbox_code_id
         }
     }
 
-    function is_used(): bool
+    /**
+     * @param user_message $msg to enrich with problems and suggested solutions
+     */
+    function is_used(user_message $msg): bool
     {
-        return !$this->not_used();
+        return !$this->not_used($msg);
     }
 
-    function not_used(): bool
+    /**
+     * @param user_message $msg to enrich with problems and suggested solutions
+     */
+    function not_used(user_message $msg): bool
     {
         /*    $change_user_id = 0;
         $sql = "SELECT user_id
@@ -1420,14 +1432,15 @@ class formula_map extends sandbox_code_id
         if ($change_user_id > 0) {
           $result = false;
         } */
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
      * true if no other user has modified the formula
      * assuming that in this case not confirmation from the other users for a formula rename is needed
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug('->not_changed (' . $this->id() . ')');
 
@@ -1439,8 +1452,8 @@ class formula_map extends sandbox_code_id
             log_err('The id must be set to check if the formula has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
+            $db_row = $db_con->get1($qp, $msg);
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
                 if ($db_row[user_db::FLD_ID] > 0) {
                     $result = false;
                 }
@@ -1677,7 +1690,7 @@ class formula_map extends sandbox_code_id
         $elm_lst = $this->elements_incl_result_phrases($msg, $trm_lst);
 
         // read the existing elements from the database
-        $db_lst = $this->load_element_list();
+        $db_lst = $this->load_element_list($msg);
 
         // add the missing links
         $add_lst = $elm_lst->diff($db_lst);
@@ -1698,7 +1711,7 @@ class formula_map extends sandbox_code_id
     function delete_elements(user_message $msg): bool
     {
         $imp = new import();
-        $lst = $this->load_element_list();
+        $lst = $this->load_element_list($msg);
         $lst->db_delete_no_log($msg, $imp, element::class);
         return $msg->is_ok();
     }
@@ -1706,10 +1719,10 @@ class formula_map extends sandbox_code_id
     /**
      * @return element_list with the element linked to this formula according to the database
      */
-    function load_element_list(): element_list
+    function load_element_list(user_message $msg): element_list
     {
         $db_lst = new element_list($this->get_user());
-        $db_lst->load_by_frm($this->id());
+        $db_lst->load_by_frm($this->id(), $msg);
         return $db_lst;
     }
 
@@ -1766,9 +1779,15 @@ class formula_map extends sandbox_code_id
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = $this->formula_word();
-        $name_wrd->save($msg);
+        // reuse the formula word if it exists e.g. from a previous formula with the same name,
+        // because the similar check of save cannot detect it: for the term namespace the formula
+        // itself is the similar object which allows adding the formula word (and hides the word)
+        $name_wrd->load_by_name($this->name(), $msg);
+        if ($name_wrd->id() == 0) {
+            $name_wrd->save($msg);
+        }
         if ($name_wrd->id > 0) {
-            $this->name_wrd = $name_wrd;
+            $this->name_phr = $name_wrd->phrase();
         } else {
             log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
         }
@@ -1784,12 +1803,12 @@ class formula_map extends sandbox_code_id
         log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
 
         $wrd = new word($this->get_user());
-        $wrd->load_by_name($old_name);
+        $wrd->load_by_name($old_name, $msg);
         if (!$wrd->is_loaded()) {
-            log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
+            log_err_msg('reloading of the word related to formula ' . $this->dsp_id() . ' failed', $msg);
         } else {
             if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
+                log_err_msg('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK, $msg);
             } else {
                 $wrd->set_name($this->name());
                 $wrd->save($msg);
@@ -1808,12 +1827,12 @@ class formula_map extends sandbox_code_id
         log_debug('formula wrd_del for ' . $this->dsp_id());
 
         $wrd = new word($this->get_user());
-        $wrd->load_by_name($this->name());
+        $wrd->load_by_name($this->name(), $msg);
         if (!$wrd->is_loaded()) {
             log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
         } else {
             if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
+                log_err_msg('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK, $msg);
             } else {
                 $wrd->del($msg);
             }
@@ -1829,7 +1848,7 @@ class formula_map extends sandbox_code_id
     {
         global $sys;
 
-        log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
+        log_err_msg('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error', $msg);
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->get_user());
@@ -1838,7 +1857,7 @@ class formula_map extends sandbox_code_id
         $name_wrd->add($msg);
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
-            $this->name_wrd = $name_wrd;
+            $this->name_phr = $name_wrd->phrase();
         } else {
             log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
         }
@@ -1879,13 +1898,13 @@ class formula_map extends sandbox_code_id
         $usr_msg_del = new user_message($msg->usr);
 
         $frm_lnk_lst = new formula_link_list($this->get_user());
-        if ($frm_lnk_lst->load_by_frm_id($this->id())) {
+        if ($frm_lnk_lst->load_by_frm_id($this->id(), $msg)) {
             $frm_lnk_lst->del_without_log($usr_msg_del);
         }
         // TODO Prio 2 review
         if ($this->get_user()->id() != $msg->usr->id()) {
             $frm_lnk_lst = new formula_link_list($msg->usr);
-            if ($frm_lnk_lst->load_by_frm_id($this->id())) {
+            if ($frm_lnk_lst->load_by_frm_id($this->id(), $msg)) {
                 $frm_lnk_lst->del_without_log($usr_msg_del);
             }
         }
@@ -1893,13 +1912,13 @@ class formula_map extends sandbox_code_id
         // and the corresponding formula elements
         if ($usr_msg_del->is_ok()) {
             $elm_lst = new element_list($this->get_user());
-            $elm_lst->load_by_frm($this->id());
+            $elm_lst->load_by_frm($this->id(), $msg);
             if (!$elm_lst->is_empty()) {
                 $usr_msg_del->merge($elm_lst->del_without_log());
             }
             if ($this->get_user()->id() != $msg->usr->id()) {
                 $elm_lst = new element_list($msg->usr);
-                $elm_lst->load_by_frm($this->id());
+                $elm_lst->load_by_frm($this->id(), $msg);
                 if (!$elm_lst->is_empty()) {
                     $usr_msg_del->merge($elm_lst->del_without_log());
                 }
@@ -1910,7 +1929,7 @@ class formula_map extends sandbox_code_id
         if ($usr_msg_del->is_ok()) {
             $imp = new import();
             $res_lst = new result_list($this->get_user());
-            $res_lst->load_by_frm($this);
+            $res_lst->load_by_frm($this, $msg);
             $res_lst->db_delete_no_log($msg, $imp, result::class);
             $usr_msg_del->merge($msg);
         }
@@ -1978,7 +1997,7 @@ class formula_map extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_TYPE,
@@ -1988,9 +2007,9 @@ class formula_map extends sandbox_code_id
             }
             $lst->add_field(
                 formula_fields::FLD_TYPE,
-                $this->type_id(),
+                $this->type_id($msg),
                 formula_db::FLD_TYPE_SQL_TYP,
-                $obj->type_id()
+                $obj->type_id($msg)
             );
         }
         // a formula must have an expression, so reject a base change that would leave it without one
@@ -2070,7 +2089,7 @@ class formula_map extends sandbox_code_id
         // an expression only counts as changed if the update actually carries one (see above),
         // so a partial update that keeps the stored expression does not bump the last update time
         if (($this->ref_text != null and $obj->ref_text !== $this->ref_text)
-            or $obj->type_id() <> $this->type_id()
+            or $obj->type_id($msg) <> $this->type_id($msg)
             or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
             $lst->add_field(

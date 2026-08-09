@@ -49,9 +49,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 
 // reset the html code var
 $web_txt = '';
@@ -64,7 +65,7 @@ global $sys;
 global $ui_sys; // the frontend cache of this request incl. the preloaded types and the user configuration
 global $mtr;
 $mtr = new Translator();
-$msg = new user_message();
+$msg_ui = new user_message_ui();  // frontend entry point
 
 // prepare for static pages
 // merge POST into GET so form submissions (e.g. login) reach url_to_action
@@ -77,13 +78,19 @@ if (!empty($_POST)) {
     log_debug('view $_POST array: ' . library::dsp_array(url_var::without_secrets($_POST), true));
 }
 
+// TODO Prio 3 remove overwrite suggestion for online debugging
+//$url_array = [url_var::MASK => views::ERROR_UPDATE_ID, url_var::ID => views::START_ID];
+if ($debug > 10) {
+    log_debug('url array: ' . library::dsp_array($url_array, true));
+}
+
 // TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
 // TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
 
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view", $msg, $url_array);
+$db_con = $app->start("view", $msg_ui, $url_array);
 
 
 if ($db_con->is_open()) {
@@ -91,7 +98,8 @@ if ($db_con->is_open()) {
     // load the session user parameters
     // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
-    $web_txt .= $usr->get();
+    $msg = new user_message();
+    $web_txt .= $usr->get($msg);
     // TODO Prio 1 make this the only place where the requesting user is stored (the user is set on the
     //   message once the frontend user is loaded below)
 
@@ -107,8 +115,8 @@ if ($db_con->is_open()) {
         // (see docs/llm/state-and-messages.md); set here and not further down, so that the
         // blocked-request branch and the cached page also know who is asking
         $usr_ui = new user_ui();
-        $usr_ui->set_from_json($usr->api_json(), $msg);
-        $msg->usr = $usr_ui;
+        $usr_ui->set_from_json($usr->api_json(), $msg_ui);
+        $msg_ui->usr = $usr_ui;
 
         $ui = new frontend('view');
 
@@ -141,13 +149,13 @@ if ($db_con->is_open()) {
         $mask_id = $url_array[url_var::MASK] ?? 0;
         if (in_array($mask_id, views::IP_BLOCKED_MASKS_IDS) and $usr->is_blocked()) {
             log_warning('change view ' . $mask_id . ' requested by the blocked user ' . $usr->dsp_id());
-            $msg->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
+            $msg_ui->add(msg_id::CHANGE_BLOCKED_FOR_IP_USER, []);
             $back_url = html_base::url_par_from_back_part($url_array);
             $back_msk_id = (int)($back_url[url_var::MASK] ?? 0);
             if ($back_msk_id > 0 and !in_array($back_msk_id, views::IP_BLOCKED_MASKS_IDS)) {
                 $url_array = $back_url;
             } else {
-                $show_url = [url_var::MASK => (new views())->change_to_show_id($mask_id)];
+                $show_url = [url_var::MASK => new views()->change_to_show_id($mask_id)];
                 if (isset($url_array[url_var::ID])) {
                     $show_url[url_var::ID] = $url_array[url_var::ID];
                 }
@@ -159,15 +167,15 @@ if ($db_con->is_open()) {
         // so that a user without own data changes gets the page with a few database reads only
         // (the cached types json, the system config, the user incl. the uses_sandbox flag
         // and this cached page); the message of this request is added to the cached page
-        $cached_page = $ui->cached_page_or_null($url_array, $msg);
+        $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
         if ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
 
             // TODO Prio o move loading of user data to frontend e.g. to skip it for the login page
-            $usr->load_usr_data();
+            $usr->load_usr_data($msg);
 
-            $ui->load_cache();
+            $ui->load_cache($msg_ui);
 
             // publish the loaded ui cache to the allowed global so renderers
             // (e.g. phrase_list::category_subtitle) can read the verb type cache
@@ -176,7 +184,7 @@ if ($db_con->is_open()) {
             // load the user-specific frontend configuration onto the ui cache
             // TODO Prio 1 load the config from cache if nothing has been changed
             $ui_sys->cfg = new config();
-            $ui_sys->cfg->load($sys);
+            $ui_sys->cfg->load($sys, $msg_ui);
 
             // execute the user request and POST-Redirect-GET to prevent re-submission on reload
             // the same predicate gates the anti-csrf token check in frontend::request_token_valid, so an
@@ -189,14 +197,14 @@ if ($db_con->is_open()) {
             $is_action = ($is_post_action or $is_get_action) && $app->session_token_valid;
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
-                    $url_array = $ui->url_to_action($url_array, $usr, $msg, $ui->dto);
+                    $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto);
                 }
             }
 
             // show the result to the user
             // and use the cached html pages for view-only requests to reduce the response time
             $sys->times->switch(system_time_type::URL_TO_HTML);
-            $web_txt .= $ui->url_to_html_cached($url_array, $msg, $is_action, $ui->dto);
+            $web_txt .= $ui->url_to_html_cached($url_array, $msg_ui, $is_action, $ui->dto);
             $sys->times->switch(system_time_type::CLOSE);
         }
     }

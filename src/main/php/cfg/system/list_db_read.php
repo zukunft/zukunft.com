@@ -39,12 +39,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::API_OBJECT . 'api_message.php';
 //include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
@@ -125,7 +127,7 @@ class list_db_read extends ListOfIdObjects
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -133,22 +135,23 @@ class list_db_read extends ListOfIdObjects
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = $this->api_json_array($typ_lst, $msg, $usr);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
      * create an array for the api json message
      *
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns array with the json fields to create an api message
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $lst = [];
         foreach ($this->lst() as $sbx) {
-            $vars = $sbx->api_json_array($typ_lst, $usr);
+            $vars = $sbx->api_json_array($typ_lst, $msg, $usr);
             $lst[] = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
         }
         return $lst;

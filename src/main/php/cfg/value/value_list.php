@@ -133,10 +133,11 @@ class value_list extends sandbox_value_list
      * TODO replace $ext with sql_tbl_typ
      *
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded values e.g. for admins
      * @return bool true if at least one value has been loaded
      */
-    protected function rows_mapper_multi(array $db_rows, string $ext, bool $load_all = false): bool
+    protected function rows_mapper_multi(array $db_rows, string $ext, user_message $msg, bool $load_all = false): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -166,7 +167,7 @@ class value_list extends sandbox_value_list
                         $obj_to_add = new value($this->get_user());
                         log_err('Value type of value db_row cannot be detected');
                     }
-                    $obj_to_add->row_mapper_sandbox_multi($db_row, $ext);
+                    $obj_to_add->row_mapper_sandbox_multi($db_row, $msg, $ext);
                     // a value row that maps to no phrase group can never be changed or deleted
                     // by a user, so skip the corrupted row and report it to the admin for manual
                     // cleanup instead of e.g. blocking the deletion of a linked word
@@ -287,13 +288,13 @@ class value_list extends sandbox_value_list
      * @return bool true if at least one value found
      */
     function load_by_phr_lst(
-        phrase_list $phr_lst,
-        bool        $or = false,
-        int         $limit = sql_db::ROW_LIMIT,
-        int         $page = 0
+        phrase_list  $phr_lst,
+        user_message $msg, bool $or = false,
+        int          $limit = sql_db::ROW_LIMIT,
+        int          $page = 0
     ): bool
     {
-        return parent::load_by_phr_lst_multi($phr_lst, value::class, $or, $limit, $page);
+        return parent::load_by_phr_lst_multi($phr_lst, $msg, value::class, $or, $limit, $page);
     }
 
     /**
@@ -306,16 +307,16 @@ class value_list extends sandbox_value_list
      * @param phrase $phr phrase list to which all related values should be loaded
      * @return bool true if at least one value has been loaded
      */
-    function load_by_phr(phrase $phr, int $limit = sql_db::ROW_LIMIT, int $page = 0): bool
+    function load_by_phr(phrase $phr, user_message $msg, int $limit = sql_db::ROW_LIMIT, int $page = 0): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page);
-        if ($this->load($qp)) {
+        if ($this->load($qp, $msg)) {
             // load additional the text config values
             $sc->reset();
             $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page, value_types::TEXT);
-            return $this->load($qp);
+            return $this->load($qp, $msg);
         } else {
             return false;
         }
@@ -328,7 +329,7 @@ class value_list extends sandbox_value_list
      * @param value_types|null $val_typ if not null load only the values of this type
      * @return bool true if at least one value found
      */
-    function load_by_ids(array $val_ids = [], value_types|null $val_typ = null): bool
+    function load_by_ids(array $val_ids, user_message $msg, value_types|null $val_typ = null): bool
     {
         global $db_con;
         if (count($val_ids) === 0) {
@@ -352,7 +353,7 @@ class value_list extends sandbox_value_list
             }
             $sc = $db_con->sql_creator();
             $qp = $this->load_sql_by_ids($sc, $type_ids, 0, 0, false, $val_typ);
-            if ($this->load($qp)) {
+            if ($this->load($qp, $msg)) {
                 $loaded = true;
             }
         }
@@ -368,9 +369,9 @@ class value_list extends sandbox_value_list
      * @param value_types|null $val_typ if not null load only the types of this list
      * @return bool true if at least one value found
      */
-    function load_by_id(string|int $id, value_types|null $val_typ = null): bool
+    function load_by_id(string|int $id, user_message $msg, value_types|null $val_typ = null): bool
     {
-        return $this->load_by_ids([$id], $val_typ);
+        return $this->load_by_ids([$id], $msg, $val_typ);
     }
 
     // internal load
@@ -383,9 +384,10 @@ class value_list extends sandbox_value_list
      * @return bool true if at least one object has been loaded
      */
     protected function load(
-        sql_par $qp,
-        bool    $load_all = false,
-        ?sql_db $db_con_given = null
+        sql_par      $qp,
+        user_message $msg,
+        bool         $load_all = false,
+        ?sql_db      $db_con_given = null
     ): bool
     {
 
@@ -403,8 +405,8 @@ class value_list extends sandbox_value_list
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_lst = $db_con_used->get($qp);
-            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $load_all);
+            $db_lst = $db_con_used->get($qp, $msg);
+            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
         }
         return $result;
     }
@@ -935,11 +937,11 @@ class value_list extends sandbox_value_list
      * set the word objects for all value in the list if needed
      * not included in load, because sometimes loading of the word objects is not needed
      */
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
         foreach ($this->lst() as $val) {
-            $val->load_phrases();
+            $val->load_phrases($msg);
         }
     }
 
@@ -1043,7 +1045,7 @@ class value_list extends sandbox_value_list
                 $src->set_name($value);
                 if ($do_save) {
                     if ($msg->is_ok()) {
-                        $src->load_by_name($value);
+                        $src->load_by_name($value, $msg);
                         if ($src->id() == 0) {
                             $src->save($msg);
                         }
@@ -1094,7 +1096,7 @@ class value_list extends sandbox_value_list
         $phr_lst_to_add = clone $phr_lst;
         $val_phr = new phrase($this->get_user());
         if ($db_con->is_open()) {
-            $val_phr->load_by_name($val_key);
+            $val_phr->load_by_name($val_key, $msg);
             $phr_lst_to_add->add($val_phr);
         } else {
             $val_phr->set_name($val_key, word::class);
@@ -1120,11 +1122,12 @@ class value_list extends sandbox_value_list
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         global $sys;
 
@@ -1133,7 +1136,7 @@ class value_list extends sandbox_value_list
         // reload the value parameters
         if ($do_load) {
             log_debug();
-            $this->load_by_ids($this->id_lst());
+            $this->load_by_ids($this->id_lst(), $msg);
         }
 
         if ($this->count() > 1) {
@@ -1197,12 +1200,12 @@ class value_list extends sandbox_value_list
      * get a list with all time phrase used in the complete value list
      * @return phrase_list with the time phrases of this value list
      */
-    function time_list(): phrase_list
+    function time_list(user_message $msg): phrase_list
     {
         log_debug();
         $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $val) {
-            $lst->merge($val->phrase_list()->time_list());
+            $lst->merge($val->phrase_list($msg)->time_list($msg));
         }
         return $lst;
     }
@@ -1210,7 +1213,7 @@ class value_list extends sandbox_value_list
     /**
      * @return phrase_list list with all unique phrase used in the complete value list
      */
-    function phr_lst(): phrase_list
+    function phr_lst(user_message $msg): phrase_list
     {
         log_debug('by ids (needs review)');
         $phr_lst = new phrase_list($this->get_user());
@@ -1218,7 +1221,7 @@ class value_list extends sandbox_value_list
 
         foreach ($this->lst() as $val) {
             if (!isset($val->phr_lst)) {
-                $val->load_phrases();
+                $val->load_phrases($msg);
             }
             $phr_lst->merge($val->phr_lst());
         }
@@ -1230,12 +1233,12 @@ class value_list extends sandbox_value_list
     /**
      * @return phrase_list list with all unique phrase including the time phrase
      */
-    function phr_lst_all(): phrase_list
+    function phr_lst_all(user_message $msg): phrase_list
     {
         log_debug();
 
-        $phr_lst = $this->phr_lst();
-        $phr_lst->merge($this->time_list());
+        $phr_lst = $this->phr_lst($msg);
+        $phr_lst->merge($this->time_list($msg));
 
         log_debug('done');
         return $phr_lst;
@@ -1244,12 +1247,12 @@ class value_list extends sandbox_value_list
     /**
      * @return word_list list of all words used for the value list
      */
-    function wrd_lst(): word_list
+    function wrd_lst(user_message $msg): word_list
     {
         log_debug();
 
-        $phr_lst = $this->phr_lst_all();
-        $wrd_lst = $phr_lst->wrd_lst_all();
+        $phr_lst = $this->phr_lst_all($msg);
+        $wrd_lst = $phr_lst->wrd_lst_all($msg);
 
         log_debug('done');
         return $wrd_lst;
@@ -1258,7 +1261,7 @@ class value_list extends sandbox_value_list
     /**
      * get a list of all words used for the value list
      */
-    function source_lst(): array
+    function source_lst(user_message $msg): array
     {
         log_debug();
         $result = array();
@@ -1274,7 +1277,7 @@ class value_list extends sandbox_value_list
                         // gets the source name, description and references, not just the id
                         if ($val->source->name() == '') {
                             log_debug('load id ' . $val->source->id());
-                            $val->load_source();
+                            $val->load_source($msg);
                             log_debug('loaded ' . $val->source->name());
                         }
                         $result[] = $val->source;
@@ -1330,7 +1333,7 @@ class value_list extends sandbox_value_list
         $lst = $this->lst();
         usort($lst, fn(value_base $a, value_base $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
-            ?: strcmp($a->name(), $b->name()));
+                ?: strcmp($a->name(), $b->name()));
         $this->set_lst($lst);
     }
 
@@ -1338,14 +1341,14 @@ class value_list extends sandbox_value_list
      * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */
-    function filter_by_time(?phrase_list $time_lst): value_list
+    function filter_by_time(user_message $msg, ?phrase_list $time_lst): value_list
     {
         log_debug();
         $lib = new library();
         $val_lst = array();
         foreach ($this->lst() as $val) {
             // only include time specific value
-            $time_list = $val->phrase_list()->time_list();
+            $time_list = $val->phrase_list()->time_list($msg);
             if ($time_list->count() > 0) {
                 foreach ($time_list->lst() as $phr) {
                     // only include values within the specific time periods
@@ -1607,7 +1610,7 @@ class value_list extends sandbox_value_list
             $grp_lst = $this->grp_ids();
             $db_lst = new value_list($this->get_user());
             foreach (value_types::cases() as $val_typ) {
-                $db_lst->load_by_ids($grp_lst->ids(), $val_typ);
+                $db_lst->load_by_ids($grp_lst->ids(), $msg, $val_typ);
             }
             $imp->step_end($db_lst->count());
 

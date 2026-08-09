@@ -105,30 +105,30 @@ class figure extends combine_object
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $ext, string $id_fld = self::FLD_ID): bool
+    function row_mapper(?array $db_row, user_message $msg, string $ext, string $id_fld = self::FLD_ID): bool
     {
         $result = false;
         $this->set_id(0);
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[$id_fld] > 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
                 $val = new value($this->get_user());
-                $val->row_mapper_sandbox_multi($db_row, $ext);
+                $val->row_mapper_sandbox_multi($db_row, $msg, $ext);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a formula result
                 $res = new result($this->get_user());
-                $res->row_mapper($db_row);
+                $res->row_mapper($db_row, $msg);
                 $this->set_obj($res);
                 $result = true;
             } else {
                 log_warning('figure with id 0 is not expected');
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**

@@ -48,8 +48,12 @@ class values
     CONST float PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST float PI = 3.1415926535898; // pi
     CONST float PI_SHORT = 3.1415927; // pi
+    // the group id of the pi value keyed by the "π (unit symbol)" triple as used by the unit test fixtures
     const int PI_ID = 32770;
-    const int PI_SYMBOL_ID = 32770;
+    // the group id of the pi number value in the seeded database,
+    // keyed by the "Pi (math)" triple (see triple_names::PI_ID and the pi value in units.json)
+    const int PI_MATH_ID = 32821;
+    const int PI_SYMBOL_ID = 5;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number
     const int E_ID = 32771;

@@ -107,9 +107,9 @@ class test_triples extends test_objects
         $msg = new user_message();
         foreach (verbs::TEST_VERBS as $name) {
             $vrb->reset();
-            $vrb->load_by_name($name);
+            $vrb->load_by_name($name, $msg);
             if ($vrb->has_id()) {
-                $trp_lst->load_by_verb($vrb, true);
+                $trp_lst->load_by_verb( $vrb, $msg, true );
                 $trp_lst->del($msg);
             }
         }
@@ -355,17 +355,17 @@ class test_triples extends test_objects
         return new triple_ui($trp->api_json());
     }
 
-    static function triple_new_url(): array
+    static function triple_new_url(user_message_ui $msg): array
     {
         $trp_ui = new triple_ui();
         $trp_ui->set_verb(test_verbs::verb_ui());
-        return $trp_ui->to_url_array();
+        return $trp_ui->to_url_array($msg);
     }
 
-    static function triple_add_url(): array
+    static function triple_add_url(user_message_ui $msg): array
     {
         $trp_ui = self::triple_add_ui();
-        return $trp_ui->to_url_array();
+        return $trp_ui->to_url_array($msg);
     }
 
     /**
@@ -375,10 +375,10 @@ class test_triples extends test_objects
      *
      * @return array the triple url parameters with the resolved from and to phrase ids
      */
-    function triple_add_url_resolved(): array
+    function triple_add_url_resolved(user_message_ui $msg): array
     {
         $t_wrd = new test_words($this->env);
-        $url_arr = self::triple_add_url();
+        $url_arr = self::triple_add_url($msg);
         $url_arr[url_var::PHRASE_FROM]
             = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
         $url_arr[url_var::PHRASE_TO]
@@ -423,7 +423,7 @@ class test_triples extends test_objects
     /**
      * @return triple "pi (unit symbol)" used for unit testing
      */
-    function triple_pi_symbol(): triple
+    function triple_pi(): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -439,7 +439,7 @@ class test_triples extends test_objects
     /**
      * @return triple "pi (math)" used for unit testing
      */
-    function triple_pi(): triple
+    function triple_pi_name(): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -694,15 +694,15 @@ class test_triples extends test_objects
     /**
      * @return triple to test the sql insert via function
      */
-    function triple_add_by_func(): triple
+    function triple_add_by_func(user_message $msg): triple
     {
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
         $t_db = new test_db_load($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set_name(triple_names::SYSTEM_TEST_ADD_VIA_FUNC);
-        $wrd_add_func = $t_db->load_word(word_names::TEST_ADD_VIA_FUNC);
-        $wrd_math = $t_db->load_word(word_names::MATH);
+        $wrd_add_func = $t_db->load_word($msg, word_names::TEST_ADD_VIA_FUNC);
+        $wrd_math = $t_db->load_word($msg, word_names::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($wrd_math->phrase());
@@ -1217,7 +1217,7 @@ class test_triples extends test_objects
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled_included());
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         $lst->add($this->zh_city());
         $lst->add($this->zh_canton());
         return $lst;
@@ -1230,8 +1230,8 @@ class test_triples extends test_objects
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled_included());
-        $lst->add($this->triple_pi_symbol());
         $lst->add($this->triple_pi());
+        $lst->add($this->triple_pi_name());
         $lst->add($this->triple_e());
         $lst->add($this->global_problem());
         $lst->add($this->triple_global_warming());

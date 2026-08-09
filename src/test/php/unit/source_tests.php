@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -53,6 +54,7 @@ class source_tests
         // init for source
         $sc = new sql_creator();
         $t_src = new test_sources($t);
+        $msg = new user_message();
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
 
@@ -128,7 +130,7 @@ class source_tests
         $t->assert_api_json($src);
         $db_con = new sql_db();
         $src->set_code_id_db(sources::SIB_CODE);
-        $t->assert_api_msg($db_con, $src);
+        $t->assert_api_msg($db_con, $src, $msg);
 
         $t->subheader($ts . 'frontend');
         $src = $t_src->source_reserved();

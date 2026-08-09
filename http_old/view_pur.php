@@ -39,12 +39,14 @@ include_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARAT
 include_once WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $result = '';
 
 // start the user session
 $session = new frontend('view');
+$msg = new user_message();
 global $sys;
 $db_con = $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
 
@@ -62,7 +64,7 @@ if ($result != '') {
     $view_id = $_GET[frontend::PAR_VIEW_ID] ?? '';
 
     // get the view from the backend if not a cache
-    $result .= $session->show_view($view_id);
+    $result .= $session->show_view($view_id, $msg);
 
     // get the data to show if not in cache
 

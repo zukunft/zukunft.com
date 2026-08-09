@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -63,10 +64,11 @@ if ($usr->id > 0) {
     global $cfg;
 
     $lib = new library();
+    $msg = new user_message();  // frontend entry point
 
     $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // get the parameters
     // the original calling page that should be shown after the change if finished
@@ -80,21 +82,22 @@ if ($usr->id > 0) {
     log_debug("create the calculation queue ... ");
 
     // estimate the block size for useful UI updates
-    $total_formulas = $db_con->count(formula::class);
-    $calc_blocks = (new formula_list($usr))->calc_blocks($db_con, $total_formulas);
+    $msg = new user_message();  // frontend entry point
+    $total_formulas = $db_con->count(formula::class, $msg);
+    $calc_blocks = new formula_list($usr)->calc_blocks($db_con, $msg, $total_formulas);
     $block_size = max(1, round($total_formulas / $calc_blocks, 0));
 
     for ($page = 0; $page <= $calc_blocks; $page++) {
         // load the formulas to calculate
         $frm_lst = new formula_list($usr);
-        $frm_lst->load_all($block_size, $page);
+        $frm_lst->load_all($block_size, $page, $msg);
         echo "Calculate " . $lib->dsp_count($frm_lst->lst()) . " formulas<br>";
 
         foreach ($frm_lst as $frm_request) {
 
             // build the calculation queue
             $calc_res_lst = new result_list($usr);
-            $calc_lst = $calc_res_lst->frm_upd_lst($frm_request, $back);
+            $calc_lst = $calc_res_lst->frm_upd_lst($frm_request, $msg, $back);
             log_debug("calculate queue is build (number of values to check: " . $lib->dsp_count($calc_lst->lst()) . ")");
 
             // execute the queue

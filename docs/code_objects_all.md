@@ -315,6 +315,7 @@ the object structure is:
 │           └── triple_listUi - a list function to create the HTML code to display a triple list
 ├── MapObjectShared - $map - temp helper object to map the frontend to backend objects until the api is fast enough
 ├── MessageShared
+│   ├── sql_message - $sql_msg - sql parameters and execution status
 │   ├── user_message - $msg - a complex object that functions can return
 │   └── user_messageUi - $msg - messages created by the frontend for the user
 ├── TextIdObjectShared

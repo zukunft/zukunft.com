@@ -64,6 +64,7 @@ class word_ui_tests
     function run(test_cleanup $t, type_lists $cfg): void
     {
         global $mtr;
+        $msg = new user_message();
 
         // init
         $html = new html_base();
@@ -110,27 +111,27 @@ class word_ui_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, '', $cfg) . '<br>';
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui()) . '<br>';
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), 'view_long') . '<br>';
+        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg, 'view_long') . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $html->tbl($wrd->dsp_del()) . '<br>';
         $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id)) . '<br>';
         $test_page .= $html->text_h2('view header');
-        $test_page .= $wrd->header() . '<br>';
+        $test_page .= $wrd->header($msg) . '<br>';
         $test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
-        $test_page .= 'all: ' . $wrd_zh->parents()->name_link_list() . '<br>';
+        $test_page .= 'all: ' . $wrd_zh->parents($msg)->name_link_list() . '<br>';
         $test_page .= 'filtered by a phrase list: '
-            . $wrd_zh->parents($t_phr->list_zh_ui())->name_link_list() . '<br>';
+            . $wrd_zh->parents($msg, $t_phr->list_zh_ui())->name_link_list() . '<br>';
         $test_page .= 'two levels up: '
-            . $wrd_zh->parents(null, 2)->name_link_list() . '<br>';
+            . $wrd_zh->parents($msg, null, 2)->name_link_list() . '<br>';
         $test_page .= $html->text_h2('children of ' . $wrd_city->name());
-        $test_page .= $wrd_city->children($t_phr->list_zh_ui())->name_link_list() . '<br>';
+        $test_page .= $wrd_city->children($msg, $t_phr->list_zh_ui())->name_link_list() . '<br>';
         $test_page .= $html->text_h2('similar to ' . $wrd_chf->name());
         $test_page .= $wrd_chf->similar($t_phr->list_currency_ui())->name_link_list() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($wrd);
+        $test_page .= $t->dsp_title_named_edit($wrd, $msg);
 
         // show the phrases related to a word as on the default word page
         $list = new ui_list();
@@ -169,7 +170,7 @@ class word_ui_tests
         $form = new system_form();
         $wrd_measure = new word($t_wrd->hz()->api_json());
         $test_page .= $html->text_h2('phrase type of ' . $wrd_measure->name());
-        $test_page .= 'phrase type: ' . $form->show_phrase_type($wrd_measure) . '<br>';
+        $test_page .= 'phrase type: ' . $form->show_phrase_type($wrd_measure, $msg) . '<br>';
 
         // show the formulas assigned to a word as on the default word page
         $t_frm = new test_formulas($t);
@@ -178,17 +179,17 @@ class word_ui_tests
         $dto->frm_lst = $t_frm->formula_list_ui();
         $wrd_minute = new word($t_wrd->word_minute()->api_json());
         $test_page .= $html->text_h2('formulas assigned to ' . $wrd_minute->name());
-        $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $dto) . '<br>';
+        $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $msg, $dto) . '<br>';
         $test_page .= $html->text_h2('formulas assigned to ' . $wrd->name());
-        $test_page .= 'formulas: ' . $list->formulas($wrd, $dto) . '<br>';
+        $test_page .= 'formulas: ' . $list->formulas($wrd, $msg, $dto) . '<br>';
 
         // show the values related to a word sorted by impact as on the default word page
         $t_val = new test_values($t);
         $dto->val_lst = $t_val->value_list_zh_impact_ui();
         $test_page .= $html->text_h2('values related to ' . $wrd_zh->name());
-        $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $dto) . '<br>';
-        $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $dto) . '<br>';
-        $t->html_page_test($test_page, 'word html components', 'word', $t);
+        $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $msg, $dto) . '<br>';
+        $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $msg, $dto) . '<br>';
+        $t->html_page_test($test_page, 'word html components', 'word', $msg);
 
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';
@@ -243,17 +244,17 @@ class word_ui_tests
 
         $t->subheader($ts . 'phrase type');
         $test_name = 'the phrase type name is shown';
-        $t->assert($test_name, $form->show_phrase_type($wrd_measure), phrase_types::MEASURE_NAME);
+        $t->assert($test_name, $form->show_phrase_type($wrd_measure, $msg), phrase_types::MEASURE_NAME);
         $test_name = 'a word without a type shows an empty text';
-        $t->assert($test_name, $form->show_phrase_type($wrd_zh), '');
+        $t->assert($test_name, $form->show_phrase_type($wrd_zh, $msg), '');
 
         $t->subheader($ts . 'assigned formulas');
         $test_name = 'the formula assigned to the word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $dto), formula_names::SCALE_TO_SEC);
+        $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $msg, $dto), formula_names::SCALE_TO_SEC);
         $test_name = 'the sample formula of the default test word is listed';
-        $t->assert_text_contains($test_name, $list->formulas($wrd, $dto), formula_names::INCREASE);
+        $t->assert_text_contains($test_name, $list->formulas($wrd, $msg, $dto), formula_names::INCREASE);
         $test_name = 'a word without assigned formulas shows an empty list';
-        $t->assert($test_name, $list->formulas($wrd_zh, $dto), '');
+        $t->assert($test_name, $list->formulas($wrd_zh, $msg, $dto), '');
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($wrd_company_rel);
@@ -263,11 +264,11 @@ class word_ui_tests
         $t->assert_text_order($test_name, $stock_html, triple_names::COMPANY_ZURICH, triple_names::COMPANY_VESTAS);
 
         $t->subheader($ts . 'related values sorted by impact');
-        $val_html = $list->values_by_word($wrd_zh, $dto);
+        $val_html = $list->values_by_word($wrd_zh, $msg, $dto);
         $test_name = 'the value of the phrase with the highest impact is shown first';
         $t->assert_text_order($test_name, $val_html, triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         $test_name = 'a word without related values shows an empty value list';
-        $t->assert($test_name, $list->values_by_word($wrd, $dto), '');
+        $t->assert($test_name, $list->values_by_word($wrd, $msg, $dto), '');
 
         // a word loaded with its related values carries them through the api to the
         // default word page, so the value list is shown without a separate cache
@@ -276,7 +277,7 @@ class word_ui_tests
         $wrd_zh_be->values_related = $t_val->value_list_zh_impact();
         $wrd_zh_rel = new word($wrd_zh_be->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES, api_types::TEST_MODE]));
-        $t->assert_text_order($test_name, $list->values_by_word($wrd_zh_rel),
+        $t->assert_text_order($test_name, $list->values_by_word($wrd_zh_rel, $msg),
             triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
 
         // the similar words of a word are the other words linked to the same parent via the 'is a' verb
@@ -292,7 +293,7 @@ class word_ui_tests
         // the entered data is checked before the confirm view is shown: a word with a name can be
         // confirmed, but an empty name reports an orange warning that the user must fix first
         $test_name = 'word->input_valid for a word with a name';
-        $t->assert_true($test_name, $wrd->input_valid(new user_message()));
+        $t->assert_true($test_name, $wrd->input_valid($msg));
 
         $test_name = 'word->input_valid for a word with an empty name';
         $wrd_empty = new word($t_wrd->word()->api_json());
@@ -304,17 +305,17 @@ class word_ui_tests
         $t->assert_true($test_name, $msg->has_msg_id(msg_id::NAME_EMPTY));
 
         $test_name = 'word->input_valid allows an empty name when the word is deleted';
-        $t->assert_true($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
+        $t->assert_true($test_name, $wrd_empty->input_valid($msg, url_var::CRUD_DELETE));
 
         $test_name = 'a used word cannot be deleted';
-        $wrd_empty->load_by_id_with_related($wrd_empty->id());
-        $t->assert_false($test_name, $wrd_empty->input_valid(new user_message(), url_var::CRUD_DELETE));
+        $wrd_empty->load_by_id_with_related($wrd_empty->id(), $msg);
+        $t->assert_false($test_name, $wrd_empty->input_valid($msg, url_var::CRUD_DELETE));
 
         $test_name = 'word->input_valid allows an empty name when the word is excluded';
         $wrd_excluded = new word($t_wrd->word()->api_json());
         $wrd_excluded->set_name('');
         $wrd_excluded->excluded = true;
-        $t->assert_true($test_name, $wrd_excluded->input_valid(new user_message()));
+        $t->assert_true($test_name, $wrd_excluded->input_valid($msg));
 
         // the phrase type may only be changed by a user that is allowed to set the type: a permitted
         // user can confirm the change, a not permitted user (e.g. ip only) gets an orange warning

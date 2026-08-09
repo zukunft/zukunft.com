@@ -149,34 +149,6 @@ class element_group extends ListBase
 
 
     /**
-     * the HTML code to display a figure list
-     */
-    function dsp_values(string $back = ''): string
-    {
-        $result = '';
-
-        $fig_lst = $this->figures();
-        $msg = new user_message();
-        log_debug('got figures');
-
-        // show the time if adjusted by a special formula element
-        // build the html code to display the value with the link
-        foreach ($fig_lst->lst() as $fig) {
-            log_debug('display figure');
-            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
-            $fig_ui = new figure();
-            $fig_ui->set_from_json($api_json, $msg);
-            $result .= $fig_ui->display_linked($back);
-        }
-
-        // TODO: show the time phrase only if it differs from the main time phrase
-
-        // display alternative values
-
-        return $result;
-    }
-
-    /**
      *  get a list of figures related to the formula element group and a context defined by a list of words
      *    e.g. 1 for the formula elements <"this"> and the context <"Switzerland" "inhabitants">
      *      the latest number of Swiss inhabitants should be returned
@@ -187,10 +159,11 @@ class element_group extends ListBase
      *      the result for <"Share price" "Nestlé" "2016" "CHF"> should be returned
      *      if the last share price is from 2016 and CHF is the most important (used) currency
      *
+     * @param user_message $msg
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return figure_list
      */
-    function figures(?term_list $trm_lst = null): figure_list
+    function figures(user_message $msg, ?term_list $trm_lst = null): figure_list
     {
         $lib = new library();
 
@@ -209,7 +182,7 @@ class element_group extends ListBase
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = $this->phr_lst;
-            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
+            $val_time_phr = $val_phr_lst->assume_time($msg, $trm_lst);
             if (isset($val_time_phr)) {
                 log_debug('for time ' . $val_time_phr->dsp_id());
             }
@@ -235,7 +208,7 @@ class element_group extends ListBase
             if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
                 if ($frm_elm->obj->is_predefined()) {
-                    $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
+                    $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst, $msg);
                     if (isset($val_time_phr)) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
                     }
@@ -262,7 +235,7 @@ class element_group extends ListBase
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value();
             // TODO create $wrd_val->load_best();
-            $wrd_val->load_by_grp($val_phr_grp);
+            $wrd_val->load_by_grp($val_phr_grp, $msg);
 
             if ($wrd_val->isset()) {
                 // save the value to the result
@@ -290,7 +263,7 @@ class element_group extends ListBase
                 } else {
                     $time_id = $val_time_phr->id();
                 }
-                $grp_res->load_by_grp($val_phr_grp, $time_id);
+                $grp_res->load_by_grp( $val_phr_grp, $msg, $time_id );
 
                 // save the value to the result
                 if ($grp_res->id() > 0) {
@@ -344,15 +317,15 @@ class element_group extends ListBase
      * set the time phrase based on a predefined formula such as "prior" or "next"
      * e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
      */
-    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst): ?phrase
+    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst, user_message $msg): ?phrase
     {
         log_debug('for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
 
-        $val_time_phr = new phrase($this->usr);
+        $val_time_phr = new phrase($msg->usr);
 
         // guess the time word if needed
         log_debug('assume time for ' . $val_phr_lst->dsp_id());
-        $val_time_phr = $val_phr_lst->assume_time();
+        $val_time_phr = $val_phr_lst->assume_time($msg);
 
         // adjust the element time word if forced by the special formula
         if (isset($val_time_phr)) {
@@ -366,10 +339,10 @@ class element_group extends ListBase
                     if ($val_time->id() > 0) {
                         $val_time_phr = $val_time;
                         if ($val_time_phr->id() == 0) {
-                            $val_time_phr->load_by_name($val_time_phr->name());
+                            $val_time_phr->load_by_name($val_time_phr->name(), $msg);
                         }
                         if ($val_time_phr->name() == '') {
-                            $val_time_phr->load_by_id($val_time_phr->id());
+                            $val_time_phr->load_by_id($val_time_phr->id(), $msg);
                         }
                         log_debug('add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
                     }
@@ -378,7 +351,8 @@ class element_group extends ListBase
         }
         if (isset($val_time_phr)) {
             // before adding a special time word, remove all other time words from the word list
-            $val_phr_lst->ex_time();
+            // (ex_time returns the filtered list and does not change the given list)
+            $val_phr_lst = $val_phr_lst->ex_time($msg);
             $val_phr_lst->add($val_time_phr);
             $this->phr_lst = $val_phr_lst;
             log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
@@ -399,14 +373,13 @@ class element_group extends ListBase
     /**
      * the HTML code to display a figure list
      */
-    function dsp_values_old(string $back = ''): string
+    function dsp_values_old(user_message $msg, string $back = ''): string
     {
         log_debug();
 
         $result = '';
 
-        $fig_lst = $this->figures();
-        $msg = new user_message();
+        $fig_lst = $this->figures($msg);
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -416,7 +389,7 @@ class element_group extends ListBase
             $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_ui = new figure();
             $fig_ui->set_from_json($api_json, $msg);
-            $result .= $fig_ui->display_linked($back);
+            $result .= $fig_ui->display_linked($msg, $back);
         }
 
         // TODO: show the time phrase only if it differs from the main time phrase

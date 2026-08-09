@@ -117,12 +117,12 @@ class combine_object extends CombineObject
      * load the combine object e.g. phrase by id via api
      * TODO Prio 1 add user_message as parameter
      * @param int $id
+     * @param user_message $msg to collect the load warnings for the user
      * @return bool
      */
-    function load_by_id(int $id): bool
+    function load_by_id(int $id, user_message $msg): bool
     {
         $result = false;
-        $msg = new user_message();
 
         $api = new rest_call();
         $json_body = $api->api_call_id($this::class, $id);

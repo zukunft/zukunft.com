@@ -32,16 +32,19 @@
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class verb_list extends type_list
@@ -57,11 +60,11 @@ class verb_list extends type_list
      * @param string|null $api_json string with the api json message to fill the list
      * the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
      */
-    function __construct(?string $api_json = null)
+    function __construct(?string $api_json = null, user_message $msg = new user_message())
     {
         $this->reset([]);
         if ($api_json != null) {
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $msg);
         }
     }
 
@@ -73,11 +76,12 @@ class verb_list extends type_list
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true), $msg);
     }
 
     /**
@@ -85,18 +89,18 @@ class verb_list extends type_list
      * TODO Prio 1 add user_message as parameter
      * @param array $json_array an api single object json message
      * @param string $class to force to use the verb child class of the type object
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json_array(array $json_array, string $class = verb::class): user_message
+    function set_from_json_array(array $json_array, user_message $msg, string $class = verb::class): bool
     {
-        $msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone new verb();
             if ($new->api_mapper($value, $msg)) {
                 $this->add_obj($new);
             }
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     function list(string $class, string $title = ''): string

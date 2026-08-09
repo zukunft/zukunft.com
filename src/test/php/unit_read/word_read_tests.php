@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -63,6 +64,7 @@ class word_read_tests
 
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t_wrd = new test_words($t);
@@ -85,10 +87,23 @@ class word_read_tests
         // TODO load plural, type and view
 
 
+        $t->subheader($ts . 'load with a message that already carries an error');
+        // regression test for sandbox_named::row_mapper_sandbox: a load must map the fields (here the
+        // name) even if the message is already not ok before the load, so an error left on the message
+        // by an earlier operation never silently drops the name - which made an imported triple
+        // unreachable by its name in the import cache and let the whole triple import fail
+        $test_name = 'the word name is mapped even if the message is not ok before the load';
+        $msg_err = new user_message();
+        $msg_err->add_message_text('unrelated error from an earlier operation');
+        $wrd_err = new word($t->usr1);
+        $wrd_err->load_by_name(word_names::MATH, $msg_err);
+        $t->assert($test_name, $wrd_err->name(), word_names::MATH);
+
+
         $t->subheader($ts . 'load related');
         $test_name = 'load_by_id_with_related populates the word';
         $wrd_chf = new word($t->usr1);
-        $loaded_id = $wrd_chf->load_by_id_with_related(words::CHF_ID);
+        $loaded_id = $wrd_chf->load_by_id_with_related(words::CHF_ID, $msg);
         $t->assert_true($test_name, $loaded_id > 0 and $wrd_chf->name() == words::CHF);
 
         $test_name = 'load_by_id_with_related fills phrases_related from triples';
@@ -99,7 +114,7 @@ class word_read_tests
         // resolve the SYMBOL verb's runtime id via the preloaded cache (per the
         // "code_id-only for code↔DB links" rule in docs/llm/coding.md) rather than
         // the seed-bound verbs::SYMBOL_ID const, so the test stays portable across pods
-        $symbol_vrb_id = $sys->typ_lst->vrb->get_verb(verbs::SYMBOL)?->id() ?? 0;
+        $symbol_vrb_id = $sys->verb(verbs::SYMBOL)?->id() ?? 0;
         $has_symbol = false;
         if ($wrd_chf->phrases_related !== null) {
             foreach ($wrd_chf->phrases_related->lst() as $rel_phr) {
@@ -117,7 +132,7 @@ class word_read_tests
         // the asserted reported outcome is the int 0 return AND no spurious related
         $test_name = 'load_by_id_with_related returns 0 for an unknown id';
         $wrd_missing = new word($t->usr1);
-        $loaded_missing = $wrd_missing->load_by_id_with_related(999999999);
+        $loaded_missing = $wrd_missing->load_by_id_with_related(999999999, $msg);
         $t->assert_true($test_name, $loaded_missing === 0);
 
         $test_name = 'load_by_id_with_related leaves phrases_related empty for an unknown id';
@@ -130,7 +145,7 @@ class word_read_tests
 
         $test_name = 'load the phrase types';
         $lst = new phrase_types();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert_true($test_name, $result);
 
         $test_name = 'check that at least ' . phrase_type_shared::NORMAL . ' is loaded';
@@ -141,14 +156,14 @@ class word_read_tests
         $t->subheader($ts . 'api creation');
 
         $test_name = word_names::MATH;
-        $wrd = $t_db->load_word(word_names::MATH);
+        $wrd = $t_db->load_word($msg, word_names::MATH);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
         $t->subheader($ts . 'frontend');
 
         $test_name = 'get the most useful view for a word';
-        $wrd = $t_db->load_word(word_names::MATH);
-        $dsp_id = $wrd->calc_view_id();
+        $wrd = $t_db->load_word($msg, word_names::MATH);
+        $dsp_id = $wrd->calc_view_id($msg);
         $t->assert($test_name, $dsp_id, 0);
 
 
@@ -161,61 +176,61 @@ class word_read_tests
 
         // create word objects for testing
         $wrd = new word ($t->usr1);
-        $wrd->load_by_name(word_names::MATH);
+        $wrd->load_by_name(word_names::MATH, $msg);
         $wrd_scale = new word ($t->usr1);
-        $wrd_scale->load_by_name(word_names::MIO);
+        $wrd_scale->load_by_name(word_names::MIO, $msg);
         $phr = new phrase ($t->usr1);
-        $phr->load_by_name(word_names::PI_SYMBOL);
+        $phr->load_by_name(word_names::PI_SYMBOL, $msg);
         $phr_grp = $t_db->load_phrase_group(array(word_names::PI_SYMBOL));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_ids(array($wrd->id()));
+        $wrd_lst->load_by_ids(array($wrd->id()), $msg);
         $t->assert('load_by_id', $wrd_lst->name(), '"' . word_names::MATH . '"');
 
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_ids(array($wrd->id(), $wrd_scale->id()));
+        $wrd_lst->load_by_ids(array($wrd->id(), $wrd_scale->id()), $msg);
         $t->assert('load_by_ids', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // load a word list by the word name
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_names(array(word_names::MATH));
+        $wrd_lst->load_by_names(array(word_names::MATH), $msg);
         $t->assert('load_by_name', $wrd_lst->name(), '"' . word_names::MATH . '"');
 
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_names(array(word_names::MATH, word_names::MIO));
+        $wrd_lst->load_by_names(array(word_names::MATH, word_names::MIO), $msg);
         $t->assert('load_by_names', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // load a word list by the phrase group
         if ($phr_grp != null) {
             $wrd_lst = new word_list ($t->usr1);
-            $wrd_lst->load_by_grp_id($phr_grp->id());
+            $wrd_lst->load_by_grp_id($phr_grp->id(), $msg);
             $t->assert('load_by_group', $wrd_lst->name(), '"' . word_names::PI_SYMBOL . '"');
         }
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_type($sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT));
+        $wrd_lst->load_by_type($sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT), $msg);
         $t->assert('load_by_type', $wrd_lst->name(), '"' . words::PCT . '"');
 
         // load a word list by name pattern
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_like('S');
+        $wrd_lst->load_like('S', $msg);
         $t->assert_contains('load_by_pattern', $wrd_lst->names(),
             array("S", "September", "Share", "Sv"));
 
         // add a word to a list by the word id
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_ids(array($wrd->id()));
-        $wrd_lst->add_id($wrd_scale->id());
+        $wrd_lst->load_by_ids(array($wrd->id()), $msg);
+        $wrd_lst->add_id($wrd_scale->id(), $msg);
         $t->assert('add_id', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
         // add a word to a list by the word name
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_ids(array($wrd->id()));
-        $wrd_lst->add_name(word_names::MIO);
+        $wrd_lst->load_by_ids(array($wrd->id()), $msg);
+        $wrd_lst->add_name(word_names::MIO, $msg);
         $t->assert('add_id', $wrd_lst->name(), '"' . word_names::MATH . '","' . word_names::MIO . '"');
 
 
@@ -223,8 +238,8 @@ class word_read_tests
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $foaf_lst = $t_wrd->word_city()->are()->names();
-        $fixed_lst = $t_phr->phrase_list_cities()->wrd_lst_all()->names();
+        $foaf_lst = $t_wrd->word_city()->are($msg)->names();
+        $fixed_lst = $t_phr->phrase_list_cities()->wrd_lst_all($msg)->names();
         $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
@@ -236,8 +251,20 @@ class word_read_tests
 
         $t->subheader($ts . 'export');
         $test_name = triple_names::PI_NAME;
-        $trp = $t_trp->triple_pi();
+        $trp = $t_trp->triple_pi_name();
         $t->assert_export_reload($ts . $test_name, $trp);
+
+        $t->subheader($ts . 'load with a message that already carries an error');
+        // regression test for triple::row_mapper_sandbox: the verb (and the other triple fields)
+        // must be mapped even if the message is already not ok before the load, so an error left
+        // on the message by an earlier operation never produces a half mapped triple that fails
+        // later e.g. with "The verb must be set before it can be loaded."
+        $test_name = 'the triple verb is mapped even if the message is not ok before the load';
+        $msg_err = new user_message();
+        $msg_err->add_message_text('unrelated error from an earlier operation');
+        $trp_err = new triple($t->usr1);
+        $trp_err->load_by_name(triple_names::PI_NAME, $msg_err);
+        $t->assert_true($test_name, $trp_err->has_verb());
     }
 
 }

@@ -86,11 +86,12 @@ class type_list
      * set the vars of these list display objects bases on the api json array
      * TODO Prio 1 add user_message parameter
      * @param array $json_array an api list json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
+     *
      */
-    function set_from_json_array(array $json_array, string $class = ''): user_message
+    function set_from_json_array(array $json_array, user_message $msg, string $class = ''): bool
     {
-        $msg = new user_message();
         foreach ($json_array as $value) {
             if ($class == verb::class) {
                 $vrb = new verb();
@@ -145,7 +146,7 @@ class type_list
                 $this->add_obj($typ);
             }
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     /**

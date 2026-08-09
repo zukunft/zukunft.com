@@ -41,6 +41,7 @@ include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTimeInterface;
@@ -184,11 +186,11 @@ class sys_log extends log
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::TIME] = $this->time?->format(DateTimeInterface::ATOM);
         if ($this->user_id() > 0) {
             $vars[json_fields::USER_ID] = $this->user_id();
@@ -339,7 +341,7 @@ class sys_log extends log
         return $html->tr($result);
     }
 
-    function get_html(?user $usr = null, string $back = ''): string
+    function get_html(user_message $msg, ?user $usr = null, string $back = ''): string
     {
         global $mtr, $sys;
 
@@ -348,7 +350,7 @@ class sys_log extends log
         // escape the user-controlled names and the request-derived log fields (stored xss); the
         // sys_log text/description/trace embed strings from log_err/log_warning (e.g. a blocked url)
         if ($this->user_id() > 0) {
-            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user()->name()));
+            $row_text .= $html->td($html->esc($this->user_name() ?? $this->user($msg)->name()));
         } else {
             $row_text .= $html->td();
         }
@@ -357,7 +359,7 @@ class sys_log extends log
         $row_text .= $html->td($html->esc($this->trace));
         $row_text .= $html->td($html->esc($this->function_id));
         if ($this->owner_id() > 0) {
-            $row_text .= $html->td($html->esc($this->owner_name()));
+            $row_text .= $html->td($html->esc($this->owner_name($msg)));
         } else {
             $row_text .= $html->td();
         }
@@ -374,27 +376,27 @@ class sys_log extends log
         return $html->tr($row_text);
     }
 
-    function user(): user
+    function user(user_message $msg): user
     {
         $usr = new user();
-        $usr->load_by_id($this->user_id);
+        $usr->load_by_id($this->user_id, $msg);
         return $usr;
     }
 
-    function owner(): user
+    function owner(user_message $msg): user
     {
         $usr = new user();
-        $usr->load_by_id($this->owner_id());
+        $usr->load_by_id($this->owner_id(), $msg);
         return $usr;
     }
 
     /** the owner (solver) name to show; the name from the api message, else a db lookup by id */
-    function owner_name(): string
+    function owner_name(user_message $msg): string
     {
         if ($this->solver_name !== null && $this->solver_name !== '') {
             return $this->solver_name;
         }
-        return $this->owner()->name();
+        return $this->owner($msg)->name();
     }
 
     // TODO review

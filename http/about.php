@@ -49,7 +49,7 @@ $db_con = $app->start("about", $msg);
 
 // display the view
 $html = new html_base();
-echo $html->about_page();
+echo $html->about_page($msg);
 
 // close the database and measure the script loading time before the frontend has been created
 $app->end($db_con, $start_time);

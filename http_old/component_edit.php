@@ -44,12 +44,14 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'json_fields.php';
 
 // open database
+$msg = new user_message();
 $app = new frontend();
 global $sys;
 $db_con = $app->start("component_edit");
@@ -60,13 +62,13 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 
 // load the session user
 $usr = new user;
-$result .= $usr->get();
+$result .= $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
     $upd_result = '';
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // get the view component id
     if (!isset($_GET[url_var::ID])) {
@@ -77,12 +79,12 @@ if ($usr->id > 0) {
 
         // create the view component object to apply the user changes to it
         $cmp = new component($usr);
-        $result .= $cmp->load_by_id($_GET[url_var::ID]);
+        $result .= $cmp->load_by_id($_GET[url_var::ID], $msg);
 
         // get the word used as a sample to illustrate the changes
         $wrd = new word($usr);
         if (isset($_GET['word'])) {
-            $result .= $wrd->load_by_id($_GET['word']);
+            $result .= $wrd->load_by_id($_GET['word'], $msg);
         } else {
             // get the default word for the view $msk
         }
@@ -96,15 +98,15 @@ if ($usr->id > 0) {
         $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
         if ($dsp_link_id > 0) {
             $dsp_link = new view($usr);
-            $result .= $dsp_link->load_by_id($dsp_link_id);
-            $order_nbr = $cmp->next_nbr($dsp_link_id);
+            $result .= $dsp_link->load_by_id($dsp_link_id, $msg);
+            $order_nbr = $cmp->next_nbr($dsp_link_id, $msg);
             $upd_result = $cmp->link($dsp_link, $order_nbr, $usr_msg);
         }
 
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
             $dsp_unlink = new view($usr);
-            $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
+            $result .= $dsp_unlink->load_by_id($dsp_unlink_id, $msg);
             $upd_result .= $cmp->unlink($dsp_unlink, $usr_msg);
         }
 
@@ -126,10 +128,10 @@ if ($usr->id > 0) {
                 $cmp->type_id = $_GET['type'];
             } //
             if (isset($_GET[json_fields::PHRASE_ROW])) {
-                $cmp->reload_row_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_row_phrase($msg, $_GET[json_fields::PHRASE_ROW]);
             } //
             if (isset($_GET[json_fields::PHRASE_COL])) {
-                $cmp->reload_col_phrase($_GET[json_fields::PHRASE_COL]);
+                $cmp->reload_col_phrase($msg, $_GET[json_fields::PHRASE_COL]);
             } //
 
             // save the changes
@@ -152,7 +154,9 @@ if ($usr->id > 0) {
 
             // show the word and its relations, so that the user can change it
             $cmp_ui = new component_ui($cmp->api_json());
-            $result .= $cmp_ui->dsp_edit($add_link, $wrd, $back);
+            // the frontend display object needs a frontend message object
+            // (frontend and backend are separate apps with separate user_message classes)
+            $result .= $cmp_ui->dsp_edit($add_link, $wrd, $back, new user_message_ui());
         }
     }
 }

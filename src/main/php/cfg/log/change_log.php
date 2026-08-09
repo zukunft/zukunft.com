@@ -676,18 +676,22 @@ class change_log extends db_object_seq_id_user
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         $vars = [];
         // the change id keeps the write order in the frontend display when several
         // changes share the same second (see change_log_list::sort_by_time_and_what)
         $vars[json_fields::ID] = $this->id();
         if ($this->get_user() != null) {
-            $vars[json_fields::USR] = $this->get_user()->api_json_array_core($typ_lst, $usr);
+            $vars[json_fields::USR] = $this->get_user()->api_json_array_core($typ_lst, $msg, $usr);
         }
         $vars[json_fields::ACTION_ID] = $this->action_id;
         $vars[json_fields::TABLE_ID] = $this->table_id;
@@ -709,6 +713,7 @@ class change_log extends db_object_seq_id_user
      */
     function load_by_field_row(
         string          $class,
+        user_message    $msg,
         string          $fld = '',
         int|string|null $id = null,
         bool            $usr_only = false
@@ -723,11 +728,10 @@ class change_log extends db_object_seq_id_user
         $this->set_class($class, $usr_only);
         $this->set_field($fld);
         $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
 
-        if ($db_row != null) {
-            $this->row_mapper($db_row);
-            $result = true;
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $result = $this->row_mapper($db_row, $msg);
         }
 
         return $result;
@@ -778,9 +782,9 @@ class change_log extends db_object_seq_id_user
         }
 
         $tbl = new change_table();
-        $tbl->load_by_code_id($table_name);
+        $tbl->load_by_code_id($table_name, $msg);
         if (!$tbl->has_db_id()) {
-            $tbl->load_by_name($table_name);
+            $tbl->load_by_name($table_name, $msg);
             if (!$tbl->has_db_id()) {
                 $tbl->name = $table_name;
                 $tbl->code_id = $table_name;
@@ -817,7 +821,7 @@ class change_log extends db_object_seq_id_user
         }
 
         $fld = new change_field();
-        $fld->load_by_name_and_table_id($field_name, $tbl_id);
+        $fld->load_by_name_and_table_id($field_name, $tbl_id, $msg);
         if (!$fld->has_db_id()) {
             $fld->tbl_id = $tbl_id;
             $fld->name = $field_name;
@@ -843,7 +847,7 @@ class change_log extends db_object_seq_id_user
 
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $act = new change_action();
-        $act->load_by_name($action_name);
+        $act->load_by_name($action_name, $msg);
         $action_id = $act->id();
 
         // add new action name if needed
@@ -866,13 +870,17 @@ class change_log extends db_object_seq_id_user
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
+     * must be overwritten by the named or link user log child class
      * TODO if changes on table values are requested include also the table "user_values"
+     * @param user_message $msg to collect any problem while loading and mapping the last change
+     * @param bool $ex_time true to exclude the change time from the returned text
+     * @return string the human-readable text of the last change
      */
-    function dsp_last(bool $ex_time = false): string
+    function dsp_last(user_message $msg, bool $ex_time = false): string
     {
-        $msg = 'Error: either the named or link user log function should be used';
-        log_err($msg);
-        return $msg;
+        $err_txt = 'Error: either the named or link user log function should be used';
+        log_err_msg($err_txt, $msg);
+        return $err_txt;
     }
 
     // add the row id to an existing log entry

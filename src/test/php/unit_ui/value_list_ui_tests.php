@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -57,6 +59,8 @@ class value_list_ui_tests
         $tl = new test_lib();
         $t_wrd = new test_words($t);
         $t_val = new test_values($t);
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $ui = new frontend('unit ui html reference list');
         $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
@@ -89,45 +93,45 @@ class value_list_ui_tests
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_ui) . '<br>';
-        $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_ui) . '<br>';
-        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_ui, '', '', 4) . '<br><br>';
-        $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui()->list_unit(7) . '<br><br>';
-        $table_html = $t_val->value_list_most_relevant_ui()->list_most_relevant();
+        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($msg_ui, $phr_lst_context_ui) . '<br>';
+        $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui) . '<br>';
+        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 4) . '<br><br>';
+        $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui($msg)->list_unit($msg_ui,7) . '<br><br>';
+        $table_html = $t_val->value_list_most_relevant_ui()->list_most_relevant($msg_ui);
         $test_page .= 'as short and grouped list: ' . $table_html . '<br>';
         // the same values in the standard, none grouped format: all phrases of a value, then its number
-        $test_page .= 'same values in standard / none grouped format: ' . $t_val->value_list_most_relevant_ui()->list() . '<br>';
-        $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
+        $test_page .= 'same values in standard / none grouped format: ' . $t_val->value_list_most_relevant_ui()->list($msg_ui) . '<br>';
+        $test_page .= 'as table without context: ' . $lst_zh_ui->table($msg_ui) . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_ui->headline();
-        $table_html = $lst_zh_ui->table($phr_lst_context_ui);
+        $table_html = $lst_zh_ui->table($msg_ui, $phr_lst_context_ui);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
-        $t->html_page_test($test_page, 'value_list', 'value_list', $t);
+        $t->html_page_test($test_page, 'value_list', 'value_list', $msg_ui);
 
         $t->subheader($ts . 'user config');
 
-        $cfg = new config($t_val->value_list_all()->api_json([api_types::INCL_PHRASES]));
+        $cfg = new config($t_val->value_list_all($msg)->api_json([api_types::INCL_PHRASES]));
         $test_name = 'a loaded config value is returned by the phrase names';
         // get_by returns the display value, so the number is rounded for the user
-        $t->assert($test_name, $cfg->get_by([word_names::PI_SYMBOL]), round(values::PI_LONG, 2));
+        $t->assert($test_name, $cfg->get_by([word_names::PI_SYMBOL], $msg_ui), round(values::PI_LONG, 2));
         $test_name = 'a missing config value returns the given default';
-        $t->assert($test_name, $cfg->get_by([words::POD], 7), 7);
+        $t->assert($test_name, $cfg->get_by([words::POD], $msg_ui, 7), 7);
 
         $t->subheader($ts . 'sort by impact');
         $impact_lst = $t_val->value_list_zh_impact_ui();
         $impact_lst->sort_by_impact();
         $test_name = 'the value of the phrase with the highest impact is first';
-        $t->assert_text_order($test_name, $impact_lst->list(), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
+        $t->assert_text_order($test_name, $impact_lst->list($msg_ui), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         // two values with the same impact and number must not be ordered by the volatile group id
         // (packed from the seed-assigned word ids), but by the stable group name, so the rendered
         // order stays the same across test database rebuilds ("Zurich" sorts before "city")
         $test_name = 'a number tie is broken by the group name for a stable order';
-        $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list(), word_names::ZH, word_names::CITY);
+        $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list($msg_ui), word_names::ZH, word_names::CITY);
         $test_name = 'sort by impact of an empty value list renders nothing';
-        $t->assert($test_name, new value_list_ui()->list(), '');
+        $t->assert($test_name, new value_list_ui()->list($msg_ui), '');
 
         $t->subheader($ts . 'most relevant');
-        $mr_html = $t_val->value_list_most_relevant_ui()->list_most_relevant();
+        $mr_html = $t_val->value_list_most_relevant_ui()->list_most_relevant($msg_ui);
         $test_name = 'the newest time group (2022) is shown before the older one (2021)';
         $t->assert_text_order($test_name, $mr_html, word_names::YEAR_2022, word_names::YEAR_2021);
         $test_name = 'the time groups are shown before the repeated-phrase group';
@@ -135,7 +139,7 @@ class value_list_ui_tests
         $test_name = 'the repeated-phrase group is shown before the ungrouped values';
         $t->assert_text_order($test_name, $mr_html, word_names::ABB, word_names::PI);
         $test_name = 'most relevant of an empty value list renders nothing';
-        $t->assert($test_name, new value_list_ui()->list_most_relevant(), '');
+        $t->assert($test_name, new value_list_ui()->list_most_relevant($msg_ui), '');
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

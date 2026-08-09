@@ -143,12 +143,12 @@ class result_list extends sandbox_value_list
      */
     function load_by_phrase_list(
         phrase_list $phr_lst,
-        bool        $or = false,
+        user_message $msg, bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
         int         $page = 0
     ): bool
     {
-        return parent::load_by_phr_lst_multi($phr_lst, result::class, $or, $limit, $page);
+        return parent::load_by_phr_lst_multi( $phr_lst, $msg, result::class, $or, $limit, $page );
     }
 
     /**
@@ -163,13 +163,13 @@ class result_list extends sandbox_value_list
      * @param formula|formula_map $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
      */
-    function load_by_frm(formula|formula_map $frm): bool
+    function load_by_frm(formula|formula_map $frm, user_message $msg): bool
     {
         global $db_con;
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_frm($sc, $frm);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -179,12 +179,12 @@ class result_list extends sandbox_value_list
      * @param formula $frm the formula whose results should be loaded
      * @return bool true if at least one result has been loaded
      */
-    function load_by_formula(formula $frm): bool
+    function load_by_formula(formula $frm, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_formula($db_con, $frm);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -194,12 +194,12 @@ class result_list extends sandbox_value_list
      * @param phrase $phr the phrase whose results should be loaded
      * @return bool true if at least one result has been loaded
      */
-    function load_by_phrase(phrase $phr): bool
+    function load_by_phrase(phrase $phr, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_phrase($db_con, $phr);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -213,7 +213,7 @@ class result_list extends sandbox_value_list
      */
     function load_by_src(
         phrase_list $phr_lst,
-        bool        $or = false,
+        user_message $msg, bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
         int         $page = 0
     ): bool
@@ -225,7 +225,7 @@ class result_list extends sandbox_value_list
         }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_src($sc, $phr_lst, $or, $limit, $page);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -234,11 +234,11 @@ class result_list extends sandbox_value_list
      * @param array $ids result ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(array $ids): bool
+    function load_by_ids(array $ids, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     // internal load
@@ -250,16 +250,16 @@ class result_list extends sandbox_value_list
      * @param bool $load_all
      * @return bool
      */
-    function load(sql_par $qp, bool $load_all = false): bool
+    function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
         if ($qp->name != '') {
-            $db_rows = $db_con->get($qp, 'result list');
+            $db_rows = $db_con->get($qp, $msg, 'result list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());
-                    $res->row_mapper($db_row);
+                    $res->row_mapper($db_row, $msg);
                     $this->add_obj($res);
                     $result = true;
                 }
@@ -762,7 +762,7 @@ class result_list extends sandbox_value_list
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
      */
-    function load_by_grp(group $grp, bool $by_source = false): bool
+    function load_by_grp(group $grp, user_message $msg, bool $by_source = false): bool
     {
         global $db_con;
 
@@ -771,7 +771,7 @@ class result_list extends sandbox_value_list
         } else {
             $qp = $this->load_sql_by_src_grp($db_con->sql_creator(), $grp);
         }
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -789,12 +789,12 @@ class result_list extends sandbox_value_list
      *             load_by_phrase() for a word or triple,
      *             and load_by_grp() for a phrase group (with $by_source for the source group)
      */
-    function load_by_obj(object $obj, bool $by_source = false): bool
+    function load_by_obj(object $obj, user_message $msg, bool $by_source = false): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
 
@@ -1135,11 +1135,9 @@ class result_list extends sandbox_value_list
      * @param formula $frm - the formula that has been updated
      * $usr - to define which user view should be updated
      */
-    function frm_upd_lst(formula $frm, string $back): job_list
+    function frm_upd_lst(formula $frm, user_message $msg, string $back): job_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
-        $lib = new library();
-        $msg = new user_message();
 
         // to inform the user about the progress
         $last_msg_time = microtime(true); // the start time
@@ -1164,7 +1162,7 @@ class result_list extends sandbox_value_list
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
         $trm_lst_back = new term_list($this->get_user());
         $trm_back = new term($this->get_user());
-        $trm_back->load_by_id($back);
+        $trm_back->load_by_id($back, $msg);
         $trm_lst_back->add($trm_back);
         $trm_lst_back = $frm->load_exp_terms($msg, $trm_lst_back, $exp);
         $phr_lst_preset_following = $exp->terms_following($msg, $trm_lst_back);
@@ -1178,14 +1176,14 @@ class result_list extends sandbox_value_list
         }
 
         // exclude the special elements from the phrase list to avoid double usage
-        $phr_lst_frm_used->remove($phr_lst_preset);
+        $phr_lst_frm_used->remove_terms($phr_lst_preset);
         if ($phr_lst_preset->dsp_name() <> '""') {
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
 
         // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "year"
         foreach ($frm_lst_preset_following->lst() as $frm_special) {
-            $frm_special->load();
+            $frm_special->load($msg);
             log_debug('get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
             $phr_lst_preset = $frm_special->special_phr_lst($phr_lst_frm_assigned);
             log_debug('got phrases ' . $phr_lst_preset->dsp_id());
@@ -1205,12 +1203,12 @@ class result_list extends sandbox_value_list
             $frm->load_wrd();
         }
         */
-        $phr_frm = $frm->name_wrd;
-        log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name_dsp() . ' should not be used for calculation to avoid loops');
+        $phr_frm = $frm->name_phr;
+        log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name() . ' should not be used for calculation to avoid loops');
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->load_result_phrases();
+        $phr_lst_res = $exp->load_result_phrases($msg);
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }
@@ -1225,16 +1223,18 @@ class result_list extends sandbox_value_list
         // because there may be one value and several results for the same word group
         log_debug('get all results used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new group_list($this->get_user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
-        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
-        $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
-        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...
-        $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
+        $phr_lst = new phrase_list($this->get_user());
+        $phr_lst->add($phr_frm);
+        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res);
+        $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_lst, $phr_lst_res);
+        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res); // for predefined formulas ...
+        $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_lst, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
         // first calculate the standard results for all user and then the user-specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->get_user());
-        $usr_lst->load_active();
+        $usr_lst->load_active($msg);
 
         $lib = new library();
         log_debug('active users (' . $lib->dsp_array($usr_lst->names()) . ')');
@@ -1280,10 +1280,10 @@ class result_list extends sandbox_value_list
      * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
-    function load_by_val(value_base $val): string
+    function load_by_val(value_base $val, user_message $msg): string
     {
         $phr_lst = $val->phr_lst();
-        return $this->load_by_phrase_list($phr_lst);
+        return $this->load_by_phrase_list($phr_lst, $msg);
     }
 
     /**

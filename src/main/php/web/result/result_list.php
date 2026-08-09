@@ -120,7 +120,7 @@ class result_list extends sandbox_list_value
      * @param group_list $lst the group used for the selection
      * @return bool true if result has been loaded
      */
-    function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
+    function load_by_formula_and_group_list(formula $frm, group_list $lst, user_message $msg): bool
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
@@ -134,7 +134,7 @@ class result_list extends sandbox_list_value
      * @param formula $frm the formula to select the results
      * @return bool true if value or phrases are found
      */
-    function load_by_formula(formula $frm): bool
+    function load_by_formula(formula $frm, user_message $msg): bool
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
@@ -147,7 +147,7 @@ class result_list extends sandbox_list_value
      * @param group $grp a named object used for selection e.g. a formula
      * @return bool true if value or phrases are found
      */
-    function load_by_group(group $grp): bool
+    function load_by_group(group $grp, user_message $msg): bool
     {
         $data = array();
         $data[url_var::GROUP] = $grp->id();
@@ -258,15 +258,16 @@ class result_list extends sandbox_list_value
      * result list shown in a view (e.g. via ui_list) does not depend on the api/db row order
      */
     function list(
-        phrase_list $context_phr_lst = new phrase_list(),
-        string      $back = '',
-        string      $style = '',
-        ?int        $limit = null,
-        ?int        $page = null
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = '',
+        string       $style = '',
+        ?int         $limit = null,
+        ?int         $page = null
     ): string
     {
         $this->sort_by_number();
-        return parent::list($context_phr_lst, $back, $style, $limit, $page);
+        return parent::list($msg, $context_phr_lst, $back, $style, $limit, $page);
     }
 
 

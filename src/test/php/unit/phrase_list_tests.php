@@ -34,6 +34,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -45,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -83,6 +85,7 @@ class phrase_list_tests
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $msg = new user_message();
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
@@ -124,7 +127,7 @@ class phrase_list_tests
         $wrd = new word($t->usr1);
         $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $sys->typ_lst->vrb->get_verb(verbs::PART_NAME);
+        $vrb = $sys->verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
@@ -135,7 +138,7 @@ class phrase_list_tests
         // check that a time phrase is correctly removed from a phrase list
         $phr_lst = $this->get_phrase_list($t);
         $phr_lst_ex_time = clone $phr_lst;
-        $phr_lst_ex_time->ex_time();
+        $phr_lst_ex_time->ex_time($msg);
         $t->assert('phrase_list->ex_time', true, true);
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time($t)->dsp_id();
@@ -143,8 +146,8 @@ class phrase_list_tests
 
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t_phr->phrase_list();
-        $wrd_lst = $phr_lst->wrd_lst_all();
-        $t->assert($test_name, $wrd_lst->count(), 3);
+        $wrd_lst = $phr_lst->wrd_lst_all($msg);
+        $t->assert($test_name, $wrd_lst->count(), 4);
 
         // TODO add assume time sql statement test
 
@@ -157,12 +160,37 @@ class phrase_list_tests
         // TODO mix it with months and quarters to select the best matching and automatic estimations
 
 
+        $t->subheader($ts . 'remove_terms');
+
+        // positive: a phrase named in the delete term list is removed;
+        // "Pi" has phrase id 17 but term id 33, so this only passes if the term ids are cast to phrase ids
+        $test_name = 'a phrase named in the delete term list is removed';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, word_names::ONE_ID, word_names::ONE));
+        $phr_lst->add($this->get_phrase($t, word_names::PI_ID, word_names::PI));
+        $del_lst = new term_list($t->usr1);
+        $del_lst->add($this->get_phrase($t, word_names::PI_ID, word_names::PI)->term());
+        $phr_lst->remove_terms($del_lst);
+        $t->assert_text_not_contains($test_name, $phr_lst->dsp_name(), word_names::PI);
+        $test_name = 'the phrase not in the delete term list remains';
+        $t->assert_text_contains($test_name, $phr_lst->dsp_name(), word_names::ONE);
+
+        // negative: a term that is not in the phrase list leaves the list unchanged
+        $test_name = 'a term not in the phrase list leaves the list unchanged';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, word_names::ONE_ID, word_names::ONE));
+        $phr_lst->add($this->get_phrase($t, word_names::PI_ID, word_names::PI));
+        $del_lst = new term_list($t->usr1);
+        $del_lst->add($this->get_phrase($t, word_names::FLOW_ID, word_names::FLOW)->term());
+        $phr_lst->remove_terms($del_lst);
+        $t->assert($test_name, $phr_lst->count(), 2);
+
 
         $t->subheader($ts . 'FOAF');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
         $wrd_city = $t_wrd->word_city();
-        $city_lst = $wrd_city->are($t_phr->phrase_list_all());
+        $city_lst = $wrd_city->are($msg);
         $target = $t_phr->phrase_list_cities();
         // TODO Prio 2 activate
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());

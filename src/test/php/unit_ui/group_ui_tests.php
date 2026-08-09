@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -44,6 +45,7 @@ class group_ui_tests
     {
         $html = new html_base();
         $t_grp = new test_groups($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html phrase group ';
@@ -56,7 +58,7 @@ class group_ui_tests
         $test_page .= 'named phrase group with link: ' . $grp->name_link_list() . '<br>';
         $test_page .= 'phrase group with tooltip: ' . $grp_2019->name_tip() . '<br>';
         $test_page .= 'phrase group with link: ' . $grp_2019->name_link_list() . '<br>';
-        $t->html_page_test($test_page, 'phrase_group', 'phrase_group', $t);
+        $t->html_page_test($test_page, 'phrase_group', 'phrase_group', $msg);
     }
 
 }

@@ -63,12 +63,13 @@ class formula_link_list extends sandbox_link_list
     /**
      * fill the formula link list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new formula_link($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new formula_link($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -140,11 +141,11 @@ class formula_link_list extends sandbox_link_list
      * @param int $frm_id the id of the formula which links should be loaded
      * @return bool true if at least one word found
      */
-    function load_by_frm_id(int $frm_id): bool
+    function load_by_frm_id(int $frm_id, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_frm_id($db_con->sql_creator(), $frm_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**

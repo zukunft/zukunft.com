@@ -74,18 +74,18 @@ class url_test_base
     ];
 
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
-    protected test_cleanup $t;       // the test environment
-    protected string $ts;            // the test section prefix used in the headers
-    protected frontend $ui;          // the frontend used to render the html
-    protected user_ui $usr;          // the rendering (frontend) user
-    protected user_message $usr_msg; // the message buffer carried through the steps
-    protected user_request $req;     // the bundled request context for the workflow steps
-    protected int $wf_id;            // the dynamic db id of the object the workflow runs on
-    protected int $wf_fixed_id;      // the fixed snapshot id that replaces the dynamic id
+    protected test_cleanup $t;         // the test environment
+    protected string $ts;              // the test section prefix used in the headers
+    protected frontend $ui;            // the frontend used to render the html
+    protected user_ui $usr;            // the rendering (frontend) user
+    protected user_message $msg;       // the message buffer carried through the steps
+    protected user_request $req;       // the bundled request context for the workflow steps
+    protected int $wf_id;              // the dynamic db id of the object the workflow runs on
+    protected int $wf_fixed_id;        // the fixed snapshot id that replaces the dynamic id
     protected array $wf_norm_ids = []; // more volatile db ids replaced in the snapshots by their fixed test id (real id => fixed id) e.g. the from and to words of the test triple
-    protected string $step_path;     // the snapshot file path grown by the cumulative spine steps
-    protected string $http_method;   // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
-    protected string $url;           // the last call url of the workflow
+    protected string $step_path;       // the snapshot file path grown by the cumulative spine steps
+    protected string $http_method;     // the form method of the most recently rendered page, used as the method of the next save / confirm form submit
+    protected string $url;             // the last call url of the workflow
 
 
     /**
@@ -99,9 +99,9 @@ class url_test_base
     {
         $this->t = $t;
         $this->ts = $ts;
-        $this->usr_msg = new user_message();
+        $this->msg = new user_message();
         $this->ui = new frontend('view');
-        $this->ui->load_cache();
+        $this->ui->load_cache($this->msg);
         // the html renderers read the type cache from the global $ui_sys; point it at the just loaded
         // frontend cache so the render does not depend on a stale cache left by another test
         global $ui_sys;
@@ -110,12 +110,12 @@ class url_test_base
         // the shared default format so an object with history renders
         $ui_sys->cfg = new config_ui();
         $this->usr = new user_ui();
-        $this->usr->set_from_json($t->usr1->api_json(), $this->usr_msg);
+        $this->usr->set_from_json($t->usr1->api_json(), $this->msg);
         // the backend attributes an insert (the new row user and the change log author) to the
         // message user (see db_object_seq_id insert log), so use usr1 - the preferred test user -
         // to record all workflow changes for usr1; the test profile of usr1 is system privileged
         // (user::is_system), so adding the reserved test names is still allowed (check_preserved)
-        $this->usr_msg->usr = $this->usr;
+        $this->msg->usr = $this->usr;
         $t->name = $name;
         $t->header($ts);
     }
@@ -151,10 +151,10 @@ class url_test_base
         // start each workflow with a fresh message buffer so a warning from a previous workflow
         // (e.g. the empty-name warning of a *_fail workflow) does not leak into this workflow's first snapshot;
         // the message user is usr1 so the workflow writes are recorded for the preferred test user (see init)
-        $this->usr_msg = new user_message();
-        $this->usr_msg->usr = $this->usr;
+        $this->msg = new user_message();
+        $this->msg->usr = $this->usr;
         // render in test mode so that the snapshot is reproducible without backend calls
-        $this->req = new user_request($this->t->usr1, $this->usr_msg, $this->ui->dto, $do_it, true);
+        $this->req = new user_request($this->t->usr1, $this->msg, $this->ui->dto, $do_it, true);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write
@@ -197,11 +197,11 @@ class url_test_base
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->usr_msg,
+            $this->req->usr_backend, $this->req->msg,
             $this->req->dto, $this->req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls
-        $result = $this->ui->url_to_html($next_url, $this->req->usr_msg,
+        $result = $this->ui->url_to_html($next_url, $this->req->msg,
             $this->req->dto, $this->req->test_mode);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);
@@ -290,9 +290,9 @@ class url_test_base
         // directly; the standard url is the relative request the form sends
         $call_url = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $query;
         $std_url = $script . $query;
-        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->usr_msg);
+        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->msg);
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
-        $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
+        $human_json = $url_map->human_url_to_json($url_arr, $this->msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $url_arr[url_var::ID] ?? 0);
         // building the human url and json mapping reads from the database and compares against a file,
@@ -355,9 +355,9 @@ class url_test_base
         // directly; the standard url is the relative request the form sends
         $call_url = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . $query;
         $std_url = $script . $query;
-        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->usr_msg);
+        $human_url = $script . $url_map->standard_url_to_human($url_arr, $this->msg);
         // the human url as a json object with the 8- / 9-prefixed vars grouped into subarrays
-        $human_json = $url_map->human_url_to_json($url_arr, $this->usr_msg);
+        $human_json = $url_map->human_url_to_json($url_arr, $this->msg);
         $content = $method . "\n" . $call_url . "\n" . $std_url . "\n" . $human_url . "\n" . $human_json;
         $content = $this->normalize_ids($content, $this->wf_id);
         // building the human url and json mapping reads from the database and compares against a file,
@@ -469,7 +469,7 @@ class url_test_base
     private function normalize_navbar_role(string $html): string
     {
         $result = $html;
-        $name = $this->req->usr_msg->usr?->name();
+        $name = $this->req->msg->usr?->name();
         if ($name != null and $name != '') {
             // scope the role prefix to the navbar user menu (the <details class="user-menu"> block)
             // only, so it is never added to other occurrences of the user name on the page e.g. in

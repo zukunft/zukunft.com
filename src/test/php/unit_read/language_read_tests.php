@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -43,6 +44,7 @@ class language_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -57,9 +59,9 @@ class language_read_tests
 
         $test_name = 'load language ' . languages::DEFAULT . ' by name and id';
         $lan = new language(languages::DEFAULT);
-        $lan->load_by_name(languages::TN_READ);
+        $lan->load_by_name(languages::TN_READ, $msg);
         $lan_by_id = new language(languages::DEFAULT);
-        $lan_by_id->load_by_id($lan->id(), language::class);
+        $lan_by_id->load_by_id($lan->id(), $msg);
         $t->assert($test_name, $lan_by_id->name(), languages::TN_READ);
         
 
@@ -71,7 +73,7 @@ class language_read_tests
         global $sys;
         $lan_typ_id = $sys->typ_lst->lan_for->id(language_forms::PLURAL);
         $lan_typ = new language_form(language_forms::PLURAL);
-        $lan_typ->load_by_id($lan_typ_id);
+        $lan_typ->load_by_id($lan_typ_id, $msg);
         $t->assert($test_name, $lan_typ->get_code_id(), language_forms::PLURAL);
 
     }

@@ -110,20 +110,20 @@ class figure_list extends ListBase
      * @return string with a list of the figure names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function display_linked(user_message $msg, string $back = ''): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($msg, $back));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
      * @return array with a list of the figure names with html links
      */
-    function names_linked(string $back = ''): array
+    function names_linked(user_message $msg, string $back = ''): array
     {
         $names = array();
         foreach ($this->lst() as $fig) {
-            $names[] = $fig->display_linked();
+            $names[] = $fig->display_linked($msg);
         }
         return $names;
     }

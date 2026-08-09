@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -63,6 +64,7 @@ class change_log_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -89,7 +91,6 @@ class change_log_read_tests
         $wrd = $t_wrd->word();
         $vrb = $t_vrb->verb();
         $trp = $t_trp->triple_pi();
-        $val = $t_val->value();
         $frm = $t_frm->formula();
         $src = $t_src->source_reserved();
         $ref = $t_ref->reference();
@@ -98,7 +99,7 @@ class change_log_read_tests
 
         // check if loading the changes technically works
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_wrd($wrd, $t->usr1, change_fields::FLD_WORD_NAME);
+        $result = $lst->load_by_fld_of_wrd( $wrd, $t->usr1, $msg, change_fields::FLD_WORD_NAME );
         $t->assert('word name change', $result, true);
 
         // ... and if the first entry is the adding of the word name
@@ -108,7 +109,7 @@ class change_log_read_tests
 
         // check loading of verb name changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_vrb($vrb, $t->usr1, change_fields::FLD_VERB_NAME);
+        $result = $lst->load_by_fld_of_vrb( $vrb, $t->usr1, $msg, change_fields::FLD_VERB_NAME );
         $t->assert('verb name change', $result, true);
 
         // ... and if the first entry is the adding a verb name
@@ -118,13 +119,13 @@ class change_log_read_tests
 
         // check loading of triple name changes of triples
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_fields::FLD_TRIPLE_NAME);
+        $result = $lst->load_by_fld_of_trp( $trp, $t->usr1, $msg, change_fields::FLD_TRIPLE_NAME );
         $t->assert('triple name change', $result, true);
 
         // check loading of given name changes of triples
         // TODO replace with triple name ?
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_fields::FLD_GIVEN_NAME);
+        $result = $lst->load_by_fld_of_trp( $trp, $t->usr1, $msg, change_fields::FLD_GIVEN_NAME );
         // TODO Prio 1 activate
         //$t->assert('given name change', $result, true);
 
@@ -135,13 +136,16 @@ class change_log_read_tests
         //$t->assert('... the given name', $first_change->new_value, triple_names::PI_NAME);
 
         // check loading of user value changes
+        // use the pi value as keyed in the seeded database by the "Pi (math)" triple,
+        // because the change log rows of the import are written for that group id
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_val($val, $t->usr1, change_fields::FLD_NUMERIC_VALUE);
+        $val_db = $t_val->value_pi_math();
+        $result = $lst->load_by_fld_of_val( $val_db, $t->usr1, $msg, change_fields::FLD_NUMERIC_VALUE );
         $t->assert('value change', $result, true);
 
         // ... and if the first entry is the update Pi probably because not all decimals can be saved in the database
-        $first_change = $lst->lst()[0];
         // TODO review
+        //$first_change = $lst->lst()[0];
         //$t->assert('first value change is updating Pi', $first_change->old_value, values::TV_READ_SHORT);
         //$t->assert('... to empty', $first_change->new_value, values::TV_READ_SHORT);
         //$t->assert('first value change is updating Pi from empty', $first_change->old_value, "");
@@ -149,7 +153,7 @@ class change_log_read_tests
 
         // check loading of user formula changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_frm($frm, $t->usr1, change_fields::FLD_FORMULA_USR_TEXT);
+        $result = $lst->load_by_fld_of_frm( $frm, $t->usr1, $msg, change_fields::FLD_FORMULA_USR_TEXT );
         $t->assert('formula expression change', $result, true);
 
         // ... and if the first entry is the adding the minute scale formula
@@ -159,7 +163,7 @@ class change_log_read_tests
 
         // check loading of name changes of source
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_src($src, $t->usr1, change_fields::FLD_SOURCE_NAME);
+        $result = $lst->load_by_fld_of_src( $src, $t->usr1, $msg, change_fields::FLD_SOURCE_NAME );
         $t->assert('source name change', $result, true);
 
         // ... and if the first entry is the setting the source name
@@ -169,7 +173,7 @@ class change_log_read_tests
 
         // check loading of name changes of view
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_ui($msk, $t->usr1, change_fields::FLD_VIEW_NAME);
+        $result = $lst->load_by_fld_of_ui( $msk, $t->usr1, $msg, change_fields::FLD_VIEW_NAME );
         $t->assert('view name change', $result, true);
 
         // ... and if the first entry is the setting the view name
@@ -179,7 +183,7 @@ class change_log_read_tests
 
         // check loading of name changes of view component
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_cmp($cmp, $t->usr1, change_fields::FLD_COMPONENT_NAME);
+        $result = $lst->load_by_fld_of_cmp( $cmp, $t->usr1, $msg, change_fields::FLD_COMPONENT_NAME );
         $t->assert('view component name change', $result, true);
 
         // ... and if the first entry is the setting the view component name
@@ -192,9 +196,9 @@ class change_log_read_tests
         $t->subheader($ts . 'API unit db tests');
 
         $wrd = new word($t->usr1);
-        $wrd->load_by_id(1);
+        $wrd->load_by_id(1, $msg);
         $log_lst = new change_log_list();
-        $log_lst->load_by_fld_of_wrd($wrd, $t->usr_system, change_fields::FLD_WORD_NAME);
+        $log_lst->load_by_fld_of_wrd( $wrd, $t->usr_system, $msg, change_fields::FLD_WORD_NAME );
         // TODO Prio 1 activate
         // $t->assert_api($log_lst);
 

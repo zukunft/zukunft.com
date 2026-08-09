@@ -33,6 +33,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
+use ValueError;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED . 'json_fields.php';
@@ -45,7 +46,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use ValueError;
 
 class Translator
 {

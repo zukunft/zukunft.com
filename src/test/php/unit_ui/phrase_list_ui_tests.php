@@ -39,6 +39,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -57,6 +58,7 @@ class phrase_list_ui_tests
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html phrase list ';
@@ -92,7 +94,7 @@ class phrase_list_ui_tests
         $from_rows .= $lst->selector($form, 0, url_var::PHRASE, msg_id::FORM_SELECT_PHRASE) . '<br>';
         $test_page .= $html->form($form, $from_rows);
 
-        $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $t);
+        $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $msg);
 
         /*
          * TODO add a phrase selector if the phrase list is short and add an test

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'share_types.php';
 
@@ -48,6 +49,7 @@ class share_read_tests
 
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'share read db->';
@@ -60,7 +62,7 @@ class share_read_tests
 
         // load the share types
         $lst = new share_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded

@@ -99,20 +99,20 @@ class import_write_tests
 
         $test_name = 'remove the test word and word to directly as fallback to cleanup the database as fallback for the triple case';
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_names::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD, $msg);
         if ($wrd->id() > 0) {
             $wrd->del($msg);
         }
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_names::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD, $msg);
         $t->assert($test_name, $wrd->id(), 0, test_base::TIMEOUT_LIMIT_DB);
         $wrd_to = new word($t->usr1);
-        $wrd_to->load_by_name(word_names::TEST_ADD_TO);
+        $wrd_to->load_by_name(word_names::TEST_ADD_TO, $msg);
         if ($wrd_to->id() > 0) {
             $wrd_to->del($msg);
         }
         $wrd_to = new word($t->usr1);
-        $wrd_to->load_by_name(word_names::TEST_ADD_TO);
+        $wrd_to->load_by_name(word_names::TEST_ADD_TO, $msg);
         $t->assert($test_name, $wrd_to->id(), 0, test_base::TIMEOUT_LIMIT_DB);
 
 
@@ -183,7 +183,7 @@ class import_write_tests
         $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         $t->assert_greater_zero($test_name, $trp->id(), test_base::TIMEOUT_LIMIT_DB);
         $org_id = $trp->id();
 
@@ -193,24 +193,24 @@ class import_write_tests
         $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_2 . test_files::JSON, $t->usr1, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED, $msg);
         $t->assert($test_name, $trp->id(), $org_id, test_base::TIMEOUT_LIMIT_DB);
 
         // the original name no longer resolves, proving the triple was renamed and not duplicated
         $test_name = 'the original triple name no longer exists after the rename';
         $trp_old = new triple($t->usr1);
-        $trp_old->load_by_name(triple_names::SYSTEM_TEST_ADD);
+        $trp_old->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
         $t->assert($test_name, $trp_old->id(), 0, test_base::TIMEOUT_LIMIT_DB);
 
         // cleanup the renamed triple and its link words
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_RENAMED, $msg);
         if ($trp->id() > 0) {
             $trp->del($msg);
         }
         foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
             $wrd = new word($t->usr1);
-            $wrd->load_by_name($wrd_name);
+            $wrd->load_by_name($wrd_name, $msg);
             if ($wrd->id() > 0) {
                 $wrd->del($msg);
             }
@@ -225,7 +225,7 @@ class import_write_tests
         $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE . test_files::JSON, $t->usr1, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
         $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_COM, test_base::TIMEOUT_LIMIT_DB);
 
         // a no update import must keep the existing description and only fill up the empty one
@@ -233,12 +233,12 @@ class import_write_tests
         $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, false, true, true);
         $t->assert_false($test_name . ' ' . $imp_msg->text(), $imp_msg->is_ok());
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
         $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_COM, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'the no update import fills up the empty description';
         $wrd_fill = new word($t->usr1);
-        $wrd_fill->load_by_name(word_names::TEST_FILL_UP);
+        $wrd_fill->load_by_name(word_names::TEST_FILL_UP, $msg);
         $t->assert($test_name, $wrd_fill->description, word_names::TEST_FILL_UP_COM, test_base::TIMEOUT_LIMIT_DB);
 
         // without the no update flag the same import overwrites the existing description
@@ -246,13 +246,13 @@ class import_write_tests
         $imp_msg = $imf->json_file(test_files::IMPORT_NO_UPDATE_CHANGED . test_files::JSON, $t->usr1, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_names::TEST_NO_UPD);
+        $wrd->load_by_name(word_names::TEST_NO_UPD, $msg);
         $t->assert($test_name, $wrd->description, word_names::TEST_NO_UPD_CHANGED, test_base::TIMEOUT_LIMIT_DB);
 
         // cleanup the no update test words
         foreach ([word_names::TEST_NO_UPD, word_names::TEST_FILL_UP] as $wrd_name) {
             $wrd = new word($t->usr1);
-            $wrd->load_by_name($wrd_name);
+            $wrd->load_by_name($wrd_name, $msg);
             if ($wrd->id() > 0) {
                 $wrd->del($msg);
             }
@@ -317,7 +317,7 @@ class import_write_tests
         $imp_msg = $imf->json_file($filename . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
-        $sbx->load_by_name($add_name);
+        $sbx->load_by_name($add_name, $msg);
         // the check follows a full json import (charged here because assert_true above returns early
         // on success without resetting the timer), so a multi db timeout is used to avoid a false timeout
         $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
@@ -326,14 +326,14 @@ class import_write_tests
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
-        $sbx->load_by_name($add_name);
+        $sbx->load_by_name($add_name, $msg);
         $t->assert($test_name, $sbx->description, $description, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove the test ' . $name . ' via import';
         $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
-        $sbx->load_by_name($add_name);
+        $sbx->load_by_name($add_name, $msg);
         if ($sbx::class != verb::class) {
             // TODO Prio 3 maybe activate also for verbs but at least should be activated for normal sandbox objects
             // TODO Prio 0 activate
@@ -341,14 +341,14 @@ class import_write_tests
         }
 
         $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';
-        $sbx->load_by_name($add_name);
+        $sbx->load_by_name($add_name, $msg);
         if ($sbx->id() > 0) {
             if ($sbx::class == verb::class) {
                 $sbx->set_user($usr_req);
             }
             $sbx->del($msg);
         }
-        $sbx->load_by_name($add_name);
+        $sbx->load_by_name($add_name, $msg);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);
 
         if ($db_con !== null) {
@@ -386,34 +386,34 @@ class import_write_tests
         $t->subheader($ts . $name);
 
         $test_name = 'import the test ' . $name;
-        $imp_msg = $imf->json_file($filename, $usr, false);
+        $imp_msg = $imf->json_file($filename, $t->usr1, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
-        $sbx->load_by_names([$add_name]);
+        $sbx->load_by_names([$add_name], $msg);
         // the check follows a full json import (charged here because assert_true above returns early
         // on success without resetting the timer), so a multi db timeout is used to avoid a false timeout
         $t->assert_greater_zero($test_name, $sbx->id(), test_base::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'add the description to the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT, $msg->usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
-        $sbx->load_by_names([$add_name]);
+        $sbx->load_by_names([$add_name], $msg);
         $t->assert($test_name, $sbx->get_description(), $description, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT, $msg->usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
-        $sbx->load_by_names([$add_name]);
+        $sbx->load_by_names([$add_name], $msg);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';
-        $sbx->load_by_names([$add_name]);
+        $sbx->load_by_names([$add_name], $msg);
         if ($sbx->id() > 0) {
             $sbx->del($msg);
         }
-        $sbx->load_by_names([$add_name]);
+        $sbx->load_by_names([$add_name], $msg);
         $t->assert($test_name, $sbx->id(), 0, test_base::TIMEOUT_LIMIT_DB);
     }
 

@@ -10,7 +10,7 @@ DOI: https://doi.org/10.5281/zenodo.21315000
 
 ## Zusammenfassung
 
-Dieses Arbeitspapier wendet die ethischen Prinzipien des kategorischen Imperativs (Immanuel Kant) und der Goldenen Regel auf konkrete Politikfelder an. Ausgehend von der Maxime „Mache andere nicht unglücklich" werden zehn Bereiche identifiziert, in denen sich eine verallgemeinerbare Praxis umsetzen lässt: von der Regulierung von Desinformation über Klimaschutz und Vermögenskonzentration bis hin zu digitaler Souveränität und offener KI-Infrastruktur. Das Papier versteht sich als Diskussionsgrundlage zur Anwendung deontologischer und kontraktualistischer Ethik auf die Politikgestaltung. Es stützt sich auf John Rawls' *Theorie der Gerechtigkeit* (insbesondere das Differenzprinzip) sowie auf Tim Berners-Lees Konzept des Giant Global Graph als Grundlage präzisen und neutralen Wissens.
+Dieses Arbeitspapier wendet die ethischen Prinzipien des kategorischen Imperativs (Immanuel Kant) und der Goldenen Regel auf konkrete Politikfelder an. Ausgehend von der Maxime „Mache andere nicht unglücklich" werden zehn Bereiche identifiziert, in denen sich eine verallgemeinerbare Praxis umsetzen lässt: von der Regulierung von Desinformation über Klimaschutz und Vermögenskonzentration bis hin zu digitaler Souveränität und offener KI-Infrastruktur. Das Papier versteht sich als Diskussionsgrundlage für einen [kontraktualistischen](https://de.wikipedia.org/wiki/Vertragstheorie) Rahmen zur Anwendung [deontologischer Ethik](https://de.wikipedia.org/wiki/Deontologische_Ethik) auf die Politikgestaltung. Es stützt sich auf John Rawls' *Theorie der Gerechtigkeit* (insbesondere das Differenzprinzip) sowie auf Tim Berners-Lees Konzept des Giant Global Graph als Grundlage präzisen und neutralen Wissens.
 
 ---
 

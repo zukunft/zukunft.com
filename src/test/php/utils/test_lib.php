@@ -142,8 +142,9 @@ class test_lib
      */
     function cast_user(user $usr): user_ui
     {
+        $msg = new user_message();
         $usr_ui = new user_ui();
-        $usr_ui->set_from_json($usr->api_json(), new user_message());
+        $usr_ui->set_from_json($usr->api_json(), $msg);
         return $usr_ui;
     }
 
@@ -236,7 +237,7 @@ class test_lib
         $dto_ui->trp_lst = $t_trp->triple_list_ui();
         $dto_ui->src_lst = $t_src->source_list_ui();
         $dto_ui->ref_lst = $t_ref->ref_list_math_ui();
-        $dto_ui->val_lst = $t_val->list_all_ui();
+        $dto_ui->val_lst = $t_val->list_all_ui($msg);
         $dto_ui->frm_lst = $t_frm->formula_list_ui();
         $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto_ui->chg_log = $t_log->log_list_named_ui();

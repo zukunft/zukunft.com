@@ -193,7 +193,7 @@ class horizontal_tests
             // by the api message from the frontend to the backend
             $check_obj->reset(true);
             // create the api message to the backend
-            $ui_json = $ui_obj->api_json();
+            $ui_json = $ui_obj->api_json($usr_msg_ui);
             // remove the fields from the message to the frontend that are never updated by the frontend
             // such as the usage and the impact that are always updated by the backend
             $api_json_ui = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
@@ -235,7 +235,7 @@ class horizontal_tests
                 $dto->add_view($filled_obj->msk);
                 $dto->add_source($filled_obj->src);
             } elseif ($class == word::class) {
-                $dto->add_view($filled_obj->get_view());
+                $dto->add_view($filled_obj->get_view($msg));
             } elseif ($class == triple::class) {
                 $dto->add_phrase($filled_obj->get_from());
                 $dto->add_phrase($filled_obj->get_to());
@@ -259,13 +259,13 @@ class horizontal_tests
                 $dto->add_view($filled_obj->get_view());
                 $dto->add_component($filled_obj->get_component());
             }
-            $ex_json = $filled_obj->export_json([], false);
+            $ex_json = $filled_obj->export_json($msg, [], false);
             $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
             // the json export and api build above take longer than a normal unit function, so a page timeout is used
             $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY, $t::TIMEOUT_LIMIT_PAGE);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
-            $empty_json = json_encode($filled_obj->export_json([], false));
+            $empty_json = json_encode($filled_obj->export_json($msg, [], false));
             $empty_target_json = $lib->class_to_empty_json($class);
             $t->assert_json_string($test_name, $empty_json, $empty_target_json);
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';

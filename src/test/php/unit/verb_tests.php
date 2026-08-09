@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -101,7 +102,7 @@ class verb_tests
 
         $t->subheader($ts . 'triple usage');
 
-        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi(), word_names::PI . ' (' . triple_names::MATH_CONST . ')');
+        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi_name(), word_names::PI . ' (' . triple_names::MATH_CONST . ')');
         $this->assert_verb($t, verbs::PART, $t_trp->triple(), word_names::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . word_names::MATH);
 
 
@@ -135,7 +136,7 @@ class verb_tests
     {
         global $sys;
         $test_name = 'the sample triple generated name for verb ';
-        $vrb = $sys->typ_lst->vrb->get_verb($code_id);
+        $vrb = $sys->verb($code_id);
         $t->assert($test_name . $vrb->name(), $trp->generate_name(), $name_generated);
     }
 
@@ -152,15 +153,16 @@ class verb_tests
         test_cleanup $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, foaf_direction $direction
     ): void
     {
+        $msg = new user_message();
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $vrb_lst->load_by_linked_phrases_sql($db_con, $phr, $direction);
+        $qp = $vrb_lst->load_by_linked_phrases_sql($db_con, $phr, $direction, $msg);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $vrb_lst->load_by_linked_phrases_sql($db_con, $phr, $direction);
+            $qp = $vrb_lst->load_by_linked_phrases_sql($db_con, $phr, $direction, $msg);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

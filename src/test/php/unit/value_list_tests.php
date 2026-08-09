@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VALUE . 'value_list.php';
@@ -69,6 +70,7 @@ class value_list_tests
 
 
         // init
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_val = new test_values($t);
@@ -83,11 +85,11 @@ class value_list_tests
 
         $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
-        $val_ids = $t_val->value_list()->grp_ids()->dsp_id();
-        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich city inhabitants (2019)');
+        $val_ids = $t_val->value_list($msg)->grp_ids()->dsp_id();
+        $t->assert($test_name, $val_ids, 'π (unit symbol) / Zurich city inhabitants (2019)');
 
         $t->subheader($ts . 'modify value list');
-        $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
+        $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
@@ -127,7 +129,7 @@ class value_list_tests
 
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
-        $api_json = $t_val->value_list()->api_json();
+        $api_json = $t_val->value_list($msg)->api_json();
         $val_lst_ui = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
 
@@ -144,7 +146,7 @@ class value_list_tests
             . 'still binds all three query parameters';
         $this->assert_sql_by_phr_same_id($test_name, $t, $db_con);
         $test_name = $test_names . 'a list of ids';
-        $val_ids = $t_val->value_list()->id_lst();
+        $val_ids = $t_val->value_list($msg)->id_lst();
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);
         $test_name = 'a list of ids including text values';
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::TEXT);
@@ -164,7 +166,7 @@ class value_list_tests
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
         // temp line until the function usage is checked correctly by the ide
-        $sql = $t_val->value_list()->load_sql_by_phr_lst($sc, $t_phr->phrase_list_math_const());
+        $sql = $t_val->value_list($msg)->load_sql_by_phr_lst($sc, $t_phr->phrase_list_math_const());
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
@@ -178,7 +180,7 @@ class value_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t_val->value_list();
+        $trp_lst = $t_val->value_list($msg);
         $t->assert_api_to_ui($trp_lst, new value_list_ui());
 
     }

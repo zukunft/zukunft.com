@@ -44,22 +44,19 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("triple", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("triple", $msg);
 
 if ($db_con->is_open()) {
 
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
+    // load the session user parameters store the requesting user on the single message
     $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
+    $usr->get($msg);
     $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -73,16 +70,16 @@ if ($db_con->is_open()) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
         // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($usr_id);
+        $load_usr = $usr->data_user($usr_id, $msg);
 
 
         $trp = new triple($load_usr);
         if ($trp_id > 0) {
-            $trp->load_by_id($trp_id);
-            $result = $trp->api_json($typ_lst, $load_usr);
+            $trp->load_by_id($trp_id, $msg);
+            $result = $trp->api_json($typ_lst, $msg, $load_usr);
         } elseif ($trp_name > 0) {
-            $trp->load_by_name($trp_name);
-            $result = $trp->api_json($typ_lst, $load_usr);
+            $trp->load_by_name($trp_name, $msg);
+            $result = $trp->api_json($typ_lst, $msg, $load_usr);
         } else {
             $msg->add_message_text('triple id or name is missing');
         }

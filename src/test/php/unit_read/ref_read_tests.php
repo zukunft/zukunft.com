@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -51,6 +52,7 @@ class ref_read_tests
     {
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $lib = new library();
@@ -64,7 +66,7 @@ class ref_read_tests
 
         // load the ref types
         $lst = new ref_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
@@ -75,7 +77,7 @@ class ref_read_tests
         $t->subheader($ts . 'apis');
 
         $ref = new ref($t->usr1);
-        $ref->load_by_id(refs::PI_ID);
+        $ref->load_by_id(refs::PI_ID, $msg);
         $t->assert_api($ref);
 
     }

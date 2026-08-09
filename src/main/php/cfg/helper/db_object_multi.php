@@ -108,10 +108,10 @@ class db_object_multi extends db_object_key
      * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
+    function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $result = false;
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($one_id_fld) {
                 if (array_key_exists($id_fld, $db_row)) {
                     if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
@@ -127,6 +127,10 @@ class db_object_multi extends db_object_key
                 $result = true;
             }
         }
+        // return if the row has been mapped, not $msg->is_ok(), because the callers gate the
+        // mapping of the remaining fields on this result and would either read fields of a
+        // missing row (row missing but $msg ok) or create a half mapped object (row ok but
+        // an unrelated error left on $msg by an earlier operation)
         return $result;
     }
 
@@ -155,9 +159,9 @@ class db_object_multi extends db_object_key
      * @param sql_par $qp the query parameters created by the calling function
      * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int|string
+    protected function load(sql_par $qp, user_message $msg): int|string
     {
-        parent::load_without_id_return($qp);
+        parent::load_without_id_return($qp, $msg);
         return $this->id();
     }
 
@@ -172,7 +176,7 @@ class db_object_multi extends db_object_key
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -180,19 +184,24 @@ class db_object_multi extends db_object_key
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = $this->api_json_array($typ_lst, $msg, $usr);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         $vars = [];
         $vars[json_fields::ID] = $this->id();
         return $vars;
@@ -362,13 +371,13 @@ class db_object_multi extends db_object_key
      */
     function load_by_id(
         int|string $id
-    ): int|string
+    , user_message $msg): int|string
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -382,9 +391,9 @@ class db_object_multi extends db_object_key
      * @param int|string $id the id of the row to load
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id_with_related(int|string $id): int|string
+    function load_by_id_with_related(int|string $id, user_message $msg): int|string
     {
-        return $this->load_by_id($id);
+        return $this->load_by_id($id, $msg);
     }
 
 

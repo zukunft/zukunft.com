@@ -46,6 +46,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -61,6 +62,7 @@ class user_ui_tests
         $t_sys = new test_sys_log($t);
         $t_usr = new test_users();
         $log = new ui_log();
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html user ';
@@ -72,15 +74,15 @@ class user_ui_tests
         $t->subheader($ts . 'system errors');
 
         $test_name = 'the open system errors related to the user are listed';
-        $err_html = $log->user_system_errors($t_sys->list_for_user_ui(), msg_id::USER_SYSTEM_ERRORS);
+        $err_html = $log->user_system_errors($t_sys->list_for_user_ui(), $msg, msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, sys_log_tests::TV_LOG_TEXT);
         $test_page .= $err_html . '<br>';
 
         $test_name = 'the error list is limited to the most relevant entries';
-        $t->assert_text_not_contains($test_name, $t_sys->list_for_user_ui()->head(1)->get_html(), sys_log_tests::T2_LOG_TEXT);
+        $t->assert_text_not_contains($test_name, $t_sys->list_for_user_ui()->head(1)->get_html($msg), sys_log_tests::T2_LOG_TEXT);
 
         $test_name = 'without an open system error the user gets the no-error message';
-        $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), msg_id::USER_SYSTEM_ERRORS);
+        $err_html = $log->user_system_errors($t_sys->list_for_user_empty_ui(), $msg, msg_id::USER_SYSTEM_ERRORS);
         $t->assert_text_contains($test_name, $err_html, $mtr->txt(msg_id::USER_SYSTEM_ERRORS_NONE));
 
         $t->subheader($ts . 'popup form');
@@ -93,7 +95,7 @@ class user_ui_tests
         $test_name = 'without an object the popup form class is empty';
         $t->assert($test_name, $preview->popup_class(), '');
 
-        $t->html_page_test($test_page, 'user', 'user', $t);
+        $t->html_page_test($test_page, 'user', 'user', $msg);
     }
 
 }

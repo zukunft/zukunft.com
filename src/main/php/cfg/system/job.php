@@ -232,11 +232,12 @@ class job extends db_object_seq_id_user
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a job is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, job_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, job_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(job_db::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[job_db::FLD_TYPE];
             }
@@ -264,7 +265,7 @@ class job extends db_object_seq_id_user
             $this->priority = $db_row[job_db::FLD_PRIO];
             log_debug('Batch job ' . $this->id() . ' loaded');
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -336,7 +337,7 @@ class job extends db_object_seq_id_user
         return $result;
     }
 
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }
@@ -467,13 +468,20 @@ class job extends db_object_seq_id_user
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        return $this->id();
+        // reset the id first so that a missing database row is reported with id 0
+        // also within the object and never with a stale id (see db_object_seq_id::load)
+        $this->id = 0;
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper($db_row, $msg);
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -493,17 +501,18 @@ class job extends db_object_seq_id_user
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::USER_NAME] = $this->get_user()->name();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::STATUS] = $this->status_id();
         // TODO use time zone?
         $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
@@ -600,9 +609,8 @@ class job extends db_object_seq_id_user
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $msg);
         if ($qp !== null) {
-            $del_msg = $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
-            $msg->merge($del_msg);
-            $result = $del_msg->is_ok();
+            $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
+            $result = $msg->is_ok();
         }
         return $result;
     }
@@ -661,7 +669,7 @@ class job extends db_object_seq_id_user
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
@@ -670,17 +678,17 @@ class job extends db_object_seq_id_user
                 );
             }
             global $sys;
-            if ($this->type_id() < 0) {
+            if ($this->type_id($msg) < 0) {
                 $msg->add(msg_id::JOB_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_TYPE => $this->type_id($msg),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
             $lst->add_type_field(
                 job_db::FLD_TYPE,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $obj->type_id(),
+                $this->type_id($msg),
+                $obj->type_id($msg),
                 $sys->typ_lst->job_typ);
         }
         if ($obj->status_id() !== $this->status_id()) {
@@ -694,7 +702,7 @@ class job extends db_object_seq_id_user
             global $sys;
             if ($this->status_id() < 0) {
                 $msg->add(msg_id::JOB_STATUS_MISSING, [
-                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_TYPE => $this->type_id($msg),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
@@ -860,7 +868,7 @@ class job extends db_object_seq_id_user
     protected function check(user_message $msg): bool
     {
         // the job type must be valid
-        if ($this->type_id() <= 0) {
+        if ($this->type_id($msg) <= 0) {
             $msg->add_err(msg_id::JOB_TYPE_INVALID, [
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);

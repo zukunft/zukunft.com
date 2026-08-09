@@ -84,12 +84,13 @@ class view_relation_list extends sandbox_link_list
      * map only the valid view relations
      *
      * @param array|null $db_rows with the data directly from the database
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if the view relation is loaded and valid
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(?array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view_relation($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view_relation($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -104,7 +105,7 @@ class view_relation_list extends sandbox_link_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view(view $msk, ?sql_db $db_con_given = null): bool
+    function load_by_view(view $msk, user_message $msg, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -114,7 +115,7 @@ class view_relation_list extends sandbox_link_list
         }
 
         $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $msk);
-        return $this->load_sys($qp, false, $db_con_given);
+        return $this->load_sys($qp, $msg, false, $db_con_given);
     }
 
 
@@ -170,15 +171,16 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
         foreach ($this->lst() as $lnk) {
-            $vars[] = $lnk->export_json($exp_typ, $do_load);
+            $vars[] = $lnk->export_json($msg, $exp_typ, $do_load);
         }
         return $vars;
     }

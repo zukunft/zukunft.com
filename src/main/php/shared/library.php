@@ -148,6 +148,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -1469,7 +1470,7 @@ class library
      * @param string|null $maker e.g. ">end"
      * @return string the selected text e.g. "select"
      */
-    function str_left_of(?string $text, ?string $maker): string
+    static function str_left_of(?string $text, ?string $maker): string
     {
         $result = "";
         if ($text == null) {
@@ -1505,7 +1506,7 @@ class library
      * @param string|null $maker e.g. "start<"
      * @return string the selected text e.g. "select"
      */
-    function str_right_of(?string $text, ?string $maker): string
+    static function str_right_of(?string $text, ?string $maker): string
     {
         $result = "";
         if ($text == null) {
@@ -2431,6 +2432,16 @@ class library
             $result = rmdir($dir);
         }
         return $result;
+    }
+
+    static function php_function_from_exception(string $trace): string
+    {
+        $fnc = self::str_right_of($trace, def_shared::PROJECT_PATH);
+        $fnc = self::str_left_of($fnc, '.php(');
+        if ($fnc == '') {
+            $fnc = 'no function name detected in ' . $trace;
+        }
+        return $fnc;
     }
 
     function php_code_use(array $lines): array

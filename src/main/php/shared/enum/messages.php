@@ -1462,9 +1462,11 @@ enum messages: string
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
-    case DB_CLEANUP_ERROR = 'There are '
-        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
-        . ' unexpected system test rows detected by '
+    case DB_CLEANUP_ERROR = 'There is '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" remaining in the database detected by '
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END;
 
     case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'

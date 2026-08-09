@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -62,8 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -104,6 +104,8 @@ class base_ui_tests
         $t_phr = new test_phrases($t);
         $t_src = new test_sources($t);
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui html base ';
@@ -173,7 +175,7 @@ class base_ui_tests
         // so view.php?mask_id=word&id=2&nocache=1 bypasses the cache just like the short url
         $test_name = 'nocache is mapped to the short nc';
         $url_map = new url_mapper();
-        $url_msg = new user_message();
+        $url_msg = new user_message_ui();
         $url_array = [url_var::MASK_HUMAN => views::WORD, url_var::ID => 2,
             url_var::NO_CACHE_HUMAN => url_var::NO_CACHE_ON];
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
@@ -225,7 +227,7 @@ class base_ui_tests
 
         $t->subheader($ts . 'login');
 
-        $created_html = $html->about_page();
+        $created_html = $html->about_page($msg_ui);
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($created_html), $lib->trim_html($expected_html));
 
@@ -257,7 +259,7 @@ class base_ui_tests
 
         // button add
         $url = $html->url_new(views::WORD_ADD_ID);
-        $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
+        $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $msg_ui);
 
         $t->subheader($ts . 'form field name and id');
 
@@ -322,7 +324,7 @@ class base_ui_tests
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
         $val_city_ui = new value_ui($val_city->api_json([api_types::INCL_PHRASES]));
-        $val_city_html = $val_city_ui->name_link();
+        $val_city_html = $val_city_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_city_html, word_names::CITY);
 
         // create the value for the inhabitants of the city of zurich
@@ -330,7 +332,7 @@ class base_ui_tests
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
         $val_canton_ui = new value_ui($val_canton->api_json([api_types::INCL_PHRASES]));
-        $val_canton_html = $val_canton_ui->name_link();
+        $val_canton_html = $val_canton_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_canton_html, word_names::CANTON);
 
         // create the value for the inhabitants of Switzerland
@@ -338,7 +340,7 @@ class base_ui_tests
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
         $val_ch_ui = new value_ui($val_ch->api_json([api_types::INCL_PHRASES]));
-        $val_ch_html = $val_ch_ui->name_link();
+        $val_ch_html = $val_ch_ui->name_link($msg_ui);
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
         // create the formula result for the inhabitants of the city of zurich
@@ -347,7 +349,7 @@ class base_ui_tests
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
         $res_city_ui = new value_ui($res_city->api_json([api_types::INCL_PHRASES]));
-        $res_city_html = $res_city_ui->name_link();
+        $res_city_html = $res_city_ui->name_link($msg_ui);
         $t->assert_text_contains('', $res_city_html, word_names::CITY);
 
         // create the formula result for the inhabitants of the canton of zurich
@@ -355,7 +357,7 @@ class base_ui_tests
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_ui = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
-        $res_canton_html = $res_canton_ui->value_edit('');
+        $res_canton_html = $res_canton_ui->value_edit($msg_ui, '');
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
@@ -363,20 +365,20 @@ class base_ui_tests
         $res_lst = new result_list_ui();
         $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
         $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
-        $t->html_page_test($res_lst->table(), '', 'table_result', $t);
+        $t->html_page_test($res_lst->table(), '', 'table_result', $msg_ui);
 
         // create the same table as above, but within a context
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json([api_types::INCL_PHRASES]));
-        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $t);
+        $t->html_page_test($res_lst->table($phr_lst_context_ui), '', 'table_result_context', $msg_ui);
 
 
         $t->subheader($ts . 'unit html view component tests');
 
         $cmp = new component($t->usr1);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
-        $cmp->set_type(comp_type_shared::TEXT, new user_message_cfg($t->usr1));
+        $cmp->set_type(comp_type_shared::TEXT, new user_message($t->usr1));
         $cmp_ui = new component_ui($cmp->api_json());
-        $t->html_page_test($cmp_ui->html(), '', 'component_text', $t);
+        $t->html_page_test($cmp_ui->html($msg_ui), '', 'component_text', $msg_ui);
 
 
         $t->subheader($ts . 'list');
@@ -390,8 +392,8 @@ class base_ui_tests
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
         $vrb_lst_ui = new verb_list_ui();
-        $vrb_lst_ui->set_from_json_array($lst->api_json_array());
-        $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $t);
+        $vrb_lst_ui->set_from_json_array($lst->api_json_array([], $msg), $msg_ui);
+        $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $msg_ui);
 
         $test_name = 'sort a named list by the name';
         $lst = $t_phr->phrase_list_zh_mio();
@@ -431,12 +433,12 @@ class base_ui_tests
 
         // test if a simple text component can be created
         $cmp = new component($t->usr1);
-        $msg = new user_message();
+        $msg = new user_message_ui();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_ui = new component_ui($cmp->api_json());
-        $result = $cmp_ui->html();
+        $result = $cmp_ui->html($msg);
         $target = views::NESN_2016_FS_NAME;
         $t->assert('component_dsp->text', $result, $target);
 
@@ -559,7 +561,7 @@ class base_ui_tests
         $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=3&id=123&9m=1');
 
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message_ui();
         $url_test = new test_mappers($t);
 
         $t->subheader($ts . 'url mapper');
@@ -600,14 +602,14 @@ class base_ui_tests
         // an '8'-prefixed pre value (and '9'-prefixed back target) is mapped to its human key with the
         // prefix kept (e.g. 8name), so it is not reported as missing
         $test_name = 'human url conversion maps an 8-prefixed pre value';
-        $ok_msg = new user_message();
+        $ok_msg = new user_message_ui();
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&' . url_var::PRE . url_var::NAME . '=x';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $ok_msg));
         $t->assert_false($test_name, $ok_msg->has_msg_id(msg_id::URL_MAP_MISSING));
         $t->assert_text_contains($test_name, $url_human, url_var::PRE . url_var::NAME_HUMAN);
         // negative: a url key without any human mapping is still reported as missing
         $test_name = 'human url conversion reports a url key without a human mapping';
-        $err_msg = new user_message();
+        $err_msg = new user_message_ui();
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&zzz=x';
         $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
@@ -639,7 +641,7 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $json, views::WORD_EDIT);
         // negative: a top-level url key without a human mapping is reported as missing
         $test_name = 'human_url_to_json reports a url key without a human mapping';
-        $err_msg = new user_message();
+        $err_msg = new user_message_ui();
         $url_map->human_url_to_json([url_var::MASK => views::WORD_EDIT_ID, 'zzz' => '1'], $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 

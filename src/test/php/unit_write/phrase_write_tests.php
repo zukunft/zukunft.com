@@ -77,22 +77,22 @@ class phrase_write_tests
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
-        $wrd = $t_db->test_word(word_names::COMPANY);
+        $wrd = $t_db->test_word($msg, word_names::COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
-        $wrd = $t_db->test_word(word_names::ZH);
+        $wrd = $t_db->test_word($msg, word_names::ZH);
         $zh_id = $wrd->id();
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($t->usr1);
-        $trp->load_by_link_id($zh_id, $is_id, $company_id);
+        $trp->load_by_link_id( $zh_id, $msg, $is_id, $company_id );
         $zh_company_id = $trp->phrase()->id();
 
 
         // test the phrase display functions for words
         $phr = new phrase($t->usr1);
         $phr->set_user($t->usr1);
-        $phr->load_by_id($company_id);
+        $phr->load_by_id($company_id, $msg);
         $result = $phr->name();
         $target = word_names::COMPANY;
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
@@ -109,7 +109,7 @@ class phrase_write_tests
         // test the phrase display functions for triples
         $phr = new phrase($t->usr1);
         $phr->set_id_from_obj($zh_company_id, triple::class);
-        $phr->load_by_id($zh_company_id);
+        $phr->load_by_id($zh_company_id, $msg);
         $result = $phr->name();
         $target = triple_names::COMPANY_ZURICH;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
@@ -120,8 +120,8 @@ class phrase_write_tests
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas
-        $phr = $t_db->load_phrase(word_names::VESTAS);
-        $is_phr = $phr->is_mainly();
+        $phr = $t_db->load_phrase(word_names::VESTAS, $msg);
+        $is_phr = $phr->is_mainly($msg);
         if ($is_phr != null) {
             $result = $is_phr->name();
         } else {
@@ -137,7 +137,7 @@ class phrase_write_tests
         $t_trp->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(phrase::class));
 
     }
 

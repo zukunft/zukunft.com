@@ -45,9 +45,11 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -80,7 +82,7 @@ class sys_log_write_tests
         $t_sys->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(sandbox::class));
 
     }
 

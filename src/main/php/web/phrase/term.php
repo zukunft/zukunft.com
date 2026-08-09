@@ -48,6 +48,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -189,25 +191,25 @@ class term extends combine_named
      * @param bool $including_triples to include the words or triple of a triple (not recursive)
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
+    function load_by_obj_id(int $id, string $class, user_message $msg, bool $including_triples = true): int
     {
         log_debug($this->name());
         $result = 0;
 
         if ($class == word::class) {
-            if ($this->load_word_by_id($id)) {
+            if ($this->load_word_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == triple::class) {
-            if ($this->load_triple_by_id($id, $including_triples)) {
+            if ($this->load_triple_by_id($id, $msg, $including_triples)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == formula::class) {
-            if ($this->load_formula_by_id($id)) {
+            if ($this->load_formula_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == verb::class) {
-            if ($this->load_verb_by_id($id)) {
+            if ($this->load_verb_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } else {
@@ -224,15 +226,15 @@ class term extends combine_named
      * (separate functions for loading  for a better overview)
      */
     private
-    function load_word_by_id(int $id): bool
+    function load_word_by_id(int $id, user_message $msg): bool
     {
         global $ui_sys;
 
         $result = false;
         $wrd = new word();
-        if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $ui_sys->typ_lst_cache->phr_typ->id(phrase_types::FORMULA_LINK)) {
-                $result = $this->load_formula_by_id($id);
+        if ($wrd->load_by_id($id, $msg)) {
+            if ($wrd->type_id($msg) == $ui_sys->typ_lst_cache->phr_typ->id(phrase_types::FORMULA_LINK)) {
+                $result = $this->load_formula_by_id($id, $msg);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
                 $this->obj = $wrd;
@@ -246,12 +248,12 @@ class term extends combine_named
      * simply load a triple
      */
     private
-    function load_triple_by_id(int $id, bool $including_triples): bool
+    function load_triple_by_id(int $id, user_message $msg, bool $including_triples): bool
     {
         $result = false;
         if ($including_triples) {
             $trp = new triple();
-            if ($trp->load_by_id($id)) {
+            if ($trp->load_by_id($id, $msg)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -264,11 +266,11 @@ class term extends combine_named
      * simply load a formula
      * without fixing any missing related word issues
      */
-    private function load_formula_by_id(int $id): bool
+    private function load_formula_by_id(int $id, user_message $msg): bool
     {
         $result = false;
         $frm = new formula();
-        if ($frm->load_by_id($id)) {
+        if ($frm->load_by_id($id, $msg)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
@@ -279,12 +281,12 @@ class term extends combine_named
     /**
      * simply load a verb
      */
-    private function load_verb_by_id(int $id): bool
+    private function load_verb_by_id(int $id, user_message $msg): bool
     {
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
-        if ($vrb->load_by_id($id)) {
+        if ($vrb->load_by_id($id, $msg)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
             $result = true;
@@ -341,12 +343,12 @@ class term extends combine_named
      * use the object id not the term id because the class is included
      * maybe to reduce traffic remove the class but than the term id needs to be used
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
         $lib = new library();
         $vars = array();
         if ($this->is_verb()) {
-            $vars = $this->obj()?->api_array();
+            $vars = $this->obj()?->api_array($typ_lst, $msg);
             $class = $lib->class_to_name($this->obj()::class);
             $vars[json_fields::OBJECT_CLASS] = $class;
         } else {
@@ -368,7 +370,7 @@ class term extends combine_named
             $vars[json_fields::ID] = $this->obj_id();
             $vars[json_fields::NAME] = $this->name();
             $vars[json_fields::DESCRIPTION] = $this->get_description();
-            $vars[json_fields::TYPE] = $this->type_id();
+            $vars[json_fields::TYPE] = $this->type_id($msg);
             if ($this->is_formula()) {
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
                 $vars[json_fields::LATEX] = $this->obj()->get_latex();

@@ -117,7 +117,7 @@ class ip_range_tests
         $ip_range->set_user($t->usr1);
         // use the system user for the import
         $ip_range->import_obj($json_in, $msg, new data_object($t->usr_system), $t);
-        $json_ex = $ip_range->export_json([]);
+        $json_ex = $ip_range->export_json($msg);
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 

@@ -40,6 +40,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -52,6 +53,7 @@ class component_list_ui_tests
 
         $html = new html_base();
         $t_cmp = new test_components($t);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui html component list ';
@@ -68,7 +70,7 @@ class component_list_ui_tests
         $from_rows .= $lst->selector($form, 0, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT) . '<br>';
         $test_page .= $html->form($form, $from_rows);
 
-        $t->html_page_test($test_page, 'component_list', 'component_list', $t);
+        $t->html_page_test($test_page, 'component_list', 'component_list', $msg_ui);
     }
 
 }

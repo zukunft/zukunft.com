@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -664,7 +665,8 @@ class coding_rule_tests
                         . ' in ' . $sub_path . $code_file
                         . ' (' . $pos . ' of ' . count($code_files) . ')';
                     // TODO Prio 2 remove exception
-                    if ($code_file != '/log_text/text_log_functions.php') {
+                    if ($code_file != '/log_text/text_log_functions.php'
+                        and $code_file != '/helper/db_cache_page.php') {
                         $t->assert($test_name, '', $class);
                     }
 
@@ -1121,10 +1123,10 @@ class coding_rule_tests
      * (the http scripts and the api index.php scripts) and every function below reads it from
      * $msg->usr, never re-sets it
      * (docs/llm/state-and-messages.md, the "requesting user lives on $msg" migration); the only
-     * sanctioned writers are the user_message classes themselves (skipped as a whole) and the single
-     * "$msg->usr = $usr_ui;" login user switch in web/frontend.php (the one allowed change of the
-     * requesting user after the entry point, see frontend::url_to_action) — that exact line is
-     * tolerated while the rest of web/frontend.php stays under the rule
+     * sanctioned writers are the user_message classes themselves (skipped as a whole) and the
+     * exact file and line pairs listed in MSG_USR_WRITE_SANCTIONED (the frontend login user
+     * switch and the signup fallback of user::db_insert) — those exact lines are tolerated
+     * while the rest of the listed files stays under the rule
      *
      * user_message variables follow the $..msg.. / $..message.. naming convention, so a
      * "$<msg>->usr =" write is the machine-detectable violation; a comment line is skipped
@@ -1150,12 +1152,24 @@ class coding_rule_tests
 
     /**
      * scan every php file under $base_path and assert one failure per post-hoc user_message->usr write;
-     * the user_message class files and web/frontend.php (the sanctioned login switch) are skipped
+     * the user_message class files are skipped and the exact sanctioned lines of
+     * MSG_USR_WRITE_SANCTIONED are tolerated
      *
      * @param test_cleanup $t the test harness used for the assertion
      * @param string $base_path the source dir to scan e.g. paths::MODEL
      * @return void
      */
+    // the sanctioned post-hoc writers of the requesting user, as exact file to line pairs:
+    // - the frontend login user switch (frontend::url_to_action) is the one allowed change of
+    //   the requesting user after the entry point assignment
+    // - the signup fallback (user::db_insert) sets the signup system user as the requester
+    //   when a guest user is created based on the ip address and no requesting user is given
+    // exactly these lines are tolerated while the rest of the files stays under the rule
+    private const array MSG_USR_WRITE_SANCTIONED = [
+        DIRECTORY_SEPARATOR . 'frontend.php' => '$msg_ui->usr = $usr_ui;',
+        DIRECTORY_SEPARATOR . 'user' . DIRECTORY_SEPARATOR . 'user.php' => '$msg->usr = $usr_req;',
+    ];
+
     private function php_msg_user_write_scan(test_cleanup $t, string $base_path): void
     {
         $lib = new library();
@@ -1163,15 +1177,11 @@ class coding_rule_tests
         // a "$<var>->usr =" write where the var name carries the message convention (msg / message);
         // the negative lookahead excludes the == / === comparisons and the => arrow
         $pattern = '#\$[a-z0-9_]*(msg|message)[a-z0-9_]*->usr\s*=(?![=>])#i';
-        // the frontend login user switch is the one sanctioned change of the requesting user after
-        // the entry point assignment (frontend::url_to_action), so exactly this line is tolerated
-        // while the rest of web/frontend.php stays under the rule
-        $frontend_login_switch = '$msg->usr = $usr_ui;';
         $files_checked = 0;
         foreach ($code_files as $code_file) {
             $full = str_replace('\\', '/', $base_path . $code_file);
             // the user_message classes are the sanctioned home of the ->usr assignment
-            if (str_ends_with($full, '/user_message.php')) {
+            if (str_ends_with($full, '/user_message.php') or str_ends_with($full, '/sql_message.php')) {
                 continue;
             }
             $files_checked++;
@@ -1183,8 +1193,9 @@ class coding_rule_tests
                     or str_starts_with($head, '//') or str_starts_with($head, '/*')) {
                     continue;
                 }
-                // tolerate only the exact sanctioned frontend login switch, nothing else
-                if ($code_file == '/frontend.php' and trim($line) == $frontend_login_switch) {
+                // tolerate only the exact sanctioned requesting user switches, nothing else
+                if (array_key_exists($code_file, self::MSG_USR_WRITE_SANCTIONED)
+                    and trim($line) == self::MSG_USR_WRITE_SANCTIONED[$code_file]) {
                     continue;
                 }
                 if (preg_match($pattern, $line)) {

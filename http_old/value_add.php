@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(views::VALUE_ADD);
+    $msk->load_by_code_id(views::VALUE_ADD, $usr_msg);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]);     // the word id from which this value change has been called (maybe later any page)
 

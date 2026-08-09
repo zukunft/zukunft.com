@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -43,6 +44,7 @@ class reference_ui_tests
     {
         $html = new html_base();
         $t_ref = new test_refs($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html reference ';
@@ -52,8 +54,8 @@ class reference_ui_tests
         $test_page = $html->text_h2('reference display test');
         $test_page .= 'with tooltip: ' . $ref->name_tip() . '<br>';
         $test_page .= 'with link: ' . $ref->name_link() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($ref);
-        $t->html_page_test($test_page, 'reference', 'reference', $t);
+        $test_page .= $t->dsp_title_named_edit($ref, $msg);
+        $t->html_page_test($test_page, 'reference', 'reference', $msg);
 
         // a reference always provides a phrase for the rendering like the other db objects:
         // the linked phrase, or an empty phrase e.g. for a new reference of an add form

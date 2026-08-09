@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -46,6 +47,7 @@ include_once html_paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -76,9 +78,9 @@ class ui_select
      * @param data_object|null $cfg the context used to create the view
      * @return string with the html code to select a view
      */
-    function view_select(db_object $dbo, string $form, ?data_object $cfg = null): string
+    function view_select(db_object $dbo, string $form, user_message $msg, ?data_object $cfg = null): string
     {
-        return $dbo->view_selector($form, $this->view_list_for($dbo, $cfg));
+        return $dbo->view_selector($form, $this->view_list_for($dbo, $msg, $cfg), $msg);
     }
 
     /**
@@ -90,14 +92,14 @@ class ui_select
      * @param data_object|null $cfg the request context that may already hold the loaded view list
      * @return view_list the views to show in the selector (the caller filters them per object type)
      */
-    function view_list_for(db_object $dbo, ?data_object $cfg = null): view_list
+    function view_list_for(db_object $dbo, user_message $msg, ?data_object $cfg = null): view_list
     {
         $msk_lst = null;
         if ($cfg != null and $cfg->has_view_list()) {
             $msk_lst = $cfg->view_list();
         }
         if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
+            $msk_lst = $dbo->view_list($msg);
         }
         return $msk_lst;
     }

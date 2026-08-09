@@ -34,12 +34,14 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHEET . 'position_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\sheet\position_list;
@@ -52,7 +54,7 @@ class sheet
      * TODO fill it based on the parameters
      * @return string html code to display a spreadsheet
      */
-    function calc_sheet(?data_object $data = null, ?position_list $pos_lst = null): string
+    function calc_sheet(?data_object $data = null, ?position_list $pos_lst = null, user_message $msg): string
     {
         // loop over the position list and get the related object
 
@@ -64,24 +66,24 @@ class sheet
       <th class="text-right" scope="col">Costs in ';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('trillion');
+        $wrd->load_by_name('trillion', $msg);
         $result .= $wrd->name_link();
         $result .= ' ';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('USD');
+        $wrd->load_by_name('EUR', $msg);
         $result .= $wrd->name_link();
         $result .= '</th>
       <th scope="col">Solution</th>
       <th class="text-right" scope="col">Gain in ';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('billion');
+        $wrd->load_by_name('billion', $msg);
         $result .= $wrd->name_link();
         $result .= ' ';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('htp');
+        $wrd->load_by_name('htp', $msg);
         $result .= $wrd->name_link();
         $result .= '</th>
     </tr>
@@ -92,7 +94,7 @@ class sheet
       <td>';
         // temp code
         $trp = new triple();
-        $trp->load_by_name('global warming');
+        $trp->load_by_name('global warming', $msg);
         $result .= $trp->name_link();
         $result .= '</td>
       <td class="text-right">31.5</td>
@@ -104,7 +106,7 @@ class sheet
       <td>';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('populism');
+        $wrd->load_by_name('populism', $msg);
         $result .= $wrd->name_link();
         $result .= '</td>
       <td class="text-right">23.8</td>
@@ -116,7 +118,7 @@ class sheet
       <td>';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('health');
+        $wrd->load_by_name('health', $msg);
         $result .= $wrd->name_link();
         $result .= '</td>
       <td class="text-right">20.4</td>
@@ -128,7 +130,7 @@ class sheet
       <td>';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('poverty');
+        $wrd->load_by_name('poverty', $msg);
         $result .= $wrd->name_link();
         $result .= '</td>
       <td class="text-right">13.6</td>
@@ -140,7 +142,7 @@ class sheet
       <td>';
         // temp code
         $wrd = new word();
-        $wrd->load_by_name('education');
+        $wrd->load_by_name('education', $msg);
         $result .= $wrd->name_link();
         $result .= '</td>
       <td class="text-right">9.4</td>

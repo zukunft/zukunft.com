@@ -79,12 +79,13 @@ class group_list extends sandbox_list
     /**
      * fill the group list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new group($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new group($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -95,9 +96,10 @@ class group_list extends sandbox_list
     /**
      * load all phrase groups that contain the given phrase
      * @param phrase $phr
+     * @param user_message $msg to collect the load warnings for the user
      * @return bool true if at least one phrase group has been found
      */
-    function load_by_phr(phrase $phr): bool
+    function load_by_phr(phrase $phr, user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -105,11 +107,11 @@ class group_list extends sandbox_list
         $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
 
         // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-        $db_rows = $db_con->get($qp, 'group list');
+        $db_rows = $db_con->get($qp, $msg, 'group list');
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $phr_grp = new group($this->get_user());
-                $phr_grp->row_mapper($db_row);
+                $phr_grp->row_mapper($db_row, $msg);
                 $this->add_obj($phr_grp);
                 $result = true;
             }
@@ -503,13 +505,15 @@ class group_list extends sandbox_list
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
         $db_con->usr_id = $this->get_user()->id;
-        return $db_con->get_old($sql);
+        $msg = new user_message(); // TODO Prio 1 deprecate
+        return $db_con->get_old($sql, $msg);
     }
 
     // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
         $lib = new library();
+        $msg = new user_message();
 
         // check the parameters
         if ($type == '') {
@@ -540,7 +544,7 @@ class group_list extends sandbox_list
                 // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->get_user());
-                $val_grp->load_by_id($val_row[group_fields::FLD_ID]);
+                $val_grp->load_by_id($val_row[group_fields::FLD_ID], $msg);
                 $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
@@ -573,23 +577,23 @@ class group_list extends sandbox_list
         return $added;
     }
 
-    function get_by_val_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
+    function get_by_val_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res): int
     {
         return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
     }
 
-    function get_by_val_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res): int
+    function get_by_val_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res): int
     {
         return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
     }
 
-    function get_by_res_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
+    function get_by_res_with_one_phr_each(phrase_list $frm_linked, phrase_list $frm_used, phrase_list $phr_frm, phrase_list $phr_lst_res): int
     {
         return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
     }
 
     //
-    function get_by_res_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res): int
+    function get_by_res_special(phrase_list $frm_linked, phrase_list $frm_used_fixed, phrase_list $phr_frm, phrase_list $phr_lst_res): int
     {
         return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
     }

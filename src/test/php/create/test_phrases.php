@@ -86,6 +86,15 @@ class test_phrases
     }
 
     /**
+     * @return phrase of the "Pi (math)" triple that carries the pi number value in the seeded database
+     */
+    function phrase_pi_math(): phrase
+    {
+        $t_trp = new test_triples($this->env);
+        return $t_trp->triple_pi_name()->phrase();
+    }
+
+    /**
      * @return phrase of the word year because on most case the phrase is used instead of the word
      */
     function year(): phrase
@@ -172,6 +181,22 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list like phrase_list_prime but with the "Pi (math)" triple
+     *                     that carries the pi number value in the seeded database
+     */
+    function phrase_list_prime_db(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word()->phrase());
+        $lst->add($t_wrd->word_const()->phrase());
+        $lst->add($t_trp->triple()->phrase());
+        $lst->add($t_trp->triple_pi_name()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with one word and one triple
      */
     function phrase_list_small(): phrase_list
@@ -208,7 +233,7 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_pi(): phrase_list
+    function phrase_list_pi_name(): phrase_list
     {
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
@@ -216,7 +241,7 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_pi_symbol(): phrase_list
+    function phrase_list_pi(): phrase_list
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);
@@ -269,6 +294,19 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->triple_pi()->phrase());
+        $lst->add($t_trp->triple_e()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the math const triples that carry the number values
+     *                     in the seeded database e.g. pi is keyed by the "Pi (math)" triple
+     */
+    function phrase_list_math_const_db(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->triple_pi_name()->phrase());
         $lst->add($t_trp->triple_e()->phrase());
         return $lst;
     }

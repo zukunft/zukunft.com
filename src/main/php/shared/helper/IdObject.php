@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+
 class IdObject
 {
 
@@ -105,21 +107,6 @@ class IdObject
         return $obj_cpy;
     }
 
-    /**
-     * just the reset the modified field
-     * to be overwritten and called by the child object
-     *
-     * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
-     */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
-    {
-        $this->modified = false;
-        return false;
-    }
-
-
     /*
      * set and get
      */
@@ -143,9 +130,10 @@ class IdObject
      * check if the object in the database needs to be updated
      *
      * @param IdObject $db_obj e.g. the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this object has infos that should be saved in the database
      */
-    function needs_db_update(IdObject $db_obj): bool
+    function needs_db_update(IdObject $db_obj, user_message $msg): bool
     {
         return $this->modified;
     }
@@ -156,6 +144,14 @@ class IdObject
     function set_modified(): void
     {
         $this->modified = true;
+    }
+
+    /**
+     * reset the modified flag e.g. after the object has been filled based on a database row
+     */
+    function unset_modified(): void
+    {
+        $this->modified = false;
     }
 
 }

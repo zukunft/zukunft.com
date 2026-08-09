@@ -46,11 +46,19 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("valueList", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("valueList", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     // TODO use a json with the ids
@@ -58,23 +66,12 @@ if ($db_con->is_open()) {
     $ids = $_GET[url_var::ID_LST] ?? '';
     $ids = explode(",", $ids);
 
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
-
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($ids != '') {
             $lst = new value_list($usr);
-            $lst->load_by_ids($ids);
+            $lst->load_by_ids($ids, $msg);
             // drop the values the requesting user may not read, so listing ids cannot disclose
             // another user's private/personal value (idor); see value::is_readable_by
             $lst->filter_readable_by($usr);

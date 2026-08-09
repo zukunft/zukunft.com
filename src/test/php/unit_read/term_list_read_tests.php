@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'formulas.php';
@@ -52,6 +53,7 @@ class term_list_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         // init
         $lib = new library();
@@ -64,27 +66,27 @@ class term_list_read_tests
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new term_list($t->usr1);
         $pattern = substr(word_names::MATH, 0, -1);
-        $lst->load_names($pattern);
+        $lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $lst->names(), word_names::MATH);
         $test_name = 'loading phrase names with pattern return the expected verb';
         $lst = new term_list($t->usr1);
         $pattern = substr(verbs::NOT_SET, 0, -1);
-        $lst->load_names($pattern);
+        $lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $lst->names(), verbs::NOT_SET_NAME);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new term_list($t->usr1);
         $pattern = substr(triple_names::MATH_CONST, 0, -1);
-        $lst->load_names($pattern);
+        $lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $lst->names(), triple_names::MATH_CONST);
         $test_name = 'loading phrase names with pattern return the expected formula';
         $lst = new term_list($t->usr1);
         $pattern = substr(formula_names::SCALE_TO_SEC, 0, -1);
-        $lst->load_names($pattern);
+        $lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $lst->names(), formula_names::SCALE_TO_SEC);
 
         $test_name = 'loading by term list by ids ';
         $trm_lst = new term_list($t->usr1);
-        $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
+        $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])), $msg);
         $result = $trm_lst->name();
         $target = '"' . triple_names::MATH_CONST . '","' .
             word_names::MATH . '","' .
@@ -104,7 +106,7 @@ class term_list_read_tests
         $test_name = 'loading by term list by pattern ';
         $trm_lst = new term_list($t->usr1);
         $pattern = substr(word_names::MATH, 0, -1);
-        $trm_lst->load_like($pattern);
+        $trm_lst->load_like($pattern, $msg);
         $t->assert_contains($test_name, $trm_lst->names(), word_names::MATH);
 
     }

@@ -46,7 +46,7 @@ SELECT ip_range_update_log_111110
 
 SELECT ip_range_update_log_111110
         (3::bigint,
-         1::smallint,
+         2::smallint,
          859::smallint,
          null::text,
          '66.249.64.95-66.249.64.95'::text,

@@ -31,6 +31,7 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'words.php';
 
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_export_test(test_cleanup $t): void
 {
+        $msg = new user_message();
 
     // start the test section (ts)
     $ts = 'integration export ';
@@ -50,9 +52,9 @@ function run_export_test(test_cleanup $t): void
     $t->subheader($ts . 'xml');
 
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->load_by_names(array(word_names::MATH));
+    $phr_lst->load_by_names(array(word_names::MATH), $msg);
     $xml_export = new xml($t->usr1);
-    $result = $xml_export->export_by_phrase_list($phr_lst, $t->usr1);
+    $result = $xml_export->export_by_phrase_list($phr_lst, $msg, $t->usr1);
     $target = 'mathematics';
     // the xml export reads the phrases from the database, so a semi page timeout is used to avoid a false timeout
     $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
@@ -60,7 +62,7 @@ function run_export_test(test_cleanup $t): void
     $t->subheader($ts . 'json');
 
     $json_export = new json_io($t->usr1, $phr_lst);
-    $result = $json_export->export();
+    $result = $json_export->export($msg);
     $target = 'mathematics';
     $t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 

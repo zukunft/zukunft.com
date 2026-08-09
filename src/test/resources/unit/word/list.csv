@@ -211,7 +211,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 210,1,woman,,an adult female human being.,1,,,,,,,,
 211,1,work,,,1,,,,,,,,
 212,1,world,,,1,,,,,,,,
-213,1,zukunft.com,,,1,,,,,zukunft.com,,,3
+213,1,zukunft.com,,,23,,,,,zukunft.com,,,3
 214,1,Zurich,,most populous canton of Switzerland, in the north‑eastern part of the country.,1,,,,,,,,
 215,1,solution,,,1,,,,,,,,
 216,1,priority,,,1,,,,,,,,

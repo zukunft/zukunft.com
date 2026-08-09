@@ -48,6 +48,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -250,8 +252,9 @@ class test_words extends test_objects
      */
     function word_id_or_fixed(string $name, int $fixed_id): int
     {
+        $msg = new user_message();
         $wrd = new word($this->env->usr1);
-        $id = $wrd->load_by_name($name);
+        $id = $wrd->load_by_name($name, $msg);
         if ($id == 0) {
             $id = $fixed_id;
         }
@@ -264,16 +267,16 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
-    static function word_new_url(): array
+    static function word_new_url(user_message_ui $msg): array
     {
         $wrd_ui = new word_ui();
-        return $wrd_ui->to_url_array();
+        return $wrd_ui->to_url_array($msg);
     }
 
-    static function word_add_url(): array
+    static function word_add_url(user_message_ui $msg): array
     {
         $wrd_ui = self::word_add_ui();
-        return $wrd_ui->to_url_array();
+        return $wrd_ui->to_url_array($msg);
     }
 
 
@@ -312,12 +315,12 @@ class test_words extends test_objects
      *
      * @return array the edit form url parameters with every field filled
      */
-    function fill_url_array(): array
+    function fill_url_array(user_message_ui $msg): array
     {
         // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
         // value of every editable url field without renaming the word the change_word workflow runs on
         $wrd = new word_ui($this->word_filled_add()->api_json());
-        $url_arr = $wrd->to_url_array();
+        $url_arr = $wrd->to_url_array($msg);
         // the workflow step adds the current db id of the test word, so drop the factory id
         unset($url_arr[url_var::ID]);
         return $url_arr;

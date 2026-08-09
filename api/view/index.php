@@ -42,46 +42,43 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("view", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("view", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $dsp_id = $_GET[url_var::ID] ?? 0;
     $dsp_name = $_GET[url_var::NAME] ?? '';
     $cmp_lvl = $_GET[url_var::LEVELS] ?? 0;
 
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
-
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         // the session user may differ from the data user e.g. an admin wants to see the data
         // of a user; the data user is included in the request in url_var::USER
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0);
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg);
 
         $msk = new view($load_usr);
         if ($dsp_id > 0) {
-            $msk->load_by_id($dsp_id);
+            $msk->load_by_id($dsp_id, $msg);
             if ($cmp_lvl > 0) {
-                $msk->load_components();
+                $msk->load_components($msg);
             }
             $result = $msk->api_json();
         } elseif ($dsp_name != '') {
-            $msk->load_by_name($dsp_name);
+            $msk->load_by_name($dsp_name, $msg);
             if ($cmp_lvl > 0) {
-                $msk->load_components();
+                $msk->load_components($msg);
             }
             $result = $msk->api_json();
         } else {

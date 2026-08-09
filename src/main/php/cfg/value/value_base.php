@@ -86,6 +86,7 @@ include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_message.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
@@ -159,6 +160,7 @@ include_once paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
@@ -326,12 +328,13 @@ class value_base extends sandbox_value
      * @return bool true if the value is loaded and valid
      */
     function row_mapper_sandbox_multi(
-        ?array $db_row,
-        string $ext,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = value_fields::FLD_ID,
-        bool   $one_id_fld = true
+        ?array       $db_row,
+        user_message $msg,
+        string       $ext,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = value_fields::FLD_ID,
+        bool         $one_id_fld = true
     ): bool
     {
         $lib = new library();
@@ -348,7 +351,7 @@ class value_base extends sandbox_value
             // if the value is not of prime or main type, use the text group id
             $id = $db_row[$id_fld];
             $grp = new group($this->get_user());
-            $grp->set_phrase_list_by_id($id);
+            $grp->set_phrase_list_by_id($id, $msg);
             $grp->set_id($id);
             $this->set_grp($grp);
         } else {
@@ -373,7 +376,7 @@ class value_base extends sandbox_value
                 $id_fld = $id_fld[0];
             }
         }
-        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
+        $result = parent::row_mapper_sandbox_multi($db_row, $msg, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
             if (array_key_exists($this::FLD_VALUE, $db_row)) {
                 $this->set_value($db_row[$this::FLD_VALUE]);
@@ -384,13 +387,18 @@ class value_base extends sandbox_value
             } elseif (array_key_exists($this::FLD_VALUE_GEO, $db_row)) {
                 $this->set_value($db_row[$this::FLD_VALUE_GEO]);
             } else {
-                log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
+                // the row is expected to contain one of the value fields, so a row without any
+                // is an internal inconsistency; include the value and the loaded db fields
+                // to identify the failing object and the sql from the log
+                log_err_msg('Value for ' . $this::FLD_VALUE . ' is undefined'
+                    . ' when loading ' . $this->dsp_id()
+                    . ' from a db row with the fields "' . implode(', ', array_keys($db_row)) . '"', $msg);
             }
             // TODO check if phrase_group_id and time_word_id are user-specific or time series specific
             $this->set_source_id($db_row[source_fields::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -590,13 +598,14 @@ class value_base extends sandbox_value
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
         // add the source
         if ($this->source != null) {
@@ -611,16 +620,6 @@ class value_base extends sandbox_value
     /*
      * set and get
      */
-
-    /**
-     * set the unique database id of a database object
-     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
-     */
-    function set_id(int|string $id): void
-    {
-        $this->id = $id;
-        $this->grp()->set_id($id);
-    }
 
     function id(): int|string
     {
@@ -690,13 +689,13 @@ class value_base extends sandbox_value
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id for results only
      * @return bool true if value has been found
      */
-    function load_by_grp(group $grp, bool $by_source = false): bool
+    function load_by_grp(group $grp, user_message $msg, bool $by_source = false): bool
     {
         global $db_con;
 
         log_debug($grp->dsp_id());
         $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
-        $id = $this->load_non_int_db_key($qp);
+        $id = $this->load_non_int_db_key($qp, $msg);
 
         // use the given phrase list
         if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
@@ -720,11 +719,11 @@ class value_base extends sandbox_value
      * @param array $phr_ids with the phrase ids
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_phr_ids(array $phr_ids): int
+    function load_by_phr_ids(array $phr_ids, user_message $msg): int
     {
         $phr_lst = new phrase_list($this->get_user());
-        $phr_lst->load_names_by_ids((new phr_ids($phr_ids)));
-        return $this->load_by_grp($phr_lst->get_grp_id());
+        $phr_lst->load_names_by_ids((new phr_ids($phr_ids)), $msg);
+        return $this->load_by_grp($phr_lst->get_grp_id(), $msg);
     }
 
     /**
@@ -733,13 +732,17 @@ class value_base extends sandbox_value
      * @param sql_par $qp the query parameters created by the calling function
      * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load_non_int_db_key(sql_par $qp): int|string
+    protected function load_non_int_db_key(sql_par $qp, user_message $msg): int|string
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox_multi($db_row, $qp->ext);
-        return $this->id();
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_sandbox_multi($db_row, $msg, $qp->ext);
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -751,11 +754,11 @@ class value_base extends sandbox_value
      *
      * @param phrase_list $phr_lst with the phrases used for the selection
      */
-    function load_best(phrase_list $phr_lst): void
+    function load_best(phrase_list $phr_lst, user_message $msg): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
         $grp = $phr_lst->get_grp_id();
-        $this->load_by_grp($grp);
+        $this->load_by_grp($grp, $msg);
         // if not found try without scaling
         if (!$this->is_id_set()) {
             if (!$phr_lst->is_empty()) {
@@ -766,16 +769,16 @@ class value_base extends sandbox_value
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
                 $grp_unscale = $phr_lst_unscaled->get_grp_id();
-                $this->load_by_grp($grp_unscale);
+                $this->load_by_grp($grp_unscale, $msg);
                 // if not found try with converted measure
                 if (!$this->is_id_set()) {
                     // try to get a value with another measure
                     $phr_lst_converted = clone $phr_lst_unscaled;
-                    $phr_lst_converted->ex_measure();
+                    $phr_lst_converted->ex_measure($msg);
                     log_debug('try converted with ' . $phr_lst_converted->dsp_id());
                     $grp_unscale = $phr_lst_converted->get_grp_id();
                     $this->grp()->set_id($grp_unscale->id());
-                    $this->load_by_grp($grp_unscale);
+                    $this->load_by_grp($grp_unscale, $msg);
                     // TODO:
                     // check if there are any matching values at all
                     // if yes, get the most often used phrase
@@ -848,7 +851,7 @@ class value_base extends sandbox_value
     function load_sql_standard(
         int|string  $id,
         sql_creator $sc,
-        array $fld_lst = []
+        array       $fld_lst = []
     ): sql_par
     {
         if ($this->is_numeric()) {
@@ -906,9 +909,9 @@ class value_base extends sandbox_value
     /**
      * called from the user sandbox
      */
-    function load_objects(bool $names_only = false): bool
+    function load_objects(user_message $msg, bool $names_only = false): bool
     {
-        $this->load_phrases($names_only);
+        $this->load_phrases($msg, $names_only);
         return true;
     }
 
@@ -918,12 +921,12 @@ class value_base extends sandbox_value
      * maybe rename to load_objects
      * NEVER call the dsp_id function from this function or any called function, because this would lead to an endless loop
      */
-    function load_phrases(bool $names_only = false): void
+    function load_phrases(user_message $msg, bool $names_only = false): void
     {
         log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
         if ($this->grp()->is_id_set()) {
-            $this->load_grp_by_id($names_only);
+            $this->load_grp_by_id($msg, $names_only);
         }
         log_debug('done');
     }
@@ -932,14 +935,14 @@ class value_base extends sandbox_value
      * load the source object
      * what happens if a source is updated
      */
-    function load_source(): ?source
+    function load_source(user_message $msg): ?source
     {
         $src = null;
         log_debug('for ' . $this->dsp_id());
 
         if ($this->get_source_id() > 0) {
             $this->source->set_user($this->get_user());
-            $this->source->load_by_id($this->get_source_id());
+            $this->source->load_by_id($this->get_source_id(), $msg);
             $src = $this->source;
         } else {
             $this->source = null;
@@ -956,13 +959,13 @@ class value_base extends sandbox_value
     /**
      * rebuild the word and triple list based on the group id
      */
-    function load_grp_by_id(bool $names_only = true): void
+    function load_grp_by_id(user_message $msg, bool $names_only = true): void
     {
         // if the group object is missing
         if ($this->grp()->is_id_set()) {
             // ... load the group related objects means the word and triple list
             $grp = new group($this->get_user()); // in case the word names and word links can be user-specific maybe the owner should be used here
-            $grp->load_by_id($this->grp()->id()); // to make sure that the word and triple object lists are loaded
+            $grp->load_by_id($this->grp()->id(), $msg); // to make sure that the word and triple object lists are loaded
             if ($grp->is_id_set()) {
                 $this->set_grp($grp);
             }
@@ -970,9 +973,9 @@ class value_base extends sandbox_value
 
         // if a list object is missing
         if ($names_only) {
-            $this->grp()->load_phrase_names();
+            $this->grp()->load_phrase_names($msg);
         } else {
-            $this->grp()->load_phrases();
+            $this->grp()->load_phrases($msg);
         }
 
         log_debug('done');
@@ -1081,13 +1084,13 @@ class value_base extends sandbox_value
      * load the source and return the source name
      * TODO avoid unneeded loading of sources
      */
-    function source_name(): string
+    function source_name(user_message $msg): string
     {
         $result = '';
         log_debug($this->dsp_id());
 
         if ($this->get_source_id() > 0) {
-            $this->load_source();
+            $this->load_source($msg);
             if (isset($this->source)) {
                 $result = $this->source->name();
             }
@@ -1200,13 +1203,13 @@ class value_base extends sandbox_value
      * TODO move to test?
      * @return bool true if everything is fine
      */
-    function check(): bool
+    function check(user_message $msg): bool
     {
         $result = true;
 
         // reload the value by id
         $val_id = new value($this->get_user());
-        $val_id->load_by_id($this->id());
+        $val_id->load_by_id($this->id(), $msg);
         if (!$this->is_same_val($val_id)) {
             $result = false;
         }
@@ -1214,7 +1217,7 @@ class value_base extends sandbox_value
         // reload the value by group
         log_debug('value->check id ' . $this->id() . ', for user ' . $this->get_user()->name);
         $val_grp = new value($this->get_user());
-        $val_grp->load_by_grp($this->grp());
+        $val_grp->load_by_grp($this->grp(), $msg);
         if (!$this->is_same_val($val_grp)) {
             $result = false;
         }
@@ -1353,24 +1356,27 @@ class value_base extends sandbox_value
      * @param user_message $msg to collect the warnings and errors that might be shown to the user or admin
      * @return float|null the scaled number or the unscaled number if scaling is not possible
      */
-    function scale(word_list|phrase_list|null $target_wrd_lst, user_message $msg): ?float
+    function scale(
+        word_list|phrase_list|null $target_wrd_lst,
+        user_message               $msg
+    ): ?float
     {
         log_debug('value->scale ' . $this->get_value());
 
         // load the phrases of this value e.g. "Switzerland", "inhabitants" and "million"
-        $this->load_phrases();
+        $this->load_phrases($msg);
 
         // load the scaling formula and the formula result phrases for each scaling word of this value
         $dto = new data_object($this->get_user());
         foreach ($this->phrase_list()->scaling_lst()->lst() as $scale_wrd) {
             if ($scale_wrd->id() > 0) {
-                $frm = $scale_wrd->formula();
+                $frm = $scale_wrd->formula($msg);
                 if ($frm->ref_text != null and $frm->ref_text != '') {
                     $frm->usr = $this->get_user(); // temp solution until the bug of not setting is found
                     $dto->add_formula($frm);
                     $exp = new expression($frm);
                     $exp->set_ref_text($frm->ref_text);
-                    foreach ($exp->load_result_phrases()->lst() as $phr) {
+                    foreach ($exp->load_result_phrases($msg)->lst() as $phr) {
                         $dto->add_phrase($phr);
                     }
                 }
@@ -1417,7 +1423,7 @@ class value_base extends sandbox_value
                     $exp = new expression($frm);
                     $exp->set_ref_text($frm->ref_text, $dto->term_list());
                     $res_ids = $exp->phr_id_lst($exp->res_part());
-                    $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all()->scaling_lst();
+                    $res_scale_lst = $dto->phrase_list()->filter_by_ids($res_ids)->wrd_lst_all($msg)->scaling_lst();
                     if (count($res_scale_lst->lst()) != 1) {
                         $msg->add(msg_id::SCALING_FORMULA_RESULT_INVALID, [msg_id::VAR_FORMULA_NAME => $frm->name()]);
                     } else {
@@ -1546,18 +1552,19 @@ class value_base extends sandbox_value
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // add the source name; load_by_grp above sets only the source id, so load the
         // source object first to get its name for the export (matching the import format)
         if ($do_load) {
-            $this->load_source();
+            $this->load_source($msg);
         }
         if ($this->source != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source->name();
@@ -1574,12 +1581,11 @@ class value_base extends sandbox_value
      * @param array $api_json the api array
      * @return user_message false if a value could not be set
      */
-    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
+    function save_from_api_msg(array $api_json, user_message $msg, bool $do_save = true): user_message
     {
         global $sys;
 
         log_debug();
-        $msg = new user_message();
 
         $lib = new library();
 
@@ -1628,7 +1634,7 @@ class value_base extends sandbox_value
             $src = new source($this->get_user());
             $src->set_name($api_json[json_fields::SOURCE_NAME]);
             if ($msg->is_ok() and $do_save) {
-                $src->load_by_name($api_json[json_fields::SOURCE_NAME]);
+                $src->load_by_name($api_json[json_fields::SOURCE_NAME], $msg);
                 if ($src->id() == 0) {
                     $src->save($msg);
                 }
@@ -1698,7 +1704,7 @@ class value_base extends sandbox_value
             $src = new source($this->get_user());
             $src->set_name($value);
             if ($msg->is_ok() and $do_save) {
-                $src->load_by_name($value);
+                $src->load_by_name($value, $msg);
                 if ($src->id() == 0) {
                     $src->save($msg);
                 }
@@ -1749,11 +1755,11 @@ class value_base extends sandbox_value
      * get a list of all formula results that are depending on this value
      * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with sql_db::ROW_MAX
      */
-    function res_lst_depending(): result_list
+    function res_lst_depending(user_message $msg): result_list
     {
         log_debug('value->res_lst_depending group id "' . $this->grp()->id() . '" for user ' . $this->get_user()->name . '');
         $res_lst = new result_list($this->get_user());
-        $res_lst->load_by_grp($this->grp(), true);
+        $res_lst->load_by_grp($this->grp(), $msg, true);
 
         log_debug('done');
         return $res_lst;
@@ -1792,29 +1798,32 @@ class value_base extends sandbox_value
     3d) user B changes the value to the same value as a -> the user-specific record is removed
     3e) user A excludes the value -> b gets the owner and a user-specific exclusion for A is created
 
+     * @param user_message $msg to enrich with problems and suggested solutions
     */
 
-    function used(): bool
+    function used(user_message $msg): bool
     {
-        return !$this->not_used();
+        return !$this->not_used($msg);
     }
 
     /**
      * true if no one has used this value
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function not_used(): bool
+    function not_used(user_message $msg): bool
     {
         log_debug('value->not_used (' . $this->id() . ')');
         $result = true;
 
         // to review: maybe replace by a database foreign key check
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
      * true if no other user has modified the value
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug('value->not_changed id ' . $this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
@@ -1826,7 +1835,7 @@ class value_base extends sandbox_value
             log_err('The id must be set to check if the formula has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
-            $db_row = $db_con->get1($qp);
+            $db_row = $db_con->get1($qp, $msg);
             if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
@@ -1911,8 +1920,8 @@ class value_base extends sandbox_value
             // check again if there ist not yet a record
             $qp = $this->load_sql_user_changes($db_con->sql_creator());
             $db_con->usr_id = $this->get_user()->id;
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
+            $db_row = $db_con->get1($qp, $msg);
+            if ($db_row !== false and $db_row !== null and $db_row !== []) {
                 $this->usr_cfg_id = $this->get_user()->id;
             }
             if (!$this->has_usr_cfg()) {
@@ -1930,7 +1939,7 @@ class value_base extends sandbox_value
      * set the log entry parameters for a value update
      * @return change_value actually a child object (prime, norm or big) with the parameters for this change
      */
-    function log_upd(): change_value
+    function log_upd(user_message $msg): change_value
     {
         log_debug('value->log_upd "' . $this->dsp_id());
         if ($this->is_text()) {
@@ -2167,7 +2176,7 @@ class value_base extends sandbox_value
 
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
-        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, false, true);
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), false, true);
 
         return $msg->is_ok();
     }
@@ -2205,7 +2214,7 @@ class value_base extends sandbox_value
             $db_chk = $this->clone_all();
             $db_chk->reset();
             $db_chk->set_user($this->get_user());
-            $db_chk->load_by_id($this->grp()->id());
+            $db_chk->load_by_id($this->grp()->id(), $msg);
             if ($db_chk->is_saved()) {
                 $this->set_last_update($db_chk->last_update());
             }
@@ -2216,7 +2225,7 @@ class value_base extends sandbox_value
             if (!$this->is_saved()) {
 
                 // make sure that only an admin user sets the admin protection also on a new value
-                $this->check_protection_change(null, $this->get_user(), $msg);
+                $this->check_protection_change(null, $msg);
                 log_debug('add ' . $this->dsp_id());
                 $this->add($msg);
             } else {
@@ -2230,7 +2239,7 @@ class value_base extends sandbox_value
                 $db_rec->reset();
                 $db_rec->set_user($this->get_user());
                 // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
-                $db_rec->load_by_id($this->grp()->id());
+                $db_rec->load_by_id($this->grp()->id(), $msg);
                 if ($db_rec->id() != $this->id()) {
                     $msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $this->dsp_id() . ' ' . $msg_fail);
                 }
@@ -2257,7 +2266,7 @@ class value_base extends sandbox_value
                 // the problem is shown to the user by the calling interactive script
                 if ($msg->is_ok()) {
                     // make sure that only an admin user reduces or raises the protection level
-                    $this->check_protection_change($db_rec, $this->get_user(), $msg);
+                    $this->check_protection_change($db_rec, $msg);
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                 } else {
@@ -2267,7 +2276,7 @@ class value_base extends sandbox_value
             }
 
             if (!$msg->is_ok()) {
-                log_err($msg->text());
+                log_err_msg($msg->text(), $msg);
             }
         }
 

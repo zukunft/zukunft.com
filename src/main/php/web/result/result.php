@@ -48,6 +48,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -213,15 +215,15 @@ class result extends sandbox_value
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         if ($this->frm != null) {
             $vars[json_fields::FORMULA_ID] = $this->frm->id();
         }
-        //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array($typ_lst, $msg);
         $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -271,7 +273,7 @@ class result extends sandbox_value
 
     // explain a formula result to the user
     // create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
-    function explain($lead_phr_id, $back): string
+    function explain(int $lead_phr_id, user_message $msg, $back): string
     {
         $lib = new library();
         $html = new html_base();
@@ -288,8 +290,8 @@ class result extends sandbox_value
         // build the title
         $title = '';
         // add the words that specify the calculated value to the title
-        $val_phr_lst = clone $this->grp->phrase_list();
-        $val_wrd_lst = $val_phr_lst->wrd_lst_all();
+        $val_phr_lst = clone $this->grp->phrase_list($msg);
+        $val_wrd_lst = $val_phr_lst->wrd_lst_all($msg);
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());
         if ($time_phr <> '') {
@@ -311,7 +313,7 @@ class result extends sandbox_value
 
         // display the formula with links
         $frm = new formula();
-        $frm->load_by_id($this->frm->id());
+        $frm->load_by_id($this->frm->id(), $msg);
         $frm_html = $frm;
         $result .= ' based on</br>' . $frm_html->name_link($back);
         $result .= ' ' . $frm_html->dsp_text($back) . "\n";

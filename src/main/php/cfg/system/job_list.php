@@ -95,11 +95,11 @@ class job_list extends list_db_write
      * @param string $type_code_id the code id of the job type that should be loaded
      * @return bool true if at least one open job found
      */
-    function load_by_type(string $type_code_id = ''): bool
+    function load_by_type(string $type_code_id, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_code_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -107,11 +107,11 @@ class job_list extends list_db_write
      * @param string $status_code_id the code id of the job status that should be loaded
      * @return bool true if at least one open job found
      */
-    function load_by_status(string $status_code_id = ''): bool
+    function load_by_status(string $status_code_id, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_status($db_con->sql_creator(), $status_code_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
 
@@ -164,7 +164,7 @@ class job_list extends list_db_write
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one change found
      */
-    private function load(sql_par $qp): bool
+    private function load(sql_par $qp, user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -172,11 +172,11 @@ class job_list extends list_db_write
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp, 'job list');
+            $db_rows = $db_con->get($qp, $msg, 'job list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $job = new job($this->usr);
-                    $job->row_mapper($db_row);
+                    $job->row_mapper($db_row, $msg);
                     $this->add_obj($job);
                     $result = true;
                 }

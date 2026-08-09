@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SYSTEM . 'back_trace.php';
@@ -59,6 +60,7 @@ class formula_ui_tests
     {
         $html = new html_base();
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html formula ';
@@ -72,12 +74,12 @@ class formula_ui_tests
         $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($frm);
+        $test_page .= $t->dsp_title_named_edit($frm, $msg);
 
         // the formula page title shows the formula name with its assigned phrases as subtitle,
         // e.g. "increase" with the assigned "year" phrase
         $frm_increase = $t_frm->formula_increase_ui();
-        $test_page .= $t->dsp_title_formula($frm_increase);
+        $test_page .= $t->dsp_title_formula($frm_increase, $msg);
 
         // the expression in latex format with a tooltip and a link for each term, e.g. the
         // "definition of joule" formula joule = ( kg * metre * metre ) / ( second * second )
@@ -116,7 +118,7 @@ class formula_ui_tests
         // the assigned-phrases component shows only the phrases the formula is assigned to (the
         // "year" carried by the increase formula), never the full phrase list; test_mode true so
         // the assigned list carried by the formula is used without an api reload
-        $assigned = $list->phrases_of_formula($frm_increase, null, true);
+        $assigned = $list->phrases_of_formula($frm_increase, $msg, null, true);
         // building the assigned phrases list reads and writes to the database, so a db timeout is used
         $test_name = 'assigned phrases of the increase formula show the assigned "year"';
         $t->assert_text_contains($test_name, $assigned, words::YEAR_CAP, $t::TIMEOUT_LIMIT_DB);
@@ -129,9 +131,9 @@ class formula_ui_tests
         // e.g. the inhabitants of the regions that the increase is calculated for
         $t_val = new test_values($t);
         $test_page .= $html->text_h2('values of the phrases used for the formula increase');
-        $test_page .= $t_val->value_list_zh_ui()->table();
+        $test_page .= $t_val->value_list_zh_ui()->table($msg);
 
-        $t->html_page_test($test_page, 'formula', 'formula', $t);
+        $t->html_page_test($test_page, 'formula', 'formula', $msg);
 
         // TODO review
 

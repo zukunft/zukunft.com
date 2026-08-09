@@ -206,7 +206,7 @@ class expression_tests
         $exp = new expression($frm);
         $exp->set_user_text(formula_names::INCREASE_EXP, $trm_lst);
         $exp->ref_text($trm_lst);
-        $phr_lst = $exp->load_result_phrases($trm_lst);
+        $phr_lst = $exp->load_result_phrases($msg, $trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_names::PERCENT
             . '" (phrase_id ' . words::PCT_ID . ') for user 3 (zukunft.com system test)';
@@ -287,7 +287,7 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         // element_special_following
-        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst));
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
         $follow_lst = $exp->terms_following($msg, $trm_lst);
         $result = $follow_lst->dsp_name();
         $target = '"' . formula_names::PRIOR . '","' . formula_names::THIS_NAME . '"';
@@ -309,7 +309,7 @@ class expression_tests
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
-        $phr_lst_res = $exp->load_result_phrases($trm_lst);
+        $phr_lst_res = $exp->load_result_phrases($msg, $trm_lst);
         $result = $phr_lst_res->dsp_name();
         $target = '"' . words::PCT . '"';
         $t->assert($test_name, $result, $target);

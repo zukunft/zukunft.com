@@ -251,12 +251,13 @@ class user_list
      *
      * @param sql_db $db_con the database connection used to count the rows
      * @param int $user_id the id of the user whose sandbox rows should be counted
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return int the number of user sandbox rows the user has, zero if none is left
      */
-    function count_user_rows(sql_db $db_con, int $user_id): int
+    function count_user_rows(sql_db $db_con, int $user_id, user_message $msg): int
     {
         $qp = $this->load_sql_count_user_rows($db_con->sql_creator(), $user_id);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $count = 0;
         if (is_array($db_row)) {
             $count = (int)($db_row[self::FLD_CHANGES] ?? 0);
@@ -321,17 +322,18 @@ class user_list
      * load this list of user
      * @param sql_db $db_con the database link as a parameter to load the system users at program start
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param user_message $msg to collect the load warnings for the user
      * @return bool true if at least one user has been loaded
      */
-    private function load(sql_db $db_con, sql_par $qp): bool
+    private function load(sql_db $db_con, sql_par $qp, user_message $msg): bool
     {
         $result = false;
 
-        $db_rows = $db_con->get($qp, 'user list');
+        $db_rows = $db_con->get($qp, $msg, 'user list');
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $usr = new user();
-                $usr->row_mapper($db_row);
+                $usr->row_mapper($db_row, $msg);
                 $this->lst[] = $usr;
                 $result = true;
             }
@@ -348,10 +350,10 @@ class user_list
      * @param array $ids list of user ids that should be loaded
      * @return bool true if at least one user found
      */
-    function load_by_ids(sql_db $db_con, array $ids): bool
+    function load_by_ids(sql_db $db_con, array $ids, user_message $msg): bool
     {
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($db_con, $qp);
+        return $this->load($db_con, $qp, $msg);
     }
 
     /**
@@ -361,10 +363,10 @@ class user_list
      * @param string $code_id list of user ids that should be loaded
      * @return bool true if at least one user found
      */
-    function load_by_code_id(sql_db $db_con, string $code_id): bool
+    function load_by_code_id(sql_db $db_con, string $code_id, user_message $msg): bool
     {
         $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
-        return $this->load($db_con, $qp);
+        return $this->load($db_con, $qp, $msg);
     }
 
     /**
@@ -375,10 +377,10 @@ class user_list
      * @param int $profile_id list of user that has at least this profile level
      * @return bool true if at least one user found
      */
-    function load_by_profile_and_higher(sql_db $db_con, int $profile_id): bool
+    function load_by_profile_and_higher(sql_db $db_con, int $profile_id, user_message $msg): bool
     {
         $qp = $this->load_sql_by_profile_and_higher($db_con->sql_creator(), $profile_id);
-        return $this->load($db_con, $qp);
+        return $this->load($db_con, $qp, $msg);
     }
 
 
@@ -407,7 +409,7 @@ class user_list
 
 
     // return a list of all users that have done at least one modification compared to the standard
-    function load_active(): array
+    function load_active(user_message $msg): array
     {
         log_debug('user_list->load_active');
         $lib = new library();
@@ -420,7 +422,7 @@ class user_list
         $this->lst[] = $usr;
 
         $qp = $this->load_sql_count_changes($db_con->sql_creator());
-        $this->load($db_con, $qp);
+        $this->load($db_con, $qp, $msg);
 
         log_debug($lib->dsp_count($this->lst));
         return $this->lst;
@@ -708,11 +710,12 @@ class user_list
     /**
      * create an array for the api json message
      *
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr_req the user for whom the api message should be created which can differ from the session user
      * @returns array with the json fields to create an api message
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr_req = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr_req = null): array
     {
         $lst = [];
         foreach ($this->lst() as $usr) {
@@ -798,28 +801,28 @@ class user_list
      * because there are probably few users to save at once
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @param user_message $usr_msg_all in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $msg in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(user_message $usr_msg_all, user|null $usr_req = null): void
+    function save(user_message $msg, user|null $usr_req = null): void
     {
         if ($this->is_empty()) {
-            $usr_msg_all->add_info_text('no users to save');
+            $msg->add_info_text('no users to save');
         } else {
             foreach ($this->lst() as $usr) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
-                $msg = $usr_msg_all->clone_reset();
+                $msg_one = $msg->clone_reset();
                 // actual save the user to the database
                 if ($usr->excluded === true) {
                     if ($usr->id == 0 and $usr->name() != '') {
-                        $usr->load_by_name($usr->name());
+                        $usr->load_by_name($usr->name(), $msg_one);
                     }
-                    $usr->del($usr_msg_all, $usr_req);
+                    $usr->del($msg, $usr_req);
                 } else {
-                    $usr->save_user($msg, $usr_req);
+                    $usr->save_user($msg_one, $usr_req);
                 }
                 // collect the user message for a consolidated list for the user
-                $usr_msg_all->merge($msg);
+                $msg->merge($msg_one);
             }
         }
     }

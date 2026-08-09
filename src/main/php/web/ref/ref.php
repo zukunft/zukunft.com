@@ -55,6 +55,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -215,7 +217,7 @@ class ref extends sandbox
             if (count($phr_lst_json) > 1) {
                 log_warning('reference ' . json_encode($json_array) . 'is not expected to have more than on phrase');
             } elseif (count($phr_lst_json) < 1) {
-                log_warning('reference ' . json_encode($json_array)  . 'is not expected to have no phrase');
+                log_warning('reference ' . json_encode($json_array) . 'is not expected to have no phrase');
             } else {
                 $phr = new phrase();
                 $phr_json = $phr_lst_json[0];
@@ -349,7 +351,7 @@ class ref extends sandbox
      * TODO Prio 2 either this or predicate_id should be deprecated
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->predicate_id;
     }
@@ -402,11 +404,11 @@ class ref extends sandbox
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASE_ID] = $this->phr?->id();
         $vars[json_fields::SOURCE_ID] = $this->source?->id();
         $vars[json_fields::URL] = $this->url();
@@ -555,7 +557,7 @@ class ref extends sandbox
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 
 
@@ -571,17 +573,18 @@ class ref extends sandbox
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_types::REF);
+        $msk_lst = $msk_lst->only_type(view_types::REF, $msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

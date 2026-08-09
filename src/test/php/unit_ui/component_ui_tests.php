@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -42,6 +43,7 @@ class component_ui_tests
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html component ';
@@ -74,8 +76,8 @@ class component_ui_tests
         $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '', '', $test_form_unique_id++) . '<br>';
-        $test_page .= $t->dsp_title_named_edit($cmp);
-        $t->html_page_test($test_page, 'component', 'component', $t);
+        $test_page .= $t->dsp_title_named_edit($cmp, $msg);
+        $t->html_page_test($test_page, 'component', 'component', $msg);
     }
 
 }

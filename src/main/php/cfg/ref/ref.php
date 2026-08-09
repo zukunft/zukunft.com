@@ -253,21 +253,21 @@ class ref extends sandbox_link
      * @return bool true if the reference is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = false,
-        string $id_fld = ''
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = false,
+        string       $id_fld = ''
     ): bool
     {
-        $msg = new user_message();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
-            $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
+            $this->set_phrase_by_id($db_row[phrase::FLD_ID], $msg);
             $this->set_external_key($db_row[ref_fields::FLD_EX_KEY]);
             $this->set_predicate_id($db_row[ref_fields::FLD_TYPE]);
             $this->set_url($db_row[fields::FLD_URL]);
             $this->description = $db_row[fields::FLD_DESCRIPTION];
-            $this->set_source_by_id($db_row[source_fields::FLD_ID]);
+            $this->set_source_by_id($db_row[source_fields::FLD_ID], $msg);
             if (array_key_exists(fields::FLD_IMPACT, $db_row)) {
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
@@ -280,7 +280,7 @@ class ref extends sandbox_link
                 log_debug('done ' . $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -362,7 +362,7 @@ class ref extends sandbox_link
             if ($src == null) {
                 $src = new source($this->get_user());
                 if ($db_con->is_open()) {
-                    $src->load_by_name($src_name);
+                    $src->load_by_name($src_name, $msg);
                     if ($src->id() == 0) {
                         $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
                             msg_id::VAR_NAME => $src_name,
@@ -400,7 +400,7 @@ class ref extends sandbox_link
             if ($phr == null) {
                 $phr = new phrase($this->get_user());
                 if ($db_con->is_open()) {
-                    $phr->load_by_name($phr_name);
+                    $phr->load_by_name($phr_name, $msg);
                     if ($phr->id() == 0) {
                         $msg->add(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                             msg_id::VAR_NAME => $phr_name,
@@ -425,20 +425,24 @@ class ref extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->get_url();
             $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
             if ($this->phrase()->id() != 0) {
                 if ($typ_lst->include_phrases()) {
-                    $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
+                    $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array($typ_lst, $msg)];
                 } else {
                     $vars[json_fields::PHRASE_ID] = $this->phrase()->id();
                 }
@@ -468,13 +472,14 @@ class ref extends sandbox_link
 
     /**
      * create an array with the export json fields of this reference excluding e.g. the database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->get_source() != null) {
             $vars[json_fields::SOURCE_NAME] = $this->get_source()->name();
@@ -541,12 +546,12 @@ class ref extends sandbox_link
      * @param phrase_list|null $phr_lst cache of phrases
      * @return void
      */
-    function set_phrase_by_id(?int $id, ?phrase_list $phr_lst = null): void
+    function set_phrase_by_id(?int $id, user_message $msg, ?phrase_list $phr_lst = null): void
     {
         if ($id != null) {
             if ($id != 0) {
                 $phr = new phrase($this->get_user());
-                $phr->load_by_id($id);
+                $phr->load_by_id($id, $msg);
                 $this->set_phrase($phr);
             }
         }
@@ -752,12 +757,12 @@ class ref extends sandbox_link
      * @param int|null $id
      * @return void
      */
-    function set_source_by_id(?int $id): void
+    function set_source_by_id(?int $id, user_message $msg): void
     {
         if ($id != null) {
             if ($id != 0) {
                 $src = new source($this->get_user());
-                $src->load_by_id($id);
+                $src->load_by_id($id, $msg);
                 $this->set_source($src);
             }
         }
@@ -867,13 +872,13 @@ class ref extends sandbox_link
      * @param string $external_key_name the name of the external key for the reference
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_ex_key(string $external_key_name): int
+    function load_by_ex_key(string $external_key_name, user_message $msg): int
     {
         global $db_con;
 
         log_debug($external_key_name);
         $qp = $this->load_sql_by_id($db_con, $external_key_name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -884,13 +889,13 @@ class ref extends sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $predicate_id = 0, int|string $to = 0, string $class = self::class): int
+    function load_by_link_id(int $from, user_message $msg, int $predicate_id = 0, int|string $to = 0, string $class = self::class): int
     {
         global $db_con;
 
         log_debug($from . ' ' . $predicate_id . ' ' . $to);
         $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $predicate_id, $to, $class);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -900,14 +905,14 @@ class ref extends sandbox_link
      * @param int $type_id the id of the reference type
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_ids(int $phr_id, int $type_id): int
+    function load_by_link_ids(int $phr_id, int $type_id, user_message $msg): int
     {
         global $db_con;
 
         log_debug();
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_link_ids($sc, $phr_id, $type_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -969,12 +974,17 @@ class ref extends sandbox_link
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row, false, true);
+        // reset the id first so that a missing database row is reported with id 0
+        // also within the object and never with a stale id (see db_object_seq_id::load)
+        $this->id = 0;
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_sandbox($db_row, $msg, false, true);
+        }
         return $this->id();
     }
 
@@ -993,7 +1003,7 @@ class ref extends sandbox_link
         if ($this->phrase()?->name() == null or $this->phrase()?->name() == '') {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
-                if ($phr->load_by_id($this->phrase_id())) {
+                if ($phr->load_by_id($this->phrase_id(), $msg)) {
                     $this->set_phrase($phr);
                     log_debug('phrase ' . $phr->dsp_id() . ' loaded');
                 } else {
@@ -1071,11 +1081,12 @@ class ref extends sandbox_link
      * e.g. for import  if this reference has only the name set, the protection should not be updated in the database
      *
      * @param ref|CombineObject|IdObject $db_obj the reference as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this reference has infos that should be saved in the database
      */
-    function needs_db_update(ref|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(ref|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->get_external_key() != null) {
             if ($this->get_external_key() != $db_obj->get_external_key()) {
                 $result = true;
@@ -1316,7 +1327,7 @@ class ref extends sandbox_link
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = $this->clone_reset(true);
-        $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
+        $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id(), $msg);
         if ($db_chk->id() > 0) {
             $msg->add(msg_id::REF_ALREADY_EXISTS, [
                 msg_id::VAR_TYPE => $this->predicate_name(),
@@ -1375,7 +1386,7 @@ class ref extends sandbox_link
             // read the database values to be able to check if something has been changed;
             // done first, because it needs to be done for user and general object values
             $db_rec = $this->clone_reset(true);
-            $db_rec->load_by_id($this->id());
+            $db_rec->load_by_id($this->id(), $msg);
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->get_user()); // must also be set to allow to take the ownership
             $std_rec->load_standard($this->id(), $msg);

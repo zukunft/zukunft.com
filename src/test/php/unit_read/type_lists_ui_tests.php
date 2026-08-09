@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -63,6 +64,7 @@ class type_lists_ui_tests
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_typ = new test_types($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db read type list ui ';
@@ -78,7 +80,7 @@ class type_lists_ui_tests
         $wrd->set_name('All type selectors');
         $cfg = new data_object();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
-        $test_page = $msk->show($wrd, $cfg, '') . '<br><br>';
+        $test_page = $msk->show($wrd, $msg, $cfg, '') . '<br><br>';
 
         // test the type list selectors; each selector renders its own <label for> tied to
         // its control id, so no extra manual label is added (that produced a dangling
@@ -99,7 +101,7 @@ class type_lists_ui_tests
         $test_page .= $ui_cache->shr_typ->selector($form) . '<br>';
         $test_page .= $html->form_end_with_submit($form, '');
 
-        $t->html_page_test($test_page, 'types', 'types', $t);
+        $t->html_page_test($test_page, 'types', 'types', $msg);
     }
 
 }

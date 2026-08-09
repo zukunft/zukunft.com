@@ -49,6 +49,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -140,11 +142,12 @@ class change_value extends change_log
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a change log entry is found
      */
-    function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = '', ?user $usr = null): bool
     {
         global $sys;
-        $result = parent::row_mapper($db_row, self::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
@@ -182,7 +185,7 @@ class change_value extends change_log
                 $this->set_user($row_usr);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /*
@@ -225,13 +228,14 @@ class change_value extends change_log
      * create an array for the api json message
      *
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::OLD_VALUE] = $this->old_value;
         $vars[json_fields::NEW_VALUE] = $this->new_value;
         $vars[json_fields::STD_VALUE] = $this->std_value;

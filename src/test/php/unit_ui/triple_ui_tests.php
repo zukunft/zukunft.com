@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -55,6 +56,7 @@ class triple_ui_tests
         $html = new html_base();
         $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html triple ';
@@ -71,14 +73,14 @@ class triple_ui_tests
         $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $msg, $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_FROM,views::TRIPLE_EDIT, $trp->get_from()->id()) . '<br>';
         $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_TO, views::TRIPLE_EDIT, $trp->get_to()->id()) . '<br>';
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));
-        $test_page .= $t->dsp_title_named_edit($trp);
+        $test_page .= $t->dsp_title_named_edit($trp, $msg);
 
         // show the related phrases grouped by verb as on the default triple page
         // ("related phrases without subtitles": the verb linked to its page, then the linked
@@ -90,7 +92,7 @@ class triple_ui_tests
         $test_page .= $html->text_h2('related phrases without subtitles of ' . $trp_problem->name());
         $test_page .= $list->phrases_related_ex_subtitle($trp_problem) . '<br>';
 
-        $t->html_page_test($test_page, 'triple', 'triple', $t);
+        $t->html_page_test($test_page, 'triple', 'triple', $msg);
 
         $t->subheader($ts . 'related phrases without subtitles');
         $sub_html = $list->phrases_related_ex_subtitle($trp_problem);

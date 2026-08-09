@@ -75,12 +75,12 @@ class ui_config
      * and if possible cached in the frontend in a cookie if possible
      *
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|user_ui|null $usr the user for whom the api message should be created which can differ from the session user
+     * @param user_message $msg to collect the error messages and the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
     function api_json(
         api_type_list|array $typ_lst,
-        user|user_ui|null   $usr = null
+        user_message        $msg
     ): string
     {
         global $sys;
@@ -91,41 +91,41 @@ class ui_config
             $typ_lst = new api_type_list($typ_lst);
         }
 
-        $vars = $sys->typ_lst->api_json_array($typ_lst);
-        $vars[json_fields::LIST_SYSTEM_VIEWS] = $cac->sys_msk->api_json_array($typ_lst);
+        $vars = $sys->typ_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::LIST_SYSTEM_VIEWS] = $cac->sys_msk->api_json_array($typ_lst, $msg);
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name($db_con);
-        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $msg->usr);
     }
 
     /**
      * TODO Prio 1 include user_message and return bool and reload only if triggered
-     * @param user $usr the user for whom the api message should be created which can differ from the session user
+     * @param user_message $msg with the user for whom the api message should be created which can differ from the session user
      * @return void
      */
-    function reload(user $usr): void
+    function reload(user_message $msg): void
     {
         global $sys;
         global $db_con;
         global $cac;
 
         // force the reload of the data
-        $sys->load_type_lists($db_con);
+        $sys->load_type_lists($db_con, $msg);
         if ($cac == null) {
-            $cac = new data_object($usr);
+            $cac = new data_object($msg->usr);
         }
-        $cac->load_system_views($db_con);
+        $cac->load_system_views($db_con, $msg);
     }
 
     /**
      * get the cache or reloaded ui type json message
      * @param api_type_list|array $typ_lst
-     * @param user|user_ui|null $usr
+     * @param user_message $msg
      * @return string
      */
     function get(
         api_type_list|array $typ_lst,
-        user|user_ui|null   $usr = null
+        user_message        $msg
     ): string
     {
         global $cfg;
@@ -135,28 +135,27 @@ class ui_config
         $use_cache = $cfg?->cache_allowed(db_cache_types::TYPES) ?? true;
         $result = false;
         if ($use_cache) {
-            $result = $this->read_db_cache($usr);
+            $result = $this->read_db_cache($msg);
         }
         if ($result === false) {
-            $this->reload($usr);
-            $result = $this->api_json($typ_lst, $usr);
+            $this->reload($msg);
+            $result = $this->api_json($typ_lst, $msg);
             if ($use_cache) {
-                $this->write_db_cache($usr);
+                $this->write_db_cache($msg);
             }
         }
         return $result;
     }
 
 
-
     /*
      * cache
      */
 
-    private function read_db_cache(user $usr): string|bool
+    private function read_db_cache(user_message $msg): string|bool
     {
-        $cac = new db_cache($usr);
-        $cac->load_by_type_id(db_cache_types::TYPES_ID);
+        $cac = new db_cache($msg->usr);
+        $cac->load_by_type_id(db_cache_types::TYPES_ID, $msg);
         if ($cac->data !== null) {
             // TODO Prio 1 add trigger check
             $cut_time = new DateTime;
@@ -181,21 +180,25 @@ class ui_config
         }
     }
 
-    private function write_db_cache(user $usr): void
+    private function write_db_cache(user_message $msg): void
     {
         // the cache row is written as the system user because filling the cache is a system
         // action that must also work for an ip user who cannot change data (like the html
         // page cache, see frontend::save_html_page)
         $cac = new db_cache(user::system());
         $cac->type_id = db_cache_types::TYPES_ID;
-        $cac->data = $this->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $usr);
+        $cac->data = $this->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $msg);
         $cac->usr = user::system();
         $cac->status_id = db_cache_statuum::CLEAN_ID;
         $cac->last_update = new DateTime();
-        // a failure is only logged because the user already has the api message
-        $msg = new user_message(user::system());
-        if (!$cac->save($msg)) {
-            log_warning('caching the types api message failed because ' . $msg->all_message_text());
+        // use a local message with the system user as the requester, because filling the cache
+        // is a system action that must also work when the request comes from an ip user who
+        // cannot change data; a refused or failed cache write is only logged and must never
+        // enrich the request message, because that would replace the types json of the response
+        // with the reject message and e.g. break the frontend of a user without login
+        $cac_msg = new user_message(user::system());
+        if (!$cac->save($cac_msg)) {
+            log_warning('caching the types api message failed because ' . $cac_msg->all_message_text());
         }
     }
 

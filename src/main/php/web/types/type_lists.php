@@ -150,10 +150,10 @@ class type_lists
      * fill the global html frontend type vars base on the api message
      * @param string|null $api_json the api message to set all types
      */
-    function __construct(?string $api_json = null)
+    function __construct(?string $api_json = null, user_message $msg = new user_message())
     {
         if ($api_json != null) {
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $msg);
         }
     }
 
@@ -230,32 +230,32 @@ class type_lists
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if everything is set
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
         if ($json_array == null) {
-            $msg = new user_message();
             $msg->add(msg_id::API_MESSAGE_EMPTY, [
                 msg_id::VAR_REQUEST => 'type_lists'
             ]);
-            return $msg;
         } else {
             $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
-            return $this->set_from_json_array($type_lists_json);
+            return $this->set_from_json_array($type_lists_json, $msg);
         }
+        return $msg->is_ok();
     }
 
     /**
      * set the vars of this log html object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true is all is set without isse
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, user_message $msg): bool
     {
-        $msg = new user_message();
         if (array_key_exists(api::JSON_LIST_USER_PROFILES, $json_array)) {
             $this->set_user_profiles($json_array[api::JSON_LIST_USER_PROFILES]);
         } else {
@@ -400,145 +400,145 @@ class type_lists
             $msg->add_error_text('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_field_list([]);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
-    function set_user_profiles(?array $json_array = null): void
+    function set_user_profiles(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->usr_pro = new user_profile();
-        $this->usr_pro->set_from_json_array($json_array);
+        $this->usr_pro->set_from_json_array($json_array, $msg);
     }
 
-    function set_phrase_types(?array $json_array = null): void
+    function set_phrase_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->phr_typ = new phrase_type_list();
-        $this->phr_typ->set_from_json_array($json_array);
+        $this->phr_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_formula_types(?array $json_array = null): void
+    function set_formula_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->frm_typ = new formula_type_list();
-        $this->frm_typ->set_from_json_array($json_array);
+        $this->frm_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_formula_link_types(?array $json_array = null): void
+    function set_formula_link_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->frm_lnk_typ = new formula_link_type_list();
-        $this->frm_lnk_typ->set_from_json_array($json_array);
+        $this->frm_lnk_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_view_types(?array $json_array = null): void
+    function set_view_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->msk_typ = new view_type_list();
-        $this->msk_typ->set_from_json_array($json_array);
+        $this->msk_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_view_styles(?array $json_array = null): void
+    function set_view_styles(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->msk_sty = new view_style_list();
-        $this->msk_sty->set_from_json_array($json_array);
+        $this->msk_sty->set_from_json_array($json_array, $msg);
     }
 
-    function set_view_link_types(?array $json_array = null): void
+    function set_view_link_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->msk_lnk_typ = new view_link_type_list();
-        $this->msk_lnk_typ->set_from_json_array($json_array);
+        $this->msk_lnk_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_view_relation_types(?array $json_array = null): void
+    function set_view_relation_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->mrl_typ = new view_relation_type_list();
-        $this->mrl_typ->set_from_json_array($json_array);
+        $this->mrl_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_component_types(?array $json_array = null): void
+    function set_component_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->cmp_typ = new component_type_list();
-        $this->cmp_typ->set_from_json_array($json_array);
+        $this->cmp_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_component_link_types(?array $json_array = null): void
+    function set_component_link_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->cmp_lnk_typ = new component_link_type_list();
-        $this->cmp_lnk_typ->set_from_json_array($json_array);
+        $this->cmp_lnk_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_position_types(?array $json_array = null): void
+    function set_position_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->pos_typ = new position_type_list();
-        $this->pos_typ->set_from_json_array($json_array);
+        $this->pos_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_source_types(?array $json_array = null): void
+    function set_source_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->src_typ = new source_type_list();
-        $this->src_typ->set_from_json_array($json_array);
+        $this->src_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_ref_types(?array $json_array = null): void
+    function set_ref_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->ref_typ = new ref_type_list();
-        $this->ref_typ->set_from_json_array($json_array, ref_type::class);
+        $this->ref_typ->set_from_json_array($json_array, $msg, ref_type::class);
     }
 
-    function set_share_types(?array $json_array = null): void
+    function set_share_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->shr_typ = new share();
-        $this->shr_typ->set_from_json_array($json_array);
+        $this->shr_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_protection_types(?array $json_array = null): void
+    function set_protection_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->ptc_typ = new protection();
-        $this->ptc_typ->set_from_json_array($json_array);
+        $this->ptc_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_languages(?array $json_array = null): void
+    function set_languages(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->lan = new language_list();
-        $this->lan->set_from_json_array($json_array, language::class);
+        $this->lan->set_from_json_array($json_array, $msg, language::class);
     }
 
-    function set_language_forms(?array $json_array = null): void
+    function set_language_forms(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->lan_for = new language_form_list();
-        $this->lan_for->set_from_json_array($json_array);
+        $this->lan_for->set_from_json_array($json_array, $msg);
     }
 
-    function set_verbs(?array $json_array = null): void
+    function set_verbs(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->vrb = new verbs();
-        $this->vrb->set_from_json_array($json_array, verb::class);
+        $this->vrb->set_from_json_array($json_array, $msg, verb::class);
     }
 
-    function set_sys_log_statuum(?array $json_array = null): void
+    function set_sys_log_statuum(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->sys_log_sta = new sys_log_status_list();
-        $this->sys_log_sta->set_from_json_array($json_array);
+        $this->sys_log_sta->set_from_json_array($json_array, $msg);
     }
 
-    function set_job_types(?array $json_array = null): void
+    function set_job_types(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->job_typ = new job_type_list();
-        $this->job_typ->set_from_json_array($json_array);
+        $this->job_typ->set_from_json_array($json_array, $msg);
     }
 
-    function set_change_action_list(?array $json_array = null): void
+    function set_change_action_list(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->cng_act = new change_action_list();
-        $this->cng_act->set_from_json_array($json_array);
+        $this->cng_act->set_from_json_array($json_array, $msg);
     }
 
-    function set_change_table_list(?array $json_array = null): void
+    function set_change_table_list(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->cng_tbl = new change_table_list();
-        $this->cng_tbl->set_from_json_array($json_array);
+        $this->cng_tbl->set_from_json_array($json_array, $msg);
     }
 
-    function set_change_field_list(?array $json_array = null): void
+    function set_change_field_list(?array $json_array = null, user_message $msg = new user_message()): void
     {
         $this->cng_fld = new change_field_list();
-        $this->cng_fld->set_from_json_array($json_array);
+        $this->cng_fld->set_from_json_array($json_array, $msg);
     }
 
     function set_system_views(?array $json_array = null): void
@@ -548,11 +548,11 @@ class type_lists
     }
 
     // TODO add similar functions for all cache types
-    function get_html_by_id(int $id): string
+    function get_html_by_id(int $id, user_message $msg): string
     {
         $msk = $this->get_view_by_id($id);
         $wrd = new word_ui();
-        return $msk->show($wrd);
+        return $msk->show($wrd, $msg);
     }
 
     function get_view_by_id(int $id): ?view
@@ -565,11 +565,11 @@ class type_lists
         return $this->msk_sys->get_by_code_id($code_id);
     }
 
-    function get_html(string $code_id): string
+    function get_html(string $code_id, user_message $msg): string
     {
         $msk = $this->get_view($code_id);
         $wrd = new word_ui();
-        return $msk->show($wrd);
+        return $msk->show($wrd, $msg);
     }
 
     function log_err(string $msg): void

@@ -170,7 +170,8 @@ class MapObject
             return new db_object_seq_id();
         }
         $db_obj = $this->dbObject($ui_obj, $usr);
-        $db_obj->api_mapper($ui_obj->api_array(), $msg);
+        $msg_ui = new user_message_ui();
+        $db_obj->api_mapper($ui_obj->api_array([], $msg_ui), $msg);
         return $db_obj;
     }
 
@@ -182,8 +183,9 @@ class MapObject
      */
     function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $msg): db_object_ui|user_ui
     {
+        $db_msg = new user_message();
         $ui_obj = $this->uiObject($obj);
-        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg);
+        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([]), $db_msg), $msg);
         return $ui_obj;
     }
 
@@ -207,7 +209,7 @@ class MapObject
     function convertMsgToUi(user_message $db_msg): user_message_ui
     {
         $ui_msg = new user_message_ui();
-        $ui_msg->api_mapper($db_msg->api_array());
+        $ui_msg->api_mapper($db_msg->api_array($db_msg), $ui_msg);
         return $ui_msg;
     }
 

@@ -44,9 +44,8 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use DateTime;
-use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
@@ -66,6 +65,8 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+//include_once html_paths::USER . 'user.php';
+//include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -77,6 +78,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -84,6 +87,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use DateTime;
+use DateTimeInterface;
 
 class db_cache_page extends db_object_seq_id
 {
@@ -154,11 +159,12 @@ class db_cache_page extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a cached html page is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, self::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(self::FLD_URL, $db_row)) {
                 $this->url = $db_row[self::FLD_URL];
             }
@@ -169,7 +175,7 @@ class db_cache_page extends db_object_seq_id
                 $this->last_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE], $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -182,13 +188,13 @@ class db_cache_page extends db_object_seq_id
      * @param string $url the request url of the cached html page
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_url(string $url): int
+    function load_by_url(string $url, user_message $msg): int
     {
         global $db_con;
 
         $this->reset();
         $qp = $this->load_sql_by_url($db_con->sql_creator(), $url);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -202,9 +208,11 @@ class db_cache_page extends db_object_seq_id
         // show the cache read from '&debug=7' upward (url_var::DEBUG_LEVEL_DB_READ) to trace what a request reads
         log_debug('read page from cache', url_var::DEBUG_LEVEL_DB_READ);
         $result = null;
-        $id = $this->load_by_url($url);
+        $msg = new user_message();
+        $id = $this->load_by_url($url, $msg);
         if ($id > 0) {
             $result = $this->html_page;
+            // TODO Prio 1 add message to page
         }
         return $result;
     }
@@ -301,7 +309,7 @@ class db_cache_page extends db_object_seq_id
      */
     function save_html(string $url, string $html, user_message $msg): bool
     {
-        $this->load_by_url($url);
+        $this->load_by_url($url, $msg);
         $this->url = $url;
         $this->html_page = $html;
         $this->last_update = new DateTime();
@@ -357,12 +365,17 @@ class db_cache_page extends db_object_seq_id
 
     /**
      * create an array for the api json creation
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();

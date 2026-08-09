@@ -78,6 +78,7 @@ class test_app
      */
     function start(
         string $code_name,
+        user_message $msg,
         bool   $echo_env = false
     ): sql_db
     {
@@ -123,7 +124,7 @@ class test_app
             phpinfo(INFO_GENERAL);
         }
 
-        return $this->open_db($code_name);
+        return $this->open_db($code_name, $msg);
     }
 
     /**
@@ -132,7 +133,7 @@ class test_app
      * @param string $code_name the place that is displayed to the user e.g. add a word
      * @return sql_db the open database connection
      */
-    function open_db(string $code_name): sql_db
+    function open_db(string $code_name, user_message $msg): sql_db
     {
 
         global $sys;       // the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes
@@ -181,7 +182,7 @@ class test_app
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                $sys->load_cache_type($db_con);
+                $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg(null, $usr_sys);
@@ -197,7 +198,7 @@ class test_app
                     log_err('Type loading incomplete due to ');
                 }
                 */
-                $sys->load_type_lists($db_con);
+                $sys->load_type_lists($db_con, $msg);
 
                 $log = new change_log($usr_sys);
                 $db_changed = $log->create_log_references($db_con);
@@ -205,7 +206,7 @@ class test_app
                 // reload the type list if needed and trigger an update in the frontend
                 // even tough the update of the preloaded list should already be done by the single adds
                 if ($db_changed) {
-                    $sys->load_type_lists($db_con);
+                    $sys->load_type_lists($db_con, $msg);
                 }
             }
 
@@ -239,6 +240,7 @@ class test_app
     private function write_time($db_con): void
     {
         global $sys;
+        $msg = new user_message();
 
         $sys_time_end = microtime(true);
         if ($sys_time_end > $sys->time_limit) {
@@ -248,7 +250,7 @@ class test_app
                 $sys_script->name = $sys->script;
                 $sys_script->code_id = $sys->script;
                 $sys_usr = new user();
-                $sys_usr->load_by_id(users::SYSTEM_ID);
+                $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
                 $msg = new user_message($sys_usr);
                 $sys_script->save($msg);
                 if ($msg->is_ok()) {

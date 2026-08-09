@@ -37,11 +37,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_im_export extends ui_base
@@ -87,6 +89,7 @@ class ui_im_export extends ui_base
     function select_export_format(
         db_object|sandbox_list $dbo,
         string                 $form,
+        user_message           $msg,
         ?data_object           $cfg = null
     ): string
     {
@@ -98,9 +101,9 @@ class ui_im_export extends ui_base
             }
         }
         if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
+            $msk_lst = $dbo->view_list($msg);
         }
-        return $dbo->view_selector($form, $msk_lst);
+        return $dbo->view_selector($form, $msk_lst, $msg);
     }
 
     /**

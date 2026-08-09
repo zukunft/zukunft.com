@@ -38,11 +38,13 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
@@ -60,14 +62,15 @@ class ref_type_list extends type_list
     /**
      * overwrite the user_type_list function to include the specific fields like the url
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_message $msg to collect the load warnings for the user
      * @param string $class the database name e.g. the table name without s
      * @return array the list of reference types
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp, 'ref type list');
+        $db_lst = $db_con->get($qp, $msg, 'ref type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[fields::FLD_CODE_ID]);

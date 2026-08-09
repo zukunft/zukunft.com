@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -43,6 +44,7 @@ class view_list_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         $lib = new library();
 
@@ -57,20 +59,20 @@ class view_list_read_tests
         $test_name = 'loading view names with pattern return the expected view';
         $pattern = substr(views::TEST_ALL_NAME, 0, -1);
         $msk_lst = new view_list($t->usr1);
-        $msk_lst->load_names($pattern);
+        $msk_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
         // TODO do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
         $msk_lst = new view_list($t->usr1);
-        $msk_lst->load_names(views::TEST_FORM_NAME);
+        $msk_lst->load_names(views::TEST_FORM_NAME, $msg);
         $t->assert_contains_not($test_name, $msk_lst->names(), views::TEST_FORM_NAME);
 
 
         $test_name = 'loading by view list by component id ';
         $msk_lst = new view_list($t->usr1);
-        $msk_lst->load_by_component_id(1);
+        $msk_lst->load_by_component_id(1, $msg);
         $result = $msk_lst->names();
         $target = views::START_NAME;
         $t->assert_contains($test_name . '1', $result, $target);
@@ -86,7 +88,7 @@ class view_list_read_tests
         $test_name = 'loading by component list by pattern ';
         $msk_lst = new view_list($t->usr1);
         $pattern = substr(views::START_NAME, 0, -1);
-        $msk_lst->load_names($pattern);
+        $msk_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $msk_lst->names(), views::START_NAME);
 
         // test load by view list by ids

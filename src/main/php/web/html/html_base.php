@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
+//include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
 //include_once html_paths::SHARED_CONST . 'files.php';
 //include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
@@ -49,6 +50,7 @@ include_once html_paths::CONST . 'icons.php';
 //include_once html_paths::SHARED_CONST . 'words.php';
 //include_once html_paths::SHARED_ENUM . 'languages.php';
 //include_once html_paths::SHARED_ENUM . 'messages.php';
+//include_once html_paths::SHARED_HELPER . 'Message.php';
 //include_once html_paths::SHARED_TYPES . 'view_styles.php';
 //include_once html_paths::SHARED . 'api.php';
 //include_once html_paths::SHARED . 'url_var.php';
@@ -62,11 +64,13 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class html_base
 {
@@ -232,13 +236,14 @@ class html_base
      * the page header for simple html pages like the login page
      * @param string $title the HTML page title
      * @param string $pod_name the name of this deployment shown in the browser tab
+     * @param user_message $msg to collect render errors
      * @return string the HTML head section for simple pages
      */
-    function header_html(string $title, string $pod_name): string
+    function header_html(string $title, string $pod_name, user_message $msg): string
     {
         $txt = $this->charset();
         $txt .= $this->viewport();
-        $txt .= $this->title($title, $pod_name);
+        $txt .= $this->title($title, $pod_name, $msg);
         $txt .= $this->stylesheet();
         return $this->head($txt);
     }
@@ -268,19 +273,21 @@ class html_base
     /**
      * create the html code for the page header
      * @param string $title the HTML page title
+     * @param user_message|Message $msg
      * @param string $style CSS class applied to the body tag e.g. center_form for the login page
      * @param string $lan the language html code id
      * @return string the HTML header and opening body tag
      */
     function header(
         string $title,
+        user_message|Message $msg,
         string $style = "",
-        string $lan = languages::DEFAULT
+        string $lan = languages::DEFAULT,
     ): string
     {
         $result = $this->doctype() . "\n";
         $result .= $this->lang($lan) . "\n";
-        $result .= $this->head($this->head_fill($title)) . "\n";
+        $result .= $this->head($this->head_fill($title, $msg)) . "\n";
         if (self::UI_USE_BOOTSTRAP) {
             $result .= '<' . self::BODY . '>';
         } else {
@@ -296,13 +303,14 @@ class html_base
 
     /**
      * @param string $title the title of the html page
+     * @param user_message|Message $msg
      * @return string with the html code for the head section of the html header
      */
-    private function head_fill(string $title): string
+    private function head_fill(string $title, user_message|Message $msg): string
     {
         $txt = $this->charset() . "\n";
         $txt .= $this->make_flood() . "\n";
-        $txt .= $this->title($title, POD_NAME) . "\n";
+        $txt .= $this->title($title, POD_NAME, $msg) . "\n";
         $txt .= $this->head_style() . "\n";
         return $txt;
     }
@@ -1403,12 +1411,13 @@ class html_base
     }
 
     /**
+     * @param user_message|Message $msg to colle
      * @return string the HTML code of the about page
      */
-    function about_page(): string
+    function about_page(user_message|Message $msg): string
     {
         global $mtr;
-        $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), "center_form");
+        $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), $msg, "center_form");
 
         $result .= $this->about_body();
 
@@ -2471,11 +2480,12 @@ class html_base
      * @param string $right the second text snippet
      * @return string the two snippets joined by the entry separator
      */
-    function concat_entry_text(string $left, string $right): string
+    function concat_entry_text(string $left, string $right, user_message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::ENTRY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::ENTRY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_ENTRY_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2487,11 +2497,12 @@ class html_base
      * @param string $right the second text snippet
      * @return string the two snippets joined by the category separator
      */
-    function concat_category_text(string $left, string $right): string
+    function concat_category_text(string $left, string $right, user_message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::CATEGORY, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_CATEGORY_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2502,13 +2513,15 @@ class html_base
      *
      * @param string $left the first text snippet
      * @param string $right the second text snippet
+     * @param user_message|Message $msg to collect the data retriavel errors
      * @return string the two snippets joined by the title separator
      */
-    function concat_title_text(string $left, string $right): string
+    function concat_title_text(string $left, string $right, user_message|Message $msg): string
     {
         global $ui_sys;
         $separator = $ui_sys?->cfg?->get_by(
-            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER]
+            [words::TITLE, words::SEPARATOR, words::LISTS, words::FRONTEND, words::USER],
+            $msg
         ) ?? def::FALLBACK_TITLE_SEPARATOR;
         return $this->concat_text($left, $right, $separator);
     }
@@ -2694,15 +2707,17 @@ class html_base
     /**
      * wrap the title tag around html title text
      * @param string $txt the title text
+     * @param string $pod_name the name of the pod
+     * @param user_message|Message $msg to collect render errors
      * @return string the warped title text
      */
-    private function title(string $txt, string $pod_name): string
+    private function title(string $txt, string $pod_name, user_message|Message $msg): string
     {
         // append the pod name with the configured title separator e.g. "US dollar - Word (default) - zukunft.com"
         if ($txt == $pod_name) {
             $title = $pod_name;
         } else {
-            $title = $this->concat_title_text($txt, $pod_name);
+            $title = $this->concat_title_text($txt, $pod_name, $msg);
         }
         // escape the title text: it is fed the raw object and view name, so an object renamed to
         // "</title><script>..." would otherwise break out of the head title and inject script (xss)

@@ -166,6 +166,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job as job_backend;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log as sys_log_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+
 // web group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
@@ -193,7 +194,7 @@ use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
@@ -202,6 +203,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
@@ -217,6 +219,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 // test group (alphabetic by FQN)
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use DateTime;
@@ -436,16 +439,16 @@ class frontend
      * is_admin checks that each admin mask would otherwise have to repeat (see url_to_html / url_to_action)
      *
      * @param int|string $view_id the resolved view id (or code id) of the request
-     * @param user_message $msg carries the requesting user (null for an anonymous request) and tells the user why the admin mask is not shown
+     * @param user_message_ui $msg_ui carries the requesting user (null for an anonymous request) and tells the user why the admin mask is not shown
      * @return bool true if the request is for an admin mask that the user may not access
      */
-    private function admin_mask_denied(int|string $view_id, user_message $msg): bool
+    private function admin_mask_denied(int|string $view_id, user_message_ui $msg_ui): bool
     {
-        $usr = $msg->usr;
+        $usr = $msg_ui->usr;
         $denied = false;
         if (in_array($view_id, views::ADMIN_MASK_IDS)) {
             if ($usr == null or (!$usr->is_admin() and !$usr->is_system())) {
-                $msg->add(msg_id::ADMIN_MASK_DENIED, []);
+                $msg_ui->add(msg_id::ADMIN_MASK_DENIED, []);
                 $denied = true;
             }
         }
@@ -508,7 +511,7 @@ class frontend
                 // preload all types, with one database read from the cached types json when available
                 // or with one select per type list if the cache is missing or outdated
                 $sys->times->switch(system_time_type::LOAD_TYPES);
-                $sys->load_type_lists_cached($db_con);
+                $sys->load_type_lists_cached($db_con, $sys_msg);
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
@@ -518,7 +521,7 @@ class frontend
                 $mtr = new Translator($cfg->language());
 
                 // honor the pod switch for the types cache, which is only known once the config is loaded
-                $sys->typ_lst->reload_if_cache_denied($db_con, $cfg->cache_allowed(db_cache_types::TYPES));
+                $sys->typ_lst->reload_if_cache_denied($db_con, $sys_msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
                 $cac = new data_object_backend($usr_sys);
                 if (!$sys->typ_lst->from_cache()) {
@@ -530,7 +533,7 @@ class frontend
                     // reload the type list if needed and trigger an update in the frontend
                     // even tough the update of the preloaded list should already be done by the single adds
                     if ($db_changed) {
-                        $sys->load_type_lists($db_con);
+                        $sys->load_type_lists($db_con, $sys_msg);
                     }
                 }
             }
@@ -546,7 +549,7 @@ class frontend
      * @param string $title the name of the called frontend view for logging
      * @return string the page header
      */
-    function start_ui(string $title): string
+    function start_ui(string $title, user_message_ui $msg_ui): string
     {
         global $mtr;
         $result = '';
@@ -573,11 +576,11 @@ class frontend
         $mtr = new Translator(language_codes::SYS);
         $usr = $this->get_user();
 
-        $this->load_cache();
+        $this->load_cache($msg_ui);
 
         // html header
         $html = new html_base();
-        echo $html->header($title, '', language_codes::SYS, THIS_URL);
+        echo $html->header($title, $msg_ui, '', language_codes::SYS, THIS_URL);
 
         if (SYS_LOG_URL != '') {
             $result .= $this->log_info('start ' . $this->code_name);
@@ -626,25 +629,25 @@ class frontend
 
     /**
      * load the frontend cache once upfront via api
-     * @return user_message
+     * @param user_message_ui $msg_ui to collect the load errory
+     * @return bool true if all is loaded without problems
      */
-    function load_cache(): user_message
+    function load_cache(user_message_ui $msg_ui): bool
     {
         global $sys;
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
-        $msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
             if ($api_msg == '' or $api_msg == null) {
-                $msg->add(msg_id::API_MESSAGE_EMPTY, [
+                $msg_ui->add(msg_id::API_MESSAGE_EMPTY, [
                     msg_id::VAR_REQUEST => 'load cache'
                 ]);
             } else {
-                $this->set_type_cache($api_msg);
+                $this->set_type_cache($api_msg, $msg_ui);
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
-        return $msg;
+        return $msg_ui->is_ok();
     }
 
     function set_cache(data_object $dto): void
@@ -655,18 +658,19 @@ class frontend
     /**
      * load the frontend cache from the test resource
      * TODO move to test to avoid usage of backend in frontend
-     * @param user_backend $usr the backend user used for the import e.g. of the system views
+     * @param user_message_ui $msg_ui the backend user used for the import e.g. of the system views
      * @return void
      */
-    function load_dummy_cache_from_test_resources(user_backend $usr): void
+    function load_dummy_cache_from_test_resources(user_message_ui $msg_ui): void
     {
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-            $this->set_type_cache($api_msg);
+            $this->set_type_cache($api_msg, $msg_ui);
         }
+        // load the system view from resource json if not already included in the cache
         if ($this->dto->msk_lst == null) {
             $imp = new import();
-            $imp->usr = $usr;
+            $imp->usr = $msg_ui->usr;
             $msg = new backend_user_message();
             $json_str = file_get_contents(files::SYSTEM_VIEWS);
             $size = strlen($json_str);
@@ -674,6 +678,7 @@ class frontend
             $dto = $imp->get_data_object($json_array, $msg, $size);
             $api_msg = $dto->view_list()->api_json();
             $this->set_view_cache($api_msg);
+            $msg_ui->merge($msg);
         }
     }
 
@@ -682,15 +687,16 @@ class frontend
      * used for the unit test without api calls
      *
      * @param string|null $api_msg with the api message as a string
+     * @param user_message_ui $msg_ui to collect the mapping errors
      * @return void
      */
-    function set_type_cache(?string $api_msg = null): void
+    function set_type_cache(?string $api_msg = null, user_message_ui $msg_ui = new user_message_ui()): void
     {
         if ($this->dto?->typ_lst_cache == null) {
             if ($this->dto == null) {
                 $this->dto = new data_object();
             }
-            $this->dto->typ_lst_cache = new type_lists($api_msg);
+            $this->dto->typ_lst_cache = new type_lists($api_msg, $msg_ui);
         }
     }
 
@@ -734,31 +740,31 @@ class frontend
      *
      * @param array $url_array the parsed url as an array
      * @param user_backend $usr_backend the backend user object updated in-place on successful login
-     * @param user_message $msg to enrich with potential errors; carries the requesting user, which is replaced on successful login
+     * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user, which is replaced on successful login
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $do_it can be set to false for unit testing without executing the exaction
      * @return array the url array to display the result and the next step
      */
-    function  url_to_action(
-        array        $url_array,
-        user_backend &$usr_backend,
-        user_message $msg,
-        data_object  $dto = new data_object(),
-        bool         $do_it = true
+    function url_to_action(
+        array           $url_array,
+        user_backend    &$usr_backend,
+        user_message_ui $msg_ui,
+        data_object     $dto = new data_object(),
+        bool            $do_it = true
     ): array
     {
         // the requesting user of this request (docs/llm/state-and-messages.md); a request without
         // a known user (e.g. before the first login) acts as an anonymous ip-only user, and the
         // login actions below replace the local var by reference, so the switched user is written
         // back to the message after the dispatch
-        $usr_ui = $msg->usr ?? new user_ui();
+        $usr_ui = $msg_ui->usr ?? new user_ui();
 
         // init the url to show the result to the user and for the next step
         $url = $url_array;
 
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
-        $url_array = $url_map->url_to_standard($url_array, $msg);
+        $url_array = $url_map->url_to_standard($url_array, $msg_ui);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -769,7 +775,7 @@ class frontend
 
         // central admin mask authorization: refuse to act on an admin only view for a non-admin user
         // and send them to the start view, so an admin action cannot be triggered without the rights
-        if ($this->admin_mask_denied($view, $msg)) {
+        if ($this->admin_mask_denied($view, $msg_ui)) {
             return [url_var::MASK => views::START_ID];
         }
 
@@ -790,8 +796,8 @@ class frontend
                     in_array($view, views::ADD_MASKS_IDS) => url_var::CRUD_CREATE,
                     default => url_var::CRUD_UPDATE,
                 };
-                $dbo->url_mapper($url_array, $msg, $dto);
-                if (!$dbo->input_valid($msg, $crud, $url_array)) {
+                $dbo->url_mapper($url_array, $msg_ui, $dto);
+                if (!$dbo->input_valid($msg_ui, $crud, $url_array)) {
                     return $url;
                 }
             }
@@ -812,32 +818,32 @@ class frontend
         }
 
         match (true) {
-            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg, $usr_backend, $usr_ui, $do_it),
-            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg, $usr_backend, $usr_ui, $do_it),
-            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg, $do_it),
-            $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg, $do_it),
-            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg, $do_it),
+            $view == views::LOGIN_ID => $url = $this->action_login($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
+            $view == views::SIGNUP_ID => $url = $this->action_signup($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
+            $view == views::LOGIN_ACTIVATE_ID => $url = $this->action_login_activate($url_array, $msg_ui, $usr_backend, $usr_ui, $do_it),
+            $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg_ui, $do_it),
+            $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg_ui, $do_it),
+            $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg_ui, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
             $action == url_var::CRUD_DELETE and $step == url_var::STEP_CONFIRMED,
-            in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $msg, $dto, url_var::CRUD_DELETE, $do_it),
+                in_array($view, views::DEL_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
+                $url_array, $view, $msg_ui, $dto, url_var::CRUD_DELETE, $do_it),
             // a confirmed create request: triggered by an add mask or by an explicit create action
             $action == url_var::CRUD_CREATE and $step == url_var::STEP_CONFIRMED,
-            in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $msg, $dto, url_var::CRUD_CREATE, $do_it),
+                in_array($view, views::ADD_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
+                $url_array, $view, $msg_ui, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
-                $url_array, $view, $msg, $dto, url_var::CRUD_UPDATE, $do_it),
-            default => $this->log_ignored_write_step($view, $step, $msg)
+                $url_array, $view, $msg_ui, $dto, url_var::CRUD_UPDATE, $do_it),
+            default => $this->log_ignored_write_step($view, $step, $msg_ui)
         };
 
         // a login, signup, activation or logout has replaced the local user var by reference, so
         // store the (possibly switched) requesting user back on the message: from here on every
         // function of this request sees the new user via $usr_msg->usr (the user switch on login
         // is the one sanctioned change of the requesting user after the entry point assignment)
-        $msg->usr = $usr_ui;
+        $msg_ui->usr = $usr_ui;
 
         return $url;
     }
@@ -871,31 +877,30 @@ class frontend
      * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_message $usr_msg to enrich with potential errors; carries the requesting user (null for an anonymous request)
+     * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user (null for an anonymous request)
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test
      * @return string the html code to show the page to the user
      */
     function url_to_html(
-        array        $url_array,
-        user_message $usr_msg,
-        data_object  $dto = new data_object(),
-        bool         $test_mode = false
+        array           $url_array,
+        user_message_ui $msg_ui,
+        data_object     $dto = new data_object(),
+        bool            $test_mode = false
     ): string
     {
         // the requesting user of this request; null renders the page for an anonymous user
         // (docs/llm/state-and-messages.md)
-        $usr = $usr_msg->usr;
+        $usr = $msg_ui->usr;
 
         $lib = new library();
 
         // init the view
         $result = ''; // reset the html code var
-        $msg = ''; // to collect all messages that should be shown to the user immediately
 
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
-        $url_array = $url_map->url_to_standard($url_array, $usr_msg);
+        $url_array = $url_map->url_to_standard($url_array, $msg_ui);
 
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
@@ -946,7 +951,7 @@ class frontend
         // central admin mask authorization: an admin only view is shown to no one but an admin (or
         // system) user, so a non-admin request is sent to the start view with a message instead of
         // rendering the admin page (which would otherwise leak the admin content to anyone)
-        if ($this->admin_mask_denied($view_id, $usr_msg)) {
+        if ($this->admin_mask_denied($view_id, $msg_ui)) {
             $view_id = views::START_ID;
             $view_code_id = views::START_CODE;
         }
@@ -972,17 +977,22 @@ class frontend
             // the debug flag must not switch the render from the loaded object to the incomplete url
             // values; only a single db object can be loaded by the id, a list (e.g. of phrases)
             // always takes the values from the url
-            if (!$this->url_has_object_values($url_array) and $dbo instanceof db_object_ui) {
+            if (!$this->url_has_object_values($url_array) and $dbo instanceof db_object_ui
+                and !$test_mode) {
                 // pass the session user id so the backend loads the user-related object (the user's
                 // sandbox overlay), not the default derived from the api caller
                 $usr_id = $usr?->id() ?? 0;
                 if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
-                    $dbo->load_by_id($id, [], $usr_id);
+                    $dbo->load_by_id($id, $msg_ui, [], $usr_id);
                 } else {
-                    $dbo->load_by_id_with_related($id, $usr_id);
+                    $dbo->load_by_id_with_related($id, $msg_ui, $usr_id);
                 }
             } else {
-                $dbo->url_mapper($url_array, $usr_msg, $dto);
+                // in test mode the object is filled from the url values only, because a test render
+                // must be reproducible without backend calls; a backend call for a dummy test id
+                // (e.g. word 999 of the workflow tests) would return an empty api json and add a
+                // mandatory-field-missing message to the rendered test page
+                $dbo->url_mapper($url_array, $msg_ui, $dto);
             }
         } else {
             // get last term used by the user or a default value
@@ -1022,8 +1032,8 @@ class frontend
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                $title = $msk_ui->title($dbo);
-                $dsp_text = $msk_ui->show($dbo, $dto, $back, '', $test_mode, $url_array);
+                $title = $msk_ui->title($dbo, $msg_ui);
+                $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, $back, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
                 if ($dsp_text == '' or $msk_ui->name() == '') {
@@ -1033,7 +1043,7 @@ class frontend
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
                 } else {
                     $html = new html_base();
-                    $result .= $html->header($title, '', $lan);
+                    $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
                         $logged_in = $usr !== null && !$usr->is_ip_only();
                         $result .= $html->navbar($view_id, $url_array,
@@ -1041,7 +1051,7 @@ class frontend
                             $logged_in ? $usr->navbar_role() : null);
                     }
                     $result .= $html->main($dsp_text);
-                    $result .= $this->user_msg_html($usr_msg);
+                    $result .= $this->user_msg_html($msg_ui);
                     $result .= $html->footer();
                 }
             }
@@ -1068,15 +1078,15 @@ class frontend
      * so the caller does the full setup and renders the page live
      *
      * @param array $url_array the parsed url as an array
-     * @param user_message $msg with the messages of this request that are added to the cached page and the requesting user with the uses_sandbox flag loaded
+     * @param user_message_ui $msg_ui with the messages of this request that are added to the cached page and the requesting user with the uses_sandbox flag loaded
      * @return string|null the cached html page or null if the page cannot be served from the cache
      */
-    function cached_page_or_null(array $url_array, user_message $msg): ?string
+    function cached_page_or_null(array $url_array, user_message_ui $msg_ui): ?string
     {
         $result = null;
         // only a user without own data changes may get the standard cached page; an unknown
         // user (null) has no own data changes, so the shared page is the correct answer
-        $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
+        $uses_sandbox = $msg_ui->usr?->uses_sandbox ?? false;
         if (!$uses_sandbox) {
             $url_key = $this->url_cache_key($url_array);
             if ($url_key != '') {
@@ -1088,7 +1098,7 @@ class frontend
                     $result = db_cache_page::restore_session_token($cached_html, self::session_token());
                     // a cached page never contains a message (see save_html_page), so add the
                     // message of this request e.g. that a change without login is not allowed
-                    $result = db_cache_page::add_user_msg($result, $this->user_msg_html($msg));
+                    $result = db_cache_page::add_user_msg($result, $this->user_msg_html($msg_ui));
                 }
             }
         }
@@ -1118,20 +1128,20 @@ class frontend
      *   and the rendering of the user specific page is requested as a backend job
      *
      * @param array $url_array the parsed url as an array
-     * @param user_message $msg to enrich with potential errors; carries the requesting user with the uses_sandbox flag loaded
+     * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user with the uses_sandbox flag loaded
      * @param bool $is_action true if the request has changed data so the result must be rendered live
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_html_cached(
-        array        $url_array,
-        user_message $msg,
-        bool         $is_action = false,
-        data_object  $dto = new data_object()
+        array           $url_array,
+        user_message_ui $msg_ui,
+        bool            $is_action = false,
+        data_object     $dto = new data_object()
     ): string
     {
         // an unknown user (null) has no own data changes, so the shared cached page is served
-        $uses_sandbox = $msg->usr?->uses_sandbox ?? false;
+        $uses_sandbox = $msg_ui->usr?->uses_sandbox ?? false;
         $result = '';
         // an action request is always rendered live because the data has just been changed
         $url_key = '';
@@ -1150,21 +1160,21 @@ class frontend
         }
         // route the request based on the user sandbox usage and the cache state
         if ($url_key == '') {
-            $result = $this->url_to_html($url_array, $msg, $dto);
+            $result = $this->url_to_html($url_array, $msg_ui, $dto);
         } elseif (!$uses_sandbox) {
             if ($cached_html !== null) {
                 // a cached page never contains a message (see save_html_page),
                 // so add the message of this request if there is one
-                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($msg));
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($msg_ui));
             } else {
                 // remember the rendered page for the next request of any user without sandbox data
-                $result = $this->url_to_html($url_array, $msg, $dto);
+                $result = $this->url_to_html($url_array, $msg_ui, $dto);
                 $this->save_html_page($cac_page, $url_key, $result);
             }
         } else {
             if ($cached_html !== null) {
                 // serve the standard page immediately and request the user specific rendering
-                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($msg))
+                $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($msg_ui))
                     . api::PAGE_REFRESH_FLAG;
                 // the refresh job is a backend write for the requesting user, so it needs the
                 // backend user object (with the profile for the job type permission), which the
@@ -1180,7 +1190,7 @@ class frontend
                 }
             } else {
                 // no cached page yet, so render the user specific page live
-                $result = $this->url_to_html($url_array, $msg, $dto);
+                $result = $this->url_to_html($url_array, $msg_ui, $dto);
             }
         }
         return $result;
@@ -1258,23 +1268,23 @@ class frontend
      * create the html notification for the user messages of the current request
      * used to render the message into a live page and to add it to a page loaded from the cache
      *
-     * @param user_message $msg with the messages collected during the request
+     * @param user_message_ui $msg_ui with the messages collected during the request
      * @return string the html code of the notification or an empty string if there is no message
      */
-    private function user_msg_html(user_message $msg): string
+    private function user_msg_html(user_message_ui $msg_ui): string
     {
         $result = '';
         $html = new html_base();
-        if ($msg->has_info()) {
-            $msg_txt = $msg->get_last_message_translated();
+        if ($msg_ui->has_info()) {
+            $msg_txt = $msg_ui->get_last_message_translated();
             if ($msg_txt === '') {
-                $msg_txt = $msg->get_last_message();
+                $msg_txt = $msg_ui->get_last_message();
             }
             if ($msg_txt === '') {
-                $msg_txt = $msg->get_last_info();
+                $msg_txt = $msg_ui->get_last_info();
             }
             if ($msg_txt !== '') {
-                if ($msg->has_msg_id(msg_id::PASSWORD_WRONG)) {
+                if ($msg_ui->has_msg_id(msg_id::PASSWORD_WRONG)) {
                     $reset_link = $html->ref(
                         api::RESET_SCRIPT,
                         msg_id::PASSWORD_WRONG->value,
@@ -1368,17 +1378,17 @@ class frontend
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->usr_msg, $req->dto, $req->do_it);
+        $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $result = $this->url_to_html($next_url, $req->usr_msg, $req->dto, $req->test_mode);
+        $result = $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
         // return to the default section for whatever the caller does next
         $sys->times->switch(system_time_type::DEFAULT);
         return $result;
     }
 
-    function show_view(int $id): string
+    function show_view(int $id, user_message_ui $msg_ui): string
     {
-        return $this->dto->typ_lst_cache->get_html_by_id($id);
+        return $this->dto->typ_lst_cache->get_html_by_id($id, $msg_ui);
     }
 
 
@@ -1391,18 +1401,18 @@ class frontend
      * TODO Prio 2 review and try to avoid the backend frontend mix for user returns
      *
      * @param array $url_array the normalised URL params including username and password
-     * @param user_message $msg collects errors if login fails
+     * @param user_message_ui $msg_ui collects errors if login fails
      * @param user_backend $usr_backend updated in-place with the logged-in user on success
      * @param user_ui $usr_ui updated in-place from the backend user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the session
      * @return array URL array pointing to the back page (or the start view if no back target) on success, or the original login URL (minus credentials) on failure
      */
     private function action_login(
-        array        $url_array,
-        user_message $msg,
-        user_backend &$usr_backend,
-        user_ui      &$usr_ui,
-        bool         $do_it
+        array           $url_array,
+        user_message_ui $msg_ui,
+        user_backend    &$usr_backend,
+        user_ui         &$usr_ui,
+        bool            $do_it
     ): array
     {
         // no 'htmlspecialchars()' to avoid converting usernames like O'Brien or a&b before writing to the database
@@ -1417,11 +1427,11 @@ class frontend
             $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
             if ($logged_in) {
                 $usr_backend = $db_usr;
-                $usr_ui->set_from_json($db_usr->api_json(), $msg);
+                $usr_ui->set_from_json($db_usr->api_json(), $msg_ui);
             } else {
-                $msg_login_ui = new user_message();
-                $msg_login_ui->api_mapper($login_msg->api_array());
-                $msg->merge($msg_login_ui);
+                $msg_login_ui = new user_message_ui();
+                $msg_login_ui->api_mapper($login_msg->api_array($login_msg), $msg_ui);
+                $msg_ui->merge($msg_login_ui);
             }
         }
 
@@ -1445,18 +1455,18 @@ class frontend
      * validate the signup form, create the user account, auto-login, and return the next URL
      *
      * @param array $url_array the normalised URL params including username, email, and passwords
-     * @param user_message $msg collects validation errors or save failures
+     * @param user_message_ui $msg_ui collects validation errors or save failures
      * @param user_backend $usr_backend updated in-place with the new user on success
      * @param user_ui $usr_ui updated in-place from the new user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the signup page (minus passwords) on failure
      */
     private function action_signup(
-        array        $url_array,
-        user_message $msg,
-        user_backend &$usr_backend,
-        user_ui      &$usr_ui,
-        bool         $do_it
+        array           $url_array,
+        user_message_ui $msg_ui,
+        user_backend    &$usr_backend,
+        user_ui         &$usr_ui,
+        bool            $do_it
     ): array
     {
         // no htmlspecialchars() — SQL injection is handled by prepared queries; output escaping happens in form_input()
@@ -1474,38 +1484,38 @@ class frontend
             if (str_contains($usr_name, '/')
                 or str_contains($usr_name, '\\')
                 or preg_match('/[\x00-\x1f]/', $usr_name) === 1) {
-                $msg->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
             }
             // block signup up front if a user whitelist is active and this name is not on it;
             // no account is created and the user is told how to get access (see is_ok() gate below)
             if (server_guard::user_rejected('', $usr_name)) {
-                $msg->add(msg_id::SIGNUP_ERR_WHITELIST, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_WHITELIST, []);
             }
             $existing = new user_backend();
-            $existing->load_by_name($usr_name);
+            $signup_msg = new backend_user_message();
+            $existing->load_by_name($usr_name, $signup_msg);
             if ($existing->has_db_id()) {
                 // the distinct message reveals that the name is taken (user enumeration), unlike
                 // the neutral reset flow (see action_login_reset); a conscious trade-off because
                 // without it the user cannot pick a free name, so signup would be impossible;
                 // the message points a returning user to the password reset instead, and the
                 // planned per-ip request rate limit will bound the probing speed (see pending.md)
-                $msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
             }
             if (empty($email)) {
-                $msg->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
             }
             if (empty($pw)) {
-                $msg->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
             }
             if (empty($pw_re)) {
-                $msg->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
             }
             if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
-                $msg->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
+                $msg_ui->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
             }
 
-            if ($msg->is_ok()) {
-                $signup_msg = new backend_user_message();
+            if ($msg_ui->is_ok()) {
                 $new_usr = new user_backend();
                 $new_usr->name = $usr_name;
                 $new_usr->email = $email;
@@ -1513,7 +1523,7 @@ class frontend
                 if ($signup_msg->is_ok()) {
                     $new_usr->save($signup_msg);
                     $usr_by_name = new user_backend();
-                    $usr_by_name->load_by_name($usr_name);
+                    $usr_by_name->load_by_name($usr_name, new backend_user_message());
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
                         session_start();
@@ -1531,16 +1541,16 @@ class frontend
                         $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
                         $_SESSION[url_var::SESSION_LOGGED] = true;
                         $usr_backend = $usr_by_name;
-                        $usr_ui->set_from_json($usr_by_name->api_json(), $msg);
+                        $usr_ui->set_from_json($usr_by_name->api_json(), $msg_ui);
                         $signed_up = true;
                     } else {
                         log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
                         $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
                     }
                 }
-                $msg_signup_ui = new user_message();
-                $msg_signup_ui->api_mapper($signup_msg->api_array());
-                $msg->merge($msg_signup_ui);
+                $msg_signup_ui = new user_message_ui();
+                $msg_signup_ui->api_mapper($signup_msg->api_array($signup_msg), $msg_ui);
+                $msg_ui->merge($msg_signup_ui);
             }
         }
 
@@ -1560,18 +1570,18 @@ class frontend
     /**
      * validate the activation key, set the new password and auto-login the user
      * @param array $url_array the normalised URL params; expects id, key, and the two password fields
-     * @param user_message $msg collects validation and save errors shown to the user
+     * @param user_message_ui $msg_ui collects validation and save errors shown to the user
      * @param user_backend $usr_backend updated in-place with the activated user on success
      * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the back page on success, or the activate page (minus passwords) on failure
      */
     private function action_login_activate(
-        array        $url_array,
-        user_message $msg,
-        user_backend &$usr_backend,
-        user_ui      &$usr_ui,
-        bool         $do_it
+        array           $url_array,
+        user_message_ui $msg_ui,
+        user_backend    &$usr_backend,
+        user_ui         &$usr_ui,
+        bool            $do_it
     ): array
     {
         global $mtr;
@@ -1584,28 +1594,32 @@ class frontend
 
         if ($do_it) {
             if ($usr_id <= 0) {
-                $msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
+                $msg_ui->add_message($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
             } else {
                 $usr = new user_backend();
-                $usr->load_by_id($usr_id);
+                $activate_msg = new backend_user_message();
+                $usr->load_by_id($usr_id, $activate_msg);
 
                 // compare the stored key hash with the hash of the posted key in constant time
                 if ($usr->activation_key_valid($post_key)) {
-                    if (empty($pw)) { $msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY)); }
-                    if (empty($pw_re)) { $msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY)); }
+                    if (empty($pw)) {
+                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY));
+                    }
+                    if (empty($pw_re)) {
+                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY));
+                    }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
-                        $msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
                     }
 
-                    if ($msg->is_ok()) {
-                        $activate_msg = new backend_user_message();
+                    if ($msg_ui->is_ok()) {
                         $usr->set_password($pw, $activate_msg);
                         if ($activate_msg->is_ok()) {
                             $usr->activation_key = '';
                             $usr->activation_timeout = new DateTime();
                             $usr->save($activate_msg);
                             $usr_by_id = new user_backend();
-                            $usr_by_id->load_by_id($usr_id);
+                            $usr_by_id->load_by_id($usr_id, new backend_user_message());
                             if ($usr_by_id->has_db_id()) {
                                 session_start();
                                 // regenerate the session id on this authentication transition so a
@@ -1624,24 +1638,24 @@ class frontend
                                 // reject at once if a user whitelist is active and this user is not on it
                                 server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
                                 $usr_backend = $usr_by_id;
-                                $usr_ui->set_from_json($usr_by_id->api_json(), $msg);
+                                $usr_ui->set_from_json($usr_by_id->api_json(), $msg_ui);
                                 $activated = true;
                             } else {
                                 log_err('Cannot find id ' . $usr_id . ' after password change.', 'action_login_activate');
                                 $activate_msg->add_message_text($mtr->txt(msg_id::ACTIVATE_ERR_FAILED));
                             }
                         }
-                        $msg_activate_ui = new user_message();
-                        $msg_activate_ui->api_mapper($activate_msg->api_array());
-                        $msg->merge($msg_activate_ui);
+                        $msg_activate_ui = new user_message_ui();
+                        $msg_activate_ui->api_mapper($activate_msg->api_array($activate_msg), $msg_ui);
+                        $msg_ui->merge($msg_activate_ui);
                     }
                 } else {
                     // a still valid key that did not match is a wrong key; otherwise it is absent
                     // or timed out, so the user is asked to request a new reset link
                     if ($usr->has_active_activation_key()) {
-                        $msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
+                        $msg_ui->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_MISMATCH));
                     } else {
-                        $msg->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
+                        $msg_ui->add_message($mtr->txt(msg_id::ACTIVATE_ERR_KEY_EXPIRED));
                     }
                 }
             }
@@ -1664,15 +1678,15 @@ class frontend
      * mirrors the login process: on login the users are set to the DB user; on logout they are reset to empty
      * @param user_backend $usr_backend the currently logged-in backend user; last_logoff is saved and object is reset
      * @param user_ui $usr_ui the frontend user object; reset to an empty (IP-only) object after logout
-     * @param user_message $msg collects errors from saving the logoff time
+     * @param user_message_ui $msg_ui collects errors from saving the logoff time
      * @param bool $do_it false for unit tests that should not touch the database or session
      * @return array URL array pointing to the logout confirmation view
      */
     private function action_logout(
-        user_backend &$usr_backend,
-        user_ui      &$usr_ui,
-        user_message $msg,
-        bool         $do_it
+        user_backend    &$usr_backend,
+        user_ui         &$usr_ui,
+        user_message_ui $msg_ui,
+        bool            $do_it
     ): array
     {
         if ($do_it) {
@@ -1680,9 +1694,9 @@ class frontend
                 $logoff_msg = new backend_user_message($usr_backend);
                 $usr_backend->last_logoff = new DateTime();
                 $usr_backend->save($logoff_msg);
-                $msg_logoff_ui = new user_message();
-                $msg_logoff_ui->api_mapper($logoff_msg->api_array());
-                $msg->merge($msg_logoff_ui);
+                $msg_logoff_ui = new user_message_ui();
+                $msg_logoff_ui->api_mapper($logoff_msg->api_array($logoff_msg), $msg_ui);
+                $msg_ui->merge($msg_logoff_ui);
             }
             if (isset($_SESSION)) {
                 $_SESSION = [];
@@ -1714,14 +1728,14 @@ class frontend
     /**
      * send a password-reset email and redirect to the activation page
      * @param array $url_array the normalised URL params (expects USERNAME_HUMAN and/or EMAIL_HUMAN)
-     * @param user_message $msg collects errors shown to the user
+     * @param user_message_ui $msg_ui collects errors shown to the user
      * @param bool $do_it false for unit tests that should not touch the database or send email
      * @return array URL array for the next page
      */
     private function action_login_reset(
-        array        $url_array,
-        user_message $msg,
-        bool         $do_it
+        array           $url_array,
+        user_message_ui $msg_ui,
+        bool            $do_it
     ): array
     {
         global $mtr;
@@ -1734,7 +1748,7 @@ class frontend
         if ($do_it) {
             // only a matching account gets a reset mail, but the user is told the same either way
             // (see the neutral message below), so the reset never reveals whether the account exists
-            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail)) {
+            if ($db_usr->load_by_name_or_email($usr_name, $usr_mail, new backend_user_message())) {
                 $key_ok = true;
                 try {
                     $key = bin2hex(random_bytes(10));
@@ -1766,7 +1780,7 @@ class frontend
                 }
             }
             // the same neutral confirmation for a found and a not-found account (user enumeration)
-            $msg->add_message($mtr->txt(msg_id::RESET_MAIL_SENT));
+            $msg_ui->add_message($mtr->txt(msg_id::RESET_MAIL_SENT));
         }
 
         // the same next page in both cases; a real account received the reset link (with its id and
@@ -1782,18 +1796,18 @@ class frontend
      *
      * @param array $url_array the normalised URL params; expects ID (log id) and
      *                         rest_ctrl::PAR_LOG_STATUS (new status id)
-     * @param user_message $msg collects backend errors so they surface in the notification bar; carries the requesting user and only admins may perform this action
+     * @param user_message_ui $msg_ui collects backend errors so they surface in the notification bar; carries the requesting user and only admins may perform this action
      * @param bool $do_it set to false in unit tests so the DB is not touched
      * @return array the URL array for the next page — stays on the error_update view with the
      *               action parameters stripped so a page reload does not re-submit the change
      */
     private function action_error_update(
-        array        $url_array,
-        user_message $msg,
-        bool         $do_it
+        array           $url_array,
+        user_message_ui $msg_ui,
+        bool            $do_it
     ): array
     {
-        $usr = $msg->usr;
+        $usr = $msg_ui->usr;
         if ($do_it and $usr != null and $usr->is_admin()) {
             $log_id = (int)($url_array[url_var::ID] ?? 0);
             $status_id = (int)($url_array[rest_ctrl::PAR_LOG_STATUS] ?? 0);
@@ -1804,9 +1818,7 @@ class frontend
                 $err_entry->status_id = $status_id;
                 $save_msg = new backend_user_message();
                 $err_entry->save($save_msg);
-                $msg_ui = new user_message();
-                $msg_ui->api_mapper($save_msg->api_array());
-                $msg->merge($msg_ui);
+                $msg_ui->api_mapper($save_msg->api_array($save_msg), $msg_ui);
             }
         }
         $next_url = $url_array;
@@ -1821,7 +1833,7 @@ class frontend
      * execute a create, update, or delete action on a sandbox object and return the next URL
      * @param array $url_array the normalised URL params
      * @param int $view the view ID that determines the object type
-     * @param user_message $usr_msg collects errors and carries the requesting user executing the action
+     * @param user_message_ui $usr_msg collects errors and carries the requesting user executing the action
      * @param data_object $dto the frontend cache
      * @param string $crud one of url_var::CRUD_CREATE / CRUD_UPDATE / CRUD_DELETE
      * @param bool $do_it false for unit tests that should not touch the database
@@ -1879,9 +1891,9 @@ class frontend
      *
      * @param int|string $view the requested view that no action arm has matched
      * @param string $step the user process step of the request
-     * @param user_message $msg to inform the user that the request has been ignored
+     * @param user_message_ui $msg to inform the user that the request has been ignored
      */
-    private function log_ignored_write_step(int|string $view, string $step, user_message $msg): void
+    private function log_ignored_write_step(int|string $view, string $step, user_message_ui $msg): void
     {
         if ($step == url_var::STEP_CONFIRM or $step == url_var::STEP_CONFIRMED) {
             log_err_msg_ui('the ' . $step . ' step for view ' . $view . ' has been ignored,'
@@ -1891,35 +1903,35 @@ class frontend
     }
 
     private function action_crud(
-        array        $url_array,
-        int          $view,
-        user_message $msg,
-        data_object  $dto,
-        string       $crud,
-        bool         $do_it
+        array           $url_array,
+        int             $view,
+        user_message_ui $msg_ui,
+        data_object     $dto,
+        string          $crud,
+        bool            $do_it
     ): array
     {
         // a confirmed create/update/delete writes the object, so the back mask that carries its type is
         // required here (unlike a standalone confirm view render)
         $dbo = $this->dbo_for_url($view, $url_array, true);
-        $dbo->url_mapper($url_array, $msg, $dto);
+        $dbo->url_mapper($url_array, $msg_ui, $dto);
 
         // a delete request by name (e.g. right after the confirmed add of the object, when the url
         // does not yet carry the assigned id) resolves the database id first
         if ($crud == url_var::CRUD_DELETE and $dbo instanceof sandbox_named_ui
             and $dbo->id() == 0 and $dbo->name() != '') {
-            $dbo->load_by_name($dbo->name());
+            $dbo->load_by_name($dbo->name(), $msg_ui);
         }
 
         if ($do_it) {
             $result_msg = match ($crud) {
-                url_var::CRUD_CREATE => $dbo->add_via_api($msg),
-                url_var::CRUD_UPDATE => $dbo->update($msg),
-                url_var::CRUD_DELETE => $dbo->del($msg),
-                default => new user_message()
+                url_var::CRUD_CREATE => $dbo->add_via_api($msg_ui),
+                url_var::CRUD_UPDATE => $dbo->update($msg_ui),
+                url_var::CRUD_DELETE => $dbo->del($msg_ui),
+                default => new user_message_ui()
             };
             if (!$result_msg->is_ok()) {
-                $msg->merge($result_msg);
+                $msg_ui->merge($result_msg);
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
@@ -2003,7 +2015,7 @@ class frontend
     private function exe_process_step(
         sandbox_ui|sandbox_named_ui|db_object_ui $sbx,
         array                                    $url_array,
-        user_message                             $msg
+        user_message_ui                          $msg
     ): bool
     {
 

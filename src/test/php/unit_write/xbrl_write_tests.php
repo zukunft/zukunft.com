@@ -110,10 +110,11 @@ class xbrl_write_tests
      */
     private function load_triple_by_any_name(test_cleanup $t, string $trp_name): triple
     {
+        $msg = new user_message();
         $trp = new triple($t->usr1);
-        $trp->load_by_name($trp_name);
+        $trp->load_by_name($trp_name, $msg);
         if ($trp->id() == 0) {
-            $trp->load_by_name_generated($trp_name);
+            $trp->load_by_name_generated($trp_name, $msg);
         }
         return $trp;
     }
@@ -148,10 +149,11 @@ class xbrl_write_tests
      */
     private function load_value_by_names(test_cleanup $t, array $names): value
     {
+        $msg = new user_message();
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array_unique($names));
+        $phr_lst->load_by_names(array_unique($names), $msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id());
+        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
         return $val;
     }
 
@@ -184,7 +186,7 @@ class xbrl_write_tests
         // remove the formula
         foreach ($json_array[json_fields::FORMULAS] as $frm_json) {
             $frm = new formula($t->usr1);
-            $frm->load_by_name($frm_json[json_fields::NAME]);
+            $frm->load_by_name($frm_json[json_fields::NAME], $msg);
             if ($frm->id() > 0) {
                 $frm->del($msg);
             }
@@ -193,7 +195,7 @@ class xbrl_write_tests
         // remove the source
         foreach ($json_array[json_fields::SOURCES] as $src_json) {
             $src = new source($t->usr1);
-            $src->load_by_name($src_json[json_fields::NAME]);
+            $src->load_by_name($src_json[json_fields::NAME], $msg);
             if ($src->id() > 0) {
                 $src->del($msg);
             }
@@ -211,7 +213,7 @@ class xbrl_write_tests
         // remove the words added by the import
         foreach ($json_array[json_fields::WORDS] as $wrd_json) {
             $wrd = new word($t->usr1);
-            $wrd->load_by_name($wrd_json[json_fields::NAME]);
+            $wrd->load_by_name($wrd_json[json_fields::NAME], $msg);
             if ($wrd->id() > 0 and $wrd->owner_id() == $t->usr1->id()) {
                 $wrd->del($msg);
             }

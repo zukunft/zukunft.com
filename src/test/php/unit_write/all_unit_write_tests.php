@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -85,6 +86,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // init
         $t_db = new test_db_load($this);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write start ';
@@ -93,8 +95,12 @@ class all_unit_write_tests extends all_unit_read_tests
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
         $usr = new user();
-        $usr->load_by_profile_code(user_profiles::TEST);
+        $usr->load_by_profile_code(user_profiles::TEST, $msg);
         if ($usr->id <= 0) {
+
+            // the first load intentionally fails on a fresh database
+            // (the test user does not exist yet), so reset the message before the retry
+            $msg->reset();
 
             // but only from localhost
             $ip_addr = '';
@@ -102,10 +108,10 @@ class all_unit_write_tests extends all_unit_read_tests
                 $ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
             }
             if ($ip_addr == users::SYSTEM_ADMIN_IP) {
-                $db_con->import_system_users();
+                $db_con->import_system_users($msg);
             }
 
-            $usr->load_by_profile_code(user_profiles::TEST);
+            $usr->load_by_profile_code(user_profiles::TEST, $msg);
         }
 
         if ($usr->id > 0) {
@@ -212,10 +218,10 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             // testing cleanup to remove any remaining test records
-            $msg = new user_message($usr);
+            $msg->usr = $usr;
             $t->cleanup($msg);
             // final check that no test row is left in any table incl. the change log
-            $t->check_cleanup($msg);
+            $t->check_cleanup($msg, library::class_to_name(sandbox::class));
 
             // start the integration tests by loading the base and sample data
             // TODO Prio 1 activate

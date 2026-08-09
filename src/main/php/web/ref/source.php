@@ -51,15 +51,16 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'view_types.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::MODEL_REF . 'source_db.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -185,11 +187,11 @@ class source extends sandbox_code_id
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::URL] = $this->url;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -238,7 +240,7 @@ class source extends sandbox_code_id
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -247,7 +249,7 @@ class source extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type within a form
      */
-    function source_type_selector(string $form, ?type_lists $typ_lst): string
+    function source_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -255,7 +257,7 @@ class source extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_source_type_id = $this->type_id();
+        $used_source_type_id = $this->type_id($msg);
         if ($used_source_type_id == null) {
             $used_source_type_id = $typ_lst->src_typ->default_id();
         }
@@ -270,17 +272,18 @@ class source extends sandbox_code_id
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_types::SOURCE);
+        $msk_lst = $msk_lst->only_type(view_types::SOURCE, $msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

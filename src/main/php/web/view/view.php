@@ -39,8 +39,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
@@ -54,6 +52,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -74,15 +73,17 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view extends view_exe
 {
@@ -283,7 +284,7 @@ class view extends view_exe
             $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
-        $result .= $this->dsp_user($usr);
+        $result .= $this->dsp_user($ui_sys->usr);
         $result .= ' ';
         $result .= $this->dsp_logout();
         $result .= '</td>';
@@ -381,7 +382,7 @@ class view extends view_exe
     /**
      * HTML code to edit all word fields
      */
-    function dsp_edit($add_cmp, $wrd, $back): string
+    function dsp_edit($add_cmp, $wrd, $back, user_message $msg): string
     {
         global $ui_sys;
 
@@ -389,7 +390,7 @@ class view extends view_exe
         $html = new html_base();
 
         // use the default settings if needed
-        if ($this->type_id() <= 0) {
+        if ($this->type_id($msg) <= 0) {
             $this->set_type_id($ui_sys->typ_lst_cache->msk_typ->id(view_types::DEFAULT));
         }
 
@@ -446,7 +447,7 @@ class view extends view_exe
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back, $msg);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -524,7 +525,7 @@ class view extends view_exe
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id(), $ui_sys->component_list());
+                $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_new(views::VIEW_EDIT_ID, $this->id(), '', $back, '', 'word=' . $wrd->id()));
             } else {
@@ -550,17 +551,18 @@ class view extends view_exe
         int         $page,
         int         $size,
         string      $call,
+        user_message $msg,
         ?back_trace $back = null
     ): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(view::class, $this->id(), $size, $page, '', $back);
+        return $log_ui->dsp_hist(view::class, $this->id(), $size, $page, $msg, '', $back);
     }
 
     /**
      * display the link history of a view
      */
-    function dsp_hist_links($page, $size, $call, $back): string
+    function dsp_hist_links($page, $size, $call, $back, user_message $msg): string
     {
         global $ui_sys;
         $usr = $ui_sys->usr;
@@ -573,7 +575,7 @@ class view extends view_exe
         $log_ui->size = $size;
         $log_ui->call = $call;
         $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links();
+        $result .= $log_ui->dsp_hist_links($msg);
 
         return $result;
     }

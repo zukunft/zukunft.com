@@ -53,6 +53,7 @@ class user_read_tests
     {
 
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'unit read db->';
@@ -65,41 +66,41 @@ class user_read_tests
 
         $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
-        $usr->load_by_name(users::SYSTEM_TEST_NAME);
+        $usr->load_by_name(users::SYSTEM_TEST_NAME, $msg);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id, user::class);
+        $usr_by_id->load_by_id($usr->id, $msg);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
         //$t->assert($test_name, $usr_by_id->email, users::SYSTEM_TEST_EMAIL);
 
         $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by email';
         $usr = new user();
-        $usr->load_by_email(users::SYSTEM_TEST_EMAIL);
+        $usr->load_by_email(users::SYSTEM_TEST_EMAIL, $msg);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id, user::class);
+        $usr_by_id->load_by_id($usr->id, $msg);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
         // data_user returns the requested data user when an api caller (e.g. an admin) asks to
         // see another user's data via url_var::USER, and the session user when no id is requested
         $session = new user();
-        $session->load_by_name(users::SYSTEM_TEST_NAME);
+        $session->load_by_name(users::SYSTEM_TEST_NAME, $msg);
         $test_name = 'data_user loads the requested data user';
-        $t->assert($test_name, $session->data_user(users::SYSTEM_ID)->id(), users::SYSTEM_ID);
+        $t->assert($test_name, $session->data_user(users::SYSTEM_ID, $msg)->id(), users::SYSTEM_ID);
         // negative: without a requested id the session user itself is used
         $test_name = 'data_user falls back to the session user';
-        $t->assert($test_name, $session->data_user(0)->id(), $session->id());
+        $t->assert($test_name, $session->data_user(0, $msg)->id(), $session->id());
         // negative: requesting the session user's own id keeps the fully loaded session user (no reload)
         $test_name = 'data_user keeps the session user when its own id is requested';
-        $t->assert_true($test_name, $session->data_user($session->id()) === $session);
+        $t->assert_true($test_name, $session->data_user($session->id(), $msg) === $session);
 
         // an api call of the own html frontend (server-to-server, session validated by the frontend)
         // is trusted to load the browsing user, so e.g. a description changed by the browsing user
         // is shown in the word and edit views; without the own pod flag the request stays blocked
         $unprivileged = new user();
-        $unprivileged->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
+        $unprivileged->load_by_name(users::SYSTEM_TEST_NORMAL_NAME, $msg);
         $test_name = 'a pod internal call loads the browsing user via the data user parameter';
-        $t->assert($test_name, $unprivileged->data_user($session->id(), true)->id(), $session->id());
+        $t->assert($test_name, $unprivileged->data_user($session->id(), $msg, true)->id(), $session->id());
         $test_name = 'without the own pod flag an unprivileged session keeps its own user';
-        $t->assert($test_name, $unprivileged->data_user($session->id())->id(), $unprivileged->id());
+        $t->assert($test_name, $unprivileged->data_user($session->id(), $msg)->id(), $unprivileged->id());
 
         // TODO test type and view
 
@@ -123,15 +124,15 @@ class user_read_tests
 
         $test_name = 'load the user_profiles';
         $lst = new user_profile_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert($test_name, $result, true);
         $test_name = 'load the user_types';
         $lst = new user_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert($test_name, $result, true);
         $test_name = 'load the user_statuum';
         $lst = new user_status_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert($test_name, $result, true);
 
         // ... and check if at least the most critical is loaded

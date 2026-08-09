@@ -44,19 +44,19 @@ END;
 PREPARE formula_insert_log_11110011110100000_user_call FROM
     'SELECT formula_insert_log_11110011110100000_user (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT formula_insert_log_11110011110100000_user (
-               3,
-               1,
-               30,
-               'scale minute to sec',
-               1,
-               34,
-               'to convert times in minutes to seconds and the other way round',
-               31,
-               1,
-               33,
-               '{t20}={w103}*60',
-               32,
-               '"second (time)" = "minute" * 60',
-               886,
-               '\text{s} = 60 \cdot \text{min}');
+SELECT formula_insert_log_11110011110100000_user
+       (3,
+        1,
+        30,
+        'scale minute to sec',
+        1,
+        34,
+        'to convert times in minutes to seconds and the other way round',
+        31,
+        1,
+        33,
+        '{t60}={w103}*60',
+        32,
+        '"second (time)" = "minute" * 60',
+        886,
+        '\text{s} = 60 \cdot \text{min}');

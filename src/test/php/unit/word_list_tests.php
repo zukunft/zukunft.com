@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -71,6 +72,7 @@ class word_list_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_wrd = new test_words($t);
+        $msg = new user_message();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
@@ -119,7 +121,7 @@ class word_list_tests
         $wrd = new word($t->usr1);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
+        $vrb = $sys->verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -136,7 +138,7 @@ class word_list_tests
         $wrd = new word($t->usr1);
         $wrd->id = 9;
         $wrd_lst->add($wrd);
-        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
+        $vrb = $sys->verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader($ts . 'modify and filter word lists');
@@ -200,7 +202,7 @@ class word_list_tests
         $t->assert($t->name . '->with time by ids', $wrd_lst_time->ids(), array(1, 3, 4));
 
         // ex time
-        $wrd_lst_time->ex_time();
+        $wrd_lst_time->ex_time($msg);
         $t->assert($t->name . '->ex_time by ids', $wrd_lst_time->ids(), array(1, 3));
 
         // with scale
@@ -265,7 +267,7 @@ class word_list_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd2);
         $wrd_lst->add($wrd_time2);
-        $wrd_lst_time = $wrd_lst->time_lst();
+        $wrd_lst_time = $wrd_lst->time_lst($msg);
         $t->assert($t->name . '->time list', $wrd_lst_time->name(), '"time_word","time_word2"');
 
         // scaling list
@@ -294,7 +296,7 @@ class word_list_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = $wrd_lst->export_json([]);
+        $json = $wrd_lst->export_json($msg, []);
         $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only

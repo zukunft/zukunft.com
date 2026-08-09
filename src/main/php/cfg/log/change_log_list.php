@@ -52,6 +52,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VERB . 'verb.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -110,15 +112,19 @@ class change_log_list extends list_db_read
      * create the api json array with one entry per change so that the frontend
      * can show e.g. the recent changes of a word on the default word page
      *
-     * @param api_type_list $typ_lst configuration for the api message
+     * @param api_type_list|array $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         $vars = [];
         foreach ($this->lst() as $chg) {
-            $vars[] = $chg->api_json_array($typ_lst, $usr);
+            $vars[] = $chg->api_json_array($typ_lst, $msg, $usr);
         }
         return $vars;
     }
@@ -133,40 +139,43 @@ class change_log_list extends list_db_read
      * @param user $usr the user sandbox object
      * @return bool true if at least one change found
      */
-    function load_by_user(user $usr): bool
+    function load_by_user(user $usr, user_message $msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_user($sc, $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
      * load the latest changes of one object
      * @param sandbox $sbx e.g. the word with id set
      * @param user $usr who has requested to see the changed
+     * @param user_message $msg to collect any problem while loading the changes
      * @return bool true if at least one change found
      */
-    function load_obj_last(sandbox $sbx, user $usr): bool
+    function load_obj_last(sandbox $sbx, user $usr, user_message $msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_obj_last($sc, $sbx::class, $sbx->id(), $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
      * load the latest changes of one object
      * @param sandbox $sbx e.g. the word with id set
      * @param user $usr who has requested to see the changed
+     * @param user_message $msg to collect any problem while loading the changes
+     * @param string $fld the field name to filter the changes for
      * @return bool true if at least one change found
      */
-    function load_obj_field_last(sandbox $sbx, user $usr, string $fld): bool
+    function load_obj_field_last(sandbox $sbx, user $usr, user_message $msg, string $fld): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_obj_fld($sc, $sbx::class, $fld, $sbx->id(), $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -181,7 +190,7 @@ class change_log_list extends list_db_read
      */
     function load_by_obj_fld(
         string          $class,
-        int|string|null $id = null,
+        user_message $msg, int|string|null $id = null,
         user|null       $usr = null,
         string|null     $field_name = ''
     ): bool
@@ -193,7 +202,7 @@ class change_log_list extends list_db_read
             $field_name,
             $id,
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -203,7 +212,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_wrd(word $wrd, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_wrd(word $wrd, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -212,7 +221,7 @@ class change_log_list extends list_db_read
             $field_name,
             $wrd->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -222,7 +231,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_vrb(verb $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_vrb(verb $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -231,7 +240,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -241,7 +250,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_trp(triple $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_trp(triple $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -250,7 +259,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -260,7 +269,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_val(value_base $val, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_val(value_base $val, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
 
@@ -270,7 +279,7 @@ class change_log_list extends list_db_read
             $field_name,
             $val->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -280,7 +289,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_frm(formula $trp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_frm(formula $trp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -289,7 +298,7 @@ class change_log_list extends list_db_read
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -299,7 +308,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_src(source $src, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_src(source $src, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -308,7 +317,7 @@ class change_log_list extends list_db_read
             $field_name,
             $src->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -318,7 +327,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_ui(view $msk, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_ui(view $msk, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -327,7 +336,7 @@ class change_log_list extends list_db_read
             $field_name,
             $msk->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
     /**
@@ -337,7 +346,7 @@ class change_log_list extends list_db_read
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_cmp(component $cmp, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_cmp(component $cmp, user $usr, user_message $msg, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -346,7 +355,7 @@ class change_log_list extends list_db_read
             $field_name,
             $cmp->id(),
             $usr);
-        return $this->load($qp, $usr);
+        return $this->load($qp, $usr, $msg);
     }
 
 
@@ -609,7 +618,7 @@ class change_log_list extends list_db_read
      * @param user $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if at least one change found
      */
-    private function load(sql_par $qp, user $usr): bool
+    private function load(sql_par $qp, user $usr, user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -617,11 +626,11 @@ class change_log_list extends list_db_read
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_rows = $db_con->get($qp, 'change log list');
+            $db_rows = $db_con->get($qp, $msg, 'change log list');
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row, '', $usr);
+                    $chg->row_mapper($db_row, $msg, '', $usr);
                     $this->add_obj($chg);
                     $result = true;
                 }

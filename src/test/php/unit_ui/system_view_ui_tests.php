@@ -178,7 +178,7 @@ class system_view_ui_tests
         $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
-        $ui->load_dummy_cache_from_test_resources($t->usr1);
+        $ui->load_dummy_cache_from_test_resources($msg);
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
@@ -410,7 +410,7 @@ class system_view_ui_tests
         // test that the logout page shows the success message
         global $mtr;
         $url_array = [url_var::MASK => views::LOGOUT_ID];
-        $logout_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
+        $logout_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         $test_name = 'logout page shows logout notice text';
         $t->assert_text_contains($test_name, $logout_html, $mtr->txt(msg_id::LOGOUT_NOTICE));
@@ -444,7 +444,7 @@ class system_view_ui_tests
         $t->subheader($ts . 'login reset');
 
         $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
-        $reset_sent_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
+        $reset_sent_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
@@ -456,7 +456,7 @@ class system_view_ui_tests
 
         // test that the login_reset form renders with a cancel and go back link when no back params are given
         $url_array = [url_var::MASK => views::LOGIN_RESET_ID];
-        $reset_form_html = $ui->url_to_html($url_array, new user_message(), $ui->dto, true);
+        $reset_form_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         $test_name = 'login reset page shows cancel and go back link';
         $t->assert_text_contains($test_name, $reset_form_html, $mtr->txt(msg_id::CANCEL_AND_GO));
@@ -487,7 +487,7 @@ class system_view_ui_tests
         $add_url = $t_map->class_to_filled_url(formula_link::class, views::FORMULA_LINK_ADD_ID, change_actions::ADD);
         $add_part = parse_url($add_url);
         parse_str($add_part['query'], $add_array);
-        $add_html = $ui->url_to_html($add_array, new user_message(), $ui->dto, true);
+        $add_html = $ui->url_to_html($add_array, $msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'add view keeps the hidden id field at 0';
         $t->assert_text_contains($test_name, $add_html, 'name="id" id="id" value="0"', $t::TIMEOUT_LIMIT_PAGE);

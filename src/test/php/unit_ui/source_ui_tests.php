@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -44,6 +45,7 @@ class source_ui_tests
     {
         $html = new html_base();
         $t_src = new test_sources($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html source ';
@@ -53,8 +55,8 @@ class source_ui_tests
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($src);
-        $t->html_page_test($test_page, 'source', 'source', $t);
+        $test_page .= $t->dsp_title_named_edit($src, $msg);
+        $t->html_page_test($test_page, 'source', 'source', $msg);
     }
 
 }

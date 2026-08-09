@@ -42,6 +42,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED . 'library.php';
 
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -68,7 +70,7 @@ class change_log_link_list extends list_db_read
      * @param int $size the max number of changes to load
      * @return bool true if at least one link change has been loaded
      */
-    function load_by_obj(string $class, int|string $id, user $usr, int $size = sql_db::ROW_LIMIT): bool
+    function load_by_obj(string $class, int|string $id, user $usr, user_message $msg, int $size = sql_db::ROW_LIMIT): bool
     {
         global $db_con;
 
@@ -77,7 +79,7 @@ class change_log_link_list extends list_db_read
         $name = $lib->class_to_name($class);
         $use_from = ($name == 'view_cmp' or $name == 'component');
         $sql = $this->load_sql_by_obj($db_con, $class, $id, $usr, $size);
-        return $this->load($sql, $usr, $use_from);
+        return $this->load($sql, $usr, $msg, $use_from);
     }
 
     /**
@@ -175,7 +177,7 @@ class change_log_link_list extends list_db_read
      * @param bool $use_from true to show the from side of the link instead of the to side (e.g. for components)
      * @return bool true if at least one link change has been loaded
      */
-    private function load(string $sql, user $usr, bool $use_from = false): bool
+    private function load(string $sql, user $usr, user_message $msg, bool $use_from = false): bool
     {
         global $db_con;
         $result = false;
@@ -184,11 +186,11 @@ class change_log_link_list extends list_db_read
             log_err('The query cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_con->usr_id = $usr->id;
-            $db_rows = $db_con->get_old($sql);
+            $db_rows = $db_con->get_old($sql, $msg);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change_link($usr);
-                    $chg->row_mapper($db_row);
+                    $chg->row_mapper($db_row, $msg);
                     // normalise the display text so the api always shows the relevant side as old/new text
                     if ($use_from) {
                         $chg->old_text_to = $chg->old_text_from;

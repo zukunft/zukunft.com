@@ -113,69 +113,70 @@ class sql_par_list
     }
 
     /**
-     * @return user_message with the parameter names formatted for sql
+     * create a list of missing sql function
+     *
+     * @param user_message $msg to collect the execution errors
+     * @param string $class the object class for which the statements are created e.g. word, formula, ...
+     * @return sql_message with the parameter names formatted for sql
      */
-    function exe(string $class = ''): user_message
+    function exe(user_message $msg, string $class = ''): sql_message
     {
         global $db_con;
 
-        $msg = new user_message();
+        $sql_msg = new sql_message();
 
         foreach ($this->lst as $qp) {
-            $db_con->insert($qp, 'add ' . $class . ' from list', $msg);
-            $msg->add_list_name_id($msg, $qp->obj_name);
+            $db_con->insert($qp, 'add ' . $class . ' from list', $msg, $sql_msg);
+            $sql_msg->add_list_name_id($sql_msg, $qp->obj_name);
         }
-        return $msg;
+        return $sql_msg;
     }
 
     /**
-     * @return user_message with the parameter names formatted for sql
+     * insert a list of sql objects without
+     *
+     * @param user_message $msg to collect the execution errors
+     * @return bool with the parameter names formatted for sql
      */
-    function exe_direct(): user_message
+    function exe_direct(user_message $msg): bool
     {
         global $db_con;
-
-        $msg = new user_message();
 
         // TODO Prio 2 execute block wise
         foreach ($this->lst as $qp) {
             $db_con->exe_direct($qp, $msg);
-            $msg->add_list_name_id($msg, $qp->obj_name);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     /**
-     * @return user_message with the parameter names formatted for sql
+     * @param user_message $msg to collect the update errors
+     * @param string $class the object class for which the statements are created e.g. word, formula, ...
+     * @return bool true if the rows has been updated
      */
-    function exe_update(string $class = ''): user_message
+    function exe_update(user_message $msg, string $class = ''): bool
     {
         global $db_con;
-
-        $msg = new user_message();
 
         foreach ($this->lst as $qp) {
             $db_con->update($qp, 'update ' . $class . ' from list', $msg);
-            $msg->add_list_name_id($msg, $qp->obj_name);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     /**
-     * @return user_message with the parameter names formatted for sql
+     * @param user_message $msg to collect the delete errors
+     * @param string $class the object class for which the statements are created e.g. word, formula, ...
+     * @return bool true if the rows has been deleted
      */
-    function exe_delete(string $class = ''): user_message
+    function exe_delete(user_message $msg, string $class = ''): bool
     {
         global $db_con;
 
-        $msg = new user_message();
-
         foreach ($this->lst as $qp) {
-            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $msg);
-            $msg->merge($del_msg);
-            $msg->add_list_name_id($del_msg, $qp->obj_name);
+            $db_con->delete($qp, 'delete ' . $class . ' from list', $msg);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
 

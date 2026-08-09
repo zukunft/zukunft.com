@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -68,9 +70,11 @@ class sys_log_ui_tests
     {
         $html = new html_base();
         $t_sys = new test_sys_log($t);
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         $sys_usr = new user;
-        $sys_usr->load_by_id(users::SYSTEM_ID);
+        $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
         $sys_usr_ui = new user_ui($sys_usr->api_json());
 
         // start the test section (ts)
@@ -95,7 +99,8 @@ class sys_log_ui_tests
         $what_max = 0;
         if ($ui_sys?->cfg !== null) {
             $what_max = (int)$ui_sys->cfg->get_by(
-                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg_ui, 0);
         }
         // sort like the page renderer (ui_log::change_log_table_pure) so that the row order of the
         // changes with the same time never depends on the api row order

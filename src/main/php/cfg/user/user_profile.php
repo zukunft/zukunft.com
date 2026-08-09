@@ -123,15 +123,15 @@ class user_profile extends type_object
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        $result = parent::row_mapper_typ_obj($db_row, $class);
+        $result = parent::row_mapper_typ_obj($db_row, $msg, $class);
         if ($result) {
             if (array_key_exists(user_profile::FLD_LEVEL, $db_row)) {
                 $this->right_level = ($db_row[user_profile::FLD_LEVEL]);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -190,18 +190,20 @@ class user_profile extends type_object
      * @return bool true if the verb is loaded and valid
      */
     function row_mapper(
-        ?array $db_row,
-        string $id_fld = self::FLD_ID): bool
+        ?array       $db_row,
+        user_message $msg,
+        string       $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper($db_row, $id_fld);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(self::FLD_LEVEL, $db_row)) {
                 if ($db_row[self::FLD_LEVEL] != null) {
                     $this->right_level = $db_row[self::FLD_LEVEL];
                 }
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -213,12 +215,13 @@ class user_profile extends type_object
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
         return $vars;
     }
@@ -230,13 +233,14 @@ class user_profile extends type_object
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->right_level !== null) {
             $vars[json_fields::RIGHT_LEVEL] = $this->right_level;
         }

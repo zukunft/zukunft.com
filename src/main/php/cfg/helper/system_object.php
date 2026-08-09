@@ -48,6 +48,7 @@ include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
@@ -134,40 +136,46 @@ class system_object
     /**
      * load the base data (types, system views) from the database
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool
      */
-    function load_type_lists(sql_db $db_con): bool
+    function load_type_lists(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load($db_con);
+        return $this->typ_lst->load($db_con, $msg);
     }
 
     /**
      * load the type lists from the cached types json with one database read
      * or with one select per type list if the cache is missing or outdated
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool true if the loading is complete
      */
-    function load_type_lists_cached(sql_db $db_con): bool
+    function load_type_lists_cached(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load_cached($db_con);
+        return $this->typ_lst->load_cached($db_con, $msg);
     }
 
     /**
      * load the cache types and statuum upfront from the database
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
      * @return bool
      */
-    function load_cache_type(sql_db $db_con): bool
+    function load_cache_type(sql_db $db_con, user_message $msg): bool
     {
-        return $this->typ_lst->load_cache($db_con);
+        return $this->typ_lst->load_cache($db_con, $msg);
     }
 
     /**
      * load all system users that have a code id
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @param user_message $msg to collect and report problems during load
+     * @return bool
      */
-    function load_system_users(sql_db $db_con): bool
+    function load_system_users(sql_db $db_con, user_message $msg): bool
     {
-        $this->sys_usr_lst->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
+        $this->sys_usr_lst->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST, $msg);
         return true;
     }
 
@@ -176,12 +184,12 @@ class system_object
      * user
      */
 
-    function user_log(): user
+    function user_log(user_message $msg): user
     {
         $usr = $this->sys_usr_lst->get_by_code_id(users::SYSTEM_LOG_CODE_ID, false);
         if ($usr == null) {
             $usr = new user();
-            $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID);
+            $usr->load_by_code_id(users::SYSTEM_LOG_CODE_ID, $msg);
             if ($usr->has_db_id()) {
                 $this->sys_usr_lst->add($usr);
             } else {
@@ -218,6 +226,18 @@ class system_object
     function system_users(): user_list
     {
         return $this->sys_usr_lst;
+    }
+
+    // often used shortcut functions
+
+    /**
+     * get a verb
+     * @param string $code_id to select the verb
+     * @return verb object
+     */
+    function verb(string $code_id): verb
+    {
+        return $this->typ_lst->vrb->get_verb($code_id);
     }
 
     /**

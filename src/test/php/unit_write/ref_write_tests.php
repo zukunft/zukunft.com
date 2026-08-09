@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -44,6 +45,7 @@ class ref_write_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -58,15 +60,15 @@ class ref_write_tests
         $t->assert_write_link($t_ref->ref_filled_add());
 
         // create the test ref
-        $wrd = $t_db->test_word(word_names::TEST_ADD);
-        $t_db->test_ref(word_names::TEST_ADD, ref::TEST_REF_NAME, ref_types::WIKIDATA);
+        $wrd = $t_db->test_word($msg, word_names::TEST_ADD);
+        $t_db->test_ref($msg, word_names::TEST_ADD, ref::TEST_REF_NAME, ref_types::WIKIDATA);
 
         // load by phrase and type
         global $sys;
         $ref = new ref($t->usr1);
         $ref->set_phrase($wrd->phrase());
         $ref->set_predicate_id($sys->typ_lst->ref_typ->id(ref_types::WIKIDATA));
-        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
+        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id(), $msg);
         $result = $ref->get_external_key();
         $target = ref::TEST_REF_NAME;
         $t->assert('ref->load "' . word_names::TEST_ADD . '" in ' . ref_types::WIKIDATA, $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
@@ -74,7 +76,7 @@ class ref_write_tests
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
             $ref2 = new ref($t->usr1);
-            $ref2->load_by_id($ref->id());
+            $ref2->load_by_id($ref->id(), $msg);
             $result = $ref2->phrase()->name();
             $target = word_names::TEST_ADD;
             $t->assert('ref->load_object word', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);

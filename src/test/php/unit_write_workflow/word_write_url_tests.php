@@ -130,9 +130,10 @@ class word_write_url_tests extends word_url_tests
      */
     private function url_to_action_write_tests(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t->subheader($this->ts . 'url_to_action & next url');
 
-        $req = new user_request($t->usr1, $this->usr_msg, $this->ui->dto, true, true);
+        $req = new user_request($t->usr1, $this->msg, $this->ui->dto, true, true);
 
         $test_name = 'a confirmed add url writes the word to the database';
         $url_arr = [];
@@ -141,13 +142,13 @@ class word_write_url_tests extends word_url_tests
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $this->ui->execute_and_next($url_arr, $req);
         $wrd_chk = new word($t->usr1);
-        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD) > 0);
+        $t->assert_true($test_name, $wrd_chk->load_by_name(word_names::TEST_ADD, $msg) > 0);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
         $this->ui->execute_and_next($url_arr, $req);
         $wrd_chk = new word($t->usr1);
-        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        $wrd_chk->load_by_name(word_names::TEST_ADD, $msg);
         // the assert follows a create/delete executed via url and a reload, so a long page timeout is used
         $t->assert($test_name, $wrd_chk->id(), 0, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
@@ -194,6 +195,7 @@ class word_write_url_tests extends word_url_tests
      */
     private function change_word_by_other_user(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t->subheader($this->ts . 'other user change');
 
         // start from a clean state so the base has the known original description and no overlay is left
@@ -214,9 +216,9 @@ class word_write_url_tests extends word_url_tests
         // uses_sandbox user update (set_uses_sandbox -> save_user) misread the flag flip as a profile
         // escalation attempt and block the whole word save (see user::enforce_profile_privilege)
         $changer = new user();
-        $changer->load_by_id($t->usr2->id());
+        $changer->load_by_id($t->usr2->id(), $msg);
         $wrd = new word($changer);
-        $wrd->load_by_name(word_names::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD, $msg);
         // the changer must actually see the base standard row before changing it; if the load misses
         // (e.g. a left over excluded row of the reserved word from the preceding add/change/del workflows)
         // the following save would take the add path and fail on the reserved-name conflict instead of
@@ -232,12 +234,12 @@ class word_write_url_tests extends word_url_tests
         // the changing user now uses the sandbox (the flag is set and persisted when the overlay is created)
         $test_name = 'the changing user now uses the sandbox';
         $usr_chk = new user();
-        $usr_chk->load_by_id($changer->id());
+        $usr_chk->load_by_id($changer->id(), $msg);
         $t->assert_true($test_name, $usr_chk->uses_sandbox);
 
         // a user sandbox row exists for the changing user and that user sees the changed description
         $wrd_changer = new word($changer);
-        $wrd_changer->load_by_name(word_names::TEST_ADD);
+        $wrd_changer->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'a user sandbox row is created for the changing user';
         $t->assert_true($test_name, $wrd_changer->has_usr_cfg());
         $test_name = 'the changing user sees the changed description';
@@ -245,7 +247,7 @@ class word_write_url_tests extends word_url_tests
 
         // the owner still sees the unchanged original description and has no overlay of his own
         $wrd_owner = new word($owner);
-        $wrd_owner->load_by_name(word_names::TEST_ADD);
+        $wrd_owner->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the owner still sees the unchanged description';
         $t->assert($test_name, $wrd_owner->get_description(), word_names::TEST_ADD_COM);
         $test_name = 'the owner has no user sandbox overlay';
@@ -257,12 +259,12 @@ class word_write_url_tests extends word_url_tests
         // but transfer the ownership to the changer and only exclude the row (see sandbox::del), which
         // leaves the reserved word in the database and breaks the add / delete word workflow on the next run
         $wrd_undo = new word($changer);
-        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_undo->set_description(word_names::TEST_ADD_COM);
         $undo_msg = new user_message($changer);
         $wrd_undo->save($undo_msg);
         $wrd_undo_chk = new word($changer);
-        $wrd_undo_chk->load_by_name(word_names::TEST_ADD);
+        $wrd_undo_chk->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the changer overlay is removed again';
         $t->assert_false($test_name, $wrd_undo_chk->has_usr_cfg());
 
@@ -293,6 +295,7 @@ class word_write_url_tests extends word_url_tests
      */
     private function rename_word_by_other_user(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t->subheader($this->ts . 'other user rename');
 
         // start from a clean state so the base word has the known original name
@@ -300,7 +303,7 @@ class word_write_url_tests extends word_url_tests
 
         // usr1 creates and owns the base word
         $owner = new user();
-        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $owner->load_by_name(users::SYSTEM_TEST_NAME, $msg);
         $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
         $owner_msg = new user_message($owner);
         $base->save($owner_msg);
@@ -312,7 +315,7 @@ class word_write_url_tests extends word_url_tests
 
         // usr2 renames the word via the same frontend bridge that the confirmed edit uses
         $changer = new user();
-        $changer->load_by_id($t->usr2->id());
+        $changer->load_by_id($t->usr2->id(), $msg);
         $msg_ui = new user_message_ui();
         $changer_ui = new user_ui();
         $changer_ui->set_from_json($changer->api_json(), $msg_ui);
@@ -334,7 +337,7 @@ class word_write_url_tests extends word_url_tests
         // the id of the ui object must resolve to the renamed word for user 2
         $test_name = 'the ui object id shows the renamed word for user 2';
         $wrd_chk = new word($changer);
-        $wrd_chk->load_by_id($wrd_ui->id());
+        $wrd_chk->load_by_id($wrd_ui->id(), $msg);
         $t->assert($test_name, $wrd_chk->name(), $renamed);
 
         // the rename request carries only the changed name (the '8'-prefixed edit baseline drops
@@ -346,7 +349,7 @@ class word_write_url_tests extends word_url_tests
         // the owner keeps the original word under the original id
         $test_name = 'the owner keeps the original word name';
         $wrd_owner = new word($owner);
-        $wrd_owner->load_by_id($base_id);
+        $wrd_owner->load_by_id($base_id, $msg);
         $t->assert($test_name, $wrd_owner->name(), word_names::TEST_ADD);
 
         // renaming back to the standard name must not report the name as already used, because
@@ -363,7 +366,7 @@ class word_write_url_tests extends word_url_tests
         $t->assert_msg($test_name, $back_msg);
         $test_name = 'the rename back removes the user overlay row';
         $wrd_undo_chk = new word($changer);
-        $wrd_undo_chk->load_by_id($base_id);
+        $wrd_undo_chk->load_by_id($base_id, $msg);
         $t->assert_false($test_name, $wrd_undo_chk->has_usr_cfg());
         $test_name = 'after the rename back user 2 sees the standard name again';
         $t->assert($test_name, $wrd_undo_chk->name(), word_names::TEST_ADD);
@@ -374,6 +377,7 @@ class word_write_url_tests extends word_url_tests
 
     private function change_word_by_other_user_with_login(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t->subheader($this->ts . 'other user change with login');
 
         // start from a clean word state before the password setup, because the cleanup can
@@ -391,7 +395,7 @@ class word_write_url_tests extends word_url_tests
         // usr1 creates and owns the base word (the owner login is checked at the end);
         // loaded fresh by name so the word save never writes back stale shared object fields
         $owner = new user();
-        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $owner->load_by_name(users::SYSTEM_TEST_NAME, $msg);
         $base = test_words::add_owned($owner, word_names::TEST_ADD_COM);
         $owner_msg = new user_message($owner);
         $base->save($owner_msg);
@@ -413,7 +417,7 @@ class word_write_url_tests extends word_url_tests
         // overlay and flips and persists the usr2 uses_sandbox flag (see sandbox::add_usr_cfg)
         $changer = $this->login_as($t, 'user 2 can log in before the change', users::SYSTEM_TEST_PARTNER_NAME);
         $wrd = new word($changer);
-        $wrd->load_by_name(word_names::TEST_ADD);
+        $wrd->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the logged in user 2 can load the base word';
         $t->assert_true($test_name, $wrd->id() > 0);
         $wrd->set_description(word_names::TEST_CHANGE_COM);
@@ -423,7 +427,7 @@ class word_write_url_tests extends word_url_tests
         $t->assert_msg($test_name, $change_msg);
         $test_name = 'user 2 now uses the sandbox';
         $usr_chk = new user();
-        $usr_chk->load_by_id($changer->id());
+        $usr_chk->load_by_id($changer->id(), $msg);
         $t->assert_true($test_name, $usr_chk->uses_sandbox);
 
         // the sandbox flag save must not touch the stored password hash
@@ -438,7 +442,7 @@ class word_write_url_tests extends word_url_tests
         $this->logout();
         $changer = $this->login_as($t, 'user 2 can log in again after the change', users::SYSTEM_TEST_PARTNER_NAME);
         $wrd_changer = new word($changer);
-        $wrd_changer->load_by_name(word_names::TEST_ADD);
+        $wrd_changer->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'user 2 sees the changed description after the re-login';
         $t->assert($test_name, $wrd_changer->get_description(), word_names::TEST_CHANGE_COM);
 
@@ -446,13 +450,13 @@ class word_write_url_tests extends word_url_tests
         $this->logout();
         $owner_in = $this->login_as($t, 'the owner can log in', users::SYSTEM_TEST_NAME);
         $wrd_owner = new word($owner_in);
-        $wrd_owner->load_by_name(word_names::TEST_ADD);
+        $wrd_owner->load_by_name(word_names::TEST_ADD, $msg);
         $test_name = 'the owner sees the unchanged description';
         $t->assert($test_name, $wrd_owner->get_description(), word_names::TEST_ADD_COM);
 
         // undo the usr2 overlay so the cleanup can hard delete the base word (see change_word_by_other_user)
         $wrd_undo = new word($changer);
-        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_undo->set_description(word_names::TEST_ADD_COM);
         $undo_msg = new user_message($changer);
         $wrd_undo->save($undo_msg);
@@ -512,8 +516,9 @@ class word_write_url_tests extends word_url_tests
      */
     private function ensure_test_password(test_cleanup $t, string $usr_name): void
     {
+        $msg = new user_message();
         $db_usr = new user();
-        $db_usr->load_by_name($usr_name);
+        $db_usr->load_by_name($usr_name, $msg);
         $pw_hash = $db_usr->get_password();
         if ($pw_hash == null or !password_verify(users::TEST_USER_PASSWORD, $pw_hash)) {
             $pw_msg = new user_message($db_usr);
@@ -525,7 +530,7 @@ class word_write_url_tests extends word_url_tests
         // check the written state the way the login will read it, so a later login failure
         // can be separated into a setup problem (this fails too) or a change in between
         $chk_usr = new user();
-        $chk_usr->load_by_name($usr_name);
+        $chk_usr->load_by_name($usr_name, $msg);
         $pw_ok = password_verify(users::TEST_USER_PASSWORD, $chk_usr->get_password() ?? '');
         // the bcrypt hash checks and creation are intentionally slow,
         // so they are not charged to the assert timing

@@ -37,7 +37,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\value;
 
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::DB . 'sql_db.php';
@@ -58,12 +57,14 @@ include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
@@ -82,6 +83,9 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -239,12 +243,12 @@ class value extends sandbox_value
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
-        $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array();
+        $vars = parent::api_array($typ_lst, $msg);
+        $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
         $vars[json_fields::NUMBER] = $this->number();
         if ($this->src != null) {
             $vars[json_fields::SOURCE_ID] = $this->source_id();
@@ -269,14 +273,15 @@ class value extends sandbox_value
      * which the frontend api_mapper picks up into $this->grp
      *
      * @param int|string $id the value id to load
+     * @param user_message|Message $msg to collect the load errors
      * @param array $data additional data that should be included in the get request
      * @param int $usr_id the id of the session user to load the value for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    function load_by_id(int|string $id, user_message|Message $msg, array $data = [], int $usr_id = 0): bool
     {
         $data[url_var::WITH_PHRASES] = url_var::TRUE;
-        return parent::load_by_id($id, $data, $usr_id);
+        return parent::load_by_id($id, $msg, $data, $usr_id);
     }
 
 
@@ -328,11 +333,11 @@ class value extends sandbox_value
      * this is the opposite of the convert function
      * @return string the html code to show only the value
      */
-    function value(): string
+    function value(user_message $msg): string
     {
         $html = new html_base();
         if ($this->number() != null) {
-            $result = $this->val_formatted();
+            $result = $this->val_formatted($msg);
             if (!$this->is_std()) {
                 $result = $html->span($result, styles::STYLE_USER);
             }
@@ -354,12 +359,12 @@ class value extends sandbox_value
      * with a link to see more related information of the value
      * @return string the formatted value with a link for more details
      */
-    function value_link(string $back = ''): string
+    function value_link(user_message $msg, string $back = ''): string
     {
         $html = new html_base();
         $lib = new library();
         $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
-        $txt = $this->value();
+        $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
     }
@@ -367,13 +372,15 @@ class value extends sandbox_value
     /**
      * create the html code to show only the value formatted based on the user settings
      * with a link to change the value itself or the value parameters
+     * @param user_message $msg to collect the error messages
+     * @param string $back the id of the original phrase (TODO Prio 0: to be replace with $url_arr that contains the previuos pages)
      * @return string the formatted value with a link to change this value
      */
-    function value_edit(string $back = ''): string
+    function value_edit(user_message $msg, string $back = ''): string
     {
         $html = new html_base();
         $url = $html->url_new(views::VALUE_DEFAULT_ID, $this->id(), '', $back);
-        $txt = $this->value();
+        $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
     }
@@ -383,23 +390,25 @@ class value extends sandbox_value
      * and the unit after the value
      * and with the information only phrases move the tooltip of the group name
      * and with the group name as a link to see the details of the value
+     * @param user_message $msg to collect the error messages
+     * @param string $back the id of the original phrase (TODO Prio 0: to be replace with $url_arr that contains the previuos pages)
      * @return string the description with links and the formatted value
      */
-    function with_unit_and_info(string $back = ''): string
+    function with_unit_and_info(user_message $msg, string $back = ''): string
     {
         $html = new html_base();
         $lib = new library();
         $phr_lst = $this->grp->phr_lst();
-        $unit_phr_lst = $phr_lst->measure_list();
-        $info_phr_lst = $phr_lst->info_list();
-        $phr_lst = $phr_lst->ex_measure_list();
-        $phr_lst = $phr_lst->ex_info_list();
+        $unit_phr_lst = $phr_lst->measure_list($msg);
+        $info_phr_lst = $phr_lst->info_list($msg);
+        $phr_lst = $phr_lst->ex_measure_list($msg);
+        $phr_lst = $phr_lst->ex_info_list($msg);
         if ($unit_phr_lst->count() > 1) {
             log_err($this->dsp_id() . ' is not expected to have more than one unit');
         }
         $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
         $name_txt = $phr_lst->name_link_list();
-        $val_txt = $this->value();
+        $val_txt = $this->value($msg);
         if (!$info_phr_lst->is_empty()) {
             // value() already returns escaped/safe html, so ref() must not escape it again
             $val_txt = $html->ref($url, $val_txt, $info_phr_lst->name_pur(), '', true);
@@ -442,11 +451,11 @@ class value extends sandbox_value
      * group and to sort the values with a time newest first; a value has at most one time phrase
      * @return phrase|null the first time phrase of the value's group or null if the value has no time
      */
-    function time_phrase(): ?phrase
+    function time_phrase(user_message $msg): ?phrase
     {
         $result = null;
         foreach ($this->grp->phr_lst()->lst() as $phr) {
-            if ($result == null and $phr->is_time()) {
+            if ($result == null and $phr->is_time($msg)) {
                 $result = $phr;
             }
         }
@@ -470,9 +479,9 @@ class value extends sandbox_value
      * @param string $sep the separator string between the name and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_tip(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
+    function name_tip(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp->name_tip($phr_lst_exclude) . $sep . $this->value();
+        return $this->grp->name_tip($phr_lst_exclude) . $sep . $this->value($msg);
     }
 
     /**
@@ -483,11 +492,11 @@ class value extends sandbox_value
      * @param string $sep the separator string between the phrases and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
+    function name_link(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
         $html = new html_base();
         $phr_links = $this->grp->name_link_list($phr_lst_exclude);
-        $val_grey = $html->span($this->value(), styles::STYLE_GREY);
+        $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
         return $phr_links . $sep . $val_grey;
     }
 
@@ -497,7 +506,7 @@ class value extends sandbox_value
      * similar to the corresponding function in the "result" class
      * @returns string the HTML code to display this value
      */
-    function val_formatted(): string
+    function val_formatted(user_message $msg): string
     {
         global $ui_sys;
         $cfg = $ui_sys->cfg;
@@ -506,7 +515,7 @@ class value extends sandbox_value
         if (!is_null($this->number())) {
             // load the list of phrases if needed
             if (!$this->grp->phr_lst()->is_empty()) {
-                if ($this->grp->phr_lst()->has_percent()) {
+                if ($this->grp->phr_lst()->has_percent($msg)) {
                     $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
                 } else {
                     if ($this->number() >= 1000 or $this->number() <= -1000) {
@@ -562,14 +571,14 @@ class value extends sandbox_value
      * @param phrase $phr the phrase to select the value
      * @return bool true if the value contains the given phrase
      */
-    function has_phrase(phrase $phr): bool
+    function has_phrase(phrase $phr, user_message $msg): bool
     {
         $result = false;
         $phr_lst = $this->grp->phr_lst();
         foreach ($phr_lst->lst() as $val_phr) {
             if ($val_phr->is_same($phr)) {
                 $result = true;
-            } elseif ($val_phr->is_type_phrase($phr)) {
+            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
                 $result = true;
             }
         }
@@ -621,7 +630,7 @@ class value extends sandbox_value
     {
         $msg = new user_message();
         if ($this->is_id_set()) {
-            $this->load_by_id($this->id());
+            $this->load_by_id($this->id(), $msg);
         }
         return $msg;
     }
@@ -669,37 +678,37 @@ class value extends sandbox_value
     }
 
     // display a value, means create the HTML code that allows to edit the value
-    function dsp_tbl_std($back): string
+    function dsp_tbl_std(user_message $msg, $back): string
     {
         log_debug('value->dsp_tbl_std ');
         $html = new html_base();
         $result = '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted()) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg)) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
 
     // same as dsp_tbl_std, but in the user-specific color
-    function dsp_tbl_usr($back): string
+    function dsp_tbl_usr(user_message $msg, $back): string
     {
         log_debug('value->dsp_tbl_usr');
         $html = new html_base();
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted(), '', styles::STYLE_USER) . '</div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '">' . $html->ref($html->url_new(views::VALUE_EDIT_ID, $this->id(), '', $back), $this->val_formatted($msg), '', styles::STYLE_USER) . '</div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
 
-    function dsp_tbl($back): string
+    function dsp_tbl(user_message $msg, $back): string
     {
         log_debug('value->dsp_tbl_std ');
         $result = '';
 
         if ($this->is_std()) {
-            $result .= $this->dsp_tbl_std($back);
+            $result .= $this->dsp_tbl_std($msg, $back);
         } else {
-            $result .= $this->dsp_tbl_usr($back);
+            $result .= $this->dsp_tbl_usr($msg, $back);
         }
         return $result;
     }
@@ -853,7 +862,7 @@ class value extends sandbox_value
     // $wrd_add is only optional to display the last added phrase at the end
     // TODO: take user unlink of phrases into account
     // save data to the database only if "save" is pressed add and remove the phrase links "on the fly", which means that after the first call the edit view is more or less the same as the add view
-    function dsp_edit($type_ids, $back): string
+    function dsp_edit($type_ids, user_message $msg, string $back): string
     {
         $result = ''; // reset the html code var
         $lib = new library();
@@ -980,10 +989,10 @@ class value extends sandbox_value
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
                     if ($phr->id() > 0) {
-                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_EDIT . '&id=' . $phr->id . '&back=' . $back;
+                        $phrase_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_EDIT . '&id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = '' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
                     }
 
                     // show the phrase selector
@@ -1140,7 +1149,7 @@ class value extends sandbox_value
         } else {
             // display similar values as a sample for the user to force a consistent type of entry e.g. cost should always be a negative number
             if (isset($main_wrd)) {
-                $main_wrd->load();
+                $main_wrd->load($msg);
                 // TODO Prio 2 activate based on a group load
                 /*
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);

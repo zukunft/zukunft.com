@@ -796,7 +796,7 @@ class import
      */
     function get_data_object(
         array        $json_array,
-        user_message $msg = new user_message(),
+        user_message $msg,
         int          $size = 0
     ): data_object
     {
@@ -1741,7 +1741,7 @@ class import
         $trp = new triple($this->usr);
         if ($from != null and $to != null) {
             $trp->set_from($from->phrase());
-            $trp->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
+            $trp->set_verb($sys->verb(verbs::NOT_SET));
             $trp->set_to($to->phrase());
             $trp->set_name($key);
         } else {

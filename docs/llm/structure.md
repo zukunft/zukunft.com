@@ -82,14 +82,14 @@ foreach ($frm_lst as $frm) {
     if ($frm->id() != 0) {
         continue;
     }
-    $msg->add(...);
+    $msg_ui->add(...);
     // ... more work ...
 }
 
 // Right — the work lives inside the positive condition
 foreach ($frm_lst as $frm) {
     if ($frm->id() == 0) {
-        $msg->add(...);
+        $msg_ui->add(...);
         // ... more work ...
     }
 }

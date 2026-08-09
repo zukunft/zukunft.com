@@ -55,6 +55,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_objects.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -246,10 +248,10 @@ class test_formulas extends test_objects
      * the url of the empty add formula form, mirroring test_words::word_new_url
      * @return array the url parameters of a formula without any field set
      */
-    static function formula_new_url(): array
+    static function formula_new_url(user_message_ui $msg): array
     {
         $frm_ui = new formula_ui();
-        return $frm_ui->to_url_array();
+        return $frm_ui->to_url_array($msg);
     }
 
     /**
@@ -257,10 +259,10 @@ class test_formulas extends test_objects
      *
      * @return array the formula url parameters of the added test formula
      */
-    function formula_add_url(): array
+    function formula_add_url(user_message_ui $msg): array
     {
         $frm_ui = new formula_ui($this->formula_add()->api_json());
-        return $frm_ui->to_url_array();
+        return $frm_ui->to_url_array($msg);
     }
 
     /**
@@ -274,7 +276,8 @@ class test_formulas extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $url_arr = $this->formula_add_url();
+        $msg = new user_message_ui();
+        $url_arr = $this->formula_add_url($msg);
         // the workflow step adds the current db id of the test formula, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::DESCRIPTION] = formula_names::SYSTEM_TEST_ADD_COM;

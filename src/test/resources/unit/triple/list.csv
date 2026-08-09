@@ -1,101 +1,101 @@
 triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,name_generated,description,weight,triple_condition_id,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
 1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,,,17,,,9999999999,,,,,3
-2,17,2,-1,1,Pi (math),,,ratio of the circumference of a circle to its diameter,,,22,,,,,,,,
-3,18,2,-1,1,𝑒 (math),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
-4,5,29,17,1,π (unit symbol),,,,,,22,,,,,,,,
-5,6,29,18,1,𝑒 (unit symbol),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
-6,9,3,8,1,natural science,,,Natural science is understanding and prediction of natural phenomena, based on empirical evidence,,,,,,,,,,,
-7,7,2,-6,1,physics (natural science),,,,,,,,,,,,,,
-8,2,3,7,1,Physical constant,,,A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time,,,17,,,,,,,,3
-9,21,20,20,1,base unit,,,,,,,,,,,,,,3
-10,21,20,39,1,derived unit,,,,,,,,,,,,,,3
-11,-10,20,40,1,named derived unit,,,,,,,,,,,,,,3
-12,-10,20,85,1,kinematic derived unit,,,,,,,,,,,,,,3
-13,-10,20,112,1,mechanics derived unit,,,,,,,,,,,,,,3
-14,22,20,23,1,international system,,,,,,,,,,,,,,3
-15,-14,5,-9,1,International System of Units (SI),,,The International System of Units, internationally known by the abbreviation SI (from French Système international d'unités), is the modern form of the metric system and the world's most widely used system of measurement.,,,,,,,,,,,3
-16,-9,3,-15,1,SI base unit,,,The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.,,,,,,,,,,,3
-17,-16,2,-8,1,SI base unit (Physical constant),,,,,,,,,,,,,,3
-18,21,5,102,1,time unit,,,a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning,,,,,,,,,,,
-19,143,6,142,1,ranking number,,,an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit,,,,,,,,,,,
-20,24,39,-18,1,second (time),,,The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.,,,3,,,,,,,,3
-21,24,39,-19,1,second (ranking),,,the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip,,,,,,,,,,,
-22,-20,2,-16,1,second (unit),,,,,,,,,,,,,,
-23,27,2,-16,1,metre (unit),,,,,,,,,,,,,,
-24,29,2,-16,1,kilogram (unit),,,,,,,,,,,,,,
-25,31,2,-16,1,ampere (unit),,,,,,,,,,,,,,
-26,33,2,-16,1,kelvin (unit),,,,,,,,,,,,,,
-27,35,2,-16,1,mole (unit),,,,,,,,,,,,,,
-28,37,2,-16,1,candela (unit),,,,,,,,,,,,,,
-29,25,29,24,1,s (unit symbol),,,,,,,,,,,,,,
-30,28,29,27,1,m (unit symbol),,,,,,,,,,,,,,
-31,30,29,29,1,kg (unit symbol),,,,,,,,,,,,,,
-32,32,29,31,1,A (unit symbol),,,,,,,,,,,,,,
-33,34,29,33,1,K (unit symbol),,,,,,,,,,,,,,
-34,36,18,35,1,mol (unit symbol),,,,,,,,,,,,,,
-35,38,29,37,1,cd (unit symbol),,,,,,,,,,,,,,
-36,-11,4,-15,1,named SI derived unit,,,SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.,,,3,,,,,,,,3
-37,-12,4,-15,1,kinematic SI derived unit,,,,,,3,,,,,,,,3
-38,-13,4,-15,1,mechanics SI derived unit,,,,,,3,,,,,,,,3
-39,27,26,24,1,metre per second,,,The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.,,,3,,,,,,,,3
-40,24,20,89,1,second squared,,,,,,,,,,,,,,3
-41,24,20,90,1,second cubed,,,,,,,,,,,,,,3
-42,27,20,89,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,,,,,,,,,3
-43,27,20,90,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
-44,-43,26,24,1,cubic metre per second,,,The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.,,,,,,,,,,,3
-45,0,18,-44,1,m3/s,,,,,,,,,,,,,,
-46,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
-47,2,5,109,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
-48,2,5,110,1,Boltzmann constant,,,The Boltzmann constant (kB or k) is the proportionality factor that relates the average relative thermal energy of particles in a gas with the thermodynamic temperature of the gas.,,,,,,,,,,,3
-49,2,5,111,1,Avogadro constant,,,The Avogadro constant is an SI defining constant with an exact value of 6.02214076×1023 mol−1 (reciprocal moles). It defines the number of constituent particles in one mole, where the particles in question can be either molecules, atoms, ions, ion pairs, or any other elementary entities.,,,,,,,,,,,3
-50,87,5,86,1,speed of light,,,The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.,,,,,,,,,,,3
-51,51,27,24,1,J⋅s,,,is the unit of the Planck constant.,,,,,,,,,,,3
-52,51,26,33,1,J/K,,,is the unit of the Boltzmann constant.,,,,,,,,,,,3
-53,35,26,4,1,mol−1,,,is the unit of the Avogadro constant.,,,,,,,,,,,3
-54,93,20,94,1,luminous efficacy,,,Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ,,,,,,,,,,,3
-55,73,26,53,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
-56,27,26,-40,1,metre per second squared,,,The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.,,,3,,,,,,,,3
-57,0,18,-56,1,m/s2,,,,,,3,,,,,,,,3
-58,27,26,-41,1,metre per second cubed,,,The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.,,,3,,,,,,,,3
-59,0,18,-58,1,m/s3,,,,,,3,,,,,,,,3
-60,43,26,24,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
-61,0,18,-60,1,rad/s,,,,,,3,,,,,,,,3
-62,97,26,96,1,angular velocity,,,In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.,,,3,,,,,,,,3
-63,88,26,96,1,angular acceleration,,,In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.,,,3,,,,,,,,3
-64,43,26,-40,1,radian per second squared,,,,,,3,,,,,,,,3
-65,0,18,-64,1,rad/s2,,,,,,3,,,,,,,,3
-66,124,29,123,1,l (unit symbol),,,,,,,,,,,,,,
-67,0,18,-39,1,m/s,,,The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.,,,3,,,,,,,,3
-68,132,39,101,1,frequency (rate),,,the number of occurrences of a repeating event per unit of time, most often measured in hertz; the rate reading of the ambiguous word 'frequency', displayed as 'frequency' with 'rate' shown only in the tooltip,,,3,,,,,,,,3
-69,-68,19,98,1,frequency drift,,,,,,3,,,,,,,,3
-70,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
-71,0,18,-70,1,Hz/s,,,,,,3,,,,,,,,3
-72,101,5,100,1,flow rate,,,,,,3,,,,,,,,3
-73,99,5,-72,1,volumetric flow rate,,,In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.,,,3,,,,,,,,3
-74,113,2,-38,1,distance (mechanics SI derived unit),,,,,,,,,,,,,,
-75,660,1,105,1,per day,,,,,,18,,,,,,,,3
-76,0,26,115,1,per km,,,,,,18,,,,,,,,3
-77,0,26,125,1,per kWh,,,,,,18,,,,,,,,3
-78,0,26,129,1,per t,,,,,,18,,,,,,,,3
-79,0,26,123,1,per l,,,,,,18,,,,,,,,3
-80,660,1,108,1,per year,,,,,,18,,,,,,,,3
-81,131,20,130,1,hyperfine transition,,,,,,,,,,,,,,3
-82,-81,7,132,1,hyperfine transition frequency,,,,,,,,,,,,,,3
-83,-82,5,134,1,hyperfine transition frequency of Cs,,,The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.,,,,,,,,,,,3
-84,136,2,108,1,1967 (year),,,,,,,,,,,,,,
-85,137,2,108,1,1979 (year),,,,,,,,,,,,,,
-86,138,2,108,1,1983 (year),,,,,,,,,,,,,,
-87,139,2,108,1,2019 (year),,,,,,,,,,,,,,
-88,108,5,135,1,year of definition,,,,,,,,,,,,,,
-89,136,2,-88,1,1967 (year of definition),,,,,,21,,,,,,,,
-90,137,2,-88,1,1979 (year of definition),,,,,,21,,,,,,,,
-91,138,2,-88,1,1983 (year of definition),,,,,,21,,,,,,,,
-92,139,2,-88,1,2019 (year of definition),,,,,,21,,,,,,,,
+2,5,29,17,1,π (unit symbol),,,,,,22,,,,,,,,
+3,6,29,18,1,𝑒 (unit symbol),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
+4,9,3,8,1,natural science,,,Natural science is understanding and prediction of natural phenomena, based on empirical evidence,,,,,,,,,,,
+5,2,3,7,1,Physical constant,,,A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time,,,17,,,,,,,,3
+6,21,20,20,1,base unit,,,,,,,,,,,,,,3
+7,21,20,39,1,derived unit,,,,,,,,,,,,,,3
+8,22,20,23,1,international system,,,,,,,,,,,,,,3
+9,21,5,102,1,time unit,,,a unit to measure a duration, used to disambiguate words like 'second' that also have a non-time meaning,,,,,,,,,,,
+10,143,6,142,1,ranking number,,,an ordinal position in a ranking (first, second, third, ...), used to disambiguate words like 'second' that also are a time unit,,,,,,,,,,,
+11,25,29,24,1,s (unit symbol),,,,,,,,,,,,,,
+12,28,29,27,1,m (unit symbol),,,,,,,,,,,,,,
+13,30,29,29,1,kg (unit symbol),,,,,,,,,,,,,,
+14,32,29,31,1,A (unit symbol),,,,,,,,,,,,,,
+15,34,29,33,1,K (unit symbol),,,,,,,,,,,,,,
+16,36,18,35,1,mol (unit symbol),,,,,,,,,,,,,,
+17,38,29,37,1,cd (unit symbol),,,,,,,,,,,,,,
+18,27,26,24,1,metre per second,,,The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.,,,3,,,,,,,,3
+19,24,20,89,1,second squared,,,,,,,,,,,,,,3
+20,24,20,90,1,second cubed,,,,,,,,,,,,,,3
+21,27,20,89,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,,,,,,,,,3
+22,27,20,90,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
+23,-22,26,24,1,cubic metre per second,,,The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.,,,,,,,,,,,3
+24,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
+25,2,5,109,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3
+26,2,5,110,1,Boltzmann constant,,,The Boltzmann constant (kB or k) is the proportionality factor that relates the average relative thermal energy of particles in a gas with the thermodynamic temperature of the gas.,,,,,,,,,,,3
+27,2,5,111,1,Avogadro constant,,,The Avogadro constant is an SI defining constant with an exact value of 6.02214076×1023 mol−1 (reciprocal moles). It defines the number of constituent particles in one mole, where the particles in question can be either molecules, atoms, ions, ion pairs, or any other elementary entities.,,,,,,,,,,,3
+28,87,5,86,1,speed of light,,,The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.,,,,,,,,,,,3
+29,51,27,24,1,J⋅s,,,is the unit of the Planck constant.,,,,,,,,,,,3
+30,51,26,33,1,J/K,,,is the unit of the Boltzmann constant.,,,,,,,,,,,3
+31,35,26,4,1,mol−1,,,is the unit of the Avogadro constant.,,,,,,,,,,,3
+32,93,20,94,1,luminous efficacy,,,Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ,,,,,,,,,,,3
+33,73,26,53,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
+34,43,26,24,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
+35,97,26,96,1,angular velocity,,,In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.,,,3,,,,,,,,3
+36,88,26,96,1,angular acceleration,,,In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.,,,3,,,,,,,,3
+37,124,29,123,1,l (unit symbol),,,,,,,,,,,,,,
+38,132,39,101,1,frequency (rate),,,the number of occurrences of a repeating event per unit of time, most often measured in hertz; the rate reading of the ambiguous word 'frequency', displayed as 'frequency' with 'rate' shown only in the tooltip,,,3,,,,,,,,3
+39,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
+40,101,5,100,1,flow rate,,,,,,3,,,,,,,,3
+41,660,1,105,1,per day,,,,,,18,,,,,,,,3
+42,0,26,115,1,per km,,,,,,18,,,,,,,,3
+43,0,26,125,1,per kWh,,,,,,18,,,,,,,,3
+44,0,26,129,1,per t,,,,,,18,,,,,,,,3
+45,0,26,123,1,per l,,,,,,18,,,,,,,,3
+46,660,1,108,1,per year,,,,,,18,,,,,,,,3
+47,131,20,130,1,hyperfine transition,,,,,,,,,,,,,,3
+48,136,2,108,1,1967 (year),,,,,,,,,,,,,,
+49,137,2,108,1,1979 (year),,,,,,,,,,,,,,
+50,138,2,108,1,1983 (year),,,,,,,,,,,,,,
+51,139,2,108,1,2019 (year),,,,,,,,,,,,,,
+52,108,5,135,1,year of definition,,,,,,,,,,,,,,
+53,17,2,-1,1,Pi (math),,,ratio of the circumference of a circle to its diameter,,,22,,,,,,,,
+54,18,2,-1,1,𝑒 (math),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
+55,7,2,-4,1,physics (natural science),,,,,,,,,,,,,,
+56,-7,20,40,1,named derived unit,,,,,,,,,,,,,,3
+57,-7,20,85,1,kinematic derived unit,,,,,,,,,,,,,,3
+58,-7,20,112,1,mechanics derived unit,,,,,,,,,,,,,,3
+59,-8,5,-6,1,International System of Units (SI),,,The International System of Units, internationally known by the abbreviation SI (from French Système international d'unités), is the modern form of the metric system and the world's most widely used system of measurement.,,,,,,,,,,,3
+60,24,39,-9,1,second (time),,,The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.,,,3,,,,,,,,3
+61,24,39,-10,1,second (ranking),,,the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip,,,,,,,,,,,
+62,0,18,-23,1,m3/s,,,,,,,,,,,,,,
+63,27,26,-19,1,metre per second squared,,,The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.,,,3,,,,,,,,3
+64,27,26,-20,1,metre per second cubed,,,The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.,,,3,,,,,,,,3
+65,0,18,-34,1,rad/s,,,,,,3,,,,,,,,3
+66,43,26,-19,1,radian per second squared,,,,,,3,,,,,,,,3
+67,0,18,-18,1,m/s,,,The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.,,,3,,,,,,,,3
+68,-38,19,98,1,frequency drift,,,,,,3,,,,,,,,3
+69,0,18,-39,1,Hz/s,,,,,,3,,,,,,,,3
+70,99,5,-40,1,volumetric flow rate,,,In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.,,,3,,,,,,,,3
+71,-47,7,132,1,hyperfine transition frequency,,,,,,,,,,,,,,3
+72,136,2,-52,1,1967 (year of definition),,,,,,21,,,,,,,,
+73,137,2,-52,1,1979 (year of definition),,,,,,21,,,,,,,,
+74,138,2,-52,1,1983 (year of definition),,,,,,21,,,,,,,,
+75,139,2,-52,1,2019 (year of definition),,,,,,21,,,,,,,,
+76,-6,3,-59,1,SI base unit,,,The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.,,,,,,,,,,,3
+77,-56,4,-59,1,named SI derived unit,,,SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.,,,3,,,,,,,,3
+78,-57,4,-59,1,kinematic SI derived unit,,,,,,3,,,,,,,,3
+79,-58,4,-59,1,mechanics SI derived unit,,,,,,3,,,,,,,,3
+80,0,18,-63,1,m/s2,,,,,,3,,,,,,,,3
+81,0,18,-64,1,m/s3,,,,,,3,,,,,,,,3
+82,0,18,-66,1,rad/s2,,,,,,3,,,,,,,,3
+83,-71,5,134,1,hyperfine transition frequency of Cs,,,The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.,,,,,,,,,,,3
+84,-76,2,-5,1,SI base unit (Physical constant),,,,,,,,,,,,,,3
+85,-60,2,-76,1,second (unit),,,,,,,,,,,,,,
+86,27,2,-76,1,metre (unit),,,,,,,,,,,,,,
+87,29,2,-76,1,kilogram (unit),,,,,,,,,,,,,,
+88,31,2,-76,1,ampere (unit),,,,,,,,,,,,,,
+89,33,2,-76,1,kelvin (unit),,,,,,,,,,,,,,
+90,35,2,-76,1,mole (unit),,,,,,,,,,,,,,
+91,37,2,-76,1,candela (unit),,,,,,,,,,,,,,
+92,113,2,-79,1,distance (mechanics SI derived unit),,,,,,,,,,,,,,
 93,162,18,158,1,tsd. is alias of thousand,,,,,,,,,,,,,,
 94,28,29,159,1,m is symbol for million,,,,,,,,,,,,,,
 95,163,29,160,1,b is symbol for billion,,,,,,,,,,,,,,
 96,206,20,195,1,global problem,,,,,,,,,,,,,,
-97,22,1,188,1,system configuration,,,,,,,,,,,,,1,3
+97,22,1,188,1,system configuration,,,,,,23,,,,,,,1,3
 98,214,2,189,1,Zurich (city),,,Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.,,,,,,71152,,,,,3
 99,214,2,187,1,Zurich (canton),,,The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.,,,,,,32400,,,,,3
 100,186,2,189,1,Bern (city),,,,,,,,,,,,,,
@@ -107,19 +107,19 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 106,225,22,222,1,climate gas,,,,,,,,,,,,,,
 107,254,5,14,1,world population,,,,,,,,,,,,,,
 108,252,14,102,1,time points,,,a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs),,,,,,,,,,,
-109,250,30,-108,1,happy time points,,,To measure the "happy points" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the "happy time points". ,,,,,,,,,,,
-110,255,29,-109,1,htp is symbol for happy time points,,,,,,,,,,,,,,
-111,257,29,159,1,mio is symbol for million,,,,,,,,,,,,,,
-112,-104,2,-96,1,global warming (global problem),,,,,,,,,,,,,,
-113,227,2,-96,1,populism (global problem),,,,,,,,,,,,,,
-114,243,20,-96,1,health can be a global problem,,,,,,,,,,,,,,
-115,260,19,261,1,GDP decline,,,,,,,,,,,,,,
-116,245,2,-96,1,poverty (global problem),,,,,,,,,,,,,,
-117,247,20,-96,1,education can be global problem,,,,,,,,,,,,,,
-118,89,20,233,1,least squares,,,,,,,,,,,,,,
-119,-118,20,232,1,ordinary least squares,,,,,,,,,,,,,,
-120,234,29,-119,1,OLS is symbol for ordinary least squares,,,,,,,,,,,,,,
-121,227,22,-115,1,populism can cause GDP decline,,,,,,,,,,,,,,
+109,257,29,159,1,mio is symbol for million,,,,,,,,,,,,,,
+110,227,2,-96,1,populism (global problem),,,,,,,,,,,,,,
+111,243,20,-96,1,health can be a global problem,,,,,,,,,,,,,,
+112,260,19,261,1,GDP decline,,,,,,,,,,,,,,
+113,245,2,-96,1,poverty (global problem),,,,,,,,,,,,,,
+114,247,20,-96,1,education can be global problem,,,,,,,,,,,,,,
+115,89,20,233,1,least squares,,,,,,,,,,,,,,
+116,250,30,-108,1,happy time points,,,To measure the "happy points" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the "happy time points". ,,,,,,,,,,,
+117,-104,2,-96,1,global warming (global problem),,,,,,,,,,,,,,
+118,-115,20,232,1,ordinary least squares,,,,,,,,,,,,,,
+119,227,22,-112,1,populism can cause GDP decline,,,,,,,,,,,,,,
+120,255,29,-116,1,htp is symbol for happy time points,,,,,,,,,,,,,,
+121,234,29,-118,1,OLS is symbol for ordinary least squares,,,,,,,,,,,,,,
 122,265,24,143,1,country can use ranking,,,,,,,,,,,,,,
 123,207,2,265,1,Switzerland (country),,,,,,,,,,,,,,
 124,266,2,265,1,Germany (country),,,,,,,,,,,,,,
@@ -148,39 +148,39 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 147,284,20,292,1,source currency,,,The currency from which an amount is converted in a currency-conversion operation.,,,,,,,,,,,
 148,284,20,293,1,target currency,,,The currency into which an amount is converted in a currency-conversion operation.,,,,,,,,,,,
 149,284,23,285,1,currency conversion,,,The process of changing an amount of money from one currency into the equivalent amount in another currency at the prevailing exchange rate.,,,,,,,,,,,
-150,-144,20,295,1,cross rate,,,A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar.,,,,,,,,,,,
-151,301,20,286,1,bid price,,,The bid price is the highest price a buyer (typically a market maker) is willing to pay for a currency at a given moment.,,,,,,,,,,,
-152,301,20,287,1,ask price,,,The ask price (also called the offer price) is the lowest price a seller (typically a market maker) is willing to accept for a currency at a given moment.,,,,,,,,,,,
-153,288,35,286,1,bid-ask spread,,,The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.,,,,,,,,,,,
-154,288,32,161,1,spread percent,,,The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels.,,,,,,,,,,,
-155,-144,23,300,1,rate change,,,The movement in an exchange rate between two points in time, expressed either in absolute terms or as a percentage.,,,,,,,,,,,
-156,-144,20,298,1,old rate,,,The earlier of two exchange rate observations, used as the baseline in computing a rate change.,,,,,,,,,,,
-157,-144,20,299,1,new rate,,,The more recent of two exchange rate observations, compared against the old rate to compute a rate change.,,,,,,,,,,,
-158,300,32,161,1,percent change,,,A change expressed as a fraction of the original value times 100. Standard formula: (new − old) / old × 100.,,,,,,,,,,,
-159,-144,20,290,1,forward rate,,,A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.,,,,,,,,,,,
-160,-144,20,291,1,spot rate,,,The spot rate is the current exchange rate at which a currency pair can be bought or sold for immediate delivery (typically T+2 settlement).,,,,,,,,,,,
-161,296,7,101,1,interest rate,,,The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.,,,,,,,,,,,
-162,-161,5,20,1,base currency interest rate,,,The interest rate applicable to the base currency of a currency pair. Higher base-currency interest rates relative to the quote currency typically lead to forward rates below spot.,,,,,,,,,,,
-163,-161,5,289,1,quote currency interest rate,,,The interest rate applicable to the quote currency of a currency pair. Higher quote-currency interest rates relative to the base currency typically lead to forward rates above spot.,,,,,,,,,,,
-164,143,7,302,1,ranking criteria,,,A ranking is always defined relative to one or more criteria that determine the order. For currencies, common criteria include trading turnover, reserve holdings, and market capitalisation.,,,,,,,,,,,
-165,304,20,303,1,most relevant,,,The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.,,,,,,,,,,,
-166,310,23,309,1,trading turnover,,,Trading turnover is the total volume of trades executed in a market over a specified period. For foreign exchange, it is typically measured in USD-equivalent value.,,,,,,,,,,,
-167,-166,20,305,1,daily turnover,,,Daily turnover aggregates all trades executed within a single trading day.,,,,,,,,,,,
-168,-166,20,306,1,weekly turnover,,,Weekly turnover aggregates daily turnover figures across a calendar week.,,,,,,,,,,,
-169,-166,20,308,1,yearly turnover,,,Yearly turnover aggregates trading activity across a calendar or fiscal year, providing a long-term view of market activity.,,,,,,,,,,,
-170,-167,20,-164,1,daily turnover ranking,,,A ranking that uses daily turnover as the ordering criterion to compare currencies, exchanges, or instruments.,,,,,,,,,,,
-171,-168,20,-164,1,weekly turnover ranking,,,A ranking that uses weekly turnover as the ordering criterion.,,,,,,,,,,,
-172,-169,20,-164,1,yearly turnover ranking,,,A ranking that uses yearly turnover as the ordering criterion. This is typically considered the most stable and relevant criterion for ranking currencies.,,,,,,,,,,,
-173,-172,2,-165,1,primary ranked by yearly turnover,,,Yearly turnover ranking is treated here as the canonical 'most relevant' ranking for currencies, as it smooths out short-term volatility.,,,,,,,,,,,
-174,-171,20,304,1,ranked by weekly turnover,,,Weekly turnover ranking provides a mid-term view of currency relevance, balancing immediacy with stability.,,,,,,,,,,,
-175,-170,20,304,1,ranked by daily turnover,,,Daily turnover ranking gives the most immediate view of currency relevance but is more volatile than longer-term rankings.,,,,,,,,,,,
-176,309,24,311,1,average turnover,,,Turnover figures are often reported as averages (typically arithmetic means) over a defined period to give a representative value rather than a one-off snapshot.,,,,,,,,,,,
-177,-176,20,305,1,daily average turnover,,,Daily average turnover expresses turnover as a per-day mean, calculated by dividing total turnover in a period by the number of trading days.,,,,,,,,,,,
-178,-176,20,307,1,monthly average turnover,,,Monthly average turnover expresses turnover as a per-month mean over a longer reporting horizon.,,,,,,,,,,,
-179,-176,20,308,1,yearly average turnover,,,Yearly average turnover expresses turnover as a per-year mean, typically derived from monthly averages.,,,,,,,,,,,
-180,284,7,-173,1,currency has a primary ranked by yearly turnover,,,Every currency in this dataset is primarily ordered by its yearly turnover, the default ranking criterion.,,,,,,,,,,,
-181,284,23,-174,1,currency can have ranked by weekly turnover,,,Currencies may also be ranked by weekly turnover where a shorter-term view is needed.,,,,,,,,,,,
-182,284,23,-175,1,currency can have ranked by daily turnover,,,Currencies may also be ranked by daily turnover, the most volatile of the supported ranking criteria.,,,,,,,,,,,
+150,301,20,286,1,bid price,,,The bid price is the highest price a buyer (typically a market maker) is willing to pay for a currency at a given moment.,,,,,,,,,,,
+151,301,20,287,1,ask price,,,The ask price (also called the offer price) is the lowest price a seller (typically a market maker) is willing to accept for a currency at a given moment.,,,,,,,,,,,
+152,288,35,286,1,bid-ask spread,,,The bid-ask spread is the difference between the ask price and the bid price for a given currency or other asset. It represents the implicit transaction cost of trading and is a key indicator of market liquidity.,,,,,,,,,,,
+153,288,32,161,1,spread percent,,,The bid-ask spread expressed as a percentage of the ask price, allowing direct comparison of spreads across different currencies and price levels.,,,,,,,,,,,
+154,300,32,161,1,percent change,,,A change expressed as a fraction of the original value times 100. Standard formula: (new − old) / old × 100.,,,,,,,,,,,
+155,296,7,101,1,interest rate,,,The interest rate is the proportion of a loan or deposit that is charged or paid as interest, typically expressed as an annual percentage. Central bank policy rates are key drivers of currency valuations and forward rates.,,,,,,,,,,,
+156,143,7,302,1,ranking criteria,,,A ranking is always defined relative to one or more criteria that determine the order. For currencies, common criteria include trading turnover, reserve holdings, and market capitalisation.,,,,,,,,,,,
+157,304,20,303,1,most relevant,,,The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.,,,,,,,,,,,
+158,310,23,309,1,trading turnover,,,Trading turnover is the total volume of trades executed in a market over a specified period. For foreign exchange, it is typically measured in USD-equivalent value.,,,,,,,,,,,
+159,309,24,311,1,average turnover,,,Turnover figures are often reported as averages (typically arithmetic means) over a defined period to give a representative value rather than a one-off snapshot.,,,,,,,,,,,
+160,-144,20,295,1,cross rate,,,A cross rate is an exchange rate between two currencies, neither of which is the official currency of the country in which the quote is given. More generally, it is a rate derived from each currency's rate against a common third currency such as the US dollar.,,,,,,,,,,,
+161,-144,23,300,1,rate change,,,The movement in an exchange rate between two points in time, expressed either in absolute terms or as a percentage.,,,,,,,,,,,
+162,-144,20,298,1,old rate,,,The earlier of two exchange rate observations, used as the baseline in computing a rate change.,,,,,,,,,,,
+163,-144,20,299,1,new rate,,,The more recent of two exchange rate observations, compared against the old rate to compute a rate change.,,,,,,,,,,,
+164,-144,20,290,1,forward rate,,,A forward exchange rate is the rate at which a bank agrees today to exchange one currency for another at a specified future date. Forward rates are derived from spot rates and interest rate differentials via the covered interest parity relationship.,,,,,,,,,,,
+165,-144,20,291,1,spot rate,,,The spot rate is the current exchange rate at which a currency pair can be bought or sold for immediate delivery (typically T+2 settlement).,,,,,,,,,,,
+166,-155,5,20,1,base currency interest rate,,,The interest rate applicable to the base currency of a currency pair. Higher base-currency interest rates relative to the quote currency typically lead to forward rates below spot.,,,,,,,,,,,
+167,-155,5,289,1,quote currency interest rate,,,The interest rate applicable to the quote currency of a currency pair. Higher quote-currency interest rates relative to the base currency typically lead to forward rates above spot.,,,,,,,,,,,
+168,-158,20,305,1,daily turnover,,,Daily turnover aggregates all trades executed within a single trading day.,,,,,,,,,,,
+169,-158,20,306,1,weekly turnover,,,Weekly turnover aggregates daily turnover figures across a calendar week.,,,,,,,,,,,
+170,-158,20,308,1,yearly turnover,,,Yearly turnover aggregates trading activity across a calendar or fiscal year, providing a long-term view of market activity.,,,,,,,,,,,
+171,-159,20,305,1,daily average turnover,,,Daily average turnover expresses turnover as a per-day mean, calculated by dividing total turnover in a period by the number of trading days.,,,,,,,,,,,
+172,-159,20,307,1,monthly average turnover,,,Monthly average turnover expresses turnover as a per-month mean over a longer reporting horizon.,,,,,,,,,,,
+173,-159,20,308,1,yearly average turnover,,,Yearly average turnover expresses turnover as a per-year mean, typically derived from monthly averages.,,,,,,,,,,,
+174,-168,20,-156,1,daily turnover ranking,,,A ranking that uses daily turnover as the ordering criterion to compare currencies, exchanges, or instruments.,,,,,,,,,,,
+175,-169,20,-156,1,weekly turnover ranking,,,A ranking that uses weekly turnover as the ordering criterion.,,,,,,,,,,,
+176,-170,20,-156,1,yearly turnover ranking,,,A ranking that uses yearly turnover as the ordering criterion. This is typically considered the most stable and relevant criterion for ranking currencies.,,,,,,,,,,,
+177,-176,2,-157,1,primary ranked by yearly turnover,,,Yearly turnover ranking is treated here as the canonical 'most relevant' ranking for currencies, as it smooths out short-term volatility.,,,,,,,,,,,
+178,-175,20,304,1,ranked by weekly turnover,,,Weekly turnover ranking provides a mid-term view of currency relevance, balancing immediacy with stability.,,,,,,,,,,,
+179,-174,20,304,1,ranked by daily turnover,,,Daily turnover ranking gives the most immediate view of currency relevance but is more volatile than longer-term rankings.,,,,,,,,,,,
+180,284,7,-177,1,currency has a primary ranked by yearly turnover,,,Every currency in this dataset is primarily ordered by its yearly turnover, the default ranking criterion.,,,,,,,,,,,
+181,284,23,-178,1,currency can have ranked by weekly turnover,,,Currencies may also be ranked by weekly turnover where a shorter-term view is needed.,,,,,,,,,,,
+182,284,23,-179,1,currency can have ranked by daily turnover,,,Currencies may also be ranked by daily turnover, the most volatile of the supported ranking criteria.,,,,,,,,,,,
 183,0,32,322,1,in USD,,,Indicates that a monetary value is expressed in United States dollars, the standard reporting unit for international foreign exchange statistics.,,,,,,,,,,,
 184,332,33,332,1,net-net basis,,,A reporting convention used in BIS foreign exchange surveys in which transactions are adjusted to remove double-counting both between local reporting dealers and between cross-border reporting dealers, yielding a true measure of global activity.,,,,,,,,,,,
 185,171,5,338,1,April 2022,,,,,,,,,,,,,,
@@ -391,100 +391,100 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 390,356,29,325,1,£ is symbol for Pound (sterling),,,,,,,,,,,,,,
 391,460,29,459,1,p is symbol for pence,,,,,,,,,,,,,,
 392,466,19,100,1,cash flow,,,,,,,,,,,,,,
-393,-392,24,467,1,cash flow statement,,,,,,,,,,,,,,
-394,471,31,470,1,income taxes,,,,,,,,,,,,,,
-395,462,7,301,1,Share Price,,,,,,,,,,,,,,
+393,471,31,470,1,income taxes,,,,,,,,,,,,,,
+394,462,7,301,1,Share Price,,,,,,,,,,,,,,
+395,-392,24,467,1,cash flow statement,,,,,,,,,,,,,,
 396,482,5,481,1,balance sheet,,,,,,,,,,,,,,
-397,190,7,-396,1,company has a balance sheet,,,,,,,,,,,,,,
-398,190,7,483,1,company has a forecast,,,,,,,,,,,,,,
-399,463,2,190,1,ABB (company),,,,,,,,,,,,,,
-400,474,2,190,1,Danone (company),,,,,,,,,,,,,,
-401,475,2,190,1,Nestlé (company),,,,,,,,,,,,,,
-402,464,2,190,1,Vestas SA,,,,,,,,,,,,,,
-403,476,2,477,1,Migros (Cooperative),,,,,,,,,,,,,,
-404,363,2,284,1,CHF (currency),,,,,,,,,,,,,,
-405,258,2,284,1,EUR (currency),,,,,,,,,,,,,,
-406,347,2,284,1,USD (currency),,,,,,,,,,,,,,
-407,160,2,479,1,billion (scaling),,,,,,,,,,,,,,
-408,159,2,479,1,million (scaling),,,,,,,,,,,,,,
-409,158,2,479,1,thousand (scaling),,,,,,,,,,,,,,
-410,528,2,108,1,2030 (year),,,,,,,,,,,,,,
-411,529,2,108,1,2029 (year),,,,,,,,,,,,,,
-412,530,2,108,1,2028 (year),,,,,,,,,,,,,,
-413,531,2,108,1,2027 (year),,,,,,,,,,,,,,
-414,532,2,108,1,2026 (year),,,,,,,,,,,,,,
-415,533,2,108,1,2025 (year),,,,,,,,,,,,,,
-416,262,2,108,1,2024 (year),,,,,,,,,,,,,,
-417,534,2,108,1,2023 (year),,,,,,,,,,,,,,
-418,338,2,108,1,2022 (year),,,,,,,,,,,,,,
-419,535,2,108,1,2021 (year),,,,,,,,,,,,,,
-420,528,11,529,1,2030 is follower of 2029,,,,,,,,,,,,,,
-421,529,11,530,1,2029 is follower of 2028,,,,,,,,,,,,,,
-422,530,11,531,1,2028 is follower of 2027,,,,,,,,,,,,,,
-423,531,11,532,1,2027 is follower of 2026,,,,,,,,,,,,,,
-424,532,11,533,1,2026 is follower of 2025,,,,,,,,,,,,,,
-425,533,11,262,1,2025 is follower of 2024,,,,,,,,,,,,,,
-426,262,11,534,1,2024 is follower of 2023,,,,,,,,,,,,,,
-427,534,11,338,1,2023 is follower of 2022,,,,,,,,,,,,,,
-428,338,11,535,1,2022 is follower of 2021,,,,,,,,,,,,,,
-429,535,11,140,1,2021 is follower of 2020,,,,,,,,,,,,,,
-430,267,11,478,1,2013 is follower of 2012,,,,,,,,,,,,,,
-431,-394,3,-393,1,income taxes is part of cash flow statement,,,,,,,,,,,,,,
-432,495,36,494,1,sustainable labels,,,,,,,,,,,,,,
-433,465,5,-432,1,sales of sustainable labels,,,,,,,,,,,,,,
-434,-433,3,465,1,sales of sustainable labels is part of sales,,,,,,,,,,,,,,
-435,465,16,484,1,sales can be used as a differentiator for sector,,,,,,,,,,,,,,
-436,190,12,485,1,company uses employee,,,,,,,,,,,,,,
-437,190,12,486,1,company uses Energy,,,,,,,,,,,,,,
-438,475,12,487,1,Nestlé uses Brand,,,,,,,,,,,,,,
-439,488,18,475,1,Nestle is alias of Nestlé,,,,,,,,,,,,,,
-440,480,36,454,1,Other revenues,,,,,,,,,,,,,,
-441,490,36,489,1,Selling expenses,,,,,,,,,,,,,,
-442,493,36,492,1,General administrative,,,,,,,,,,,,,,
-443,490,5,-442,1,General administrative expenses,,,,,,,,,,,,,,
-444,491,36,496,1,operating expense,,,,,,,,,,,,,,
-445,-444,36,454,1,Other operating expense,,,,,,,,,,,,,,
-446,491,36,310,1,trading expense,,,,,,,,,,,,,,
-447,-446,36,454,1,Other trading expense,,,,,,,,,,,,,,
-448,470,5,310,1,trading income,,,,,,,,,,,,,,
-449,-448,36,454,1,Other trading income,,,,,,,,,,,,,,
-450,490,5,310,1,trading expenses,,,,,,,,,,,,,,
-451,-450,36,454,1,Other trading expenses,,,,,,,,,,,,,,
-452,332,5,496,1,operating net,,,,,,,,,,,,,,
-453,-452,36,454,1,Other operating net,,,,,,,,,,,,,,
-454,497,5,465,1,Cost of sales,,,,,,,,,,,,,,
-455,-454,36,498,1,Cost of sales (reported),,,,,,,,,,,,,,
-456,499,36,500,1,goods sold,,,,,,,,,,,,,,
-457,497,5,-456,1,Cost of goods sold,,,,,,,,,,,,,,
-458,502,5,501,1,Distribution costs,,,,,,,,,,,,,,
-459,502,5,503,1,Research costs,,,,,,,,,,,,,,
-460,506,36,505,1,equity method,,,,,,,,,,,,,,
-461,507,5,-460,1,equity method investments,,,,,,,,,,,,,,
-462,504,30,219,1,Profit/loss,,,,,,,,,,,,,,
-463,-462,31,-461,1,Profit/loss on equity method investments,,,,,,,,,,,,,,
-464,-463,36,332,1,Profit/loss on equity method investments, net,,,,,,,,,,,,,,
-465,470,30,491,1,income/expense,,,,,,,,,,,,,,
-466,-465,36,508,1,financial income/expense,,,,,,,,,,,,,,
-467,-466,36,454,1,Other financial income/expense,,,,,,,,,,,,,,
-468,-467,36,332,1,Other financial income/expense, net,,,,,,,,,,,,,,
-469,470,5,508,1,Financial income,,,,,,,,,,,,,,
-470,491,5,508,1,Financial expense,,,,,,,,,,,,,,
-471,470,5,509,1,Interest income,,,,,,,,,,,,,,
-472,491,5,509,1,Interest expense,,,,,,,,,,,,,,
-473,301,5,462,1,Share price,,,,,,,,,,,,,,
-474,510,5,511,1,Number of shares,,,,,,,,,,,,,,
-475,514,30,513,1,Price Earning,,,,,,,,,,,,,,
-476,515,5,-475,1,Price Earning Ratio,,,,,,,,,,,,,,
-477,-476,36,512,1,Target Price Earning Ratio,,,,,,,,,,,,,,
-478,519,36,518,1,joint ventures,,,,,,,,,,,,,,
-479,517,30,-478,1,associates and joint ventures,,,,,,,,,,,,,,
-480,516,5,-479,1,Income from associates and joint ventures,,,,,,,,,,,,,,
-481,522,36,521,1,non-controlling interests,,,,,,,,,,,,,,
-482,520,33,-481,1,attributable to non-controlling interests,,,,,,,,,,,,,,
-483,504,36,-482,1,Profit attributable to non-controlling interests,,,,,,,,,,,,,,
-484,524,36,523,1,Prepared dishes,,,,,,,,,,,,,,
-485,526,36,525,1,Operating profit,,,,,,,,,,,,,,
-486,-485,36,498,1,Operating profit (reported),,,,,,,,,,,,,,
+397,190,7,483,1,company has a forecast,,,,,,,,,,,,,,
+398,463,2,190,1,ABB (company),,,,,,,,,,,,,,
+399,474,2,190,1,Danone (company),,,,,,,,,,,,,,
+400,475,2,190,1,Nestlé (company),,,,,,,,,,,,,,
+401,464,2,190,1,Vestas SA,,,,,,,,,,,,,,
+402,476,2,477,1,Migros (Cooperative),,,,,,,,,,,,,,
+403,363,2,284,1,CHF (currency),,,,,,,,,,,,,,
+404,258,2,284,1,EUR (currency),,,,,,,,,,,,,,
+405,347,2,284,1,USD (currency),,,,,,,,,,,,,,
+406,160,2,479,1,billion (scaling),,,,,,,,,,,,,,
+407,159,2,479,1,million (scaling),,,,,,,,,,,,,,
+408,158,2,479,1,thousand (scaling),,,,,,,,,,,,,,
+409,528,2,108,1,2030 (year),,,,,,,,,,,,,,
+410,529,2,108,1,2029 (year),,,,,,,,,,,,,,
+411,530,2,108,1,2028 (year),,,,,,,,,,,,,,
+412,531,2,108,1,2027 (year),,,,,,,,,,,,,,
+413,532,2,108,1,2026 (year),,,,,,,,,,,,,,
+414,533,2,108,1,2025 (year),,,,,,,,,,,,,,
+415,262,2,108,1,2024 (year),,,,,,,,,,,,,,
+416,534,2,108,1,2023 (year),,,,,,,,,,,,,,
+417,338,2,108,1,2022 (year),,,,,,,,,,,,,,
+418,535,2,108,1,2021 (year),,,,,,,,,,,,,,
+419,528,11,529,1,2030 is follower of 2029,,,,,,,,,,,,,,
+420,529,11,530,1,2029 is follower of 2028,,,,,,,,,,,,,,
+421,530,11,531,1,2028 is follower of 2027,,,,,,,,,,,,,,
+422,531,11,532,1,2027 is follower of 2026,,,,,,,,,,,,,,
+423,532,11,533,1,2026 is follower of 2025,,,,,,,,,,,,,,
+424,533,11,262,1,2025 is follower of 2024,,,,,,,,,,,,,,
+425,262,11,534,1,2024 is follower of 2023,,,,,,,,,,,,,,
+426,534,11,338,1,2023 is follower of 2022,,,,,,,,,,,,,,
+427,338,11,535,1,2022 is follower of 2021,,,,,,,,,,,,,,
+428,535,11,140,1,2021 is follower of 2020,,,,,,,,,,,,,,
+429,267,11,478,1,2013 is follower of 2012,,,,,,,,,,,,,,
+430,-393,3,-395,1,income taxes is part of cash flow statement,,,,,,,,,,,,,,
+431,495,36,494,1,sustainable labels,,,,,,,,,,,,,,
+432,465,16,484,1,sales can be used as a differentiator for sector,,,,,,,,,,,,,,
+433,190,12,485,1,company uses employee,,,,,,,,,,,,,,
+434,190,12,486,1,company uses Energy,,,,,,,,,,,,,,
+435,475,12,487,1,Nestlé uses Brand,,,,,,,,,,,,,,
+436,488,18,475,1,Nestle is alias of Nestlé,,,,,,,,,,,,,,
+437,480,36,454,1,Other revenues,,,,,,,,,,,,,,
+438,490,36,489,1,Selling expenses,,,,,,,,,,,,,,
+439,493,36,492,1,General administrative,,,,,,,,,,,,,,
+440,491,36,496,1,operating expense,,,,,,,,,,,,,,
+441,491,36,310,1,trading expense,,,,,,,,,,,,,,
+442,470,5,310,1,trading income,,,,,,,,,,,,,,
+443,490,5,310,1,trading expenses,,,,,,,,,,,,,,
+444,332,5,496,1,operating net,,,,,,,,,,,,,,
+445,497,5,465,1,Cost of sales,,,,,,,,,,,,,,
+446,499,36,500,1,goods sold,,,,,,,,,,,,,,
+447,502,5,501,1,Distribution costs,,,,,,,,,,,,,,
+448,502,5,503,1,Research costs,,,,,,,,,,,,,,
+449,506,36,505,1,equity method,,,,,,,,,,,,,,
+450,504,30,219,1,Profit/loss,,,,,,,,,,,,,,
+451,470,30,491,1,income/expense,,,,,,,,,,,,,,
+452,470,5,508,1,Financial income,,,,,,,,,,,,,,
+453,491,5,508,1,Financial expense,,,,,,,,,,,,,,
+454,470,5,509,1,Interest income,,,,,,,,,,,,,,
+455,491,5,509,1,Interest expense,,,,,,,,,,,,,,
+456,301,5,462,1,Share price,,,,,,,,,,,,,,
+457,510,5,511,1,Number of shares,,,,,,,,,,,,,,
+458,514,30,513,1,Price Earning,,,,,,,,,,,,,,
+459,519,36,518,1,joint ventures,,,,,,,,,,,,,,
+460,522,36,521,1,non-controlling interests,,,,,,,,,,,,,,
+461,524,36,523,1,Prepared dishes,,,,,,,,,,,,,,
+462,526,36,525,1,Operating profit,,,,,,,,,,,,,,
+463,190,7,-396,1,company has a balance sheet,,,,,,,,,,,,,,
+464,465,5,-431,1,sales of sustainable labels,,,,,,,,,,,,,,
+465,490,5,-439,1,General administrative expenses,,,,,,,,,,,,,,
+466,-440,36,454,1,Other operating expense,,,,,,,,,,,,,,
+467,-441,36,454,1,Other trading expense,,,,,,,,,,,,,,
+468,-442,36,454,1,Other trading income,,,,,,,,,,,,,,
+469,-443,36,454,1,Other trading expenses,,,,,,,,,,,,,,
+470,-444,36,454,1,Other operating net,,,,,,,,,,,,,,
+471,-445,36,498,1,Cost of sales (reported),,,,,,,,,,,,,,
+472,497,5,-446,1,Cost of goods sold,,,,,,,,,,,,,,
+473,507,5,-449,1,equity method investments,,,,,,,,,,,,,,
+474,-451,36,508,1,financial income/expense,,,,,,,,,,,,,,
+475,515,5,-458,1,Price Earning Ratio,,,,,,,,,,,,,,
+476,517,30,-459,1,associates and joint ventures,,,,,,,,,,,,,,
+477,520,33,-460,1,attributable to non-controlling interests,,,,,,,,,,,,,,
+478,-462,36,498,1,Operating profit (reported),,,,,,,,,,,,,,
+479,-464,3,465,1,sales of sustainable labels is part of sales,,,,,,,,,,,,,,
+480,-450,31,-473,1,Profit/loss on equity method investments,,,,,,,,,,,,,,
+481,-474,36,454,1,Other financial income/expense,,,,,,,,,,,,,,
+482,-475,36,512,1,Target Price Earning Ratio,,,,,,,,,,,,,,
+483,516,5,-476,1,Income from associates and joint ventures,,,,,,,,,,,,,,
+484,504,36,-477,1,Profit attributable to non-controlling interests,,,,,,,,,,,,,,
+485,-480,36,332,1,Profit/loss on equity method investments, net,,,,,,,,,,,,,,
+486,-481,36,332,1,Other financial income/expense, net,,,,,,,,,,,,,,
 487,561,1,300,1,database change,,,,,,,,,,,,,,3
 488,589,1,563,1,start delay,,,,,,,,,,,,,,3
 489,527,1,563,1,max delay,,,,,,,,,,,,,,3
@@ -682,25 +682,25 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 681,794,5,-99,1,Gini coefficient of Zurich (canton),,,,,,,,,,,,,,
 682,809,32,187,1,cantonal council seats total,,,,,,,,,,,,,,
 683,845,32,187,1,executive councillors total,,,,,,,,,,,,,,
-684,635,5,-658,1,GDP per capita rank,,,,,,,,,,,,,,
-685,736,5,743,1,real GDP growth,,,,,,,,,,,,,,
-686,852,5,842,1,debt to revenue ratio,,,,,,,,,,,,,,
-687,853,32,746,1,gender pay gap,,,,,,,,,,,,,,
-688,471,36,840,1,highest municipal tax multiplier,,,,,,,,,,,,,,
-689,471,36,841,1,lowest municipal tax multiplier,,,,,,,,,,,,,,
-690,824,5,714,1,infant mortality per 1000,,,,,,,,,,,,,,
-691,719,5,820,1,motorised individual transport share,,,,,,,,,,,,,,
-692,854,32,765,1,number of acute care beds,,,,,,,,,,,,,,
-693,761,32,187,1,number of secondary schools,,,,,,,,,,,,,,
-694,719,5,749,1,owner‑occupied dwellings share,,,,,,,,,,,,,,
-695,254,36,856,1,share of population 0–19,,,,,,,,,,,,,,
-696,254,36,857,1,share of population 20–64,,,,,,,,,,,,,,
-697,254,36,858,1,share of population 65+,,,,,,,,,,,,,,
-698,763,32,762,1,tertiary education attainment 25–64,,,,,,,,,,,,,,
-699,719,5,855,1,walking modal share,,,,,,,,,,,,,,
-700,719,5,758,1,bicycle modal share,,,,,,,,,,,,,,
-701,719,5,770,1,water share of area,,,,,,,,,,,,,,
-702,108,5,207,1,year of accession to Confederation,,,,,,,,,,,,,,
+684,736,5,743,1,real GDP growth,,,,,,,,,,,,,,
+685,852,5,842,1,debt to revenue ratio,,,,,,,,,,,,,,
+686,853,32,746,1,gender pay gap,,,,,,,,,,,,,,
+687,471,36,840,1,highest municipal tax multiplier,,,,,,,,,,,,,,
+688,471,36,841,1,lowest municipal tax multiplier,,,,,,,,,,,,,,
+689,824,5,714,1,infant mortality per 1000,,,,,,,,,,,,,,
+690,719,5,820,1,motorised individual transport share,,,,,,,,,,,,,,
+691,854,32,765,1,number of acute care beds,,,,,,,,,,,,,,
+692,761,32,187,1,number of secondary schools,,,,,,,,,,,,,,
+693,719,5,749,1,owner‑occupied dwellings share,,,,,,,,,,,,,,
+694,254,36,856,1,share of population 0–19,,,,,,,,,,,,,,
+695,254,36,857,1,share of population 20–64,,,,,,,,,,,,,,
+696,254,36,858,1,share of population 65+,,,,,,,,,,,,,,
+697,763,32,762,1,tertiary education attainment 25–64,,,,,,,,,,,,,,
+698,719,5,855,1,walking modal share,,,,,,,,,,,,,,
+699,719,5,758,1,bicycle modal share,,,,,,,,,,,,,,
+700,719,5,770,1,water share of area,,,,,,,,,,,,,,
+701,108,5,207,1,year of accession to Confederation,,,,,,,,,,,,,,
+702,635,5,-658,1,GDP per capita rank,,,,,,,,,,,,,,
 703,866,2,265,1,United States (country),,,,,,,,,,,,,,
 704,248,5,194,1,government spending,,,all spending by the government on consumption, investment, and transfer payments.,,,,,,,,,,,
 705,869,30,574,1,net exports,,,exports minus imports of goods and services, the trade-balance term of the GDP expenditure identity.,,,,,,,,,,,
@@ -726,10 +726,10 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 725,719,5,787,1,internet share,,,the share of the world population that uses the internet,,,,,,,,,,,
 726,719,5,892,1,social media share,,,the share of the world population that uses social media,,,,,,,,,,,
 727,185,26,210,1,children per woman,,,the total fertility rate: the average number of children a woman would bear over her lifetime at current age-specific rates.,,,,,,,,,,,
-728,-727,36,901,1,replacement fertility,,,the children per woman at which a population exactly replaces itself, about 2.1,,,,,,,,,,,
-729,-727,36,902,1,fertility surplus,,,the children per woman above the replacement level,,,,,,,,,,,
-730,899,3,898,1,YLL is part of disease burden,,,,,,,,,,,,,,
-731,900,3,898,1,YLD is part of disease burden,,,,,,,,,,,,,,
+728,899,3,898,1,YLL is part of disease burden,,,,,,,,,,,,,,
+729,900,3,898,1,YLD is part of disease burden,,,,,,,,,,,,,,
+730,-727,36,901,1,replacement fertility,,,the children per woman at which a population exactly replaces itself, about 2.1,,,,,,,,,,,
+731,-727,36,902,1,fertility surplus,,,the children per woman above the replacement level,,,,,,,,,,,
 732,253,36,915,1,DALY kind of HALY,,,,,,,,,,,,,,
 733,914,36,915,1,QALY kind of HALY,,,,,,,,,,,,,,
 734,907,3,243,1,wellbeing is part of health,,,,,,,,,,,,,,
@@ -745,20 +745,20 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 744,245,36,932,1,multidimensional poverty,,,poverty measured across health, education and living-standard deprivations,,,,,,,,,,,
 745,933,5,245,1,poverty line,,,the income or consumption level below which a person is counted as poor,,,,,,,,,,,
 746,679,5,245,1,poverty threshold,,,the level of income or consumption that marks the boundary of poverty,,,,,,,,,,,
-747,-745,36,23,1,international poverty line,,,the World Bank line for extreme poverty, 2.15 USD per person per day in 2017 PPP,,,,,,,,,,,
-748,-745,36,929,1,relative poverty line,,,a poverty line set at a fraction, often 60 percent, of the median income,,,,,,,,,,,
-749,923,5,470,1,income inequality,,,,,,,,,,,,,,
-750,686,5,924,1,wealth distribution,,,,,,,,,,,,,,
-751,937,36,935,1,economic mobility,,,the ability of a person or family to improve their economic status over time,,,,,,,,,,,
-752,934,5,245,1,poverty trap,,,a self-reinforcing mechanism that keeps people in poverty,,,,,,,,,,,
-753,470,36,738,1,median income,,,,,,,,,,,,,,
-754,101,5,245,1,poverty rate,,,the share of a population living below the poverty line,,,,,,,,,,,
-755,719,5,681,1,top income share,,,the share of total income received by the richest 20 percent,,,,,,,,,,,
-756,719,5,682,1,bottom income share,,,the share of total income received by the poorest 20 percent,,,,,,,,,,,
-757,852,5,470,1,income ratio,,,the income quintile share ratio S80/S20, the top income share divided by the bottom income share,,,,,,,,,,,
-758,927,36,245,1,deprivation kind of poverty,,,,,,,,,,,,,,
-759,923,17,245,1,inequality influences poverty,,,,,,,,,,,,,,
-760,-752,17,-751,1,poverty trap on mobility,,,,,,,,,,,,,,
+747,923,5,470,1,income inequality,,,,,,,,,,,,,,
+748,686,5,924,1,wealth distribution,,,,,,,,,,,,,,
+749,937,36,935,1,economic mobility,,,the ability of a person or family to improve their economic status over time,,,,,,,,,,,
+750,934,5,245,1,poverty trap,,,a self-reinforcing mechanism that keeps people in poverty,,,,,,,,,,,
+751,470,36,738,1,median income,,,,,,,,,,,,,,
+752,101,5,245,1,poverty rate,,,the share of a population living below the poverty line,,,,,,,,,,,
+753,719,5,681,1,top income share,,,the share of total income received by the richest 20 percent,,,,,,,,,,,
+754,719,5,682,1,bottom income share,,,the share of total income received by the poorest 20 percent,,,,,,,,,,,
+755,852,5,470,1,income ratio,,,the income quintile share ratio S80/S20, the top income share divided by the bottom income share,,,,,,,,,,,
+756,927,36,245,1,deprivation kind of poverty,,,,,,,,,,,,,,
+757,923,17,245,1,inequality influences poverty,,,,,,,,,,,,,,
+758,-745,36,23,1,international poverty line,,,the World Bank line for extreme poverty, 2.15 USD per person per day in 2017 PPP,,,,,,,,,,,
+759,-745,36,929,1,relative poverty line,,,a poverty line set at a fraction, often 60 percent, of the median income,,,,,,,,,,,
+760,-750,17,-749,1,poverty trap on mobility,,,,,,,,,,,,,,
 761,951,5,968,1,learning outcome,,,a measurable result that a learner is expected to achieve,,,,,,,,,,,
 762,970,5,968,1,transfer of learning,,,the application of skills or knowledge learned in one context to another,,,,,,,,,,,
 763,952,5,941,1,knowledge retention,,,the proportion of learned knowledge still remembered after a delay,,,,,,,,,,,

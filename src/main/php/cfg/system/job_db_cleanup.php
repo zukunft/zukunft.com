@@ -126,7 +126,7 @@ class job_db_cleanup implements job_exe
     {
         $result = 0;
         $jobs = new job_list($usr);
-        $jobs->load_by_status($status_code_id);
+        $jobs->load_by_status($status_code_id, $msg);
         foreach ($jobs->lst() as $job) {
             if ($result < $max and $this->is_old($job, $cutoff)) {
                 $del_ok = $job->del($msg);

@@ -329,10 +329,10 @@ class sandbox_value extends sandbox_multi
      * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
+    function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $this->set_last_update(null);
-        return parent::row_mapper_multi($db_row, $id_fld);
+        return parent::row_mapper_multi($db_row, $msg, $ext, $id_fld, $one_id_fld);
     }
 
     /**
@@ -360,6 +360,17 @@ class sandbox_value extends sandbox_multi
             $this->grp = $grp;
             $this->id = $grp->id();
         }
+    }
+
+    /**
+     * set the unique database id and the group id of a value or result
+     * e.g. so that the standard row can be loaded by the id into a fresh object
+     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+        $this->grp()->set_id($id);
     }
 
     function grp(): group
@@ -1046,9 +1057,10 @@ class sandbox_value extends sandbox_multi
     /**
      * if the object has been changed by someone else than the owner the user id is returned
      * but only return the user id if the user has not also excluded it
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @returns int the user id of someone who has changed the object, but is not owner
      */
-    function changer(): int
+    function changer(user_message $msg): int
     {
         log_debug($this->dsp_id());
 
@@ -1058,7 +1070,7 @@ class sandbox_value extends sandbox_multi
         $db_con->set_class($this::class);
         $db_con->set_usr($this->get_user()->id);
         $qp = $this->load_sql_changer($db_con->sql_creator());
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         if ($db_row) {
             $user_id = $db_row[user_db::FLD_ID];
         }
@@ -1444,13 +1456,13 @@ class sandbox_value extends sandbox_multi
 
     /**
      * dummy function to be overwritten by the child value or result objects
-     * @param group $grp
+     * @param group $grp the group to select the values
+     * @param user_message $msg to collect any errors during load to present them to the user
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if the value or result has been loaded
      */
-    function load_by_grp(group $grp, bool $by_source = false): bool
+    function load_by_grp(group $grp, user_message $msg, bool $by_source = false): bool
     {
-        $msg = new user_message();
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -1458,7 +1470,7 @@ class sandbox_value extends sandbox_multi
         return false;
     }
 
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         log_err('the load_phrases function is expected to be overwritten by the child class');
     }
@@ -1479,22 +1491,22 @@ class sandbox_value extends sandbox_multi
      * @param phrase_list|null $phr_lst with the cache of the phrases already loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_names(array $names, ?phrase_list $phr_lst = null): int
+    function load_by_names(array $names, user_message $msg, ?phrase_list $phr_lst = null): int
     {
         $load_lst = new phrase_list($this->get_user());
         if ($phr_lst == null) {
-            $load_lst->load_by_names($names);
+            $load_lst->load_by_names($names, $msg);
         } else {
             foreach ($names as $name) {
                 $phr = $phr_lst->get_by_name($name);
                 if ($phr == null) {
                     $phr = new phrase($this->get_user());
-                    $phr->load_by_name($name);
+                    $phr->load_by_name($name, $msg);
                 }
                 $load_lst->add($phr);
             }
         }
-        return $this->load_by_grp($load_lst->get_grp_id());
+        return $this->load_by_grp($load_lst->get_grp_id(), $msg);
     }
 
 
@@ -1505,13 +1517,18 @@ class sandbox_value extends sandbox_multi
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($typ_lst->no_key_fill()) {
             $vars[json_fields::ID] = $this->grp()->id(true);
@@ -1526,10 +1543,10 @@ class sandbox_value extends sandbox_multi
             // prime and main values carry only the phrase ids, so load the names
             // from the group id before serializing them e.g. for the value page title
             if (!$this->grp()->phrase_list()->loaded()) {
-                $this->grp()->load_phrase_names();
+                $this->grp()->load_phrase_names($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
-            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
+            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
         }
 
         return $vars;
@@ -1543,18 +1560,19 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // reload the value parameters
         if ($do_load) {
-            $this->load_by_grp($this->grp());
-            $this->load_phrases();
+            $this->load_by_grp($this->grp(), $msg);
+            $this->load_phrases($msg);
         }
 
         // add all phrases (words and triples) under "words" so that the export matches the

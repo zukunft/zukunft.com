@@ -266,13 +266,13 @@ class component extends sandbox_code_id
      * TODO Prio 2 move $typ_lst array convert to one place
      * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the api json message
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
         $vars[json_fields::UI_MSG_CODE_ID_VARS] = $this->ui_msg_code_id_vars?->value;
@@ -333,7 +333,7 @@ class component extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function component_type_selector(string $form, ?type_lists $typ_lst): string
+    function component_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -341,7 +341,7 @@ class component extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id();
+        $used_type_id = $this->type_id($msg);
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
         }
@@ -357,22 +357,23 @@ class component extends sandbox_code_id
      * TODO Prio 1 apply this error handling to similar functions
      * get the
      * @param type_lists|null $typ_lst
+     * @param user_message $msg
      * @return string
      */
-    function type_code_id(?type_lists $typ_lst): string
+    function type_code_id(?type_lists $typ_lst, user_message $msg): string
     {
 
         $type_code_id = '';
         if ($typ_lst?->cmp_typ == null) {
             $this->log_err('cmp_typ are empty');
         } else {
-            if ($this->type_id() == null) {
+            if ($this->type_id($msg) == null) {
                 $err_msg = 'Component type not set in ' . $this->dsp_id();
                 $this->log_err($err_msg);
             } else {
                 $err_msg = 'Component type code id for ' . $this->dsp_id()
-                    . ' and type id ' . $this->type_id() . ' missing';
-                $type_code_id = $typ_lst->cmp_typ->get_code_id($this->type_id());
+                    . ' and type id ' . $this->type_id($msg) . ' missing';
+                $type_code_id = $typ_lst->cmp_typ->get_code_id($this->type_id($msg));
                 if ($type_code_id == '') {
                     $this->log_err($err_msg);
                 }
@@ -452,9 +453,9 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a system form button
      */
-    function is_button(?type_lists $typ_lst): bool
+    function is_button(?type_lists $typ_lst, user_message $msg): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_types::BUTTON_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst, $msg), component_types::BUTTON_TYPES)) {
             return true;
         } else {
             return false;
@@ -464,9 +465,9 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a hidden system form element
      */
-    function is_hidden(?type_lists $typ_lst): bool
+    function is_hidden(?type_lists $typ_lst, user_message $msg): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_types::HIDDEN_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst, $msg), component_types::HIDDEN_TYPES)) {
             return true;
         } else {
             return false;
@@ -477,9 +478,9 @@ class component extends sandbox_code_id
      * TODO Prio 1 can be removed due to the explicit combine position type
      * @return bool true if the component is a subheader to combine several lists
      */
-    function is_list_group(?type_lists $typ_lst): bool
+    function is_list_group(?type_lists $typ_lst, user_message $msg): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_types::LIST_GROUP)) {
+        if (in_array($this->type_code_id($typ_lst, $msg), component_types::LIST_GROUP)) {
             return true;
         } else {
             return false;
@@ -501,11 +502,11 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a system form button or a hidden form element
      */
-    function needs_row_components(?type_lists $typ_lst): bool
+    function needs_row_components(?type_lists $typ_lst, user_message $msg): bool
     {
-        if ($this->is_button($typ_lst)
-            or $this->is_hidden($typ_lst)
-            or $this->is_list_group($typ_lst)) {
+        if ($this->is_button($typ_lst, $msg)
+            or $this->is_hidden($typ_lst, $msg)
+            or $this->is_list_group($typ_lst, $msg)) {
             return true;
         } else {
             return false;
@@ -523,7 +524,7 @@ class component extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function type_selector(string $form, ?type_lists $typ_lst): string
+    function type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -531,7 +532,7 @@ class component extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id();
+        $used_type_id = $this->type_id($msg);
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
         }
@@ -544,7 +545,7 @@ class component extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function style_selector(string $form, ?type_lists $typ_lst): string
+    function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -552,7 +553,7 @@ class component extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id();
+        $used_type_id = $this->type_id($msg);
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_sty->default_id();
         }
@@ -642,9 +643,9 @@ class component extends sandbox_code_id
 
 
     // TODO HTML code to add a view component
-    function dsp_add($add_link, $wrd, $back): string
+    function dsp_add($add_link, $wrd, $back, user_message $msg): string
     {
-        return $this->dsp_edit($add_link, $wrd, $back);
+        return $this->dsp_edit($add_link, $wrd, $back, $msg);
     }
 
     /**
@@ -654,7 +655,7 @@ class component extends sandbox_code_id
      * @param back_trace|null $back
      * @return string
      */
-    function dsp_edit(int $add_link, word $wrd, ?back_trace $back): string
+    function dsp_edit(int $add_link, word $wrd, ?back_trace $back, user_message $msg): string
     {
         $this->log_debug($this->dsp_id() . ' (called from ' . $back->url_encode() . ')');
         $result = '';
@@ -711,14 +712,14 @@ class component extends sandbox_code_id
         if ($this->id() > 0) {
             $result .= '</div>';
 
-            $view_html = $this->linked_views($add_link, $wrd, $back);
-            $changes = $this->dsp_hist(0, 0, '', $back);
+            $view_html = $this->linked_views($add_link, $wrd, $msg, $back);
+            $changes = $this->dsp_hist(0, 0, '', $msg, $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, 0, '', $back);
+            $changes = $this->dsp_hist_links(0, 0, '', $back, $msg);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -787,13 +788,13 @@ class component extends sandbox_code_id
     /**
      * @returns string the html code to display this view component
      */
-    function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
+    function html(user_message $msg, ?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
         global $ui_sys;
         $base = new ui_base();
-        return match ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id())) {
+        return match ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id($msg))) {
             component_types::TEXT => $this->text(),
-            component_types::PHRASE_NAME => $this->word_name($phr),
+            component_types::PHRASE_NAME => $this->word_name($phr, $msg),
             component_types::VALUES_RELATED => $base->table($dbo, $cfg),
             default => 'ERROR: unknown type ',
         };
@@ -810,10 +811,10 @@ class component extends sandbox_code_id
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function word_name(phrase $phr): string
+    function word_name(phrase $phr, user_message $msg): string
     {
         global $ui_sys;
-        if ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id()) == component_types::PHRASE_NAME) {
+        if ($ui_sys->typ_lst_cache->cmp_typ->get_code_id($this->type_id($msg)) == component_types::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';
@@ -823,7 +824,7 @@ class component extends sandbox_code_id
     /**
      * lists of all views where this component is used
      */
-    private function linked_views($add_link, $wrd, $back): string
+    private function linked_views($add_link, word $wrd, user_message $msg, $back): string
     {
         $this->log_debug("id " . $this->id() . " (word " . $wrd->id() . ", add " . $add_link . ").");
 
@@ -839,7 +840,7 @@ class component extends sandbox_code_id
         }
 
         $msk_lst = new view_list();
-        $msk_lst->load_by_component_id($this->id());
+        $msk_lst->load_by_component_id($this->id(), $msg);
 
         foreach ($msk_lst as $msk) {
             $result .= '  <tr>' . "\n";
@@ -862,7 +863,7 @@ class component extends sandbox_code_id
             $result .= $html->dsp_form_end('', $back);
         } else {
             $result .= '      ' . btn_add('add new',
-                $html->url_new(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
+                    $html->url_new(views::COMPONENT_EDIT_ID, $this->id(), '', $back, '', 'add_link=1&word=' . $wrd->id));
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -882,24 +883,25 @@ class component extends sandbox_code_id
      * display the history of a view component
      */
     function dsp_hist(
-        int        $page,
-        int        $size,
-        string     $call,
-        back_trace $back
+        int          $page,
+        int          $size,
+        string       $call,
+        user_message $msg,
+        back_trace   $back
     ): string
     {
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
         $log_ui = new user_log_display();
-        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
+        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page, $msg);
 
         $this->log_debug("done");
         return $result;
     }
 
     // display the link history of a view component
-    function dsp_hist_links($page, $size, $call, $back): string
+    function dsp_hist_links($page, $size, $call, $back, user_message $msg): string
     {
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
@@ -911,7 +913,7 @@ class component extends sandbox_code_id
         $log_ui->size = $size;
         $log_ui->call = $call;
         $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links();
+        $result .= $log_ui->dsp_hist_links($msg);
 
         $this->log_debug("done");
         return $result;

@@ -281,11 +281,11 @@ class term extends combine_named
      * map the main field from the term view to a term object
      * @return bool true if at least one term has been loaded
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(array $db_row, user_message $msg): bool
     {
         $result = false;
         $this->set_id(0);
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
@@ -295,7 +295,7 @@ class term extends combine_named
                 $result = true;
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -304,37 +304,38 @@ class term extends combine_named
      * @return bool true if at least one term has been loaded
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        string $id_fld = term::FLD_ID,
-        string $name_fld = term::FLD_NAME,
-        string $type_fld = term::FLD_TYPE,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true
+        ?array       $db_row,
+        user_message $msg,
+        string       $id_fld = term::FLD_ID,
+        string       $name_fld = term::FLD_NAME,
+        string       $type_fld = term::FLD_TYPE,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true
     ): bool
     {
         $result = false;
         $this->set_obj_id(0);
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if (array_key_exists(term::FLD_ID, $db_row)) {
                 $this->set_obj_from_id($db_row[term::FLD_ID]);
                 if ($this->type() == word::class) {
-                    $result = $this->get_word()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    $result = $this->get_word()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
                 } elseif ($this->type() == triple::class) {
-                    $result = $this->get_triple()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    $result = $this->get_triple()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
                 } elseif ($this->type() == formula::class) {
-                    $result = $this->get_formula()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                    $result = $this->get_formula()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
                 } elseif ($this->type() == verb::class) {
-                    $result = $this->get_verb()->row_mapper_verb($db_row, $id_fld, $name_fld);
+                    $result = $this->get_verb()->row_mapper_verb($db_row, $msg, $id_fld, $name_fld);
                 } else {
-                    log_err('Term ' . $this->dsp_id() . ' is of unknown type');
+                    log_err_msg('Term ' . $this->dsp_id() . ' is of unknown type', $msg);
                 }
                 // overwrite the term id in the object with the real object id
                 $this->set_id($db_row[$id_fld]);
             } else {
-                log_err('id field missing when trying to map term from ' . implode(',', $db_row));
+                log_err_msg('id field missing when trying to map term from ' . implode(',', $db_row), $msg);
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     function clone_reset(bool $keep_user): word|verb|triple|formula|phrase|term
@@ -824,13 +825,20 @@ class term extends combine_named
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    private function load(sql_par $qp): int
+    private function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        return $this->id();
+        // reset the id first so that a missing database row is reported with id 0
+        // also within the object and never with a stale id (see db_object_seq_id::load)
+        $this->set_id(0);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper($db_row, $msg);
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -838,13 +846,13 @@ class term extends combine_named
      * @param int $id the id of the term as defined in the database term view
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, user_message $msg): int
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -852,13 +860,13 @@ class term extends combine_named
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message $msg): int
     {
         global $db_con;
 
         log_debug($name);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -873,7 +881,7 @@ class term extends combine_named
 
         log_debug($name);
         $qp = $this->load_sql_standard_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -883,29 +891,29 @@ class term extends combine_named
      * @param bool $including_triples to include the words or triple of a triple (not recursive)
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
+    function load_by_obj_id(int $id, string $class, user_message $msg, bool $including_triples = true): int
     {
         log_debug($id);
         $result = 0;
 
         if ($class == word::class) {
-            if ($this->load_word_by_id($id)) {
+            if ($this->load_word_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == triple::class) {
-            if ($this->load_triple_by_id($id, $including_triples)) {
+            if ($this->load_triple_by_id($id, $including_triples, $msg)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == formula::class) {
-            if ($this->load_formula_by_id($id)) {
+            if ($this->load_formula_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } elseif ($class == verb::class) {
-            if ($this->load_verb_by_id($id)) {
+            if ($this->load_verb_by_id($id, $msg)) {
                 $result = $this->obj_id();
             }
         } else {
-            log_err('Unexpected class ' . $class . ' when creating term ' . $this->dsp_id());
+            log_err_msg('Unexpected class ' . $class . ' when creating term ' . $this->dsp_id(), $msg);
         }
 
         log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
@@ -918,16 +926,16 @@ class term extends combine_named
      * (separate functions for loading  for a better overview)
      */
     private
-    function load_word_by_id(int $id): bool
+    function load_word_by_id(int $id, user_message $msg): bool
     {
         global $sys;
 
         $result = false;
         $wrd = new word($this->get_user());
-        if ($wrd->load_by_id($id)) {
+        if ($wrd->load_by_id($id, $msg)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
             if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                $result = $this->load_formula_by_id($id);
+                $result = $this->load_formula_by_id($id, $msg);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
                 $this->obj = $wrd;
@@ -941,12 +949,12 @@ class term extends combine_named
      * simply load a triple
      */
     private
-    function load_triple_by_id(int $id, bool $including_triples): bool
+    function load_triple_by_id(int $id, bool $including_triples, user_message $msg): bool
     {
         $result = false;
         if ($including_triples) {
             $trp = new triple($this->get_user());
-            if ($trp->load_by_id($id)) {
+            if ($trp->load_by_id($id, $msg)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -959,11 +967,11 @@ class term extends combine_named
      * simply load a formula
      * without fixing any missing related word issues
      */
-    private function load_formula_by_id(int $id): bool
+    private function load_formula_by_id(int $id,user_message $msg): bool
     {
         $result = false;
         $frm = new formula($this->get_user());
-        if ($frm->load_by_id($id)) {
+        if ($frm->load_by_id($id, $msg)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
@@ -974,13 +982,13 @@ class term extends combine_named
     /**
      * simply load a verb
      */
-    private function load_verb_by_id(int $id): bool
+    private function load_verb_by_id(int $id, user_message $msg): bool
     {
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
         $vrb->set_user($this->get_user());
-        if ($vrb->load_by_id($id)) {
+        if ($vrb->load_by_id($id, $msg)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
             $result = true;
@@ -994,18 +1002,18 @@ class term extends combine_named
      * @param bool $including_triples to include the words or triple of a triple (not recursive)
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_obj_name(string $name, bool $including_triples = true): int
+    function load_by_obj_name(string $name, user_message $msg, bool $including_triples = true): int
     {
         log_debug($name);
         $result = 0;
 
-        if ($this->load_word_by_name($name)) {
+        if ($this->load_word_by_name($name, $msg)) {
             $result = $this->id();
-        } elseif ($this->load_triple_by_name($name, $including_triples)) {
+        } elseif ($this->load_triple_by_name($name, $including_triples, $msg)) {
             $result = $this->id();
-        } elseif ($this->load_formula_by_name($name)) {
+        } elseif ($this->load_formula_by_name($name, $msg)) {
             $result = $this->id();
-        } elseif ($this->load_verb_by_name($name)) {
+        } elseif ($this->load_verb_by_name($name, $msg)) {
             $result = $this->id();
         }
         log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
@@ -1018,16 +1026,16 @@ class term extends combine_named
      * (separate functions for loading  for a better overview)
      */
     private
-    function load_word_by_name(string $name): bool
+    function load_word_by_name(string $name, user_message $msg): bool
     {
         global $sys;
 
         $result = false;
         $wrd = new word($this->get_user());
-        if ($wrd->load_by_name($name)) {
+        if ($wrd->load_by_name($name, $msg)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
             if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
-                $result = $this->load_formula_by_name($name);
+                $result = $this->load_formula_by_name($name, $msg);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
                 $this->obj = $wrd;
@@ -1041,12 +1049,12 @@ class term extends combine_named
      * simply load a triple by name
      */
     private
-    function load_triple_by_name(string $name, bool $including_triples): bool
+    function load_triple_by_name(string $name, bool $including_triples, user_message $msg): bool
     {
         $result = false;
         if ($including_triples) {
             $trp = new triple($this->get_user());
-            if ($trp->load_by_name($name)) {
+            if ($trp->load_by_name($name, $msg)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -1060,11 +1068,11 @@ class term extends combine_named
      * without fixing any missing related word issues
      */
     private
-    function load_formula_by_name(string $name): bool
+    function load_formula_by_name(string $name, user_message $msg): bool
     {
         $result = false;
         $frm = new formula($this->get_user());
-        if ($frm->load_by_name($name)) {
+        if ($frm->load_by_name($name, $msg)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
@@ -1076,13 +1084,13 @@ class term extends combine_named
      * simply load a verb by name
      */
     private
-    function load_verb_by_name(string $name): bool
+    function load_verb_by_name(string $name, user_message $msg): bool
     {
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
         $vrb->set_user($this->get_user());
-        if ($vrb->load_by_name($name)) {
+        if ($vrb->load_by_name($name, $msg)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
             $result = true;
@@ -1250,12 +1258,12 @@ class term extends combine_named
      * info functions
      */
 
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
         $result = false;
         $phr = $this->get_phrase();
         if ($phr != null) {
-            if ($phr->is_time()) {
+            if ($phr->is_time($msg)) {
                 $result = true;
             }
         }
@@ -1272,26 +1280,27 @@ class term extends combine_named
      * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
      * @param term $db_trm the word, verb, triple or formula as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(term $db_trm): bool
+    function needs_db_update(term $db_trm, user_message $msg): bool
     {
         if ($this->is_word() and $db_trm->is_word()) {
             $wrd = $this->obj();
             $db_wrd = $db_trm->obj();
-            return $wrd->needs_db_update($db_wrd);
+            return $wrd->needs_db_update($db_wrd, $msg);
         } elseif ($this->is_verb() and $db_trm->is_verb()) {
             $vrb = $this->obj();
             $db_vrb = $db_trm->obj();
-            return $vrb->needs_db_update($db_vrb);
+            return $vrb->needs_db_update($db_vrb, $msg);
         } elseif ($this->is_triple() and $db_trm->is_triple()) {
             $trp = $this->obj();
             $db_trp = $db_trm->obj();
-            return $trp->needs_db_update($db_trp);
+            return $trp->needs_db_update($db_trp, $msg);
         } elseif ($this->is_formula() and $db_trm->is_formula()) {
             $frm = $this->obj();
             $db_frm = $db_trm->obj();
-            return $frm->needs_db_update($db_frm);
+            return $frm->needs_db_update($db_frm, $msg);
         } else {
             return true;
         }
@@ -1380,27 +1389,28 @@ class term extends combine_named
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         if ($this->is_word()) {
             $wrd = $this->get_word();
-            $vars = $wrd->export_json($exp_typ, $do_load);
+            $vars = $wrd->export_json($msg, $exp_typ, $do_load);
             $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
         } elseif ($this->is_verb()) {
             $vrb = $this->get_verb();
-            $vars = $vrb->export_json($exp_typ, $do_load);
+            $vars = $vrb->export_json($msg, $exp_typ, $do_load);
             $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
         } elseif ($this->is_triple()) {
             $trp = $this->get_triple();
-            $vars = $trp->export_json($exp_typ, $do_load);
+            $vars = $trp->export_json($msg, $exp_typ, $do_load);
             $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
         } elseif ($this->is_formula()) {
             $frm = $this->get_formula();
-            $vars = $frm->export_json($exp_typ, $do_load);
+            $vars = $frm->export_json($msg, $exp_typ, $do_load);
             $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
         } else {
             $msg = 'term with unknown object';

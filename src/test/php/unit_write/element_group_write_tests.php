@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
@@ -107,7 +108,7 @@ class element_group_write_tests
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
             $phr_lst = new phrase_list($t->usr1);
-            $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO));
+            $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO), $msg);
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
@@ -204,7 +205,7 @@ class element_group_write_tests
 
         // test if there are any test leftovers in the database and report which
         // TODO Prio 2 add this test to all db write test blocks (or at least to those that are causing issues)
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(element_group::class));
 
     }
 

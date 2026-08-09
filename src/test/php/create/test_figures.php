@@ -37,11 +37,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -68,10 +70,10 @@ class test_figures
     /**
      * @return figure with all vars set for unit testing - user value case
      */
-    function figure_value(): figure
+    function figure_value(user_message $msg): figure
     {
         $t_val = new test_values($this->env);
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
         return $val->figure();
     }
@@ -86,10 +88,10 @@ class test_figures
         return $res->figure();
     }
 
-    function figure_list(): figure_list
+    function figure_list(user_message $msg): figure_list
     {
         $lst = new figure_list($this->env->usr1);
-        $lst->add($this->figure_value());
+        $lst->add($this->figure_value($msg));
         $lst->add($this->figure_result());
         return $lst;
     }

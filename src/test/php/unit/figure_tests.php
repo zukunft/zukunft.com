@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -41,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -55,6 +57,8 @@ class figure_tests
     {
 
         // init
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $tl = new test_lib();
         $t_fig = new test_figures($t);
 
@@ -77,16 +81,16 @@ class figure_tests
 
         $t->subheader($ts . 'set and get');
 
-        $fig = $t_fig->figure_value();
-        $t->assert('figure value id', $fig->id(), values::PI_ID);
-        $t->assert('figure value obj id', $fig->obj_id(), values::PI_ID);
+        $fig = $t_fig->figure_value($msg);
+        $t->assert('figure value id', $fig->id(), values::PI_SYMBOL_ID);
+        $t->assert('figure value obj id', $fig->obj_id(), values::PI_SYMBOL_ID);
         $t->assert('figure value number', $fig->number(), values::PI_SHORT);
         $fig = $t_fig->figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);
         $t->assert('figure result number', $fig->number(), results::TV_INT);
 
-        $fig = $t_fig->figure_value();
+        $fig = $t_fig->figure_value($msg);
         $t->assert('figure value symbol', $fig->get_symbol(), "");
         $fig = $t_fig->figure_result();
         // TODO review
@@ -98,7 +102,7 @@ class figure_tests
         // (idor); figure::is_readable_by delegates to the value/result share scope
         global $sys;
         $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
-        $fig = $t_fig->figure_value();
+        $fig = $t_fig->figure_value($msg);
         $fig->obj()->set_owner_id($t->usr1->id);
         $fig->obj()->set_share_id($private_id);
         $t->assert_true('the owner may read a private value figure', $fig->is_readable_by($t->usr1));
@@ -107,7 +111,7 @@ class figure_tests
 
         $t->subheader($ts . 'api');
 
-        $fig = $t_fig->figure_value();
+        $fig = $t_fig->figure_value($msg);
         $t->assert_api($fig, 'figure_value_without_phrases');
         $t->assert_api($fig, 'figure_value_with_phrases', [api_types::INCL_PHRASES]);
 
@@ -118,14 +122,14 @@ class figure_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $fig = $t_fig->figure_value();
+        $fig = $t_fig->figure_value($msg);
         $t->assert_api_to_ui($fig, new figure_ui());
         $fig = $t_fig->figure_result();
         $t->assert_api_to_ui($fig, new figure_ui());
 
-        $fig = $t_fig->figure_value();
+        $fig = $t_fig->figure_value($msg);
         $dsp = $tl->ui_obj($fig, new figure_ui());
-        $html_link = $dsp->display_linked();
+        $html_link = $dsp->display_linked($msg_ui);
         $t->assert_text_contains('figure html link', $html_link, url_var::MASK . '=' . views::RESULT_EDIT_ID);
 
     }

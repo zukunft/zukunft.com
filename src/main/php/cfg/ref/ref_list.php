@@ -132,11 +132,14 @@ class ref_list extends type_list
      * api
      */
 
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         foreach ($this->lst() as $ref) {
-            $ref_vars = $ref->api_json_array($typ_lst, $usr);
+            $ref_vars = $ref->api_json_array($typ_lst, $msg, $usr);
             $vars[] = $ref_vars;
         }
         return $vars;
@@ -154,10 +157,10 @@ class ref_list extends type_list
      * @param string $class the database name e.g. the table name without s
      * @return bool true if at least one ref has been loaded
      */
-    function load(sql_db $db_con, string $class = ref::class): bool
+    function load(sql_db $db_con, user_message $msg, string $class = ref::class): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $class));
+        $this->set_lst($this->load_list($db_con, $msg, $class));
         if ($this->count() > 0) {
             $result = true;
         }
@@ -168,19 +171,20 @@ class ref_list extends type_list
      * force to reload the complete list of refs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_message $msg to collect the load warnings for the user
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return array the list of types
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $usr = $this->get_user();
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp, 'ref list');
+        $db_lst = $db_con->get($qp, $msg, 'ref list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $ref = new ref($usr);
-                $ref->row_mapper_sandbox($db_row);
+                $ref->row_mapper_sandbox($db_row, $msg);
                 $this->lst()[$db_row[$db_con->get_id_field_name($class)]] = $ref;
             }
         }
@@ -192,11 +196,11 @@ class ref_list extends type_list
      * @param array $keys a named object used for selection e.g. a source type
      * @return bool true if at least one source found
      */
-    function load_by_keys(array $keys): bool
+    function load_by_keys(array $keys, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $keys);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -205,9 +209,10 @@ class ref_list extends type_list
      * which selects a non-existing code_id column for the refs table
      *
      * @param int $phr_id the database id of the phrase whose references should be loaded
+     * @param user_message $msg to collect the load warnings for the user
      * @return bool true if at least one reference has been loaded
      */
-    function load_by_phr_id(int $phr_id): bool
+    function load_by_phr_id(int $phr_id, user_message $msg): bool
     {
         global $db_con;
         $this->reset();
@@ -217,11 +222,11 @@ class ref_list extends type_list
         $sc->add_where(ref::FLD_FROM, $phr_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        $db_lst = $db_con->get($qp, 'ref list');
+        $db_lst = $db_con->get($qp, $msg, 'ref list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $ref_obj = new ref($this->get_user());
-                $ref_obj->row_mapper_sandbox($db_row);
+                $ref_obj->row_mapper_sandbox($db_row, $msg);
                 $this->add($ref_obj);
             }
         }
@@ -303,6 +308,12 @@ class ref_list extends type_list
                 // add only objects that have all mandatory values
                 if ($to_add->can_be_ready($msg)) {
                     $this->add_direct($to_add);
+                    $result = true;
+                } else {
+                    // never fail silently: a reference that is dropped here is missing after the
+                    // import without any trace, so report which ref is dropped and why
+                    log_warning('reference ' . $to_add->dsp_id()
+                        . ' not added to the list because ' . $msg->all_message_text());
                 }
             }
         } else {

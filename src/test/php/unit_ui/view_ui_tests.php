@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -49,6 +50,7 @@ class view_ui_tests
     {
         $html = new html_base();
         $t_msk = new test_views($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html view ';
@@ -63,20 +65,20 @@ class view_ui_tests
         $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $msk->view_type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows = $msk->view_type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache, $msg) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
-        $test_page .= $t->dsp_title_named_edit($msk);
+        $test_page .= $t->dsp_title_named_edit($msk, $msg);
 
         // show a view with a side-or-below group where the columns
         // are shown side by side on wide screens and stacked on small screens
         $t_wrd = new test_words($t);
         $wrd = new word($t_wrd->word()->api_json());
         $msk_cols = new view($t_msk->view_side_or_below()->api_json([api_types::INCL_COMPONENTS]));
-        $cols_html = $msk_cols->show($wrd, $ui->dto, '', '', true);
+        $cols_html = $msk_cols->show($wrd, $msg, $ui->dto, '', '', true);
         $test_page .= $html->text_h2('side or below columns');
         $test_page .= $cols_html;
-        $t->html_page_test($test_page, 'view', 'view', $t);
+        $t->html_page_test($test_page, 'view', 'view', $msg);
 
         $t->subheader($ts . 'side or below columns');
         $test_name = 'each column limits the minimal width so that up to four fit at the wide side width';
@@ -88,7 +90,7 @@ class view_ui_tests
         // rendering the plain view builds the complete component html, so a semi page timeout is used
         $test_name = 'without the side or below position types no minimal width is set';
         $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $ui->dto, '', '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
     }
 
 }

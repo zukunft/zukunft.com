@@ -63,6 +63,10 @@ class api
     const string LOGOUT_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGOUT_ID;
     const string RESET_SCRIPT = self::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::LOGIN_RESET_ID;
 
+    // the http header name of the per session anti csrf token that must be sent with every
+    // api write call of a session (see server_guard::csrf_token_valid)
+    const string CSRF_TOKEN_HEADER = 'X-CSRF-Token';
+
     // human-readable root-level forward scripts (nicer than /http/view.php?m=... for emails and sharing)
     const string LOGIN_FORWARD = DIRECTORY_SEPARATOR . 'login';
     const string SIGNUP_FORWARD = DIRECTORY_SEPARATOR . 'signup';

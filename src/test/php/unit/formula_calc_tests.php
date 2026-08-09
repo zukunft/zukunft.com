@@ -42,11 +42,13 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -70,6 +72,8 @@ class formula_calc_tests
 
         // init
         $lib = new library();
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $t_frm = new test_formulas($t);
         $t_wrd = new test_words($t);
         $t_phr = new test_phrases($t);
@@ -122,7 +126,7 @@ class formula_calc_tests
         $frm_html = new formula_ui($frm->api_json());
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $back = 0;
-        $result = $frm_html->dsp_text($back, $trm_lst_ui);
+        $result = $frm_html->dsp_text($msg_ui, $back, $trm_lst_ui);
         $frm_edit_url = api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_EDIT_ID . '&amp;id=';
         $target = '"' . words::PERCENT
             . '" = ( <a href="' . $frm_edit_url
@@ -178,7 +182,7 @@ class formula_calc_tests
         $trm_lst->add($frm_wrd->term());
         $exp = new expression($frm);
         $exp->set_ref_text('{w' . word_names::ONE_ID . '}={w' . word_names::MIO_ID . '}*1000000', $t_trm->term_list_scale());
-        $result = $exp->load_result_phrases($trm_lst);
+        $result = $exp->load_result_phrases($msg, $trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_names::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
@@ -195,7 +199,7 @@ class formula_calc_tests
 
         $test_name = 'formula term list';
         $frm = $t_frm->formula();
-        $trm_lst = $frm->term_list($t_trm->term_list_time());
+        $trm_lst = $frm->term_list($t_trm->term_list_time(), $msg);
         $t->assert($test_name, $trm_lst->dsp_id(),
             '"' . word_names::MINUTE . '","' . triple_names::SECOND . '" ('
             . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','

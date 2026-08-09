@@ -151,15 +151,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param string $key_name the name of the key as defined by object const
      * @return bool true if the object has been loaded
      */
-    function load_by_key(string $key, string $key_name): bool
+    function load_by_key(string $key, string $key_name, user_message $msg): bool
     {
         if ($this:: class == user::class) {
             if ($key_name == user::KEY_IP) {
-                return $this->load_by_ip($key);
+                return $this->load_by_ip($key, $msg);
             } elseif ($key_name == user::KEY_NAME) {
-                return $this->load_by_name($key);
+                return $this->load_by_name($key, $msg);
             } elseif ($key_name == user::KEY_EMAIL) {
-                return $this->load_by_email($key);
+                return $this->load_by_email($key, $msg);
             } else {
                 return false;
             }
@@ -192,7 +192,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         } else {
             // refresh the object with the database to include all updates utils now
             $reloaded = false;
-            $reloaded_id = $this->load_by_id($this->id());
+            $reloaded_id = $this->load_by_id($this->id(), $msg);
             if ($reloaded_id != 0) {
                 $reloaded = true;
             }
@@ -212,7 +212,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $msg->merge($this->del_exe($usr));
+                    $this->del_exe($msg);
                 }
             }
         }
@@ -221,23 +221,20 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
     /**
      * delete the complete object (the calling function del must have checked that no one uses this object)
-     * @param user $usr_req the user who has requested the deletion
-     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $msg with the user who has requested the deletion and for the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @returns bool true if everything is fine
      */
-    protected function del_exe(user $usr_req): user_message
+    protected function del_exe(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        $msg = new user_message($usr_req);
-
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
-        $msg->merge($del_msg);
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
 
-        return $msg;
+        return $msg->is_ok();
     }
 
 
@@ -455,15 +452,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * overwrite
      */
 
-    function load_by_ip(string $ip): bool
+    function load_by_ip(string $ip, user_message $msg): bool
     {
-        log_err('load_by_ip used but not overwritten in ' . $this::class);
+        log_err_msg('load_by_ip used but not overwritten in ' . $this::class, $msg);
         return false;
     }
 
-    function load_by_email(string $email): bool
+    function load_by_email(string $email, user_message $msg): bool
     {
-        log_err('load_by_email used but not overwritten in ' . $this::class);
+        log_err_msg('load_by_email used but not overwritten in ' . $this::class, $msg);
         return false;
     }
 

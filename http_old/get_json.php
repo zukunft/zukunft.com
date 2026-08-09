@@ -32,6 +32,7 @@
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -42,16 +43,17 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
 $app = new frontend();
-$db_con = $app->start_api("get_json");
+$db_con = $app->start("get_json");
 
 // load the session user parameters
 $usr = new user;
-$result = $usr->get();
+$msg = new user_message();
+$result = $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET[url_var::WORDS];
@@ -61,17 +63,17 @@ if ($usr->id() > 0) {
     // load the phrases
     $phr_lst = new phrase_list($usr);
     if (count($word_names) > 0) {
-        $phr_lst->load_by_names($word_names);
+        $phr_lst->load_by_names($word_names, $msg);
     }
     // get all related Phrases
     foreach ($word_names as $wrd_name) {
         if ($wrd_name <> '') {
-            $phr_lst->add_name($wrd_name);
+            $phr_lst->add_name($wrd_name, $msg);
         }
     }
 
     if (count($phr_lst->lst()) > 0) {
-        $phr_lst = $phr_lst->are();
+        $phr_lst = $phr_lst->are($msg);
 
         log_debug("get_json.php ... phrase loaded.");
         $json_export = new json_io($usr, $phr_lst);
@@ -89,6 +91,5 @@ if ($usr->id() > 0) {
 
 }
 
-
 // Closing connection
-$app->end_api($db_con);
+$app->end($db_con);

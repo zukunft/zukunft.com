@@ -88,7 +88,7 @@ function run_sandbox_test(all_tests $t): void
 
     // check if the source has been saved (check _sandbox->save case 1)
     $src = new source($t->usr1);
-    if ($src->load_by_id($src_id)) {
+    if ($src->load_by_id($src_id, $msg)) {
         $result = $src->name();
     }
     $target = sources::IPCC_AR6_SYNTHESIS;
@@ -111,7 +111,7 @@ function run_sandbox_test(all_tests $t): void
 
     // check if the source url has been updates (check _sandbox->save case 2)
     $src = new source($t->usr1);
-    if ($src->load_by_id($src_id)) {
+    if ($src->load_by_id($src_id, $msg)) {
         $result = $src->url;
     }
     $target = sources::IPCC_AR6_SYNTHESIS_URL;

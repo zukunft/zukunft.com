@@ -109,7 +109,7 @@ class permission_tests
 
         // a value is a multi-user object (sandbox_multi branch), so verify the block is enforced
         // there as well and not only in the sandbox branch that the word above covers
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $test_name = 'the save of a value requested by an ip user is blocked';
         $msg = new user_message($usr_ip);
         $t->assert_false($test_name, $val->save($msg));

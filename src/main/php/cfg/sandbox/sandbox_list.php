@@ -123,12 +123,12 @@ class sandbox_list extends list_db_write
     /**
      * dummy function to be overwritten by the child class
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        $msg = new user_message();
         $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'rows_mapper',
             msg_id::VAR_CLASS_NAME => $this::class
@@ -141,10 +141,16 @@ class sandbox_list extends list_db_write
      *
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj the user sandbox object that should be added to the list
      * @param array|null $db_rows is an array of an array with the database values
+     * @param user_message $msg to collect the mapping errors
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj, ?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper_obj(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $db_obj,
+        ?array                                                       $db_rows,
+        user_message                                                 $msg,
+        bool                                                         $load_all = false
+    ): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -155,7 +161,7 @@ class sandbox_list extends list_db_write
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = $db_obj->clone_reset(true);
-                    $obj_to_add->row_mapper_sandbox($db_row);
+                    $obj_to_add->row_mapper_sandbox($db_row, $msg);
                     // TODO check if object direct should be used to save time
                     $this->add_obj($obj_to_add);
                     $result = true;
@@ -273,7 +279,8 @@ class sandbox_list extends list_db_write
      */
     function load_sbx_names(
         sandbox_named|sandbox_link_named|combine_named $sbx,
-        string                                         $pattern = '',
+        string                                         $pattern,
+        user_message                                   $msg,
         int                                            $limit = 0,
         int                                            $offset = 0
     ): bool
@@ -287,8 +294,8 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
-            $db_lst = $db_con->get($qp, 'sandbox list');
-            $result = $this->rows_mapper($db_lst);
+            $db_lst = $db_con->get($qp, $msg, 'sandbox list');
+            $result = $this->rows_mapper($db_lst, $msg);
         }
         return $result;
     }
@@ -318,8 +325,8 @@ class sandbox_list extends list_db_write
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $msg, $limit, $offset);
-            $db_lst = $db_con->get($qp, 'sandbox list');
-            $result = $this->rows_mapper($db_lst);
+            $db_lst = $db_con->get($qp, $msg, 'sandbox list');
+            $result = $this->rows_mapper($db_lst, $msg);
         }
         return $msg->is_ok();
     }
@@ -364,19 +371,20 @@ class sandbox_list extends list_db_write
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false): bool
+    protected function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
-        return $this->load_sys($qp, $load_all);
+        return $this->load_sys($qp, $msg, $load_all);
     }
 
     /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one object has been loaded
      */
-    protected function load_sys(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    protected function load_sys(sql_par $qp, user_message $msg, bool $load_all = false, ?sql_db $db_con_given = null): bool
     {
 
         global $db_con;
@@ -393,7 +401,7 @@ class sandbox_list extends list_db_write
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_lst = $db_con_used->get($qp);
+            $db_lst = $db_con_used->get($qp, $msg);
             // get() returns false only when the sql query itself failed (an empty
             // result is []), so guard it here: log the failed load and report
             // 'nothing loaded' instead of passing false into rows_mapper(?array),
@@ -401,7 +409,7 @@ class sandbox_list extends list_db_write
             if ($db_lst === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
-                $result = $this->rows_mapper($db_lst, $load_all);
+                $result = $this->rows_mapper($db_lst, $msg, $load_all);
             }
         }
         return $result;
@@ -414,15 +422,16 @@ class sandbox_list extends list_db_write
 
     /**
      * create an array with one export json array for each list item
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array of export json arrays
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $exp_lst = [];
         foreach ($this->lst() as $sbx) {
-            $exp_lst[] = $sbx->export_json($exp_typ, $do_load);
+            $exp_lst[] = $sbx->export_json($msg, $exp_typ, $do_load);
         }
         return $exp_lst;
     }

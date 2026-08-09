@@ -96,6 +96,7 @@ class ref_list extends ListBase
      * @return string the html code to show the references
      */
     function list(
+        user_message $msg,
         phrase_list $context_phr_lst = new phrase_list(),
         string      $back = '',
         string      $style = '',
@@ -104,7 +105,7 @@ class ref_list extends ListBase
     ): string
     {
         $this->sort_by_impact_and_type();
-        return parent::list($context_phr_lst, $back, $style, $limit, $page);
+        return parent::list($msg, $context_phr_lst, $back, $style, $limit, $page);
     }
 
     /**

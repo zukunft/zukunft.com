@@ -53,6 +53,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple;
 use Zukunft\ZukunftCom\main\php\web\word\word as word;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -253,11 +255,11 @@ class group extends sandbox_named
     /**
      * @return array the json message array to send the updated data to the backend
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::PHRASES] = $this->phr_lst()->api_array();
+        $vars[json_fields::PHRASES] = $this->phr_lst()->api_array($typ_lst, $msg);
         if ($this->description != null) {
             $vars[json_fields::NAME] = $this->name;
         }
@@ -292,9 +294,9 @@ class group extends sandbox_named
      * info
      */
 
-    function has_percent(): bool
+    function has_percent(user_message $msg): bool
     {
-        return $this->phr_lst()->has_percent();
+        return $this->phr_lst()->has_percent($msg);
     }
 
     /**

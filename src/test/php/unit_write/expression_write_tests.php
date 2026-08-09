@@ -62,12 +62,12 @@ class expression_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_price = $t_db->test_word(word_names::TEST_PRICE);
-        $wrd_earning = $t_db->test_word(word_names::TEST_EARNING);
-        $wrd_pe = $t_db->test_word(word_names::TEST_PE);
-        $frm_ratio = $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $msg);
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
+        $wrd_price = $t_db->test_word($msg, word_names::TEST_PRICE);
+        $wrd_earning = $t_db->test_word($msg, word_names::TEST_EARNING);
+        $wrd_pe = $t_db->test_word($msg, word_names::TEST_PE);
+        $frm_ratio = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         $back = '';
 
@@ -91,7 +91,7 @@ class expression_write_tests
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
-        $wrd_percent = $t_db->load_word(words::PCT);
+        $wrd_percent = $t_db->load_word($msg, words::PCT);
         $frm_this = $t_db->load_formula(formula_names::THIS_NAME);
         $frm_prior = $t_db->load_formula(formula_names::PRIOR);
 
@@ -103,7 +103,7 @@ class expression_write_tests
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
         $target = 'true';
-        $result = $lib->dsp_bool($exp->has_ref());
+        $result = $lib->dsp_bool($exp->has_ref($msg));
         $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
         $result = $exp->ref_text();
@@ -117,7 +117,7 @@ class expression_write_tests
         $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
-        $phr_lst_res = $exp->load_result_phrases();
+        $phr_lst_res = $exp->load_result_phrases($msg);
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
@@ -129,7 +129,7 @@ class expression_write_tests
         $trm_lst = $exp_pe->term_id_list($msg);
         $ids = new trm_ids($trm_lst->ids());
         $trm_lst->reset(true);
-        $trm_lst->load_by_ids($ids);
+        $trm_lst->load_by_ids($ids, $msg);
         $phr_lst_res = $trm_lst->phrase_list();
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
@@ -162,14 +162,14 @@ class expression_write_tests
         // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases
-        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst));
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
         $phr_lst = $exp->terms_following($msg, $trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . formula_names::THIS_NAME . '","' . formula_names::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
-        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst));
+        $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
         $frm_lst = $exp->element_special_following_frm($msg, $trm_lst);
         $result = $frm_lst->name();
         $target = '' . formula_names::THIS_NAME . ',' . formula_names::PRIOR . '';
