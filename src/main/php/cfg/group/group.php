@@ -72,6 +72,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_message.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
@@ -106,6 +107,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -196,16 +198,16 @@ class group extends sandbox_multi
      * @param string $id_fld the name of the id field
      * @return bool true if one phrase group is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $result = false;
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             $this->set_id(0);
             if (array_key_exists(group_fields::FLD_ID, $db_row)) {
                 $this->set_id($db_row[group_fields::FLD_ID]);
                 $grp_id = new group_id();
                 $phr_ids = new phr_ids($grp_id->get_array($db_row[group_fields::FLD_ID]));
-                $this->load_lst($phr_ids);
+                $this->load_lst($msg, $phr_ids);
                 $result = true;
             }
         }
@@ -214,6 +216,10 @@ class group extends sandbox_multi
             $this->description = $db_row[fields::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
+        // report if the database row has been found and mapped and not the message state,
+        // because e.g. load() decides based on this return value if the phrase list needs
+        // to be filled from the id (a group has a database row only if e.g. a user has
+        // named the group, so a missing row is a normal case and not an error)
         return $result;
     }
 
@@ -249,18 +255,22 @@ class group extends sandbox_multi
     /**
      * create an array for the api json message
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
         } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::ID] = $this->id();
             if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
@@ -270,7 +280,7 @@ class group extends sandbox_multi
             }
             if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
-                $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
+                $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
             }
 
         }
@@ -301,12 +311,12 @@ class group extends sandbox_multi
      * @param phrase_list|null $phr_lst_in list of the phrases already loaded to reduce traffic
      * @return bool true if the list has be set successfully
      */
-    function set_phrase_list_by_id(int|string $id, ?phrase_list $phr_lst_in = null): bool
+    function set_phrase_list_by_id(int|string $id, user_message $msg, ?phrase_list $phr_lst_in = null): bool
     {
         $grp_id = new group_id();
         $phr_ids = new phr_ids($grp_id->get_array($id));
         $phr_lst = new phrase_list($this->get_user());
-        if ($phr_lst->load_names_by_ids($phr_ids, $phr_lst_in)) {
+        if ($phr_lst->load_names_by_ids($phr_ids, $msg, $phr_lst_in)) {
             $this->set_phrase_list($phr_lst);
             return true;
         } else {
@@ -732,15 +742,19 @@ class group extends sandbox_multi
      * @return int|string the id of the object found and zero if nothing is found
      */
     function load_by_id(
-        int|string $id,
-        ?sql_type  $typ = null
+        int|string   $id,
+        user_message $msg, ?sql_type $typ = null
     ): int|string
     {
         global $db_con;
 
         log_debug($id);
+        // remember the requested id, because a group id encodes the phrase ids, so even
+        // without a database row (a group row is only saved if e.g. a user has named the
+        // group) the load fills the phrase list decoded from the requested id
+        $this->set_id($id);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -748,13 +762,17 @@ class group extends sandbox_multi
      * @param string $name the id of the group
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int|string
+    function load_by_name(string $name, user_message $msg): int|string
     {
         global $db_con;
 
         log_debug($name);
+        // reset the id first, so that on a reused group object a name miss is reported with
+        // id 0 and not with the stale id of the previous load (a found row sets the id again
+        // in the row mapper; unlike load_by_id no requested id is known for a name load)
+        $this->set_id(0);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -765,11 +783,11 @@ class group extends sandbox_multi
      * @param phrase_list $phr_lst list of phrases
      * @return bool
      */
-    function load_by_phr_lst(phrase_list $phr_lst): bool
+    function load_by_phr_lst(phrase_list $phr_lst, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_phrase_list($db_con->sql_creator(), $phr_lst);
-        if ($this->load($qp)) {
+        if ($this->load($qp, $msg)) {
             return true;
         } else {
             $this->set_phrase_list($phr_lst);
@@ -782,24 +800,24 @@ class group extends sandbox_multi
      * @param phr_ids $ids list of phrase ids where triples have a negative id
      * @return bool
      */
-    function load_by_ids(phr_ids $ids): bool
+    function load_by_ids(phr_ids $ids, user_message $msg): bool
     {
         $phr_lst = new phrase_list($this->get_user());
-        $phr_lst->load_names_by_ids($ids);
-        return $this->load_by_phr_lst($phr_lst);
+        $phr_lst->load_names_by_ids($ids, $msg);
+        return $this->load_by_phr_lst($phr_lst, $msg);
     }
 
     /**
      * load the word and triple objects based on the ids load from the database if needed
      * TODO review
      */
-    private function load_lst(?phr_ids $ids = null): void
+    private function load_lst(user_message $msg, phr_ids|null $ids = null): void
     {
         if (!$this->phrase_list()->loaded($ids)) {
             if ($ids == null) {
                 $ids = $this->phrase_list()->phrase_ids();
             }
-            $this->phrase_list()->load_by_ids($ids);
+            $this->phrase_list()->load_by_ids($ids, $msg);
         }
     }
 
@@ -825,14 +843,16 @@ class group extends sandbox_multi
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        if (!$this->row_mapper_sandbox_multi(
-            $db_row, $qp->ext, true, false)) {
-            $lib = new library();
-            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                msg_id::VAR_NAME => $this->dsp_id(),
-            ]);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            if (!$this->row_mapper_sandbox_multi(
+                $db_row, $msg, $qp->ext, true, false)) {
+                $lib = new library();
+                $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                ]);
+            }
         }
         return $msg->is_ok();
     }
@@ -842,10 +862,15 @@ class group extends sandbox_multi
      * @param sql_par $qp the query parameters created by the calling function
      * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int|string
+    protected function load(sql_par $qp, user_message $msg): int|string
     {
-        if (!parent::load_without_id_return($qp)) {
-            $this->set_phrase_list_by_id($this->id());
+        if (!parent::load_without_id_return($qp, $msg)) {
+            // a group has a database row only if e.g. a user has named the group, so for a
+            // group without a database row fill the phrase list from the id encoding, which
+            // is only possible if the id is known e.g. not after a load by name miss
+            if ($this->id() != 0 and $this->id() != '') {
+                $this->set_phrase_list_by_id($this->id(), $msg);
+            }
         }
         return $this->id();
     }
@@ -1024,7 +1049,7 @@ class group extends sandbox_multi
      * load the object parameters for all users
      * @return bool true if the phrase group object has been loaded
      */
-    function load_by_obj_vars(): bool
+    function load_by_obj_vars(user_message $msg): bool
     {
         global $db_con;
         $result = false;
@@ -1034,10 +1059,10 @@ class group extends sandbox_multi
         if ($qp->sql == '') {
             log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
         } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row);
+            $db_row = $db_con->get1($qp, $msg);
+            $result = $this->row_mapper($db_row, $msg);
             if ($result and $this->phrase_list()->empty()) {
-                $this->load_lst();
+                $this->load_lst($msg);
             }
         }
         return $result;
@@ -1090,26 +1115,26 @@ class group extends sandbox_multi
     /**
      * load the phrase names based on the group id
      */
-    function load_phrase_names(): void
+    function load_phrase_names(user_message $msg): void
     {
         $grp_id = new group_id();
         $ids = $grp_id->get_array($this->id());
         $phr_ids = (new phr_ids($ids));
         $phr_lst = new phrase_list($this->get_user());
-        $phr_lst->load_names_by_ids($phr_ids);
+        $phr_lst->load_names_by_ids($phr_ids, $msg);
         $this->set_phrase_list($phr_lst);
     }
 
     /**
      * load the phrases with all parameters based on the group id
      */
-    function load_phrases(): void
+    function load_phrases(user_message $msg): void
     {
         $grp_id = new group_id();
         $ids = $grp_id->get_array($this->id());
         $phr_ids = (new phr_ids($ids));
         $phr_lst = new phrase_list($this->get_user());
-        $phr_lst->load_by_ids($phr_ids);
+        $phr_lst->load_by_ids($phr_ids, $msg);
         $this->set_phrase_list($phr_lst);
     }
 
@@ -1123,21 +1148,22 @@ class group extends sandbox_multi
      * and save the given group name or description if needed
      *
      * @param phrase_list $phr_lst the list of phrase that should be used to set the group id
+     * @param user_message $msg to collect issue on data retrivial
      * @param string $name the given name as a replacement for the generated name
      * @param string $description a user defined description of the group
      * @param bool $do_save set it to false for unit testing
      * @return user_message
      */
     function get_by_phrase_list(
-        phrase_list $phr_lst,
-        string      $name = '',
-        string      $description = '',
-        bool        $do_save = true): user_message
+        phrase_list  $phr_lst,
+        user_message $msg,
+        string       $name = '',
+        string       $description = '',
+        bool         $do_save = true): user_message
     {
-        $msg = new user_message();
         $db_entry_needed = false;
         $this->set_phrase_list($phr_lst);
-        if ($name != '' and $name != $this->generic_name()) {
+        if ($name != '' and $name != $this->generic_name($msg)) {
             $this->name = $name;
             $db_entry_needed = true;
         }
@@ -1149,7 +1175,7 @@ class group extends sandbox_multi
         if ($do_save and $db_entry_needed) {
             // check if there is already a db entry
             $db_rec = new group($this->get_user());
-            $db_rec->load_by_id($this->id());
+            $db_rec->load_by_id($this->id(), $msg);
             if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
                 // TODO call insert or update sql statement
                 //$result .= $this->save_id();
@@ -1164,7 +1190,7 @@ class group extends sandbox_multi
      * @param bool $do_save can be set to false for unit testing
      * based on a string with the word and triple ids
      */
-    function get(bool $do_save = true): string
+    function get(user_message $msg, bool $do_save = true): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1172,7 +1198,7 @@ class group extends sandbox_multi
         // get the id based on the given parameters
         $test_load = clone $this;
         if ($do_save) {
-            $result .= $test_load->load_by_obj_vars();
+            $result .= $test_load->load_by_obj_vars($msg);
             log_debug('loaded ' . $this->dsp_id());
         } else {
             // TODO use a unit test seq builder
@@ -1184,13 +1210,13 @@ class group extends sandbox_multi
             $this->id = $test_load->id();
         } else {
             log_debug('save ' . $this->dsp_id());
-            $this->load_by_obj_vars();
-            $result .= $this->save_id();
+            $this->load_by_obj_vars($msg);
+            $result .= $this->save_id($msg);
         }
 
         // update the database for correct selection references
         if ($this->id() > 0) {
-            $result .= $this->generic_name($do_save); // update the generic name if needed
+            $result .= $this->generic_name($msg, $do_save); // update the generic name if needed
         }
 
         log_debug('got ' . $this->dsp_id());
@@ -1200,12 +1226,12 @@ class group extends sandbox_multi
     /**
      * @return int|null the group id generated from the previous set phrase list
      */
-    function get_id(): ?int
+    function get_id(user_message $msg): ?int
     {
         if (!$this->is_id_set()) {
             // if the id has not yet been set, try to create it, but actually this should never happen
             log_warning('Unexpected creation of the group id triggered for ' . $this->dsp_id());
-            $this->get();
+            $this->get($msg);
         }
         return $this->id;
     }
@@ -1317,7 +1343,7 @@ class group extends sandbox_multi
         global $db_con;
         $result = null;
 
-        $wrd_lst = $this->phrase_list()->wrd_lst();
+        $wrd_lst = $this->phrase_list()->wrd_lst($msg);
 
         if (isset($wrd_lst)) {
             if ($wrd_lst->lst > 0) {
@@ -1376,16 +1402,17 @@ class group extends sandbox_multi
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($do_load) {
-            $this->load_phrases();
+            $this->load_phrases($msg);
         }
 
         // add the words
@@ -1598,14 +1625,14 @@ class group extends sandbox_multi
         // check with the user namespace
         $db_chk->set_user($this->get_user());
         if ($this->name() != '') {
-            if ($db_chk->load_by_name($this->name())) {
+            if ($db_chk->load_by_name($this->name(), $msg)) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                     $sim = $db_chk;
                 }
             }
         } else {
-            log_err('The name must be set to check if a similar object exists');
+            log_err_msg('The name must be set to check if a similar object exists', $msg);
         }
 
         return $sim;
@@ -1630,7 +1657,7 @@ class group extends sandbox_multi
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         // TODO Prio 1 set the user table based on the exiting db rows link the sandbox add
         $usr_tbl = false;
-        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, $usr_tbl, true)) {
+        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), $usr_tbl, true)) {
             $this->id = $msg->get_row_id();
         }
 
@@ -1646,10 +1673,10 @@ class group extends sandbox_multi
      * return the first value related to the word lst
      * or an array with the value and the user_id if the result is user-specific
      */
-    function value(): value
+    function value(user_message $msg): value
     {
         $val = new value($this->get_user());
-        $val->load_by_grp($this);
+        $val->load_by_grp($this, $msg);
 
         log_debug($val->grp()->dsp_id() . ' for "' . $this->get_user()->name . '" is ' . $val->number());
         return $val;
@@ -1659,15 +1686,15 @@ class group extends sandbox_multi
      * TODO add a unit test
      * @return phrase of the most relevant time
      */
-    function time(): phrase
+    function time(user_message $msg): phrase
     {
         $phr = new phrase($this->get_user());
-        $phr_lst = $this->phrase_list()->time_word_list();
+        $phr_lst = $this->phrase_list()->time_word_list($msg);
         if (!$phr_lst->is_empty()) {
             // TODO use a new "most relevant" function
             $phr = $phr_lst->lst()[0];
         } else {
-            $phr = $phr_lst->assume_time();
+            $phr = $phr_lst->assume_time($msg);
         }
         return $phr;
     }
@@ -1677,23 +1704,23 @@ class group extends sandbox_multi
      * @param $time_wrd_id
      * @return result the best matching result of the group
      */
-    function result($time_wrd_id): result
+    function result(int $time_wrd_id, user_message $msg): result
     {
         log_debug($this->id() . ",time" . $time_wrd_id . ",u" . $this->get_user()->name);
 
         global $db_con;
 
         $res = new result($this->get_user());
-        $result = $res->load_by_grp($this);
+        $result = $res->load_by_grp($this, $msg);
 
         // if no user-specific result is found, get the standard result
         if ($result === false) {
-            $result = $res->load_std_by_grp($this);
+            $result = $res->load_std_by_grp($this, $msg);
 
             // get any time value: to be adjusted to: use the latest
             if ($result === false) {
-                $grp_ex_time = $this->get_ex_time();
-                $result = $res->load_std_by_grp($this);
+                $grp_ex_time = $this->get_ex_time($msg);
+                $result = $res->load_std_by_grp($this, $msg);
                 if ($result === false) {
                     log_info('no result found for ' . $this->dsp_id());
                 } else {
@@ -1715,7 +1742,7 @@ class group extends sandbox_multi
      *
      * @returns string the generic name if it has been saved to the database
      */
-    private function generic_name(bool $do_save = true): string
+    private function generic_name(user_message $msg, bool $do_save = true): string
     {
         log_debug();
 
@@ -1723,7 +1750,7 @@ class group extends sandbox_multi
 
         // if not yet done, load, the words and triple list
         if ($do_save) {
-            $this->load_lst();
+            $this->load_lst($msg);
         }
 
         // TODO take the order into account
@@ -1752,10 +1779,10 @@ class group extends sandbox_multi
     }
 
 
-    function get_ex_time(): group
+    function get_ex_time(user_message $msg): group
     {
         $phr_lst = $this->phrase_list();
-        $phr_lst->ex_time();
+        $phr_lst->ex_time($msg);
         return $phr_lst->get_grp_id();
     }
 
@@ -1801,7 +1828,7 @@ class group extends sandbox_multi
         }
 
         if ($msg->is_ok() and $do_save) {
-            $msg->add_message_text($this->save_id());
+            $msg->add_message_text($this->save_id($msg));
         }
 
         return $msg;
@@ -1811,12 +1838,12 @@ class group extends sandbox_multi
     /**
      * create a new phrase group
      */
-    private function save_id(): ?int
+    private function save_id(user_message $msg): ?int
     {
         log_debug($this->dsp_id());
 
         if ($this->id() <= 0) {
-            $this->generic_name();
+            $this->generic_name($msg);
 
             // write new group
             if (!$this->phrase_list()->is_empty()) {
@@ -2168,12 +2195,12 @@ class group extends sandbox_multi
     /**
      * @return array a list of the word and triple names
      */
-    function names(): array
+    function names(user_message $msg): array
     {
         log_debug();
 
         // if not yet done, load, the words and triple list
-        $this->load_lst();
+        $this->load_lst($msg);
 
         return $this->phrase_list()->names();
     }

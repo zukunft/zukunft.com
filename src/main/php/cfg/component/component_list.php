@@ -106,12 +106,13 @@ class component_list extends sandbox_list_named
     /**
      * fill the component list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one component has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new component($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new component($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -126,9 +127,9 @@ class component_list extends sandbox_list_named
      * @param int $offset jump over these number of pages
      * @return bool true if at least one component found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new component($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new component($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
     /**
@@ -138,7 +139,7 @@ class component_list extends sandbox_list_named
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one component has been loaded
      */
-    function load_by_ids(array $ids, ?sql_db $db_con_given = null): bool
+    function load_by_ids(array $ids, user_message $msg, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -148,7 +149,7 @@ class component_list extends sandbox_list_named
         }
 
         $qp = $this->load_sql_by_ids($db_con_used->sql_creator(), $ids);
-        return $this->load_sys($qp, false, $db_con_used);
+        return $this->load_sys($qp, $msg, false, $db_con_used);
     }
 
     /**
@@ -156,13 +157,13 @@ class component_list extends sandbox_list_named
      * @param int $id the id of the view
      * @return bool true if at least one component has been loaded
      */
-    function load_by_view_id(int $id): bool
+    function load_by_view_id(int $id, user_message $msg): bool
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $id);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
 
@@ -320,15 +321,16 @@ class component_list extends sandbox_list_named
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $cmp_lst = [];
         foreach ($this->lst() as $cmp) {
-            $cmp_lst[] = $cmp->export_json($exp_typ, $do_load);
+            $cmp_lst[] = $cmp->export_json($msg, $exp_typ, $do_load);
         }
         return $cmp_lst;
     }
@@ -369,6 +371,7 @@ class component_list extends sandbox_list_named
             $level = 0;
             $db_lst_all = new component_list($this->get_user());
             $add_lst = new component_list($this->get_user());
+            $db_lst = new component_list($this->get_user());
             while ($frm_added and $level < $max_frm_levels) {
                 $frm_added = false;
                 $msg->unset_added_depending();
@@ -381,10 +384,9 @@ class component_list extends sandbox_list_named
                 // load the components by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, component::class, $load_lst->count(), $step_time);
-                $db_lst = new component_list($this->get_user());
                 // force to load all names including the components excluded by the user to potential include the components due to the import
                 // TODO add load_all = true also to the other objects
-                $db_lst->load_by_names($load_lst->names(true), true);
+                $db_lst->load_by_names( $load_lst->names(true), $msg, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
                 // fill up the overall db list with db value for later detection of the components that needs to be updated
@@ -405,7 +407,7 @@ class component_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, component::class, $add_lst->count(), $step_time);
-                    $msg->merge($add_lst->insert($db_lst_all, $imp, component::class));
+                    $add_lst->insert($db_lst_all, $msg, $imp, component::class);
                     if ($add_lst->count() > 0) {
                         $msg->set_added_depending();
                         $frm_added = true;
@@ -421,7 +423,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql update functions and update the components
-            $msg->merge($this->update($db_lst_all, $imp, component::class, $upd_per_sec));
+            $this->update($db_lst_all, $msg, $imp, component::class, $upd_per_sec);
 
 
             // fill up the main list with the components to check if anything is missing
@@ -429,7 +431,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $msg->merge($this->delete($db_lst_all, $imp, component::class, $del_per_sec));
+            $this->delete($db_lst_all, $msg, $imp, component::class, $del_per_sec);
 
         }
 

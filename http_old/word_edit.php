@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -52,6 +53,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
 $app = new frontend();
+$msg = new user_message();
+$msg_ui = new user_message_ui();
 global $sys;
 $db_con = $app->start("word_edit");
 $html = new html_base();
@@ -61,22 +64,22 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 
 // load the session user parameters
 $usr = new user;
-$result .= $usr->get();
+$result .= $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(views::WORD_EDIT);
+    $msk->load_by_code_id(views::WORD_EDIT, $msg);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
-    $wrd->load_by_id($_GET[url_var::ID]);
+    $wrd->load_by_id($_GET[url_var::ID], $msg);
 
     if ($wrd->id() <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
@@ -122,8 +125,8 @@ if ($usr->id() > 0) {
 
             // show the word and its relations, so that the user can change it
             $wrd_ui = new word_ui();
-            $wrd_ui->set_from_json($wrd->api_json());
-            $result .= $wrd_ui->dsp_edit($back);
+            $wrd_ui->set_from_json($wrd->api_json(), $msg_ui);
+            $result .= $wrd_ui->dsp_edit($msg_ui, $back);
         }
     }
 }

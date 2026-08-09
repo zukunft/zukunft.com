@@ -198,15 +198,15 @@ class view_base extends sandbox_code_id
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
 
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::STYLE] = $this->get_style_id();
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -232,13 +232,13 @@ class view_base extends sandbox_code_id
         return $this->style_id;
     }
 
-    function type_code_id(): ?string
+    function type_code_id(user_message $msg): ?string
     {
         global $ui_sys;
         $msk_typ_lst = $ui_sys->typ_lst_cache->msk_typ;
-        $id = $this->type_id();
+        $id = $this->type_id($msg);
         if ($id != null) {
-            return $msk_typ_lst->get($this->type_id())?->get_code_id();
+            return $msk_typ_lst->get($this->type_id($msg))?->get_code_id();
         } else {
             return '';
         }
@@ -254,11 +254,11 @@ class view_base extends sandbox_code_id
      * @param int $id
      * @return bool
      */
-    function load_by_id_with(int $id): bool
+    function load_by_id_with(int $id, user_message $msg): bool
     {
         $data = [];
         $data[url_var::LEVELS] = 1;
-        return parent::load_by_id($id, $data);
+        return parent::load_by_id($id, $msg, $data);
     }
 
 
@@ -278,11 +278,11 @@ class view_base extends sandbox_code_id
         return parent::name_link($back, $style, $msk_id);
     }
 
-    function title(db_object|type_object|combine_named|sandbox_list $dbo): string
+    function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string
     {
         // the object name comes first, then the view name, joined by the configured title separator
         $html = new html_base();
-        return $html->concat_title_text($dbo->name(), $this->name());
+        return $html->concat_title_text($dbo->name(), $this->name(), $msg);
     }
 
 
@@ -297,7 +297,7 @@ class view_base extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function view_type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list
@@ -305,14 +305,14 @@ class view_base extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id();
+        $used_type_id = $this->type_id($msg);
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->msk_typ->default_id();
         }
         return $typ_lst->msk_typ->selector($form, $used_type_id);
     }
 
-    public function style_selector(string $form, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list

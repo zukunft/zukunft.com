@@ -31,6 +31,7 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -44,6 +45,7 @@ $result = ''; // reset the html code var
 
 // open database
 $app = new frontend();
+$msg = new user_message();
 global $sys;
 $db_con = $app->start("triple");
 
@@ -56,16 +58,16 @@ if (!$db_con->connected()) {
 
     // load the session user parameters
     $usr = new user;
-    $result .= $usr->get();
+    $result .= $usr->get($msg);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
-        $usr->load_usr_data();
+        $usr->load_usr_data($msg);
 
         // show view header
         $trp = new triple($usr);
-        $trp->load_by_id($id);
+        $trp->load_by_id($id, $msg);
 
         $result .= $trp->dsp_id();
 

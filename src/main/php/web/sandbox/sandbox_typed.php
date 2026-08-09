@@ -38,11 +38,13 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -107,10 +109,10 @@ class sandbox_typed extends sandbox_named
     /**
      * @return array parent url array extended with the type id
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
-        $url_array[url_var::TYPE] = $this->type_id();
+        $url_array = parent::to_url_array($msg);
+        $url_array[url_var::TYPE] = $this->type_id($msg);
         return $url_array;
     }
 
@@ -121,12 +123,12 @@ class sandbox_typed extends sandbox_named
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars = parent::api_array($typ_lst, $msg);
+        $vars[json_fields::TYPE] = $this->type_id($msg);
         return $vars;
     }
 
@@ -140,7 +142,7 @@ class sandbox_typed extends sandbox_named
         $this->type_id = $type_id;
     }
 
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }

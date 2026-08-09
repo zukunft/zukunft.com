@@ -46,32 +46,29 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("language", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("language", $msg);
 
 if ($db_con->is_open()) {
 
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
+
     // get the parameters
     $lan_typ_id = $_GET[url_var::ID] ?? 0;
-
-    $result = ''; // reset the html code var
-
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($lan_typ_id != '') {
             $lan_typ = new language(languages::DEFAULT);
-            $lan_typ->load_by_id($lan_typ_id);
+            $lan_typ->load_by_id($lan_typ_id, $msg);
             $result = $lan_typ->api_json();
         } else {
             $msg->add_message_text('language id is missing');

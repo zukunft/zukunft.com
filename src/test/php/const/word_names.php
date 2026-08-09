@@ -360,6 +360,7 @@ class word_names
     const string TEST_BIL = 'System Test Scaling Word e.g. billions';
     const string TEST_TOTAL = 'System Test Word Total';
     const string TEST_INCREASE = 'System Test Word Increase';
+    const string TEST_PERCENT = 'System Test Word Percent';
     const string TEST_THIS = 'System Test Word This';
     const string TEST_PRIOR = 'System Test Word Prior';
     const string TEST_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
@@ -414,6 +415,7 @@ class word_names
         self::TEST_BIL,
         self::TEST_TOTAL,
         self::TEST_INCREASE,
+        self::TEST_PERCENT,
         self::TEST_THIS,
         self::TEST_PRIOR,
         self::TEST_TIME_JUMP,

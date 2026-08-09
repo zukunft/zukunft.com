@@ -147,12 +147,13 @@ class sys_log extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a system log row is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
 
         $lib = new library();
-        $result = parent::row_mapper($db_row, sys_log_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, sys_log_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             $this->log_time = $lib->get_datetime($db_row[sys_log_db::FLD_TIME]);
             if ($db_row[user_db::FLD_ID] > 0) {
                 $usr = new user();
@@ -181,17 +182,17 @@ class sys_log extends db_object_seq_id
 
             $this->status_id = $db_row[sys_log_status::FLD_ID];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
-    private function get_user_by_id(int $usr_id): user
+    private function get_user_by_id(int $usr_id, user_message $msg): user
     {
         global $sys;
         $usr = $sys->usr_sys->get_by_id($usr_id);
         if ($usr == null) {
             // TODO Prio 2 try to get the user from cache
             $usr = new user();
-            if (!$usr->load_by_id($usr_id)) {
+            if (!$usr->load_by_id($usr_id, $msg)) {
                 log_warning('db user id ' . $usr_id . ' not found');
             }
         }
@@ -353,7 +354,7 @@ class sys_log extends db_object_seq_id
      * @param int $id the id of the system log entry that should be loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, user_message $msg): int
     {
         log_debug();
 
@@ -361,7 +362,14 @@ class sys_log extends db_object_seq_id
 
         // at the moment it is only possible to select the error by the id
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->row_mapper($db_con->get1($qp));
+        $db_row = $db_con->get1($qp, $msg);
+        // a false db row means that the query itself failed, which the db layer has already
+        // logged, so it is mapped like "no row found" to avoid a fatal in the row mapper
+        if ($db_row === false) {
+            $db_row = null;
+        }
+        $this->row_mapper($db_row, $msg);
+        return $this->id();
     }
 
     /**
@@ -423,13 +431,14 @@ class sys_log extends db_object_seq_id
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::TIME] = $this->log_time->format(DateTimeInterface::ATOM);

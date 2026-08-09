@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -42,6 +43,7 @@ class component_list_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         // init
         $t->name = 'component list read db->';
@@ -54,17 +56,17 @@ class component_list_read_tests
         $test_name = 'loading component names with pattern return the expected component';
         $pattern = substr(components::WORD_NAME, 0, -1);
         $cmp_lst = new component_list($t->usr1);
-        $cmp_lst->load_names($pattern);
+        $cmp_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $cmp_lst->names(), components::WORD_NAME);
         $test_name = 'system component are not included in the normal component list';
         $cmp_lst = new component_list($t->usr1);
-        $cmp_lst->load_names(components::FORM_TITLE_NAME);
+        $cmp_lst->load_names(components::FORM_TITLE_NAME, $msg);
         $t->assert_contains_not($test_name, $cmp_lst->names(), components::FORM_TITLE_NAME);
 
 
         $test_name = 'loading by component list by view id ';
         $cmp_lst = new component_list($t->usr1);
-        $cmp_lst->load_by_view_id(1);
+        $cmp_lst->load_by_view_id(1, $msg);
         $result = $cmp_lst->name();
         $target = '"' . components::WORD_NAME . '"';
         $t->assert_text_contains($test_name . '1', $result, $target);
@@ -79,7 +81,7 @@ class component_list_read_tests
         $test_name = 'loading by component list by pattern ';
         $cmp_lst = new component_list($t->usr1);
         $pattern = substr(components::WORD_NAME, 0, -1);
-        $cmp_lst->load_names($pattern);
+        $cmp_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $cmp_lst->names(), components::WORD_NAME);
 
         // test load by component list by ids

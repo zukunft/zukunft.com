@@ -152,6 +152,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 
@@ -174,6 +175,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Exception;
@@ -381,9 +383,9 @@ class expression extends shared_expression
     /**
      * @returns bool true if the formula contains a word, verb or formula link
      */
-    function has_ref(): bool
+    function has_ref(user_message $msg): bool
     {
-        if (count($this->symbols()) > 0) {
+        if (count($this->symbols($msg)) > 0) {
             return true;
         } else {
             return false;
@@ -395,7 +397,7 @@ class expression extends shared_expression
      * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return array with all element / term symbols of the formula expression and of the result phrases
      */
-    function symbols(user_message $msg = new user_message()): array
+    function symbols(user_message $msg): array
     {
         return array_merge(
             $this->symbol_list($msg, $this->r_part()),
@@ -631,7 +633,7 @@ class expression extends shared_expression
                     global $db_con;
                     if ($db_con->is_open()) {
                         $trm = new term($this->usr);
-                        if ($trm->load_by_obj_id($id, $class) == 0) {
+                        if ($trm->load_by_obj_id($id, $class, $msg) == 0) {
                             $trm = null;
                         }
                     }
@@ -711,17 +713,17 @@ class expression extends shared_expression
      * @returns phrase_list with the phrases that should be added to the result of a formula
      * e.g. for >"per cent" = ("this" - "prior") / "prior"< a list with the phrase "per cent" will be returned
      */
-    function load_result_phrases(?term_list $trm_lst = null): phrase_list
+    function load_result_phrases(user_message $msg, ?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->res_part());
         if ($trm_lst == null) {
-            $phr_lst->load_names_by_ids($phr_ids);
+            $phr_lst->load_names_by_ids($phr_ids, $msg);
         } else {
             $cac_lst = $trm_lst->get_by_ids($phr_ids->trm_ids());
             $ids_to_load = array_diff($phr_ids->lst, $cac_lst->id_lst());
             if (count($ids_to_load) > 0) {
-                $phr_lst->load_by_ids($phr_ids, $trm_lst->phrase_list());
+                $phr_lst->load_by_ids($phr_ids, $msg, $trm_lst->phrase_list());
             }
         }
 
@@ -1148,11 +1150,10 @@ class expression extends shared_expression
      * overwrite
      */
 
-    protected
-    function get_formula_symbol(string $name): string
+    protected function get_formula_symbol(string $name, Message $msg): string
     {
         $frm = new formula($this->usr);
-        $frm->load_by_name($name);
+        $frm->load_by_name($name, $msg);
         if ($frm->id > 0) {
             $db_sym = chars::FORMULA_START . $frm->id . chars::FORMULA_END;
             log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
@@ -1162,11 +1163,10 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected
-    function get_word_symbol(string $name): string
+    protected function get_word_symbol(string $name, Message $msg): string
     {
         $wrd = new word($this->usr);
-        $wrd->load_by_name($name);
+        $wrd->load_by_name($name, $msg);
         if ($wrd->id > 0) {
             $db_sym = chars::WORD_START . $wrd->id . chars::WORD_END;
             log_debug('found word "' . $db_sym . '" for "' . $name . '"');
@@ -1177,10 +1177,10 @@ class expression extends shared_expression
     }
 
     protected
-    function get_triple_symbol(string $name): string
+    function get_triple_symbol(string $name, user_message|Message $msg): string
     {
         $trp = new triple($this->usr);
-        $trp->load_by_name($name);
+        $trp->load_by_name($name, $msg);
         if ($trp->id > 0) {
             $db_sym = chars::TRIPLE_START . $trp->id . chars::TRIPLE_END;
             log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
@@ -1190,12 +1190,11 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected
-    function get_verb_symbol(string $name): string
+    protected function get_verb_symbol(string $name, user_message|Message $msg): string
     {
         $vrb = new verb;
         $vrb->set_user($this->usr);
-        $vrb->load_by_name($name);
+        $vrb->load_by_name($name, $msg);
         if ($vrb->id > 0) {
             $db_sym = chars::VERB_START . $vrb->id . chars::VERB_END;
             log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
@@ -1205,33 +1204,30 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected
-    function load_word(int $id): ?word
+    protected function load_word(int $id, user_message|Message $msg): ?word
     {
         $wrd = new word($this->usr);
-        $wrd->load_by_id($id);
+        $wrd->load_by_id($id, $msg);
         if ($wrd->id == 0) {
             $wrd = null;
         }
         return $wrd;
     }
 
-    protected
-    function load_triple(int $id): ?triple
+    protected function load_triple(int $id, user_message|Message $msg): ?triple
     {
         $trp = new triple($this->usr);
-        $trp->load_by_id($id);
+        $trp->load_by_id($id, $msg);
         if ($trp->id == 0) {
             $trp = null;
         }
         return $trp;
     }
 
-    protected
-    function load_formula(int $id): ?formula
+    protected function load_formula(int $id, user_message|Message $msg): ?formula
     {
         $frm = new formula($this->usr);
-        $frm->load_by_id($id);
+        $frm->load_by_id($id, $msg);
         if ($frm->id == 0) {
             $frm = null;
         }
@@ -1239,11 +1235,11 @@ class expression extends shared_expression
     }
 
     protected
-    function load_verb(int $id): ?verb
+    function load_verb(int $id, user_message|Message $msg): ?verb
     {
         $vrb = new verb();
         $vrb->set_user($this->usr);
-        $vrb->load_by_id($id);
+        $vrb->load_by_id($id, $msg);
         if ($vrb->id == 0) {
             $vrb = null;
         }

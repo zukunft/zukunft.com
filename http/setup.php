@@ -47,8 +47,8 @@ $db_con = $app->start("setup");
 
 // load the session user parameters
 $usr = new user;
-$msg = new user_message();
-$msg->add_message_text($usr->get());
+$msg = new user_message(); // frontend entry point
+$usr->get($msg);
 // store the requesting user on the single message of this request as early as possible,
 // so every function below reads the requesting user from $msg->usr
 // (docs/llm/state-and-messages.md)

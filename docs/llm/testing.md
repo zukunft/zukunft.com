@@ -248,18 +248,18 @@ $chf->phrases_related = $sym_lst;
 $chf->phrases_related = $t_phr->list_chf_symbol_ui();
 ```
 
-### Test url arrays come from a factory object via to_url_array()
+### Test url arrays come from a factory object via to_url_array($msg)
 
 A url test (e.g. `unit_workflow/*_url_tests.php`) never hand-builds the object
-fields of a `$url_arr`: it starts from a factory object's `to_url_array()`
-(`$t_wrd->word_dsp()->to_url_array()`) or a factory url helper
+fields of a `$url_arr`: it starts from a factory object's `to_url_array($msg)`
+(`$t_wrd->word_dsp()->to_url_array($msg)`) or a factory url helper
 (`test_words::word_new_url()`, `word_add_url()`, `change_url_array()`, ...) and
 adds only the request context — mask, action, step, back, user. A hand-built key
 list duplicates the object's field mapping in the test body, and the factory
 would no longer show centrally which test objects each test uses; keeping the
 build in the factory also means a field added to the object reaches every url
 test through one change. To vary a field, change it on the factory object
-(`$wrd->set_description(...)`) before calling `to_url_array()`, never by
+(`$wrd->set_description(...)`) before calling `to_url_array($msg)`, never by
 patching the array. The only urls built without a factory object are those that
 carry no object at all (e.g. a search pattern url).
 
@@ -271,8 +271,9 @@ $url_arr[url_var::ID] = word_names::MATH_ID;
 $url_arr[url_var::NAME] = word_names::MATH;
 ```
 - **Right** — the object fields come from the factory, the test adds the context:
+
 ```php
-$url_arr = $t_wrd->word_dsp()->to_url_array();
+$url_arr = $t_wrd->word_dsp()->to_url_array($msg_ui);
 $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
 ```
 
@@ -421,6 +422,46 @@ $title_sym = $form->title_of_named_with_edit_link($chf_sym);
 $t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);
 ```
 
+### The test `$msg` is created once and reset only after an intended fail
+
+Like `$test_name`, the `user_message $msg` a test threads into the functions
+under test is created **once**, at the block's init, and **reused** for every
+call in the block:
+
+```php
+// init
+$t_db = new test_db_load($this);
+$msg = new user_message();
+// ...
+$usr->load_by_profile_code(user_profiles::TEST, $msg);   // same $msg
+// ...
+$t->cleanup($msg);                                        // still the same $msg
+```
+
+`$msg` is append-only in production — `http/view.php` creates the one request
+`user_message` and nothing below it ever resets or re-creates it (see
+`state-and-messages.md`). Tests are the **only** place `$msg->reset()` is
+allowed, and only **right after a test that is meant to fail**: the failing call
+leaves its expected error on `$msg`, and the reset clears it so the next
+assertion starts from a clean, `is_ok()` message instead of tripping over the
+prior failure.
+
+```php
+// negative test — the call is supposed to report an error
+$test_name = 'adding a triple with the name of a word is rejected';
+$t->assert_false($test_name, $trp->save($msg_ui)->is_ok());
+$msg_ui->reset();   // clear the intended error before the next test
+
+// the next test starts from a clean $msg
+$test_name = 'a valid triple is saved';
+$t->assert_true($test_name, $trp_ok->save($msg_ui)->is_ok());
+```
+
+Never reset `$msg` after a passing test, and never spin up a fresh
+`new user_message()` mid-block just to "start clean" — reset the one block `$msg`
+so a single object carries the block's history. `reset()` keeps the user
+(`reset(keep_usr = true)`), so re-setting `$msg->usr` after it is unnecessary.
+
 ### Keep `$test_name` short but unique — don't repeat the subheader
 
 The `$test_name` only has to make the assertion **uniquely identifiable within
@@ -495,11 +536,11 @@ matters.
 ```php
 // Right — the one message the user sees; robust to unrelated messages on the same $msg
 $test_name = 'import of an unknown element is reported';
-$imp->put_json_direct($json_str, $msg);
-$t->assert($test_name, $msg->text(), 'Unknown element "test"');
+$imp->put_json_direct($json_str, $msg_ui);
+$t->assert($test_name, $msg_ui->text(), 'Unknown element "test"');
 
 // Wrong — asserts the concatenation of every message, so any unrelated add elsewhere breaks it
-$t->assert($test_name, $msg->all_message_text(), 'Unknown element "test"');
+$t->assert($test_name, $msg_ui->all_message_text(), 'Unknown element "test"');
 ```
 
 Assert `all_message_text()` only when the test genuinely verifies that a **set** of

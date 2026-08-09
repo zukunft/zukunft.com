@@ -49,7 +49,7 @@ SELECT sys_log_update_log_10000010128
 
 SELECT sys_log_update_log_10000010128
     (3::bigint,
-     1::smallint,
+     2::smallint,
      null::smallint,
      null::timestamp,
      2023-01-04 09:12:34::timestamp,

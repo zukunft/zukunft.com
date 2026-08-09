@@ -52,19 +52,16 @@ $dsp_type = $_GET[url_var::LOG_STATUS] ?? sys_log_list::DSP_ALL;
 $page = (int)($_GET[url_var::LOG_PAGE] ?? 0);
 $size = (int)($_GET[url_var::LOG_SIZE] ?? shared_config::ROW_LIMIT);
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("log", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("log", $msg);
 
 if ($db_con->is_open()) {
 
-    // load the session user parameters
+    // load the session user parameters store the requesting user on the single message
     $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
+    $usr->get($msg);
     $msg->usr = $usr;
 
     $result = ''; // reset the json message string
@@ -80,8 +77,8 @@ if ($db_con->is_open()) {
         $lst->dsp_type = $dsp_type;
         $lst->page = $page;
         $lst->size = $size;
-        $lst->load_all();
-        $result = $lst->api_json([api_types::HEADER], $usr);
+        $lst->load_all($msg);
+        $result = $lst->api_json([api_types::HEADER], $msg, $usr);
     } else {
         $msg->add_message_text('not permitted');
     }

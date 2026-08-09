@@ -26,7 +26,7 @@ PREPARE sys_log_update_log_10000000008_call FROM
 
 SELECT sys_log_update_log_10000000008
        (3,
-        1,
+        2,
         209,
         'resolved',
         3,

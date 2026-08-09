@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::CONST . 'word_names.php';
@@ -83,7 +84,7 @@ class user_write_tests
 
         // use a test user that exists in the database
         $usr_db = new user();
-        $usr_db->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
+        $usr_db->load_by_name(users::SYSTEM_TEST_PARTNER_NAME, $msg);
 
         // make sure the starting point is "not yet using the sandbox"
         if ($usr_db->uses_sandbox) {
@@ -96,7 +97,7 @@ class user_write_tests
 
         // reload the user by id to check that the flag has really been written to the database
         $usr_reload = new user();
-        $usr_reload->load_by_id($usr_db->id());
+        $usr_reload->load_by_id($usr_db->id(), $msg);
         $test_name = 'switching a user to sandbox usage is stored in the database';
         $t->assert_true($test_name, $usr_reload->uses_sandbox);
 
@@ -107,9 +108,9 @@ class user_write_tests
         global $db_con;
         $usr_reload->check_sandbox_usage($db_con, $msg);
         $usr_check = new user();
-        $usr_check->load_by_id($usr_db->id());
+        $usr_check->load_by_id($usr_db->id(), $msg);
         $usr_lst = new user_list($usr_check);
-        $sandbox_rows = $usr_lst->count_user_rows($db_con, $usr_check->id());
+        $sandbox_rows = $usr_lst->count_user_rows($db_con, $usr_check->id(), $msg);
         $test_name = 'after the check the sandbox usage flag mirrors the remaining sandbox rows';
         $t->assert($test_name, $usr_check->uses_sandbox, $sandbox_rows > 0);
 
@@ -210,7 +211,7 @@ class user_write_tests
         $t_usr->cleanup($ts, $t);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(user::class));
 
     }
 
@@ -224,36 +225,37 @@ class user_write_tests
     function create_test_words(all_tests $t): void
     {
         $t_db = new test_db_load($t);
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db validate test words ';
         $t->header($ts);
 
         foreach (word_names::WORDS_SCALING as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::SCALING);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::SCALING);
         }
         foreach (word_names::WORDS_SCALING_HIDDEN as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::SCALING_HIDDEN);
         }
         foreach (word_names::WORDS_PERCENT as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::PERCENT);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::PERCENT);
         }
 
         foreach (word_names::TEST_WORDS_CREATE as $word_name) {
-            $t_db->test_word($word_name);
+            $t_db->test_word($msg, $word_name);
         }
         foreach (word_names::TEST_WORDS_MEASURE as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::MEASURE);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::MEASURE);
         }
         foreach (word_names::TEST_WORDS_SCALING as $word_name) {
-            $t_db->test_word($word_name, phrase_type_shared::SCALING);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::SCALING);
         }
         $prev_word_name = null;
         foreach (word_names::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t_db->test_triple($word_name, verbs::IS, words::YEAR_CAP);
-            $t_db->test_word($word_name, phrase_type_shared::TIME);
+            $t_db->test_triple($msg, $word_name, verbs::IS, words::YEAR_CAP);
+            $t_db->test_word($msg, $word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
-                $t_db->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
+                $t_db->test_triple($msg, $word_name, verbs::FOLLOW, $prev_word_name);
             }
             $prev_word_name = $word_name;
         }

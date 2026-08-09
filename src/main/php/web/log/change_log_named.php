@@ -283,7 +283,7 @@ class change_log_named extends change_log
     private function action_name(): string
     {
         global $ui_sys;
-        $action = $ui_sys->typ_lst_cache->cng_act->get_by_id($this->action_id);
+        $action = $ui_sys->typ_lst_cache->cng_act->get($this->action_id);
         return $action->name;
     }
 

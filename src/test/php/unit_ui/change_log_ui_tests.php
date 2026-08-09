@@ -42,8 +42,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
-use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -57,6 +58,7 @@ class change_log_ui_tests
     {
         $html = new html_base();
         $t_log = new test_log($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui change log ';
@@ -120,7 +122,7 @@ class change_log_ui_tests
         $test_name = 'the condensed changes table shows the remove user overwrite text';
         $t->assert_text_contains($test_name, $rem_tbl_cond, 'remove user overwrite for view');
 
-        $t->html_page_test($test_page, 'change_log', 'change_log', $t);
+        $t->html_page_test($test_page, 'change_log', 'change_log', $msg);
 
         $t->subheader($ts . 'filter and limit');
 

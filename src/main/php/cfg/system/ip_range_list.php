@@ -109,16 +109,16 @@ class ip_range_list extends list_db_write
      *
      * @return true if at least one ip range has been loaded
      */
-    function load(): bool
+    function load(user_message $msg): bool
     {
         global $db_con;
         $result = false;
 
         $qp = $this->load_sql_obj_vars($db_con);
-        $ip_lst = $db_con->get($qp, 'ip range list');
+        $ip_lst = $db_con->get($qp, $msg, 'ip range list');
         foreach ($ip_lst as $db_row) {
             $ip = new ip_range();
-            $ip->row_mapper($db_row);
+            $ip->row_mapper($db_row, $msg);
             if ($ip->id() > 0) {
                 $this->add($ip);
                 $result = true;

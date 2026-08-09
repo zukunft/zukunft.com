@@ -65,9 +65,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api_core("config");
+$msg = new user_message(); // for api
+$db_con = $app->start_api_core("config", $msg);
 
 if ($db_con->is_open()) {
 
@@ -75,12 +76,11 @@ if ($db_con->is_open()) {
     $part = $_GET[url_var::CONFIG_PART] ?? '';
     $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
-    $msg = new user_message();
     $result = ''; // reset the html code var
 
     // load the session user parameters
     $usr = new user;
-    $msg->add_message_text($usr->get());
+    $msg->add_message_text($usr->get($msg));
     // store the requesting user on the single message of this request as early as possible,
     // so every function below reads the requesting user from $msg->usr
     // (docs/llm/state-and-messages.md)
@@ -92,9 +92,9 @@ if ($db_con->is_open()) {
         if ($part == api::CONFIG_ALL or $part == '') {
             $msg->merge($cfg_lst->load_cfg(null, $usr));
         } elseif ($part == api::CONFIG_FRONTEND) {
-            $msg->merge($cfg_lst->load_frontend_cfg($usr));
+            $msg->merge($cfg_lst->load_frontend_cfg($usr, $msg));
         } elseif ($part == api::CONFIG_USER) {
-            $msg->merge($cfg_lst->load_usr_cfg($usr));
+            $msg->merge($cfg_lst->load_usr_cfg($usr, $msg));
         } else {
             $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }

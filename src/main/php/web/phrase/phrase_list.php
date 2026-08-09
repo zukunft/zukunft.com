@@ -175,7 +175,7 @@ class phrase_list extends sandbox_list_named
      * @param formula $frm
      * @return bool
      */
-    function load_by_formula(formula $frm): bool
+    function load_by_formula(formula $frm, user_message $msg): bool
     {
         $result = false;
 
@@ -474,13 +474,14 @@ class phrase_list extends sandbox_list_named
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
-        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_system($msg);
         return $msk_lst->selector($form, views::PHRASE_ID, $name, $msg_id);
     }
 
@@ -510,11 +511,11 @@ class phrase_list extends sandbox_list_named
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
-    function assume_time(?term_list $trm_lst = null): ?phrase
+    function assume_time(user_message $msg, ?term_list $trm_lst = null): ?phrase
     {
         $time_phr = null;
-        $wrd_lst = $this->wrd_lst_all();
-        $time_wrd = $wrd_lst->assume_time($trm_lst);
+        $wrd_lst = $this->wrd_lst_all($msg);
+        $time_wrd = $wrd_lst->assume_time($msg, $trm_lst);
         if (isset($time_wrd)) {
             $time_phr = $time_wrd;
         }
@@ -525,7 +526,7 @@ class phrase_list extends sandbox_list_named
      * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
      * @return word_list with all words of the phrases split into single words
      */
-    function wrd_lst_all(): word_list
+    function wrd_lst_all(user_message $msg): word_list
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
 
@@ -540,7 +541,7 @@ class phrase_list extends sandbox_list_named
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
-                        $phr->load();
+                        $phr->load($msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {
@@ -551,7 +552,7 @@ class phrase_list extends sandbox_list_named
                         $sub_wrd_lst = $phr->obj()->wrd_lst();
                         foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
-                                $wrd->load_by_id($wrd->id());
+                                $wrd->load_by_id($wrd->id(), $msg);
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
                             $wrd_lst->add($wrd);
@@ -636,7 +637,7 @@ class phrase_list extends sandbox_list_named
         usort($lst, function (phrase $a, phrase $b) {
             return $b->impact() <=> $a->impact()
                 ?: strcmp($a->name() ?? '', $b->name() ?? '')
-                ?: $a->id() <=> $b->id();
+                    ?: $a->id() <=> $b->id();
         });
         $this->set_lst($lst);
     }
@@ -775,11 +776,11 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of the measure / unit phrases e.g. m/s
      */
-    function measure_list(): phrase_list
+    function measure_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if ($phr->is_measure()) {
+            if ($phr->is_measure($msg)) {
                 $result->add($phr);
             }
         }
@@ -789,11 +790,25 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list without the measure / unit phrases e.g. speed of light
      */
-    function ex_measure_list(): phrase_list
+    function ex_measure_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if (!$phr->is_measure()) {
+            if (!$phr->is_measure($msg)) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the time phrases e.g. second
+     */
+    function ex_time(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_time($msg)) {
                 $result->add($phr);
             }
         }
@@ -803,11 +818,11 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of information only phrases
      */
-    function info_list(): phrase_list
+    function info_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if ($phr->is_info()) {
+            if ($phr->is_info($msg)) {
                 $result->add($phr);
             }
         }
@@ -817,11 +832,11 @@ class phrase_list extends sandbox_list_named
     /**
      * @return phrase_list list of phrases without the info phrases e.g. without 1967 (year of definition)
      */
-    function ex_info_list(): phrase_list
+    function ex_info_list(user_message $msg): phrase_list
     {
         $result = new phrase_list();
         foreach ($this->lst() as $phr) {
-            if (!$phr->is_info()) {
+            if (!$phr->is_info($msg)) {
                 $result->add($phr);
             }
         }
@@ -836,11 +851,11 @@ class phrase_list extends sandbox_list_named
     /**
      * @return bool true if one of the phrases is of type percent
      */
-    function has_percent(): bool
+    function has_percent(user_message $msg): bool
     {
         $result = false;
         foreach ($this->lst() as $phr) {
-            if ($phr->is_percent()) {
+            if ($phr->is_percent($msg)) {
                 $result = true;
             }
         }
@@ -1001,6 +1016,7 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
+     * TODO Prio 1 review
      * @return group|null the group with only the id set based to this list or null if no group matches
      */
     function get_grp_id(bool $do_save = true): ?group
@@ -1011,9 +1027,11 @@ class phrase_list extends sandbox_list_named
             log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new group();
+            /*
             $grp_id = new group_id();
             $grp->set_id($grp_id->get_id($this));
             $grp->set_phrase_list(clone $this);
+            */
         }
         return $grp;
     }
@@ -1054,7 +1072,7 @@ class phrase_list extends sandbox_list_named
      * e.g. used to display all phrases linked to a word
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase $root_phr, string $back = ''): string
+    function dsp_graph(phrase $root_phr, user_message $msg, string $back = ''): string
     {
         log_debug();
         $result = '';
@@ -1065,7 +1083,7 @@ class phrase_list extends sandbox_list_named
         } else {
             $phr_lst = new phrase_list();
             $phr_lst->set_from_json($this->api_json());
-            $wrd_lst = $phr_lst->wrd_lst_all();
+            $wrd_lst = $phr_lst->wrd_lst_all($msg);
             $result .= $wrd_lst->tbl($back);
             foreach ($this->lst() as $phr) {
                 // show the RDF graph for this verb

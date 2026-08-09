@@ -72,11 +72,12 @@ class export
 
     /**
      * export zukunft.com data as object for creating e.g. a json message
+     * @param user_message $msg to collect issue in export
      * @param user|null $usr the user who wants to im- or export
      * @param phrase_list|null $phr_lst to export all values related to this phrase
      * @return object
      */
-    function get(?user $usr = null, ?phrase_list $phr_lst = null): object
+    function get(user_message $msg, ?user $usr = null, ?phrase_list $phr_lst = null): object
     {
 
         global $db_con;
@@ -94,7 +95,6 @@ class export
 
                 // 1. create the header
                 $export_obj->version = def::PRG_VERSION;
-                $msg = new user_message($usr);
                 $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con, $msg, 'get pod name');
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
@@ -109,7 +109,7 @@ class export
                 $loops = 0;
                 do {
                     $rel_trp_lst = new triple_list($usr);
-                    $rel_trp_lst->load_by_phr_lst($added_lst, null, foaf_direction::BOTH);
+                    $rel_trp_lst->load_by_phr_lst($added_lst, $msg, null, foaf_direction::BOTH);
                     $rel_phr_lst = $rel_trp_lst->phrase_list();
                     $added_lst = clone $rel_phr_lst;
                     $added_lst->remove($phr_lst);
@@ -122,7 +122,7 @@ class export
                 // otherwise make the type and from/to access fail while exporting the triples
                 if (!$phr_lst->is_empty()) {
                     $full_lst = new phrase_list($usr);
-                    $full_lst->load_by_ids($phr_lst->phrase_ids());
+                    $full_lst->load_by_ids($phr_lst->phrase_ids(), $msg);
                     if (!$full_lst->is_empty()) {
                         $phr_lst = $full_lst;
                     }
@@ -133,18 +133,18 @@ class export
                 // 2. collect values linked to the user selected words
                 //    e.g. if carrots are selected get the climate gas emissions per weight percent
                 log_debug('export->get values');
-                $val_lst = $phr_lst->val_lst();
+                $val_lst = $phr_lst->val_lst($msg);
 
                 // 3. get all words and triples needed for the values that should be exported
                 //    e.g. carrots, climate gas emission (CO2, methane), weight, percent
                 log_debug('export->get words and triples');
-                $phr_lst->merge($val_lst->phr_lst_all());
-                $wrd_lst = $phr_lst->wrd_lst_all();
+                $phr_lst->merge($val_lst->phr_lst_all($msg));
+                $wrd_lst = $phr_lst->wrd_lst_all($msg);
 
                 // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
                 log_debug('export->get typed words');
                 if ($wrd_lst != null) {
-                    $exp_words = $wrd_lst->export_json([]);
+                    $exp_words = $wrd_lst->export_json($msg, []);
                     if (count($exp_words) > 0) {
                         $export_obj->words = $exp_words;
                     }
@@ -155,7 +155,7 @@ class export
                 $lnk_lst = $phr_lst->triples();
                 $exp_triples = array();
                 foreach ($lnk_lst->lst() as $lnk) {
-                    $exp_lnk = $lnk->export_json([]);
+                    $exp_lnk = $lnk->export_json($msg, []);
                     if (isset($exp_lnk)) {
                         $exp_triples[] = $exp_lnk;
                     }
@@ -166,13 +166,13 @@ class export
 
                 // 6. add all sources to the export object
                 log_debug('export->get sources');
-                $source_lst = $val_lst->source_lst();
+                $source_lst = $val_lst->source_lst($msg);
                 log_debug('export->got ' . $lib->dsp_count($source_lst) . ' sources');
                 $exp_sources = array();
                 if ($source_lst != null) {
                     foreach ($source_lst as $src) {
                         if (isset($src)) {
-                            $exp_src = $src->export_json([]);
+                            $exp_src = $src->export_json($msg, []);
                             if (isset($exp_src)) {
                                 $exp_sources[] = $exp_src;
                             }
@@ -188,7 +188,7 @@ class export
                 $exp_values = array();
                 foreach ($val_lst->lst() as $val) {
                     if (isset($val)) {
-                        $exp_val = $val->export_json([]);
+                        $exp_val = $val->export_json($msg, []);
                         if (isset($exp_val)) {
                             $exp_values[] = $exp_val;
                         }
@@ -199,11 +199,11 @@ class export
                 // 8. export all used formula relations to reproduce the results
                 //    after the values so that the export matches the import file order
                 log_debug('export->get formulas');
-                $frm_lst = $phr_lst->frm_lst();
+                $frm_lst = $phr_lst->frm_lst($msg);
                 $exp_formulas = array();
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
-                        $exp_frm = $frm->export_json([]);
+                        $exp_frm = $frm->export_json($msg, []);
                         if (isset($exp_frm)) {
                             $exp_formulas[] = $exp_frm;
                         }
@@ -215,23 +215,23 @@ class export
                 // TODO create an array add function that does not add duplicates
                 log_debug('export->get views');
                 //$wrd_lst = $phr_lst_used->wrd_lst_all();
-                $view_lst = $wrd_lst->view_lst();
+                $view_lst = $wrd_lst->view_lst($msg);
                 $exp_view_lst = array();
                 foreach ($view_lst as $view) {
-                    $exp_view_lst[] = $view->export_json([]);
+                    $exp_view_lst[] = $view->export_json($msg, []);
                 }
                 $export_obj->views = $exp_view_lst;
 
                 // 10. just for validating the import: add all formula results to the export
                 log_debug('export->get formula results');
                 $exp_results = array();
-                $frm_lst = $phr_lst->frm_lst();
+                $frm_lst = $phr_lst->frm_lst($msg);
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
                         $res_lst = $frm->get_res_lst();
                         if ($res_lst->lst() != null) {
                             foreach ($res_lst->lst() as $res) {
-                                $exp_res = $res->export_json([]);
+                                $exp_res = $res->export_json($msg, []);
                                 if (isset($exp_res)) {
                                     $exp_results[] = $exp_res;
                                 }

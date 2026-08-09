@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
@@ -47,6 +48,7 @@ class triple_list_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -60,14 +62,14 @@ class triple_list_read_tests
         $test_name = 'loading triple names with pattern return the expected triple';
         $pattern = substr(triple_names::MATH_CONST, 0, -1);
         $trp_lst = new triple_list($t->usr1);
-        $trp_lst->load_names($pattern);
+        $trp_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $trp_lst->names(), triple_names::MATH_CONST);
 
 
         // test load by triple list by ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($t->usr1);
-        $trp_lst->load_by_ids(array(triple_names::MATH_CONST_ID,triple_names::PI_SYMBOL_ID));
+        $trp_lst->load_by_ids(array(triple_names::MATH_CONST_ID,triple_names::PI_SYMBOL_ID), $msg);
         $target = array(triple_names::MATH_CONST, triple_names::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
         /* TODO Prio 1 activate

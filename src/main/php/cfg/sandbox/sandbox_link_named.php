@@ -137,16 +137,17 @@ class sandbox_link_named extends sandbox_link
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = '',
-        string $type_fld = ''
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = '',
+        string       $type_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
+        if ($this->id() != 0) {
             if (array_key_exists($name_fld, $db_row)) {
                 if ($db_row[$name_fld] != null) {
                     $this->set_name($db_row[$name_fld]);
@@ -159,7 +160,7 @@ class sandbox_link_named extends sandbox_link
                 $this->type_id = $db_row[$type_fld];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -227,21 +228,25 @@ class sandbox_link_named extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if ($typ_lst->with_excluded()) {
             $vars[json_fields::NAME] = $this->name(true);
         } else {
             $vars[json_fields::NAME] = $this->name();
         }
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
 
         return $vars;
     }
@@ -385,7 +390,7 @@ class sandbox_link_named extends sandbox_link
     /**
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }
@@ -473,11 +478,11 @@ class sandbox_link_named extends sandbox_link
             if ($trm->load_standard_by_name($name, $msg)) {
                 $result = $trm;
             } else {
-                if ($trm->load_by_name($name)) {
+                if ($trm->load_by_name($name, $msg)) {
                     $result = $trm;
                 }
             }
-            $trm->load_by_name($name);
+            $trm->load_by_name($name, $msg);
         }
         return $result;
     }
@@ -491,13 +496,13 @@ class sandbox_link_named extends sandbox_link
      * same as in cfg/sandbox/sandbox_named, but php does not yet allow multi extends
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
-    function fill_api_obj(object $api_obj): void
+    function fill_api_obj(object $api_obj, user_message $msg): void
     {
-        parent::fill_api_obj($api_obj);
+        parent::fill_api_obj($api_obj, $msg);
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
-        $api_obj->set_type_id($this->type_id());
+        $api_obj->set_type_id($this->type_id($msg));
     }
 
 
@@ -565,11 +570,12 @@ class sandbox_link_named extends sandbox_link
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;
@@ -663,7 +669,7 @@ class sandbox_link_named extends sandbox_link
         }
         if ($this->type_id === null and $obj->type_id != null) {
             $this->type_id = $obj->type_id;
-        } elseif ($this->type_id() != $obj->type_id()) {
+        } elseif ($this->type_id($msg) != $obj->type_id($msg)) {
             $lib = new library();
             $msg->add(msg_id::DIFF_TYPE, [
                 msg_id::VAR_TYPE => $obj->type_name(),
@@ -760,11 +766,11 @@ class sandbox_link_named extends sandbox_link
                 if ($trm != null) {
                     $sim = $trm->obj();
                     if (!$this->is_similar_named($sim)) {
-                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not');
+                        log_err_msg($this->dsp_id() . ' is supposed to be similar to ' . $sim->dsp_id() . ', but it seems not', $msg);
                     }
                 } else {
                     $trp = new triple($this->get_user());
-                    $trp->load_by_name_generated($this->name());
+                    $trp->load_by_name_generated($this->name(), $msg);
                     if ($trp->id() > 0) {
                         $trp->reload_objects($msg);
                         log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $trp->dsp_id() . '"');
@@ -772,7 +778,7 @@ class sandbox_link_named extends sandbox_link
                     }
                 }
             } else {
-                log_err($this->dsp_id() . ' is not expected to be a named sandbox link object');
+                log_err_msg($this->dsp_id() . ' is not expected to be a named sandbox link object', $msg);
             }
         }
 
@@ -787,25 +793,27 @@ class sandbox_link_named extends sandbox_link
     /**
      * get the description of the latest change related to this object
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @return string the description of the latest change
      */
-    function log_last_msg(user $usr): string
+    function log_last_msg(user $usr, user_message $msg): string
     {
         $log = new change_log_list();
-        $log->load_obj_last($this, $usr);
+        $log->load_obj_last($this, $usr, $msg);
         return $log->first_msg();
     }
 
     /**
      * get the description of the latest change related to this object and the given field
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
-    function log_last_field_msg(user $usr, string $fld): string
+    function log_last_field_msg(user $usr, user_message $msg, string $fld): string
     {
         $log = new change_log_list();
-        $log->load_obj_field_last($this, $usr, $fld);
+        $log->load_obj_field_last($this, $usr, $msg, $fld);
         return $log->first_msg();
     }
 

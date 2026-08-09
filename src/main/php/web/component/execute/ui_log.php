@@ -39,6 +39,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -70,10 +72,10 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    function system_change_log(db_object $dbo, change_log_list $log_lst, user_message $msg, bool $test_mode = false): string
     {
         // the pure change log table below uses the same prepared list, so both are sorted equally
-        return $this->prepared_change_log($dbo, $log_lst, $test_mode)->dsp(null, false, false, $test_mode);
+        return $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode)->dsp(null, false, false, $test_mode);
     }
 
     /**
@@ -86,12 +88,17 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the borderless when / who / what change log table
      */
-    function change_log_table_pure(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
+    function change_log_table_pure(
+        db_object       $dbo,
+        change_log_list $log_lst,
+        user_message    $msg,
+        bool            $test_mode = false
+    ): string
     {
         // use the same filtered, sorted and row-limited list as system_change_log, so the borderless
         // table is sorted with the same parameters as the previously used change log
-        $log_lst = $this->prepared_change_log($dbo, $log_lst, $test_mode);
-        return $this->table_pure($log_lst, $test_mode);
+        $log_lst = $this->prepared_change_log($dbo, $log_lst, $msg, $test_mode);
+        return $this->table_pure($log_lst, $msg, $test_mode);
     }
 
     /**
@@ -107,6 +114,8 @@ class ui_log
      */
     function user_overwrites_table_pure(db_object $dbo, change_log_list $log_lst, bool $test_mode = false): string
     {
+        // the max number of chars of the what column and the max number of rows both come from the
+        // frontend config (config.yaml > ... > change log > what limit / row limit)
         global $ui_sys;
         $result = '';
         $usr = $ui_sys->usr ?? null;
@@ -128,16 +137,18 @@ class ui_log
      * @param bool $test_mode true to keep the change time deterministic in the snapshots
      * @return string the html code of the borderless when / who / what change log table
      */
-    private function table_pure(change_log_list $log_lst, bool $test_mode): string
+    private function table_pure(change_log_list $log_lst, user_message $msg, bool $test_mode): string
     {
         global $ui_sys;
         $what_max_chars = 0;
         $max_rows = 0;
         if ($ui_sys?->cfg !== null) {
             $what_max_chars = (int)$ui_sys->cfg->get_by(
-                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+                [triples::WHAT_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, 0);
             $max_rows = (int)$ui_sys->cfg->get_by(
-                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER], 0);
+                [triples::ROW_LIMIT, triples::CHANGE_LOG, words::FRONTEND, words::USER],
+                $msg, 0);
         }
         return $log_lst->tbl_when_who_what($what_max_chars, $max_rows, $test_mode);
     }
@@ -158,6 +169,7 @@ class ui_log
     private function prepared_change_log(
         db_object       $dbo,
         change_log_list $log_lst,
+        user_message    $msg,
         bool            $test_mode = false,
         ?user           $overwrites_of = null
     ): change_log_list
@@ -197,7 +209,7 @@ class ui_log
         if ($ui_sys?->cfg !== null) {
             $limit = (int)$ui_sys->cfg->get_by(
                 [triples::WORD_CHANGES, triples::ROW_LIMIT, words::FRONTEND, words::USER],
-                def::FALLBACK_DB_PAGE_ROWS);
+                $msg, def::FALLBACK_DB_PAGE_ROWS);
         }
         return $log_lst->head($limit);
     }
@@ -210,7 +222,11 @@ class ui_log
      * @param msg_id|null $ui_msg_code_id the message id of the headline shown in the user language
      * @return string the html code with the error list or the no-error message
      */
-    function user_system_errors(sys_log_list $err_lst, ?msg_id $ui_msg_code_id = null): string
+    function user_system_errors(
+        sys_log_list $err_lst,
+        user_message $msg,
+        ?msg_id $ui_msg_code_id = null
+    ): string
     {
         global $mtr;
         global $ui_sys;
@@ -226,12 +242,12 @@ class ui_log
             if ($ui_sys?->cfg !== null) {
                 $limit = (int)$ui_sys->cfg->get_by(
                     [triples::SYSTEM_ERRORS, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                    def::FALLBACK_USER_ERRORS
+                    $msg, def::FALLBACK_USER_ERRORS
                 );
             } else {
                 $limit = def::FALLBACK_USER_ERRORS;
             }
-            $result .= $err_lst->head($limit)->get_html();
+            $result .= $err_lst->head($limit)->get_html($msg);
         }
         return $result;
     }

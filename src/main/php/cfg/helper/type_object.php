@@ -183,30 +183,27 @@ class type_object extends db_object_seq_id
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        $result = parent::row_mapper($db_row, $this->id_field_typ($class));
-        if ($result) {
-            // set the id upfront to allow row mapping
-            if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-                $this->id = ($db_row[language::FLD_ID]);
-            }
-            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-                $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
-            }
-            if (array_key_exists($this->name_field(), $db_row)) {
-                $this->name = strval($db_row[$this->name_field()]);
-            }
-            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
-                $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
-            }
-            if (($this->code_id == null or $this->name == '')
-                and ($this->name == null or $this->name == '')) {
-                log_err('either the name of code_id must be set');
-                $result = false;
-            }
+        parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+        // set the id upfront to allow row mapping
+        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
+            $this->id = ($db_row[language::FLD_ID]);
         }
-        return $result;
+        if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+            $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
+        }
+        if (array_key_exists($this->name_field(), $db_row)) {
+            $this->name = strval($db_row[$this->name_field()]);
+        }
+        if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+            $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
+        }
+        if (($this->code_id == null or $this->code_id == '')
+            and ($this->name == null or $this->name == '')) {
+            log_err_msg('either the name or code_id must be set', $msg);
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -362,14 +359,14 @@ class type_object extends db_object_seq_id
      * @param string $name e.g. of the phrase type
      * @return int the id of the type object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message $msg): int
     {
         global $db_con;
 
         log_debug($name);
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_name($sc, $name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -377,14 +374,14 @@ class type_object extends db_object_seq_id
      * @param string $code_id e.g. of the phrase type
      * @return int the id of the type object found and zero if nothing is found
      */
-    function load_by_code_id(string $code_id): int
+    function load_by_code_id(string $code_id, user_message $msg): int
     {
         global $db_con;
 
         log_debug($code_id);
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_code_id($sc, $code_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -470,9 +467,9 @@ class type_object extends db_object_seq_id
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the type object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
-        return $this->load_typ_obj($qp, $this::class);
+        return $this->load_typ_obj($qp, $msg, $this::class);
     }
 
     /**
@@ -481,15 +478,15 @@ class type_object extends db_object_seq_id
      * @param string $class the type class name that should be filled
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load_typ_obj(sql_par $qp, string $class): int
+    protected function load_typ_obj(sql_par $qp, user_message $msg, string $class): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        if ($db_row == null) {
-            $this->id = 0;
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_typ_obj($db_row, $msg, $class);
         } else {
-            $this->row_mapper_typ_obj($db_row, $class);
+            $this->id = 0;
         }
         return $this->id();
     }
@@ -513,11 +510,12 @@ class type_object extends db_object_seq_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
 
@@ -561,20 +559,20 @@ class type_object extends db_object_seq_id
         // check potential duplicate by name
         $db_chk = $this->clone_reset(true);
         if ($this->name() != '') {
-            if ($db_chk->load_by_name($this->name())) {
+            if ($db_chk->load_by_name($this->name(), $msg)) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                     $sim = $db_chk;
                 }
             }
         } else {
-            log_err('The name must be set to check if a similar object exists');
+            log_err_msg('The name must be set to check if a similar object exists', $msg);
         }
 
         // check potential duplicate by code id
         if ($sim == null) {
             if ($this->code_id != '') {
-                if ($db_chk->load_by_code_id($this->code_id)) {
+                if ($db_chk->load_by_code_id($this->code_id, $msg)) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same code id is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                         $sim = $db_chk;
@@ -615,7 +613,7 @@ class type_object extends db_object_seq_id
                         ]);
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
-                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        $sim->load_by_id($sim->id(), $msg); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
                         if (get_class($this) != get_class($sim)) {
                             $msg->merge($sim->id_used_msg($this));
@@ -878,13 +876,17 @@ class type_object extends db_object_seq_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         return array_merge($vars, get_object_vars($this));
     }
 
@@ -1038,7 +1040,7 @@ class type_object extends db_object_seq_id
         $sql = '';
         $fvt_insert = $fvt_lst->get($this->name_field(), $msg);
         if ($fvt_insert == null) {
-            log_err('name field is missing for ' . $this->dsp_id());
+            log_err_msg('name field is missing for ' . $this->dsp_id(), $msg);
         }
 
         // create the sql to insert the row

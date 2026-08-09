@@ -37,6 +37,7 @@ namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -187,6 +188,7 @@ class expression
 
     /**
      * get and set the reference text based on the user formula expression
+     * TODO Prio 1 avoid creating the message object
      * TODO Prio 2 do not call it from the frontend
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param user_message $msg to enrich with problems and suggested solution
@@ -226,7 +228,7 @@ class expression
      */
     protected function get_ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message $msg = new user_message()
+        user_message                $msg = new user_message()
     ): string
     {
         $result = '';
@@ -260,7 +262,10 @@ class expression
      * @return string the formula expression converted to the user text from the database reference format
      * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
-    protected function get_usr_text(term_list|term_list_ui|null $trm_lst = null): string
+    protected function get_usr_text(
+        term_list|term_list_ui|null $trm_lst = null,
+        user_message                $msg = new user_message()
+    ): string
     {
         log_debug($this->ref_text());
         $result = '';
@@ -270,10 +275,10 @@ class expression
         if ($pos > 0) {
             $left_part = $this->res_part();
             $right_part = $this->r_part();
-            $left_part = $this->get_usr_part($left_part, $trm_lst);
+            $left_part = $this->get_usr_part($left_part, $trm_lst, $msg);
             // continue with the right part of the expression only if the left part has been fine
             if (!$this->usr_text_dirty) {
-                $right_part = $this->get_usr_part($right_part, $trm_lst);
+                $right_part = $this->get_usr_part($right_part, $trm_lst, $msg);
             }
             $result = $left_part . chars::CHAR_CALC . $right_part;
         }
@@ -335,7 +340,7 @@ class expression
     private function get_ref_part(
         string                      $frm_part_text,
         term_list|term_list_ui|null $trm_lst = null,
-        user_message $msg = new user_message()
+        user_message                $msg = new user_message()
     ): string
     {
         $result = $frm_part_text;
@@ -365,7 +370,7 @@ class expression
                         if ($trm->obj()::class == word::class) {
                             if ($trm->obj()->type_id == phrase_types::FORMULA_LINK_ID) {
                                 $frm_trm = new formula($this->usr);
-                                $frm_trm->load_by_name($name);
+                                $frm_trm->load_by_name($name, $msg);
                                 $trm = $frm_trm->term();
                             }
                         }
@@ -417,7 +422,7 @@ class expression
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format
      */
-    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null): string
+    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null, user_message $msg): string
     {
         $result = $frm_part_text;
 
@@ -425,11 +430,11 @@ class expression
         $this->usr_text_dirty = false;
 
         // replace the database references with the names
-        $trm = $this->get_next_term_from_ref($result, $trm_lst);
+        $trm = $this->get_next_term_from_ref($result, $trm_lst, $msg);
         while ($trm != null) {
             $db_sym = $this->get_db_sym($trm);
             $result = str_replace($db_sym, chars::TERM_DELIMITER . $trm->name() . chars::TERM_DELIMITER, $result);
-            $trm = $this->get_next_term_from_ref($result, $trm_lst);
+            $trm = $this->get_next_term_from_ref($result, $trm_lst, $msg);
         }
 
         log_debug($result);
@@ -441,10 +446,13 @@ class expression
      *
      * @param string $frm_part_ref_text
      * @param term_list|term_list_ui|null $trm_lst
+     * @param user_message $msg
      * @return term|term_ui|null
      */
     private function get_next_term_from_ref(
-        string $frm_part_ref_text, term_list|term_list_ui|null $trm_lst = null
+        string $frm_part_ref_text,
+        term_list|term_list_ui|null $trm_lst = null,
+        user_message $msg = new user_message()
     ): term|term_ui|null
     {
         $trm = null;
@@ -462,7 +470,7 @@ class expression
         if ($id > 0) {
             $wrd = $trm_lst?->word_by_id($id);
             if ($wrd == null) {
-                $wrd = $this->load_word($id);
+                $wrd = $this->load_word($id, $msg);
             }
             if ($wrd == null) {
                 $this->usr_text_dirty = true;
@@ -480,7 +488,7 @@ class expression
             if ($id > 0) {
                 $trp = $trm_lst?->triple_by_id($id);
                 if ($trp == null) {
-                    $trp = $this->load_triple($id);
+                    $trp = $this->load_triple($id, $msg);
                 }
                 if ($trp == null) {
                     $this->usr_text_dirty = true;
@@ -498,7 +506,7 @@ class expression
             if ($id > 0) {
                 $frm = $trm_lst?->formula_by_id($id);
                 if ($frm == null) {
-                    $frm = $this->load_formula($id);
+                    $frm = $this->load_formula($id, $msg);
                 }
                 if ($frm == null) {
                     $this->usr_text_dirty = true;
@@ -515,7 +523,7 @@ class expression
             $id = $lib->str_between($frm_part_ref_text, chars::VERB_START, chars::VERB_END);
             if ($id > 0) {
                 $vrb = $trm_lst?->verb_by_id($id);
-                $vrb?->load_by_id($id);
+                $vrb?->load_by_id($id, $msg);
                 if ($vrb == null) {
                     $this->usr_text_dirty = true;
                     log_warning('Verb with id ' . $id . ' not found');
@@ -549,25 +557,25 @@ class expression
         return $db_sym;
     }
 
-    protected function get_term_symbol(string $name, user_message $msg): string
+    protected function get_term_symbol(string $name, Message $msg): string
     {
         // check for formulas first, because for every formula a word is also existing
         // similar to a part in get_usr_part, maybe combine
-        $db_sym = $this->get_formula_symbol($name);
+        $db_sym = $this->get_formula_symbol($name, $msg);
 
         // check for words
         if ($db_sym == '') {
-            $db_sym = $this->get_word_symbol($name);
+            $db_sym = $this->get_word_symbol($name, $msg);
         }
 
         // check for triple
         if ($db_sym == '') {
-            $db_sym = $this->get_triple_symbol($name);
+            $db_sym = $this->get_triple_symbol($name, $msg);
         }
 
         // check for verbs
         if ($db_sym == '') {
-            $db_sym = $this->get_verb_symbol($name);
+            $db_sym = $this->get_verb_symbol($name, $msg);
         }
 
         // if still not found report the missing link
@@ -586,45 +594,45 @@ class expression
      * overwrite
      */
 
-    protected function get_formula_symbol(string $name): string
+    protected function get_formula_symbol(string $name, Message $msg): string
     {
         return 'Error: function get_formula_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function get_word_symbol(string $name): string
+    protected function get_word_symbol(string $name, Message $msg): string
     {
         return 'Error: function get_word_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function get_triple_symbol(string $name): string
+    protected function get_triple_symbol(string $name, Message $msg): string
     {
         return 'Error: function get_triple_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function get_verb_symbol(string $name): string
+    protected function get_verb_symbol(string $name, Message $msg): string
     {
         return 'Error: function get_verb_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function load_word(int $id): word|word_ui|null
+    protected function load_word(int $id, Message $msg): word|word_ui|null
     {
         log_err('Error: function load_word() is expected to be overwritten');
         return new word_ui();
     }
 
-    protected function load_triple(int $id): triple|triple_ui|null
+    protected function load_triple(int $id, Message $msg): triple|triple_ui|null
     {
         log_err('Error: function load_triple() is expected to be overwritten');
         return new triple_ui();
     }
 
-    protected function load_formula(int $id): formula|formula_ui|null
+    protected function load_formula(int $id, Message $msg): formula|formula_ui|null
     {
         log_err('Error: function load_formula() is expected to be overwritten');
         return new formula_ui();
     }
 
-    protected function load_verb(int $id): verb|verb_ui|null
+    protected function load_verb(int $id, Message $msg): verb|verb_ui|null
     {
         log_err('Error: function load_verb() is expected to be overwritten');
         return new verb_ui();

@@ -37,6 +37,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'formula_url_tests.php';
@@ -64,13 +65,14 @@ class formula_write_url_tests extends formula_url_tests
 
         // load the shared frontend run state and print the section header
         $this->init($t, 'formula url write->', 'url write formula ');
+        $msg = new user_message();
 
         // remove any test formula left over from a previous run
         $this->cleanup_test_formulas($t);
 
         // create the test word so that the test formula can be assigned to a word
         $t_db = new test_db_load($t);
-        $t_db->test_word(word_names::TEST_ADD);
+        $t_db->test_word($msg, word_names::TEST_ADD);
 
         // run the same three workflows as formula_url_tests but with do_it true
         // so each confirmed step is persisted and check if the database is actually updated

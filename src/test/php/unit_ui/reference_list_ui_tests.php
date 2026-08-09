@@ -41,6 +41,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -55,6 +56,7 @@ class reference_list_ui_tests
         $tl = new test_lib();
         $ui = new frontend('unit ui html reference list');
         $t_ref = new test_refs($t);
+        $msg = new user_message();
         $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
 
@@ -66,9 +68,9 @@ class reference_list_ui_tests
         $lst = $t_ref->ref_list_math_ui();
         $test_page = $html->text_h2('reference list display test');
         $test_page .= 'short list of reference names with tooltip: ' . $lst->name_text() . '<br>';
-        $test_page .= 'vertical list of reference with link:<br>' . $lst->list() . '<br>';
-        $test_page .= 'table of reference with add and remove option:<br>' . $lst->list() . '<br>';
-        $t->html_page_test($test_page, 'reference_list', 'reference_list', $t);
+        $test_page .= 'vertical list of reference with link:<br>' . $lst->list($msg) . '<br>';
+        $test_page .= 'table of reference with add and remove option:<br>' . $lst->list($msg) . '<br>';
+        $t->html_page_test($test_page, 'reference_list', 'reference_list', $msg);
     }
 
 }

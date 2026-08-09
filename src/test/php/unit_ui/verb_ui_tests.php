@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -43,6 +44,7 @@ class verb_ui_tests
     {
         $html = new html_base();
         $t_vrb = new test_verbs($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html verb list ';
@@ -52,8 +54,8 @@ class verb_ui_tests
         $test_page = $html->text_h2('Verb display test');
         $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
         $test_page .= 'with link: ' . $vrb->name_link() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($vrb);
-        $t->html_page_test($test_page, 'verb', 'verb', $t);
+        $test_page .= $t->dsp_title_named_edit($vrb, $msg);
+        $t->html_page_test($test_page, 'verb', 'verb', $msg);
     }
 
 }

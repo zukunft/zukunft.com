@@ -44,33 +44,30 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("figure");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("figure", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $fig_id = $_GET[url_var::ID] ?? 0;
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
+    // get the parameters
+    $fig_id = $_GET[url_var::ID] ?? 0;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($fig_id > 0) {
             $val = new value($usr);
-            $val->load_by_id($fig_id);
-            $val->load_objects();
+            $val->load_by_id($fig_id, $msg);
+            $val->load_objects($msg);
             // do not disclose another user's private value behind a figure id (idor); the same
             // neutral message as a missing id, so the response does not confirm it exists
             if ($val->is_readable_by($usr)) {
@@ -81,7 +78,7 @@ if ($db_con->is_open()) {
             }
         } elseif ($fig_id < 0) {
             $res = new result($usr);
-            $res->load_by_id($fig_id);
+            $res->load_by_id($fig_id, $msg);
             if ($res->is_readable_by($usr)) {
                 $fig = $res->figure();
                 $result = $fig->api_json();

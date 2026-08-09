@@ -99,15 +99,15 @@ class change_log_list extends ListBase
      * @return user_message to report any problems to the user
      */
     function load_by_object_field(
-        string     $class,
-        int|string $id = 1,
-        string     $fld = '',
-        user|null  $usr = null,
-        int        $size = 0,
-        int        $page = 0
+        string       $class,
+        user_message $msg,
+        int|string   $id = 1,
+        string       $fld = '',
+        user|null    $usr = null,
+        int          $size = 0,
+        int          $page = 0
     ): user_message
     {
-        $msg = new user_message();
         $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $size, $page);
         $actual = json_decode($json, true);
 
@@ -184,7 +184,7 @@ class change_log_list extends ListBase
         $result = new change_log_list();
         $tbl_id_lst = $lib->ui_class_to_table_id_list($dbo::class);
         foreach ($this->lst() as $chg) {
-            if (in_array($chg->table_id, $tbl_id_lst) ) {
+            if (in_array($chg->table_id, $tbl_id_lst)) {
                 if ($chg->row_id == $dbo->id()) {
                     // allow duplicates: the api change entries carry no own id (all id 0), so the
                     // default id-dedup of add() would collapse every change into a single row
@@ -407,7 +407,7 @@ class change_log_list extends ListBase
             if ($with_users) {
                 $head_text .= $html->th('user');
             }
-            $head_text .= $html->th_row(array('field','from','to'));
+            $head_text .= $html->th_row(array('field', 'from', 'to'));
         }
         $head_text .= $html->th('');  // extra column for the undo icon
         return $html->tr($head_text);

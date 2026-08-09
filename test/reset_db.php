@@ -42,12 +42,13 @@ include_once 'test_const.php';
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\test_app;
-
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
 include_once test_paths::UTILS . 'test_base.php';
@@ -69,13 +70,13 @@ $msg = new user_message();
 
 // open database and display header
 $app = new test_app();
-$db_con = $app->start("db reset", '', false, true);
+$db_con = $app->start("db reset", $msg, true);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id() > 0) {
@@ -89,7 +90,9 @@ if ($db_con->is_open()) {
             $t->set_users();
             $t->header('drop and recreate zukunft.com database');
             $ui = new frontend('reset db');
-            $ui->load_dummy_cache_from_test_resources($t->usr1);
+            $usr_ui = new user_ui($t->usr1->api_json());
+            $msg_ui = new user_message_ui($usr_ui);
+            $ui->load_dummy_cache_from_test_resources($msg_ui);
 
             if (getenv(ENVIRONMENT) == ENV_DEV) {
 
@@ -97,6 +100,11 @@ if ($db_con->is_open()) {
                 $t = new all_tests();
                 $t->run_unit($ui);
                 $t->run_db_recreate($msg);
+
+                // login after the database recreate so that the api calls of the following
+                // checks are permitted also on a pod that blocks the changes of a user
+                // without login; a login before the recreate would point to a dropped session user
+                $t->api_login();
 
                 // create the test dataset to check the basic write functions
                 // TODO Prio 3 make sure that all are created by import instead
@@ -110,7 +118,7 @@ if ($db_con->is_open()) {
                 // or there is a good reason due to some code changes
                 // these fixed csv files help to detect the impact of code changes
                 // e.g. if some words are missing due to different error handling
-                $t_db->csv_recreate();
+                $t_db->csv_recreate($msg);
 
                 // as the last step verify the type list api message against the fully reset database
                 // because src/test/resources/api/type_lists/type_lists.json is used by the unit tests
@@ -118,7 +126,11 @@ if ($db_con->is_open()) {
                 // from the type_list created by test.php
                 // most likely new fields have not yet been added to the
                 // src/main/resources/db_code_links/change_fields.csv of the predefined fields
-                $t_db->type_list_check($t, $t->usr1);
+                $msg->usr = $t->usr1;
+                $t_db->type_list_check($t, $msg);
+
+               // end the admin session used for the api calls of the test scripts
+                $t->api_logout();
 
                 // display the test results
                 if ($t->format == text_log_format::HTML) {

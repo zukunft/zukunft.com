@@ -78,6 +78,7 @@ class triple_write_url_tests extends triple_url_tests
 
         // load the shared frontend run state and print the section header
         $this->init($t, 'triple url write->', 'url write triple ');
+        $msg = new user_message();
 
         // remove any test triple left over from a previous run (including the user sandbox rows) so the
         // add workflow starts from a clean state; an add to an already existing triple keeps its old
@@ -88,8 +89,8 @@ class triple_write_url_tests extends triple_url_tests
         // them; only test words are used so the workflows never change seeded data (e.g. the usage of
         // the math words)
         $t_db = new test_db_load($t);
-        $t_db->test_word(word_names::TEST_ADD);
-        $t_db->test_word(word_names::TEST_ADD_TO);
+        $t_db->test_word($msg, word_names::TEST_ADD);
+        $t_db->test_word($msg, word_names::TEST_ADD_TO);
 
         // run the same three workflows as triple_url_tests but with do_it true so each confirmed step is
         // persisted: add creates the test triple, change modifies it and del removes it again - the add
@@ -124,22 +125,23 @@ class triple_write_url_tests extends triple_url_tests
      */
     private function rename_triple_by_other_user(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t->subheader($this->ts . 'other user rename');
 
         // start from a clean state and make sure the from and to test words of the link exist
         $this->cleanup_test_triples($t);
         $t_db = new test_db_load($t);
-        $t_db->test_word(word_names::TEST_ADD);
-        $t_db->test_word(word_names::TEST_ADD_TO);
+        $t_db->test_word($msg, word_names::TEST_ADD);
+        $t_db->test_word($msg, word_names::TEST_ADD_TO);
 
         // usr1 creates and owns the base triple linking the two test words with a given name that
         // differs from the generated '<from> <verb> <to>' name, so the rename changes a real name
         $owner = new user();
-        $owner->load_by_name(users::SYSTEM_TEST_NAME);
+        $owner->load_by_name(users::SYSTEM_TEST_NAME, $msg);
         $from = new word($owner);
-        $from->load_by_name(word_names::TEST_ADD);
+        $from->load_by_name(word_names::TEST_ADD, $msg);
         $to = new word($owner);
-        $to->load_by_name(word_names::TEST_ADD_TO);
+        $to->load_by_name(word_names::TEST_ADD_TO, $msg);
         $base = new triple($owner);
         $base->set_from($from->phrase());
         $base->set_verb(test_verbs::verb_part());
@@ -158,9 +160,9 @@ class triple_write_url_tests extends triple_url_tests
         // the triple is loaded fresh so the ui object carries the from, verb and to of the link
         // (a triple rename request keeps the link as the '8'-prefixed baseline, only the name changes)
         $changer = new user();
-        $changer->load_by_id($t->usr2->id());
+        $changer->load_by_id($t->usr2->id(), $msg);
         $trp_load = new triple($changer);
-        $trp_load->load_by_id($base_id);
+        $trp_load->load_by_id($base_id, $msg);
         // TODO Prio 2 create $t->usr_ui2 and use it
         $msg_ui = new user_message_ui();
         $changer_ui = new user_ui();
@@ -181,7 +183,7 @@ class triple_write_url_tests extends triple_url_tests
         // user 2 sees the renamed triple at the unchanged id
         $test_name = 'user 2 sees the renamed triple';
         $trp_chk = new triple($changer);
-        $trp_chk->load_by_id($base_id);
+        $trp_chk->load_by_id($base_id, $msg);
         $t->assert($test_name, $trp_chk->name(), $renamed);
 
         // the rename request carries only the changed name, so the description of the original
@@ -192,7 +194,7 @@ class triple_write_url_tests extends triple_url_tests
         // the owner keeps the original triple name under the original id
         $test_name = 'the owner keeps the original triple name';
         $trp_owner = new triple($owner);
-        $trp_owner->load_by_id($base_id);
+        $trp_owner->load_by_id($base_id, $msg);
         $t->assert($test_name, $trp_owner->name(), triple_names::SYSTEM_TEST_ADD);
 
         // renaming back to the standard name must not report the name as already used (the similar
@@ -205,7 +207,7 @@ class triple_write_url_tests extends triple_url_tests
         $t->assert_msg($test_name, $back_msg);
         $test_name = 'the rename back removes the user overlay row';
         $trp_undo_chk = new triple($changer);
-        $trp_undo_chk->load_by_id($base_id);
+        $trp_undo_chk->load_by_id($base_id, $msg);
         $t->assert_false($test_name, $trp_undo_chk->has_usr_cfg());
         $test_name = 'after the rename back user 2 sees the standard name again';
         $t->assert($test_name, $trp_undo_chk->name(), triple_names::SYSTEM_TEST_ADD);
@@ -219,14 +221,14 @@ class triple_write_url_tests extends triple_url_tests
         // the delete is requested by the owner, so switch the message user to the owner
         $msg_ui->usr = $owner_ui;
         $trp_owner_load = new triple($owner);
-        $trp_owner_load->load_by_id($base_id);
+        $trp_owner_load->load_by_id($base_id, $msg);
         $trp_del = new triple_ui($trp_owner_load->api_json());
         $del_msg = $trp_del->del($msg_ui);
         $test_name = 'the owner deletes the triple via the frontend bridge';
         $t->assert_msg($test_name, $del_msg);
         $test_name = 'the triple is removed after the url delete';
         $trp_gone = new triple($owner);
-        $trp_gone->load_by_id($base_id);
+        $trp_gone->load_by_id($base_id, $msg);
         $t->assert_true($test_name, $trp_gone->id() <= 0);
 
         // check that all have been removed

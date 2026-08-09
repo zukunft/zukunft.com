@@ -4,8 +4,8 @@
             "pageid": 5867,
             "ns": 0,
             "title": "Q4916",
-            "lastrevid": 2504880847,
-            "modified": "2026-06-12T03:00:21Z",
+            "lastrevid": 2527806138,
+            "modified": "2026-08-05T21:14:16Z",
             "type": "item",
             "id": "Q4916",
             "labels": {
@@ -273,10 +273,6 @@
                     "language": "lez",
                     "value": "Евро"
                 },
-                "li": {
-                    "language": "li",
-                    "value": "Euro"
-                },
                 "lij": {
                     "language": "lij",
                     "value": "Œüro"
@@ -291,7 +287,7 @@
                 },
                 "lt": {
                     "language": "lt",
-                    "value": "Euras"
+                    "value": "euras"
                 },
                 "ltg": {
                     "language": "ltg",
@@ -579,7 +575,7 @@
                 },
                 "pcd": {
                     "language": "pcd",
-                    "value": "Uro"
+                    "value": "uro"
                 },
                 "zh-hk": {
                     "language": "zh-hk",
@@ -608,10 +604,6 @@
                 "sr-el": {
                     "language": "sr-el",
                     "value": "evro"
-                },
-                "vls": {
-                    "language": "vls",
-                    "value": "Euro"
                 },
                 "myv": {
                     "language": "myv",
@@ -825,23 +817,31 @@
                     "language": "shi",
                     "value": "Yuṛu"
                 },
-                "fr": {
-                    "language": "fr",
-                    "value": "Euro"
-                },
-                "en": {
-                    "language": "en",
-                    "value": "euro"
-                },
                 "olo": {
                     "language": "olo",
+                    "value": "euro"
+                },
+                "isv-cyrl": {
+                    "language": "isv-cyrl",
+                    "value": "евро"
+                },
+                "isv-latn": {
+                    "language": "isv-latn",
+                    "value": "evro"
+                },
+                "sh": {
+                    "language": "sh",
+                    "value": "euro"
+                },
+                "ro": {
+                    "language": "ro",
                     "value": "euro"
                 }
             },
             "descriptions": {
                 "it": {
                     "language": "it",
-                    "value": "valuta comune ufficiale di 21 dei 27 Paesi dell'Unione europea"
+                    "value": "valuta comune ufficiale di 21 dei 27 Paesi dell'Unione europea, usata anche da altri Paesi"
                 },
                 "de": {
                     "language": "de",
@@ -1013,7 +1013,7 @@
                 },
                 "ro": {
                     "language": "ro",
-                    "value": "moneda majorității țărilor din Uniunea Europeană"
+                    "value": "monedă a majorității țărilor din Uniunea Europeană"
                 },
                 "zh": {
                     "language": "zh",
@@ -1437,6 +1437,24 @@
                     {
                         "language": "gv",
                         "value": "oarey"
+                    }
+                ],
+                "isv-cyrl": [
+                    {
+                        "language": "isv-cyrl",
+                        "value": "евра"
+                    }
+                ],
+                "isv-latn": [
+                    {
+                        "language": "isv-latn",
+                        "value": "evra"
+                    }
+                ],
+                "sh": [
+                    {
+                        "language": "sh",
+                        "value": "evro"
                     }
                 ]
             },
@@ -6931,8 +6949,68 @@
                             "datatype": "external-id"
                         },
                         "type": "statement",
+                        "qualifiers": {
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "hash": "3084e3b8a8327068d29db87271ae41c0e0c567fc",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 1266546,
+                                            "id": "Q1266546"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P459"
+                        ],
                         "id": "Q4916$7D6380E8-D00A-496F-94A8-54DB154BBF19",
-                        "rank": "normal"
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "29d9261d3b24be2fb72a4e345a3e45cdf28eeed5",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "4b222ea31b6fcd95c95734ce289e8c0b903041e9",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 1370467,
+                                                    "id": "Q1370467"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ],
+                                    "P854": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P854",
+                                            "hash": "906490cb26d50131e0290371d0ce82d503c6c5e9",
+                                            "datavalue": {
+                                                "value": "https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/eurovoc",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248",
+                                    "P854"
+                                ]
+                            }
+                        ]
                     }
                 ],
                 "P6058": [
@@ -10100,6 +10178,57 @@
                         "id": "Q4916$41795C09-E294-4FDF-905B-E33B97F88A19",
                         "rank": "normal"
                     }
+                ],
+                "P7666": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P7666",
+                            "hash": "4ff7d456bbc455c18b8eb44c417cbae5e98a19eb",
+                            "datavalue": {
+                                "value": "euras",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$901bbf7c-4f36-c26f-7616-90f56bb7e3bc",
+                        "rank": "normal"
+                    }
+                ],
+                "P9438": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P9438",
+                            "hash": "e8c47df4448610276879838b9e62c2b02edb8220",
+                            "datavalue": {
+                                "value": "176834",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$5886E8EE-BE1D-4105-B0EB-07BDEC82C9FD",
+                        "rank": "normal"
+                    }
+                ],
+                "P13772": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P13772",
+                            "hash": "21429f9d8de638938bd889a5d899d88e05de09f2",
+                            "datavalue": {
+                                "value": "euro",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$321CA367-3A7C-4148-8DFE-DD8D2AA3C183",
+                        "rank": "normal"
+                    }
                 ]
             },
             "sitelinks": {
@@ -11295,6 +11424,16 @@
                 "kncwiki": {
                     "site": "kncwiki",
                     "title": "Euro",
+                    "badges": []
+                },
+                "olowiki": {
+                    "site": "olowiki",
+                    "title": "Euro",
+                    "badges": []
+                },
+                "isvwiki": {
+                    "site": "isvwiki",
+                    "title": "Evro",
                     "badges": []
                 }
             }

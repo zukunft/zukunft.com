@@ -195,7 +195,7 @@ class formula extends formula_map
         $msg = new user_message();
         $phr_lst = $this->expression($trm_lst)->phrases($msg, $trm_lst);
         foreach ($phr_lst->lst() as $phr) {
-            $map[$phr->name()] = $this->phrase_symbol($phr) ?? $phr->name();
+            $map[$phr->name()] = $this->phrase_symbol($phr, $msg) ?? $phr->name();
         }
         return $map;
     }
@@ -205,11 +205,11 @@ class formula extends formula_map
      * @return string|null the name of the phrase that "is symbol for" the given phrase, or null
      *                     if no symbol is linked
      */
-    private function phrase_symbol(phrase $phr): ?string
+    private function phrase_symbol(phrase $phr, user_message $msg): ?string
     {
         $result = null;
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($phr, null, foaf_direction::BOTH);
+        $trp_lst->load_by_phr($phr, $msg, null, foaf_direction::BOTH);
         foreach ($trp_lst->lst() as $trp) {
             if ($trp->get_verb_code_id() == verbs::SYMBOL and $trp->get_to()?->id() == $phr->id()) {
                 $result = $trp->get_from()?->name();
@@ -385,7 +385,7 @@ class formula extends formula_map
             }
             if ($this->type_cl == formula_type::NEXT) {
                 $val_phr_lst = clone $phr_lst;
-                $next_wrd = $time_phr->next();
+                $next_wrd = $time_phr->next($msg);
                 if ($next_wrd->id() > 0) {
                     $val_phr_lst->add($next_wrd); // the time word should be added at the end, because ...
                     log_debug("next (" . $next_wrd->name() . ")");
@@ -394,7 +394,7 @@ class formula extends formula_map
             }
             if ($this->type_cl == formula_type::PREV) {
                 $val_phr_lst = clone $phr_lst;
-                $prior_wrd = $time_phr->prior();
+                $prior_wrd = $time_phr->prior($msg);
                 if ($prior_wrd->id() > 0) {
                     $val_phr_lst->add($prior_wrd->phrase()); // the time word should be added at the end, because ...
                     log_debug("prior (" . $prior_wrd->name() . ")");
@@ -412,7 +412,7 @@ class formula extends formula_map
      * e.g. "this" or "next" where the value of this or the following time word is returned
      * TODO Prio 1 move to phrase list
      */
-    function special_time_phr(phrase $time_phr): phrase
+    function special_time_phr(phrase $time_phr, user_message $msg): phrase
     {
         log_debug($this->type_cl . ' for ' . $time_phr->dsp_id());
         $result = $time_phr;
@@ -425,13 +425,13 @@ class formula extends formula_map
                     $result = $time_phr;
                 }
                 if ($this->type_cl == formula_type::NEXT) {
-                    $this_wrd = $time_phr->main_word();
-                    $next_wrd = $this_wrd->next();
+                    $this_wrd = $time_phr->main_word($msg);
+                    $next_wrd = $this_wrd->next($msg);
                     $result = $next_wrd->phrase();
                 }
                 if ($this->type_cl == formula_type::PREV) {
-                    $this_wrd = $time_phr->main_word();
-                    $prior_wrd = $this_wrd->prior();
+                    $this_wrd = $time_phr->main_word($msg);
+                    $prior_wrd = $this_wrd->prior($msg);
                     $result = $prior_wrd->phrase();
                 }
             }
@@ -446,7 +446,7 @@ class formula extends formula_map
      * e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
      * TODO Prio 1 move to phrase list
      */
-    function special_phr_lst(phrase_list $phr_lst): phrase_list
+    function special_phr_lst(phrase_list $phr_lst, user_message $msg): phrase_list
     {
         log_debug('for ' . $phr_lst->dsp_id());
         $result = clone $phr_lst;
@@ -457,7 +457,7 @@ class formula extends formula_map
                 $phr->set_user($this->get_user());
             }
             // get all special phrases
-            $time_phr = $this->special_time_phr($phr);
+            $time_phr = $this->special_time_phr($phr, $msg);
             if (isset($time_phr)) {
                 $result->add($time_phr);
                 log_debug('added time ' . $time_phr->dsp_id() . ' to ' . $result->dsp_id());
@@ -484,7 +484,7 @@ class formula extends formula_map
      * - linked_foaf_phrases_standard: for the linked phrases including foaf to the formula based on the standard settings for new user
      * - linked_foaf_phrases_all_user: for the linked phrases including foaf to the formula for any user
      */
-    function assign_phr_glst_direct($sbx): ?phrase_list
+    function assign_phr_glst_direct($sbx, user_message $msg): ?phrase_list
     {
         $phr_lst = null;
         $lib = new library();
@@ -492,12 +492,12 @@ class formula extends formula_map
         if ($this->id() > 0 and $this->get_user() != null) {
             log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->get_user()->name . '"');
             $frm_lnk_lst = new formula_link_list($this->get_user());
-            $frm_lnk_lst->load_by_frm_id($this->id());
+            $frm_lnk_lst->load_by_frm_id($this->id(), $msg);
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->get_user());
-                $phr_lst->load_names_by_ids($phr_ids);
+                $phr_lst->load_names_by_ids($phr_ids, $msg);
                 log_debug("number of words " . $lib->dsp_count($phr_lst->lst()));
             }
         } else {
@@ -512,27 +512,27 @@ class formula extends formula_map
      * TODO Prio 1 move to phrase list
      * TODO rename to linked_foaf_phrases_standard
      */
-    function assign_phr_lst_direct(): ?phrase_list
+    function assign_phr_lst_direct(user_message $msg): ?phrase_list
     {
-        return $this->assign_phr_glst_direct(false);
+        return $this->assign_phr_glst_direct(false, $msg);
     }
 
     /**
      * the user-specific list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
      */
-    function assign_phr_ulst_direct(): ?phrase_list
+    function assign_phr_ulst_direct(user_message $msg): ?phrase_list
     {
-        return $this->assign_phr_glst_direct(true);
+        return $this->assign_phr_glst_direct(true, $msg);
     }
 
     /**
      * load the phrases this formula is assigned to into the in-memory phrases_related list so
      * that api_json_array() can emit them under the INCL_RELATED flag (like word::load_phrases_related)
      */
-    function load_phrases_related(): void
+    function load_phrases_related(user_message $msg): void
     {
-        $phr_lst = $this->assign_phr_lst_direct();
+        $phr_lst = $this->assign_phr_lst_direct($msg);
         if ($phr_lst == null) {
             $phr_lst = new phrase_list($this->get_user());
         }
@@ -544,7 +544,7 @@ class formula extends formula_map
      * api_json_array() can emit them under the INCL_RELATED flag; each "\text{...}" token of the
      * latex is resolved to a term by its name (the symbol word or the phrase name)
      */
-    function load_latex_terms(): void
+    function load_latex_terms(user_message $msg): void
     {
         $trm_lst = new term_list($this->get_user());
         $latex = $this->get_latex();
@@ -552,7 +552,7 @@ class formula extends formula_map
             if (preg_match_all('/\\\\text\{([^{}]*)}/', $latex, $matches)) {
                 foreach ($matches[1] as $name) {
                     $trm = new term($this->get_user());
-                    if ($trm->load_by_name($name) != 0) {
+                    if ($trm->load_by_name($name, $msg) != 0) {
                         $trm_lst->add($trm);
                     }
                 }
@@ -568,12 +568,12 @@ class formula extends formula_map
      * @param int $id the formula id to load
      * @return int the id of the loaded formula, or 0 if not found
      */
-    function load_by_id_with_related(int $id): int
+    function load_by_id_with_related(int $id, user_message $msg): int
     {
-        $loaded_id = parent::load_by_id($id);
+        $loaded_id = parent::load_by_id($id, $msg);
         if ($loaded_id > 0) {
-            $this->load_phrases_related();
-            $this->load_latex_terms();
+            $this->load_phrases_related($msg);
+            $this->load_latex_terms($msg);
         }
         return $loaded_id;
     }
@@ -582,16 +582,20 @@ class formula extends formula_map
      * extend the formula api message with the assigned phrases so the frontend "Formula title"
      * component can show them in the subtitle; only added for a page request (INCL_RELATED)
      * of a saved formula (a fresh formula with id 0 has no assigned phrases)
-     * @param api_type_list $typ_lst configuration for the api message
+     * @param api_type_list|array $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created
      * @return array the filled api json array
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         if ($typ_lst->incl_related() and $this->id() != 0) {
             if ($this->phrases_related == null and !$typ_lst->test_mode()) {
-                $this->load_phrases_related();
+                $this->load_phrases_related($msg);
             }
             if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
                 // drop the assigned phrases the requester may not read (idor)
@@ -599,10 +603,10 @@ class formula extends formula_map
                 // INCL_PHRASES so each assigned phrase carries its name (and description for the
                 // tooltip) needed by the subtitle links, sorted by impact in the frontend
                 $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
             }
             if ($this->latex_terms == null and !$typ_lst->test_mode()) {
-                $this->load_latex_terms();
+                $this->load_latex_terms($msg);
             }
             if ($this->latex_terms != null and !$this->latex_terms->is_empty()) {
                 // drop the latex terms the requester may not read (idor)
@@ -610,7 +614,7 @@ class formula extends formula_map
                 // INCL_PHRASES so each latex term carries its name (and description for the
                 // tooltip) needed by the "expression_latex_link" component to create the links
                 $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $usr);
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
             }
         }
         return $vars;
@@ -625,22 +629,23 @@ class formula extends formula_map
     {
         $phr_lst = new phrase_list($this->get_user());
         $lib = new library();
+        $msg = new user_message();
 
         if ($this->id() > 0 and $this->get_user() != null) {
-            $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
+            $direct_phr_lst = $this->assign_phr_glst_direct($sbx, $msg);
             if ($direct_phr_lst != null) {
                 if (!$direct_phr_lst->is_empty()) {
                     log_debug($this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
 
                     //$indirect_phr_lst = $direct_phr_lst->is();
-                    $indirect_phr_lst = $direct_phr_lst->are();
+                    $indirect_phr_lst = $direct_phr_lst->are($msg);
                     log_debug('indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
 
                     // merge direct and indirect assigns (maybe later using phrase_list->merge)
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
-                    $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+                    $phr_lst->load_by_ids((new phr_ids($phr_ids)), $msg);
                     log_debug('number of words and triples ' . $lib->dsp_count($phr_lst->lst()));
                 } else {
                     log_debug('no words are assigned to ' . $this->dsp_id());
@@ -685,7 +690,7 @@ class formula extends formula_map
     {
         log_debug('delete_results of ' . $this->dsp_id());
         $res_lst = new result_list($this->get_user());
-        $res_lst->load_by_frm($this);
+        $res_lst->load_by_frm($this, $msg);
         $imp = new import();
         $res_lst->db_delete_no_log($msg, $imp, result::class);
         return $msg->is_ok();
@@ -796,7 +801,7 @@ class formula extends formula_map
         // replace each element group symbol with the matching number(s)
         $all_elm_grp_filled = true;
         foreach ($elm_grp_lst->lst() as $elm_grp) {
-            if (!$this->fill_element_group($res_lst, $elm_grp, $trm_lst, $phr_lst, $res_init)) {
+            if (!$this->fill_element_group($res_lst, $elm_grp, $trm_lst, $phr_lst, $res_init, $msg)) {
                 $all_elm_grp_filled = false;
             }
         }
@@ -822,7 +827,8 @@ class formula extends formula_map
         element_group $elm_grp,
         term_list     $trm_lst,
         phrase_list   $phr_lst,
-        result        $res_init
+        result        $res_init,
+        user_message $msg
     ): bool
     {
         $lib = new library();
@@ -831,7 +837,7 @@ class formula extends formula_map
         // get the figures for the element group (a figure is a user value or a calculated result)
         $elm_grp->phr_lst = clone $phr_lst;
         $elm_grp->build_symbol();
-        $fig_lst = $elm_grp->figures($trm_lst);
+        $fig_lst = $elm_grp->figures($msg, $trm_lst);
         log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
         if ($fig_lst->lst() != null) {
@@ -1143,7 +1149,7 @@ class formula extends formula_map
      *      if one of the result words is a scaling word, remove all value scaling words
      *      always create a default result (for the user 0)
      */
-    function calc(phrase_list $phr_lst): ?array
+    function calc(phrase_list $phr_lst, user_message $msg): ?array
     {
         $result = null;
 
@@ -1154,13 +1160,13 @@ class formula extends formula_map
             log_debug('->calc ' . $this->dsp_id() . ' for ' . $phr_lst->dsp_id());
 
             // data retrieval: reload the formula and calculate the numeric results
-            $this->reload_if_incomplete();
+            $this->reload_if_incomplete($msg);
             $res_add_phr_lst = null;
             $has_result_phrases = false;
-            $res_lst = $this->build_result_list($phr_lst, $res_add_phr_lst, $has_result_phrases);
+            $res_lst = $this->build_result_list($phr_lst, $msg, $res_add_phr_lst, $has_result_phrases);
 
             // data save: apply the result word rules and store the updated results
-            $this->save_calc_results($res_lst, $res_add_phr_lst, $has_result_phrases);
+            $this->save_calc_results($res_lst, $msg, $res_add_phr_lst, $has_result_phrases);
 
             $result = $res_lst->lst();
         }
@@ -1172,11 +1178,11 @@ class formula extends formula_map
     /**
      * data retrieval: reload the formula from the database if its name or name word is not set
      */
-    function reload_if_incomplete(): void
+    function reload_if_incomplete(user_message $msg): void
     {
-        if ($this->name() == '' or is_null($this->name_wrd)) {
+        if ($this->name() == '' or $this->name == null) {
             if ($this->id() > 0) {
-                $this->load_by_id($this->id());
+                $this->load_by_id($this->id(), $msg);
                 log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
             } else {
                 log_warning('formula ' . $this->dsp_id() . ' cannot be reloaded');
@@ -1191,7 +1197,12 @@ class formula extends formula_map
      * @param bool $has_result_phrases set to true if the formula defines phrases to add to the result
      * @return result_list the numeric results to be saved
      */
-    function build_result_list(phrase_list $phr_lst, ?phrase_list &$res_add_phr_lst, bool &$has_result_phrases): result_list
+    function build_result_list(
+        phrase_list  $phr_lst,
+        user_message $msg,
+        ?phrase_list &$res_add_phr_lst,
+        bool         &$has_result_phrases
+    ): result_list
     {
         $lib = new library();
 
@@ -1203,7 +1214,7 @@ class formula extends formula_map
         $has_result_phrases = false;
         $res_lst = new result_list($this->get_user());
         if ($exp->is_valid()) {
-            $res_add_phr_lst = $exp->load_result_phrases();
+            $res_add_phr_lst = $exp->load_result_phrases($msg);
             if (isset($res_add_phr_lst)) {
                 log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
                 $has_result_phrases = true;
@@ -1227,7 +1238,7 @@ class formula extends formula_map
      * @param phrase_list|null $res_add_phr_lst the phrases to add to each result before saving
      * @param bool $has_result_phrases passed on to result::save_if_updated
      */
-    function save_calc_results(result_list $res_lst, ?phrase_list $res_add_phr_lst, bool $has_result_phrases): void
+    function save_calc_results(result_list $res_lst, user_message $msg, ?phrase_list $res_add_phr_lst, bool $has_result_phrases): void
     {
         if ($res_lst->lst() != null) {
             foreach ($res_lst->lst() as $res) {
@@ -1236,7 +1247,7 @@ class formula extends formula_map
                     log_debug('some values missing for ' . $res->dsp_id());
                 } else {
                     if ($res->is_updated) {
-                        $this->save_calc_result($res, $res_add_phr_lst, $has_result_phrases);
+                        $this->save_calc_result($res, $res_add_phr_lst, $has_result_phrases, $msg);
                     }
                 }
             }
@@ -1249,19 +1260,19 @@ class formula extends formula_map
      * @param phrase_list|null $res_add_phr_lst the phrases to add to the result before saving
      * @param bool $has_result_phrases passed on to result::save_if_updated
      */
-    function save_calc_result(result $res, ?phrase_list $res_add_phr_lst, bool $has_result_phrases): void
+    function save_calc_result(result $res, ?phrase_list $res_add_phr_lst, bool $has_result_phrases, user_message $msg): void
     {
         log_debug('formula result ' . $res->dsp_id() . ' is updated');
 
         // apply the result word rules and add the result phrases (calculation, no data access)
         if (isset($res_add_phr_lst)) {
-            $this->apply_result_phrases($res, $res_add_phr_lst);
+            $this->apply_result_phrases($res, $res_add_phr_lst, $msg);
         }
 
         // add the formula name word to the result phrases (data retrieval via reload_wrd)
-        $this->add_formula_name_phrase($res);
+        $this->add_formula_name_phrase($res, $msg);
 
-        $res->save_if_updated($has_result_phrases);
+        $res->save_if_updated($msg, $has_result_phrases);
     }
 
     /**
@@ -1270,14 +1281,14 @@ class formula extends formula_map
      * @param result $res the result whose phrase list is normalised and extended in place
      * @param phrase_list $res_add_phr_lst the phrases left of the equation sign that define the result
      */
-    function apply_result_phrases(result $res, phrase_list $res_add_phr_lst): void
+    function apply_result_phrases(result $res, phrase_list $res_add_phr_lst, user_message $msg): void
     {
         log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
-        $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all();
+        $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all($msg);
 
         // a percent result is relative, so remove any measure word from the result words
         if ($res_add_wrd_lst->has_percent()) {
-            $res->grp()->phrase_list()->ex_measure();
+            $res->grp()->phrase_list()->ex_measure($msg);
             log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
         }
         // a percent result is not scaled e.g. not in millions even if the used values are
@@ -1302,16 +1313,16 @@ class formula extends formula_map
      * data retrieval: add the formula name word (reloaded if needed) to the result phrases
      * @param result $res the result whose phrase list gets the formula name word
      */
-    function add_formula_name_phrase(result $res): void
+    function add_formula_name_phrase(result $res, user_message $msg): void
     {
         // add the formula name also to the result phrase e.g. increase
-        if (is_null($this->name_wrd)) {
-            $this->reload_wrd();
+        if (is_null($this->name_phr)) {
+            $this->reload_wrd($msg);
         }
-        if (is_null($this->name_wrd)) {
+        if (is_null($this->name_phr)) {
             log_warning('Cannot load word for formula ' . $this->dsp_id());
         } else {
-            $res->grp()->phrase_list()->add($this->name_wrd->phrase());
+            $res->grp()->phrase_list()->add($this->name_phr);
         }
     }
 
@@ -1350,10 +1361,10 @@ class formula extends formula_map
     /**
      * @return result_list a list of all formula results linked to this formula
      */
-    function get_res_lst(): result_list
+    function get_res_lst(user_message $msg): result_list
     {
         $res_lst = new result_list($this->get_user());
-        $res_lst->load_by_frm($this);
+        $res_lst->load_by_frm($this, $msg);
         return $res_lst;
     }
 
@@ -1396,16 +1407,15 @@ class formula extends formula_map
      * @param term_list $cache with the terms already loaded
      * @return term_list list of all terms used in the formula expression
      */
-    function term_list(term_list $cache): term_list
+    function term_list(term_list $cache, user_message $msg): term_list
     {
         $trm_lst = new term_list($this->get_user());
-        $msg = new user_message();
         $exp = $this->expression($cache);
         $elm_lst = $exp->element_list($msg, $cache);
         foreach ($elm_lst->lst() as $elm) {
             $trm_lst->add($elm->term());
         }
-        $res_phr_lst = $exp->load_result_phrases($cache);
+        $res_phr_lst = $exp->load_result_phrases($msg, $cache);
         return $trm_lst->merge($res_phr_lst->term_list());
     }
 

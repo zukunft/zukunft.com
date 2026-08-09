@@ -39,11 +39,13 @@ class triple_tests
 {
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
         $sc = new sql_creator();
         $t_trp = new test_triples($t);
+        $msg_ui = new user_message_ui();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
@@ -164,13 +166,13 @@ class triple_tests
         // an api message with only the id maps the id and does not fail
         $test_name = 'api_mapper with only the id keeps the id';
         $trp = new triple($t->usr1);
-        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], new user_message());
+        $trp->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID], $msg);
         $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
 
         // an api message with only the name maps the name and leaves the id at 0
         $test_name = 'api_mapper with only the name keeps the name';
         $trp = new triple($t->usr1);
-        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], new user_message());
+        $trp->api_mapper([json_fields::NAME => triple_names::MATH_CONST], $msg);
         $t->assert($test_name, $trp->name(), triple_names::MATH_CONST);
         $test_name = 'api_mapper with only the name leaves the id at 0';
         $t->assert($test_name, $trp->id(), 0);
@@ -178,7 +180,7 @@ class triple_tests
         // an api message with neither the id nor the name maps nothing and leaves the id at 0
         $test_name = 'api_mapper with neither id nor name leaves the id at 0';
         $trp = new triple($t->usr1);
-        $trp->api_mapper([], new user_message());
+        $trp->api_mapper([], $msg);
         $t->assert($test_name, $trp->id(), 0);
 
         // an api message where the from, verb and to are present but null (an incomplete triple) maps
@@ -191,7 +193,7 @@ class triple_tests
             json_fields::FROM => null,
             json_fields::VERB => null,
             json_fields::TO => null
-        ], new user_message());
+        ], $msg);
         $t->assert($test_name, $trp->get_from()?->id() ?? 0, 0);
         $test_name = 'api_mapper with a null to leaves the to phrase empty';
         $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
@@ -245,13 +247,13 @@ class triple_tests
         // build a target phrase ("Pi") that should appear in the triple's related list, and
         // wrap it in a one-entry json array. The frontend phrase_list api_mapper then turns
         // it into a phrase_list whose api_array round-trips back to the same json shape.
-        $target_trp = $t_trp->triple_pi();
+        $target_trp = $t_trp->triple_pi_name();
         $related_json = [[
             json_fields::OBJECT_CLASS => json_fields::CLASS_TRIPLE,
             json_fields::ID => $target_trp->id(),
             json_fields::NAME => $target_trp->name(),
         ]];
-        $symbol_trp = $t_trp->triple_pi_symbol();
+        $symbol_trp = $t_trp->triple_pi();
         $trp_json = json_decode($symbol_trp->api_json(), true);
         $trp_json[json_fields::PHRASES_RELATED] = $related_json;
         $trp_ui = new triple_ui(json_encode($trp_json));
@@ -260,14 +262,14 @@ class triple_tests
             $trp_ui->phr_lst !== null and !$trp_ui->phr_lst->is_empty());
         $test_name = 'triple ui api_array re-emits phrases_related';
         $t->assert_true($t->name . $test_name,
-            array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array()));
+            array_key_exists(json_fields::PHRASES_RELATED, $trp_ui->api_array([], $msg_ui)));
         // negative: a triple without phrases_related in its json keeps the field null
         $bare_trp_ui = new triple_ui($symbol_trp->api_json());
         $test_name = 'triple ui phrases_related stays null when json key is absent';
         $t->assert_true($t->name . $test_name, $bare_trp_ui->phr_lst === null);
         $test_name = 'triple ui api_array omits phrases_related when null';
         $t->assert_true($t->name . $test_name,
-            !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array()));
+            !array_key_exists(json_fields::PHRASES_RELATED, $bare_trp_ui->api_array([], $msg_ui)));
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_trp->triple(), $t->usr_system);
@@ -281,7 +283,7 @@ class triple_tests
         // e.g. if the calculation definition is not yet set 
         $trp = $t_trp->triple();
         $trp->set_impact(impacts::HIGH);
-        $json_ex = $trp->export_json([], false);
+        $json_ex = $trp->export_json($msg, [], false);
         // the assert follows the json export above, so a page timeout is used to avoid a false timeout
         $t->assert($ts . 'export includes the impact', $json_ex[json_fields::IMPACT] ?? null, impacts::HIGH, $t::TIMEOUT_LIMIT_PAGE);
         // re-import the exported json and check that the impact is read back
@@ -293,11 +295,11 @@ class triple_tests
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_trp = $t_trp->triple_name_only();
         $db_trp = $t_trp->triple();
-        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
 
         $in_trp = $t_trp->triple_link_only();
         $db_trp = $t_trp->triple();
-        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
 
     }
 

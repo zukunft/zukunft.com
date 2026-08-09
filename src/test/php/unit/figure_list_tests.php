@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_creator.php';
@@ -55,6 +56,7 @@ class figure_list_tests
     {
 
         // init
+        $msg = new user_message();
         $sc = new sql_creator();
         $t_fig = new test_figures($t);
         $t->name = 'figure->';
@@ -75,14 +77,14 @@ class figure_list_tests
 
         $t->subheader($ts . 'api');
 
-        $fig_lst = $t_fig->figure_list();
+        $fig_lst = $t_fig->figure_list($msg);
         $t->assert_api($fig_lst, 'figure_list_without_phrases');
         $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_types::INCL_PHRASES]);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $fig_lst = $t_fig->figure_list();
+        $fig_lst = $t_fig->figure_list($msg);
         $t->assert_api_to_ui($fig_lst, new figure_list_ui());
 
     }

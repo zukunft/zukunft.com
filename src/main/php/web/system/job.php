@@ -40,6 +40,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -267,11 +269,11 @@ class job extends db_object
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
         $vars[json_fields::TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
         $vars[json_fields::TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);

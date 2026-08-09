@@ -84,8 +84,12 @@ include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -93,12 +97,11 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'phrase_fields.php';
-include_once html_paths::SHARED_CONST_FIELDS . 'word_fields.php';
+
 //include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -112,6 +115,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -122,19 +126,18 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class word extends sandbox_code_id
 {
@@ -285,9 +288,9 @@ class word extends sandbox_code_id
      * TODO Prio 0 make sure that all fields are mapped to the url
      * @return array parent url array extended with the plural and view of this word, without empty strings
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_arr = parent::to_url_array();
+        $url_arr = parent::to_url_array($msg);
         $url_arr[url_var::PLURAL] = $this->plural;
         $url_arr[url_var::VIEW] = $this->view_id;
         if ($this->impact > 0) {
@@ -457,23 +460,23 @@ class word extends sandbox_code_id
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         // usage and impact are not included here because this system value is never updated by the frontend
         $vars[json_fields::PLURAL] = $this->plural;
         if ($this->has_parent()) {
-            $vars[json_fields::PARENT] = $this->parent->api_array();
+            $vars[json_fields::PARENT] = $this->parent->api_array($typ_lst, $msg);
         }
         // usage and impact are included here because to allow
         // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
         $vars[json_fields::VIEW] = $this->view_id;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
-            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -499,9 +502,9 @@ class word extends sandbox_code_id
      * @param int $usr_id the id of the session user to load the word for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
 
@@ -587,9 +590,9 @@ class word extends sandbox_code_id
      * @param int $levels the number of parent levels
      * @return phrase_list capped by the user-specific frontend config limit
      */
-    function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    function parents(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        return $this->related($phr_lst, foaf_direction::UP);
+        return $this->related($msg, $phr_lst, foaf_direction::UP);
     }
 
     /**
@@ -601,9 +604,9 @@ class word extends sandbox_code_id
      * @param int $levels the number of child levels
      * @return phrase_list capped by the user-specific frontend config limit
      */
-    function children(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
+    function children(user_message $msg, ?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
-        return $this->related($phr_lst, foaf_direction::DOWN);
+        return $this->related($msg, $phr_lst, foaf_direction::DOWN);
     }
 
     /**
@@ -646,7 +649,7 @@ class word extends sandbox_code_id
      * @param foaf_direction $direction foaf_direction::UP for parents, foaf_direction::DOWN for children
      * @return phrase_list capped by the user-specific frontend config limit
      */
-    private function related(?phrase_list $phr_lst, foaf_direction $direction): phrase_list
+    private function related(user_message $msg, ?phrase_list $phr_lst, foaf_direction $direction): phrase_list
     {
         if ($phr_lst !== null) {
             if ($direction == foaf_direction::UP) {
@@ -663,7 +666,7 @@ class word extends sandbox_code_id
         if ($ui_sys?->cfg !== null) {
             $limit = $ui_sys->cfg->get_by(
                 [words::RELATED, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                def::FALLBACK_PHRASES_RELATED
+                $msg, def::FALLBACK_PHRASES_RELATED
             );
         } else {
             $limit = def::FALLBACK_PHRASES_RELATED;
@@ -719,14 +722,14 @@ class word extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
+    function dsp_type_selector(string $form, user_message $msg, string $style = '', ?type_lists $typ_lst = null): string
     {
         global $ui_sys;
         $result = '';
-        if ($ui_sys->typ_lst_cache->phr_typ->get_code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
-            $result .= ' type: ' . $ui_sys->typ_lst_cache->phr_typ->name($this->type_id());
+        if ($ui_sys->typ_lst_cache->phr_typ->get_code_id($this->type_id($msg)) == phrase_types::FORMULA_LINK) {
+            $result .= ' type: ' . $ui_sys->typ_lst_cache->phr_typ->name($this->type_id($msg));
         } else {
-            $result .= $this->phrase_type_selector($form, $typ_lst);
+            $result .= $this->phrase_type_selector($form, $msg, $typ_lst);
         }
         return $result;
     }
@@ -738,7 +741,7 @@ class word extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
+    public function phrase_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list,
@@ -747,7 +750,7 @@ class word extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id();
+        $used_phrase_id = $this->type_id($msg);
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
@@ -851,12 +854,12 @@ class word extends sandbox_code_id
      * @returns bool true if the word has the given type
      * TODO Switch to php 8.1 and real ENUM
      */
-    function is_type(string $type): bool
+    function is_type(string $type, user_message $msg): bool
     {
         global $ui_sys;
         $result = false;
-        if ($this->type_id() != Null) {
-            if ($this->type_id() == $ui_sys->typ_lst_cache->phr_typ->id($type)) {
+        if ($this->type_id($msg) != Null) {
+            if ($this->type_id($msg) == $ui_sys->typ_lst_cache->phr_typ->id($type)) {
                 $result = true;
             }
         }
@@ -866,17 +869,17 @@ class word extends sandbox_code_id
     /**
      * @return bool true if the word has the type "time" e.g. "2022 (year)"
      */
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::TIME);
+        return $this->is_type(phrase_types::TIME, $msg);
     }
 
     /**
      * @return bool true if the word has the type "time" e.g. "monthly"
      */
-    function is_time_jump(): bool
+    function is_time_jump(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::TIME_JUMP);
+        return $this->is_type(phrase_types::TIME_JUMP, $msg);
     }
 
     /**
@@ -884,28 +887,28 @@ class word extends sandbox_code_id
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
-    function is_measure(): bool
+    function is_measure(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::MEASURE);
+        return $this->is_type(phrase_types::MEASURE, $msg);
     }
 
     /**
      * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
      * if used for a value these phrases are shown only as a tooltip
      */
-    function is_info(): bool
+    function is_info(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::INFO);
+        return $this->is_type(phrase_types::INFO, $msg);
     }
 
     /**
      * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
      */
-    function is_scaling(): bool
+    function is_scaling(user_message $msg): bool
     {
         $result = false;
-        if ($this->is_type(phrase_types::SCALING)
-            or $this->is_type(phrase_types::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_types::SCALING, $msg)
+            or $this->is_type(phrase_types::SCALING_HIDDEN, $msg)) {
             $result = true;
         }
         return $result;
@@ -914,17 +917,17 @@ class word extends sandbox_code_id
     /**
      * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::PERCENT);
+        return $this->is_type(phrase_types::PERCENT, $msg);
     }
 
     /**
      * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
      */
-    function is_hidden(): bool
+    function is_hidden(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN, $msg);
     }
 
     /*
@@ -943,7 +946,7 @@ class word extends sandbox_code_id
      *             that the Zurich (city) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function header(?phrase $is_part_of = null): string
+    function header(user_message $msg, ?phrase $is_part_of = null): string
     {
         $html = new html_base();
 
@@ -965,7 +968,7 @@ class word extends sandbox_code_id
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $this->url_edit();
+            $url = $this->url_edit($msg);
             $title .= $html->ref($url, $html->span($html->esc($this->name()), styles::STYLE_GLYPH), 'Rename word', '', true);
             $result .= $html->dsp_text_h1($title);
         }
@@ -983,7 +986,7 @@ class word extends sandbox_code_id
      *
      * @return string the url to the change word view e.g. /http/view.php?m=3&id=1&9m=90&9id=1&8k=USD&8o=...
      */
-    private function url_edit(): string
+    private function url_edit(user_message $msg): string
     {
         $html = new html_base();
         $url = $html->url_with_back(
@@ -994,7 +997,7 @@ class word extends sandbox_code_id
             url_var::NAME => $this->name(),
             url_var::PLURAL => $this->plural,
             url_var::DESCRIPTION => $this->get_description(),
-            url_var::PHRASE_TYPE => $this->type_id(),
+            url_var::PHRASE_TYPE => $this->type_id($msg),
         ]);
         if ($pre != '') {
             $url .= '&' . $pre;
@@ -1044,24 +1047,24 @@ class word extends sandbox_code_id
     /**
      * HTML code to edit all word fields
      */
-    function dsp_edit(string $back = ''): string
+    function dsp_edit(user_message $msg, string $back = ''): string
     {
         global $ui_sys;
-        $row_limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], def::FALLBACK_DB_PAGE_ROWS);
+        $row_limit = $ui_sys->cfg->get_by([words::ROW, words::LIMIT], $msg, def::FALLBACK_DB_PAGE_ROWS);
         $html = new html_base();
-        $phr_lst_up = $this->parents();
-        $phr_lst_down = $this->children();
-        $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $back);
-        $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $back);
+        $phr_lst_up = $this->parents($msg);
+        $phr_lst_down = $this->children($msg);
+        $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $msg, $back);
+        $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $msg, $back);
         $wrd_ui = $this;
         // collect the display code for the user changes
         $dsp_log = '';
-        $changes = $this->dsp_hist(1, $row_limit, '', $back);
+        $changes = $this->dsp_hist($msg, 1, $row_limit, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        $changes = $this->dsp_hist_links(0, $row_limit, '', $back);
+        $changes = $this->dsp_hist_links($msg,0, $row_limit, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
@@ -1070,7 +1073,7 @@ class word extends sandbox_code_id
             $dsp_graph,
             $dsp_log,
             //$this->dsp_formula($back),
-            $this->dsp_type_selector(views::WORD_EDIT),
+            $this->dsp_type_selector(views::WORD_EDIT, $msg),
             $back);
     }
 
@@ -1078,9 +1081,9 @@ class word extends sandbox_code_id
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, verb_list $link_types, string $back = ''): string
     {
-        return $this->phrase()->dsp_graph($direction, $link_types, $back);
+        return $this->phrase()->dsp_graph($direction, $msg, $link_types, $back);
     }
 
     /**
@@ -1182,16 +1185,16 @@ class word extends sandbox_code_id
      * maybe move this to a new object user_log_display
      * because this is very similar to a value linked function
      */
-    function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
+    function dsp_hist(user_message $msg, int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, '', null);
+        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, $msg, '', null);
     }
 
     /**
      * display the history of a word
      */
-    function dsp_hist_links($page, $size, $call, $back): string
+    function dsp_hist_links($msg, $page, $size, $call, $back): string
     {
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
@@ -1203,7 +1206,7 @@ class word extends sandbox_code_id
         $log_ui->size = $size;
         $log_ui->call = $call;
         $log_ui->back = $back;
-        $result .= $log_ui->dsp_hist_links();
+        $result .= $log_ui->dsp_hist_links($msg);
 
         log_debug('done');
         return $result;
@@ -1240,18 +1243,19 @@ class word extends sandbox_code_id
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->ex_system();
-        $msk_lst = $msk_lst->ex_non_phrase();
+        $msk_lst = $msk_lst->ex_system($msg);
+        $msk_lst = $msk_lst->ex_non_phrase($msg);
         // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
         // existing view and detect whether the user actually changed it (see url_var::PRE);
         // a re-render after a save error keeps the original db snapshot via pre_value

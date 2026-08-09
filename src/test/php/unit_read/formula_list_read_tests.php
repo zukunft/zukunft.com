@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
@@ -50,6 +51,7 @@ class formula_list_read_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         // init
         $t->name = 'formula list read db->';
@@ -62,12 +64,12 @@ class formula_list_read_tests
         $test_name = 'loading formula names with pattern return the expected formula';
         $pattern = substr(formula_names::SCALE_TO_SEC, 0, -1);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_names($pattern);
+        $frm_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), formula_names::SCALE_TO_SEC);
 
         // test load by formula list by ids
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_by_ids([1, 2]);
+        $frm_lst->load_by_ids([1, 2], $msg);
         $result = $frm_lst->name();
         $target = formula_names::SCALE_TO_SEC . ',' . formula_names::SCALE_HOUR; // order adjusted based on the number of usage
         if ($result != $target) {
@@ -89,38 +91,38 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the word second
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $trp_sec = new triple($t->usr1);
-        $trp_sec->load_by_name(triple_names::SECOND);
+        $trp_sec->load_by_name(triple_names::SECOND, $msg);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_by_triple_ref($trp_sec);
+        $frm_lst->load_by_triple_ref($trp_sec, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::SCALE_TO_SEC]);
 
         // test loading the formulas that use the results related to the triple "Zurich (city)"
         $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
-        $trp_zh->load_by_name(triple_names::CITY_ZH);
+        $trp_zh->load_by_name(triple_names::CITY_ZH, $msg);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_by_triple_ref($trp_zh);
+        $frm_lst->load_by_triple_ref($trp_zh, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::BIGGEST_CITY]);
 
         // test loading the formulas that use the results related to the verb "time step"
         $test_name = 'formulas that use the verb "time step" are at least "prior"';
         $vrb_time_step = new verb();
-        $vrb_time_step->load_by_name(verbs::TIME_STEP_NAME_FORMULA);
+        $vrb_time_step->load_by_name(verbs::TIME_STEP_NAME_FORMULA, $msg);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_by_verb_ref($vrb_time_step);
+        $frm_lst->load_by_verb_ref($vrb_time_step, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::PRIOR]);
 
         // test loading the formulas that use the results of a given formula
         $test_name = 'formulas that use the formula "this" are at least "increase"';
         $frm_this = new formula($t->usr1);
-        $frm_this->load_by_name(formula_names::THIS_NAME);
+        $frm_this->load_by_name(formula_names::THIS_NAME, $msg);
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_by_formula_ref($frm_this);
+        $frm_lst->load_by_formula_ref($frm_this, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::INCREASE]);
 
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);
-        $frm_lst->load_like('i');
+        $frm_lst->load_like('i', $msg);
         $t->assert_contains($test_name, $frm_lst->names(), formula_names::INCREASE);
     }
 

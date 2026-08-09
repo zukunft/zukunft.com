@@ -114,10 +114,11 @@ class formula_list extends sandbox_list_named
     /**
      * fill the formula list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -130,12 +131,11 @@ class formula_list extends sandbox_list_named
                     $frm_id = $db_row[formula_fields::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->get_user());
-                        $frm->row_mapper_sandbox($db_row);
+                        $frm->row_mapper_sandbox($db_row, $msg);
                         // TODO check if this is really needed
                         if ($frm->name() <> '') {
                             $name_wrd = new word($this->get_user());
-                            $name_wrd->load_by_name($frm->name());
-                            $frm->name_wrd = $name_wrd;
+                            $name_wrd->load_by_name($frm->name(), $msg);
                         }
                         $this->add_obj($frm);
                         $result = true;
@@ -454,9 +454,9 @@ class formula_list extends sandbox_list_named
      * @param int $offset jump over these number of pages
      * @return bool true if at least one formula found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new formula($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new formula($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
     /**
@@ -464,11 +464,11 @@ class formula_list extends sandbox_list_named
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return bool true if at least one formula found
      */
-    function load_by_ids(array $frm_ids): bool
+    function load_by_ids(array $frm_ids, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $frm_ids);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -477,11 +477,11 @@ class formula_list extends sandbox_list_named
      * @param string $pattern the text part that should be used to select the formulas
      * @return bool true if at least one formula has been loaded
      */
-    function load_like(string $pattern): bool
+    function load_like(string $pattern, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -489,11 +489,11 @@ class formula_list extends sandbox_list_named
      * @param phrase $phr a phrase used to select the formulas
      * @return bool true if at least one formula found
      */
-    function load_by_phr(phrase $phr): bool
+    function load_by_phr(phrase $phr, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -501,11 +501,11 @@ class formula_list extends sandbox_list_named
      * @param phrase_list $phr_lst a phrase list used to select the formulas
      * @return bool true if at least one formula found
      */
-    function load_by_phr_lst(phrase_list $phr_lst): bool
+    function load_by_phr_lst(phrase_list $phr_lst, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -513,11 +513,11 @@ class formula_list extends sandbox_list_named
      * @param word $wrd the word that
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_word_ref(word $wrd): bool
+    function load_by_word_ref(word $wrd, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_word_ref($db_con->sql_creator(), $wrd);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -525,11 +525,11 @@ class formula_list extends sandbox_list_named
      * @param triple $trp the triple that
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_triple_ref(triple $trp): bool
+    function load_by_triple_ref(triple $trp, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_triple_ref($db_con->sql_creator(), $trp);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -537,11 +537,11 @@ class formula_list extends sandbox_list_named
      * @param verb $vrb the verb that
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_verb_ref(verb $vrb): bool
+    function load_by_verb_ref(verb $vrb, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_verb_ref($db_con->sql_creator(), $vrb);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -549,11 +549,11 @@ class formula_list extends sandbox_list_named
      * @param formula $frm the formula that
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_formula_ref(formula $frm): bool
+    function load_by_formula_ref(formula $frm, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_formula_ref($db_con->sql_creator(), $frm);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -562,11 +562,11 @@ class formula_list extends sandbox_list_named
      * @param int $page the offset
      * @return bool true if at least one word found
      */
-    function load_all(int $limit, int $page): bool
+    function load_all(int $limit, int $page, user_message $msg): bool
     {
         global $db_con;
         $qp = $this->load_sql_all($db_con, $limit, $page);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
 
@@ -599,16 +599,17 @@ class formula_list extends sandbox_list_named
 
     /**
      * create an array with the export json fields of this formula
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $frm_lst = [];
         foreach ($this->lst() as $frm) {
             if (get_class($frm) == formula::class) {
-                $frm_lst[] = $frm->export_json($exp_typ, $do_load);
+                $frm_lst[] = $frm->export_json($msg, $exp_typ, $do_load);
             } else {
                 log_err('The function formula_list->export_json returns ' . $frm->dsp_id()
                     . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');
@@ -690,9 +691,9 @@ class formula_list extends sandbox_list_named
      * @param sql_db $db_con the active database connection
      * @return int|null the total number of formulas (without user-specific changes)
      */
-    function count_db(sql_db $db_con): ?int
+    function count_db(sql_db $db_con, user_message $msg): ?int
     {
-        return $db_con->count(formula::class);
+        return $db_con->count(formula::class, $msg);
     }
 
     /**
@@ -719,15 +720,15 @@ class formula_list extends sandbox_list_named
      * upgrade functions
      */
 
-    function db_ref_refresh(sql_db $db_con): bool
+    function db_ref_refresh(sql_db $db_con, user_message $msg): bool
     {
         $result = true;
 
-        $total = $this->count_db($db_con);
+        $total = $this->count_db($db_con, $msg);
         $page = 1;
         $pages = ceil($total / self::UPDATE_BLOCK_SIZE);
         while ($page <= $pages and $result) {
-            $this->load_all(self::UPDATE_BLOCK_SIZE, $page);
+            $this->load_all(self::UPDATE_BLOCK_SIZE, $page, $msg);
             foreach ($this->lst() as $frm) {
                 $frm->set_ref_text();
             }
@@ -774,7 +775,7 @@ class formula_list extends sandbox_list_named
     /**
      * @return int the number of suggested calculation blocks to update all formulas
      */
-    function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
+    function calc_blocks(sql_db $db_con, user_message $msg, int $total_formulas = 0): int
     {
         global $cfg;
 
@@ -783,7 +784,7 @@ class formula_list extends sandbox_list_named
         $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], def::FALLBACK_RESPONSE_TIME);
 
         if ($total_formulas == 0) {
-            $total_formulas = $db_con->count(formula::class);
+            $total_formulas = $db_con->count(formula::class, $msg);
         }
         $total_expected_time = $total_formulas * $avg_calc_time;
         return max(1, round($total_expected_time / ($ui_response_time * 1000)));
@@ -799,11 +800,9 @@ class formula_list extends sandbox_list_named
      * @param term_list $trm_lst the cached phrases that does not need to be loaded from the db again
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_with_cache(import $imp, term_list $trm_lst): user_message
+    function save_with_cache(import $imp, term_list $trm_lst, user_message $msg): user_message
     {
         global $cfg;
-
-        $msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::FORMULAS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $save_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -826,19 +825,24 @@ class formula_list extends sandbox_list_named
             // create a new user message object for each try
             // to get only the user messages of the last try
             // and to report only the remaining messages
-            $lst_usr_msg = new user_message();
-            $ref_usr_msg = new user_message();
-            $trm_usr_msg = new user_message();
+            // TODO check that other list also have independent check messages
+            $msg_load = new user_message($msg->usr);
+            $msg_chk = new user_message($msg->usr);
+            $lst_ins = new user_message($msg->usr);
+            $ref_usr_msg = new user_message($msg->usr);
+            $trm_usr_msg = new user_message($msg->usr);
 
             while ($frm_added and $level < $max_frm_levels) {
 
                 // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
-                $lst_usr_msg = new user_message();
-                $ref_usr_msg = new user_message();
-                $trm_usr_msg = new user_message();
+                $msg_load = new user_message($msg->usr);
+                $msg_chk = new user_message($msg->usr);
+                $lst_ins = new user_message($msg->usr);
+                $ref_usr_msg = new user_message($msg->usr);
+                $trm_usr_msg = new user_message($msg->usr);
 
                 $frm_added = false;
-                $lst_usr_msg->unset_added_depending();
+                $lst_ins->unset_added_depending();
 
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
@@ -871,7 +875,7 @@ class formula_list extends sandbox_list_named
                 $db_lst = new formula_list($this->get_user());
                 // force to load all names including the formulas excluded by the user to potential include the formulas due to the import
                 // TODO add load_all = true also to the other objects
-                $db_lst->load_by_names($load_lst->names(true), true);
+                $db_lst->load_by_names( $load_lst->names(true), $msg_load, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
                 // fill up the cache to prevent loading the same formula again in the next level
@@ -888,7 +892,7 @@ class formula_list extends sandbox_list_named
                 $load_lst->refresh_ref_text($trm_lst, $ref_usr_msg);
 
                 // select the formulas that are ready to be added to the database
-                $load_lst = $load_lst->get_ready($lst_usr_msg, $imp->file_name);
+                $load_lst = $load_lst->get_ready($msg_chk, $imp->file_name);
 
                 // get the formulas that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -906,16 +910,16 @@ class formula_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->merge($add_lst->insert($trm_lst, $imp, formula::class));
+                    $add_lst->insert($trm_lst, $lst_ins, $imp, formula::class);
                     if ($add_lst->count() > 0) {
-                        $lst_usr_msg->set_added_depending();
+                        $lst_ins->set_added_depending();
                         $frm_added = true;
                     }
                     $imp->step_end($add_lst->count(), $save_per_sec);
                 }
 
                 // create the related words
-                $this->save_formulas_words($imp, $lst_usr_msg);
+                $this->save_formulas_words($imp, $lst_ins);
 
                 // fill up the cache to prevent loading the same formula again in the next level
                 // TODO increase speed!
@@ -930,18 +934,24 @@ class formula_list extends sandbox_list_named
             }
 
             // add the user_messages to the last try
+            if (!$msg_load->is_ok()) {
+                $msg->merge($msg_load);
+            }
+            if (!$msg_chk->is_ok()) {
+                $msg->merge($msg_chk);
+            }
             if (!$ref_usr_msg->is_ok()) {
                 $msg->merge($ref_usr_msg);
             }
-            if (!$lst_usr_msg->is_ok()) {
-                $msg->merge($lst_usr_msg);
+            if (!$lst_ins->is_ok()) {
+                $msg->merge($lst_ins);
             }
             if (!$trm_usr_msg->is_ok()) {
                 $msg->merge($trm_usr_msg);
             }
 
             // create any missing sql update functions and update the formulas
-            $msg->merge($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
+            $this->update($db_lst_all, $msg, $imp, formula::class, $upd_per_sec);
 
 
             // fill up the main list with the words
@@ -954,7 +964,7 @@ class formula_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $msg->merge($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
+            $this->delete($db_lst_all, $msg, $imp, formula::class, $del_per_sec);
 
         }
 

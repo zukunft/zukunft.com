@@ -160,7 +160,7 @@ class sandbox_value extends sandbox
     }
 
     // TODO review (split value objects?)
-    function value(): float|string|DateTime|null
+    function value(user_message $msg): float|string|DateTime|null
     {
         if ($this->number() != null) {
             return $this->number();
@@ -309,7 +309,7 @@ class sandbox_value extends sandbox
      * similar to the corresponding function in the "result" class
      * @returns string the html text with the formatted value
      */
-    function val_formatted(): string
+    function val_formatted(user_message $msg): string
     {
         global $ui_sys;
         $cfg = $ui_sys->cfg;
@@ -318,7 +318,7 @@ class sandbox_value extends sandbox
         // TODO check that the phrases are set
 
         if (!$this->is_null()) {
-            if ($this->is_percent()) {
+            if ($this->is_percent($msg)) {
                 $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
@@ -339,9 +339,9 @@ class sandbox_value extends sandbox
     /**
      * @return bool true if one of the phrases that classify this value is of type percent
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        if ($this->grp->has_percent()) {
+        if ($this->grp->has_percent($msg)) {
             return true;
         } else {
             return false;

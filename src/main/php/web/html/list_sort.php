@@ -40,6 +40,7 @@ include_once html_paths::HTML . 'table.php';
 include_once html_paths::HTML . 'scopes.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'words.php';
@@ -48,6 +49,7 @@ include_once html_paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -59,11 +61,13 @@ class list_sort
     /**
      * TODO review
      * @param phrase $phr the start phrase to select the rows
+     * @param user_message $msg to collect the load warnings for the user
      * @param data_object|null $cac the data cache use to reduce the backend traffic
      * @return string html code to display a spreadsheet
      */
     function list_sort(
         phrase       $phr,
+        user_message $msg,
         ?data_object $cac = null
     ): string
     {
@@ -81,29 +85,29 @@ class list_sort
         if ($phr_lst->is_empty()) {
             $phr_lst = new phrase_list();
             $trp = new triple();
-            $trp->load_by_name('global warming');
+            $trp->load_by_name('global warming', $msg);
             $phr_lst->add($trp->phrase());
             $wrd = new word();
-            $wrd->load_by_name('populism');
+            $wrd->load_by_name('populism', $msg);
             $phr_lst->add($wrd->phrase());
             $wrd = new word();
-            $wrd->load_by_name('health');
+            $wrd->load_by_name('health', $msg);
             $phr_lst->add($wrd->phrase());
             $wrd = new word();
-            $wrd->load_by_name('poverty');
+            $wrd->load_by_name('poverty', $msg);
             $phr_lst->add($wrd->phrase());
             $wrd = new word();
-            $wrd->load_by_name('education');
+            $wrd->load_by_name('education', $msg);
             $phr_lst->add($wrd->phrase());
             $trillion = new word();
 
-            $trillion->load_by_name('trillion');
+            $trillion->load_by_name('trillion', $msg);
             $billion = new word();
-            $billion->load_by_name('billion');
+            $billion->load_by_name('billion', $msg);
             $usd = new word();
-            $usd->load_by_name('USD');
+            $usd->load_by_name('USD', $msg);
             $htp = new word();
-            $htp->load_by_name('htp');
+            $htp->load_by_name('htp', $msg);
         } else {
             $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION);
             $billion = $cac?->phr_lst->get_by_name(word_names::BILLION);

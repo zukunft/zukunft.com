@@ -45,8 +45,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -57,11 +59,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -71,7 +73,6 @@ use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
@@ -87,6 +88,7 @@ class value_tests
 
         // init
         $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $tl = new test_lib();
@@ -135,7 +137,7 @@ class value_tests
             source_fields::FLD_ID => null,
             fields::FLD_LAST_UPDATE => null,
         ];
-        $val->row_mapper_sandbox_multi($db_row, '');
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert($test_name, $val->phrase_list()->count(), 2);
         $test_name = '... and the group id of the prime union row value is set';
         $t->assert_true($test_name, $val->id() != 0);
@@ -145,7 +147,7 @@ class value_tests
         $val_bad = new value($t->usr1);
         $db_row[$id_flds[0]] = null;
         $db_row[$id_flds[1]] = null;
-        $val_bad->row_mapper_sandbox_multi($db_row, '');
+        $val_bad->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert_true($test_name, $val_bad->id() == 0 or $val_bad->id() == '');
 
         $t->subheader($ts . 'scaling');
@@ -207,13 +209,13 @@ class value_tests
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         $t->subheader($ts . 'sql setup');
-        $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
+        $val = $t_val->value($msg); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
         $t->subheader($ts . 'sql read');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $val_16 = $t_val->value_16();
         $val_txt = $t_val->text_value();
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
@@ -223,7 +225,7 @@ class value_tests
         $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $val_3 = $t_val->value_prime_3();
         $val_16 = $t_val->value_16();
         $val_17 = $t_val->value_17_plus();
@@ -245,7 +247,7 @@ class value_tests
 
         // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
         $val_0 = $t_val->value_zero();
@@ -281,7 +283,7 @@ class value_tests
         $t->assert_sql_insert($sc, $val_txt);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
-        $val = $t_val->value_incomplete();
+        $val = $t_val->value_incomplete($msg);
         $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
@@ -289,7 +291,7 @@ class value_tests
         // TODO add test to change owner of the normal (not user-specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
@@ -317,50 +319,50 @@ class value_tests
         // gating as the seq-id branch (see word_tests protection); a normal user may neither raise
         // a value to admin protection (self-lock) nor reduce it below the stored level
         global $sys;
-        $val_db = $t_val->value_protected(); // a value with admin protection stored in the database
+        $val_db = $t_val->value_protected($msg); // a value with admin protection stored in the database
         $protect_denied = 'Only an admin'; // stable start of both protection warning translations
 
         $test_name = 'a normal user cannot reduce the value protection level';
-        $msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value reduction is reported to the user';
         $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can reduce the value protection level';
-        $msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_admin);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_PROTECT);
-        $val_imp->check_protection_change($val_db, $t->usr_admin, $msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $test_name = 'the admin value reduction is not reported';
         $t->assert($test_name, $msg->all_message_text(), '');
 
         $test_name = 'a normal user cannot raise the value protection to no change';
-        $msg = new user_message();
-        $val_imp = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_imp = $t_val->value($msg);
         $val_imp->set_protection_by_code_id(protection_types::NO_CHANGE);
-        $val_imp->check_protection_change($val_db, $t->usr_normal, $msg);
+        $val_imp->check_protection_change($val_db, $msg);
         $t->assert($test_name, $val_imp->protection_id(), $val_db->protection_id());
         $test_name = 'the denied value raise is reported to the user';
         $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'a normal user cannot set the admin protection on a new value';
-        $msg = new user_message();
-        $val_new = $t_val->value();
+        $msg = new user_message($t->usr_normal);
+        $val_new = $t_val->value($msg);
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_normal, $msg);
+        $val_new->check_protection_change(null, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::USER));
         $test_name = 'the denied protection of the new value is reported to the user';
         $t->assert_text_contains($test_name, $msg->all_message_text(), $protect_denied);
 
         $test_name = 'an admin user can set the admin protection on a new value';
-        $msg = new user_message();
-        $val_new = $t_val->value();
+        $msg = new user_message($t->usr_admin);
+        $val_new = $t_val->value($msg);
         $val_new->set_protection_by_code_id(protection_types::ADMIN);
-        $val_new->check_protection_change(null, $t->usr_admin, $msg);
+        $val_new->check_protection_change(null, $msg);
         $t->assert($test_name, $val_new->protection_id(), $sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         $test_name = 'the admin protection of the new value is not reported';
         $t->assert($test_name, $msg->all_message_text(), '');
@@ -370,7 +372,7 @@ class value_tests
         // see value::is_readable_by and value_list::filter_readable_by
         $private_id = $sys->typ_lst->shr_typ->id(share_types::PRIVATE);
 
-        $val_priv = $t_val->value();
+        $val_priv = $t_val->value($msg);
         $val_priv->set_owner_id($t->usr1->id);
         $val_priv->set_share_id($private_id);
         $test_name = 'the owner may read their own private value';
@@ -380,7 +382,7 @@ class value_tests
         $test_name = 'an admin may read another user private value';
         $t->assert_true($test_name, $val_priv->is_readable_by($t->usr_admin));
 
-        $val_pub = $t_val->value();
+        $val_pub = $t_val->value($msg);
         $val_pub->set_owner_id($t->usr1->id);
         $test_name = 'a public value is readable by another user';
         $t->assert_true($test_name, $val_pub->is_readable_by($t->usr2));
@@ -418,7 +420,7 @@ class value_tests
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t_val->value(), $t->usr_system);
+        $t->assert_ex_and_import($t_val->value($msg), $t->usr_system);
         $t->assert_ex_and_import($t_val->value_16_filled(), $t->usr_system);
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($t->usr1), $json_file);
@@ -428,7 +430,7 @@ class value_tests
 
         $test_case = 'show the unit after the value';
         $val = $tl->ui_value($t_val->light_speed());
-        $result = $tl->text_from_html($val->with_unit_and_info());
+        $result = $tl->text_from_html($val->with_unit_and_info($msg_ui));
         $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triple_names::M_PER_S;
         $t->assert($test_case, $result, $target);
 
@@ -443,13 +445,13 @@ class value_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $val = $t_val->value();
+        $val = $t_val->value($msg);
         // TODO add class field to api message
         $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit(), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=32770">3.14</a>');
+        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 

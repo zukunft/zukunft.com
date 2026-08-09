@@ -47,19 +47,19 @@ PREPARE formula_insert_log_11110011110100000_user_call
     SELECT formula_insert_log_11110011110100000_user
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
 
-SELECT formula_insert_log_11110011110100000_user (
-               3::bigint,
-               1::smallint,
-               119::smallint,
-               'scale minute to sec'::text,
-               1::bigint,
-               36::smallint,
-               'to convert times in minutes to seconds and the other way round'::text,
-               31::smallint,
-               1::smallint,
-               33::smallint,
-               '{t20}={w103}*60'::text,
-               32::smallint,
-               '"second (time)" = "minute" * 60'::text,
-               886::smallint,
-               '\text{s} = 60 \cdot \text{min}'::text);
+SELECT formula_insert_log_11110011110100000_user
+       (3::bigint,
+        1::smallint,
+        119::smallint,
+        'scale minute to sec'::text,
+        1::bigint,
+        34::smallint,
+        'to convert times in minutes to seconds and the other way round'::text,
+        31::smallint,
+        1::smallint,
+        33::smallint,
+        '{t60}={w103}*60'::text,
+        32::smallint,
+        '"second (time)" = "minute" * 60'::text,
+        886::smallint,
+        '\text{s} = 60 \cdot \text{min}'::text);

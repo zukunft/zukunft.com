@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_link.php';
@@ -144,8 +145,8 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_SYMBOL_ID);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t_trp->triple_list_one()->phrase_list()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), [values::PI_SYMBOL_ID]);
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
@@ -262,15 +263,16 @@ class group_tests
         group_link   $phr_grp_lnk,
         group        $grp): void
     {
+        $msg = new user_message();
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+        $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp, $msg);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+            $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp, $msg);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

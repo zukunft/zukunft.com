@@ -132,7 +132,7 @@ class verb_list extends type_list
      * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction): sql_par
+    function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction, user_message $msg): sql_par
     {
         $qp = new sql_par(self::class);
         if ($phr->id() != 0) {
@@ -143,7 +143,7 @@ class verb_list extends type_list
                 $qp->name .= '_down';
             }
         } else {
-            log_err('The phrase id must be set to load a verb list');
+            log_err_msg('The phrase id must be set to load a verb list', $msg);
             $qp->name = '';
         }
 
@@ -177,7 +177,12 @@ class verb_list extends type_list
      * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
      * @return bool true if at least one verb is found
      */
-    function load_by_linked_phrases(sql_db $db_con, phrase $phr, foaf_direction $direction): bool
+    function load_by_linked_phrases(
+        sql_db         $db_con,
+        phrase         $phr,
+        foaf_direction $direction,
+        user_message   $msg
+    ): bool
     {
 
         $result = false;
@@ -189,16 +194,16 @@ class verb_list extends type_list
               zu_err("The word id, the direction and the user (".$this->get_user()->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
-            $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction);
+            $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction, $msg);
             if ($qp->name != '') {
                 $vrb_lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
                 $vrb_id_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
-                $db_vrb_lst = $db_con->get($qp, 'verb list');
+                $db_vrb_lst = $db_con->get($qp, $msg, 'verb list');
                 if ($db_vrb_lst != null) {
                     foreach ($db_vrb_lst as $db_vrb) {
                         if (!in_array($db_vrb[verb_db::FLD_ID], $vrb_id_lst)) {
                             $vrb = new verb;
-                            $vrb->row_mapper_verb($db_vrb);
+                            $vrb->row_mapper_verb($db_vrb, $msg);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
                             $vrb_id_lst[] = $vrb->id;
@@ -222,15 +227,15 @@ class verb_list extends type_list
      * @param string $class the database name e.g. the table name without s
      * @return array the list of types
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp, 'verb list');
+        $db_lst = $db_con->get($qp, $msg, 'verb list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
-                $vrb->row_mapper_verb($db_row);
+                $vrb->row_mapper_verb($db_row, $msg);
                 $this->add_verb($vrb);
             }
         }

@@ -35,12 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\language_list;
 use Zukunft\ZukunftCom\main\php\web\system\language as ui_language;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -52,6 +54,8 @@ class language_tests
 
         // init
         $t_lan = new test_languages();
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $t->name = 'language->';
         $t->resource_path = 'db/language/';
 
@@ -100,9 +104,9 @@ class language_tests
         $t->subheader($ts . 'ui');
         $test_name = 'header language select list';
         $lst = $t_lan->language_list();
-        $api_json = $lst->api_json_array();
+        $api_json = $lst->api_json_array([], $msg);
         $ui_lst = new language_list();
-        $ui_lst->set_from_json_array($api_json, ui_language::class);
+        $ui_lst->set_from_json_array($api_json, $msg_ui, ui_language::class);
         $html = new html_base();
         $url = $html->url_new(views::START_ID);
         $target = $t->file('unit/language/header_select_list.html');

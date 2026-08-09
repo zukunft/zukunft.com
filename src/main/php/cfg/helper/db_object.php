@@ -229,6 +229,26 @@ class db_object extends IdObject
 
 
     /*
+     * map
+     */
+
+    /**
+     * just reset the modified flag; the field mapping is done by the child objects
+     * moved from the shared IdObject because mapping a database row is a backend only task
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param user_message $msg to enrich with any mapping problem; a missing row is normal-empty and adds no message
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if no mapping problem has been reported on $msg
+     */
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
+    {
+        $this->unset_modified();
+        return $msg->is_ok();
+    }
+
+
+    /*
      * load
      */
 
@@ -319,13 +339,13 @@ class db_object extends IdObject
      * @return bool false if no database row has been found
      *                    which means that no user has changed the standard group settings
      */
-    protected function load_without_id_return(sql_par $qp): bool
+    protected function load_without_id_return(sql_par $qp, user_message $msg): bool
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
-            return $this->row_mapper($db_row);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            return $this->row_mapper($db_row, $msg);
         } else {
             return false;
         }

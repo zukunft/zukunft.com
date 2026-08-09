@@ -39,12 +39,14 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class ui_base
 {
@@ -97,9 +99,9 @@ class ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function num_value(?db_object $dbo = null): string
+    function num_value(user_message $msg, ?db_object $dbo = null): string
     {
-        return $dbo->value();
+        return $dbo->value($msg);
     }
 
     /**

@@ -241,13 +241,14 @@ class formula_link extends sandbox_link
      * @return bool true if the formula link is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = self::FLD_ID
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
             if (key_exists(formula_fields::FLD_ID, $db_row)) {
@@ -262,7 +263,7 @@ class formula_link extends sandbox_link
                 log_warning('formula id missing for ' . $this->dsp_id());
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -409,24 +410,29 @@ class formula_link extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         if ($this->formula_id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
         }
         if ($this->phrase_id() != 0) {
             if ($typ_lst->include_phrases()) {
-                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $msg, $usr);
             } else {
                 $vars[json_fields::PHRASE_ID] = $this->phrase_id();
             }
@@ -732,10 +738,10 @@ class formula_link extends sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(formula|formula_map $frm, phrase $phr, string $class = self::class): int
+    function load_by_link(formula|formula_map $frm, phrase $phr, user_message $msg, string $class = self::class): int
     {
         global $sys;
-        $id = parent::load_by_link_id($frm->id(), $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class);
+        $id = parent::load_by_link_id( $frm->id(), $msg, $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class );
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -774,7 +780,7 @@ class formula_link extends sandbox_link
     {
         if ($this->formula_id() > 0) {
             $frm = new formula($this->get_user());
-            $frm->load_by_id($this->formula_id());
+            $frm->load_by_id($this->formula_id(), $msg);
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
             } else {
@@ -786,7 +792,7 @@ class formula_link extends sandbox_link
         if ($msg->is_ok()) {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->get_user());
-                $phr->load_by_id($this->phrase_id());
+                $phr->load_by_id($this->phrase_id(), $msg);
                 if ($phr->id() != 0) {
                     $this->set_phrase($phr);
                 } else {
@@ -830,18 +836,19 @@ class formula_link extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->formula()?->name() != null) {
-            $vars[json_fields::FORMULA] = $this->formula()->export_json($exp_typ, $do_load);
+            $vars[json_fields::FORMULA] = $this->formula()->export_json($msg, $exp_typ, $do_load);
         }
         if ($this->phrase()?->name() != null) {
-            $vars[json_fields::PHRASE] = $this->phrase()->export_json($exp_typ, $do_load);
+            $vars[json_fields::PHRASE] = $this->phrase()->export_json($msg, $exp_typ, $do_load);
         }
 
         // do not include the default link type in the export
@@ -914,20 +921,22 @@ class formula_link extends sandbox_link
      */
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no one has used this formula
      */
-    function not_used(): bool
+    function not_used(user_message $msg): bool
     {
         log_debug('formula_link->not_used (' . $this->id() . ')');
 
         // to review: maybe replace by a database foreign key check
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no other user has modified the formula link
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
@@ -936,8 +945,8 @@ class formula_link extends sandbox_link
         $result = true;
         $qp = $this->not_changed_sql($db_con->sql_creator());
         $db_con->usr_id = $this->get_user()->id;
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
@@ -959,13 +968,14 @@ class formula_link extends sandbox_link
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
+     * @param user_message $msg to collect the message e.g. if the field cannot be changed
      * @return change the change log object with the presets for formula links
      */
-    function log_upd_field(): change
+    function log_upd_field(user_message $msg): change
     {
         $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
-        if ($this->can_change()) {
+        if ($this->can_change($msg)) {
             $log->set_class(formula_link::class);
         } else {
             $log->set_table(change_tables::FORMULA_LINK_USR);

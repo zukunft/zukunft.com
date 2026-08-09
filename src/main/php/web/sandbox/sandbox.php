@@ -45,21 +45,25 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\component\component_list;
 
 class sandbox extends db_object
 {
@@ -174,9 +178,9 @@ class sandbox extends db_object
     /**
      * @return array parent url array extended with the share and protection of this sandbox object
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
+        $url_array = parent::to_url_array($msg);
         $url_array[url_var::SHARE] = $this->share_id;
         $url_array[url_var::PROTECTION] = $this->protection_id;
         return $url_array;
@@ -194,11 +198,11 @@ class sandbox extends db_object
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         if ($this->share_id != null) {
             $vars[json_fields::SHARE] = $this->share_id;
@@ -245,16 +249,17 @@ class sandbox extends db_object
      * add the user to the load of the user sandbox object e.g. word by id via api
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
+     * @param user_message|Message $msg
      * @param array $data additional data that should be included in the get request
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    function load_by_id(int|string $id, user_message|Message $msg, array $data = [], int $usr_id = 0): bool
     {
         if ($usr_id > 0) {
             $data[url_var::USER] = $usr_id;
         }
-        return parent::load_by_id($id, $data, $usr_id);
+        return parent::load_by_id($id, $msg, $data, $usr_id);
     }
 
 
@@ -270,17 +275,18 @@ class sandbox extends db_object
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_system($msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

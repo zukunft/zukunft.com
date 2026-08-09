@@ -68,6 +68,7 @@ include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
@@ -98,17 +99,18 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\phrase_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class triple extends sandbox_code_id
 {
@@ -326,9 +328,9 @@ class triple extends sandbox_code_id
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true if the triple has been loaded
      */
-    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [url_var::INCL_RELATED => '1'], $usr_id);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id, $msg);
     }
 
     /**
@@ -491,11 +493,11 @@ class triple extends sandbox_code_id
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::FROM] = $this->get_from()?->id();
         $vars[json_fields::VERB] = $this->get_verb()->id();
         $vars[json_fields::TO] = $this->get_to()?->id();
@@ -505,7 +507,7 @@ class triple extends sandbox_code_id
         // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
-            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array();
+            $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
         return $vars;
     }
@@ -514,9 +516,9 @@ class triple extends sandbox_code_id
      * @return array parent url array extended with the triple fields, without empty values (like the
      *               word url array), so that an unset field never masks a posted value in a url union
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
+        $url_array = parent::to_url_array($msg);
         $url_array[url_var::PHRASE_FROM] = $this->get_from()?->id();
         $url_array[url_var::VERB] = $this->get_verb()?->id();
         $url_array[url_var::PHRASE_TO] = $this->get_to()?->id();
@@ -603,7 +605,7 @@ class triple extends sandbox_code_id
             }
             if ($phr == null) {
                 $phr_loaded = new phrase();
-                if ($phr_loaded->load_by_name($id)) {
+                if ($phr_loaded->load_by_name($id, $msg)) {
                     $phr = $phr_loaded;
                 } else {
                     // an unknown phrase name is a user input that the user can correct
@@ -673,13 +675,13 @@ class triple extends sandbox_code_id
      * TODO use ENUM instead of string in php version 8.1
      * @return phrase_types|null the phrase type of this word
      */
-    function type(): ?object
+    function type(user_message $msg): ?object
     {
         global $ui_sys;
-        if ($this->type_id() == null) {
+        if ($this->type_id($msg) == null) {
             return null;
         } else {
-            return $ui_sys->typ_lst_cache->phr_typ->get($this->type_id());
+            return $ui_sys->typ_lst_cache->phr_typ->get($this->type_id($msg));
         }
     }
 
@@ -736,7 +738,7 @@ class triple extends sandbox_code_id
             if ($this->get_from()->id() > 0) {
                 $wrd_lst->add($this->get_from()->obj()->word());
             } elseif ($this->get_from()->id() < 0) {
-                $sub_wrd_lst = $this->get_from()->wrd_lst();
+                $sub_wrd_lst = $this->get_from()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
@@ -750,7 +752,7 @@ class triple extends sandbox_code_id
             if ($this->get_to()->id() > 0) {
                 $wrd_lst->add($this->get_to()->obj()->word());
             } elseif ($this->get_to()->id() < 0) {
-                $sub_wrd_lst = $this->get_to()->wrd_lst();
+                $sub_wrd_lst = $this->get_to()->wrd_lst($msg);
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
@@ -766,9 +768,9 @@ class triple extends sandbox_code_id
     /**
      * @return bool true if the triple is normally not shown to the user e.g. scaling of one is assumed
      */
-    function is_hidden(): bool
+    function is_hidden(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN, $msg);
     }
 
 
@@ -799,7 +801,7 @@ class triple extends sandbox_code_id
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
+    public function phrase_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         global $ui_sys;
         // fall back to the frontend request cache if the caller has no type list,
@@ -808,7 +810,7 @@ class triple extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id();
+        $used_phrase_id = $this->type_id($msg);
         if ($used_phrase_id == null) {
             $used_phrase_id = $typ_lst->phr_typ->default_id();
         }
@@ -887,11 +889,11 @@ class triple extends sandbox_code_id
      * @returns bool true if the word has the given type
      * TODO Switch to php 8.1 and real ENUM
      */
-    function is_type(string $type): bool
+    function is_type(string $type, user_message $msg): bool
     {
         $result = false;
-        if ($this->type() != Null) {
-            if ($this->type()->code_id == $type) {
+        if ($this->type($msg) != Null) {
+            if ($this->type($msg)->code_id == $type) {
                 $result = true;
             }
         }
@@ -901,31 +903,44 @@ class triple extends sandbox_code_id
     /**
      * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::PERCENT);
+        return $this->is_type(phrase_types::PERCENT, $msg);
     }
 
-    function is_measure(): bool
+    function is_measure(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::MEASURE);
+        return $this->is_type(phrase_types::MEASURE, $msg);
+    }
+
+    /**
+     * @return bool true if the triple has the type "scaling" or the hidden scaling type
+     */
+    function is_scaling(user_message $msg): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_types::SCALING, $msg)
+            or $this->is_type(phrase_types::SCALING_HIDDEN, $msg)) {
+            $result = true;
+        }
+        return $result;
     }
 
     /**
      * @return bool true if the triple has the type "time" (e.g. a named period triple)
      */
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::TIME);
+        return $this->is_type(phrase_types::TIME, $msg);
     }
 
     /**
      * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
      * if used for a value these phrases are shown only as a tooltip
      */
-    function is_info(): bool
+    function is_info(user_message $msg): bool
     {
-        return $this->is_type(phrase_types::INFO);
+        return $this->is_type(phrase_types::INFO, $msg);
     }
 
 
@@ -980,18 +995,19 @@ class triple extends sandbox_code_id
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->ex_system();
-        $msk_lst = $msk_lst->ex_non_phrase();
+        $msk_lst = $msk_lst->ex_system($msg);
+        $msk_lst = $msk_lst->ex_non_phrase($msg);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

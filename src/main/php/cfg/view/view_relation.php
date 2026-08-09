@@ -165,12 +165,13 @@ class view_relation extends sandbox_link
      * @return bool true if the view relation is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = view_relation_db::FLD_ID): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = view_relation_db::FLD_ID): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, view_relation_db::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, view_relation_db::FLD_ID);
         if ($result) {
             $prt = new view($this->get_user());
             $prt->id = $db_row[view_relation_db::FLD_PARENT];
@@ -182,7 +183,7 @@ class view_relation extends sandbox_link
             $this->start_pos = $db_row[view_relation_db::FLD_START_POS];
             $this->description = $db_row[fields::FLD_DESCRIPTION];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -280,25 +281,30 @@ class view_relation extends sandbox_link
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             if ($this->parent() != null) {
                 if ($typ_lst->include_views()) {
-                    $vars[json_fields::PARENT] = $this->parent()->api_json_array($typ_lst, $usr);
+                    $vars[json_fields::PARENT] = $this->parent()->api_json_array($typ_lst, $msg, $usr);
                 } else {
                     $vars[json_fields::PARENT_ID] = $this->parent()->id();
                 }
             }
             if ($this->child() != null) {
                 if ($typ_lst->include_views()) {
-                    $vars[json_fields::CHILD] = $this->child()->api_json_array($typ_lst, $usr);
+                    $vars[json_fields::CHILD] = $this->child()->api_json_array($typ_lst, $msg, $usr);
                 } else {
                     $vars[json_fields::CHILD_ID] = $this->child()->id();
                 }
@@ -503,17 +509,18 @@ class view_relation extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         // TODO Prio 0 if requested export the object
         if (!$do_load) {
-            $vars[json_fields::PARENT] = $this->parent()?->export_json($exp_typ, $do_load);
-            $vars[json_fields::CHILD] = $this->child()?->export_json($exp_typ, $do_load);
+            $vars[json_fields::PARENT] = $this->parent()?->export_json($msg, $exp_typ, $do_load);
+            $vars[json_fields::CHILD] = $this->child()?->export_json($msg, $exp_typ, $do_load);
         } else {
             $vars[json_fields::PARENT] = $this->parent()?->name();
             $vars[json_fields::CHILD] = $this->child()?->name();
@@ -659,7 +666,7 @@ class view_relation extends sandbox_link
         $prt = $this->parent();
         if ($prt->id() == 0) {
             if ($prt->name() != '') {
-                if (!$prt->load_by_name($prt->name())) {
+                if (!$prt->load_by_name($prt->name(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
                         msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
                         msg_id::VAR_VIEW => $this->parent()->dsp_id()
@@ -673,7 +680,7 @@ class view_relation extends sandbox_link
             }
         } else {
             if ($prt->name() == '') {
-                if (!$prt->load_by_id($prt->id())) {
+                if (!$prt->load_by_id($prt->id(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
                         msg_id::VAR_SIDE => msg_id::SIDE_PARENT->text(),
                         msg_id::VAR_VIEW => $this->parent()->dsp_id()
@@ -685,7 +692,7 @@ class view_relation extends sandbox_link
         $cld = $this->child();
         if ($cld->id() == 0) {
             if ($cld->name() != '') {
-                if (!$cld->load_by_name($cld->name())) {
+                if (!$cld->load_by_name($cld->name(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
                         msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
                         msg_id::VAR_VIEW => $this->child()->dsp_id()
@@ -699,7 +706,7 @@ class view_relation extends sandbox_link
             }
         } else {
             if ($cld->name() == '') {
-                if (!$cld->load_by_id($cld->id())) {
+                if (!$cld->load_by_id($cld->id(), $msg)) {
                     $msg->add(msg_id::LOAD_VIEW_SIDE_BY_ID_FAILED, [
                         msg_id::VAR_SIDE => msg_id::SIDE_CHILD->text(),
                         msg_id::VAR_VIEW => $this->child()->dsp_id()

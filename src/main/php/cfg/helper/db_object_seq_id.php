@@ -137,21 +137,20 @@ class db_object_seq_id extends db_object
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, $id_fld);
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
         $this->id = 0;
-        if ($db_row != null) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if (array_key_exists($id_fld, $db_row)) {
                 // TODO check that $this->reset() is removed from all load function and only this reset is used
                 $this->reset(true);
                 if ($db_row[$id_fld] != 0) {
                     $this->id = $db_row[$id_fld];
-                    $result = true;
                 }
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -312,9 +311,14 @@ class db_object_seq_id extends db_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
-        parent::load_without_id_return($qp);
+        // reset the id first, so that a missing database row is reported with id 0 as documented
+        // and never with the stale id of e.g. a row that another user has deleted in the meantime,
+        // because e.g. del() decides between delete and user exclude based on the reloaded id
+        // (a found row sets the id again in the row_mapper independent of the message state)
+        $this->id = 0;
+        parent::load_without_id_return($qp, $msg);
         return $this->id();
     }
 
@@ -341,7 +345,7 @@ class db_object_seq_id extends db_object
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -349,18 +353,19 @@ class db_object_seq_id extends db_object
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = $this->api_json_array($typ_lst, $msg, $usr);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
         $vars[json_fields::ID] = $this->id();
@@ -638,14 +643,14 @@ class db_object_seq_id extends db_object
      * @param int $id the id of the word, triple, formula, verb, view or view component
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, user_message $msg): int
     {
         global $db_con;
 
         log_debug($id);
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_id($sc, $id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -663,9 +668,9 @@ class db_object_seq_id extends db_object
      * @param int $id the id of the row to load
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id_with_related(int $id): int
+    function load_by_id_with_related(int $id, user_message $msg): int
     {
-        return $this->load_by_id($id);
+        return $this->load_by_id($id, $msg);
     }
 
     /**
@@ -673,7 +678,7 @@ class db_object_seq_id extends db_object
      * @param string $name the name of the word, triple, formula, verb, view or view component
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message $msg): int
     {
         return 0;
     }
@@ -819,7 +824,7 @@ class db_object_seq_id extends db_object
         // done first, because it needs to be done for user and general object values
         $db_rec = clone $this;
         $db_rec->reset();
-        if ($db_rec->load_by_id($this->id()) != $this->id()) {
+        if ($db_rec->load_by_id($this->id(), $msg) != $this->id()) {
             $msg->add(msg_id::FAILED_RELOAD_CLASS, [
                 msg_id::VAR_CLASS_NAME => $class_name
             ]);
@@ -1191,9 +1196,15 @@ class db_object_seq_id extends db_object
         }
 
         // add the change action field to the field list for the log entries
+        // matching the sql type, because this function is used for insert and update
+        if ($sc_par_lst->is_insert()) {
+            $cng_act_id = $sys->typ_lst->cng_act->id(change_actions::ADD);
+        } else {
+            $cng_act_id = $sys->typ_lst->cng_act->id(change_actions::UPDATE);
+        }
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $sys->typ_lst->cng_act->id(change_actions::ADD),
+            $cng_act_id,
             type_object::FLD_ID_SQL_TYP
         );
 

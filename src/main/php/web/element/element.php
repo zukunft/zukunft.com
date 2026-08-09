@@ -52,7 +52,8 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word;use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class element extends db_object
@@ -131,16 +132,16 @@ class element extends db_object
     /**
      * create an api json array for the backend based on this frontend object
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::FORMULA] = $this->frm->api_array();
+        $vars[json_fields::FORMULA] = $this->frm->api_array($typ_lst, $msg);
         if ($this->obj != null) {
-            $vars[json_fields::TERM] = $this->obj->api_array();
+            $vars[json_fields::TERM] = $this->obj->api_array($typ_lst, $msg);
             if ($this->obj->term()->is_word()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
             } elseif ($this->obj->term()->is_verb()) {

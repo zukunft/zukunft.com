@@ -294,13 +294,13 @@ class type_lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool true if the loading is complete
      */
-    function load_cached(sql_db $db_con): bool
+    function load_cached(sql_db $db_con, user_message $msg): bool
     {
-        $this->from_cache = $this->load_from_types_cache();
+        $this->from_cache = $this->load_from_types_cache($msg);
         if ($this->from_cache) {
             $result = true;
         } else {
-            $result = $this->load($db_con);
+            $result = $this->load($db_con, $msg);
         }
         return $result;
     }
@@ -320,11 +320,11 @@ class type_lists
      * @param bool $allowed the pod switch for the types cache e.g. via config_numbers::cache_allowed
      * @return void
      */
-    function reload_if_cache_denied(sql_db $db_con, bool $allowed): void
+    function reload_if_cache_denied(sql_db $db_con, user_message $msg, bool $allowed): void
     {
         if (!$allowed and $this->from_cache) {
             $this->from_cache = false;
-            $this->load($db_con);
+            $this->load($db_con, $msg);
         }
     }
 
@@ -333,19 +333,20 @@ class type_lists
      * the message is written by ui_config::write_db_cache on a frontend types api call
      * @return bool true if all type lists have been filled from the cache
      */
-    private function load_from_types_cache(): bool
+    private function load_from_types_cache(user_message $msg): bool
     {
         $result = false;
         // the fixed type id is used, because the db_cache type list itself is not yet loaded
         $cac = new db_cache(user::system());
-        $cac->load_by_type_id(db_cache_types::TYPES_ID);
+        $cac->load_by_type_id(db_cache_types::TYPES_ID, $msg);
         if (!$cac->is_outdated()) {
             if (is_array($cac->data)) {
                 $api_json = $cac->data[json_fields::BODY] ?? $cac->data;
-                $msg = new user_message(user::system());
-                $result = $this->fill_from_api_json($api_json, $msg);
-                if (!$msg->is_ok()) {
-                    log_warning('cached types json rejected: ' . $msg->all_message_text());
+                $msg_sys = new user_message(user::system());
+                $result = $this->fill_from_api_json($api_json, $msg_sys);
+                if (!$msg_sys->is_ok()) {
+                    log_warning('cached types json rejected: ' . $msg_sys->all_message_text());
+                    $msg->merge($msg_sys);
                     $result = false;
                 }
             }
@@ -375,24 +376,24 @@ class type_lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
      * @return bool true if the loading is complete
      */
-    function load(sql_db $db_con): bool
+    function load(sql_db $db_con, user_message $msg): bool
     {
 
         // user
-        $result = $this->usr_pro->load($db_con);
+        $result = $this->usr_pro->load($db_con, $msg);
         if ($result) {
-            $result = $this->usr_typ->load($db_con);
+            $result = $this->usr_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->usr_sta->load($db_con);
+            $result = $this->usr_sta->load($db_con, $msg);
         }
 
         // log
         if ($result) {
-            $result = $this->load_backend_only($db_con);
+            $result = $this->load_backend_only($db_con, $msg);
         }
         if ($result) {
-            $result = $this->load_log($db_con);
+            $result = $this->load_log($db_con, $msg);
         }
 
         // load the type database enum
@@ -400,72 +401,72 @@ class type_lists
 
         // cache
         if ($result) {
-            $result = $this->load_cache($db_con);
+            $result = $this->load_cache($db_con, $msg);
         }
 
         // language and system jobs
         if ($result) {
-            $result = $this->lan->load($db_con);
+            $result = $this->lan->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->lan_for->load($db_con);
+            $result = $this->lan_for->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->job_typ->load($db_con);
+            $result = $this->job_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->job_sta->load($db_con);
+            $result = $this->job_sta->load($db_con, $msg);
         }
 
         // sandbox
         if ($result) {
-            $result = $this->shr_typ->load($db_con);
+            $result = $this->shr_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->ptc_typ->load($db_con);
+            $result = $this->ptc_typ->load($db_con, $msg);
         }
 
         // word, number and formula types
         if ($result) {
-            $result = $this->load_core($db_con);
+            $result = $this->load_core($db_con, $msg);
         }
         if ($result) {
-            $result = $this->ref_typ->load($db_con);
+            $result = $this->ref_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->src_typ->load($db_con);
+            $result = $this->src_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->frm_typ->load($db_con);
+            $result = $this->frm_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->frm_lnk_typ->load($db_con);
+            $result = $this->frm_lnk_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->elm_typ->load($db_con);
+            $result = $this->elm_typ->load($db_con, $msg);
         }
 
         // view
         if ($result) {
-            $result = $this->msk_typ->load($db_con);
+            $result = $this->msk_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->msk_sty->load($db_con);
+            $result = $this->msk_sty->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->msk_lnk_typ->load($db_con);
+            $result = $this->msk_lnk_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->cmp_typ->load($db_con);
+            $result = $this->cmp_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->cmp_lnk_typ->load($db_con);
+            $result = $this->cmp_lnk_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->pos_typ->load($db_con);
+            $result = $this->pos_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->mrl_typ->load($db_con);
+            $result = $this->mrl_typ->load($db_con, $msg);
         }
 
         // preload type lists vars of this object
@@ -474,7 +475,7 @@ class type_lists
         }
 
         // preload the little more complex objects
-        $this->vrb->load($db_con);
+        $this->vrb->load($db_con, $msg);
 
         // fallback to avoid getting stuck in load process
         if ($this->vrb->is_empty()) {
@@ -493,13 +494,14 @@ class type_lists
     /**
      * load the cache types objects upfront
      * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param user_message $msg to collect any load errors
      * @return bool true if the loading is complete
      */
-    function load_cache(sql_db $db_con): bool
+    function load_cache(sql_db $db_con, user_message $msg): bool
     {
-        $result = $this->cac_typ->load($db_con);
+        $result = $this->cac_typ->load($db_con, $msg);
         if ($result) {
-            $result = $this->cac_sta->load($db_con);
+            $result = $this->cac_sta->load($db_con, $msg);
         }
         return $result;
     }
@@ -507,12 +509,13 @@ class type_lists
     /**
      * reload the cache used for logging the changes
      * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param user_message $msg to collect any load errors
      * @return bool false if the load is incomplete
      */
-    function load_log_if_empty(sql_db $db_con): bool
+    function load_log_if_empty(sql_db $db_con, user_message $msg): bool
     {
         if ($this->cng_act->is_empty()) {
-            return $this->load_log($db_con);
+            return $this->load_log($db_con, $msg);
         } else {
             return true;
         }
@@ -521,25 +524,26 @@ class type_lists
     /**
      * reload the cache used for logging the changes
      * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param user_message $msg to collect any load errors
      * @return bool false if the load is incomplete
      */
-    function load_log(sql_db $db_con): bool
+    function load_log(sql_db $db_con, user_message $msg): bool
     {
-        $result = $this->cng_act->load($db_con);
+        $result = $this->cng_act->load($db_con, $msg);
         if ($result) {
-            $result = $this->cng_tbl->load($db_con);
+            $result = $this->cng_tbl->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->cng_fld->load($db_con);
+            $result = $this->cng_fld->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->usr_pro->load($db_con);
+            $result = $this->usr_pro->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->usr_typ->load($db_con);
+            $result = $this->usr_typ->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->usr_sta->load($db_con);
+            $result = $this->usr_sta->load($db_con, $msg);
         }
 
         return $result;
@@ -548,26 +552,28 @@ class type_lists
     /**
      * load the core type lists needed for the api
      * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param user_message $msg to collect any load errors
      * @return bool false if the load is incomplete
      */
-    function load_core(sql_db $db_con): bool
+    function load_core(sql_db $db_con, user_message $msg): bool
     {
-        return $this->phr_typ->load($db_con);
+        return $this->phr_typ->load($db_con, $msg);
     }
 
     /**
      * load the backend-only type lists
      * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @param user_message $msg to collect any load errors
      * @return bool false if the load is incomplete
      */
-    function load_backend_only(sql_db $db_con): bool
+    function load_backend_only(sql_db $db_con, user_message $msg): bool
     {
-        $result = $this->sys_log_lvl->load($db_con);
+        $result = $this->sys_log_lvl->load($db_con, $msg);
         if ($result) {
-            $result = $this->sys_log_fnc->load($db_con);
+            $result = $this->sys_log_fnc->load($db_con, $msg);
         }
         if ($result) {
-            $result = $this->sys_log_sta->load($db_con);
+            $result = $this->sys_log_sta->load($db_con, $msg);
         }
         /* TODO move the user cache
         if ($result) {
@@ -591,7 +597,7 @@ class type_lists
      * @param user|null $usr the user for whom the message has been created
      * @return string with the encoded json message
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -599,20 +605,23 @@ class type_lists
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_json_array();
+        $vars = $this->api_json_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
      * @return array with all preloaded types
      */
-    function api_json_array(): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         log_debug();
         $vars = [];
         foreach (self::API_LISTS as $json_key => $lst_var) {
-            $vars[$json_key] = $this->$lst_var->api_json_array();
+            $vars[$json_key] = $this->$lst_var->api_json_array($typ_lst, $msg);
         }
         return $vars;
     }

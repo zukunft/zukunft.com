@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -51,8 +52,10 @@ class start_ui_tests
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $msg = new user_message();
         $t_trp = new test_triples($t);
         $t_phr = new test_phrases($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html start page ';
@@ -75,8 +78,8 @@ class start_ui_tests
         $phr = $t_trp->global_problem()->phrase();
         $phr_ui = new phrase($phr->api_json());
         $test_page = $html->text_h2('start page display test');
-        $test_page .= $msk->list_sort($phr_ui, $dto_ui);
-        $t->html_page_test($test_page, 'start page', 'start_page', $t);
+        $test_page .= $msk->list_sort($phr_ui, $msg, $dto_ui);
+        $t->html_page_test($test_page, 'start page', 'start_page', $msg);
     }
 
 }

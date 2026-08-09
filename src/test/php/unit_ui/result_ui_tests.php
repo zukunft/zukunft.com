@@ -38,6 +38,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -48,6 +49,7 @@ class result_ui_tests
     {
         $html = new html_base();
         $t_res = new test_results($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html result ';
@@ -58,22 +60,22 @@ class result_ui_tests
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';
-        $test_page .= $t->dsp_title_named_edit($res);
-        $t->html_page_test($test_page, 'result', 'result', $t);
+        $test_page .= $t->dsp_title_named_edit($res, $msg);
+        $t->html_page_test($test_page, 'result', 'result', $msg);
 
         $t->subheader($ts . 'format');
 
         $test_name = 'big numbers use the user config thousand separator';
-        $t->assert($test_name, $res->val_formatted(), "123'456");
+        $t->assert($test_name, $res->val_formatted($msg), "123'456");
 
         $test_name = 'percent values use the user config percent decimals';
         $api_json = $t_res->result_pct()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
         $res = new result($api_json);
-        $t->assert($test_name, $res->val_formatted(), '1.23%');
+        $t->assert($test_name, $res->val_formatted($msg), '1.23%');
 
         $test_name = 'a missing number returns an empty text';
         $res = new result();
-        $t->assert($test_name, $res->val_formatted(), '');
+        $t->assert($test_name, $res->val_formatted($msg), '');
     }
 
 }

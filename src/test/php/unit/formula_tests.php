@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -62,6 +63,8 @@ class formula_tests
 
 
         // init
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $t->name = 'formula->';
@@ -142,17 +145,17 @@ class formula_tests
 
         $test_name = 'the url array contains the expression and the latex of the formula';
         $frm_ui = new formula_ui($frm->api_json());
-        $url_arr = $frm_ui->to_url_array();
+        $url_arr = $frm_ui->to_url_array($msg_ui);
         $t->assert($test_name, $url_arr[url_var::USER_EXPRESSION], formula_names::SCALE_TO_SEC_EXP);
         $t->assert($test_name, $url_arr[url_var::LATEX], formula_names::SCALE_TO_SEC_LATEX);
         $test_name = 'the url array contains the set need all values flag and impact';
         $frm_ui->need_all_val = true;
         $frm_ui->impact = test_const::DUMMY_IMPACT;
-        $url_arr = $frm_ui->to_url_array();
+        $url_arr = $frm_ui->to_url_array($msg_ui);
         $t->assert($test_name, $url_arr[url_var::NEED_ALL], '1');
         $t->assert($test_name, $url_arr[url_var::IMPACT], test_const::DUMMY_IMPACT);
         $test_name = 'the unset formula fields are excluded from the url array';
-        $url_arr = (new formula_ui())->to_url_array();
+        $url_arr = new formula_ui()->to_url_array($msg_ui);
         $t->assert_contains_not($test_name, array_keys($url_arr), url_var::USER_EXPRESSION);
         $t->assert_contains_not($test_name, array_keys($url_arr), url_var::LATEX);
         $t->assert_contains_not($test_name, array_keys($url_arr), url_var::NEED_ALL);
@@ -178,7 +181,7 @@ class formula_tests
         // carries the name but no expression, so ref_text and usr_text stay null
         $frm_upd = new formula($t->usr1);
         $frm_upd->set($frm_db->id(), $frm_db->name());
-        $frm_upd->set_type_id($frm_db->type_id(), new user_message($t->usr1));
+        $frm_upd->set_type_id($frm_db->type_id($msg), new user_message($t->usr1));
         $frm_upd->description = 'a new formula description';
         $msg = new user_message();
         $chg_lst = $frm_upd->db_fields_changed($frm_db, $msg);
@@ -190,7 +193,7 @@ class formula_tests
         $t->assert_true($test_name, $chg_lst->has_name(fields::FLD_DESCRIPTION));
         // a real expression change (the update carries a new expression) is still detected and written
         $frm_upd->ref_text = '{w1}=2';
-        $chg_lst = $frm_upd->db_fields_changed($frm_db, new user_message());
+        $chg_lst = $frm_upd->db_fields_changed($frm_db, $msg);
         $test_name = 'a changed formula expression is written';
         $t->assert_true($test_name, $chg_lst->has_name(formula_fields::FLD_FORMULA_TEXT));
 

@@ -154,11 +154,12 @@ class db_cache extends db_object_seq_id_user
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a db_cache is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, db_cache_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, db_cache_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(db_cache_db::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[db_cache_db::FLD_TYPE];
             }
@@ -180,7 +181,7 @@ class db_cache extends db_object_seq_id_user
             }
             log_debug('Batch db_cache ' . $this->id() . ' loaded');
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -191,7 +192,7 @@ class db_cache extends db_object_seq_id_user
     function set_type(string $code_id): void
     {
         global $sys;
-        $lst = $sys->typ_lst->dbc_typ;
+        $lst = $sys->typ_lst->cac_typ;
         $this->type_id = $lst->get_by_code_id($code_id);
     }
 
@@ -244,12 +245,12 @@ class db_cache extends db_object_seq_id_user
      * @param string $typ_code_id the id of the user sandbox object
      * @return int the id of the data cache entry
      */
-    function load_by_type(string $typ_code_id): int
+    function load_by_type(string $typ_code_id, user_message $msg): int
     {
         global $sys;
         $typ_lst = $sys->typ_lst->cac_typ;
         $id = $typ_lst->id($typ_code_id);
-        return $this->load_by_type_id($id);
+        return $this->load_by_type_id($id, $msg);
     }
 
     /**
@@ -259,12 +260,12 @@ class db_cache extends db_object_seq_id_user
      * @param string $typ_code_id the code id of the cache type
      * @return int the id of the data cache entry
      */
-    function load_by_type_and_user(string $typ_code_id): int
+    function load_by_type_and_user(string $typ_code_id, user_message $msg): int
     {
         global $sys;
         $typ_lst = $sys->typ_lst->cac_typ;
         $id = $typ_lst->id($typ_code_id);
-        return $this->load_by_type_id($id, $this->get_user()->id);
+        return $this->load_by_type_id($id, $msg, $this->get_user()->id);
     }
 
     /**
@@ -274,13 +275,13 @@ class db_cache extends db_object_seq_id_user
      * @param int|null $usr_id if not null the cache of this user, else the first cache of the type
      * @return int the id of the data cache entry
      */
-    function load_by_type_id(int $id, ?int $usr_id = null): int
+    function load_by_type_id(int $id, user_message $msg, ?int $usr_id = null): int
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_type_id($db_con->sql_creator(), $id, $usr_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -352,9 +353,8 @@ class db_cache extends db_object_seq_id_user
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $msg);
         if ($qp !== null) {
-            $del_msg = $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
-            $msg->merge($del_msg);
-            $result = $del_msg->is_ok();
+            $db_con->delete($qp, 'del ' . $this->dsp_id(), $msg);
+            $result = $msg->is_ok();
         }
         return $result;
     }
@@ -366,12 +366,17 @@ class db_cache extends db_object_seq_id_user
 
     /**
      * create an array for the api json creation
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();

@@ -121,7 +121,7 @@ class horizontal_ui_tests
             $ui_obj = $t_map->class_to_ui_object($class);
             $filled_obj = $t_map->class_to_filled_object($class);
             $ui_obj->url_mapper($url_array, $usr_msg_ui);
-            $api_msg = $ui_obj->api_array();
+            $api_msg = $ui_obj->api_array([], $msg_ui);
             $refilled_obj = clone $filled_obj;
             $refilled_obj->reset(true);
             $refilled_obj->api_mapper($api_msg, $msg);
@@ -213,7 +213,7 @@ class horizontal_ui_tests
             $obj = $t_map->component_type_to_object($typ);
             if ($obj !== null) {
                 $ui_obj = $t_map->class_to_ui_object($obj::class);
-                $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $msg_ui);
+                $ui_obj->api_mapper($obj->api_json_array([], $msg), $msg_ui);
                 $cmp = new component_exe();
                 $cmp->set_type_id($typ->id(), new user_message($t->usr1));
                 $cmp->code_id = $typ->code_id;
@@ -222,7 +222,7 @@ class horizontal_ui_tests
                 $form_name = 'component_type_test_' . $test_form_unique_id;
                 // render in test mode so that no component triggers a backend call
                 // TODO Prio 2 review and move the calls to the backend 'outside'
-                $part = $cmp->dsp_entries($ui_obj, $form_name, views::WORD_EDIT_ID, $ui->dto,
+                $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $ui->dto,
                     null, '', '', true, [], $test_form_unique_id);
                 // wrap a field part that references its form by id so the reference resolves
                 if (str_contains($part, ' form="') and !str_contains($part, '<form')) {
@@ -238,7 +238,7 @@ class horizontal_ui_tests
                 $test_page .= 'no object mapped for type ' .  $typ->name;
             }
         }
-        $t->html_page_test($test_page, 'all component types', 'all_component_types', $t);
+        $t->html_page_test($test_page, 'all component types', 'all_component_types', $msg_ui);
     }
 
     /**

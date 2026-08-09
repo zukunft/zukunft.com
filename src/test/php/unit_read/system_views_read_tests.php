@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -78,6 +79,7 @@ class system_views_read_tests
         $t_frm = new test_formulas($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db read system view by object ';
@@ -87,7 +89,7 @@ class system_views_read_tests
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         global $sys;
         $ui = new frontend('system_views_read_tests');
-        $ui->load_cache();
+        $ui->load_cache($msg);
         $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         //$cfg = new data_object_ui();
@@ -162,7 +164,7 @@ class system_views_read_tests
 
         $html = new html_base();
         $target = htmlspecialchars(trim('<title>Header test - zukunft.com</title>'));
-        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
+        $result = htmlspecialchars(trim($html->header('Header test', $msg, 'center_form')));
         $t->dsp_contains(", dsp_header", $target, $result);
 
         // check if the about page contains at least some basic keywords

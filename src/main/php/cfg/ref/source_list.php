@@ -71,12 +71,13 @@ class source_list extends sandbox_list_named
      * actually just set the source object for the parent function
      *
      * @param array|null $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded sources e.g. for admins
      * @return bool true if at least one source has been added
      */
-    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(?array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new source($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new source($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -155,15 +156,15 @@ class source_list extends sandbox_list_named
      * @param bool $load_all force to include also the excluded sources e.g. for admins
      * @return bool true if at least one source has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false): bool
+    protected function load(sql_par $qp, user_message $msg, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
 
-        $src_lst = $db_con->get($qp, 'source list');
+        $src_lst = $db_con->get($qp, $msg, 'source list');
         foreach ($src_lst as $db_row) {
             $src = new source($this->get_user());
-            $src->row_mapper_sandbox($db_row);
+            $src->row_mapper_sandbox($db_row, $msg);
             $result = $this->add($src);
         }
 
@@ -176,12 +177,12 @@ class source_list extends sandbox_list_named
      * @param array $ids of source ids that should be loaded
      * @return bool true if at least one source has been loaded
      */
-    function load_by_ids(array $ids): bool
+    function load_by_ids(array $ids, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -204,12 +205,12 @@ class source_list extends sandbox_list_named
      * load the sources that matches the given pattern
      * @param string $pattern part of the name that should be used to select the sources
      */
-    function load_like(string $pattern): bool
+    function load_like(string $pattern, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
 

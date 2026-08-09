@@ -49,6 +49,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED . 'library.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
@@ -104,7 +106,7 @@ class db_object_key extends TextIdObject
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         return false;
     }
@@ -328,14 +330,15 @@ class db_object_key extends TextIdObject
     /**
      * load one database row e.g. group (where the id might be a string) from the database
      * @param sql_par $qp the query parameters created by the calling function
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool false if no database row has been found
      *                    which means that no user has changed the standard group settings
      */
-    protected function load_without_id_return(sql_par $qp): bool
+    protected function load_without_id_return(sql_par $qp, user_message $msg): bool
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         // a false db row means that the query itself failed (e.g. on an outdated database),
         // which the db layer has already logged;
         // it is mapped like "no row found", because a fatal crash of the row mapper
@@ -343,7 +346,7 @@ class db_object_key extends TextIdObject
         if ($db_row === false) {
             $db_row = null;
         }
-        return $this->row_mapper($db_row);
+        return $this->row_mapper($db_row, $msg);
     }
 
 

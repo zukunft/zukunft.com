@@ -180,22 +180,23 @@ class element extends db_object_seq_id_user
      * @param array|null $db_row with the data directly from the database
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper_sandbox(?array $db_row): bool
+    function row_mapper_sandbox(?array $db_row, user_message $msg): bool
     {
         $this->id = 0;
-        $result = parent::row_mapper($db_row, element_db::FLD_ID);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, element_db::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(element_db::FLD_REF_ID, $db_row)
                 and array_key_exists(element_db::FLD_TYPE, $db_row)) {
                 $id = $db_row[element_db::FLD_REF_ID];
                 $typ_id = $db_row[element_db::FLD_TYPE];
-                $this->set_object_by_id($id, $typ_id);
+                $this->set_object_by_id($id, $typ_id, $msg);
             }
         }
-        if ($result) {
+        if ($this->id() != 0) {
             if (array_key_exists(formula_fields::FLD_ID, $db_row)) {
                 $frm = new formula($this->get_user());
-                $frm->load_by_id($db_row[formula_fields::FLD_ID]);
+                $frm->load_by_id($db_row[formula_fields::FLD_ID], $msg);
                 $this->frm = $frm;
             }
         }
@@ -205,7 +206,7 @@ class element extends db_object_seq_id_user
                 $this->validate_type();
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -267,22 +268,26 @@ class element extends db_object_seq_id_user
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             if ($this->id() != 0) {
                 $vars[json_fields::ID] = $this->id();
             }
             if ($this->frm->id() != 0) {
-                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $usr);
+                $vars[json_fields::FORMULA] = $this->frm->api_json_array($typ_lst, $msg, $usr);
             }
             if ($this->obj != null) {
-                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $usr);
+                $vars[json_fields::TERM] = $this->obj->api_json_array($typ_lst, $msg, $usr);
                 if ($this->is_word()) {
                     $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
                 } elseif ($this->is_triple()) {
@@ -318,7 +323,7 @@ class element extends db_object_seq_id_user
      */
     function name(): string|null
     {
-        return $this->obj->name();
+        return $this->obj?->name();
     }
 
     /**
@@ -329,7 +334,7 @@ class element extends db_object_seq_id_user
      * @param int $typ_id the id of the element object type
      * @return bool true if a valid object has been set
      */
-    function set_object_by_id(int $id, int $typ_id): bool
+    function set_object_by_id(int $id, int $typ_id, user_message $msg): bool
     {
         global $sys;
 
@@ -347,7 +352,7 @@ class element extends db_object_seq_id_user
             log_err('id of type ' . $this->type() . ' is not expected');
         }
         $this->obj = $obj;
-        return $obj->load_by_id($id);
+        return $obj->load_by_id($id, $msg);
     }
 
     /**
@@ -440,28 +445,28 @@ class element extends db_object_seq_id_user
      * @param int $id the id of the formula element
      * @return int the id of the element found and zero if nothing is found
      */
-    function load_obj_by_id(int $id): int
+    function load_obj_by_id(int $id, user_message $msg): int
     {
         if ($id != 0 and $this->get_user()->is_set()) {
             if ($this->type() == word::class) {
                 $wrd = new word($this->get_user());
-                $wrd->load_by_id($id);
+                $wrd->load_by_id($id, $msg);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type() == triple::class) {
                 $trp = new triple($this->get_user());
-                $trp->load_by_id($id);
+                $trp->load_by_id($id, $msg);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type() == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->get_user());
-                $vrb->load_by_id($id);
+                $vrb->load_by_id($id, $msg);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type() == formula::class) {
                 $frm = new formula($this->get_user());
-                $frm->load_by_id($id);
+                $frm->load_by_id($id, $msg);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
                 $this->obj = $frm;
                 /*

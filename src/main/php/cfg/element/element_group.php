@@ -52,6 +52,7 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -84,16 +86,20 @@ class element_group extends list_db_write
     /**
      * create an array for the api json message
      *
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns array with the json fields to create an api message
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
-        $vars[json_fields::LIST_ELEMENTS] = parent::api_json_array($typ_lst, $usr);
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $vars[json_fields::LIST_ELEMENTS] = parent::api_json_array($typ_lst, $msg, $usr);
         if ($this->phr_lst != null) {
-            $vars[json_fields::PHRASES] = $this->phr_lst->api_json_array($typ_lst, $usr);
+            $vars[json_fields::PHRASES] = $this->phr_lst->api_json_array($typ_lst, $msg, $usr);
         }
         return $vars;
     }
@@ -147,7 +153,7 @@ class element_group extends list_db_write
      * set the time phrase based on a predefined formula such as "prior" or "next"
      * e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
      */
-    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst): ?phrase
+    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst, user_message $msg): ?phrase
     {
         log_debug('for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
 
@@ -155,7 +161,7 @@ class element_group extends list_db_write
 
         // guess the time word if needed
         log_debug('assume time for ' . $val_phr_lst->dsp_id());
-        $val_time_phr = $val_phr_lst->assume_time();
+        $val_time_phr = $val_phr_lst->assume_time($msg);
 
         // adjust the element time word if forced by the special formula
         if (isset($val_time_phr)) {
@@ -165,14 +171,14 @@ class element_group extends list_db_write
             } else {
                 log_debug('get predefined time result');
                 if (isset($frm_elm->obj)) {
-                    $val_time = $frm_elm->obj->special_time_phr($val_time_phr);
+                    $val_time = $frm_elm->obj->special_time_phr($val_time_phr, $msg);
                     if ($val_time->id() > 0) {
                         $val_time_phr = $val_time;
                         if ($val_time_phr->id() == 0) {
-                            $val_time_phr->load_by_name($val_time_phr->name());
+                            $val_time_phr->load_by_name($val_time_phr->name(), $msg);
                         }
                         if ($val_time_phr->name() == '') {
-                            $val_time_phr->load_by_id($val_time_phr->id());
+                            $val_time_phr->load_by_id($val_time_phr->id(), $msg);
                         }
                         log_debug('add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
                     }
@@ -181,7 +187,7 @@ class element_group extends list_db_write
         }
         if (isset($val_time_phr)) {
             // before adding a special time word, remove all other time words from the word list
-            $val_phr_lst->ex_time();
+            $val_phr_lst->ex_time($msg);
             $val_phr_lst->add($val_time_phr);
             $this->phr_lst = $val_phr_lst;
             log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
@@ -209,7 +215,7 @@ class element_group extends list_db_write
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return figure_list
      */
-    function figures(?term_list $trm_lst = null): figure_list
+    function figures(user_message $msg, ?term_list $trm_lst = null): figure_list
     {
         log_debug('figures ' . $this->dsp_id());
         $lib = new library();
@@ -252,7 +258,7 @@ class element_group extends list_db_write
             if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
                 if ($frm_elm->obj->is_predefined() and $val_time_phr == null) {
-                    $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
+                    $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst, $msg);
                     if ($val_time_phr != null) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
                     }
@@ -265,11 +271,11 @@ class element_group extends list_db_write
             }
 
             // add the time to the list
-            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
+            $val_time_phr = $val_phr_lst->assume_time($msg, $trm_lst);
             if ($val_time_phr != null) {
                 log_debug('for time ' . $val_time_phr->dsp_id());
             }
-            if (!$val_phr_lst->has_time() and $val_time_phr != null) {
+            if (!$val_phr_lst->has_time($msg) and $val_time_phr != null) {
                 $val_phr_lst->add($val_time_phr);
             }
 
@@ -288,7 +294,7 @@ class element_group extends list_db_write
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value($this->usr);
             // TODO create $wrd_val->load_best();
-            $wrd_val->load_by_grp($val_phr_grp);
+            $wrd_val->load_by_grp($val_phr_grp, $msg);
 
             if ($wrd_val->isset()) {
                 // save the value to the result
@@ -311,7 +317,7 @@ class element_group extends list_db_write
                 /* TODO review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
-                $grp_res->load_by_grp($val_phr_grp, true);
+                $grp_res->load_by_grp( $val_phr_grp, $msg, true );
 
                 // save the value to the result
                 if ($grp_res->id() > 0) {

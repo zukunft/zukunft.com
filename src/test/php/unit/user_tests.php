@@ -36,6 +36,7 @@ use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -52,6 +53,7 @@ class user_tests
 
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
         // init
         $db_con = new sql_db();
@@ -88,6 +90,13 @@ class user_tests
         $usr_test = $t_usr->user_sys_test();
         $t->assert_sql_insert($sc, $usr_test, [sql_type::LOG]);
 
+        // negative: without a requesting user on the message the sql creation is refused
+        // with a reported message instead of a fatal, because the change log needs the user
+        $test_name = 'insert sql creation without a requesting user reports the missing user';
+        $msg_no_usr = new user_message();
+        $usr_ip->sql_insert($sc, $msg_no_usr, new sql_type_list([sql_type::LOG]));
+        $t->assert_false($test_name, $msg_no_usr->is_ok());
+
         $t->subheader($ts . 'sql write update');
         $usr_changed = $usr_test->cloned(users::SYSTEM_TEST_PARTNER_NAME);
         $usr_changed->created = $usr_test->created;
@@ -120,7 +129,7 @@ class user_tests
         $test_name = 'the activation key stays available on the backend object';
         $t->assert_true($test_name, $usr_key->activation_key == users::TEST_USER_ACTIVATION_KEY);
         $test_name = 'the export json does not leak the activation key';
-        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json()));
+        $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key->export_json($msg)));
         $test_name = 'the api json does not leak the activation key';
         $usr_key_api = json_decode($usr_key->api_json(), true);
         $t->assert_false($test_name, key_exists(json_fields::ACTIVATION_KEY, $usr_key_api));
@@ -174,15 +183,15 @@ class user_tests
         $usr_attacker->id = users::TEST_USER_ID;
         $usr_attacker->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         $test_name = 'a normal user cannot load the system user via the data user parameter';
-        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID)->id(), users::TEST_USER_ID);
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID, $msg)->id(), users::TEST_USER_ID);
         $test_name = 'the data user parameter is ignored for the session user own id';
-        $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID)->id(), users::TEST_USER_ID);
+        $t->assert($test_name, $usr_attacker->data_user(users::TEST_USER_ID, $msg)->id(), users::TEST_USER_ID);
         // the own pod flag is set by the api entry scripts via server_guard::from_own_pod, never
         // from a request value, so an external caller can never combine it with the user parameter
         $test_name = 'without the own pod flag the data user request of a normal user stays blocked';
-        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID, false)->id(), users::TEST_USER_ID);
+        $t->assert($test_name, $usr_attacker->data_user(users::SYSTEM_ID, $msg, false)->id(), users::TEST_USER_ID);
         $test_name = 'the own pod flag without a requested user keeps the session user';
-        $t->assert($test_name, $usr_attacker->data_user(0, true)->id(), users::TEST_USER_ID);
+        $t->assert($test_name, $usr_attacker->data_user(0, $msg, true)->id(), users::TEST_USER_ID);
 
 
         $t->subheader($ts . 'sandbox usage');
@@ -193,17 +202,17 @@ class user_tests
         $t->assert_true($test_name, in_array(user_db::FLD_USES_SANDBOX, user_db::FLD_NAMES));
         $test_name = 'a user with sandbox changes is mapped to use the sandbox';
         $usr = new user();
-        $usr->row_mapper($t_usr->to_db_row($t_usr->sandbox_user()));
+        $usr->row_mapper($t_usr->to_db_row($t_usr->sandbox_user()), $msg);
         $t->assert_true($test_name, $usr->uses_sandbox);
         $test_name = 'a user without sandbox changes is mapped to not use the sandbox';
         $usr = new user();
-        $usr->row_mapper($t_usr->to_db_row($t_usr->non_sandbox_user()));
+        $usr->row_mapper($t_usr->to_db_row($t_usr->non_sandbox_user()), $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
         $test_name = 'a user row of a not yet upgraded pod does not use the sandbox';
         $usr = new user();
         $db_row = $t_usr->to_db_row($t_usr->sandbox_user());
         unset($db_row[user_db::FLD_USES_SANDBOX]);
-        $usr->row_mapper($db_row);
+        $usr->row_mapper($db_row, $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
 
         // adding a sandbox row switches the user to the sandbox usage (see sandbox->add_usr_cfg);
@@ -377,10 +386,10 @@ class user_tests
         $usr->import_mapper([], $msg);
         $t->assert_false($test_name, $usr->uses_sandbox);
         $test_name = 'the sandbox usage flag is part of the export json';
-        $t->assert_true($test_name, $t_usr->sandbox_user()->export_json()[json_fields::USES_SANDBOX] ?? false);
+        $t->assert_true($test_name, $t_usr->sandbox_user()->export_json($msg)[json_fields::USES_SANDBOX] ?? false);
         $test_name = 'the default false is not exported';
         $t->assert_false(
-            $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json()));
+            $test_name, key_exists(json_fields::USES_SANDBOX, $t_usr->non_sandbox_user()->export_json($msg)));
 
 
         $t->subheader($ts . 'activation key at rest');

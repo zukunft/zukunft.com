@@ -140,6 +140,7 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
+     * TODO Prio 0 move the $db_row != null to the calling function
      * set the user based on the id from the database row array
      * to be extended by the child functions
      *
@@ -147,10 +148,12 @@ class db_object_seq_id_user extends db_object_seq_id
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, $id_fld);
-        if (array_key_exists(user_db::FLD_ID, $db_row)) {
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
+        // map the fields if the id has been set from a found row, independent of the message state
+        // (a set id also implies that $db_row is an array, because the id is only set from a row)
+        if ($this->id() != 0 and array_key_exists(user_db::FLD_ID, $db_row)) {
             $obj_usr_id = $this->get_user_id();
             $db_usr_id = $db_row[user_db::FLD_ID];
             if ($obj_usr_id != $db_usr_id) {
@@ -168,16 +171,16 @@ class db_object_seq_id_user extends db_object_seq_id
                     if ($usr == null) {
                         // TODO Prio 2 try to get the user from cache
                         $usr = new user();
-                        if ($usr->load_by_id($db_usr_id)) {
+                        if ($usr->load_by_id($db_usr_id, $msg)) {
                             $this->set_user($usr);
                         } else {
-                            log_err('db user id ' . $obj_usr_id . ' not found');
+                            log_err_msg('db user id ' . $obj_usr_id . ' not found', $msg);
                         }
                     }
                 }
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -244,13 +247,21 @@ class db_object_seq_id_user extends db_object_seq_id
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        return $this->id();
+        // reset the id first so that a missing database row is reported with id 0
+        // also within the object and never with a stale id (see db_object_seq_id::load)
+        $this->id = 0;
+        $db_row = $db_con->get1($qp, $msg);
+        // TODO Prio 2 reduce the possible return cases to false for error or null for empty
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper($db_row, $msg);
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
 

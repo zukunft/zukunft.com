@@ -8,6 +8,7 @@ if (PHP_SAPI !== 'cli') {
 include_once 'test_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
@@ -28,11 +29,12 @@ global $db_con;
 
 // open database and display header
 $app = new application();
+$msg = new user_message(); // frontend entry point
 $db_con = $app->start("sql sequence check", '', false);
 
 // load the session user parameters
 $start_usr = new user;
-$result = $start_usr->get();
+$result = $start_usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($start_usr->id() > 0) {
@@ -52,4 +54,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-$app->end($db_con, false);
+$app->end($db_con, $msg, false);

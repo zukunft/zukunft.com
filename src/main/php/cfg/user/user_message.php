@@ -262,7 +262,7 @@ class user_message extends Message
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
      */
-    function api_array(): array
+    function api_array(user_message $msg): array
     {
         $vars = array();
         $msg_lst = [];
@@ -277,7 +277,7 @@ class user_message extends Message
         $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
         $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
         if ($this->usr != null) {
-            $vars[json_fields::USER] = $this->usr->api_json_array(new api_type_list([]));
+            $vars[json_fields::USER] = $this->usr->api_json_array([], $msg);
         }
         return $vars;
     }
@@ -285,9 +285,9 @@ class user_message extends Message
     /**
      * @return string the json message to the backend as a string
      */
-    function api_json(): string
+    function api_json(user_message $msg): string
     {
-        return json_encode($this->api_array());
+        return json_encode($this->api_array($msg));
     }
 
     /**
@@ -663,12 +663,13 @@ class user_message extends Message
     /**
      * @return array with all the text messages
      */
-    protected function get_all_messages(): array
+    function get_all_messages(): array
     {
         return $this->msg_text;
     }
 
     /**
+     * TODO Prio 2 make it protected
      * @return array with all the translatable messages
      */
     protected function get_all_id_messages(): array
@@ -677,6 +678,7 @@ class user_message extends Message
     }
 
     /**
+     * TODO Prio 2 make it protected
      * @return array with all the text messages
      */
     protected function get_all_type_messages(): array
@@ -686,10 +688,11 @@ class user_message extends Message
 
     /**
      * combine the status of two user messages and assume the worst
-     * @param user_message $msg_to_add the user messages that should be combined with this user message
+     * TODO Prio 2 make it private
+     * @param user_message|Message $msg_to_add the user messages that should be combined with this user message
      * @return void
      */
-    private function combine_status(user_message $msg_to_add): void
+    function combine_status(user_message|Message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
             $this->msg_status = msg_id::NOK;

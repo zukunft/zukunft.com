@@ -166,7 +166,7 @@ class list_db_write extends list_db_read
             // add the remaining missing objects
             $step_time = $this->count() / $save_per_sec;
             $imp->step_start($msg_id, $class, $this->count(), $step_time);
-            $msg->merge($sql_lst->exe_direct());
+            $sql_lst->exe_direct($msg);
             $imp->step_end($sql_lst->count(), $save_per_sec);
 
         }
@@ -191,11 +191,12 @@ class list_db_write extends list_db_read
                 $ins_usr_msg = new user_message();
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
-                    $qp->obj_name = $sbx->name();
+                    // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                     $sql_list->add($qp);
                 } else {
                     $msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $msg->all_message_text());
+                    log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
                 }
             }
         }
@@ -219,11 +220,12 @@ class list_db_write extends list_db_read
                 $ins_usr_msg = new user_message();
                 $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
                 if ($ins_usr_msg->is_ok()) {
-                    $qp->obj_name = $sbx->name();
+                    // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                     $sql_list->add($qp);
                 } else {
                     $msg->merge($ins_usr_msg);
-                    log_err('Internal import error: ' . $msg->all_message_text());
+                    log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
                 }
             }
         }
@@ -252,11 +254,12 @@ class list_db_write extends list_db_read
             $ins_usr_msg = new user_message();
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
-                $qp->obj_name = $sbx->name();
+                // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                 $sql_list->add($qp);
             } else {
                 $msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $msg->all_message_text());
+                log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
             }
         }
         return $sql_list;
@@ -283,11 +286,12 @@ class list_db_write extends list_db_read
             $ins_usr_msg = new user_message();
             $qp = $sbx->sql_delete($sc, $ins_usr_msg, $sc_par_lst);
             if ($ins_usr_msg->is_ok()) {
-                $qp->obj_name = $sbx->name();
+                // e.g. an element loaded from the database has no term object and with that no name loaded
+                $qp->obj_name = $sbx->name() ?? '';
                 $sql_list->add($qp);
             } else {
                 $msg->merge($ins_usr_msg);
-                log_err('Internal import error: ' . $msg->all_message_text());
+                log_err_msg('Internal import error: ' . $msg->all_message_text(), $msg);
             }
         }
         return $sql_list;

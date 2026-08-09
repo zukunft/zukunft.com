@@ -52,6 +52,7 @@ include_once html_paths::SHARED_CONST . 'users.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -588,11 +590,11 @@ class user extends db_object
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::IP_ADDR] = $this->ip_addr;
         $vars[json_fields::EMAIL] = $this->email;
@@ -809,15 +811,15 @@ class user extends db_object
      * display the latest changes of the user
      * TODO add display the latest changes by a user
      */
-    function dsp_changes(int $size, int $page, ?back_trace $back = null): string
+    function dsp_changes(int $size, int $page, user_message $msg, ?back_trace $back = null): string
     {
         $log_ui = new user_log_display();
-        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
+        return $log_ui->dsp_hist(user::class, $this->id(), $size, $page, $msg, '', $back);
     }
 
     // display the error that are related to the user, so that he can track when they are closed
     // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors($dsp_type, $size, $page, $back): string
+    function dsp_errors(string $dsp_type, user_message $msg, int $size, int $page, string $back): string
     {
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
@@ -828,9 +830,9 @@ class user extends db_object
         //$err_lst->size = $size;
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
-        if ($err_lst->load()) {
+        if ($err_lst->load($msg)) {
             $err_lst_ui = new sys_log_list($err_lst->api_json());
-            $result = $err_lst_ui->get_html();
+            $result = $err_lst_ui->get_html($msg);
         }
 
         log_debug('done');

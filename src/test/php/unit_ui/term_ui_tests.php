@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -49,6 +50,7 @@ class term_ui_tests
         $t_vrb = new test_verbs($t);
         $t_trp = new test_triples($t);
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html term ';
@@ -67,7 +69,7 @@ class term_ui_tests
         $test_page .= 'verb term with link: ' . $vrb->name_link() . '<br>';
         $test_page .= 'formula term with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'formula term with link: ' . $frm->name_link() . '<br>';
-        $t->html_page_test($test_page, 'term', 'term', $t);
+        $t->html_page_test($test_page, 'term', 'term', $msg);
     }
 
 }

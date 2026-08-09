@@ -34,8 +34,15 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -45,17 +52,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\results;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -65,13 +65,14 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
-
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_FORMULA . 'formula_db.php';
-include_once paths::SHARED_ENUM . 'change_tables.php';
-include_once paths::SHARED_ENUM . 'change_fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'fields.php';
-include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use DateTime;
 
 class formula_write_tests
 {
@@ -90,6 +91,7 @@ class formula_write_tests
         $back = 0;
         $lib = new library();
         $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'db write formula ';
@@ -114,12 +116,12 @@ class formula_write_tests
         // prepare
         $this->create_test_formulas($t);
         $frm = $t_db->add_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $msg);
-        $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
+        $phr = $t_db->add_word($msg, words::YEAR_CAP)->phrase();
         $frm->link_phrase_and_save($phr, $msg);
 
         // test loading of one formula
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, formula::class);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg, formula::class);
         $result = $frm->usr_text;
         $target = formula_names::INCREASE_EXP;
         $t->assert('load for "' . $frm->name() . '"', $result, $target);
@@ -136,7 +138,7 @@ class formula_write_tests
         $trm_lst = $t_trm->term_list_all();
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
-        $elm_lst_db = $frm->load_element_list();
+        $elm_lst_db = $frm->load_element_list($msg);
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'remove an element and update the database ... compare with fixed text';
         $target = '';
@@ -147,21 +149,21 @@ class formula_write_tests
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
         $elm_lst = $elm_lst->unique();
-        $elm_lst_db = $frm->load_element_list();
+        $elm_lst_db = $frm->load_element_list($msg);
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'remove an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_ALTERNATIVE_EXP);
         $frm->element_refresh($msg);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
-        $elm_lst_db = $frm->load_element_list();
+        $elm_lst_db = $frm->load_element_list($msg);
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'add an element and update the database without term cache';
         $frm->set_user_text(formula_names::INCREASE_EXP);
         $frm->element_refresh($msg, $trm_lst);
         $elm_lst = $frm->elements_incl_result_phrases($msg, $trm_lst);
-        $elm_lst_db = $frm->load_element_list();
+        $elm_lst_db = $frm->load_element_list($msg);
         $elm_lst = $elm_lst->unique();
         $t->assert($test_name, $elm_lst_db->dsp_id(), $elm_lst->dsp_id(), $t::TIMEOUT_LIMIT_DB);
 
@@ -169,11 +171,11 @@ class formula_write_tests
 
         $msg->reset();
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, formula::class);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg, formula::class);
         $exp = $frm->expression();
         $trm_lst = new term_list($t->usr1);
         $trm_ids = $exp->terms_missing($msg, $trm_lst);
-        $trm_lst->load_additional_by_id($trm_ids);
+        $trm_lst->load_additional_by_id($trm_ids, $msg);
         $frm_lst = $exp->element_special_following_frm($msg, $trm_lst);
         $phr_lst = new phrase_list($t->usr1);
         if (!$frm_lst->is_empty()) {
@@ -183,8 +185,8 @@ class formula_write_tests
                 $target = $lib->dsp_bool(true);
                 $t->assert('formula->is_special for "' . $elm_frm->name() . '"', $result, $target);
 
-                $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2019));
-                $time_phr = $phr_lst->time_useful();
+                $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2019), $msg);
+                $time_phr = $phr_lst->time_useful($msg);
                 // TODO review
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
@@ -201,14 +203,14 @@ class formula_write_tests
                 } else {
                     $elm_frm_next = $elm_frm;
                 }
-                $time_phr = $elm_frm_next->special_time_phr($time_phr);
+                $time_phr = $elm_frm_next->special_time_phr($time_phr, $msg);
                 $result = $time_phr->name();
                 $target = word_names::YEAR_2019;
                 $t->assert('formula->special_time_phr for "' . $elm_frm_next->name() . '"', $result, $target);
             }
         }
 
-        $phr_lst = $frm->special_phr_lst($phr_lst);
+        $phr_lst = $frm->special_phr_lst($phr_lst, $msg);
         if (!isset($phr_lst)) {
             $result = '';
         } else {
@@ -217,7 +219,7 @@ class formula_write_tests
         $target = '"' . word_names::YEAR_2019 . '","' . word_names::INHABITANTS . '","' . words::CH . '"';
         $t->assert('formula->special_phr_lst for "' . $frm->name() . '"', $result, $target);
 
-        $phr_lst = $frm->assign_phr_lst_direct();
+        $phr_lst = $frm->assign_phr_lst_direct($msg);
         if (!isset($phr_lst)) {
             $result = '';
         } else {
@@ -226,7 +228,7 @@ class formula_write_tests
         $target = '"year"';
         $t->assert('formula->assign_phr_lst_direct for "' . $frm->name() . '"', $result, $target);
 
-        $phr_lst = $frm->assign_phr_ulst_direct();
+        $phr_lst = $frm->assign_phr_ulst_direct($msg);
         if (!isset($phr_lst)) {
             $result = '';
         } else {
@@ -236,17 +238,17 @@ class formula_write_tests
         $t->assert('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $result, $target);
 
         // loading another formula (Price Earning ratio ) to have more test cases
-        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $msg);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_RATIO, word_names::TEST_SHARE);
         $frm_pe = $t_db->load_formula(formula_names::SYSTEM_TEST_RATIO);
 
-        $wrd_share = $t_db->test_word(word_names::TEST_SHARE);
-        $wrd_chf = $t_db->test_word(word_names::TEST_CHF);
+        $wrd_share = $t_db->test_word($msg, word_names::TEST_SHARE);
+        $wrd_chf = $t_db->test_word($msg, word_names::TEST_CHF);
 
         $frm_pe->assign_phrase($wrd_share->phrase(), $msg);
 
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::TEST_SHARE, word_names::TEST_CHF));
+        $phr_lst->load_by_names(array(word_names::TEST_SHARE, word_names::TEST_CHF), $msg);
 
         $phr_lst_all = $frm_pe->assign_phr_lst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
@@ -263,7 +265,7 @@ class formula_write_tests
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::MIO));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::MIO), $msg);
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         // calculate one value via the split path: load_data_for_calc fills the cache and to_num_new computes
         // use a separate message object so the shared $usr_msg (and its user) is not overwritten
@@ -284,13 +286,13 @@ class formula_write_tests
 
         // to_num_new calculates the same numeric result as to_num
         if ($res_lst_new->lst() != null) {
-            $res_new->save_if_updated();
+            $res_new->save_if_updated($msg);
             $result = $res_new->number();
             $target = results::TV_INCREASE_LONG;
             $t->assert('result->save_if_updated via to_num_new "' . $frm->name() . '" for a term list ' . $phr_lst->dsp_id(), $result, $target);
         }
 
-        $res_lst = $frm->calc($phr_lst);
+        $res_lst = $frm->calc($phr_lst, $msg);
         if ($res_lst != null) {
             $result = $res_lst[0]->number();
         } else {
@@ -303,7 +305,7 @@ class formula_write_tests
         // TODO remove any scaling words from the phrase list if the result word is of type scaling
         // TODO automatically check the fastest way to scale and avoid double scaling calculations
         $frm_scale_mio_to_one = $t_db->load_formula(formula_names::SYSTEM_TEST_SCALE_MIO);
-        $res_lst = $frm_scale_mio_to_one->calc($phr_lst);
+        $res_lst = $frm_scale_mio_to_one->calc($phr_lst, $msg);
         if ($res_lst != null) {
             $result = $res_lst[0]->number();
         } else {
@@ -316,7 +318,7 @@ class formula_write_tests
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::ONE));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::ONE), $msg);
         $frm_scale_one_to_k = $t_db->load_formula(formula_names::SYSTEM_TEST_SCALE_TO_K);
         // TODO Prio 1 activate
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
@@ -331,7 +333,7 @@ class formula_write_tests
         //$t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
 
         // load the test ids
-        $wrd_percent = $t_db->load_word('percent');
+        $wrd_percent = $t_db->load_word($msg, 'percent');
         $frm_this = $t_db->load_formula(formula_names::THIS_NAME);
         $frm_prior = $t_db->load_formula(formula_names::PRIOR);
 
@@ -352,7 +354,7 @@ class formula_write_tests
         // TODO test without preloaded term list
         $trm_lst = $t_trm->term_list_increase();
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
-        $result = $frm_html->dsp_text($back, $trm_lst_ui);
+        $result = $frm_html->dsp_text($msg_ui, $back, $trm_lst_ui);
         $target = '"' . words::PERCENT
             . '" = ( <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_this->id() . '&amp;back=0">' . word_names::THIS_NAME . '</a>'
             . ' - <a href="/http/view.php?m=' . views::FORMULA_EDIT_ID . '&amp;id=' . $frm_prior->id() . '&amp;back=0">' . word_names::PRIOR_NAME . '</a> )'
@@ -368,7 +370,7 @@ class formula_write_tests
         // ... the formula result selected by the word and in percent
         // TODO defined the criteria for selecting the result
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::CH);
+        $wrd->load_by_name(words::CH, $msg);
         /*
         $result = trim($frm_ui->dsp_result($wrd, $back));
         $target = '0.79 %';
@@ -543,7 +545,7 @@ class formula_write_tests
 
         // check if a user-specific formula is created if another user changes the formula
         $frm_usr2 = new formula($t->usr2);
-        $frm_usr2->load_by_name(formula_names::SYSTEM_TEST_RENAMED, formula::class);
+        $frm_usr2->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg, formula::class);
         $frm_usr2->usr_text = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
         $frm_usr2->description = formula_names::SYSTEM_TEST_RENAMED . ' description2';
         $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
@@ -555,7 +557,7 @@ class formula_write_tests
 
         // ... and if a user-specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
-        $frm_usr2_reloaded->load_by_name(formula_names::SYSTEM_TEST_RENAMED, formula::class);
+        $frm_usr2_reloaded->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
         $target = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
         $t->assert('formula->load usr_text for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
@@ -595,7 +597,7 @@ class formula_write_tests
 
         // check if undo all specific changes removes the user formula
         $frm_usr2 = new formula($t->usr2);
-        $frm_usr2->load_by_name(formula_names::SYSTEM_TEST_RENAMED, formula::class);
+        $frm_usr2->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg, formula::class);
         $frm_usr2->usr_text = '= "' . word_names::THIS_NAME . '"';
         $frm_usr2->description = formula_names::SYSTEM_TEST_RENAMED . ' description';
         $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
@@ -607,7 +609,7 @@ class formula_write_tests
 
         // ... and if a user-specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
-        $frm_usr2_reloaded->load_by_name(formula_names::SYSTEM_TEST_RENAMED);
+        $frm_usr2_reloaded->load_by_name(formula_names::SYSTEM_TEST_RENAMED, $msg);
         $result = $frm_usr2_reloaded->usr_text;
         $target = '= "' . word_names::THIS_NAME . '"';
         $t->assert('formula->load usr_text for "' . formula_names::SYSTEM_TEST_RENAMED . '"', $result, $target);
@@ -637,12 +639,13 @@ class formula_write_tests
         $t_frm->cleanup($ts);
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(formula::class));
 
     }
 
     function run_list(test_cleanup $t): void
     {
+        $msg = new user_message();
         $t_db = new test_db_load($t);
 
         // start the test section (ts)
@@ -650,13 +653,13 @@ class formula_write_tests
         $t->header($ts);
 
         // load the main test word
-        $wrd_share = $t_db->test_word(word_names::TEST_SHARE);
+        $wrd_share = $t_db->test_word($msg, word_names::TEST_SHARE);
 
         $wrd = new word($t->usr1);
-        $wrd->load_by_id($wrd_share->id(), word::class);
+        $wrd->load_by_id($wrd_share->id(), $msg);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->back = $wrd->id();
-        $frm_lst->load_by_phr($wrd->phrase());
+        $frm_lst->load_by_phr($wrd->phrase(), $msg);
         // TODO fix it
         //$result = $frm_lst->display();
         //$target = formulas::TN_RATIO;
@@ -673,33 +676,38 @@ class formula_write_tests
         $ts = 'db create test formulas ';
         $t->header($ts);
 
-        $t_db->test_word(word_names::TEST_EARNING);
-        $t_db->test_word(word_names::TEST_PRICE);
-        $t_db->test_word(word_names::TEST_PE);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP, $msg);
-        $t_db->test_word(word_names::TEST_TOTAL);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
+        $t_db->test_word($msg, word_names::TEST_EARNING);
+        $t_db->test_word($msg, word_names::TEST_PRICE);
+        $t_db->test_word($msg, word_names::TEST_PE);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_RATIO, formula_names::SYSTEM_TEST_RATIO_EXP);
+        $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
         //$t->test_formula(formulas::TN_THIS, formulas::TF_THIS);
-        $t_db->test_word(word_names::TEST_THIS);
-        $t_db->test_word(word_names::TEST_PRIOR);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_EXP, $msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_EXCLUDED, formula_names::INCREASE_EXP, $msg);
-        $t_db->test_word(word_names::TEST_IN_K);
-        $t_db->test_word(word_names::TEST_BIL);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_K, formula_names::SYSTEM_TEST_SCALE_K_EXP, $msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_TO_K, formula_names::SYSTEM_TEST_SCALE_TO_K_EXP, $msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_MIO, formula_names::SYSTEM_TEST_SCALE_MIO_EXP, $msg);
-        $t_db->test_formula(formula_names::SYSTEM_TEST_SCALE_BIL, formula_names::SYSTEM_TEST_SCALE_BIL_EXP, $msg);
+        $t_db->test_word($msg, word_names::TEST_PERCENT);
+        $t_db->test_word($msg, word_names::TEST_THIS);
+        $t_db->test_word($msg, word_names::TEST_PRIOR);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_ADD, formula_names::INCREASE_TEST_EXP);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_EXCLUDED, formula_names::INCREASE_TEST_EXP);
+        $t_db->test_word($msg, word_names::TEST_IN_K);
+        $t_db->test_word($msg, word_names::TEST_BIL);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SCALE_K, formula_names::SYSTEM_TEST_SCALE_K_EXP);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SCALE_TO_K, formula_names::SYSTEM_TEST_SCALE_TO_K_EXP);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SCALE_MIO, formula_names::SYSTEM_TEST_SCALE_MIO_EXP);
+        $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SCALE_BIL, formula_names::SYSTEM_TEST_SCALE_BIL_EXP);
 
         // modify the special test cases
+        // use a fresh message so a message left by the creates above does not block
+        // the row mapping (row_mapper_sandbox only maps the fields if $msg->is_ok())
+        $frm_msg = new user_message($t->usr1);
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formula_names::SYSTEM_TEST_EXCLUDED);
+        $frm->load_by_name(formula_names::SYSTEM_TEST_EXCLUDED, $frm_msg);
         if ($frm->name() == '') {
             log_err('formula ' . formula_names::SYSTEM_TEST_EXCLUDED . ' could not be loaded', 'create_test_formulas');
         } else {
             $frm->excluded = true;
-            $frm->save($msg);
+            $frm->save($frm_msg);
         }
+        $msg->merge($frm_msg); // collect the messages
     }
 
 

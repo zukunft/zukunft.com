@@ -61,7 +61,7 @@ class component_list extends sandbox_list_named
      * load
      */
 
-    function load_by_view_id(int $id): bool
+    function load_by_view_id(int $id, user_message $msg): bool
     {
         $url = '';
         return true;

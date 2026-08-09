@@ -64,8 +64,8 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);
@@ -73,8 +73,8 @@ class element_write_tests
         $elm_lst = $exp->element_list($msg);
 
         // get the test word ids
-        $wrd_country = $t_db->load_word(words::COUNTRY);
-        $wrd_canton = $t_db->load_word(word_names::CANTON);
+        $wrd_country = $t_db->load_word($msg, words::COUNTRY);
+        $wrd_canton = $t_db->load_word($msg, word_names::CANTON);
         $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -84,7 +84,7 @@ class element_write_tests
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    $elm->load_obj_by_id($elm->obj->id, $elm->type());
+                    $elm->load_obj_by_id($elm->obj->id, $msg, $elm->type());
                 }
 
                 $result = $elm->dsp_id();
@@ -153,8 +153,8 @@ class element_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepare');
-        $wrd_total = $t_db->test_word(word_names::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP, $msg);
+        $wrd_total = $t_db->test_word($msg, word_names::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula($msg, formula_names::SYSTEM_TEST_SECTOR, formula_names::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_SECTOR);

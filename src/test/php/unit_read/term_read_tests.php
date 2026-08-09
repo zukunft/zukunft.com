@@ -46,6 +46,7 @@ include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -69,6 +70,7 @@ class term_read_tests
     {
 
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'term->';
@@ -80,57 +82,57 @@ class term_read_tests
         // test load by term by a word db row
         $wrd = new word($t->usr1); // create a word object just to create the query parameters
         $qp = $wrd->load_sql_by_id($db_con->sql_creator(),1);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $trm = new term($t->usr1); // use the term object to convert the id
         $trm->set_obj_from_class(word::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, word_fields::FLD_ID, word_fields::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, $msg, word_fields::FLD_ID, word_fields::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_names::MATH);
         $trm_by_obj_id = new term($t->usr1);
-        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
+        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class, $msg);
         $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), word_names::MATH);
 
         // test load by term by a triple db row
         $trp = new triple($t->usr1);
         $qp = $trp->load_sql_by_id($db_con->sql_creator(),1);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, triple_fields::FLD_ID, triple_fields::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, $msg, triple_fields::FLD_ID, triple_fields::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triple_names::MATH_CONST);
         $trm_by_obj_id = new term($t->usr1);
-        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
+        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class, $msg);
         $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_names::MATH_CONST);
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
         $qp = $frm->load_sql_by_id($db_con->sql_creator(),formula_names::SCALE_TO_SEC_ID);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, formula_fields::FLD_ID, formula_fields::FLD_NAME, formula_fields::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, $msg, formula_fields::FLD_ID, formula_fields::FLD_NAME, formula_fields::FLD_TYPE);
         $t->assert($t->name . ' formula row mapper', $trm->name(), formula_names::SCALE_TO_SEC);
         $trm_by_obj_id = new term($t->usr1);
-        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
+        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class, $msg);
         $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula_names::SCALE_TO_SEC);
 
         // test load by term by a verb db row
         $vrb = new verb();
         $qp = $vrb->load_sql_by_id($db_con->sql_creator(),1);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(verb::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, verb_db::FLD_ID, verb_db::FLD_NAME);
+        $trm->row_mapper_sandbox($db_row, $msg, verb_db::FLD_ID, verb_db::FLD_NAME);
         $t->assert($t->name . ' verb row mapper', $trm->name(), verbs::NOT_SET_NAME);
         $trm_by_obj_id = new term($t->usr1);
-        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);
+        $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class, $msg);
         $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verbs::NOT_SET_NAME);
 
         // test loading by term by id and name

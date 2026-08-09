@@ -33,6 +33,7 @@
 use Zukunft\ZukunftCom\main\php\cfg\export\xml;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -49,6 +50,7 @@ $db_con = $app->start_api("get_xml");
 
 // load the session user parameters
 $usr = new user;
+$msg = new user_message();
 $result = $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -65,9 +67,9 @@ if ($usr->id() > 0) {
 
     if (count($phr_names) > 0) {
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names($phr_names);
+        $phr_lst->load_by_names($phr_names, $msg);
         // get all related Phrases
-        $phr_lst = $phr_lst->are();
+        $phr_lst = $phr_lst->are($msg);
 
         log_debug("get_xml.php ... phrase loaded.");
         $xml_export = new xml($usr);

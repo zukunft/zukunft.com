@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
@@ -110,6 +111,7 @@ class a_selected_test extends all_unit_tests
         $tl = new test_lib();
         $t_db = new test_db_load($this);
         $u_env = new unit_env();
+        $msg_ui = new user_message();
 
         // start the test section (ts)
         $ts = 'db write job ';
@@ -187,7 +189,7 @@ class a_selected_test extends all_unit_tests
 
             global $sys;
             $ui = new frontend('api based ui tests');
-            $ui->load_cache();
+            $ui->load_cache($msg_ui);
             // the html renderers read the type cache from the global $ui_sys; point it at the just
             // loaded frontend cache so the render does not depend on a stale cache of the unit tests
             // (same pattern as url_test_base and /http/view.php)
@@ -287,11 +289,11 @@ class a_selected_test extends all_unit_tests
             // run the selected db write tests
             //run_system_test($this);
             $t_db->create_test_db_entries($this);
-            new user_write_tests()->run($this);
+            //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
-            //new word_write_tests()->run($this);
+            new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
             //new triple_write_tests()->run($this);
@@ -314,11 +316,11 @@ class a_selected_test extends all_unit_tests
             //new formula_write_tests()->run_list($this);
             //new formula_link_write_tests()->run($this);
             //new formula_link_write_tests()->run_list($this);
-            //new formula_trigger_tests()->run($t);
-            //new result_write_tests()->run($t);
-            //new result_write_tests()->run_list($t);
-            //new job_write_tests()->run($t);
-            //new job_write_tests()->run_list($t);
+            //new formula_trigger_tests()->run($this);
+            //new result_write_tests()->run($this);
+            //new result_write_tests()->run_list($this);
+            //new job_write_tests()->run($this);
+            //new job_write_tests()->run_list($this);
             //new view_write_tests()->run($this);
             //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
@@ -327,9 +329,9 @@ class a_selected_test extends all_unit_tests
 
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
-            //new import_write_tests()->run($this);
-            //new xbrl_write_tests()->run($this);
-            //new wikidata_write_tests()->run($this);
+            new import_write_tests()->run($this);
+            new xbrl_write_tests()->run($this);
+            new wikidata_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);

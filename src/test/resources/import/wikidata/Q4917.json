@@ -4,8 +4,8 @@
             "pageid": 5869,
             "ns": 0,
             "title": "Q4917",
-            "lastrevid": 2504880895,
-            "modified": "2026-06-12T03:00:30Z",
+            "lastrevid": 2522565903,
+            "modified": "2026-07-25T16:32:34Z",
             "type": "item",
             "id": "Q4917",
             "labels": {
@@ -820,6 +820,10 @@
                 "kaa": {
                     "language": "kaa",
                     "value": "AQSh dolları"
+                },
+                "olo": {
+                    "language": "olo",
+                    "value": "Yhtysvaldoin dollar"
                 }
             },
             "descriptions": {
@@ -1130,6 +1134,10 @@
                 "ro": {
                     "language": "ro",
                     "value": "moneda oficială a Statelor Unite"
+                },
+                "ku": {
+                    "language": "ku",
+                    "value": "pereya resmî a DYAyê"
                 }
             },
             "aliases": {
@@ -5516,9 +5524,9 @@
                         "mainsnak": {
                             "snaktype": "value",
                             "property": "P8313",
-                            "hash": "d59e3599521d7f6505959c795d1c5fff609f337f",
+                            "hash": "b9d0a1572aaec51d50e1b74abe8d0882508571ff",
                             "datavalue": {
-                                "value": "dollar",
+                                "value": "amerikanske_dollar",
                                 "type": "string"
                             },
                             "datatype": "external-id"
@@ -6101,6 +6109,72 @@
                         },
                         "type": "statement",
                         "id": "Q4917$ED7C3F07-2D1A-4D18-A33F-DC45C3F38D90",
+                        "rank": "normal"
+                    }
+                ],
+                "P13772": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P13772",
+                            "hash": "2f787eaa27c112863ecd2427b65ad1af68c6d45a",
+                            "datavalue": {
+                                "value": "dollar",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4917$0C0DC7D8-67C4-4B27-97CD-B5A7A0258F4E",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P13772",
+                            "hash": "6c60b24e171beaa4ec02d346c30de5f158ab2d9b",
+                            "datavalue": {
+                                "value": "dollar-american",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4917$800E9C0B-5869-4862-9C60-6A46A6D4C143",
+                        "rank": "normal"
+                    }
+                ],
+                "P14470": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P14470",
+                            "hash": "7f527a5c597da76bef711721d36f036b5086e01a",
+                            "datavalue": {
+                                "value": "Concepts/United_States_Dollar",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P9675": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P9675",
+                                    "hash": "f7524f2dd4564486735af013af71ba492fb04230",
+                                    "datavalue": {
+                                        "value": "90314",
+                                        "type": "string"
+                                    },
+                                    "datatype": "string"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P9675"
+                        ],
+                        "id": "Q4917$E0A5F58D-3F8E-45E2-A067-B3CBBA690B8D",
                         "rank": "normal"
                     }
                 ]
@@ -7029,6 +7103,16 @@
                 "madwiki": {
                     "site": "madwiki",
                     "title": "Dollar Amèrika Serikat",
+                    "badges": []
+                },
+                "kuwiki": {
+                    "site": "kuwiki",
+                    "title": "Dolara DYAyê",
+                    "badges": []
+                },
+                "isvwiki": {
+                    "site": "isvwiki",
+                    "title": "Dolar SŠA",
                     "badges": []
                 }
             }

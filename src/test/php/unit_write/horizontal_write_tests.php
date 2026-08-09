@@ -47,6 +47,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -108,13 +109,13 @@ class horizontal_write_tests
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' and check differences';
                 $ids[$class] = $obj->id();  // remember id for update and delete loops
                 $check_obj = $obj->clone_reset(true);
-                $check_obj->load_by_id($ids[$class]);
+                $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
                 $t->assert_true($test_name, $diff->is_ok());
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' by name and check differences';
                 $check_obj->reset(true);
-                $check_obj->load_by_name($obj->name());
+                $check_obj->load_by_name($obj->name(), $msg);
                 $diff = $check_obj->diff_msg($obj);
                 $t->assert_true($test_name, $diff->is_ok());
             }
@@ -127,7 +128,7 @@ class horizontal_write_tests
             if (in_array($class, def::NAME_CLASSES)) {
                 // reload the object
                 $obj = $t_map->class_to_object($class, $t->usr1);
-                $obj->load_by_id($ids[$class]);
+                $obj->load_by_id($ids[$class], $msg);
 
                 // set the sql creation types
                 $sc_par_lst = [];
@@ -141,7 +142,7 @@ class horizontal_write_tests
 
                 $test_name = 'reload filled ' . $lib->class_to_name($class) . ' and check differences';
                 $check_obj = $obj->clone_reset(true);
-                $check_obj->load_by_id($ids[$class]);
+                $check_obj->load_by_id($ids[$class], $msg);
                 $diff = $check_obj->diff_msg($obj);
                 $t->assert_true($test_name, $diff->is_ok());
 
@@ -178,7 +179,7 @@ class horizontal_write_tests
 
                 // reload the object
                 $obj = $t_map->class_to_object($class, $t->usr1);
-                $obj->load_by_id($ids[$class]);
+                $obj->load_by_id($ids[$class], $msg);
 
                 // set the sql creation types
                 $sc_par_lst = [];
@@ -199,12 +200,12 @@ class horizontal_write_tests
                 $t->assert_delete($test_name, $obj, $msg, $sc_par_lst);
 
                 $test_name = 'reload ' . $lib->class_to_name($class) . ' and check that it has been remove';
-                $t->assert_false($test_name, $obj->load_by_id($ids[$class]));
+                $t->assert_false($test_name, $obj->load_by_id($ids[$class], $msg));
 
                 // delete the second word used for a proper triple creation
                 if ($class == word::class) {
                     $wrd2 = $t_wrd->word_add_via_api();
-                    $wrd2->load_by_name($wrd2->name());
+                    $wrd2->load_by_name($wrd2->name(), $msg);
                     $wrd2->del($msg);
                 }
             }
@@ -216,7 +217,7 @@ class horizontal_write_tests
         $t->subheader($ts . 'remove');
 
         // test if there are any test leftovers in the database and report which
-        $t->check_cleanup($msg);
+        $t->check_cleanup($msg, library::class_to_name(sandbox::class));
 
     }
 

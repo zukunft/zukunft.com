@@ -50,16 +50,16 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("word", "", false);
+$msg = new user_message(); // for api
+$db_con = $app->start_api("word", $msg);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
+    $msg->add_message_text($usr->get($msg));
     // store the requesting user on the single message of this request as early as possible,
     // so every function below reads the requesting user from $msg->usr
     // (docs/llm/state-and-messages.md)
@@ -106,7 +106,7 @@ if ($db_con->is_open()) {
         // session it has validated itself; the data user is included in the request in
         // url_var::USER and honored for a server-to-server call of this pod, so that e.g.
         // a description changed by the browsing user is shown in the word and edit views
-        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, server_guard::from_own_pod());
+        $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
         $wrd = new word($load_usr);
 
@@ -120,11 +120,11 @@ if ($db_con->is_open()) {
             $typ_lst = api_type_list::from_url_array($_GET, [api_types::HEADER]);
 
             if ($wrd_id > 0) {
-                $wrd->load_by_id($wrd_id);
-                $result = $wrd->api_json($typ_lst, $load_usr);
+                $wrd->load_by_id($wrd_id, $msg);
+                $result = $wrd->api_json($typ_lst, $msg, $load_usr);
             } elseif ($wrd_name != '') {
-                $wrd->load_by_name($wrd_name);
-                $result = $wrd->api_json($typ_lst, $load_usr);
+                $wrd->load_by_name($wrd_name, $msg);
+                $result = $wrd->api_json($typ_lst, $msg, $load_usr);
             } else {
                 $msg->add_message_text('word id or name is missing');
             }

@@ -142,11 +142,14 @@ function log_php_error_timestamped(int $errno, string $errstr, string $errfile =
  */
 function log_php_exception_timestamped(Throwable $e): void
 {
-    $text = 'PHP Fatal error: Uncaught ' . $e::class . ': ' . $e->getMessage()
-        . ' in ' . $e->getFile() . ' on line ' . $e->getLine() . "\n";
-    $text .= 'PHP Stack trace:' . "\n";
-    $text .= $e->getTraceAsString();
+    $text = 'PHP Fatal error: Uncaught ' . $e::class . ': '
+        . $e->getMessage()
+        . ' in ' . $e->getFile()
+        . ' on line ' . $e->getLine() . "\n"
+        . 'PHP Stack trace:' . "\n"
+        . $e->getTraceAsString();
     echo_timestamped($text);
+    //log_fatal_db($text);
 }
 
 /**
@@ -261,18 +264,11 @@ function log_err(string $msg_text,
     }
     // TODO move the next lines to a class and a private function "get_function_name"
     $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 ');
-        $function_name = $lib->str_left_of($function_name, '): ');
-        $function_name = $lib->str_right_of($function_name, '/main/php/');
-        $function_name = $lib->str_left_of($function_name, '.php(');
-    }
-    if ($function_name == '' or $function_name == null) {
-        $function_name = 'no function name detected';
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
     }
     return log_msg($msg_text,
         $msg_description,
@@ -349,21 +345,18 @@ function log_warning_msg_ui(string $msg_txt, user_message_ui $msg): void
  */
 function log_fatal_db(
     string $msg_text,
-    string $function_name,
+    string $function_name = '',
     string $msg_description = '',
     string $trace = '',
     ?user  $calling_usr = null): string
 {
     // escape the (possibly request-derived) message before echoing it into the html response (xss)
     echo 'FATAL ERROR! ' . htmlspecialchars($msg_text, ENT_QUOTES);
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
     }
     return log_msg(
         'FATAL ERROR! ' . $msg_text,
@@ -414,15 +407,12 @@ function log_fatal(string $msg_text,
         fwrite($log_file, $time . ': FATAL ERROR! ' . $msg_text
             . '", by user "' . $usr_txt . "\n");
     }
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-        $write_with_more_info = true;
-    }
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
+        $write_with_more_info = true;
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = library::php_function_from_exception($trace);
         $write_with_more_info = true;
     }
     if ($write_with_more_info and $log_file !== false) {
@@ -573,9 +563,7 @@ function log_msg(string  $msg_text,
             $msg_description = $msg_text;
         }
         if ($function_name == '' or $function_name == null) {
-            $function_name = (new Exception)->getTraceAsString();
-            $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-            $function_name = $lib->str_left_of($function_name, ': log_');
+            $function_name = library::php_function_from_exception(new Exception);
         }
         if ($trace == '') {
             $trace = (new Exception)->getTraceAsString();
@@ -631,7 +619,7 @@ function log_msg(string  $msg_text,
             } else {
                 if ($msg_log_level >= text_log::DSP_LEVEL) {
                     $usr = new user();
-                    $usr->load_by_id($user_id);
+                    $usr->load_by_id($user_id, $msg);
                     $msk = new view($usr);
                     $msk_ui = new view_ui($msk->api_json());
                     $result .= $msk_ui->dsp_navbar_simple();

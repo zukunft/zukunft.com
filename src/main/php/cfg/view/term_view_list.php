@@ -35,8 +35,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class term_view_list extends sandbox_link_list
 {
@@ -48,12 +50,13 @@ class term_view_list extends sandbox_link_list
     /**
      * fill the term view list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new term_view($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new term_view($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 }

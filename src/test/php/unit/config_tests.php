@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -70,6 +71,7 @@ class config_tests
     {
 
         // init
+        $msg = new user_message();
         $sc = new sql_creator();
         $t_val = new test_values($t);
         $t->name = 'config->';
@@ -131,7 +133,7 @@ class config_tests
         // without building the value and phrase objects on every request
         $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::TYPES];
         $cfg_objects = $t_val->config_cache_switch($names, false);
-        $api_json = $cfg_objects->api_json_array(new api_type_list([api_types::PHRASE_NAMES]));
+        $api_json = $cfg_objects->api_json_array(new api_type_list([api_types::PHRASE_NAMES]), $msg);
         $cfg_cached = $t_val->config_empty();
         $test_name = 'the cached config json fills the lookup rows';
         $t->assert_true($test_name, $cfg_cached->set_cache_json($api_json));

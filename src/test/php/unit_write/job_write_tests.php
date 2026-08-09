@@ -76,10 +76,10 @@ class job_write_tests
 
         // prepare test adding a batch job via a list
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
-        $phr_lst->ex_time();
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
+        $phr_lst->ex_time($msg);
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp_id());
+        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
         $result = $val->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert('job->value to link', $result, $target);
@@ -98,6 +98,7 @@ class job_write_tests
 
     function run_list(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -110,7 +111,7 @@ class job_write_tests
         // prepare test adding a batch job via a list
         $frm = $t_db->load_formula(formula_names::INCREASE);
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
+        $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
 
         // test adding a batch job via a list
         $job_lst = new job_list($t->usr1);

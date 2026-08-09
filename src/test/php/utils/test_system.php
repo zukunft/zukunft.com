@@ -53,6 +53,7 @@ function run_system_test(test_cleanup $t): void
 
     global $db_con;
 
+    $msg = new user_message();
     $t_db = new test_db_load($t);
 
     // start the test section (ts)
@@ -60,7 +61,7 @@ function run_system_test(test_cleanup $t): void
     $t->header($ts);
 
     // load the main test word
-    $wrd_company = $t_db->test_word(word_names::COMPANY);
+    $wrd_company = $t_db->test_word($msg, word_names::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->subheader($ts . 'test mail sending');
@@ -86,7 +87,7 @@ function run_system_test(test_cleanup $t): void
     $usr_test = new user;
     $usr_test->ip_addr = users::TEST_IP;
     $target = 'Your IP ' . $usr_test->ip_addr . ' is blocked at the moment because too much damage from this IP. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
-    $result = $usr_test->get();
+    $result = $usr_test->get($msg);
     if ($usr_test->id() > 0) {
         $result = 'permitted!';
     }
@@ -97,9 +98,9 @@ function run_system_test(test_cleanup $t): void
 
     // load by name
     $usr_by_id = new user;
-    $usr_by_id->load_by_id(users::SYSTEM_TEST_ID);
+    $usr_by_id->load_by_id(users::SYSTEM_TEST_ID, $msg);
     $usr_test = new user;
-    $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
+    $usr_test->load_by_name(users::SYSTEM_TEST_NAME, $msg);
     $usr_ui = new user_ui($usr_by_id->api_json());
     $target = '<a href="/http/view.php?m=74&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_ui->display();
@@ -109,7 +110,7 @@ function run_system_test(test_cleanup $t): void
     $t->subheader('user list');
 
     $usr_lst = new user_list($t->usr1);
-    $usr_lst->load_active();
+    $usr_lst->load_active($msg);
     $result = $usr_lst->name_lst();
     $target = users::TEST_NAME;
     $t->dsp_contains(', user_list->load_active', $target, $result);

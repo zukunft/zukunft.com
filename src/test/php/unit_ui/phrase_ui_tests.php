@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -45,6 +46,7 @@ class phrase_ui_tests
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html phrase ';
@@ -57,7 +59,7 @@ class phrase_ui_tests
         $test_page .= 'word phrase with link: ' . $wrd->name_link() . '<br>';
         $test_page .= 'triple phrase with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'triple phrase with link: ' . $trp->name_link() . '<br>';
-        $t->html_page_test($test_page, 'phrase', 'phrase', $t);
+        $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
     }
 
 }

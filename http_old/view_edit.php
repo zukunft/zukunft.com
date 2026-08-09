@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -50,6 +51,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $app = new frontend();
+$msg = new user_message();
 global $sys;
 $db_con = $app->start("view_edit");
 $html = new html_base();
@@ -60,23 +62,23 @@ $msg_txt = '';
 
 // load the session user parameters
 $usr = new user;
-$result .= $usr->get();
+$result .= $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
     $upd_result = '';
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($usr_msg);
 
     // prepare the display to edit the view
     $msk = new view($usr);
-    $msk->load_by_code_id(views::VIEW_ADD);
+    $msk->load_by_code_id(views::VIEW_ADD, $usr_msg);
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]);
 
     // create the view object that the user can change
     $msk_edit = new view($usr);
-    $result .= $msk_edit->load_by_id($_GET[url_var::ID]);
+    $result .= $msk_edit->load_by_id($_GET[url_var::ID], $usr_msg);
 
     // get the view id to adjust
     if ($msk_edit->id() <= 0) {
@@ -85,12 +87,12 @@ if ($usr->id() > 0) {
 
         // get the word used as a sample the show the changes
         $wrd = new word($usr);
-        $result .= $wrd->load_by_id($_GET['word']);
+        $result .= $wrd->load_by_id($_GET['word'], $usr_msg);
 
         // save the direct changes
         // ... of the element list
         if (isset($_GET['move_up'])) {
-            $upd_result = $msk_edit->entry_up($_GET['move_up']);
+            $upd_result = $msk_edit->entry_up($_GET['move_up'], $usr_msg);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
                 $msg_txt .= $upd_result;
@@ -98,7 +100,7 @@ if ($usr->id() > 0) {
         }
 
         if (isset($_GET['move_down'])) {
-            $upd_result .= $msk_edit->entry_down($_GET['move_down']);
+            $upd_result .= $msk_edit->entry_down($_GET['move_down'], $usr_msg);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
                 $msg_txt .= $upd_result;
@@ -108,17 +110,17 @@ if ($usr->id() > 0) {
         // unlink an entry
         if (isset($_GET['del'])) {
             $cmp = new component($usr);
-            $cmp->load_by_id($_GET['del']);
-            $cmp->unlink($msk_edit);
+            $cmp->load_by_id($_GET['del'], $usr_msg);
+            $cmp->unlink($msk_edit, $usr_msg);
         }
 
         // check if a existing view element should be added
         if (isset($_GET['add_component'])) {
             if ($_GET['add_component'] > 0) {
                 $cmp = new component($usr);
-                $cmp->load_by_id($_GET['add_component']);
-                $order_nbr = $cmp->next_nbr($msk_edit->id());
-                $cmp->link($msk_edit, $order_nbr);
+                $cmp->load_by_id($_GET['add_component'], $usr_msg);
+                $order_nbr = $cmp->next_nbr($msk_edit->id(), $msg);
+                $cmp->link($msk_edit, $order_nbr, $usr_msg);
             }
         }
 
@@ -130,12 +132,12 @@ if ($usr->id() > 0) {
                 $cmp->set_name($cmp_name);
                 $add_result = $cmp->save($usr_msg);
                 if ($add_result == '') {
-                    $cmp->load_by_name($cmp_name);
+                    $cmp->load_by_name($cmp_name, $usr_msg);
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
                         $cmp->save($usr_msg);
-                        $order_nbr = $cmp->next_nbr($msk_edit->id());
-                        $cmp->link($msk_edit, $order_nbr);
+                        $order_nbr = $cmp->next_nbr($msk_edit->id(), $msg);
+                        $cmp->link($msk_edit, $order_nbr, $usr_msg);
                     }
                 }
             }
@@ -186,7 +188,9 @@ if ($usr->id() > 0) {
 
             // show the word and its relations, so that the user can change it
             $msk_edit_dsp = new view_ui($msk_edit->api_json());
-            $result .= $msk_edit_dsp->dsp_edit($add_cmp, $wrd, $back);
+            // the frontend display object needs a frontend message object
+            // (frontend and backend are separate apps with separate user_message classes)
+            $result .= $msk_edit_dsp->dsp_edit($add_cmp, $wrd, $back, new user_message_ui());
         }
     }
 }

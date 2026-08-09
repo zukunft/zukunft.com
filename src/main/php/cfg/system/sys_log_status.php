@@ -125,9 +125,9 @@ class sys_log_status extends type_object
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        $result = parent::row_mapper_typ_obj($db_row, $class);
+        $result = parent::row_mapper_typ_obj($db_row, $msg, $class);
         if ($result) {
             if (array_key_exists(sys_log_status::FLD_ID, $db_row)) {
                 $this->status_id = ($db_row[sys_log_status::FLD_ID]);
@@ -135,8 +135,13 @@ class sys_log_status extends type_object
             if (array_key_exists(sys_log_status::FLD_ACTION, $db_row)) {
                 $this->action = ($db_row[sys_log_status::FLD_ACTION]);
             }
+            // TODO Prio 2 review and move to type ?
+            if ($this->id() == null or $this->id() == 0) {
+                log_warning_msg('the id must be set', $msg);
+                $msg->set_not_ok();
+            }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -207,12 +212,13 @@ class sys_log_status extends type_object
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
         $vars[json_fields::STATUS] = $this->status_id;
         $vars[json_fields::ACTION] = $this->action;
         return $vars;
@@ -225,13 +231,14 @@ class sys_log_status extends type_object
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         if ($this->status_id !== null) {
             $vars[json_fields::STATUS] = $this->status_id;
         }

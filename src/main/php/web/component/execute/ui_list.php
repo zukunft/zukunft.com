@@ -54,6 +54,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
@@ -67,6 +68,7 @@ include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+
 //include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -83,6 +85,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -325,7 +328,7 @@ class ui_list extends ui_base
      * @param bool $test_mode true to skip the api load and use only the passed cache for a reproducible result
      * @return string the html code with the linked names of the assigned phrases
      */
-    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null, bool $test_mode = false): string
+    function phrases_of_formula(formula|db_object $frm, user_message $msg, ?data_object $cac = null, bool $test_mode = false): string
     {
         global $ui_sys;
 
@@ -343,16 +346,18 @@ class ui_list extends ui_base
             $phr_lst = new phrase_list();
             // the default cache is an empty list, so an empty cache triggers the backend call
             if ($lnk_lst != null and !$lnk_lst->is_empty()) {
-                $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
+                $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst, $msg);
             } elseif (!$test_mode) {
                 // TODO Prio 2 decide if and when a reloading via api is done
                 $lnk_lst = new formula_link_list();
-                $lnk_lst->load_by_formula_id($frm->id());
-                $phr_lst = $lnk_lst->get_phrase_list($cac?->phr_lst ?? new phrase_list());
+                $lnk_lst->load_by_formula_id($frm->id(), $msg);
+                $phr_lst = $lnk_lst->get_phrase_list($cac?->phr_lst ?? new phrase_list(), $msg);
             }
         }
         if ($ui_sys?->cfg !== null) {
-            $row_limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
+            $row_limit = $ui_sys->cfg->get_by(
+                [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                $msg, config::LIMIT_NAME_LIST);
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
@@ -364,7 +369,7 @@ class ui_list extends ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function triple_list(?db_object $dbo = null, ?data_object $cfg = null): string
+    function triple_list(?db_object $dbo = null, user_message $msg, ?data_object $cfg = null): string
     {
         global $mtr;
 
@@ -372,7 +377,7 @@ class ui_list extends ui_base
         $trp_lst = clone $cfg->trp_lst;
         if ($dbo::class == verb::class) {
             $trp_lst = $trp_lst->get_by_verb($dbo);
-            $result = $trp_lst->display();
+            $result = $trp_lst->display($msg);
         } else {
             log_err($dbo::class . '  is not expected to be a selection for triples');
         }
@@ -479,7 +484,7 @@ class ui_list extends ui_base
      * @param data_object|null $dto the context used to create the view
      * @return string with the html code of the external references
      */
-    function ref_list_word(db_object $dbo, ?data_object $dto): string
+    function ref_list_word(db_object $dbo, user_message $msg, ?data_object $dto): string
     {
         $result = '';
         $phr = null;
@@ -499,7 +504,7 @@ class ui_list extends ui_base
             }
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($dbo->phrase());
-            $result = $ref_lst->list($phr_lst);
+            $result = $ref_lst->list($msg, $phr_lst);
         }
         // wrap the reference list in a block div so each reference name and its refresh icon
         // stay on one line; without it the bare inline elements land directly in the
@@ -540,11 +545,12 @@ class ui_list extends ui_base
      * TODO Prio 3 replace the view preview placeholder with a real miniature preview
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param user_message $msg
      * @param bool $test_mode true to create a reproducible result without a backend call
      * @param array $url_array the parsed url of the current page, carried into the my tab undo links
      * @return string the html code of the tab box or an empty string for an unsupported object
      */
-    function view_tab_box(db_object $dbo, bool $test_mode = false, array $url_array = []): string
+    function view_tab_box(db_object $dbo, user_message $msg, bool $test_mode = false, array $url_array = []): string
     {
         global $mtr;
         $result = '';
@@ -564,7 +570,7 @@ class ui_list extends ui_base
             // tab 2: the change log of the word as the invisible (borderless, standard grey) table
             // with the three columns when, who and what, latest first (see ui_log)
             $log = new ui_log();
-            $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $test_mode);
+            $log_html = $log->change_log_table_pure($dbo, new change_log_list(), $msg, $test_mode);
             // tab 3: the session user's own overwrites of this object (the current user_ table
             // row values compared to the standard values); an empty string if the user is not
             // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
@@ -613,7 +619,7 @@ class ui_list extends ui_base
      * @param bool $test_mode true to create a reproducible result without a backend call
      * @return string the html code with the linked names of the assigned formulas
      */
-    function formulas(word|phrase|db_object $wrd, ?data_object $cac = null, bool $test_mode = false): string
+    function formulas(word|phrase|db_object $wrd, user_message $msg, ?data_object $cac = null, bool $test_mode = false): string
     {
         global $ui_sys;
 
@@ -637,16 +643,16 @@ class ui_list extends ui_base
             $frm_lst = new formula_list();
             // the default cache is an empty list, so an empty cache triggers the backend call
             if ($lnk_lst != null and !$lnk_lst->is_empty()) {
-                $frm_lst = $lnk_lst->get_formula_list($phr, $cac->frm_lst);
+                $frm_lst = $lnk_lst->get_formula_list($phr, $msg, $cac->frm_lst);
             } elseif (!$test_mode) {
                 // TODO Prio 2 decide if and when a reloading via api is done
-                $frm_lst->load_by_phr_id($phr->id());
+                $frm_lst->load_by_phr_id($phr->id(), $msg);
             }
         }
         if ($ui_sys?->cfg !== null) {
             $row_limit = $ui_sys->cfg->get_by(
                 [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                config::LIMIT_NAME_LIST);
+                $msg, config::LIMIT_NAME_LIST);
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
@@ -663,11 +669,11 @@ class ui_list extends ui_base
      * @param data_object|null $cfg the cached lists for initial display without backend call
      * @return string the html code of the value chart or an empty string if there is no value
      */
-    function value_chart(db_object $dbo, ?data_object $cfg = null): string
+    function value_chart(db_object $dbo, user_message $msg, ?data_object $cfg = null): string
     {
         $result = '';
         if ($dbo::class == word::class) {
-            $val_lst = $this->value_related_list($dbo, $cfg);
+            $val_lst = $this->value_related_list($dbo, $msg, $cfg);
             if ($val_lst != null and !$val_lst->is_empty()) {
                 $html = new html_base();
                 $result = $html->div('value chart', view_styles::COL_SM_12);
@@ -688,17 +694,18 @@ class ui_list extends ui_base
      */
     function values_by_word(
         word|db_object|type_object|null $dbo,
+        user_message                    $msg,
         ?data_object                    $dto = null,
         ?int                            $style_id = null
     ): string
     {
-        $val_lst = $this->value_related_list($dbo, $dto);
+        $val_lst = $this->value_related_list($dbo, $msg, $dto);
         // show the grouped list (value_list::list_most_relevant) so the newest time period and the
         // phrases shared by several values are highlighted, matching this "most relevant and related
         // values" component that the default word view uses
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
     }
 
     /**
@@ -713,14 +720,15 @@ class ui_list extends ui_base
      */
     function values_most_relevant(
         word|db_object|type_object|null $dbo,
+        user_message                    $msg,
         ?data_object                    $dto = null,
         ?int                            $style_id = null
     ): string
     {
-        $val_lst = $this->value_related_list($dbo, $dto);
+        $val_lst = $this->value_related_list($dbo, $msg, $dto);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
     }
 
     /**
@@ -733,10 +741,11 @@ class ui_list extends ui_base
      */
     private function value_related_list(
         word|db_object|type_object|null $dbo,
+        user_message                    $msg,
         ?data_object                    $dto
     ): ?value_list
     {
-        $val_lst = $dto?->val_lst?->filter($dbo);
+        $val_lst = $dto?->val_lst?->filter($msg, $dbo);
         if ($dbo::class == word::class and $dbo->val_lst != null) {
             $val_lst = $dbo->val_lst;
         }
@@ -752,11 +761,12 @@ class ui_list extends ui_base
      */
     function values_by_triple(
         triple|db_object|null $dbo,
+        user_message          $msg,
         ?data_object          $dto = null,
         ?int                  $style_id = null
     ): string
     {
-        $val_lst = $dto->val_lst?->filter($dbo);
+        $val_lst = $dto->val_lst?->filter($msg, $dbo);
         // the triple carries its own related values from the INCL_RELATED api message
         if ($dbo::class == triple::class and $dbo->val_lst != null) {
             $val_lst = $dbo->val_lst;
@@ -764,7 +774,7 @@ class ui_list extends ui_base
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         // show the grouped list (list_most_relevant) like the default word view
-        return $this->value_list($val_lst, $phr_lst, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
     }
 
     /**
@@ -776,12 +786,13 @@ class ui_list extends ui_base
      */
     function values_by_source(
         source|db_object|null $dbo,
+        user_message          $msg,
         ?data_object          $dto = null,
         ?int                  $style_id = null
     ): string
     {
-        $val_lst = $dto->val_lst?->filter($dbo);
-        return $this->value_list_unit($val_lst, $style_id);
+        $val_lst = $dto->val_lst?->filter($msg, $dbo);
+        return $this->value_list_unit($val_lst, $msg, $style_id);
     }
 
     /**
@@ -796,6 +807,7 @@ class ui_list extends ui_base
      */
     function results_by_word(
         formula|db_object|null $dbo,
+        user_message           $msg,
         ?data_object           $dto = null,
         ?int                   $style_id = null
     ): string
@@ -803,7 +815,7 @@ class ui_list extends ui_base
         $res_lst = $dto->res_lst?->filter($dbo);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->result_list_by($res_lst, $phr_lst, $style_id);
+        return $this->result_list_by($res_lst, $phr_lst, $msg, $style_id);
     }
 
     /**
@@ -818,10 +830,11 @@ class ui_list extends ui_base
      * @return string the html code to show the list of values
      */
     private function value_list(
-        value_list  $val_lst,
-        phrase_list $phr_lst,
-        ?int        $style_id = null,
-        bool        $most_relevant = false
+        value_list   $val_lst,
+        phrase_list  $phr_lst,
+        user_message $msg,
+        ?int         $style_id = null,
+        bool         $most_relevant = false
     ): string
     {
         global $ui_sys;
@@ -832,9 +845,9 @@ class ui_list extends ui_base
         }
         // the "most relevant" component groups the values, the plain one just sorts them by impact
         if ($most_relevant) {
-            $result = $val_lst->list_most_relevant($phr_lst, '', $style_txt);
+            $result = $val_lst->list_most_relevant($msg, $phr_lst, '', $style_txt);
         } else {
-            $result = $val_lst->list($phr_lst, '', $style_txt);
+            $result = $val_lst->list($msg, $phr_lst, '', $style_txt);
         }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
@@ -858,8 +871,9 @@ class ui_list extends ui_base
      * @return string the html code to show the list of values
      */
     private function value_list_unit(
-        value_list $val_lst,
-        ?int       $style_id = null
+        value_list   $val_lst,
+        user_message $msg,
+        ?int         $style_id = null
     ): string
     {
         global $ui_sys;
@@ -867,7 +881,7 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
-        return $val_lst->list_unit();
+        return $val_lst->list_unit($msg);
     }
 
     /**
@@ -882,9 +896,10 @@ class ui_list extends ui_base
      * @return string the html code to show the list of values
      */
     private function result_list_by(
-        result_list $res_lst,
-        phrase_list $phr_lst,
-        ?int        $style_id = null
+        result_list  $res_lst,
+        phrase_list  $phr_lst,
+        user_message $msg,
+        ?int         $style_id = null
     ): string
     {
         global $ui_sys;
@@ -892,7 +907,7 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
-        return $res_lst->list($phr_lst, '', $style_txt);
+        return $res_lst->list($msg, $phr_lst, '', $style_txt);
     }
 
     /**
@@ -961,24 +976,26 @@ class ui_list extends ui_base
      * @return string the html code of a sortable list
      */
     function list_sort(
-        phrase      $phr,
-        data_object $dto
+        phrase       $phr,
+        user_message $msg,
+        data_object  $dto
     ): string
     {
         $lst = new list_sort();
-        return $lst->list_sort($phr, $dto);
+        return $lst->list_sort($phr, $msg, $dto);
     }
 
     /**
      * @return string the html code for the start view as a sortable list
      */
     function start_list(
-        data_object $dto
+        data_object  $dto,
+        user_message $msg
     ): string
     {
         $phr = new phrase();
-        $phr->load_by_name(triple_names::GLOBAL_PROBLEM);
-        return $this->list_sort($phr, $dto);
+        $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        return $this->list_sort($phr, $msg, $dto);
     }
 
     /**

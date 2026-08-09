@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::API_OBJECT . 'api_message.php';
@@ -57,6 +56,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'MapObject.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
@@ -83,7 +83,9 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -214,11 +216,11 @@ class db_object extends TextIdObject
     /**
      * the inverse of url_mapper: the url parameters that represent this object's database values,
      * e.g. to build the url array of an edit form submission in a test without hard-coding the keys;
-     * each child extends the array with its own fields via parent::to_url_array()
+     * each child extends the array with its own fields via parent::to_url_array($msg)
      *
      * @return array the url var keyed array of this object's values
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
         return [url_var::ID => $this->id()];
     }
@@ -308,14 +310,14 @@ class db_object extends TextIdObject
      * load the user sandbox object e.g. word by id via api
      * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
+     * @param user_message $msg to collect the load warnings for the user
      * @param array $data additional data that should be included in the get request
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool
      */
-    function load_by_id(int|string $id, array $data = [], int $usr_id = 0): bool
+    function load_by_id(int|string $id, user_message $msg, array $data = [], int $usr_id = 0): bool
     {
         $result = false;
-        $msg = new user_message();
 
         $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
@@ -350,9 +352,9 @@ class db_object extends TextIdObject
      * @param int $usr_id the id of the session user to load the object for, 0 for the default
      * @return bool true on a successful load (mirrors load_by_id)
      */
-    function load_by_id_with_related(int|string $id, int $usr_id = 0): bool
+    function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, [], $usr_id);
+        return $this->load_by_id($id, $msg, [], $usr_id);
     }
 
 
@@ -362,9 +364,9 @@ class db_object extends TextIdObject
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
         $vars = array();
         $vars[json_fields::ID] = $this->id();
@@ -374,9 +376,9 @@ class db_object extends TextIdObject
     /**
      * @return string the json message to the backend as a string
      */
-    function api_json(): string
+    function api_json(user_message $msg): string
     {
-        return json_encode($this->api_array());
+        return json_encode($this->api_array([], $msg));
     }
 
 
@@ -566,7 +568,7 @@ class db_object extends TextIdObject
         return $msg;
     }
 
-    function value(): float|string|DateTime|null
+    function value(user_message $msg): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
         log_err($msg);
@@ -617,15 +619,15 @@ class db_object extends TextIdObject
      * load
      */
 
-    function view_list(?string $pattern = null): view_list
+    function view_list(user_message $msg, ?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
         // without an explicit pattern use the load_by_pattern default ('%'), the sql like wildcard the
         // backend expects; a literal '*' matches nothing and would return an empty view list
         if ($pattern == null) {
-            $msk_lst->load_by_pattern();
+            $msk_lst->load_by_pattern($msg);
         } else {
-            $msk_lst->load_by_pattern($pattern);
+            $msk_lst->load_by_pattern($msg, $pattern);
         }
         return $msk_lst;
     }
@@ -665,7 +667,7 @@ class db_object extends TextIdObject
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_post($this::class, $this->api_array());
+        $result = $rest->api_post($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -703,7 +705,7 @@ class db_object extends TextIdObject
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_put($this::class, $this->api_array());
+        $result = $rest->api_put($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -735,7 +737,7 @@ class db_object extends TextIdObject
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
-        $result = $rest->api_del($this::class, $this->api_array());
+        $result = $rest->api_del($this::class, $this->api_array($typ_lst, $msg));
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
@@ -785,7 +787,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
+    public function phrase_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('phrase_type_selector');
     }
@@ -796,7 +798,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    public function source_type_selector(string $form, ?type_lists $typ_lst): string
+    public function source_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('source_type_selector');
     }
@@ -833,7 +835,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the formula type
      */
-    public function formula_type_selector(string $form, ?type_lists $typ_lst): string
+    public function formula_type_selector(string $form, user_message $msg, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('formula_type_selector');
     }
@@ -844,7 +846,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function view_type_selector(string $form, ?type_lists $typ_lst): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         $msg = 'view type selector not defined for ' . $this::class . '.';
         // TODO Prio 1 active
@@ -861,7 +863,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function style_selector(string $form, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('style_selector');
     }
@@ -872,7 +874,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    public function component_type_selector(string $form, ?type_lists $typ_lst): string
+    public function component_type_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('component_type_selector');
     }
@@ -883,7 +885,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    public function component_style_selector(string $form, ?type_lists $typ_lst): string
+    public function component_style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
     {
         return $this->selector_not_defined('component_style_selector');
     }
@@ -1041,9 +1043,9 @@ class db_object extends TextIdObject
      * @return string the html code to select a result
      */
     public function result_selector(
-        string      $form,
-        result_list $res_lst = null,
-        string      $name = url_var::RESULT
+        string           $form,
+        result_list|null $res_lst = null,
+        string           $name = url_var::RESULT
     ): string
     {
         return $this->selector_not_defined('result_selector');
@@ -1057,10 +1059,11 @@ class db_object extends TextIdObject
      * @return string the html code to select a view
      */
     public function view_selector(
-        string    $form,
-        view_list $msk_lst,
-        string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+        string       $form,
+        view_list    $msk_lst,
+        user_message $msg,
+        string       $name = url_var::VIEW,
+        msg_id       $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         return $this->selector_not_defined('view_selector');

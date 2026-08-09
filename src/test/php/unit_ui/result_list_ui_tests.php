@@ -38,6 +38,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -49,6 +50,7 @@ class result_list_ui_tests
 
         $html = new html_base();
         $t_res = new test_results($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html result list ';
@@ -59,7 +61,7 @@ class result_list_ui_tests
         $test_page = $html->text_h2('result list display test');
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';
-        $t->html_page_test($test_page, 'result_list', 'result_list', $t);
+        $t->html_page_test($test_page, 'result_list', 'result_list', $msg);
     }
 
 }

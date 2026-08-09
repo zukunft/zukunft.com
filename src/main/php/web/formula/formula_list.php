@@ -71,9 +71,9 @@ class formula_list extends ListBase
      * @param int $id the id of the phrase to which the formulas are assigned
      * @return bool true if at least one formula has been loaded
      */
-    function load_by_phr_id(int $id): bool
+    function load_by_phr_id(int $id, user_message $msg): bool
     {
-        return parent::load_by_id(self::class, url_var::PHRASE, $id);
+        return parent::load_by_id(self::class, url_var::PHRASE, $id, $msg);
     }
 
 

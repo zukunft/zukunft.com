@@ -4,8 +4,8 @@
             "pageid": 305,
             "ns": 0,
             "title": "Q167",
-            "lastrevid": 2505004017,
-            "modified": "2026-06-12T09:54:27Z",
+            "lastrevid": 2517824221,
+            "modified": "2026-07-15T18:17:00Z",
             "type": "item",
             "id": "Q167",
             "labels": {
@@ -5577,6 +5577,166 @@
                         "id": "Q167$A1B0CF29-CC91-4F66-AC9F-FE0A084058CD",
                         "rank": "normal"
                     }
+                ],
+                "P12975": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P12975",
+                            "hash": "92f3f0872bb6604f57a0ca80468f2294a9877175",
+                            "datavalue": {
+                                "value": "5618",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q167$2A783831-EEEC-490B-818E-24AC5AC8E0FC",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P12975",
+                            "hash": "8ee6a5605cd3eae7abf79798b04b7be1003a89d6",
+                            "datavalue": {
+                                "value": "242",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q167$B4FCB763-1198-478F-8BAF-B027CB2F2C71",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P12975",
+                            "hash": "6fc54901dd00f0754b3837e346b9745371fd465a",
+                            "datavalue": {
+                                "value": "6101",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q167$ED53FE0E-86C0-4FAE-B281-9AF17CA4877D",
+                        "rank": "normal"
+                    }
+                ],
+                "P14534": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P14534",
+                            "hash": "a7dc4af528e7554551a8638ea03c5517611bb21a",
+                            "datavalue": {
+                                "value": "Real.pi",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q167$D0D81569-32B2-481F-A404-FB8722688DD0",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "bc9233368248cfa206c6d64cfc6acd8e9daacb77",
+                                "snaks": {
+                                    "P854": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P854",
+                                            "hash": "fc435661d345898924274ce39dce9219c4e5c3cf",
+                                            "datavalue": {
+                                                "value": "https://github.com/leanprover-community/mathlib4/blob/88d006abbcd1f157f567bd21c7a33c271df9b83b/Mathlib/Analysis/SpecialFunctions/Trigonometric/Basic.lean#L126",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ],
+                                    "P813": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P813",
+                                            "hash": "9f4997feb72fb59fd262109420ddb6e851de6828",
+                                            "datavalue": {
+                                                "value": {
+                                                    "time": "+2026-07-02T00:00:00Z",
+                                                    "timezone": 0,
+                                                    "before": 0,
+                                                    "after": 0,
+                                                    "precision": 11,
+                                                    "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                                },
+                                                "type": "time"
+                                            },
+                                            "datatype": "time"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P854",
+                                    "P813"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P14541": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P14541",
+                            "hash": "d4156e80a9038879b24ddb75d65f71e450918107",
+                            "datavalue": {
+                                "value": "378yFw",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P1810": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1810",
+                                    "hash": "96f7034623cf3b9b6e68c18dff033d013e247161",
+                                    "datavalue": {
+                                        "value": "圆周率",
+                                        "type": "string"
+                                    },
+                                    "datatype": "string"
+                                }
+                            ],
+                            "P5017": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P5017",
+                                    "hash": "ef5bc85df833f280f40f4dd196de7a8344abc4c8",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2026-03-07T00:00:00Z",
+                                            "timezone": 0,
+                                            "before": 0,
+                                            "after": 0,
+                                            "precision": 11,
+                                            "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                        },
+                                        "type": "time"
+                                    },
+                                    "datatype": "time"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P1810",
+                            "P5017"
+                        ],
+                        "id": "Q167$22FDE896-E34B-487D-8F72-BA9183BB58C3",
+                        "rank": "normal"
+                    }
                 ]
             },
             "sitelinks": {
@@ -6488,11 +6648,6 @@
                     "title": "Pi",
                     "badges": []
                 },
-                "tokwiki": {
-                    "site": "tokwiki",
-                    "title": "nanpa sike",
-                    "badges": []
-                },
                 "ladwiki": {
                     "site": "ladwiki",
                     "title": "Numero π",
@@ -6506,6 +6661,11 @@
                 "wikifunctionswiki": {
                     "site": "wikifunctionswiki",
                     "title": "Z20862",
+                    "badges": []
+                },
+                "tokwiki": {
+                    "site": "tokwiki",
+                    "title": "nanpa Pi",
                     "badges": []
                 }
             }

@@ -73,10 +73,10 @@ class sys_log_list
      * construct and map
      */
 
-    function __construct(?string $api_json = null)
+    function __construct(?string $api_json = null, user_message $msg = new user_message())
     {
         if ($api_json != null) {
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $msg);
         }
     }
 
@@ -88,30 +88,31 @@ class sys_log_list
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $msg): bool
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true), $msg);
     }
 
     /**
      * set the vars of these list display objects bases on the api json array
      * TODO can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
+     * @return bool true if there are no errors
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, user_message $msg): bool
     {
         $ctrl = new controller();
         $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
-        $msg = new user_message();
         foreach ($json_array as $value) {
             $new = new sys_log();
             $new->api_mapper($value, $msg);
             $this->add($new);
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
 
@@ -122,11 +123,12 @@ class sys_log_list
     /**
      * request the system log entries related to the session user from the backend
      * @param string $dsp_type which log entries should be loaded e.g. 'all' or only the entries relevant for the user
+     * @param user_message $msg the reasons why loading has failed
      * @param int $size the maximal number of log entries to load
      * @param int $page the offset in pages of the given size to load additional entries
-     * @return user_message ok or the reason why loading has failed
+     * @return bool true if all fine
      */
-    function load_by_user(string $dsp_type, int $size, int $page = 0): user_message
+    function load_by_user(string $dsp_type, user_message $msg, int $size, int $page = 0): bool
     {
         $data = [];
         $data[url_var::LOG_STATUS] = $dsp_type;
@@ -134,7 +136,7 @@ class sys_log_list
         $data[url_var::LOG_PAGE] = $page;
         $rest = new rest_call();
         $json_body = $rest->api_get($this::class, $data);
-        return $this->set_from_json_array($json_body);
+        return $this->set_from_json_array($json_body, $msg);
     }
 
 
@@ -148,7 +150,7 @@ class sys_log_list
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name();
@@ -161,7 +163,7 @@ class sys_log_list
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
     function api_array(api_type_list|array $typ_lst = []): array
     {
@@ -253,11 +255,12 @@ class sys_log_list
      * display the error that are related to the user, so that he can track when they are closed
      * or display the error that are related to the user, so that he can track when they are closed
      * called also from user_display.php/dsp_errors
+     * @param user_message $msg to collect error message during the html creation
      * @param user|null $usr e.g. an admin user to allow updating the system errors
      * @param string $back
      * @return string the html code of the system log
      */
-    function get_html(?user $usr = null, string $back = ''): string
+    function get_html(user_message $msg, ?user $usr = null, string $back = ''): string
     {
         $html = new html_base();
         $result = ''; // reset the html code var
@@ -271,7 +274,7 @@ class sys_log_list
                 if ($row_nbr == 1) {
                     $rows .= $this->headline_html();
                 }
-                $rows .= $log_ui->get_html($usr, $back);
+                $rows .= $log_ui->get_html($msg, $usr, $back);
             }
             $result = $html->tbl($rows);
         }
@@ -297,11 +300,11 @@ class sys_log_list
         return $result;
     }
 
-    function get_html_page(?user $usr = null, string $back = ''): string
+    function get_html_page(user_message $msg, ?user $usr = null, string $back = ''): string
     {
-        return $this->get_html_header('System log')
+        return $this->get_html_header('System log', $msg)
             . $this->get_html_navbar()
-            . $this->get_html($usr, $back)
+            . $this->get_html($msg, $usr, $back)
             . $this->get_html_footer();
     }
 
@@ -309,7 +312,7 @@ class sys_log_list
      * to review
      */
 
-    function get_html_header(string $title): string
+    function get_html_header(string $title, user_message $msg): string
     {
         if ($title == null) {
             $title = 'api message';
@@ -317,7 +320,7 @@ class sys_log_list
             $title = 'api message';
         }
         $html = new html_base();
-        return $html->header($title);
+        return $html->header($title, $msg);
     }
 
     function get_html_navbar(): string

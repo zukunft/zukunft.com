@@ -117,7 +117,7 @@ class view_list extends ListBase
      * load
      */
 
-    function load_by_pattern(string $pattern = '%'): bool
+    function load_by_pattern(user_message $msg, string $pattern = '%'): bool
     {
         $result = false;
 
@@ -137,7 +137,7 @@ class view_list extends ListBase
      * @param int $id of the component
      * @return bool true if the load has been successful
      */
-    function load_by_component_id(int $id): bool
+    function load_by_component_id(int $id, user_message $msg): bool
     {
         $result = false;
 
@@ -227,14 +227,14 @@ class view_list extends ListBase
      * filter
      */
 
-    public function ex_system(): view_list
+    public function ex_system(user_message $msg): view_list
     {
-        return $this->ex_type(view_types::SYSTEM_TYPES);
+        return $this->ex_type(view_types::SYSTEM_TYPES, $msg);
     }
 
-    public function ex_non_phrase(): view_list
+    public function ex_non_phrase(user_message $msg): view_list
     {
-        return $this->ex_type(view_types::NON_PHRASE_TYPES);
+        return $this->ex_type(view_types::NON_PHRASE_TYPES, $msg);
     }
 
     /**
@@ -242,11 +242,11 @@ class view_list extends ListBase
      * @param array $typ_lst list of view_types
      * @return view_list this list excluding the views of the given types
      */
-    private function ex_type(array $typ_lst): view_list
+    private function ex_type(array $typ_lst, user_message $msg): view_list
     {
         $views = new view_list();
         foreach ($this->lst() as $msk) {
-            $code_id = $msk->type_code_id();
+            $code_id = $msk->type_code_id($msg);
             if (!in_array($code_id, $typ_lst)) {
                 $views->add($msk);
             }
@@ -259,11 +259,11 @@ class view_list extends ListBase
      * @param string $typ the view_type to select the views
      * @return view_list with the views of the given type
      */
-    function only_type(string $typ): view_list
+    function only_type(string $typ, user_message $msg): view_list
     {
         $views = new view_list();
         foreach ($this->lst() as $msk) {
-            $code_id = $msk->type_code_id();
+            $code_id = $msk->type_code_id($msg);
             if ($code_id == $typ) {
                 $views->add($msk);
             }

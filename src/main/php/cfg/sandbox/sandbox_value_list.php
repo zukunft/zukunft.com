@@ -219,7 +219,7 @@ class sandbox_value_list extends sandbox_list
      */
     function load_by_phr_lst_multi(
         phrase_list $phr_lst,
-        string      $class = value::class,
+        user_message $msg, string      $class = value::class,
         bool        $or = false,
         int         $limit = sql_db::ROW_LIMIT,
         int         $page = 0
@@ -234,7 +234,7 @@ class sandbox_value_list extends sandbox_list
         }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst_multi($sc, $phr_lst, $class, false, $or, $limit, $page);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**

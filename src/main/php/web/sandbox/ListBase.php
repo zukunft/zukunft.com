@@ -193,7 +193,7 @@ class ListBase extends ListOfIdObjects
      * @param int $id of the object to filter the list
      * @return bool true if the load has been successful
      */
-    function load_by_id(string $class, string $url_var, int $id): bool
+    function load_by_id(string $class, string $url_var, int $id, user_message $msg): bool
     {
         $result = false;
 
@@ -240,7 +240,7 @@ class ListBase extends ListOfIdObjects
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name();
@@ -255,7 +255,7 @@ class ListBase extends ListOfIdObjects
      * create the json array for updating the database via backend
      *
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
     function api_array(api_type_list|array $typ_lst = []): array
     {
@@ -349,11 +349,12 @@ class ListBase extends ListOfIdObjects
      * @return string the html code to show a useful numbers of list objects
      */
     function list(
-        phrase_list $context_phr_lst = new phrase_list(),
-        string      $back = '',
-        string      $style = '',
-        ?int        $limit = null,
-        ?int        $page = null
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = '',
+        string       $style = '',
+        ?int         $limit = null,
+        ?int         $page = null
     ): string
     {
         $result = '';

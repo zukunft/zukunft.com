@@ -51,6 +51,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -146,7 +148,7 @@ class phrase extends combine_named
     /**
      * @return array the json message array to send the updated data to the backend
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
         $vars = array();
         if ($this->is_word()) {
@@ -163,7 +165,7 @@ class phrase extends combine_named
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::PLURAL] = $this->get_plural();
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
@@ -313,14 +315,14 @@ class phrase extends combine_named
         return $result;
     }
 
-    function is_type_phrase(phrase $phr): bool
+    function is_type_phrase(phrase $phr, user_message $msg): bool
     {
         global $ui_sys;
 
         $result = false;
-        $typ_id = $this->type_id();
+        $typ_id = $this->type_id($msg);
         if ($typ_id != null) {
-            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id());
+            $typ = $ui_sys?->typ_lst_cache?->phr_typ?->get($this->type_id($msg));
             if ($typ != null) {
                 $typ_phr_lst = $typ->type_phrases();
                 foreach ($typ_phr_lst->lst() as $typ_phr) {
@@ -338,27 +340,27 @@ class phrase extends combine_named
     /**
      * @return bool true if this phrase is of type percent
      */
-    function is_percent(): bool
+    function is_percent(user_message $msg): bool
     {
-        return $this->obj()->is_percent();
+        return $this->obj()->is_percent($msg);
     }
 
-    function is_measure(): bool
+    function is_measure(user_message $msg): bool
     {
-        return $this->obj()->is_measure();
+        return $this->obj()->is_measure($msg);
     }
 
     /**
      * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
      */
-    function is_time(): bool
+    function is_time(user_message $msg): bool
     {
-        return $this->obj()->is_time();
+        return $this->obj()->is_time($msg);
     }
 
-    function is_info(): bool
+    function is_info(user_message $msg): bool
     {
-        return $this->obj()->is_info();
+        return $this->obj()->is_info($msg);
     }
 
     /**
@@ -437,11 +439,11 @@ class phrase extends combine_named
      * to review
      */
 
-    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, user_message $msg, ?verb_list $link_types = null, string $back = ''): string
     {
         $phr_lst = new phrase_list();
         if ($phr_lst->load_related($this, $direction, $link_types)) {
-            return $phr_lst->dsp_graph($this, $back);
+            return $phr_lst->dsp_graph($this, $msg, $back);
         } else {
             return '';
         }
@@ -450,12 +452,12 @@ class phrase extends combine_named
     /**
      * @return word the most relevant
      */
-    function main_word(): word
+    function main_word(user_message $msg): word
     {
         if ($this->is_word()) {
             return $this->obj()->word();
         } else {
-            return $this->obj()->main_word();
+            return $this->obj()->main_word($msg);
         }
     }
 
@@ -500,9 +502,9 @@ class phrase extends combine_named
     /**
      * html code for a button to add a new phrase similar to this phrase
      **/
-    function btn_add($back): string
+    function btn_add(user_message $msg, string $back): string
     {
-        $wrd = $this->main_word();
+        $wrd = $this->main_word($msg);
         return $wrd->btn_add($back);
     }
 
@@ -521,12 +523,12 @@ class phrase extends combine_named
      * to enable the recursive function in work_link
      * TODO add a list of triple already split to detect endless loops
      */
-    function wrd_lst(): word_list
+    function wrd_lst(user_message $msg): word_list
     {
         $wrd_lst = new word_list();
         if (!$this->is_word()) {
             $trp = $this->obj();
-            $sub_wrd_lst = $trp->wrd_lst();
+            $sub_wrd_lst = $trp->wrd_lst($msg);
             foreach ($sub_wrd_lst->lst() as $wrd) {
                 $wrd_lst->add($wrd);
             }

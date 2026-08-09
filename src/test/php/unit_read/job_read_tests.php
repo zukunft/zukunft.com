@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
@@ -45,6 +46,7 @@ class job_read_tests
     {
 
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'batch job read db->';
@@ -57,13 +59,13 @@ class job_read_tests
 
         // use the system user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_id(users::SYSTEM_ID);
+        $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
 
         $test_name = 'check if at least one batch job has the base import id ' . job_types::BASE_IMPORT_ID;
         $job_lst = new job_list($sys_usr);
-        $job_lst->load_by_type(job_types::BASE_IMPORT);
+        $job_lst->load_by_type(job_types::BASE_IMPORT, $msg);
         $first_job = $job_lst->lst()[0];
-        $t->assert($test_name, $first_job->type_id(), job_types::BASE_IMPORT_ID);
+        $t->assert($test_name, $first_job->type_id($msg), job_types::BASE_IMPORT_ID);
 
 
         $t->subheader($ts . 'api');

@@ -39,6 +39,7 @@ include_once html_paths::EXECUTE . 'system_page.php';
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -52,6 +53,7 @@ class term_list_ui_tests
 
         $html = new html_base();
         $t_trm = new test_terms($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui html term list ';
@@ -100,7 +102,7 @@ class term_list_ui_tests
         $test_name = 'the search result title does not contain a raw script tag';
         $t->assert_false($test_name, str_contains($xss_title, '<script>'));
 
-        $t->html_page_test($test_page, 'term_list', 'term_list', $t);
+        $t->html_page_test($test_page, 'term_list', 'term_list', $msg);
     }
 
 }

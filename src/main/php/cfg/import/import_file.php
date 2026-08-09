@@ -225,13 +225,11 @@ class import_file
      * @param bool $validate if true, the import is validated even if the number of the values matches
      * @return user_message true if the configuration has imported
      */
-    function import_config_yaml(user $usr, bool $validate = false): user_message
+    function import_config_yaml(user $usr, user_message $msg, bool $validate = false): user_message
     {
         global $sys;
         global $db_con;
         global $mtr;
-
-        $msg = new user_message();
 
         // only admin users are allowed to load the system config from the resource file
         if ($usr->is_admin() or $usr->is_system()) {
@@ -244,7 +242,7 @@ class import_file
             if (!$msg->is_ok() or $validate) {
 
                 // load the system configuration from the database
-                $sys->load_cache_type($db_con);
+                $sys->load_cache_type($db_con, $msg);
                 // TODO Prio 3 base the validation on the export yaml
                 $cfg = new config_numbers($usr);
                 $cfg->load_cfg(null, $usr);
@@ -269,8 +267,8 @@ class import_file
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
                     $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load($db_con);
-                    $sys->typ_lst->load($db_con);
+                    $load_msg = $dto->load($db_con, $msg);
+                    $sys->typ_lst->load($db_con, $msg);
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values

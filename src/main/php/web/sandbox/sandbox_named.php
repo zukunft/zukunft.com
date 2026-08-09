@@ -51,6 +51,8 @@ include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_HELPER . 'Message.php';
+include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -63,6 +65,8 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -162,11 +166,11 @@ class sandbox_named extends sandbox
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
     {
-        $vars = parent::api_array();
+        $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
@@ -239,9 +243,9 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
     /**
      * @return array parent url array extended with the name and description of this named object
      */
-    function to_url_array(): array
+    function to_url_array(user_message $msg): array
     {
-        $url_array = parent::to_url_array();
+        $url_array = parent::to_url_array($msg);
         $url_array[url_var::NAME] = $this->name();
         $url_array[url_var::DESCRIPTION] = $this->get_description();
         if ($this->usage > 0) {
@@ -259,13 +263,13 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      * load the named user sandbox object e.g. word by name via api
      * TODO Prio 1 add user_message as parameter
      * @param string $name
+     * @param user_message|Message $msg to collect the load warnings for the user
      * @return bool
      */
-    function load_by_name(string $name): bool
+    function load_by_name(string $name, user_message|Message $msg): bool
     {
         $result = false;
 
-        $msg = new user_message();
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {

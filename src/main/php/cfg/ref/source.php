@@ -191,19 +191,20 @@ class source extends sandbox_code_id
      * @return bool true if the source is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = source_fields::FLD_ID,
-        string $name_fld = source_fields::FLD_NAME,
-        string $type_fld = source_fields::FLD_TYPE
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = source_fields::FLD_ID,
+        string       $name_fld = source_fields::FLD_NAME,
+        string       $type_fld = source_fields::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             $this->url = $db_row[fields::FLD_URL];
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -255,15 +256,19 @@ class source extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars = parent::api_json_array($typ_lst, $msg, $usr);
             $vars[json_fields::URL] = $this->url;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -279,13 +284,14 @@ class source extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->url <> '') {
             $vars[json_fields::URL] = $this->url;
@@ -410,11 +416,12 @@ class source extends sandbox_code_id
      * e.g. for import if this source has only the name set, the protection should not be updated in the database
      *
      * @param source|CombineObject|IdObject $db_obj the source as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this source has infos that should be saved in the database
      */
-    function needs_db_update(source|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(source|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->url != null) {
             if ($this->url != $db_obj->url) {
                 $result = true;
@@ -497,20 +504,22 @@ class source extends sandbox_code_id
      */
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no one has used this source
      */
-    function not_used(): bool
+    function not_used(user_message $msg): bool
     {
         log_debug($this->id());
 
         // to review: maybe replace by a database foreign key check
-        return $this->not_changed();
+        return $this->not_changed($msg);
     }
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool true if no other user has modified the source
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
@@ -522,7 +531,7 @@ class source extends sandbox_code_id
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
-            $db_row = $db_con->get1($qp);
+            $db_row = $db_con->get1($qp, $msg);
             $change_user_id = $db_row[user_db::FLD_ID];
             if ($change_user_id > 0) {
                 $result = false;
@@ -641,7 +650,7 @@ class source extends sandbox_code_id
         $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_TYPE,
@@ -651,9 +660,9 @@ class source extends sandbox_code_id
             }
             $lst->add_field(
                 source_fields::FLD_TYPE,
-                $this->type_id(),
+                $this->type_id($msg),
                 type_object::FLD_ID_SQL_TYP,
-                $obj->type_id()
+                $obj->type_id($msg)
             );
         }
         if ($obj->url !== $this->url) {

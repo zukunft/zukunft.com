@@ -57,7 +57,7 @@ class group_write_tests
 
     function run(test_cleanup $t): void
     {
-
+        $msg = new user_message();
 
         // init
         $t_db = new test_db_load($t);
@@ -78,7 +78,7 @@ class group_write_tests
         $t->subheader($ts . 'add the system test words to avoid dependencies on group testing');
         $wrd_add_lst = [];
         foreach ($grp_add_lst as $grp_add) {
-            $wrd_add_lst[] = $t_db->test_word($grp_add[2]);
+            $wrd_add_lst[] = $t_db->test_word($msg, $grp_add[2]);
         }
 
         $t->subheader($ts . 'add');
@@ -118,9 +118,9 @@ class group_write_tests
         // test if the time word is correctly excluded
         // TODO move to phrase list tests
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
+        $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $phr_grp = new group($t->usr1);
-        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list(), $msg);
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
         // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group
@@ -140,7 +140,7 @@ class group_write_tests
         // load based on id
         if ($phr_grp->is_id_set()) {
             $phr_grp_reload = new group($t->usr1);
-            $phr_grp_reload->load_by_id($phr_grp->id());
+            $phr_grp_reload->load_by_id($phr_grp->id(), $msg);
             $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->words();
             $result = array_diff(
                 array(word_names::MIO, word_names::ZH, word_names::CANTON, word_names::INHABITANTS, words::CH),
@@ -152,22 +152,22 @@ class group_write_tests
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(triple_names::CITY_ZH, word_names::INHABITANTS));
+        $phr_lst->load_by_names(array(triple_names::CITY_ZH, word_names::INHABITANTS), $msg);
         $zh_city_grp = $phr_lst->get_grp_id();
-        $result = $zh_city_grp->get_id();
+        $result = $zh_city_grp->get_id($msg);
         if ($result > 0) {
             $target = $result;
         }
         $t->assert('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test names
-        $result = implode(",", $zh_city_grp->names());
+        $result = implode(",", $zh_city_grp->names($msg));
         $target = word_names::INHABITANTS . ',' . triple_names::CITY_ZH;
         $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS), $msg);
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
@@ -177,7 +177,7 @@ class group_write_tests
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);
         $grp_check->set_id($grp->id());
@@ -251,14 +251,14 @@ class group_write_tests
     {
         $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
-        $grp->load_by_name($grp_name);
+        $grp->load_by_name($grp_name, $msg);
         if (!$grp->is_saved()) {
             $phr_lst->add($wrd->phrase());
             $grp->set_phrase_list($phr_lst);
             $grp->set_name($grp_name);
             $grp->save($msg);
             $grp->reset();
-            $grp->load_by_name($grp_name);
+            $grp->load_by_name($grp_name, $msg);
             $t->assert_true($test_name, $grp->isset());
         }
     }
@@ -283,7 +283,7 @@ class group_write_tests
     {
         $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
-        $grp->load_by_name($old_name);
+        $grp->load_by_name($old_name, $msg);
         if ($grp->is_saved()) {
             $id = $grp->id();
             if ($test_case == 2) {
@@ -294,7 +294,7 @@ class group_write_tests
             $grp->set_name($new_name);
             $grp->save($msg);
             $grp->reset();
-            $grp->load_by_id($id);
+            $grp->load_by_id($id, $msg);
             $t->assert($test_name, $grp->name(), $new_name);
         }
     }
@@ -315,12 +315,12 @@ class group_write_tests
     {
         $msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
-        $grp->load_by_name($grp_name);
+        $grp->load_by_name($grp_name, $msg);
         if ($grp->is_saved()) {
             $id = $grp->id();
             $grp->del($msg);
             $grp->reset();
-            $grp->load_by_id($id);
+            $grp->load_by_id($id, $msg);
             // the delete and reload above write to and read from the database, so a db timeout is used
             $t->assert($test_name, $grp->name(), $grp->name_generated(), $t::TIMEOUT_LIMIT_DB);
         }

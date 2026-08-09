@@ -21,6 +21,7 @@ Dieses Manifest dient als provisorische Diskussionsgrundlage für eine potenziel
   - **Achte auf deine Gesundheit und die Gesundheit anderer**
   - **Souveränität ermöglicht freie Entscheidungen, aber überprüfe, ob sie nicht anderen schadet**
   - **Versuche mit deinem Wissen die Gesellschaft für alle besser zu machen**
+  - **Die Macht von Mächtigen zu reduzieren ist meistens kein Schaden, sondern ein Nutzen, denn niemand hat die Macht, die Macht gleichmässig zu verteilen, denn sobald der Mächtige seine Macht abgibt, hat er nicht mehr die Macht, die gleichmässige Verteilung der Macht sicherzustellen.**
 
 ---
 

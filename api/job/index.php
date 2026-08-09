@@ -45,32 +45,29 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("job");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("job", $msg);
 
 if ($db_con->is_open()) {
 
-    // get the parameters
-    $job_id = $_GET[url_var::ID] ?? 0;
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
 
     $result = ''; // reset the json message string
 
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
+    // get the parameters
+    $job_id = $_GET[url_var::ID] ?? 0;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
 
         if ($job_id > 0) {
             $job = new job($usr);
-            $job->load_by_id($job_id);
+            $job->load_by_id($job_id, $msg);
             $result = $job->api_json();
         } else {
             $msg->add_message_text('job id is missing');

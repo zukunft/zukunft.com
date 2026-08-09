@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -45,6 +46,7 @@ class sys_log_read_tests
     {
 
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'error log read db->';
@@ -57,7 +59,7 @@ class sys_log_read_tests
 
         // use the system test user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_name(users::SYSTEM_TEST_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_TEST_NAME, $msg);
 
         // check if loading the system errors technically works
         $err_lst = new sys_log_list();
@@ -65,7 +67,7 @@ class sys_log_read_tests
         $err_lst->dsp_type = sys_log_list::DSP_ALL;
         $err_lst->page = 0;
         $err_lst->size = 20;
-        $result = $err_lst->load_all();
+        $result = $err_lst->load_all($msg);
         $t->assert('system errors', $result, true);
 
         $t->subheader($ts . 'api');

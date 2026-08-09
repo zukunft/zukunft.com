@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
@@ -60,6 +61,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -96,7 +98,7 @@ class test_values extends test_objects
      * unit
      */
 
-    function value(): value
+    function value(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group();
@@ -108,18 +110,18 @@ class test_values extends test_objects
      * frontend value title shows the protection in its subtitle, mirroring the word
      * @return value the test value with admin protection set
      */
-    function value_protected(): value
+    function value_protected(user_message $msg): value
     {
         global $sys;
-        $val = $this->value();
+        $val = $this->value($msg);
         $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::ADMIN));
         return $val;
     }
 
-    function value_incomplete(): value
+    function value_incomplete(user_message $msg): value
     {
         $t_grp = new test_groups($this->env);
-        $val = $this->value();
+        $val = $this->value($msg);
         $val->set_grp($t_grp->group_incomplete());
         return $val;
     }
@@ -128,6 +130,16 @@ class test_values extends test_objects
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_pi_symbol();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * @return value the pi number value as keyed in the seeded database by the "Pi (math)" triple
+     */
+    function value_pi_math(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_pi_math();
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
@@ -435,10 +447,10 @@ class test_values extends test_objects
     /**
      * @return value_list with only a few values for first basic tests
      */
-    function value_list_short(): value_list
+    function value_list_short(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
+        $lst->add($this->value($msg));
         $lst->add($this->value_zh());
         return $lst;
     }
@@ -446,10 +458,10 @@ class test_values extends test_objects
     /**
      * @return value_list with the standard test values
      */
-    function value_list(): value_list
+    function value_list(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
+        $lst->add($this->value($msg));
         $lst->add($this->value_zh());
         return $lst;
     }
@@ -457,10 +469,10 @@ class test_values extends test_objects
     /**
      * @return value_list with all values for selection and paging tests
      */
-    function value_list_all(): value_list
+    function value_list_all(user_message $msg): value_list
     {
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value());
+        $lst->add($this->value($msg));
         $lst->add($this->value_zh());
         $lst->add($this->value_canton());
         $lst->add($this->value_ch());
@@ -493,10 +505,10 @@ class test_values extends test_objects
     }
 
     // TODO Prio 1 easy: rename a _dsp functions and object to _ui
-    function value_list_ui(): value_list_ui
+    function value_list_ui(user_message $msg): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list($msg), [api_types::INCL_PHRASES]);
     }
 
     function value_list_zh_ui(): value_list_ui
@@ -549,10 +561,10 @@ class test_values extends test_objects
         return $tl->list_to_ui($this->value_list_math(), [api_types::INCL_PHRASES]);
     }
 
-    function list_all_ui(): value_list_ui
+    function list_all_ui(user_message $msg): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_all(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_all($msg), [api_types::INCL_PHRASES]);
     }
 
     /**

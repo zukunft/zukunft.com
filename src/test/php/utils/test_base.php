@@ -54,6 +54,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
@@ -495,29 +496,30 @@ class test_base
 
     function set_users(): void
     {
+        $msg = new user_message();
 
         // create the system test user to simulate the user sandbox
         // e.g. a value owned by the first user cannot be adjusted by the second user instead a user-specific value is created
         // instead a user-specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user();
-        $this->usr1->load_by_name(users::SYSTEM_TEST_NAME);
+        $this->usr1->load_by_name(users::SYSTEM_TEST_NAME, $msg);
 
         $this->usr2 = new user();
-        $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
+        $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME, $msg);
 
         // TODO Prio 2 use SYSTEM_TEST_ADMIN_NAME
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
+        $this->usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME, $msg);
 
         $this->usr_system = new user();
-        $this->usr_system->load_by_name(users::SYSTEM_NAME);
+        $this->usr_system->load_by_name(users::SYSTEM_NAME, $msg);
 
         $this->usr_normal = new user();
-        $this->usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
+        $this->usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME, $msg);
 
         $this->usr_signup = new user();
-        $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
+        $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID, $msg);
 
         // fail fast if an essential test user is missing (id 0): otherwise a write test creates data
         // owned by a non-existent user and only fails ~200 seconds later deep in create_test_words with
@@ -1067,12 +1069,13 @@ class test_base
      */
     function assert_export_reload(string $test_name, object $usr_obj): bool
     {
+        $msg = new user_message();
         $lib = new library();
-        $original_json = $usr_obj->export_json([]);
+        $original_json = $usr_obj->export_json($msg, []);
         $db_obj = $usr_obj->clone_all();
         $db_obj->reset(true);
-        $db_obj->load_by_id($usr_obj->id());
-        $recreated_json = $db_obj->export_json([]);
+        $db_obj->load_by_id($usr_obj->id(), $msg);
+        $recreated_json = $db_obj->export_json($msg, []);
         $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
@@ -1117,17 +1120,18 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string                        $dsp_code_id,
-        user                          $usr,
+        string                         $dsp_code_id,
+        user                           $usr,
         db_object_seq_id|sandbox_multi $dbo,
-        int                           $id = 0,
-        ?data_object_ui               $cfg = null
+        int                            $id = 0,
+        ?data_object_ui                $cfg = null
     ): bool
     {
         global $sys;
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $lib = new library();
         $tl = new test_lib();
-        $usr_msg_ui = new user_message_ui();
 
         // create the filename of the expected result
         $folder = '';
@@ -1145,9 +1149,9 @@ class test_base
 
         // load the view from the database (the db layer measures its own read time)
         $msk = new view($usr);
-        $msk->load_by_code_id($dsp_code_id);
+        $msk->load_by_code_id($dsp_code_id, $msg);
         if ($msk->id() > 0) {
-            $msk->load_components();
+            $msk->load_components($msg);
         } else {
             log_err('view with code id ' . $dsp_code_id . ' not found');
         }
@@ -1161,33 +1165,33 @@ class test_base
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the related database objects
-            $dbo->load_by_id_with_related($id);
+            $dbo->load_by_id_with_related($id, $msg);
         }
         // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above
         $dbo_api_msg = $dbo->api_json([api_types::INCL_RELATED, api_types::INCL_PHRASES]);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
-            $dbo_dsp->set_from_json($dbo_api_msg, $usr_msg_ui);
+            $dbo_dsp->set_from_json($dbo_api_msg, $msg_ui);
         }
         $dsp_html = new view_ui;
-        $dsp_html->set_from_json($api_msg, $usr_msg_ui);
+        $dsp_html->set_from_json($api_msg, $msg_ui);
 
         // load the frontend configuration cache if the caller has not provided it
         if ($cfg == null) {
             $sys->times->switch(system_time_type::LOAD_FRONTEND);
             $ui = new frontend('');
-            $ui->load_cache();
+            $ui->load_cache($msg_ui);
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();
-            $cfg->usr = $map_ui->convertToUi($usr, $usr_msg_ui);
+            $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
         }
         // render in test mode so that the result is reproducible without backend calls
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $actual = $dsp_html->show($dbo_dsp, $cfg, '', '', true);
+        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', '', true);
         // return to the default section for the following tests
         $sys->times->switch(system_time_type::DEFAULT);
 
@@ -1224,7 +1228,7 @@ class test_base
             $dto = new data_object($msg->usr);
             $usr_obj->import_obj($json_in, $msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
-            $json_ex = $usr_obj->export_json([], false);
+            $json_ex = $usr_obj->export_json($msg, [], false);
             // TODO Prio 2 remove exception
             if ($usr_obj::class == user::class) {
                 $json_ex = $this->json_remove_volatile($json_ex);
@@ -1251,7 +1255,7 @@ class test_base
     {
         $msg = new user_message($usr_req);
         $json_before = $obj->api_json([api_types::TEST_MODE]);
-        $json_ex = $obj->export_json([], false);
+        $json_ex = $obj->export_json($msg, [], false);
         $new_obj = $obj->clone_all();
         $new_obj->reset(true);
         $dto = new data_object($usr_req);
@@ -1383,7 +1387,8 @@ class test_base
      */
     function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
     {
-        $actual = $this->html_page($body);
+        $msg_ui = new user_message_ui();
+        $actual = $this->html_page($body, $msg_ui);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
     }
 
@@ -2793,6 +2798,7 @@ class test_base
      */
     function assert_load_by_id(sandbox_named|sandbox_link|sandbox_multi|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
+        $msg = new user_message();
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset(true);
@@ -2803,7 +2809,7 @@ class test_base
         if ($usr_obj::class == view_relation::class) {
             return true;
         } else {
-            $usr_obj->load_by_id($id);
+            $usr_obj->load_by_id($id, $msg);
             return $this->assert($test_name, $usr_obj->id(), $id);
         }
     }
@@ -2817,6 +2823,7 @@ class test_base
      */
     function assert_load_by_name(sandbox_named|sandbox_link|type_object|db_id_object_non_sandbox $usr_obj, string $name = ''): bool
     {
+        $msg = new user_message();
         $lib = new library();
         // check the loading via name
         $test_name = 'check the loading of a ' . $lib->class_to_name($usr_obj::class) . ' by name ' . $name
@@ -2824,7 +2831,7 @@ class test_base
         $usr_obj->reset(true);
         $usr_obj->id = 0;
         $usr_obj->set_name('');
-        $usr_obj->load_by_name($name);
+        $usr_obj->load_by_name($name, $msg);
         return $this->assert($test_name, $usr_obj->name(), $name);
     }
 
@@ -2838,17 +2845,18 @@ class test_base
      */
     function assert_load(sandbox_named|sandbox_link_named $usr_obj, string $name = '', int $id = 1): bool
     {
+        $msg = new user_message();
         // check the loading via name and check the id
         $test_name = 'load ' . $usr_obj::class . ' by name ' . $name;
         $usr_obj->reset(true);
-        $usr_obj->load_by_name($name);
+        $usr_obj->load_by_name($name, $msg);
         $result = $this->assert($test_name, $usr_obj->id(), $id);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
             $usr_obj->reset(true);
-            $usr_obj->load_by_id($id);
+            $usr_obj->load_by_id($id, $msg);
             $result = $this->assert($test_name, $usr_obj->name(), $name);
         }
         return $result;
@@ -2856,9 +2864,10 @@ class test_base
 
     function assert_load_by_code_id(sandbox_named $usr_obj, string $code_id = '', int $id = 1): bool
     {
+        $msg = new user_message();
         $test_name = 'load ' . $usr_obj::class . ' by code_id ' . $code_id;
         $usr_obj->reset(true);
-        $usr_obj->load_by_code_id($code_id);
+        $usr_obj->load_by_code_id($code_id, $msg);
         return $this->assert($test_name, $usr_obj->id(), $id);
     }
 
@@ -2873,18 +2882,19 @@ class test_base
      */
     function assert_load_by_link(sandbox_link $usr_obj, int $fid = 0, int $typ = 1, int|string $tid = 0, int $id = 0): bool
     {
+        $msg = new user_message();
         // check the loading via name and check the id
         $lnk_id = $fid . '/' . $typ . '/' . $tid;
         $test_name = 'load ' . $usr_obj::class . ' by ' . $lnk_id;
         $usr_obj->reset(true);
-        $usr_obj->load_by_link_id($fid, $typ, $tid);
+        $usr_obj->load_by_link_id($fid, $msg, $typ, $tid);
         $result = $this->assert($test_name, $usr_obj->id(), $id);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
             $usr_obj->reset(true);
-            $usr_obj->load_by_id($id);
+            $usr_obj->load_by_id($id, $msg);
             $result = $this->assert($test_name, $usr_obj->link_id(), $lnk_id);
         }
         return $result;
@@ -2899,14 +2909,15 @@ class test_base
      */
     function assert_load_combine(combine_object $usr_obj, string $name): bool
     {
+        $msg = new user_message();
         // check the loading via id and check the name
-        $usr_obj->load_by_id(1, $usr_obj::class);
+        $usr_obj->load_by_id(1, $msg, $usr_obj::class);
         $result = $this->assert($usr_obj::class . '->load', $usr_obj->name(), $name);
 
         // ... and check the loading via name and check the id
         if ($result) {
             $usr_obj->reset(true);
-            $usr_obj->load_by_name($name);
+            $usr_obj->load_by_name($name, $msg);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;
@@ -2922,17 +2933,18 @@ class test_base
      */
     function assert_not_exist(sandbox_named $usr_obj, string $name = '', int $id = 1): bool
     {
+        $msg = new user_message();
         // check the loading via name and check the id
         $test_name = 'load ' . $usr_obj::class . ' by name ' . $name . ' returns zero';
         $usr_obj->reset(true);
-        $usr_obj->load_by_name($name);
+        $usr_obj->load_by_name($name, $msg);
         $result = $this->assert($test_name, $usr_obj->id(), 0);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id . ' returns an empty string';
             $usr_obj->reset(true);
-            $usr_obj->load_by_id($id);
+            $usr_obj->load_by_id($id, $msg);
             $result = $this->assert($test_name, $usr_obj->name(), '');
         }
         return $result;
@@ -3000,7 +3012,7 @@ class test_base
     {
         if ($dbo->save($msg, $sc_par_lst)) {
             $db_obj = $dbo->clone_reset();
-            $db_obj->load_by_id($dbo->id());
+            $db_obj->load_by_id($dbo->id(), $msg);
             $diff = $db_obj->diff_msg($dbo);
             $this->assert_true($test_name, $diff->is_ok());
         }
@@ -3023,8 +3035,8 @@ class test_base
     {
         if ($dbo->del($msg)) {
             $db_obj = $dbo->clone_reset();
-            $db_obj->load_by_id($dbo->id());
-            $this->assert_false($test_name, $db_obj->load_by_id($dbo->id()));
+            $db_obj->load_by_id($dbo->id(), $msg);
+            $this->assert_false($test_name, $db_obj->load_by_id($dbo->id(), $msg));
         }
         return $msg->is_ok();
     }
@@ -3056,7 +3068,7 @@ class test_base
         $qp = $dbo->sql_insert($sc, $msg, new sql_type_list($sc_par_lst));
         if ($msg->is_ok()) {
             $msg_txt = 'add ' . $dbo->dsp_id() . ' for system testing';
-            if ($db_con->insert($qp, $msg_txt, $msg, false, $is_val)) {
+            if ($db_con->insert($qp, $msg_txt, $msg, new sql_message(), false, $is_val)) {
                 $db_id = $msg->get_row_id();
                 if ($db_id <= 0) {
                     $msg->add(msg_id::DB_INSERT_ID_MISSING, [
@@ -3094,7 +3106,7 @@ class test_base
 
         $sc = $db_con->sql_creator();
         $db_row = $dbo->clone_reset();
-        $db_row->load_by_id($dbo->id());
+        $db_row->load_by_id($dbo->id(), $msg);
         $qp = $dbo->sql_update($sc, $db_row, $msg, new sql_type_list($sc_par_lst));
         if ($msg->is_ok()) {
             $msg_txt = 'update ' . $dbo->dsp_id() . ' for system testing';
@@ -3151,13 +3163,13 @@ class test_base
         // reset the user_message because we don't care if the object already existed before saving it,
         $msg = new user_message($this->usr1);
         $sbx->reset(true);
-        $sbx->load_by_name($name);
+        $sbx->load_by_name($name, $msg);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
 
         // check the log
         if ($result) {
             $id = $sbx->id();
-            $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
+            $log_msg = $sbx->log_last_field_msg($this->usr1, $msg, $sbx->name_field());
             // the save and reload above write to the database, so a db timeout is used to avoid a false timeout
             $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
@@ -3170,14 +3182,14 @@ class test_base
             $sbx->set_name($name . self::EXT_RENAME);
             $sbx->save($msg);
             $sbx->reset(true);
-            $sbx->load_by_id($id);
+            $sbx->load_by_id($id, $msg);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
 
         }
 
         // check the log
         if ($result) {
-            $log_msg = $sbx->log_last_msg($this->usr1);
+            $log_msg = $sbx->log_last_msg($this->usr1, $msg);
             // the update save and reload above write to the database, so a db timeout is used to avoid a false timeout
             $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
@@ -3192,7 +3204,7 @@ class test_base
 
         // check the log
         if ($result) {
-            $log_msg = $sbx->log_last_msg($this->usr1);
+            $log_msg = $sbx->log_last_msg($this->usr1, $msg);
             // the delete above writes to the database, so a db timeout is used to avoid a false timeout
             $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name, self::TIMEOUT_LIMIT_DB);
             if ($result) {
@@ -3551,6 +3563,8 @@ class test_base
          * prepare
          */
 
+        $msg = new user_message();
+
         // keep the original objects as given
         $ori = clone $lnk;
 
@@ -3605,9 +3619,9 @@ class test_base
         // check the log
         if ($id != 0) {
             if ($lnk::class == triple::class) {
-                $result = $this->write_named_link_log($lnk, msg_id::LOG_LINK->value);
+                $result = $this->write_named_link_log($lnk, msg_id::LOG_LINK->value, $msg);
             } else {
-                $result = $this->write_link_log($lnk, msg_id::LOG_LINK->value);
+                $result = $this->write_link_log($lnk, msg_id::LOG_LINK->value, $msg);
             }
         } else {
             $result = false;
@@ -3746,7 +3760,7 @@ class test_base
     function write_cleanup(user|db_id_object_non_sandbox $obj, string $key, string $key_name, bool $check = false): void
     {
         $msg = new user_message();
-        $obj->load_by_key($key, $key_name);
+        $obj->load_by_key($key, $key_name, $msg);
         if ($check) {
             if ($obj->id() != 0) {
                 log_warning('Unexpected cleanup of ' . $obj->dsp_id());
@@ -3770,7 +3784,7 @@ class test_base
      */
     function cleanup_change_log(
         sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
-        array                                                             $names
+        array                                                              $names
     ): void
     {
         foreach ($names as $name) {
@@ -3789,14 +3803,15 @@ class test_base
      */
     private function cleanup_change_log_of_row(
         sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
-        string                                                            $name
+        string                                                             $name
     ): void
     {
+        $msg = new user_message();
         // a type row has no user overlay, so only a sandbox row is loaded as the system user
         if (!$sbx instanceof type_object) {
             $sbx->set_user($this->usr_system);
         }
-        $sbx->load_by_name($name);
+        $sbx->load_by_name($name, $msg);
         if ($sbx->id() != 0) {
             $this->delete_change_log_of_obj($sbx::class, $sbx->id());
         }
@@ -3813,10 +3828,11 @@ class test_base
     private function delete_change_log_of_obj(string $class, int|string $id): void
     {
         global $db_con;
+        $msg = new user_message();
         $log_lst = new change_log_list();
         // raise the default page limit so all change log entries of the test row are removed at once
         $log_lst->limit = sql_db::ROW_MAX;
-        $log_lst->load_by_obj_fld($class, $id, $this->usr_system);
+        $log_lst->load_by_obj_fld($class, $msg, $id, $this->usr_system);
         // a value logs to a change_values_* table and a named object to the changes table, so group the
         // change log ids by their change log class and delete each group from its own table
         $ids_by_class = [];
@@ -3905,9 +3921,10 @@ class test_base
     private function delete_value_link_change_log(int|string $grp_id): void
     {
         global $db_con;
+        $msg = new user_message();
         if (is_int($grp_id)) {
             $link_lst = new change_log_link_list();
-            $link_lst->load_by_obj(value::class, $grp_id, $this->usr_system, sql_db::ROW_MAX);
+            $link_lst->load_by_obj(value::class, $grp_id, $this->usr_system, $msg, sql_db::ROW_MAX);
             $ids = $link_lst->ids();
             if (count($ids) > 0) {
                 $msg = new user_message($this->usr_system);
@@ -3929,8 +3946,9 @@ class test_base
     private function delete_value_time_series_change_log(group $grp): void
     {
         global $db_con, $sys;
+        $msg = new user_message();
         $vts = new value_time_series($this->usr_system);
-        $vts->load_by_grp($grp);
+        $vts->load_by_grp($grp, $msg);
         $vts_id = $vts->id();
         if (is_int($vts_id) and $vts_id != 0) {
             $cng_tbl = $sys->typ_lst->cng_tbl;
@@ -4059,8 +4077,9 @@ class test_base
      */
     function cleanup_change_log_ref(ref $ref, string $name): void
     {
+        $msg = new user_message();
         $ref->set_user($this->usr_system);
-        $ref->load_by_name($name);
+        $ref->load_by_name($name, $msg);
         if ($ref->id() != 0) {
             // a loaded ref only carries the phrase id, so load the phrase to get its name to check
             $msg = new user_message($this->usr_system);
@@ -4081,9 +4100,10 @@ class test_base
      */
     function cleanup_change_log_group(group $grp, array $group_spec): void
     {
+        $msg = new user_message();
         $phr_names = $group_spec[1] ?? [];
         $phr_lst = new phrase_list($this->usr_system);
-        $phr_lst->load_by_names($phr_names);
+        $phr_lst->load_by_names($phr_names, $msg);
         if ($this->phrase_list_has_test_row($phr_lst)) {
             $grp->set_user($this->usr_system);
             $grp->set_phrase_list($phr_lst);
@@ -4143,8 +4163,53 @@ class test_base
         } else {
             $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
             $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
+            // the protection tests write with the normal user, so rows owned by the normal user
+            // (e.g. after an ownership transfer of a partly failed previous cleanup) can only be
+            // removed by the normal user, because for all other users del() writes an exclusion
+            // overlay instead of removing the database row
+            $this->write_named_cleanup_one($sbx, $this->usr_normal, $name, $check);
             $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
             $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+            $this->write_named_cleanup_one($sbx, $this->usr_normal, $name . self::EXT_RENAME, $check);
+            // remove rows that resist the single user cleanups above
+            $this->write_named_cleanup_force($sbx, $name);
+            $this->write_named_cleanup_force($sbx, $name . self::EXT_RENAME);
+        }
+    }
+
+    /**
+     * remove a test row that resists the single user cleanup, e.g. an object owned by one test
+     * user with exclusion overlay rows of two other test users: del() of a single user removes
+     * at most the overlay of one other user (the new owner after the ownership transfer) and
+     * otherwise just writes another exclusion overlay, so such a row would survive every
+     * single user cleanup and block the test rerun with a duplicate name
+     *
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word
+     * @param string $name the name of the user sandbox object that should be removed
+     * @return void
+     */
+    private function write_named_cleanup_force(
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        string                                                             $name
+    ): void
+    {
+        // only sandbox objects have user overlay rows that can block the delete
+        if ($sbx instanceof sandbox) {
+            $msg = new user_message($this->usr_system);
+            $sbx_sys = clone $sbx;
+            $sbx_sys->reset();
+            $sbx_sys->set_user($this->usr_system);
+            $sbx_sys->load_by_name($name, $msg);
+            if ($sbx_sys->id() != 0) {
+                // remove the overlay rows of all test users, so that the delete below is not
+                // diverted to yet another exclusion overlay by the used by someone else check
+                foreach ([$this->usr1, $this->usr2, $this->usr_normal] as $usr) {
+                    $sbx_sys->set_user($usr);
+                    $sbx_sys->del_usr_cfg($msg);
+                }
+                $sbx_sys->set_user($this->usr_system);
+                $sbx_sys->del($msg);
+            }
         }
     }
 
@@ -4182,7 +4247,7 @@ class test_base
     {
         $msg = new user_message($usr);
         $sbx->set_user($usr);
-        $sbx->load_by_name($name);
+        $sbx->load_by_name($name, $msg);
         if ($sbx->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
@@ -4202,7 +4267,7 @@ class test_base
             if ($sbx_std instanceof sandbox) {
                 $sbx_std->reset();
                 $sbx_std->set_user($this->usr_system);
-                $sbx_std->load_by_name($name);
+                $sbx_std->load_by_name($name, $msg);
                 if ($sbx_std->id() != 0) {
                     $sbx_std->set_user($usr);
                     $sbx_std->del_usr_cfg($msg);
@@ -4231,7 +4296,7 @@ class test_base
         global $db_con;
 
         $msg = new user_message($this->usr_admin);
-        $typ->load_by_name($name);
+        $typ->load_by_name($name, $msg);
         if ($typ->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $typ->dsp_id());
@@ -4266,7 +4331,7 @@ class test_base
     {
         $msg = new user_message($usr);
         $sbx->set_user($usr);
-        $sbx->load_by_grp($grp);
+        $sbx->load_by_grp($grp, $msg);
         if ($sbx->id() != 0) {
             if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
@@ -4294,7 +4359,7 @@ class test_base
     {
         $msg = new user_message($usr_sys);
         $usr = new user();
-        $usr->load_by_name($name);
+        $usr->load_by_name($name, $msg);
         if ($check) {
             if ($usr->id() != 0) {
                 log_warning('Unexpected cleanup of ' . $usr->dsp_id());
@@ -4316,7 +4381,7 @@ class test_base
     {
         $msg = new user_message($this->usr1);
         $lnk->set_user($this->usr1);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         if ($check) {
             if ($lnk->id() != 0) {
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
@@ -4324,7 +4389,7 @@ class test_base
         }
         $lnk->del($msg);
         $lnk->set_user($this->usr2);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         if ($check) {
             if ($lnk->id() != 0) {
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
@@ -4397,9 +4462,9 @@ class test_base
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
         $fob = clone $ori->fob();
-        $fob->load_by_name($fob->name());
+        $fob->load_by_name($fob->name(), $msg);
         $tob = clone $ori->tob();
-        $tob->load_by_name($tob->name());
+        $tob->load_by_name($tob->name(), $msg);
         $sbx->set_user($usr);
         $sbx->set_fob($fob);
         $sbx->set_tob($tob);
@@ -4422,13 +4487,13 @@ class test_base
 
         $sbx->set_user($usr);
         $fob = clone $ori->fob();
-        $fob->load_by_name($fob->name());
+        $fob->load_by_name($fob->name(), $msg);
         $sbx->set_fob($fob);
         if ($ori::class == ref::class) {
             $sbx->set_to_id($ori->to_id());
         } else {
             $tob = clone $ori->tob();
-            $tob->load_by_name($tob->name());
+            $tob->load_by_name($tob->name(), $msg);
             $sbx->set_tob($tob);
         }
         $sbx->set_predicate_id($ori->predicate_id());
@@ -4517,7 +4582,8 @@ class test_base
     private
     function write_named_link_log(
         triple $lnk,
-        string $action
+        string $action,
+        user_message $msg
     ): bool
     {
         $log = new change_link($lnk->get_user());
@@ -4525,7 +4591,7 @@ class test_base
         $tbl_name = $lib->class_to_table($lnk::class);
         $log->set_table($tbl_name);
         $log->row_id = $lnk->id();
-        $result = $log->dsp_last(true);
+        $result = $log->dsp_last($msg, true);
         $target = $lnk->get_user()->name() . ' ' . $action . ' ';
         $target .= $lnk->from_name() . ' to ';
         $target .= $lnk->to_name();
@@ -4538,7 +4604,8 @@ class test_base
     private
     function write_link_log(
         sandbox_link $lnk,
-        string       $action
+        string       $action,
+        user_message $msg
     ): bool
     {
         $log = new change_link($lnk->get_user());
@@ -4546,7 +4613,7 @@ class test_base
         $tbl_name = $lib->class_to_table($lnk::class);
         $log->set_table($tbl_name);
         $log->row_id = $lnk->id();
-        $result = $log->dsp_last(true);
+        $result = $log->dsp_last($msg, true);
         $target = $lnk->get_user()->name() . ' ' . $action . ' ';
         $target .= $lnk->from_name() . ' to ';
         $target .= $lnk->to_name();
@@ -4569,7 +4636,7 @@ class test_base
     {
         $msg = new user_message($usr);
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $name = $sbx->name();
         $new_name = $name . self::EXT_RENAME;
         $lib = new library();
@@ -4578,7 +4645,7 @@ class test_base
         $sbx->set_name($new_name);
         if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             $sbx->reset(true);
-            $sbx->load_by_name($new_name);
+            $sbx->load_by_name($new_name, $msg);
             if ($sbx->id() == $id) {
                 if ($this->assert_load($sbx, $new_name, $id)) {
                     return $sbx->name();
@@ -4599,7 +4666,7 @@ class test_base
         $msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' description ' . $description;
@@ -4617,7 +4684,7 @@ class test_base
         $msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $old_description = $sbx->description;
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -4633,9 +4700,10 @@ class test_base
 
     private function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
     {
+        $msg = new user_message();
         $id = $sbx->id();
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
@@ -4649,9 +4717,10 @@ class test_base
     private
     function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
+        $msg = new user_message();
         $id = $sbx->id();
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' is excluded for user ' . $usr->dsp_id();
@@ -4668,7 +4737,7 @@ class test_base
         $msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         $old_order_nbr = $lnk->order_nbr;
         $lib = new library();
         $class = $lib->class_to_name($lnk::class);
@@ -4685,9 +4754,10 @@ class test_base
     private
     function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
     {
+        $msg = new user_message();
         $id = $lnk->id();
         $lnk->set_user($usr);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($lnk::class);
         $test_name = $class . ' order number for user ' . $usr->dsp_id() . ' is ' . $order_nbr;
@@ -4704,7 +4774,7 @@ class test_base
         $msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         $old_description = $lnk->description;
         $lib = new library();
         $class = $lib->class_to_name($lnk::class);
@@ -4721,9 +4791,10 @@ class test_base
     private
     function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
     {
+        $msg = new user_message();
         $id = $lnk->id();
         $lnk->set_user($usr);
-        $lnk->load_by_id($id);
+        $lnk->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($lnk::class);
         $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
@@ -4771,7 +4842,7 @@ class test_base
         $id = $sbx->id();
         $name = $sbx->name();
         $sbx->set_user($usr);
-        $sbx->load_by_id($id);
+        $sbx->load_by_id($id, $msg);
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'del ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
@@ -4788,7 +4859,8 @@ class test_base
     ): bool
     {
         // check if noone has changed it
-        $usr_lst = $sbx->changed_by();
+        $msg = new user_message();
+        $usr_lst = $sbx->changed_by($msg);
 
         if ($usr_lst->is_empty()) {
             return true;
@@ -4804,7 +4876,8 @@ class test_base
     ): bool
     {
         $test_name = 'user ' . $usr->dsp_id() . ' as reported as changer';
-        $usr_lst = $sbx->changed_by();
+        $msg = new user_message();
+        $usr_lst = $sbx->changed_by($msg);
         return $this->assert_contains($test_name, $usr_lst->names(), $usr->name());
     }
 
@@ -4843,14 +4916,15 @@ class test_base
         float                            $exe_max_time = self::TIMEOUT_LIMIT_DB
     ): bool
     {
+        $msg = new user_message();
         natcasesort($id_lst);
         $names = array_values($id_lst);
 
         // load list by the names to get the ids
         if ($sbx::class == view::class) {
-            $lst->load_by_code_ids($names);
+            $lst->load_by_code_ids($names, $msg);
         } else {
-            $lst->load_by_names($names);
+            $lst->load_by_names($names, $msg);
         }
 
         // check
@@ -4940,7 +5014,7 @@ class test_base
         $class = $lib->class_to_name($base::class);
         $test_name = 'empty ' . $class . ' differs from filled object and the no_diff function works';
         $this->assert_false($test_name, $base->no_diff($filled, $msg));
-        $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
+        $original_json = $filled->api_json([api_types::TEST_MODE], $msg, $usr_sys);
         $empty = $base->clone_reset();
         $empty->fill($filled, $usr_sys);
         $test_name = 'no_diff finds no difference in the filled ' . $class . ' compared to the original';
@@ -4952,7 +5026,7 @@ class test_base
         }
         if ($msg->is_ok()) {
             $test_name = $class . ' fill empty object and test via api json';
-            $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
+            $filled_json = $empty->api_json([api_types::TEST_MODE], $msg, $usr_sys);
             return $this->assert_json_string($test_name, $filled_json, $original_json);
         } else {
             return false;
@@ -5204,6 +5278,57 @@ class test_base
         return $result;
     }
 
+    // the session cookie file and the anti csrf token of the admin login used for the api
+    // calls of this test process (see api_login) and released again by api_logout
+    private string $api_login_cookie_file = '';
+    private string $api_login_token = '';
+
+    /**
+     * login as the admin user and use the session for all following api calls
+     * of this test process, because a pod that does not allow the changes of a user
+     * without login would otherwise refuse the api requests of the test scripts
+     * e.g. the type list api call writes the type cache which is blocked for an ip user
+     * the anti csrf token of the session is sent with every api call so that also
+     * the api write calls pass the csrf check of the backend
+     *
+     * @return bool true if the login has been possible and the session is set
+     */
+    function api_login(): bool
+    {
+        $result = false;
+        $cookie_file = $this->login_admin_cookie();
+        if ($cookie_file != '') {
+            // the cookie file is kept for the whole test run so that every
+            // api call of this process is done with the admin session
+            $this->api_login_cookie_file = $cookie_file;
+            rest_call::set_session_cookie_file($cookie_file);
+            rest_call::set_session_token($this->api_login_token);
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * end the admin session of api_login: log out on the pod, stop using the session
+     * for the api calls and remove the session cookie file
+     *
+     * @return void
+     */
+    function api_logout(): void
+    {
+        if ($this->api_login_cookie_file != '') {
+            // invalidate the session on the pod like a user clicking logout
+            $this->web_page_curl(
+                THIS_URL . api::LOGOUT_SCRIPT, $this->api_login_cookie_file, [], self::TIMEOUT_LIMIT_LOGIN);
+            // stop using the session for the api calls of this process
+            rest_call::set_session_cookie_file('');
+            rest_call::set_session_token('');
+            unlink($this->api_login_cookie_file);
+            $this->api_login_cookie_file = '';
+            $this->api_login_token = '';
+        }
+    }
+
     /**
      * log in as the admin user of the env file and keep the session cookie
      * the admin user is used, because on a fresh setup this is the only user
@@ -5259,6 +5384,10 @@ class test_base
                     $this->dsp_warning('the login of the admin user for the web tests has failed');
                     unlink($cookie_file);
                     $cookie_file = '';
+                } else {
+                    // remember the anti csrf token of the session so that it can be sent
+                    // with the api write calls of this session (see api_login)
+                    $this->api_login_token = $token;
                 }
             }
         }
@@ -5455,10 +5584,10 @@ class test_base
     }
 
     private
-    function html_page(string $body): string
+    function html_page(string $body, user_message_ui $msg_ui): string
     {
         $html = new html_base();
-        return $html->header('test')
+        return $html->header('test', $msg_ui)
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();
@@ -5476,12 +5605,12 @@ class test_base
      *                       verb, view, component, source, ref, value, result, ...)
      * @return string a h2 heading plus the rendered TITLE_NAMED_EDIT html
      */
-    function dsp_title_named_edit(db_object $dbo): string
+    function dsp_title_named_edit(db_object $dbo, user_message_ui $msg): string
     {
         $html = new html_base();
         $sfm = new system_form();
         return $html->text_h2('title named with edit link')
-            . $sfm->title_named($dbo);
+            . $sfm->title_named($dbo, $msg);
     }
 
     /**
@@ -5494,12 +5623,12 @@ class test_base
      *                       assigned phrases (phr_lst) are the subtitle
      * @return string a h2 heading plus the rendered formula title html
      */
-    function dsp_title_formula(db_object $dbo): string
+    function dsp_title_formula(db_object $dbo, user_message_ui $msg): string
     {
         $html = new html_base();
         $sfm = new system_form();
         return $html->text_h2('formula title with subtitle')
-            . $sfm->title_formula($dbo);
+            . $sfm->title_formula($dbo, $msg);
     }
 
     /**
@@ -5511,12 +5640,12 @@ class test_base
      * @param db_object $dbo the value whose related phrases and number are the title
      * @return string a h2 heading plus the rendered value title html
      */
-    function dsp_title_value(db_object $dbo): string
+    function dsp_title_value(db_object $dbo, user_message_ui $msg): string
     {
         $html = new html_base();
         $sfm = new system_form();
         return $html->text_h2('title named with edit link')
-            . $sfm->title_value($dbo);
+            . $sfm->title_value($dbo, $msg);
     }
 
     function class_without_namespace(string $class_name_with_namespace): string
@@ -5532,11 +5661,12 @@ class test_base
      */
     function log_last_by_user(?user $usr = null): string
     {
+        $msg = new user_message();
         if ($usr == null) {
             $usr = $this->usr1;
         }
         $log = new change($this->usr1);
-        $log->load_by_user($this->usr1);
+        $log->load_by_user($this->usr1, $msg);
         $log_ui = new change_log_ui($log->api_json());
         return $log_ui->dsp(true);
     }
@@ -5580,6 +5710,7 @@ class test_base
         bool                                           $usr_only = false
     ): change_log_ui
     {
+        $msg = new user_message();
         // TODO maybe use log_object?
         if ($sbx->is_value_obj()) {
             $log = $sbx->log_value_object();
@@ -5588,6 +5719,9 @@ class test_base
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
         return new change_log_ui($log->api_json());
+        $log->load_by_field_row($sbx::class, $msg, $fld, $id, $usr_only);
+        $log_ui = new change_log_ui($log->api_json());
+        return $log_ui->dsp($ex_time);
     }
 
 
@@ -5690,43 +5824,4 @@ class test_base
         return $usr;
     }
 
-}
-
-
-// -----------------------------------------------
-// testing functions to create the main time value
-// -----------------------------------------------
-
-// TODO Prio 0 review
-function zu_test_time_setup(test_cleanup $t): string
-{
-    global $db_con;
-
-    $cfg = new config();
-    $t_db = new test_db_load($t);
-    $result = '';
-    $this_year = intval(date('Y'));
-    $prev_year = '';
-    // a missing test years entry is created with the default value by the system user
-    $sys_msg = new user_message(user::system());
-    $test_years = intval($cfg->get_db(config::TEST_YEARS, $db_con, $sys_msg));
-    if ($test_years == '') {
-        log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
-    } else {
-        $start_year = $this_year - $test_years;
-        $end_year = $this_year + $test_years;
-        for ($year = $start_year; $year <= $end_year; $year++) {
-            $this_year = $year;
-            // here the system user is used, because the year are not test words that are removed after the test
-            $t_db->test_word(strval($this_year), null, $t->usr_system);
-            $wrd_lnk = $t_db->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
-            $result = $wrd_lnk->name();
-            if ($prev_year <> '') {
-                $t_db->test_triple($prev_year, verbs::FOLLOW, $this_year);
-            }
-            $prev_year = $this_year;
-        }
-    }
-
-    return $result;
 }

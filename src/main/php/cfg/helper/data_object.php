@@ -184,7 +184,7 @@ class data_object
     private ip_range_list $ip_lst;
 
     // for warning and errors while filling the data_object
-    private user_message $usr_msg;
+    private user_message $msg;
 
     // all preloaded types
     public type_lists $typ_lst;
@@ -225,7 +225,7 @@ class data_object
         $this->trm_msk_lst = new term_view_list($usr);
         $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
-        $this->usr_msg = new user_message();
+        $this->msg = new user_message();
         $this->typ_lst = new type_lists();
         $this->sys_msk = new view_sys_list($usr);
     }
@@ -241,7 +241,7 @@ class data_object
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -249,7 +249,7 @@ class data_object
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
@@ -257,23 +257,23 @@ class data_object
      * create an api json array for the backend based on this frontend object
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
+     * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = [];
-        $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst);
-        $vars[json_fields::VERBS] = $this->vrb_lst->api_json_array();
-        $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst);
-        $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst);
-        $vars[json_fields::REFERENCES] = $this->ref_lst->api_json_array($typ_lst);
-        $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
-        $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
-        $vars[json_fields::FORMULA_LINKS] = $this->frm_lnk_lst->api_json_array($typ_lst);
-        $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst);
-        $vars[json_fields::USERS] = $this->usr_lst->api_json_array($typ_lst);
-        $vars[json_fields::IP_BLACKLIST] = $this->ip_lst->api_json_array($typ_lst);
+        $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::VERBS] = $this->vrb_lst->api_json_array([], $msg);
+        $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::REFERENCES] = $this->ref_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::FORMULA_LINKS] = $this->frm_lnk_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::USERS] = $this->usr_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::IP_BLACKLIST] = $this->ip_lst->api_json_array($typ_lst, $msg);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -668,14 +668,14 @@ class data_object
      * e.g. to validate the import
      * TODO Prio 2 add the missing lists and vars
      */
-    function load(sql_db $db_con): user_message
+    function load(sql_db $db_con, user_message $msg): user_message
     {
         $usr_msg = new user_message();
-        $this->load_system_views($db_con);
+        $this->load_system_views($db_con, $msg);
         $wrd_lst = $this->word_list();
-        $wrd_lst->load_by_names($wrd_lst->names());
+        $wrd_lst->load_by_names($wrd_lst->names(), $msg);
         $trp_lst = $this->triple_list();
-        $trp_lst->load_by_names($trp_lst->names());
+        $trp_lst->load_by_names($trp_lst->names(), $msg);
         $usr_msg->merge($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
         //$this->value_list()->load_by_ids();
         return $usr_msg;
@@ -686,9 +686,9 @@ class data_object
      * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
      * @return bool
      */
-    function load_system_views(sql_db $db_con): bool
+    function load_system_views(sql_db $db_con, user_message $msg): bool
     {
-        return $this->sys_msk->load($db_con);
+        return $this->sys_msk->load($db_con, $msg);
     }
 
 
@@ -1010,7 +1010,7 @@ class data_object
 
     function add_message(msg_id $msg): void
     {
-        $this->usr_msg->add_id($msg);
+        $this->msg->add_id($msg);
     }
 
     function get_component_by_name(string $name): component|IdObject|null
@@ -1055,11 +1055,11 @@ class data_object
     /**
      * add all words, triples and values to the database
      * or update the database
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, import $imp): bool
+    function save(user_message $msg, import $imp): bool
     {
         global $cfg;
         global $sys;
@@ -1067,7 +1067,7 @@ class data_object
         // reject the import upfront if a formula shares its name with another term (word, verb or
         // triple), because the shared name leads to an ambiguous id assignment (the formula could
         // inherit the other term's id and the later element insert would violate elements_formula_fk)
-        if (!$this->check_formula_name_collision($usr_msg)) {
+        if (!$this->check_formula_name_collision($msg)) {
             return false;
         }
 
@@ -1079,11 +1079,13 @@ class data_object
         // save the data lists in order of the dependencies
 
         // start with the system configuration
-        $this->save_users($usr_msg, $imp);
-        $this->save_ip_ranges($usr_msg, $imp);
+        $this->save_users($msg, $imp);
+        $this->save_ip_ranges($msg, $imp);
 
         // import first the words
-        $this->save_words($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_words($msg, $imp);
+        }
 
         // clone the list as cache to filter the phrases already fine
         // without removing the fine words or triples from the original lists
@@ -1093,23 +1095,29 @@ class data_object
         $phr_lst->filter_valid();
 
         // import the verbs before the triples
-        $this->save_verbs($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_verbs($msg, $imp);
+        }
 
         // import the triples
         // add the id of the triples just added to the values
-        if ($this->save_triples($usr_msg, $imp, $phr_lst)) {
-            $phr_lst = $this->phrase_list();
-            foreach ($this->value_list()->lst() as $val) {
-                $this->resolve_phrase_list_ids($val->phrase_list(), $phr_lst, $usr_msg);
+        if ($msg->is_ok()) {
+            if ($this->save_triples($msg, $imp, $phr_lst)) {
+                $phr_lst = $this->phrase_list();
+                foreach ($this->value_list()->lst() as $val) {
+                    $this->resolve_phrase_list_ids($val->phrase_list(), $phr_lst, $msg);
+                }
             }
         }
 
         // import the sources
-        $this->save_sources($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_sources($msg, $imp);
+        }
 
         // add the id of the sources just added to the values so that the value source is
         // persisted; without this the value still points to the source object with id 0
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             foreach ($this->value_list()->lst() as $val) {
                 $src = $val->get_source();
                 if ($src != null) {
@@ -1124,50 +1132,50 @@ class data_object
         }
 
         // add the id of the phrases just added to the references
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $phr_lst = $this->phrase_list();
             foreach ($this->reference_list()->lst() as $ref) {
                 $phr = $ref->phrase();
                 if ($phr->id() == 0) {
                     if ($phr->name() == '') {
-                        $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                        $msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
                             msg_id::VAR_NAME => $phr->dsp_id()
                         ]);
                     } else {
                         $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                        $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
+                        $this->set_phrase_id($phr, $phr_reloaded, $msg);
                     }
                 }
             }
         }
 
         // import the references
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $ref_lst = $this->reference_list();
             $ref_est = $ref_lst->count() / $ref_per_sec;
             $imp->step_start(msg_id::SAVE, ref::class, $ref_lst->count(), $ref_est);
-            $ref_lst->save($usr_msg, $imp, $ref_per_sec);
+            $ref_lst->save($msg, $imp, $ref_per_sec);
             $imp->step_end($ref_lst->count(), $ref_per_sec);
         } else {
-            log_debug('references not imported because ' . $usr_msg->all_message_text());
+            log_debug('references not imported because ' . $msg->all_message_text());
         }
 
         // import the values
         // TODO Prio 1 review and use predefined functions
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $val_lst = $this->value_list();
             $val_est = $val_lst->count() / $val_per_sec;
             $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
-            $val_lst->save($usr_msg, $imp, $val_per_sec);
+            $val_lst->save($msg, $imp, $val_per_sec);
             $imp->step_end($val_lst->count(), $val_per_sec);
             $imp->values_done = $val_lst->count();
         } else {
-            log_debug('values not imported because ' . $usr_msg->all_message_text());
+            log_debug('values not imported because ' . $msg->all_message_text());
         }
 
         // temp solution to get a valid user
         // TODO Prio 2 deprecate
-        $vrb_usr = $usr_msg->usr;
+        $vrb_usr = $msg->usr;
         if ($vrb_usr == null) {
             $vrb_usr = $this->get_user();
         }
@@ -1181,35 +1189,35 @@ class data_object
         $trm_lst->merge($sys->typ_lst->vrb->term_list($vrb_usr));
 
         // import the formulas
-        if ($usr_msg->is_ok()) {
-            $this->save_formulas($usr_msg, $imp, $trm_lst);
+        if ($msg->is_ok()) {
+            $this->save_formulas($msg, $imp, $trm_lst);
         } else {
-            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+            log_debug('formulas not imported because ' . $msg->all_message_text());
         }
 
         // import the pre-calculated results after the formulas so the formula ids are set
-        if ($usr_msg->is_ok()) {
-            $this->save_results($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_results($msg, $imp);
         } else {
-            log_debug('results not imported because ' . $usr_msg->all_message_text());
+            log_debug('results not imported because ' . $msg->all_message_text());
         }
 
         // import the components before the view because the views use the components
-        if ($usr_msg->is_ok()) {
-            $this->save_components($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_components($msg, $imp);
         } else {
-            log_debug('components not imported because ' . $usr_msg->all_message_text());
+            log_debug('components not imported because ' . $msg->all_message_text());
         }
 
         // import the views
         // TODO Prio 1 review and use predefined functions for save view list
-        if ($usr_msg->is_ok()) {
-            $this->save_views($usr_msg, $imp);
+        if ($msg->is_ok()) {
+            $this->save_views($msg, $imp);
         } else {
-            log_debug('views not imported because ' . $usr_msg->all_message_text());
+            log_debug('views not imported because ' . $msg->all_message_text());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1218,16 +1226,16 @@ class data_object
      * formula could inherit the other term's id, which then violates the elements_formula_fk
      * on the element insert)
      *
-     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @param user_message $msg the shared import message; one error is added per colliding name
      * @return bool true if there is no formula/term name collision
      */
-    private function check_formula_name_collision(user_message $usr_msg): bool
+    private function check_formula_name_collision(user_message $msg): bool
     {
-        $result = $this->check_formula_names_against($this->word_list()->names(), word::class, $usr_msg);
-        if (!$this->check_formula_names_against($this->verb_list()->names(), verb::class, $usr_msg)) {
+        $result = $this->check_formula_names_against($this->word_list()->names(), word::class, $msg);
+        if (!$this->check_formula_names_against($this->verb_list()->names(), verb::class, $msg)) {
             $result = false;
         }
-        if (!$this->check_formula_names_against($this->triple_list()->names(), triple::class, $usr_msg)) {
+        if (!$this->check_formula_names_against($this->triple_list()->names(), triple::class, $msg)) {
             $result = false;
         }
         return $result;
@@ -1238,16 +1246,16 @@ class data_object
      *
      * @param array $other_names the names of the words, verbs or triples to check against
      * @param string $class the class of the other term, used to name the colliding type in the message
-     * @param user_message $usr_msg the shared import message; one error is added per colliding name
+     * @param user_message $msg the shared import message; one error is added per colliding name
      * @return bool true if no formula name collides with a name in $other_names
      */
-    private function check_formula_names_against(array $other_names, string $class, user_message $usr_msg): bool
+    private function check_formula_names_against(array $other_names, string $class, user_message $msg): bool
     {
         $lib = new library();
         $result = true;
         foreach ($this->formula_list()->lst() as $frm) {
             if (in_array($frm->name(), $other_names)) {
-                $usr_msg->add(msg_id::FORMULA_NAME_EQUALS_TERM, [
+                $msg->add(msg_id::FORMULA_NAME_EQUALS_TERM, [
                     msg_id::VAR_FORMULA_NAME => $frm->name(),
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($class)
                 ]);
@@ -1261,9 +1269,9 @@ class data_object
      * add or update all users to the database
      * TODO add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
-    private function save_users(user_message $usr_msg, import $imp): void
+    private function save_users(user_message $msg, import $imp): void
     {
         global $cfg;
 
@@ -1273,7 +1281,7 @@ class data_object
         if (!$usr_lst->is_empty()) {
             $usr_est = $usr_lst->count() / $usr_per_sec;
             $imp->step_start(msg_id::SAVE, user::class, $usr_lst->count(), $usr_est);
-            $usr_lst->save($usr_msg, $imp->usr);
+            $usr_lst->save($msg, $imp->usr);
             $imp->step_end($usr_lst->count(), $usr_per_sec);
         }
     }
@@ -1281,51 +1289,51 @@ class data_object
     /**
      * add or update all ip ranges to the database
      * @param import $imp the import object that includes the start time of the import
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
-    private function save_ip_ranges(user_message $usr_msg, import $imp): void
+    private function save_ip_ranges(user_message $msg, import $imp): void
     {
-        $this->save_sandbox_list($imp, words::IP_RANGES, $this->ip_range_list(), ip_range::class, $usr_msg);
+        $this->save_sandbox_list($imp, words::IP_RANGES, $this->ip_range_list(), ip_range::class, $msg);
     }
 
     /**
      * add or update all words to the database
      * @param import $imp the import object that includes the start time of the import
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
-    private function save_words(user_message $usr_msg, import $imp): void
+    private function save_words(user_message $msg, import $imp): void
     {
-        $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class, $usr_msg);
+        $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class, $msg);
     }
 
     /**
      * add or update all verbs to the database
      * @param import $imp the import object that includes the start time of the import
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
-    private function save_verbs(user_message $usr_msg, import $imp): void
+    private function save_verbs(user_message $msg, import $imp): void
     {
         global $cfg;
 
-        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC, $usr_msg);
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC, $msg);
 
         $vrb_lst = $this->verb_list();
         if (!$vrb_lst->is_empty()) {
             $vrb_est = $vrb_lst->count() / $vrb_per_sec;
             $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
-            $vrb_lst->save($usr_msg);
+            $vrb_lst->save($msg);
             $imp->step_end($vrb_lst->count(), $vrb_per_sec);
         }
     }
 
     /**
      * add or update all triples to the database
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      * @param phrase_list $cache with the db words saved until now and filled up with the triples saved
      * @return bool true if everything has been fine
      */
-    private function save_triples(user_message $usr_msg, import $imp, phrase_list $cache): bool
+    private function save_triples(user_message $msg, import $imp, phrase_list $cache): bool
     {
         global $cfg;
 
@@ -1335,32 +1343,32 @@ class data_object
         if (!$trp_lst->is_empty()) {
             $trp_est = $trp_lst->count() / $trp_per_sec;
             $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-            $trp_lst->save_with_cache($usr_msg, $imp, $cache);
+            $trp_lst->save_with_cache($msg, $imp, $cache);
             $imp->step_end($trp_lst->count(), $trp_per_sec);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->triple_list()->fill_by_name($trp_lst);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * add or update all sources to the database
      * @param import $imp the import object that includes the start time of the import
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
-    private function save_sources(user_message $usr_msg, import $imp): void
+    private function save_sources(user_message $msg, import $imp): void
     {
-        $this->save_sandbox_list($imp, words::SOURCES, $this->source_list(), source::class, $usr_msg);
+        $this->save_sandbox_list($imp, words::SOURCES, $this->source_list(), source::class, $msg);
     }
 
     /**
      * add or update all formulas to the database
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      * @param term_list $cache with the db words saved until now and filled up with the formulas saved
      */
-    private function save_formulas(user_message $usr_msg, import $imp, term_list $cache): void
+    private function save_formulas(user_message $msg, import $imp, term_list $cache): void
     {
         global $cfg;
 
@@ -1370,26 +1378,26 @@ class data_object
         if (!$frm_lst->is_empty()) {
             // to prevent that errors in some formulas lead to missing links in formulas that are fine
             // but to allow that nevertheless links can be saved with blocks of db insert statements
-            $usr_msg_lnk = clone $usr_msg;
+            $usr_msg_lnk = clone $msg;
 
             $frm_est = $frm_lst->count() / $frm_per_sec;
             $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
-            $usr_msg->merge($frm_lst->save_with_cache($imp, $cache));
+            $msg->merge($frm_lst->save_with_cache($imp, $cache, $msg));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
 
             // update the reference table for fast calculation
             // TODO Prio 2 use fast element_list block save process
             foreach ($frm_lst->lst() as $frm) {
-                if ($usr_msg->is_ok() and !$frm->is_excluded()) {
+                if ($msg->is_ok() and !$frm->is_excluded()) {
                     $frm->generate_ref_text($cache);
                     if ($frm->id() <= 0) {
-                        log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $usr_msg->all_message_text());
+                        log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $msg->all_message_text());
                     }
                     if ($frm->ref_text != null) {
-                        $msg_elm = $usr_msg->clone_reset();
+                        $msg_elm = $msg->clone_reset();
                         if (!$frm->element_refresh($msg_elm, $cache)) {
                             // TODO Prio 3 the import intentionally tolerates first-try element refresh
-                            //   failures, so $msg_elm is dropped instead of merged into $usr_msg;
+                            //   failures, so $msg_elm is dropped instead of merged into $msg;
                             //   log the dropped messages as a warning so they are not lost for review
                             log_warning('formula element refresh failed for ' . $frm->dsp_id()
                                 . ' and the messages are dropped because ' . $msg_elm->all_message_text());
@@ -1406,7 +1414,7 @@ class data_object
                 }
             }
 
-            $usr_msg->merge($usr_msg_lnk);
+            $msg->merge($usr_msg_lnk);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->formula_list()->fill_by_name($frm_lst);
@@ -1415,21 +1423,21 @@ class data_object
 
     /**
      * add or update all views to the database
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      */
-    private function save_views(user_message $usr_msg, import $imp): void
+    private function save_views(user_message $msg, import $imp): void
     {
-        $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class, $usr_msg);
+        $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class, $msg);
     }
 
     /**
      * add or update all pre-calculated results to the database
      * called after save_formulas so each result's formula reference already has its db id
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      */
-    private function save_results(user_message $usr_msg, import $imp): void
+    private function save_results(user_message $msg, import $imp): void
     {
         global $cfg;
 
@@ -1437,10 +1445,10 @@ class data_object
 
         $res_lst = $this->result_list();
         if (!$res_lst->is_empty()) {
-            $this->set_result_phrase_ids($usr_msg);
+            $this->set_result_phrase_ids($msg);
             $res_est = $res_lst->count() / $res_per_sec;
             $imp->step_start(msg_id::SAVE, result::class, $res_lst->count(), $res_est);
-            $res_lst->save($usr_msg, $imp, $res_per_sec);
+            $res_lst->save($msg, $imp, $res_per_sec);
             $imp->step_end($res_lst->count(), $res_per_sec);
         }
     }
@@ -1451,23 +1459,23 @@ class data_object
      * variant and the prepared statement name carries the correct "_pN" phrase-count suffix
      * (without this, a 4-phrase and a 1-phrase result would collide under the same name)
      *
-     * @param user_message $usr_msg warnings are added if a phrase name is missing from the dto
+     * @param user_message $msg warnings are added if a phrase name is missing from the dto
      */
-    private function set_result_phrase_ids(user_message $usr_msg): void
+    private function set_result_phrase_ids(user_message $msg): void
     {
         $phr_lst = $this->phrase_list();
         foreach ($this->result_list()->lst() as $res) {
-            $this->resolve_phrase_list_ids($res->grp()->phrase_list(), $phr_lst, $usr_msg);
+            $this->resolve_phrase_list_ids($res->grp()->phrase_list(), $phr_lst, $msg);
             $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
             if ($res->src_grp !== null) {
-                $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $usr_msg);
+                $this->resolve_phrase_list_ids($res->src_grp->phrase_list(), $phr_lst, $msg);
                 // an unresolved source phrase list yields no group; skip it with a
                 // warning instead of passing null to the non-nullable set_src_grp
                 $src_grp = $res->src_grp->phrase_list()->get_grp_id(false);
                 if ($src_grp !== null) {
                     $res->set_src_grp($src_grp);
                 } else {
-                    $usr_msg->add_warning_with_vars(msg_id::IMPORT_RESULT_SOURCE_GROUP_MISSING, [
+                    $msg->add_warning_with_vars(msg_id::IMPORT_RESULT_SOURCE_GROUP_MISSING, [
                         msg_id::VAR_GROUP => $res->grp()->dsp_id()
                     ]);
                 }
@@ -1480,23 +1488,23 @@ class data_object
      *
      * @param phrase_list $target the phrase list whose entries may still have id 0
      * @param phrase_list $resolved the dto's merged phrase list (words + triples already saved)
-     * @param user_message $usr_msg warning sink for the unresolvable case
+     * @param user_message $msg warning sink for the unresolvable case
      */
     private function resolve_phrase_list_ids(
         phrase_list  $target,
         phrase_list  $resolved,
-        user_message $usr_msg
+        user_message $msg
     ): void
     {
         foreach ($target->lst() as $phr) {
             if ($phr->id() == 0) {
                 if ($phr->name() == '') {
-                    $usr_msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
+                    $msg->add(msg_id::PHRASE_ID_AND_NAME_MISSING_IN, [
                         msg_id::VAR_NAME => $phr->dsp_id()
                     ]);
                 } else {
                     $phr_reloaded = $resolved->get_by_name($phr->name());
-                    $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
+                    $this->set_phrase_id($phr, $phr_reloaded, $msg);
                 }
             }
         }
@@ -1504,15 +1512,16 @@ class data_object
 
     /**
      * add or update all components to the database
+     * @param user_message $msg to collect the error message
      * @param import $imp the import object that includes the start time of the import
      * @return void ok or the error message for the user with the suggested solution
      */
-    private function save_components(user_message $usr_msg, import $imp): void
+    private function save_components(user_message $msg, import $imp): void
     {
-        $this->save_sandbox_list($imp, words::COMPONENTS, $this->component_list(), component::class, $usr_msg);
+        $this->save_sandbox_list($imp, words::COMPONENTS, $this->component_list(), component::class, $msg);
 
         // add the id of the components just added to the views
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $cmp_lst = $this->component_list();
             foreach ($this->view_list()->lst() as $msk) {
                 if ($msk->has_components()) {
@@ -1520,11 +1529,11 @@ class data_object
                         $cmp = $lnk->get_component();
                         if ($cmp->id() == 0) {
                             if ($cmp->name() == '') {
-                                $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
+                                $msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                             } else {
                                 $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
                                 if ($cmp_reloaded == null) {
-                                    $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
+                                    $msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
                                     $cmp->id = $cmp_reloaded->id();
                                     $lnk->set_component($cmp_reloaded);
@@ -1544,14 +1553,14 @@ class data_object
      * @param string $cfg_wrd the word name used to select the configuration values
      * @param sandbox_list_named|ip_range_list $sbx_lst the list of named sandbox objects that should be saved to the database
      * @param string $class the class name of the list objects e.g. words::SOURCES
-     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
+     * @param user_message $msg ok or the error message for the user with the suggested solution
      */
     private function save_sandbox_list(
         import                           $imp,
         string                           $cfg_wrd,
         sandbox_list_named|ip_range_list $sbx_lst,
         string                           $class,
-        user_message                     $usr_msg
+        user_message                     $msg
     ): void
     {
         global $cfg;
@@ -1561,10 +1570,10 @@ class data_object
         if (!$sbx_lst->is_empty()) {
             $est = $sbx_lst->count() / $per_sec;
             $imp->step_start(msg_id::SAVE, $class, $sbx_lst->count(), $est);
-            $sbx_lst->save($usr_msg, $imp);
-            if (!$usr_msg->is_ok()) {
+            $sbx_lst->save($msg, $imp);
+            if (!$msg->is_ok()) {
                 $lib = new library();
-                log_debug($lib->class_to_name($class) . 's not imported because ' . $usr_msg->all_message_text());
+                log_debug($lib->class_to_name($class) . 's not imported because ' . $msg->all_message_text());
             }
             $imp->step_end($sbx_lst->count(), $per_sec);
         }
@@ -1578,11 +1587,11 @@ class data_object
      */
     function diff_msg(data_object $dto): user_message
     {
-        $usr_msg = new user_message();
-        $usr_msg->merge($this->word_list()->diff_msg($dto->word_list()));
-        $usr_msg->merge($this->triple_list()->diff_msg($dto->triple_list()));
-        $usr_msg->merge($this->value_list()->diff_msg($dto->value_list()));
-        return $usr_msg;
+        $msg = new user_message();
+        $msg->merge($this->word_list()->diff_msg($dto->word_list()));
+        $msg->merge($this->triple_list()->diff_msg($dto->triple_list()));
+        $msg->merge($this->value_list()->diff_msg($dto->value_list()));
+        return $msg;
     }
 
     /**
@@ -1592,7 +1601,7 @@ class data_object
      * @param formula $frm the formula that should be checked
      * @param term $trm either the from or to phrase of the triple
      * @param term_list $trm_lst the cache of all terms that are fine until now
-     * @param user_message $usr_msg all user messages of the import up to this check
+     * @param user_message $msg all user messages of the import up to this check
      * @param bool $trp_self_ref the status to the self reference before this check
      * @return bool
      */

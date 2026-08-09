@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -51,6 +52,7 @@ class triple_read_tests
     {
 
         global $sys;
+        $msg = new user_message();
 
         // init
         $t_db = new test_db_load($t);
@@ -65,23 +67,23 @@ class triple_read_tests
         // load the verb used for testing
         $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load the words used for testing the triples (Zurich (city) and Zurich (canton)
-        $wrd_zh = $t_db->load_word(word_names::ZH);
-        $wrd_canton = $t_db->load_word(word_names::CANTON);
+        $wrd_zh = $t_db->load_word($msg, word_names::ZH);
+        $wrd_canton = $t_db->load_word($msg, word_names::CANTON);
         // create the group test word
-        $wrd_company = $t_db->test_word(word_names::COMPANY);
+        $wrd_company = $t_db->test_word($msg, word_names::COMPANY);
 
         $t->subheader($ts . 'load');
         $test_name = 'load triple ' . triple_names::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_names::MATH_CONST);
+        $trp->load_by_name(triple_names::MATH_CONST, $msg);
         $trp_by_id = new triple($t->usr1);
-        $trp_by_id->load_by_id($trp->id());
+        $trp_by_id->load_by_id($trp->id(), $msg);
         $t->assert($test_name, $trp_by_id->name(), triple_names::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triple_names::MATH_CONST_COM);
 
         $test_name = 'triple load ' . word_names::CANTON . ' ' . word_names::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
-        $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
+        $lnk_canton->load_by_link_id( $wrd_zh->id(), $msg, $is_id, $wrd_canton->id() );
         $target = word_names::ZH . ' (' . word_names::CANTON . ')';
         $result = $lnk_canton->name();
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
@@ -93,7 +95,7 @@ class triple_read_tests
 
         $test_name = 'triple load ' . triple_names::COMPANY_ZURICH . ' by link';
         $lnk_company = new triple($t->usr1);
-        $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
+        $lnk_company->load_by_link_id( $wrd_zh->id(), $msg, $is_id, $wrd_company->id() );
         $target = triple_names::COMPANY_ZURICH;
         $result = $lnk_company->name();
         $t->assert($test_name, $result, $target);

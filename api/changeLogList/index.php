@@ -46,11 +46,19 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-// open database
+// init api app and open database
 $app = new application();
-$db_con = $app->start_api("log");
+$msg = new user_message(); // for api
+$db_con = $app->start_api("change log entries", $msg);
 
 if ($db_con->is_open()) {
+
+    // load the session user parameters store the requesting user on the single message
+    $usr = new user;
+    $usr->get($msg);
+    $msg->usr = $usr;
+
+    $result = ''; // reset the json message string
 
     // get the parameters
     $class = $_GET[url_var::LOG_CLASS] ?? '';
@@ -60,17 +68,6 @@ if ($db_con->is_open()) {
     // TODO deprecate
     $wrd_id = $_GET[url_var::WORD] ?? 0;
     $wrd_fld = $_GET[url_var::LOG_FIELD] ?? '';
-
-    $result = ''; // reset the json message string
-
-    // load the session user parameters
-    $usr = new user;
-    $msg = new user_message();
-    $msg->add_message_text($usr->get());
-    // store the requesting user on the single message of this request as early as possible,
-    // so every function below reads the requesting user from $msg->usr
-    // (docs/llm/state-and-messages.md)
-    $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -82,13 +79,13 @@ if ($db_con->is_open()) {
             if (is_numeric($id)) {
                 $id = (int)$id;
             }
-            $lst->load_by_obj_fld($class, $id, $usr, $fld);
+            $lst->load_by_obj_fld($class, $msg, $id, $usr, $fld);
             $result = $lst->api_json();
         } else {
             // TODO deprecate
             if ($wrd_id != 0) {
                 $wrd = new word($usr);
-                $wrd->load_by_id($wrd_id);
+                $wrd->load_by_id($wrd_id, $msg);
                 $lst = new change_log_list();
                 $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
                 $result = $lst->api_json();

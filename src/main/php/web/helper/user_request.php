@@ -58,7 +58,7 @@ class user_request
     public user_backend $usr_backend;
     // the message buffer enriched with potential errors; carries the requesting
     // frontend user as $usr_msg->usr (docs/llm/state-and-messages.md)
-    public user_message $usr_msg;
+    public user_message $msg;
     // the frontend cache used to reduce the backend loading
     public data_object $dto;
     // false to skip the database execution e.g. for unit testing
@@ -80,14 +80,14 @@ class user_request
      */
     function __construct(
         user_backend $usr_backend,
-        user_message $usr_msg,
+        user_message $msg,
         data_object  $dto = new data_object(),
         bool         $do_it = true,
         bool         $test_mode = false
     )
     {
         $this->usr_backend = $usr_backend;
-        $this->usr_msg = $usr_msg;
+        $this->msg = $msg;
         $this->dto = $dto;
         $this->do_it = $do_it;
         $this->test_mode = $test_mode;

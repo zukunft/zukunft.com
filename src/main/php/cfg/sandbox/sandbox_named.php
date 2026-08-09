@@ -204,16 +204,23 @@ class sandbox_named extends sandbox
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = ''
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
-        if ($result) {
-            $this->set_name($db_row[$name_fld]);
+        $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld);
+        // map the loaded fields whenever the row has been mapped (id set), independent of a prior
+        // error left on $msg by an earlier operation; gating this on $msg->is_ok() (via $result)
+        // would silently drop the name and make the object unreachable by a later name based
+        // lookup, e.g. the import cache that matches triples by name
+        if ($this->id() != 0) {
+            if (array_key_exists($name_fld, $db_row)) {
+                $this->set_name($db_row[$name_fld]);
+            }
             if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[fields::FLD_DESCRIPTION];
             }
@@ -221,7 +228,9 @@ class sandbox_named extends sandbox
                 $this->set_usage($db_row[fields::FLD_USAGE]);
             }
         }
-        return $result;
+        // TODO Prio 1 use $msg->is_ok() as prefered return var!
+        // false if something on the mapping has failed even if the row has been loaded to avoid that a a half loaded row is used as a correct loaded row
+        return ($result and $msg->is_ok());
     }
 
     /**
@@ -296,13 +305,18 @@ class sandbox_named extends sandbox
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
 
         $vars[json_fields::NAME] = $this->name();
         if ($typ_lst->test_mode()) {
@@ -324,13 +338,14 @@ class sandbox_named extends sandbox
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
         $vars[json_fields::NAME] = $this->name();
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
@@ -551,19 +566,19 @@ class sandbox_named extends sandbox
      * so in this case, if a formula or verb with the same name already exists, get it
      * @return term
      */
-    function get_term(): term
+    function get_term(user_message $msg): term
     {
         $trm = new term($this->get_user());
-        $trm->load_by_name($this->name());
+        $trm->load_by_name($this->name(), $msg);
         return $trm;
     }
 
     /**
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
-    function fill_api_obj(object $api_obj): void
+    function fill_api_obj(object $api_obj, user_message $msg): void
     {
-        parent::fill_api_obj($api_obj);
+        parent::fill_api_obj($api_obj, $msg);
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
@@ -579,23 +594,24 @@ class sandbox_named extends sandbox
      * @param string $name the name of the word, triple, formula, verb, view or view component
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message|Message $msg): int
     {
         global $db_con;
 
         log_debug($name);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
     /**
      * only to suppress the polymorphic warning and to be overwritten by the child objects
      * @param string $code_id
+     * @param user_message|Message $msg
      * @return int zero if not overwritten by the child object to indicate the internal error
      */
-    function load_by_code_id(string $code_id): int
+    function load_by_code_id(string $code_id, user_message|Message $msg): int
     {
-        log_err($this::class . ' does not have a load_by_code_id function');
+        log_err_msg($this::class . ' does not have a load_by_code_id function', $msg);
         return 0;
     }
 
@@ -636,11 +652,14 @@ class sandbox_named extends sandbox
         $qp = $this->load_sql_standard_by_name($name, $sc);
 
         $db_row = $db_con->get1($qp, $msg);
-        if (!$this->row_mapper_sandbox(
-            $db_row, true, false)) {
-            $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
-                msg_id::VAR_NAME => $this->dsp_id(),
-            ]);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_sandbox($db_row, $msg, true, false);
+            // no id after the mapping means that the expected standard row is missing
+            if ($this->id() == 0) {
+                $msg->add(msg_id::LOAD_STANDARD_MAPPING_FAILED, [
+                    msg_id::VAR_NAME => $this->dsp_id(),
+                ]);
+            }
         }
         return $msg->is_ok();
     }
@@ -706,11 +725,12 @@ class sandbox_named extends sandbox
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_named|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_named|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox_named|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;
@@ -788,25 +808,27 @@ class sandbox_named extends sandbox
     /**
      * get the description of the latest change related to this object
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @return string the description of the latest change
      */
-    function log_last_msg(user $usr): string
+    function log_last_msg(user $usr, user_message $msg): string
     {
         $log = new change_log_list();
-        $log->load_obj_last($this, $usr);
+        $log->load_obj_last($this, $usr, $msg);
         return $log->first_msg();
     }
 
     /**
      * get the description of the latest change related to this object and the given field
      * @param user $usr who has requested to see the change
+     * @param user_message $msg to collect any problem while loading the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
-    function log_last_field_msg(user $usr, string $fld): string
+    function log_last_field_msg(user $usr, user_message $msg, string $fld): string
     {
         $log = new change_log_list();
-        $log->load_obj_field_last($this, $usr, $fld);
+        $log->load_obj_field_last($this, $usr, $msg, $fld);
         return $log->first_msg();
     }
 
@@ -1135,7 +1157,7 @@ class sandbox_named extends sandbox
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
         if (in_array($this::class, def::TERM_CLASSES)) {
-            $similar_trm = $this->get_term();
+            $similar_trm = $this->get_term($msg);
             if ($similar_trm->id_obj() > 0) {
                 $sim = $similar_trm->obj();
                 if (!$this->is_similar_named($sim)) {
@@ -1143,7 +1165,7 @@ class sandbox_named extends sandbox
                 }
             } else {
                 $similar_trp = new triple($this->get_user());
-                $similar_trp->load_by_name_generated($this->name());
+                $similar_trp->load_by_name_generated($this->name(), $msg);
                 if ($similar_trp->id() > 0) {
                     $similar_trp->reload_objects($msg);
                     log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $similar_trp->dsp_id() . '"');
@@ -1165,7 +1187,7 @@ class sandbox_named extends sandbox
             $db_chk->set_user($this->get_user());
             if ($this::class == change::class) {
                 // TODO check if it is working with build in tests
-                if ($db_chk->load_by_id($this->id())) {
+                if ($db_chk->load_by_id($this->id(), $msg)) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                         $sim = $db_chk;
@@ -1173,14 +1195,14 @@ class sandbox_named extends sandbox
                 }
             } else {
                 if ($this->name() != '') {
-                    if ($db_chk->load_by_name($this->name())) {
+                    if ($db_chk->load_by_name($this->name(), $msg)) {
                         if ($db_chk->id() > 0) {
                             log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                             $sim = $db_chk;
                         }
                     }
                 } else {
-                    log_err('The name must be set to check if a similar object exists');
+                    log_err_msg('The name must be set to check if a similar object exists', $msg);
                 }
             }
         }
@@ -1204,7 +1226,7 @@ class sandbox_named extends sandbox
                         ]);
                     } else {
                         // if similar is found reload to have the full data
-                        $sim->load_by_id($sim->id()); // e.g. to get the type_id
+                        $sim->load_by_id($sim->id(), $msg); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
                         if (get_class($this) != get_class($sim)) {
                             if (!((get_class($this) == word::class and get_class($sim) == formula::class)

@@ -529,14 +529,15 @@ class type_list extends ListOfIdNamedCodeObjects
     /**
      * force to reload the type names and translations from the database
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_message $msg to collect the load warnings for the user
      * @param string $class the database name is e.g. the table name without s
      * @return array the list of types
      */
-    protected function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, user_message $msg, string $class): array
     {
         $this->set_lst([]);
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
-        $db_lst = $db_con->get($qp, library::class_to_name($class) . ' type list');
+        $db_lst = $db_con->get($qp, $msg, library::class_to_name($class) . ' type list');
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
@@ -633,14 +634,14 @@ class type_list extends ListOfIdNamedCodeObjects
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if a load was successful
      */
-    function load(sql_db $db_con, string $class = ''): bool
+    function load(sql_db $db_con, user_message $msg, string $class = ''): bool
     {
         if ($class == '') {
             $class = $this::class;
             // replace the type list class with the type class because the load is done from the list object instead of the type object
             $class = $this->list_class_to_type($class);
         }
-        $this->load_list($db_con, $class);
+        $this->load_list($db_con, $msg, $class);
         if ($this->is_empty()) {
             return false;
         } else {
@@ -659,7 +660,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
     {
         global $db_con;
         $api_msg = new api_message();
@@ -667,12 +668,15 @@ class type_list extends ListOfIdNamedCodeObjects
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = $this->api_json_array($typ_lst, $msg, $usr);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
-    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
         $vars = [];
         foreach ($this->lst() as $typ) {
             // TODO Prio 3 avoid this exceptions
@@ -680,7 +684,7 @@ class type_list extends ListOfIdNamedCodeObjects
                 or $typ::class == verb::class
                 or $typ::class == view::class
                 or $typ::class == language::class) {
-                $typ_vars = $typ->api_json_array($typ_lst);
+                $typ_vars = $typ->api_json_array($typ_lst, $msg);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
                 $typ_vars[json_fields::CODE_ID] = $typ->get_code_id();

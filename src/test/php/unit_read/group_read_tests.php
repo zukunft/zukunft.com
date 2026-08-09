@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -43,6 +44,7 @@ class group_read_tests
 {
     function run(test_cleanup $t): void
     {
+        $msg = new user_message();
 
 
         // init
@@ -57,10 +59,10 @@ class group_read_tests
 
         $test_name = 'group by word names';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_names($t_wrd->words_canton_zh_inhabitants());
+        $wrd_lst->load_by_names($t_wrd->words_canton_zh_inhabitants(), $msg);
         $test_name .= ' for ' . $wrd_lst->dsp_id();
         $phr_grp = new group($t->usr1);
-        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list(), $msg);
         $result = $phr_grp->id();
         $target = 0;
         if ($result > 0) {
@@ -70,7 +72,7 @@ class group_read_tests
 
         $test_name = 'test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names([word_names::ZH, word_names::CANTON, word_names::INHABITANTS]);
+        $phr_lst->load_by_names([word_names::ZH, word_names::CANTON, word_names::INHABITANTS], $msg);
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);
@@ -81,7 +83,7 @@ class group_read_tests
 
         $test_name = 'second test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);

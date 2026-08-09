@@ -187,11 +187,11 @@ class word_list extends list_named
      * @param string $type the ENUM string of the fixed type
      * @return word_list with the all words of the give type
      */
-    private function filter(string $type): word_list
+    private function filter(string $type, user_message $msg): word_list
     {
         $result = new word_list();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_type($type)) {
+            if ($wrd->is_type($type, $msg)) {
                 $result->add($wrd);
             }
         }
@@ -207,15 +207,15 @@ class word_list extends list_named
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null a time phrase
      */
-    function assume_time(?term_list $trm_lst = null): ?phrase
+    function assume_time(user_message $msg, ?term_list $trm_lst = null): ?phrase
     {
         log_debug('for ' . $this->dsp_id());
         $result = null;
         $phr = null;
 
-        if ($this->has_time()) {
+        if ($this->has_time($msg)) {
             // get the last time from the word list
-            $time_phr_lst = $this->time_lst();
+            $time_phr_lst = $this->time_lst($msg);
             // shortcut, replace with a most_useful function
             foreach ($time_phr_lst->lst() as $time_wrd) {
                 if (is_null($phr)) {
@@ -228,7 +228,7 @@ class word_list extends list_named
             log_debug('time ' . $phr->name() . ' assumed for ' . $this->name_tip());
         } else {
             // get the time of the last "real" (reported) value for the word list
-            $wrd_max_time = $this->max_val_time($trm_lst);
+            $wrd_max_time = $this->max_val_time($msg, $trm_lst);
             $phr = $wrd_max_time?->phrase();
         }
 
@@ -248,13 +248,13 @@ class word_list extends list_named
     /**
      * @return bool true if a word lst contains a time word
      */
-    function has_time(): bool
+    function has_time(user_message $msg): bool
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if (!$result) {
-                if ($wrd->is_time()) {
+                if ($wrd->is_time($msg)) {
                     $result = true;
                 }
             }
@@ -267,7 +267,7 @@ class word_list extends list_named
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return word|null a time word (or phrase?)
      */
-    function max_val_time(?term_list $trm_lst = null): ?word
+    function max_val_time(user_message $msg, ?term_list $trm_lst = null): ?word
     {
         $lib = new library();
         $wrd = null;
@@ -275,7 +275,7 @@ class word_list extends list_named
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list();
-            $val_lst->load_by_phr_lst($this->phrase_list());
+            $val_lst->load_by_phr_lst($this->phrase_list(), $msg);
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();
@@ -294,7 +294,7 @@ class word_list extends list_named
 
             $time_lst = new word_list();
             if (count($time_ids) > 0) {
-                $time_lst->load_by_ids($time_ids);
+                $time_lst->load_by_ids($time_ids, $msg);
                 $wrd = $time_lst->max_time();
             }
         } else {
@@ -363,27 +363,27 @@ class word_list extends list_named
     /**
      * get all time words from this list of words
      */
-    function time_lst(): word_list
+    function time_lst(user_message $msg): word_list
     {
-        return $this->filter(phrase_type_shared::TIME);
+        return $this->filter(phrase_type_shared::TIME, $msg);
     }
 
     /**
      * get all measure words from this list of words
      */
-    function measure_lst(): word_list
+    function measure_lst(user_message $msg): word_list
     {
-        return $this->filter(phrase_type_shared::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE, $msg);
     }
 
     /**
      * get all scaling words from this list of words
      */
-    function scaling_lst(): word_list
+    function scaling_lst(user_message $msg): word_list
     {
         $result = new word_list();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_scaling()) {
+            if ($wrd->is_scaling($msg)) {
                 $result->add($wrd);
             }
         }
@@ -394,10 +394,10 @@ class word_list extends list_named
      * get all measure and scaling words from this list of words
      * @returns word_list words that are usually shown after a number
      */
-    function measure_scale_lst(): word_list
+    function measure_scale_lst(user_message $msg): word_list
     {
-        $scale_lst = $this->scaling_lst();
-        $measure_lst = $this->measure_lst();
+        $scale_lst = $this->scaling_lst($msg);
+        $measure_lst = $this->measure_lst($msg);
         $measure_lst->merge($scale_lst);
         return $measure_lst;
     }
@@ -405,9 +405,9 @@ class word_list extends list_named
     /**
      * get all measure words from this list of words
      */
-    function percent_lst(): word_list
+    function percent_lst(user_message $msg): word_list
     {
-        return $this->filter(phrase_type_shared::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT, $msg);
     }
 
     /**
@@ -416,46 +416,46 @@ class word_list extends list_named
      * TODO call this from the display object t o avoid casting again
      * @returns word_list a word
      */
-    function ex_measure_and_time_lst(): word_list
+    function ex_measure_and_time_lst(user_message $msg): word_list
     {
         $wrd_lst_ex = clone $this;
-        $wrd_lst_ex->ex_time();
-        $wrd_lst_ex->ex_measure();
-        $wrd_lst_ex->ex_scaling();
-        $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
+        $wrd_lst_ex->ex_time($msg);
+        $wrd_lst_ex->ex_measure($msg);
+        $wrd_lst_ex->ex_scaling($msg);
+        $wrd_lst_ex->ex_percent($msg); // the percent sign is normally added to the value
         return $wrd_lst_ex;
     }
 
     /**
      * Exclude all time words from this word list
      */
-    function ex_time(): void
+    function ex_time(user_message $msg): void
     {
-        $this->remove($this->time_lst());
+        $this->remove($this->time_lst($msg));
     }
 
     /**
      * Exclude all measure words from this word list
      */
-    function ex_measure(): void
+    function ex_measure(user_message $msg): void
     {
-        $this->remove($this->measure_lst());
+        $this->remove($this->measure_lst($msg));
     }
 
     /**
      * Exclude all measure words from this word list
      */
-    function ex_scaling(): void
+    function ex_scaling(user_message $msg): void
     {
-        $this->remove($this->scaling_lst());
+        $this->remove($this->scaling_lst($msg));
     }
 
     /**
      * Exclude all measure words from this word list
      */
-    function ex_percent(): void
+    function ex_percent(user_message $msg): void
     {
-        $this->remove($this->percent_lst());
+        $this->remove($this->percent_lst($msg));
     }
 
 }

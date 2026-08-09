@@ -74,12 +74,12 @@ class graph_tests
         // step 1: define the phrase list e.g. in this case only the test word for city
 
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::CITY));
+        $phr_lst->load_by_names(array(word_names::CITY), $msg);
 
         // step 2: get all values related to the phrases
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_phr_lst($phr_lst);
-        $wrd_lst_all = $val_lst->phr_lst()->wrd_lst_all();
+        $val_lst->load_by_phr_lst($phr_lst, $msg);
+        $wrd_lst_all = $val_lst->phr_lst($msg)->wrd_lst_all($msg);
 
         // step 3: get all phrases used for the value descriptions
         $phr_lst_used = new phrase_list($t->usr1);
@@ -106,9 +106,9 @@ class graph_tests
 
         // similar to above, but just for the zurich
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_names::ZH, word_names::INHABITANTS, word_names::MIO));
+        $phr_lst->load_by_names(array(word_names::ZH, word_names::INHABITANTS, word_names::MIO), $msg);
         $lnk_lst = new triple_list($t->usr1);
-        $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
+        $lnk_lst->load_by_phr_lst($phr_lst, $msg, null, foaf_direction::UP, $msg);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
         // TODO to be reviewed
@@ -119,10 +119,10 @@ class graph_tests
         $test_name = 'load the types of Zurich from the database: Zurich is a ';
         // load the word Zurich from the database
         $ZH = new word($t->usr1);
-        $ZH->load_by_name(word_names::ZH);
+        $ZH->load_by_name(word_names::ZH, $msg);
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($t->usr1);
-        $zh_lst->load_by_phr($ZH->phrase(), $t_vrb->verb_is(), foaf_direction::UP);
+        $zh_lst->load_by_phr($ZH->phrase(), $msg, $t_vrb->verb_is(), foaf_direction::UP);
         // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();
         $zh_types = $trp_lst->phrase_parts();

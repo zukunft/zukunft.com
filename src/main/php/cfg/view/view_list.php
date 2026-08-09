@@ -88,12 +88,13 @@ class view_list extends sandbox_list_named
      * TODO check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper(array $db_rows, user_message $msg, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $msg, $load_all);
     }
 
 
@@ -224,9 +225,9 @@ class view_list extends sandbox_list_named
      * @param int $offset jump over these number of pages
      * @return bool true if at least one view found
      */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_names(string $pattern, user_message $msg, int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new view($this->get_user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new view($this->get_user()), $pattern, $msg, $limit, $offset);
     }
 
     /**
@@ -259,13 +260,13 @@ class view_list extends sandbox_list_named
      * @param int $id the id of the component
      * @return bool true if at least one component has been loaded
      */
-    function load_by_component_id(int $id): bool
+    function load_by_component_id(int $id, user_message $msg): bool
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $id);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
     /**
@@ -273,12 +274,12 @@ class view_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views by the name
      * @return bool true if at least one view has been loaded
      */
-    function load_by_pattern(string $pattern = ''): bool
+    function load_by_pattern(string $pattern, user_message $msg): bool
     {
         global $db_con;
 
         $qp = $this->load_sql_by_pattern($db_con->sql_creator(), $pattern);
-        return parent::load($qp);
+        return parent::load($qp, $msg);
     }
 
 

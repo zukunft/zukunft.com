@@ -40,9 +40,9 @@ class groups
     // phrase group or value names used by the system for testing
 
     // persevered phrase group names for unit and integration tests
-    const string TN_READ = 'Pi (math)';
-    const string TN_READ_COM = 'ratio of the circumference of a circle to its diameter';
-    const string TN_RENAMED = 'Pi';
+    const string TN_READ = 'π (unit symbol)';
+    const string TN_READ_COM = 'Symbol for the ratio of the circumference of a circle to its diameter';
+    const string TN_RENAMED = 'π';
 
     const string ZH_CITY_INHABITANTS = word_names::ZH . ' ' . word_names::CITY . ' ' . word_names::INHABITANTS;
     const string ZH_CITY_INHABITANTS_COM = word_names::INHABITANTS . ' in the ' . word_names::CITY . ' of ' . word_names::ZH;
@@ -66,7 +66,10 @@ class groups
 
     // phrase group ids (the group key built from the phrase ids, '......' marks an empty slot)
     // used to load a fixed group e.g. for the api test
-    const string CH_2019_MIO = '....09+....0T+....14+....1D+....2Y+......+......+......+......+......+......+......+......+......+......+......+'; // the group of 'inhabitants of Switzerland in Mio (2019)'
+    // the big group named TN_CH_2019 with the words 2019, million, inhabitants, Switzerland
+    // and country, created with every database reset from TEST_GROUPS_CREATE
+    // (see group_write_tests::create_test_groups)
+    const string CH_2019_MIO = '....09+....0T+....14+....1D+....27+......+......+......+......+......+......+......+......+......+......+......+';
 
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';

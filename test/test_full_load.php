@@ -46,9 +46,12 @@ include_once 'test_const.php';
 
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
-use Zukunft\ZukunftCom\test\php\test_app;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\test_app;
 
 // load the base testing functions
 include_once test_paths::UTILS . 'test_base.php';
@@ -72,13 +75,14 @@ global $db_con;
 
 // open database and display header
 $app = new test_app();
-$db_con = $app->start("unit and integration testing with full data load", '', false, true);
+$msg = new user_message();
+$db_con = $app->start("unit and integration testing with full data load", $msg);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
-    $result = $start_usr->get();
+    $result = $start_usr->get($msg);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id > 0) {
@@ -93,9 +97,15 @@ if ($db_con->is_open()) {
             $t->set_users();
             $t->header('Start zukunft.com tests without database read or write tests');
 
+            // login so that the api calls of the test scripts are permitted
+            // also on a pod that blocks the changes of a user without login
+            $t->api_login();
+
             // prepare the frontend dummy cache used by the unit and ui tests
             $ui = new frontend('full data load tests');
-            $ui->load_dummy_cache_from_test_resources($t->usr1);
+            $usr_ui = new user_ui($t->usr1->api_json());
+            $msg_ui = new user_message_ui($usr_ui);
+            $ui->load_dummy_cache_from_test_resources($msg_ui);
 
             // run the unit tests upfront (no database connection needed)
             $t->run_unit($ui);
@@ -103,15 +113,18 @@ if ($db_con->is_open()) {
             // create the html frontend pages based on the url (no database access)
             if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST) {
                 $ui = new frontend('unit ui tests');
-                $ui->load_dummy_cache_from_test_resources($t->usr1);
+                $ui->load_dummy_cache_from_test_resources($msg_ui);
                 new all_ui_tests()->run($t, $ui);
             }
 
             // run the workflow tests
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
-                $usr_msg_ui = new MapObject()->convertMsgToUi(new user_message());
+                $usr_msg_ui = new MapObject()->convertMsgToUi($msg);
                 new all_workflow_tests()->run($t, $t->usr1, $usr_msg_ui);
             }
+
+            // end the admin session used for the api calls of the test scripts
+            $t->api_logout();
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

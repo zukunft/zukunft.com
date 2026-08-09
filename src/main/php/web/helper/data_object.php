@@ -194,7 +194,7 @@ class data_object
     public sys_log_list $sys_log;
 
     // for warning and errors while filling the data_object
-    private user_message $usr_msg;
+    private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
 
@@ -209,13 +209,13 @@ class data_object
      */
     function __construct(?string $api_json = null)
     {
-        $this->usr_msg = new user_message();
+        $this->msg = new user_message();
         if ($api_json != null) {
             $this->val_lst = new value_list();
             $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
-            $this->set_from_json($api_json, $this->usr_msg);
+            $this->set_from_json($api_json, $this->msg);
             $this->usr = new user();
         } else {
             $this->reset();
@@ -253,7 +253,7 @@ class data_object
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the object is filled
      */
     function set_from_json(string $json_api_msg, user_message $usr_msg): bool
@@ -267,12 +267,12 @@ class data_object
         return $usr_msg->is_ok();
     }
 
-    function refresh_words_via_api(user_message $usr_msg): bool
+    function refresh_words_via_api(user_message $msg): bool
     {
         if ($this->online) {
-            $this->wrd_lst->reload($usr_msg);
+            $this->wrd_lst->reload($msg);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

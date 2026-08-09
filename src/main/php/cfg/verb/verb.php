@@ -323,9 +323,9 @@ class verb extends type_object
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
      */
-    function row_mapper_typ_obj(array $db_row, string $class): bool
+    function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        return $this->row_mapper_verb($db_row);
+        return $this->row_mapper_verb($db_row, $msg);
     }
 
     /**
@@ -337,12 +337,14 @@ class verb extends type_object
      * @return bool true if the verb is loaded and valid
      */
     function row_mapper_verb(
-        ?array $db_row,
-        string $id_fld = verb_db::FLD_ID,
-        string $name_fld = verb_db::FLD_NAME): bool
+        ?array       $db_row,
+        user_message $msg,
+        string       $id_fld = verb_db::FLD_ID,
+        string       $name_fld = verb_db::FLD_NAME): bool
     {
-        $result = parent::row_mapper($db_row, $id_fld);
-        if ($result) {
+        $result = parent::row_mapper($db_row, $msg, $id_fld);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 if ($db_row[fields::FLD_CODE_ID] != null) {
                     $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
@@ -379,7 +381,7 @@ class verb extends type_object
                 }
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
 
@@ -459,13 +461,13 @@ class verb extends type_object
      * @param string $name the name of the verb
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, user_message $msg): int
     {
         global $db_con;
 
         log_debug($name);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -473,13 +475,13 @@ class verb extends type_object
      * @param string $code_id the code id of the verb
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_code_id(string $code_id): int
+    function load_by_code_id(string $code_id, user_message $msg): int
     {
         global $db_con;
 
         log_debug($code_id);
         $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
-        return $this->load($qp);
+        return $this->load($qp, $msg);
     }
 
     /**
@@ -487,13 +489,20 @@ class verb extends type_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_verb($db_row);
-        return $this->id();
+        // reset the id first so that a missing database row is reported with id 0
+        // also within the object and never with a stale id (see db_object_seq_id::load)
+        $this->id = 0;
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_verb($db_row, $msg);
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
 
@@ -579,10 +588,11 @@ class verb extends type_object
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
 
@@ -678,13 +688,14 @@ class verb extends type_object
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
@@ -752,10 +763,10 @@ class verb extends type_object
      * get the term corresponding to this verb name,
      * so in this case, if a word or formula with the same name already exists, get it
      */
-    private function reload_term(): term
+    private function reload_term(user_message $msg): term
     {
         $trm = new term($this);
-        $trm->load_by_name($this->name);
+        $trm->load_by_name($this->name, $msg);
         return $trm;
     }
 
@@ -861,9 +872,10 @@ class verb extends type_object
      */
 
     /**
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @returns bool true if no one has used this verb
      */
-    private function not_used(): bool
+    private function not_used(user_message $msg): bool
     {
         log_debug('verb->not_used (' . $this->id() . ')');
 
@@ -872,7 +884,7 @@ class verb extends type_object
 
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $usage = $db_row[fields::FLD_USAGE];
         if ($usage > 0) {
             $result = false;
@@ -898,8 +910,11 @@ class verb extends type_object
         return $qp;
     }
 
-    // true if no other user has modified the verb
-    private function not_changed(): bool
+    /**
+     * true if no other user has modified the verb
+     * @param user_message $msg to enrich with problems and suggested solutions
+     */
+    private function not_changed(user_message $msg): bool
     {
         log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->get_user()->id . ')');
 
@@ -916,7 +931,7 @@ class verb extends type_object
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
         $db_con->usr_id = $this->get_user()->id();
-        $change_user_id = $db_con->get1($sql);
+        $change_user_id = $db_con->get1($sql, $msg);
         if ($change_user_id > 0) {
           $result = false;
         }
@@ -997,7 +1012,7 @@ class verb extends type_object
         }
 
         if (!$msg->is_ok()) {
-            log_err('verb not saved');
+            log_err_msg('verb not saved', $msg);
         }
 
         return $msg->is_ok();
@@ -1149,7 +1164,7 @@ class verb extends type_object
 
         // check potential duplicate by term name
         if ($sim == null) {
-            $trm = $this->reload_term();
+            $trm = $this->reload_term($msg);
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $msg->merge($trm->id_used_msg($this));
             }
@@ -1177,13 +1192,13 @@ class verb extends type_object
         // reload only if needed
         if ($this->name == '') {
             if ($this->id() > 0) {
-                $this->load_by_id($this->id());
+                $this->load_by_id($this->id(), $msg);
             } else {
-                log_err('Cannot delete verb, because neither the id or name is given');
+                log_err_msg('Cannot delete verb, because neither the id or name is given', $msg);
             }
         } else {
             if ($this->id() == 0) {
-                $this->load_by_name($this->name);
+                $this->load_by_name($this->name, $msg);
             }
         }
 
@@ -1196,7 +1211,7 @@ class verb extends type_object
                 $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
             } else {
                 // TODO: create a new verb and request to delete the old
-                log_err('Creating a new verb is not yet possible');
+                log_err_msg('Creating a new verb is not yet possible', $msg);
             }
         }
 

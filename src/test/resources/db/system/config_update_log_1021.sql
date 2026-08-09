@@ -40,7 +40,7 @@ SELECT config_update_log_1021
 
 SELECT config_update_log_1021
         (3::bigint,
-         1::smallint,
+         2::smallint,
          176::smallint,
          null::text,
          'Database version'::text,

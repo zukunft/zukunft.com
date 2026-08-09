@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_type.php';
@@ -103,6 +104,7 @@ class change_log_tests
         $t_grp = new test_groups($t);
         $t_val = new test_values($t);
         $t_wrd = new test_words($t);
+        $msg = new user_message();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
 
@@ -233,7 +235,7 @@ class change_log_tests
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group_fields::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value($msg)->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
         // a type row e.g. a sys log function logs to the changes table like the named objects,
@@ -260,22 +262,22 @@ class change_log_tests
         $test_name = 'the new link target is sent as the new value';
         $log_lnk = $t_log->log_link();
         $log_lnk->new_text_to = word_names::MATH;
-        $api = $log_lnk->api_json_array(new api_type_list([]));
+        $api = $log_lnk->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::NEW_VALUE] ?? '', word_names::MATH);
         $test_name = 'a link change without a display text sends no new value';
         $log_empty = new change_link($t->usr1);
-        $api = $log_empty->api_json_array(new api_type_list([]));
+        $api = $log_empty->api_json_array(new api_type_list([]), $msg);
         $t->assert_true($test_name, ($api[json_fields::NEW_VALUE] ?? null) === null);
 
         // the change id is sent to the frontend so that same-second changes
         // can be sorted in the write order (see change_log_list::sort_by_time_and_what)
         $test_name = 'the change id is part of the api json';
         $log_add = $t_log->log_word_add();
-        $api = $log_add->api_json_array(new api_type_list([]));
+        $api = $log_add->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::ID] ?? 0, $log_add->id());
         $test_name = 'a change that is not yet saved sends the change id 0';
         $log_new = new change($t->usr1);
-        $api = $log_new->api_json_array(new api_type_list([]));
+        $api = $log_new->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
 
         // sql to load a log entry by field and row id

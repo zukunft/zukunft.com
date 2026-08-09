@@ -110,20 +110,20 @@ class triple_list extends ListBase
      * @return string with a list of the triple names with html links
      * ex. names_linked
      */
-    function display(string $back = ''): string
+    function display(user_message $msg, string $back = ''): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($msg, $back));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
      * @return array with a list of the triple names with html links
      */
-    function names_linked(string $back = ''): array
+    function names_linked(user_message $msg, string $back = ''): array
     {
         $result = array();
         foreach ($this->lst() as $trp) {
-            if (!$trp->is_hidden()) {
+            if (!$trp->is_hidden($msg)) {
                 $result[] = $trp->name_link($back);
             }
         }
@@ -320,11 +320,11 @@ class triple_list extends ListBase
      * @param string $type the ENUM string of the fixed type
      * @return triple_list_ui with the all triples of the give type
      */
-    private function filter(string $type): triple_list_ui
+    private function filter(string $type, user_message $msg): triple_list_ui
     {
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_type($type)) {
+            if ($wrd->is_type($type, $msg)) {
                 $result->add($wrd);
             }
         }
@@ -334,27 +334,27 @@ class triple_list extends ListBase
     /**
      * get all time triples from this list of triples
      */
-    function time_lst(): triple_list_ui
+    function time_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::TIME);
+        return $this->filter(phrase_type_shared::TIME, $msg);
     }
 
     /**
      * get all measure triples from this list of triples
      */
-    function measure_lst(): triple_list_ui
+    function measure_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE, $msg);
     }
 
     /**
      * get all scaling triples from this list of triples
      */
-    function scaling_lst(): triple_list_ui
+    function scaling_lst(user_message $msg): triple_list_ui
     {
         $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
-            if ($wrd->is_scaling()) {
+            if ($wrd->is_scaling($msg)) {
                 $result->add($wrd);
             }
         }
@@ -365,10 +365,10 @@ class triple_list extends ListBase
      * get all measure and scaling triples from this list of triples
      * @returns triple_list_ui triples that are usually shown after a number
      */
-    function measure_scale_lst(): triple_list_ui
+    function measure_scale_lst(user_message $msg): triple_list_ui
     {
-        $scale_lst = $this->scaling_lst();
-        $measure_lst = $this->measure_lst();
+        $scale_lst = $this->scaling_lst($msg);
+        $measure_lst = $this->measure_lst($msg);
         $measure_lst->merge($scale_lst);
         return $measure_lst;
     }
@@ -376,9 +376,9 @@ class triple_list extends ListBase
     /**
      * get all measure triples from this list of triples
      */
-    function percent_lst(): triple_list_ui
+    function percent_lst(user_message $msg): triple_list_ui
     {
-        return $this->filter(phrase_type_shared::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT, $msg);
     }
 
     /**
@@ -387,46 +387,46 @@ class triple_list extends ListBase
      * TODO call this from the display object t o avoid casting again
      * @returns triple_list_ui a triple
      */
-    function ex_measure_and_time_lst(): triple_list_ui
+    function ex_measure_and_time_lst(user_message $msg): triple_list_ui
     {
         $wrd_lst_ex = clone $this;
-        $wrd_lst_ex->ex_time();
-        $wrd_lst_ex->ex_measure();
-        $wrd_lst_ex->ex_scaling();
-        $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
+        $wrd_lst_ex->ex_time($msg);
+        $wrd_lst_ex->ex_measure($msg);
+        $wrd_lst_ex->ex_scaling($msg);
+        $wrd_lst_ex->ex_percent($msg); // the percent sign is normally added to the value
         return $wrd_lst_ex;
     }
 
     /**
      * Exclude all time triples from this triple list
      */
-    function ex_time(): void
+    function ex_time(user_message $msg): void
     {
-        $this->remove($this->time_lst());
+        $this->remove($this->time_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_measure(): void
+    function ex_measure(user_message $msg): void
     {
-        $this->remove($this->measure_lst());
+        $this->remove($this->measure_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_scaling(): void
+    function ex_scaling(user_message $msg): void
     {
-        $this->remove($this->scaling_lst());
+        $this->remove($this->scaling_lst($msg));
     }
 
     /**
      * Exclude all measure triples from this triple list
      */
-    function ex_percent(): void
+    function ex_percent(user_message $msg): void
     {
-        $this->remove($this->percent_lst());
+        $this->remove($this->percent_lst($msg));
     }
 
     /**

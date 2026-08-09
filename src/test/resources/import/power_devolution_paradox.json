@@ -1,0 +1,148 @@
+{
+  "pod": {
+    "version": "0.0.3",
+    "description": "Claim analysis: reducing the power of the powerful is usually a net benefit; revised premise: no actor can ensure even distribution of power, because relinquishing power removes the capacity to guarantee the outcome",
+    "time": "2026-08-04"
+  },
+  "words": [
+    {
+      "name": "power reduction claim",
+      "description": "reducing the power of powerful actors is usually a net benefit, not a harm"
+    },
+    {
+      "name": "distribution impossibility premise",
+      "description": "no actor can ensure even distribution of power: the act of relinquishing power removes the capacity to guarantee the distribution's outcome"
+    },
+    {
+      "name": "self-undermining transfer",
+      "description": "logical structure in which executing the transfer destroys the enforcement capacity for the transfer's goal"
+    },
+    {
+      "name": "boeckenfoerde dilemma",
+      "description": "the liberal state lives on preconditions it cannot itself guarantee; static analogue of the premise"
+    },
+    {
+      "name": "self-enforcing equilibrium",
+      "description": "even distribution can persist only as a coordination equilibrium among many actors, not as a guaranteed state"
+    },
+    {
+      "name": "power reconcentration",
+      "description": "distributed power tends to reconcentrate over time (iron law of oligarchy)"
+    },
+    {
+      "name": "continuous reduction strategy",
+      "description": "because even distribution is neither achievable in one act nor stable, ongoing marginal reduction of concentrated power is the second-best strategy"
+    },
+    {
+      "name": "power vacuum risk",
+      "description": "abrupt power reduction can transfer power to worse actors instead of counterweights"
+    },
+    {
+      "name": "historical transition failure",
+      "description": "post-abdication collapse cases: Sulla's restored republic, Diocletian's tetrarchy"
+    }
+  ],
+  "triples": [
+    {
+      "from": "distribution impossibility premise",
+      "verb": "supports",
+      "to": "power reduction claim"
+    },
+    {
+      "from": "self-undermining transfer",
+      "verb": "explains",
+      "to": "distribution impossibility premise"
+    },
+    {
+      "from": "historical transition failure",
+      "verb": "is evidence for",
+      "to": "distribution impossibility premise"
+    },
+    {
+      "from": "boeckenfoerde dilemma",
+      "verb": "is analogous to",
+      "to": "distribution impossibility premise"
+    },
+    {
+      "from": "self-enforcing equilibrium",
+      "verb": "is consequence of",
+      "to": "distribution impossibility premise"
+    },
+    {
+      "from": "power reconcentration",
+      "verb": "supports",
+      "to": "continuous reduction strategy"
+    },
+    {
+      "from": "distribution impossibility premise",
+      "verb": "supports",
+      "to": "continuous reduction strategy"
+    },
+    {
+      "from": "continuous reduction strategy",
+      "verb": "refines",
+      "to": "power reduction claim"
+    },
+    {
+      "from": "power vacuum risk",
+      "verb": "limits",
+      "to": "power reduction claim"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "distribution impossibility premise",
+        "assumed value",
+        "confidence"
+      ],
+      "number": 0.9,
+      "description": "probability that no single actor can guarantee even power distribution, given the self-undermining structure of the transfer"
+    },
+    {
+      "words": [
+        "power reduction claim",
+        "assumed value",
+        "confidence"
+      ],
+      "number": 0.75,
+      "description": "probability that marginal reduction of concentrated power toward counterweights yields net benefit; raised from 0.7 in v0.0.1 because the revised premise supports the second-best argument"
+    },
+    {
+      "words": [
+        "power reconcentration",
+        "assumed value",
+        "confidence"
+      ],
+      "number": 0.85,
+      "description": "probability that distributed power reconcentrates absent active counterbalancing"
+    },
+    {
+      "words": [
+        "historical transition failure",
+        "assumed value",
+        "confidence"
+      ],
+      "number": 0.9,
+      "description": "probability that the Sulla and Diocletian cases show abdication without outcome guarantee"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Boeckenfoerde 1967",
+      "description": "Die Entstehung des Staates als Vorgang der Saekularisation, source of the Boeckenfoerde dilemma"
+    },
+    {
+      "name": "Weingast 1997",
+      "description": "The Political Foundations of Democracy and the Rule of Law, American Political Science Review 91(2), constitutions as self-enforcing coordination equilibria"
+    },
+    {
+      "name": "Madison 1788",
+      "description": "Federalist No. 51, ambition counteracting ambition"
+    },
+    {
+      "name": "Michels 1911",
+      "description": "Zur Soziologie des Parteiwesens, iron law of oligarchy"
+    }
+  ]
+}

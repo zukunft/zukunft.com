@@ -42,10 +42,10 @@ SELECT value_prime_p1_update_log_0210001
         1::smallint,
         3.1415926535898::numeric,
         123.456::numeric,
-        32770::bigint,
+        5::bigint,
         4::smallint,
         2::smallint,
-        -2::smallint,
+        5::smallint,
         0::smallint,
         0::smallint,
         0::smallint);

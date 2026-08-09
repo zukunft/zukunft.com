@@ -113,10 +113,21 @@ class test_groups extends test_objects
     function group_pi_symbol(): group
     {
         $t_phr = new test_phrases($this->env);
-        $lst = $t_phr->phrase_list_pi_symbol();
+        $lst = $t_phr->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
         $grp->name = groups::TN_READ;
         return $grp;
+    }
+
+    /**
+     * @return group of the "Pi (math)" triple that keys the pi number value in the seeded database
+     */
+    function group_pi_math(): group
+    {
+        $t_phr = new test_phrases($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_phr->phrase_pi_math());
+        return $lst->get_grp_id(false);
     }
 
     /**

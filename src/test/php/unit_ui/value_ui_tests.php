@@ -32,8 +32,10 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -46,6 +48,8 @@ class value_ui_tests
         $html = new html_base();
         $t_val = new test_values($t);
         $tl = new test_lib();
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui value ';
@@ -53,21 +57,21 @@ class value_ui_tests
 
         $t->subheader($ts . 'html');
 
-        $val = new value($t_val->value()->api_json([api_types::INCL_PHRASES]));
+        $val = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
-        $test_page .= 'with name and tooltip: ' . $val->name_tip() . '<br>';
-        $test_page .= 'with name and link: ' . $val->name_link() . '<br>';
-        $test_page .= 'with tooltip: ' . $val->value() . '<br>';
-        $test_page .= 'with detail link: ' . $val->value_link() . '<br>';
-        $test_page .= 'with edit link: ' . $val->value_edit() . '<br>';
-        $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info() . '<br>';
+        $test_page .= 'with name and tooltip: ' . $val->name_tip($msg_ui) . '<br>';
+        $test_page .= 'with name and link: ' . $val->name_link($msg_ui) . '<br>';
+        $test_page .= 'with tooltip: ' . $val->value($msg_ui) . '<br>';
+        $test_page .= 'with detail link: ' . $val->value_link($msg_ui) . '<br>';
+        $test_page .= 'with edit link: ' . $val->value_edit($msg_ui) . '<br>';
+        $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info($msg_ui) . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $val->btn_del() . '<br>';
-        $val_protected = new value($t_val->value_protected()->api_json([api_types::INCL_PHRASES]));
-        $test_page .= $t->dsp_title_value($val_protected);
-        $t->html_page_test($test_page, 'value html components', 'value', $t);
+        $val_protected = new value($t_val->value_protected($msg)->api_json([api_types::INCL_PHRASES]));
+        $test_page .= $t->dsp_title_value($val_protected, $msg_ui);
+        $t->html_page_test($test_page, 'value html components', 'value', $msg_ui);
 
 
         // TODO review

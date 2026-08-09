@@ -42,10 +42,12 @@ include_once 'test_const.php';
 // load the main test class to get the test environment
 include_once TEST_PHP_PATH . 'test_app.php';
 
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\test\php\test_app;
-
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\test_app;
 
 // load the base testing functions
 include_once test_paths::UTILS . 'test_base.php';
@@ -81,11 +83,19 @@ if ($db_con->is_open()) {
             $t = new all_tests();
             $t->set_users();
             $t->header('Start zukunft.com unit tests');
+            // login so that the api calls of the test scripts are permitted
+            // also on a pod that blocks the changes of a user without login
+            $t->api_login();
             $ui = new frontend('unit tests');
-            $ui->load_dummy_cache_from_test_resources($t->usr1);
+            $usr_ui = new user_ui($this->usr1->api_json());
+            $msg_ui = new user_message_ui($usr_ui);
+            $ui->load_dummy_cache_from_test_resources($msg_ui);
 
             // run a list of selected tests
             $t->run_unit($ui);
+
+            // end the admin session used for the api calls of the test scripts
+            $t->api_logout();
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

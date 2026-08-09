@@ -120,21 +120,25 @@ class sandbox_typed extends sandbox_named
      * @return bool true if this object is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = '',
-        string $name_fld = '',
-        string $type_fld = ''): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = '',
+        string       $name_fld = '',
+        string       $type_fld = ''): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        // map the fields whenever the row has been mapped (id set), not based on the parent return,
+        // because an error left on $msg by an earlier operation must not lead to a half mapped object
+        if ($this->id() != 0) {
             // TODO easy use set_type_by_id function
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
         }
-        return $result;
+        // TODO Prio 0 if no row has been mapped and this should prevent a further execution this should be included in the $msg var, so that the return value could always be $msg->is_ok()
+        return $msg->is_ok();
     }
 
     /**
@@ -189,15 +193,16 @@ class sandbox_typed extends sandbox_named
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
-        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id($msg);
 
         return $vars;
     }
@@ -322,7 +327,7 @@ class sandbox_typed extends sandbox_named
     /**
      * @return int|null the database id of the type
      */
-    function type_id(): ?int
+    function type_id(user_message $msg): ?int
     {
         return $this->type_id;
     }
@@ -365,11 +370,11 @@ class sandbox_typed extends sandbox_named
     /**
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
-    function fill_api_obj(object $api_obj): void
+    function fill_api_obj(object $api_obj, user_message $msg): void
     {
-        parent::fill_api_obj($api_obj);
+        parent::fill_api_obj($api_obj, $msg);
 
-        $api_obj->set_type_id($this->type_id());
+        $api_obj->set_type_id($this->type_id($msg));
     }
 
 
@@ -379,13 +384,14 @@ class sandbox_typed extends sandbox_named
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         // TODO use the code id additional to the name where ever possible
         if ($this->type_code_id() <> '') {
@@ -432,7 +438,7 @@ class sandbox_typed extends sandbox_named
     {
         $msg = parent::diff_msg($obj, $ex_def);
         if (!$ex_def) {
-            if ($this->type_id() != $obj->type_id()) {
+            if ($this->type_id($msg) != $obj->type_id($msg)) {
                 $lib = new library();
                 $msg->add(msg_id::DIFF_TYPE, [
                     msg_id::VAR_TYPE => $obj->type_name(),
@@ -449,11 +455,12 @@ class sandbox_typed extends sandbox_named
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed|CombineObject|IdObject $db_obj the word as saved in the database
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has info that should be saved in the database
      */
-    function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(sandbox_typed|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
                 $result = true;
@@ -479,9 +486,9 @@ class sandbox_typed extends sandbox_named
     function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
-        if ($this->type_id() === null and $obj->type_id() != null) {
+        if ($this->type_id($msg) === null and $obj->type_id($msg) != null) {
             // a local buffer for the permission check; the fill copies a type already stored
-            $this->set_type_id($obj->type_id(), new user_message($usr_req));
+            $this->set_type_id($obj->type_id($msg), new user_message($usr_req));
         }
         return $msg;
     }

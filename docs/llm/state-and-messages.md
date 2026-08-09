@@ -204,7 +204,7 @@ object after the first failure. When you need a throw-away buffer, create a
 Every message added to `$msg` goes via `$msg->add(msg_id::SOME_CASE, [])`, never
 `add_message(string)` or `add_message_text(string)` — the plain-string methods
 bypass translation and break serialisation, so the message won't survive the
-`api_array()` round-trip to the frontend notification bar.
+`api_array($msg)` round-trip to the frontend notification bar.
 
 - **Right**: `$msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);`
 - **Wrong**: `$msg->add_message($mtr->txt(msg_id::SIGNUP_ERR_NAME_EXISTS));`

@@ -121,7 +121,7 @@ class value_list extends ListBase
      * load
      */
 
-    function load_by_phr_lst(phrase_list $phr_lst): bool
+    function load_by_phr_lst(phrase_list $phr_lst, user_message $msg): bool
     {
         $result = false;
         $rest = new rest_call();
@@ -186,12 +186,12 @@ class value_list extends ListBase
      * @param word|triple|source|formula|db_object|type_object|null $dbo to filter the values
      * @return value_list with only the direct linked values
      */
-    function filter(word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
+    function filter(user_message $msg, word|triple|source|formula|db_object|type_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $val) {
-                if ($val->has_phrase($dbo->phrase())) {
+                if ($val->has_phrase($dbo->phrase(), $msg)) {
                     $val_lst->add($val);
                 }
             }
@@ -221,7 +221,7 @@ class value_list extends ListBase
         // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
         usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
-            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+                ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $this->set_lst($lst);
     }
 
@@ -242,11 +242,12 @@ class value_list extends ListBase
      * @return string the html code to display the values to the user
      */
     function list(
-        phrase_list $context_phr_lst = new phrase_list(),
-        string $back = '',
-        string $style = '',
-        ?int $limit = null,
-        ?int $page = null
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = '',
+        string       $style = '',
+        ?int         $limit = null,
+        ?int         $page = null
     ): string
     {
         $html = new html_base();
@@ -257,14 +258,14 @@ class value_list extends ListBase
             // sort so the highest impact value is shown first and the order is always deterministic
             $this->sort_by_impact();
             if ($limit == null) {
-                $limit = $this->configured_limit();
+                $limit = $this->configured_limit($msg);
             }
 
             $i = 0;
             foreach ($this->lst() as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $result .= $this->value_line($val, $context_phr_lst, $back);
+                        $result .= $this->value_line($val, $msg, $context_phr_lst, $back);
                     } else {
                         $diff = $this->count() - $i;
                         if ($diff > 0) {
@@ -288,12 +289,12 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return string the html code of one value line
      */
-    private function value_line(value $val, phrase_list $context_phr_lst, string $back): string
+    private function value_line(value $val, user_message $msg, phrase_list $context_phr_lst, string $back): string
     {
         $html = new html_base();
         // keep the phrases and the value of one value on a single row (text-nowrap) so they are never
         // wrapped and the html snapshot keeps them on one line as well (see library::format_html)
-        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($back);
+        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $back);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -313,9 +314,10 @@ class value_list extends ListBase
      * @return string the html code to display the grouped values to the user
      */
     function list_most_relevant(
-        phrase_list $context_phr_lst = new phrase_list(),
-        string      $back = '',
-        string      $style = ''
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = '',
+        string       $style = ''
     ): string
     {
         $result = '';
@@ -323,9 +325,9 @@ class value_list extends ListBase
             $html = new html_base();
             // the values still to be placed; each section consumes the values it groups
             $pool = $this->lst();
-            [$time_html, $pool] = $this->time_groups($pool, $context_phr_lst, $back);
-            [$phrase_html, $pool] = $this->relevant_phrase_groups($pool, $context_phr_lst, $back);
-            $rest_html = $this->impact_group($pool, $context_phr_lst, $back);
+            [$time_html, $pool] = $this->time_groups($pool, $context_phr_lst, $msg, $back);
+            [$phrase_html, $pool] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $back);
+            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $back);
             // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
             // list width) is added as a second css class of that container
             $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
@@ -343,13 +345,18 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return array [string the html of the time groups, array the values not put into a time group]
      */
-    private function time_groups(array $pool, phrase_list $context_phr_lst, string $back): array
+    private function time_groups(
+        array        $pool,
+        phrase_list  $context_phr_lst,
+        user_message $msg,
+        string       $back
+    ): array
     {
         // bucket the values by the id of their time phrase, keeping the time phrase per bucket
         $buckets = [];
         $time_phr = [];
         foreach ($pool as $val) {
-            $tphr = $val->time_phrase();
+            $tphr = $val->time_phrase($msg);
             if ($tphr != null) {
                 $buckets[$tphr->id()][] = $val;
                 $time_phr[$tphr->id()] = $tphr;
@@ -367,7 +374,7 @@ class value_list extends ListBase
         $result = '';
         $grouped = [];
         foreach ($ids as $id) {
-            $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $back);
+            $result .= $this->group_block($time_phr[$id], $buckets[$id], $context_phr_lst, $msg, $back);
             foreach ($buckets[$id] as $val) {
                 $grouped[$val->id()] = true;
             }
@@ -385,7 +392,7 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return array [string the html of the phrase groups, array the values not put into a phrase group]
      */
-    private function relevant_phrase_groups(array $pool, phrase_list $context_phr_lst, string $back): array
+    private function relevant_phrase_groups(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back): array
     {
         $min = config::MIN_PHRASE_GROUP;
         $ctx_ids = $this->phrase_id_set($context_phr_lst);
@@ -397,7 +404,7 @@ class value_list extends ListBase
         $impact = [];
         foreach ($pool as $val) {
             $ids_of_val = [];
-            foreach ($this->group_phrases($val, $ctx_ids) as $phr) {
+            foreach ($this->group_phrases($val, $msg, $ctx_ids) as $phr) {
                 $id = $phr->id();
                 $ids_of_val[$id] = true;
                 $count[$id] = ($count[$id] ?? 0) + 1;
@@ -423,7 +430,7 @@ class value_list extends ListBase
             $members = array_values(array_filter($remaining,
                 fn(value $val) => isset($val_phr_ids[$val->id()][$id])));
             if (count($members) > $min) {
-                $result .= $this->group_block($phr_by_id[$id], $members, $context_phr_lst, $back);
+                $result .= $this->group_block($phr_by_id[$id], $members, $context_phr_lst, $msg, $back);
                 $taken = [];
                 foreach ($members as $val) {
                     $taken[$val->id()] = true;
@@ -444,7 +451,7 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return string the html of the remaining values as a 'value-items' list, or '' if none remain
      */
-    private function impact_group(array $pool, phrase_list $context_phr_lst, string $back): string
+    private function impact_group(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back): string
     {
         $html = new html_base();
         $result = '';
@@ -452,12 +459,12 @@ class value_list extends ListBase
             $val_lst = new value_list();
             $val_lst->set_lst($pool);
             $val_lst->sort_by_impact();
-            $limit = $this->configured_limit();
+            $limit = $this->configured_limit($msg);
             $items = '';
             $i = 0;
             foreach ($val_lst->lst() as $val) {
                 if ($i < $limit) {
-                    $items .= $this->value_item($val, $context_phr_lst, $back);
+                    $items .= $this->value_item($val, $msg, $context_phr_lst, $back);
                 }
                 $i++;
             }
@@ -482,7 +489,13 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return string the html code of the value group (title and item list)
      */
-    private function group_block(phrase $header, array $members, phrase_list $context_phr_lst, string $back): string
+    private function group_block(
+        phrase       $header,
+        array        $members,
+        phrase_list  $context_phr_lst,
+        user_message $msg,
+        string       $back
+    ): string
     {
         $html = new html_base();
         $title = $html->div($header->name_link(), styles::VALUE_GROUP_TITLE);
@@ -496,7 +509,7 @@ class value_list extends ListBase
         $val_lst->sort_by_impact();
         $items = '';
         foreach ($val_lst->lst() as $val) {
-            $items .= $this->value_item($val, $ctx, $back);
+            $items .= $this->value_item($val, $msg, $ctx, $back);
         }
         $result = $html->div($title . $html->list_unsorted($items, styles::VALUE_ITEMS), styles::VALUE_GROUP);
         return $result;
@@ -511,11 +524,11 @@ class value_list extends ListBase
      * @param string $back the last view to suggest the best follow-up view
      * @return string the html code of one value list item
      */
-    private function value_item(value $val, phrase_list $context_phr_lst, string $back): string
+    private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, string $back): string
     {
         $html = new html_base();
         $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
-        $num = $html->span($val->value_edit($back), styles::VALUE_NUM);
+        $num = $html->span($val->value_edit($msg, $back), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
         return $result;
     }
@@ -525,14 +538,14 @@ class value_list extends ListBase
      * config::LIMIT_VALUE_LIST); shared by list() and impact_group
      * @return int the maximum number of value rows to show
      */
-    private function configured_limit(): int
+    private function configured_limit(user_message $msg): int
     {
         global $ui_sys;
         $result = config::LIMIT_VALUE_LIST;
         if ($ui_sys?->cfg !== null) {
             $result = $ui_sys->cfg->get_by(
                 [triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
-                config::LIMIT_VALUE_LIST);
+                $msg, config::LIMIT_VALUE_LIST);
         }
         return $result;
     }
@@ -545,11 +558,11 @@ class value_list extends ListBase
      * @param array $ctx_ids the ids of the context phrases keyed by id
      * @return array the groupable phrase objects of the value
      */
-    private function group_phrases(value $val, array $ctx_ids): array
+    private function group_phrases(value $val, user_message $msg, array $ctx_ids): array
     {
         $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
-            if (!isset($ctx_ids[$phr->id()]) and !$phr->is_time()) {
+            if (!isset($ctx_ids[$phr->id()]) and !$phr->is_time($msg)) {
                 $result[] = $phr;
             }
         }
@@ -578,6 +591,7 @@ class value_list extends ListBase
      * @return string the html code to display the values to the user
      */
     function list_unit(
+        user_message $msg,
         ?int $limit = null,
         ?int $page = null
     ): string
@@ -593,7 +607,8 @@ class value_list extends ListBase
             if ($limit == null) {
                 global $ui_sys;
                 if ($ui_sys?->cfg !== null) {
-                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+                    $limit = $ui_sys->cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+                        $msg, config::LIMIT_VALUE_LIST);
                 } else {
                     $limit = config::LIMIT_VALUE_LIST;
                 }
@@ -603,7 +618,7 @@ class value_list extends ListBase
             foreach ($this->lst() as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $row = $val->with_unit_and_info();
+                        $row = $val->with_unit_and_info($msg);
                         $row .= $html->lf();
                         $result .= $row;
                     } else {
@@ -621,11 +636,12 @@ class value_list extends ListBase
     }
 
     /**
+     * @param user_message $msg to collect the error messages
      * @param phrase_list|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @param string $back
      * @return string the html code to show the values as a table to the user
      */
-    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(user_message $msg, ?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -667,7 +683,7 @@ class value_list extends ListBase
                 $header_rows = $html->tr($header);
             }
             $row = $html->td($val->grp->name_link_list($common_phrases));
-            $row .= $html->td($val->value_edit($back));
+            $row .= $html->td($val->value_edit($msg, $back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();
@@ -1111,7 +1127,7 @@ class value_list extends ListBase
      * $this->user()->id() is a parameter, because the viewer must not be the owner of the value
      * TODO add back
      */
-    function html($back): string
+    function html(user_message $msg, $back): string
     {
         $lib = new library();
         $html = new html_base();
@@ -1147,7 +1163,7 @@ class value_list extends ListBase
         log_debug('common dsp');
         if (!empty($common_phr_ids)) {
             $common_phr_lst = new word_list();
-            $common_phr_lst->load_by_ids($common_phr_ids);
+            $common_phr_lst->load_by_ids($common_phr_ids, $msg);
             $common_phr_lst_dsp = $common_phr_lst->dsp_obj();
             $result .= ' in (' . implode(",", $common_phr_lst_dsp->names_linked()) . ')<br>';
         }
@@ -1189,7 +1205,7 @@ class value_list extends ListBase
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id() > 0) {
                         $time_phr = new phrase();
-                        $time_phr->load_by_id($val->time_phr->id());
+                        $time_phr->load_by_id($val->time_phr->id(), $msg);
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
                         log_debug('add time word ' . $val->time_phr->name());
@@ -1205,7 +1221,7 @@ class value_list extends ListBase
                 // to review
                 // list the related results
                 $res_lst = new result_list();
-                $res_lst->load_by_val($val);
+                $res_lst->load_by_val($val, $msg);
                 $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
                 log_debug('formula results ' . $val->id . ' loaded');
@@ -1243,7 +1259,7 @@ class value_list extends ListBase
         if (empty($common_phr_ids)) {
             $common_phr_lst_new = new word_list();
             $common_phr_ids[] = $this->phr->id();
-            $common_phr_lst_new->load_by_ids($common_phr_ids);
+            $common_phr_lst_new->load_by_ids($common_phr_ids, $msg);
         }
 
         $common_phr_lst = $common_phr_lst->phrase_list();

@@ -85,7 +85,6 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
-include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -109,7 +108,6 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
@@ -144,7 +142,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -168,7 +165,6 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -351,15 +347,18 @@ class word extends sandbox_code_id
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
-        ?array $db_row,
-        bool   $load_std = false,
-        bool   $allow_usr_protect = true,
-        string $id_fld = word_fields::FLD_ID,
-        string $name_fld = word_fields::FLD_NAME,
-        string $type_fld = phrase::FLD_TYPE): bool
+        ?array       $db_row,
+        user_message $msg,
+        bool         $load_std = false,
+        bool         $allow_usr_protect = true,
+        string       $id_fld = word_fields::FLD_ID,
+        string       $name_fld = word_fields::FLD_NAME,
+        string       $type_fld = phrase::FLD_TYPE): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        if ($result) {
+        parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+        // map the fields whenever the row has been mapped (id set), not based on the parent return,
+        // because an error left on $msg by an earlier operation must not lead to a half mapped word
+        if ($this->id() != 0) {
             if (array_key_exists(word_fields::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[word_fields::FLD_PLURAL];
             }
@@ -372,7 +371,7 @@ class word extends sandbox_code_id
                 $this->impact = $db_row[fields::FLD_IMPACT];
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -470,7 +469,7 @@ class word extends sandbox_code_id
             $msk_name = $in_ex_json[json_fields::VIEW];
             $wrd_view = new view($this->get_user());
             if ($db_con->is_open()) {
-                $wrd_view->load_by_name($msk_name);
+                $wrd_view->load_by_name($msk_name, $msg);
                 if ($wrd_view->id() == 0) {
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
                 } else {
@@ -503,19 +502,25 @@ class word extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * TODO prio 2 review
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping error messages
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             if ($typ_lst->phrase_names()) {
                 $vars[json_fields::ID] = $this->id();
                 $vars[json_fields::NAME] = $this->name();
             } else {
-                $vars = parent::api_json_array($typ_lst, $usr);
+                $vars = parent::api_json_array($typ_lst, $msg, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
                 $vars[json_fields::IMPACT] = $this->impact;
                 // send the assigned default view id so the edit form can preselect it and the
@@ -527,7 +532,7 @@ class word extends sandbox_code_id
                 // word (id 0, e.g. the add form) has none to load
                 if ($typ_lst->incl_related() and $this->id() != 0) {
                     if ($this->phrases_related == null and !$typ_lst->test_mode()) {
-                        $this->load_phrases_related();
+                        $this->load_phrases_related($msg);
                     }
                     if ($this->phrases_related != null and !$this->phrases_related->is_empty()) {
                         // drop the related phrases the requester may not read so a public word cannot
@@ -536,10 +541,10 @@ class word extends sandbox_code_id
                         // INCL_PHRASES so each related triple emits its from/verb/to phrases,
                         // not just id+name — the page-title renderer needs the link names
                         $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
                     }
                     if ($this->values_related == null and !$typ_lst->test_mode()) {
-                        $this->load_values_related();
+                        $this->load_values_related($msg);
                     }
                     if ($this->values_related != null and !$this->values_related->is_empty()) {
                         // drop the values the requester may not read so the related-value list
@@ -549,10 +554,10 @@ class word extends sandbox_code_id
                         // INCL_PHRASES so each value carries its group phrases, which the
                         // frontend needs for the value name and to sort the list by impact
                         $vars[json_fields::VALUES] = $this->values_related->api_json_array(
-                            new api_type_list([api_types::INCL_PHRASES]), $usr);
+                            new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
                     }
                     if ($this->formulas_related == null and !$typ_lst->test_mode()) {
-                        $this->load_formulas_related();
+                        $this->load_formulas_related($msg);
                     }
                     if ($this->formulas_related != null and !$this->formulas_related->is_empty()) {
                         // drop the related formulas the requester may not read (idor)
@@ -561,10 +566,10 @@ class word extends sandbox_code_id
                         // their own name, id and impact, which the frontend needs to render
                         // and sort the list by impact, without recursing back into relations
                         $vars[json_fields::FORMULAS] = $this->formulas_related->api_json_array(
-                            new api_type_list(), $usr);
+                            new api_type_list(), $msg, $usr);
                     }
                     if ($this->parent_formulas_related == null and !$typ_lst->test_mode()) {
-                        $this->load_parent_formulas_related();
+                        $this->load_parent_formulas_related($msg);
                     }
                     if ($this->parent_formulas_related != null and $this->parent_formulas_related != []) {
                         // emit one group per ancestor: the ancestor phrase (for the 'assigned to
@@ -572,38 +577,38 @@ class word extends sandbox_code_id
                         $grp_lst = [];
                         foreach ($this->parent_formulas_related as $grp) {
                             // drop the ancestor's formulas the requester may not read (idor)
-                            $grp['formulas']->filter_readable_by($usr);
+                            $grp[json_fields::FORMULAS]->filter_readable_by($usr);
                             $grp_lst[] = [
-                                json_fields::PHRASE => $grp['phrase']->api_json_array(new api_type_list(), $usr),
-                                json_fields::FORMULAS => $grp['formulas']->api_json_array(new api_type_list(), $usr)
+                                json_fields::PHRASE => $grp[json_fields::PHRASE]->api_json_array([], $msg, $usr),
+                                json_fields::FORMULAS => $grp[json_fields::FORMULAS]->api_json_array([], $msg, $usr)
                             ];
                         }
                         $vars[json_fields::PARENT_FORMULAS] = $grp_lst;
                     }
                     if ($this->references_related == null and !$typ_lst->test_mode()) {
-                        $this->load_references_related();
+                        $this->load_references_related($msg);
                     }
                     if ($this->references_related != null and !$this->references_related->is_empty()) {
                         // drop the related references the requester may not read (idor)
                         $this->references_related->filter_readable_by($usr);
                         $vars[json_fields::REFERENCES] = $this->references_related->api_json_array(
-                            new api_type_list(), $usr);
+                            [], $msg, $usr);
                     }
                     if ($this->changes_related == null and !$typ_lst->test_mode()) {
-                        $this->load_changes_related();
+                        $this->load_changes_related($msg);
                     }
                     if ($this->changes_related != null and !$this->changes_related->is_empty()) {
                         $vars[json_fields::CHANGES] = $this->changes_related->api_json_array(
-                            new api_type_list(), $usr);
+                            [], $msg, $usr);
                     }
                     if ($this->views_related == null and !$typ_lst->test_mode()) {
-                        $this->load_views_related();
+                        $this->load_views_related($msg);
                     }
                     if ($this->views_related != null and !$this->views_related->is_empty()) {
                         // drop the related views the requester may not read (idor)
                         $this->views_related->filter_readable_by($usr);
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
-                            new api_type_list(), $usr);
+                            [], $msg, $usr);
                     }
                     // the fields the requesting user has overwritten in user_words with the user
                     // and the standard value, so the 'my' tab can show the user overwrites, and
@@ -652,11 +657,12 @@ class word extends sandbox_code_id
     /**
      * TODO Prio 1 move to sandbox or higher
      * set the usage object var based on the already loaded related object
+     * @param user_message $msg
      * @return void
      */
-    function calc_usage(): void
+    function calc_usage(user_message $msg): void
     {
-        $this->load_related();
+        $this->load_related($msg);
         $this->update_usage();
     }
 
@@ -664,31 +670,31 @@ class word extends sandbox_code_id
      * TODO Prio 1 review e.g. if the parent formulas should also be loaded
      * load all related objects counted by update_usage
      */
-    function load_related(): void
+    function load_related(user_message $msg): void
     {
-        $this->load_phrases_related();
-        $this->load_values_related();
-        $this->load_formulas_related();
-        $this->load_references_related();
+        $this->load_phrases_related($msg);
+        $this->load_values_related($msg);
+        $this->load_formulas_related($msg);
+        $this->load_references_related($msg);
     }
 
     /**
      * load the values related to this word into the in-memory values_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
      */
-    function load_values_related(): void
+    function load_values_related(user_message $msg): void
     {
-        $this->values_related = $this->reload_value_list();
+        $this->values_related = $this->reload_value_list($msg);
     }
 
     /**
      * load the formulas related to this word into the in-memory formulas_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
      */
-    function load_formulas_related(): void
+    function load_formulas_related(user_message $msg): void
     {
         $frm_lst = new formula_list($this->get_user());
-        $frm_lst->load_by_phr($this->phrase());
+        $frm_lst->load_by_phr($this->phrase(), $msg);
         $this->formulas_related = $frm_lst;
     }
 
@@ -696,14 +702,15 @@ class word extends sandbox_code_id
      * load the formulas assigned to the ancestor phrases of this word (the full 'is a' / 'is symbol
      * for' chain) into the in-memory parent_formulas_related list so that api_json_array() can emit
      * them per ancestor under the INCL_RELATED flag; an ancestor without formulas is skipped
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function load_parent_formulas_related(): void
+    function load_parent_formulas_related(user_message $msg): void
     {
         $result = [];
         // all ancestors via any up-relation (is a, is symbol for, ...), nearest first
-        foreach ($this->phrase_list()->foaf_parents()->lst() as $par_phr) {
+        foreach ($this->phrase_list()->foaf_parents($msg)->lst() as $par_phr) {
             $frm_lst = new formula_list($this->get_user());
-            $frm_lst->load_by_phr($par_phr);
+            $frm_lst->load_by_phr($par_phr, $msg);
             if (!$frm_lst->is_empty()) {
                 $result[] = ['phrase' => $par_phr, 'formulas' => $frm_lst];
             }
@@ -714,22 +721,25 @@ class word extends sandbox_code_id
     /**
      * load the external references of this word into the in-memory references_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
+     * @param user_message $msg to collect any problem while loading the changes
      */
-    function load_references_related(): void
+    function load_references_related(user_message $msg): void
     {
         $ref_lst = new ref_list($this->get_user());
-        $ref_lst->load_by_phr_id($this->phrase()->id());
+        $ref_lst->load_by_phr_id($this->phrase()->id(), $msg);
         $this->references_related = $ref_lst;
     }
 
     /**
      * load the most recent change log entries of this word into the in-memory
      * changes_related list so that api_json_array() can emit them under the INCL_RELATED flag
+     * @param user_message $msg to collect any problem while loading the changes
+     * @return void
      */
-    function load_changes_related(): void
+    function load_changes_related(user_message $msg): void
     {
         $chg_lst = new change_log_list();
-        $chg_lst->load_obj_last($this, $this->get_user());
+        $chg_lst->load_obj_last($this, $this->get_user(), $msg);
         $this->changes_related = $chg_lst;
     }
 
@@ -742,15 +752,15 @@ class word extends sandbox_code_id
      * TODO the parent loop loads each parent word and its view one by one; replace with a
      *      single list load once a view_list->load_by_word_list() exists
      */
-    function load_views_related(): void
+    function load_views_related(user_message $msg): void
     {
         $msk_lst = new view_list($this->get_user());
-        $this->add_default_view_to($msk_lst);
-        foreach ($this->parents()->lst() as $phr) {
+        $this->add_default_view_to($msk_lst, $msg);
+        foreach ($this->parents($msg)->lst() as $phr) {
             if ($phr->is_word()) {
                 $par_wrd = new word($this->get_user());
-                $par_wrd->load_by_id($phr->id());
-                $par_wrd->add_default_view_to($msk_lst);
+                $par_wrd->load_by_id($phr->id(), $msg);
+                $par_wrd->add_default_view_to($msk_lst, $msg);
             }
         }
         // a word without an own default view and without parent views is shown with the system
@@ -770,11 +780,11 @@ class word extends sandbox_code_id
      * words without a default view); the view is loaded by id so that it carries its name
      * @param view_list $msk_lst the list the default view is added to
      */
-    private function add_default_view_to(view_list $msk_lst): void
+    private function add_default_view_to(view_list $msk_lst, user_message $msg): void
     {
         if ($this->view != null and $this->view->id() > 0) {
             $msk = new view($this->get_user());
-            $msk->load_by_id($this->view->id());
+            $msk->load_by_id($this->view->id(), $msg);
             $msk_lst->add($msk);
         }
     }
@@ -785,10 +795,13 @@ class word extends sandbox_code_id
      * @param int $per_verb_limit upper bound on triples kept per verb; the loader keeps one
      *                            extra row so the caller can detect overflow without a count
      */
-    function load_phrases_related(int $per_verb_limit = def_shared::LIMIT_RELATED_PER_VERB): void
+    function load_phrases_related(
+        user_message $msg,
+        int          $per_verb_limit = def_shared::LIMIT_RELATED_PER_VERB
+    ): void
     {
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($this->phrase(), null, foaf_direction::BOTH);
+        $trp_lst->load_by_phr($this->phrase(), $msg, null, foaf_direction::BOTH);
         $this->phrases_related = $this->select_phrases_related($trp_lst, $per_verb_limit);
     }
 
@@ -830,12 +843,12 @@ class word extends sandbox_code_id
      * @param int $id the word id to load
      * @return int the id of the loaded word, or 0 if not found
      */
-    function load_by_id_with_related(int $id): int
+    function load_by_id_with_related(int $id, user_message $msg): int
     {
-        $loaded_id = parent::load_by_id($id);
+        $loaded_id = parent::load_by_id($id, $msg);
         if ($loaded_id > 0) {
-            $this->load_phrases_related();
-            $this->load_values_related();
+            $this->load_phrases_related($msg);
+            $this->load_values_related($msg);
             $this->update_usage();
         }
         return $loaded_id;
@@ -848,15 +861,16 @@ class word extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param user_message $msg to collect the export errors
      * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         global $sys;
 
-        $vars = parent::export_json($exp_typ, $do_load);
+        $vars = parent::export_json($msg, $exp_typ, $do_load);
 
         if ($this->plural <> '') {
             $vars[json_fields::PLURAL] = $this->plural;
@@ -870,7 +884,7 @@ class word extends sandbox_code_id
         if ($this->view != null) {
             if ($this->get_view_id() > 0 and $this->view->name() == '') {
                 if ($do_load) {
-                    $this->reload_view();
+                    $this->reload_view($msg);
                 }
             }
             if ($this->view->name() != '') {
@@ -880,7 +894,7 @@ class word extends sandbox_code_id
         if (count($this->ref_lst) > 0) {
             $ref_lst = [];
             foreach ($this->ref_lst as $ref) {
-                $ref_lst[] = $ref->export_json([]);
+                $ref_lst[] = $ref->export_json($msg, []);
             }
             $vars[json_fields::REFS] = $ref_lst;
         }
@@ -916,9 +930,9 @@ class word extends sandbox_code_id
         }
     }
 
-    function get_view(): ?view
+    function get_view(user_message $msg): ?view
     {
-        return $this->reload_view();
+        return $this->reload_view($msg);
     }
 
     /**
@@ -1030,13 +1044,15 @@ class word extends sandbox_code_id
      * @param string $name the name word
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_formula_name(string $name): int
+    function load_by_formula_name(string $name, user_message $msg): int
     {
         global $db_con;
 
         $qp = $this->load_sql_by_formula_name($db_con->sql_creator(), $name);
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
+        $db_row = $db_con->get1($qp, $msg);
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $this->row_mapper_sandbox($db_row, $msg);
+        }
         return $this->id();
     }
 
@@ -1133,13 +1149,13 @@ class word extends sandbox_code_id
      * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function reload_value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
+    function reload_value_list(user_message $msg, int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr($this->phrase(), $size, $page);
+        $val_lst->load_by_phr($this->phrase(), $msg, $size, $page);
         // load the phrase names of each value group so that the related value list
         // shows the phrase names (and not only the links) in the api and frontend
-        $val_lst->load_phrases();
+        $val_lst->load_phrases($msg);
         return $val_lst;
     }
 
@@ -1148,8 +1164,9 @@ class word extends sandbox_code_id
      * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
      * TODO get the user-specific list of formulas
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function reload_formula(): formula
+    function reload_formula(user_message $msg): formula
     {
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->get_user()->name . '"');
 
@@ -1163,11 +1180,11 @@ class word extends sandbox_code_id
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         $frm = new formula($this->get_user());
-        if ($db_row !== false) {
+        if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($db_row[formula_fields::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula_fields::FLD_ID]);
+                $frm->load_by_id($db_row[formula_fields::FLD_ID], $msg);
             }
         }
 
@@ -1242,11 +1259,12 @@ class word extends sandbox_code_id
      * is expected to be similar to the diff_msg function
      *
      * @param word|CombineObject|IdObject $db_obj which might be different to this sandbox object
+     * @param user_message $msg to collect the messages
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(word|CombineObject|IdObject $db_obj): bool
+    function needs_db_update(word|CombineObject|IdObject $db_obj, user_message $msg): bool
     {
-        $result = parent::needs_db_update($db_obj);
+        $result = parent::needs_db_update($db_obj, $msg);
         if ($this->plural != null) {
             if ($this->plural != $db_obj->plural) {
                 $result = true;
@@ -1446,12 +1464,12 @@ class word extends sandbox_code_id
      * returns a list of words (actually phrases) that are related to this word
      * e.g. for "Zurich" it will return "canton", "city" and "company", but not "Zurich" itself
      */
-    function parents(): phrase_list
+    function parents(user_message $msg): phrase_list
     {
         global $sys;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->get_user()->id);
         $phr_lst = $this->phrase_list();
-        $parent_phr_lst = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
+        $parent_phr_lst = $phr_lst->foaf_parents($msg, $sys->verb(verbs::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1462,9 +1480,9 @@ class word extends sandbox_code_id
      * e.g. for "Zurich" it will return "canton", "city" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
      */
-    function is_phrases(): phrase_list
+    function is_phrases(user_message $msg): phrase_list
     {
-        $phr_lst = $this->parents();
+        $phr_lst = $this->parents($msg);
         $phr_lst->add($this->phrase());
         log_debug($this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
         return $phr_lst;
@@ -1473,10 +1491,10 @@ class word extends sandbox_code_id
     /**
      * returns the best guess category for a word  e.g. for "ABB" it will return only "company"
      */
-    function is_mainly(): phrase
+    function is_mainly(user_message $msg): phrase
     {
         $result = null;
-        $is_phr_lst = $this->is_phrases();
+        $is_phr_lst = $this->is_phrases($msg);
         if (!$is_phr_lst->is_empty()) {
             $result = $is_phr_lst->lst()[0];
         }
@@ -1495,11 +1513,11 @@ class word extends sandbox_code_id
     {
         global $sys;
 
-        $wrd_lst = $this->children();
+        $wrd_lst = $this->children($msg);
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->get_user());
             $wrd_lnk->set_from($child->phrase());
-            $wrd_lnk->set_verb($sys->typ_lst->vrb->get_verb(verbs::IS));
+            $wrd_lnk->set_verb($sys->verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
             $wrd_lnk->save($msg);
         }
@@ -1512,12 +1530,12 @@ class word extends sandbox_code_id
      *
      * @return phrase_list a list of words that are related to this word
      */
-    function children(): phrase_list
+    function children(user_message $msg): phrase_list
     {
         global $sys;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->get_user()->id);
         $phr_lst = $this->phrase_list();
-        $child_phr_lst = $phr_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::IS));
+        $child_phr_lst = $phr_lst->all_children($sys->verb(verbs::IS), $msg);
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1526,32 +1544,32 @@ class word extends sandbox_code_id
      * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a city
      */
     private
-    function verb_list_up(): verb_list
+    function verb_list_up(user_message $msg): verb_list
     {
-        return $this->link_types(foaf_direction::UP);
+        return $this->link_types(foaf_direction::UP, $msg);
     }
 
     /**
      * return a list of downward related verbs e.g. 'contains' for mathematical constant because mathematical constant contains Pi
      */
     private
-    function verb_list_down(): verb_list
+    function verb_list_down(user_message $msg): verb_list
     {
-        return $this->link_types(foaf_direction::DOWN);
+        return $this->link_types(foaf_direction::DOWN, $msg);
     }
 
     private
-    function phrase_list_up(): phrase_list
+    function phrase_list_up(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->get_user());
-        return $phr_lst->parents();
+        return $phr_lst->parents($msg);
     }
 
     private
-    function phrase_list_down(): phrase_list
+    function phrase_list_down(user_message $msg): phrase_list
     {
         $phr_lst = new phrase_list($this->get_user());
-        return $phr_lst->direct_children();
+        return $phr_lst->direct_children($msg);
     }
 
     /**
@@ -1561,9 +1579,9 @@ class word extends sandbox_code_id
      *
      * @return phrase_list a list of words that are related to the given word
      */
-    function are(): phrase_list
+    function are(user_message $msg): phrase_list
     {
-        $phr_lst = $this->children();
+        $phr_lst = $this->children($msg);
         $phr_lst->add($this->phrase());
         return $phr_lst;
     }
@@ -1572,11 +1590,11 @@ class word extends sandbox_code_id
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
      * e.g. for "Switzerland" it will return "Zurich (canton)" and "Zurich (city)" which is part of the canton
      */
-    function parts(): phrase_list
+    function parts(user_message $msg): phrase_list
     {
         global $sys;
         $phr_lst = $this->phrase_list();
-        return $phr_lst->foaf_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
+        return $phr_lst->foaf_children($msg, $sys->verb(verbs::PART_NAME));
     }
 
     /**
@@ -1585,12 +1603,12 @@ class word extends sandbox_code_id
      * for the value selection this should be tested level by level
      * to use by default the most specific value
      */
-    function is_part(): phrase_list
+    function is_part(user_message $msg): phrase_list
     {
         global $sys;
         log_debug($this->dsp_id() . ', user ' . $this->get_user()->id);
         $phr_lst = $this->phrase_list();
-        $is_phr_lst = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
+        $is_phr_lst = $phr_lst->foaf_parents($msg, $sys->verb(verbs::PART_NAME));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
@@ -1600,25 +1618,25 @@ class word extends sandbox_code_id
      * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
      * e.g. for "Switzerland" it will return "Zurich (canton)" but not "Zurich (city)"
      */
-    function direct_parts(): phrase_list
+    function direct_parts(user_message $msg): phrase_list
     {
         global $sys;
         $phr_lst = $this->phrase_list();
-        return $phr_lst->foaf_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME), 1);
+        return $phr_lst->foaf_children($msg, $sys->verb(verbs::PART_NAME), 1);
     }
 
     /**
      * makes sure that all combinations of "are" and "contains" are included
      * @return phrase_list all phrases linked with are and contains
      */
-    function are_and_contains(): phrase_list
+    function are_and_contains(user_message $msg): phrase_list
     {
         log_debug('for ' . $this->dsp_id());
 
         // this first time get all related items
         $phr_lst = $this->phrase_list();
-        $phr_lst = $phr_lst->are();
-        $added_lst = $phr_lst->contains();
+        $phr_lst = $phr_lst->are($msg);
+        $added_lst = $phr_lst->contains($msg);
         $added_lst->remove($this->phrase_list());
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
@@ -1626,8 +1644,8 @@ class word extends sandbox_code_id
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
             do {
                 $next_lst = clone $added_lst;
-                $next_lst = $next_lst->are();
-                $added_lst = $next_lst->contains();
+                $next_lst = $next_lst->are($msg);
+                $added_lst = $next_lst->contains($msg);
                 $added_lst->remove($phr_lst);
                 if (!$added_lst->is_empty()) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
@@ -1644,7 +1662,7 @@ class word extends sandbox_code_id
      * @return word the follow word id based on the predefined verb following
      * TODO create unit tests
      */
-    function next(): word
+    function next(user_message $msg): word
     {
         log_debug($this->dsp_id());
 
@@ -1660,7 +1678,7 @@ class word extends sandbox_code_id
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
-                $result->load_by_id($id);
+                $result->load_by_id($id, $msg);
             }
         }
         return $result;
@@ -1670,7 +1688,7 @@ class word extends sandbox_code_id
      * return the follow word id based on the predefined verb following
      * TODO create unit tests
      */
-    function prior(): word
+    function prior(user_message $msg): word
     {
         log_debug($this->dsp_id());
 
@@ -1686,7 +1704,7 @@ class word extends sandbox_code_id
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
-                $result->load_by_id($id);
+                $result->load_by_id($id, $msg);
             }
         }
         return $result;
@@ -1699,9 +1717,10 @@ class word extends sandbox_code_id
 
     /**
      * get the suggested view
+     * @param user_message $msg to enrich with problems and suggested solutions
      * @return int the view of the most often used view
      */
-    function calc_view_id(): int
+    function calc_view_id(user_message $msg): int
     {
         log_debug('for ' . $this->dsp_id());
 
@@ -1709,7 +1728,7 @@ class word extends sandbox_code_id
 
         $view_id = 0;
         $qp = $this->view_sql($db_con);
-        $db_row = $db_con->get1($qp);
+        $db_row = $db_con->get1($qp, $msg);
         if (isset($db_row)) {
             if ($db_row[fields::FLD_VIEW] != null) {
                 $view_id = $db_row[fields::FLD_VIEW];
@@ -1769,7 +1788,7 @@ class word extends sandbox_code_id
     /**
      * returns a list of the link types related to this word e.g. for "company" the link "are" will be returned, because "ABB" "is a" "company"
      */
-    function link_types(foaf_direction $direction): verb_list
+    function link_types(foaf_direction $direction, user_message $msg): verb_list
     {
         log_debug($this->dsp_id() . ' and user ' . $this->get_user()->id);
 
@@ -1778,14 +1797,14 @@ class word extends sandbox_code_id
         $vrb_lst = new verb_list($this->get_user());
         $wrd = clone $this;
         $phr = $wrd->phrase();
-        $vrb_lst->load_by_linked_phrases($db_con, $phr, $direction);
+        $vrb_lst->load_by_linked_phrases($db_con, $phr, $direction, $msg);
         return $vrb_lst;
     }
 
     /**
      * get the view object for this word
      */
-    function reload_view(): ?view
+    function reload_view(user_message $msg): ?view
     {
         $msk = null;
 
@@ -1794,7 +1813,7 @@ class word extends sandbox_code_id
         } else {
             if ($this->get_view_id() > 0) {
                 $msk = new view($this->get_user());
-                if ($msk->load_by_id($this->get_view_id())) {
+                if ($msk->load_by_id($this->get_view_id(), $msg)) {
                     $this->view = $msk;
                     log_debug('for ' . $this->dsp_id() . ' is ' . $msk->dsp_id());
                 }
@@ -1839,11 +1858,14 @@ class word extends sandbox_code_id
         return $has_cfg;
     }
 
-    function not_used(): bool
+    /**
+     * @param user_message $msg to enrich with problems and suggested solutions
+     */
+    function not_used(user_message $msg): bool
     {
         log_debug($this->id());
 
-        if (parent::not_used()) {
+        if (parent::not_used($msg)) {
             $result = true;
             // check if no value is related to the word
             // check if no phrase group is linked to the word
@@ -1857,8 +1879,9 @@ class word extends sandbox_code_id
     /**
      * true if no other user has modified the word
      * assuming that in this case not confirmation from the other users for a word rename is needed
+     * @param user_message $msg to enrich with problems and suggested solutions
      */
-    function not_changed(): bool
+    function not_changed(user_message $msg): bool
     {
         log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id());
 
@@ -1869,7 +1892,7 @@ class word extends sandbox_code_id
             log_err('The id must be set to check if the triple has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con);
-            $db_row = $db_con->get1($qp);
+            $db_row = $db_con->get1($qp, $msg);
             if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
@@ -1897,12 +1920,11 @@ class word extends sandbox_code_id
      * set the log entry parameters for a value update
      */
     private
-    function log_upd_view($view_id): change
+    function log_upd_view(int $view_id, user_message $msg): change
     {
         log_debug($this->dsp_id() . ' for user ' . $this->get_user()->name);
-        $msg = new user_message();
         $msk_new = new view($this->get_user());
-        $msk_new->load_by_id($view_id);
+        $msk_new->load_by_id($view_id, $msg);
 
         $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
@@ -1910,7 +1932,7 @@ class word extends sandbox_code_id
         $log->set_field(fields::FLD_VIEW);
         if ($this->get_view_id() > 0) {
             $msk_old = new view($this->get_user());
-            $msk_old->load_by_id($this->get_view_id());
+            $msk_old->load_by_id($this->get_view_id(), $msg);
             $log->old_value = $msk_old->name();
             $log->old_id = $msk_old->id();
         } else {
@@ -1934,15 +1956,14 @@ class word extends sandbox_code_id
      * remember the word view, which means to save the view id for this word
      * each user can define set the view individually, so this is user-specific
      */
-    function save_view(int $view_id): user_message
+    function save_view(int $view_id, user_message $msg): user_message
     {
 
         global $db_con;
-        $msg = new user_message();
 
         if ($this->id() > 0 and $view_id > 0 and $view_id <> $this->get_view_id()) {
             $this->set_view_id($view_id);
-            if ($this->log_upd_view($view_id) > 0) {
+            if ($this->log_upd_view($view_id, $msg) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->get_user()->id;
                 if ($this->can_change($msg)) {
@@ -2006,11 +2027,11 @@ class word extends sandbox_code_id
 
         // collect all triples where this word is used
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($this->phrase());
+        $trp_lst->load_by_phr($this->phrase(), $msg);
 
         // collect all values related to word triple
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr($this->phrase());
+        $val_lst->load_by_phr($this->phrase(), $msg);
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
@@ -2077,7 +2098,7 @@ class word extends sandbox_code_id
         $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->type_id($msg) !== $this->type_id($msg)) {
             $change_typ = true;
         } else {
             $change_typ = false;
@@ -2085,7 +2106,7 @@ class word extends sandbox_code_id
         // TODO Prio 2 review
         // do not overwrite a type with the default value
         // because this is set also if not specified by the import
-        if ($this->type_id() == $sys->typ_lst->phr_typ->default_id() and $obj->type_id() !== null) {
+        if ($this->type_id($msg) == $sys->typ_lst->phr_typ->default_id() and $obj->type_id($msg) !== null) {
             // if not the user table
             if (!$sc_par_lst->is_usr_tbl()) {
                 $change_typ = false;
@@ -2100,17 +2121,17 @@ class word extends sandbox_code_id
                 );
             }
             global $sys;
-            if ($this->type_id() < 0) {
+            if ($this->type_id($msg) < 0) {
                 $msg->add(msg_id::PHRASE_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_TYPE => $this->type_id($msg),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
-                $this->type_id(),
-                $obj->type_id(),
+                $this->type_id($msg),
+                $obj->type_id($msg),
                 $sys->typ_lst->phr_typ);
         }
         if ($obj->get_view_id() !== $this->get_view_id()) {

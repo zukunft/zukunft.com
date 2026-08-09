@@ -154,7 +154,7 @@ tests** asserting against seed data — never production code.
 
 - **Right** — look up by code_id, read the runtime id from the resolved object:
 ```php
-$symbol_vrb = $sys->typ_lst->vrb->get_verb(verbs::SYMBOL);
+$symbol_vrb = $sys->verb(verbs::SYMBOL);
 $trp_lst->load_by_phr($phr, $symbol_vrb, foaf_direction::BOTH);
 ```
 - **Wrong** — hardcoded numeric id couples to the seed, breaks on any re-seeded / imported pod:

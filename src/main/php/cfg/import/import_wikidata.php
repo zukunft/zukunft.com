@@ -71,6 +71,8 @@ class import_wikidata
     const string WD_ENTITIES = 'entities';
     const string WD_LABELS = 'labels';
     const string WD_LANG_EN = 'en';
+    // the wikidata code for the default label that is the same in most languages
+    const string WD_LANG_MUL = 'mul';
     const string WD_VALUE = 'value';
     const string WD_ID = 'id';
     const string WD_CLAIMS = 'claims';
@@ -336,7 +338,11 @@ class import_wikidata
      */
     private function label(array $entity): string
     {
-        return $entity[self::WD_LABELS][self::WD_LANG_EN][self::WD_VALUE] ?? '';
+        // wikidata stores a label that is the same in most languages only once with the
+        // language code "mul" e.g. "euro" for Q4916 has no extra english label
+        return $entity[self::WD_LABELS][self::WD_LANG_EN][self::WD_VALUE]
+            ?? $entity[self::WD_LABELS][self::WD_LANG_MUL][self::WD_VALUE]
+            ?? '';
     }
 
     /**

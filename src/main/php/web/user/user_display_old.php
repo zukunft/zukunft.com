@@ -39,6 +39,7 @@ include_once html_paths::MODEL_FORMULA . 'formula_link.php';
 include_once html_paths::MODEL_GROUP . 'group_db.php';
 include_once html_paths::MODEL_REF . 'source.php';
 include_once html_paths::MODEL_REF . 'source_db.php';
+include_once html_paths::MODEL_COMPONENT . 'component_db.php';
 include_once html_paths::MODEL_USER . 'user_db.php';
 include_once html_paths::MODEL_VERB . 'verb_db.php';
 include_once html_paths::MODEL_VIEW . 'view_db.php';
@@ -60,6 +61,7 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'view_fields.php';
@@ -68,6 +70,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -87,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
@@ -155,7 +159,7 @@ class user_display_old extends user
     /**
      * display triple changes by the user which are not (yet) standard
      */
-    function dsp_sandbox_wrd_link($back): string
+    function dsp_sandbox_wrd_link(user_message $msg, string $back): string
     {
         log_debug($this->id());
 
@@ -211,23 +215,23 @@ class user_display_old extends user
                 $trp_usr = new triple();
                 $id = $sbx_row['id'];
                 if ($id != 0) {
-                    $trp_usr->load_by_id($id);
+                    $trp_usr->load_by_id($id, $msg);
                 } else {
                     $from_id = $sbx_row[triple_fields::FLD_FROM];
                     $vrb_id = $sbx_row[verb_db::FLD_ID];
                     $to_id = $sbx_row[triple_fields::FLD_TO];
-                    $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
+                    $trp_usr->load_by_link_id( $from_id, $msg, $vrb_id, $to_id );
                 }
                 $trp_usr->set_name($sbx_row['usr_name']);
                 $trp_usr->set_excluded($sbx_row['usr_excluded']);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $wrd_std = clone $trp_usr;
                 $wrd_std->set_user($usr_std);
-                $wrd_std->load_by_id($trp_usr->id());
+                $wrd_std->load_by_id($trp_usr->id(), $msg);
                 $wrd_std->set_name($sbx_row['std_name']);
                 $wrd_std->set_excluded($sbx_row['std_excluded']);
 
@@ -270,12 +274,12 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($wrd_lnk_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($wrd_lnk_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $trp_usr;
                         $wrd_lnk_other->set_user($usr_other);
-                        $wrd_lnk_other->load_by_id($trp_usr->id());
+                        $wrd_lnk_other->load_by_id($trp_usr->id(), $msg);
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
                         $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
@@ -423,7 +427,7 @@ class user_display_old extends user
 
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
-                $frm_usr->set_id($sbx_row['id']);
+                $frm_usr->id = $sbx_row['id'];
                 $frm_usr->formula()->set_id($sbx_row[formula_fields::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
@@ -432,7 +436,7 @@ class user_display_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
@@ -484,7 +488,7 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($frm_lnk_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($frm_lnk_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
@@ -601,7 +605,7 @@ class user_display_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($val_row['owner_id']);
+                $usr_std->load_by_id($val_row['owner_id'], $msg);
 
                 $val_std = clone $val_usr;
                 $val_std->set_user($usr_std);
@@ -655,7 +659,7 @@ class user_display_old extends user
                     $val_lst_other = $db_con->get_old($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($val_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($val_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
@@ -772,7 +776,7 @@ class user_display_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
@@ -784,7 +788,7 @@ class user_display_old extends user
                 // check database consistency and correct it if needed
                 if ($usr_ui->set_name($dsp_std->name())
                     and $usr_ui->description == $dsp_std->description
-                    and $usr_ui->type_id() == $dsp_std->type_id()
+                    and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     $usr_ui->del_usr_cfg();
                 } else {
@@ -822,7 +826,7 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user views with one query
                         $dsp_other = clone $usr_ui;
@@ -933,24 +937,24 @@ class user_display_old extends user
                 $usr_ui->set_id($sbx_row['id']);
                 $usr_ui->set_name($sbx_row['usr_name']);
                 $usr_ui->description = $sbx_row['usr_comment'];
-                $usr_ui->type_id = $sbx_row['usr_type'];
-                $usr_ui->set_excluded($sbx_row['usr_excluded']);
+                $usr_ui->set_type_id($sbx_row['usr_type']);
+                $usr_ui->excluded = $sbx_row['usr_excluded'];
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_comment'];
-                $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->set_excluded($sbx_row['std_excluded']);
+                $dsp_std->set_type_id($sbx_row['std_type']);
+                $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($usr_ui->name() == $dsp_std->name()
                     and $usr_ui->description == $dsp_std->description
-                    and $usr_ui->type_id == $dsp_std->type_id
+                    and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     $usr_ui->del_usr_cfg();
                 } else {
@@ -988,15 +992,15 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($cmp_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($cmp_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user components with one query
                         $cmp_other = clone $usr_ui;
-                        $cmp_other->set_user($usr_other);
-                        $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
+                        $cmp_other->user = $usr_other;
+                        $cmp_other->set_name($cmp_other_row[component_db::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[fields::FLD_DESCRIPTION];
-                        $cmp_other->type_id = $cmp_other_row['component_type_id'];
-                        $cmp_other->set_excluded($cmp_other_row[fields::FLD_EXCLUDED]);
+                        $cmp_other->set_type_id($cmp_other_row['component_type_id']);
+                        $cmp_other->excluded = $cmp_other_row[fields::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1109,7 +1113,7 @@ class user_display_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
@@ -1158,7 +1162,7 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $lnk_other_row_ui) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($lnk_other_row_ui[user_db::FLD_ID]);
+                        $usr_other->load_by_id($lnk_other_row_ui[user_db::FLD_ID], $msg);
 
                         // to review: load all user component_links with one query
                         $lnk_other_ui = clone $usr_ui;
@@ -1284,7 +1288,7 @@ class user_display_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->load_by_id($sbx_row['owner_id']);
+                $usr_std->load_by_id($sbx_row['owner_id'], $msg);
 
                 $dsp_std = clone $usr_ui;
                 $dsp_std->set_user($usr_std);
@@ -1339,7 +1343,7 @@ class user_display_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
+                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user sources with one query
                         $dsp_other = clone $usr_ui;

@@ -46,6 +46,7 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -183,6 +185,7 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+
     /**
      * show a view zoomed to 1/3 of its original size as a preview so that the user can see a
      * preview of the original page based on a different view mask
@@ -200,6 +203,7 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+
     /**
      * request from the user the values relevant for the initial setup
      * so the main question ist that the user confirms the admin username and password from the .env for
@@ -448,6 +452,7 @@ class system_page extends component
      * @return string the HTML body for the error_update page
      */
     function error_update(
+        user_message  $msg,
         ?sys_log_list $errors = null,
         ?user_dsp     $usr = null,
         string        $back = ''
@@ -462,7 +467,7 @@ class system_page extends component
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PERMISSION_DENIED));
         } elseif ($errors !== null and !$errors->is_empty()) {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_PROGRAM_ISSUES))
-                . $errors->get_html($usr, $back);
+                . $errors->get_html($msg, $usr, $back);
         } else {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
         }

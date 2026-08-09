@@ -120,15 +120,19 @@ class db_check
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
+            // if tbe database needs to be created it is a system task independent of the calling user
+            $sys_msg = new user_message(user::system());
             // because no log yet exists here echo instead of log_echo() is used
             $sys->log_txt->echo_text_log('zukunft.com: empty database detected');
-            $db_con->setup_db($msg);
-            if ($msg->is_ok()) {
-                $db_con->db_fill_code_links();
-                $db_con->db_check_missing_owner();
+            $db_con->setup_db($sys_msg);
+            if ($sys_msg->is_ok()) {
+                $db_con->db_fill_code_links($sys_msg);
+                $db_con->db_check_missing_owner($sys_msg);
                 $cfg = new config();
                 $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
             }
+            // report tbe system setup errors to the calling user
+            $msg->merge($sys_msg);
         }
 
         $cfg = new config();
@@ -172,9 +176,12 @@ class db_check
 
         // run a database consistency check now and remember the time
         if ($do_consistency_check) {
-            $db_con->db_fill_code_links();
-            $db_con->db_check_missing_owner();
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $msg);
+            // if tbe database needs to be check it is a system task independent of the calling user
+            $sys_msg = new user_message(user::system());
+            $db_con->db_fill_code_links($sys_msg);
+            $db_con->db_check_missing_owner($sys_msg);
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con, $sys_msg);
+            $msg->merge($sys_msg);
         }
 
         return $msg->is_ok();
@@ -196,148 +203,146 @@ class db_check
         $sys->times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
-        $usr_msg = $this->db_move_time_phrase_to_group();
-        if ($usr_msg->is_ok()) {
+        if ($this->db_move_time_phrase_to_group($msg)) {
             //
-            $usr_msg->merge($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
-            $usr_msg->merge($db_con->del_field('result', 'time_word_id'));
+            $db_con->del_field($lib->class_to_name(value::class), 'time_word_id', $msg);
+            $db_con->del_field('result', 'time_word_id', $msg);
         }
-        $msg->merge($usr_msg);
 
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
         $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
         // TODO check if change has been successful
         // rename word_link to triple
-        $result .= $db_con->change_table_name('word_link', 'triple');
-        $result .= $db_con->change_column_name('triple', 'word_link_id', 'triple_id');
-        $result .= $db_con->change_column_name('triple', 'word_link_condition_id', 'triple_condition_id');
-        $result .= $db_con->change_column_name('triple', 'word_link_condition_type_id', 'triple_condition_type_id');
-        $result .= $db_con->change_table_name('user_' . 'word_link', 'user_' . 'triple');
-        $result .= $db_con->change_column_name('user_' . 'triple', 'word_link_id', 'user_' . 'triple_id');
-        $result .= $db_con->change_table_name('view_word_link', 'view_term_link');
-        $result .= $db_con->change_table_name('formula_value', 'result');
-        $result .= $db_con->change_column_name('result', 'formula_group_id', 'group_id');
-        $result .= $db_con->change_column_name('result', 'formula_value', 'result');
-        $result .= $db_con->change_table_name('view_component', 'component');
-        $result .= $db_con->change_column_name('component', 'view_component_id', component::FLD_ID);
-        $result .= $db_con->change_column_name('component', 'view_component_name', 'component_name');
-        $result .= $db_con->change_column_name('component', 'linked_view_component_id', 'linked_component_id');
-        $result .= $db_con->change_column_name('component', 'view_component_link_type_id', 'component_link_type_id');
-        $result .= $db_con->change_table_name('user_' . 'view_components', 'user_' . 'component');
-        $result .= $db_con->change_column_name('user_' . 'component', 'view_component_id', component::FLD_ID);
-        $result .= $db_con->change_column_name('user_' . 'component', 'view_component_name', 'component_name');
-        $result .= $db_con->change_table_name('view_component_link', 'component_link');
-        $result .= $db_con->change_column_name('component_link', 'view_component_id', component::FLD_ID);
-        $result .= $db_con->change_table_name('user_' . 'view_component_links', 'user_' . 'component_link');
-        $result .= $db_con->change_column_name('user_' . 'component_link', 'view_component_id', component::FLD_ID);
-        $result .= $db_con->change_table_name('view_component_link_type', 'component_link_type');
-        $result .= $db_con->change_column_name('component_link_type', 'view_component_link_id', 'component_link_id');
-        $result .= $db_con->change_column_name('component_link_type', 'view_component_id', component::FLD_ID);
-        $result .= $db_con->change_table_name('view_component_position_type', 'position_type');
-        $result .= $db_con->change_column_name('position_type', 'view_component_position_type_id', 'position_type_id');
+        $result .= $db_con->change_table_name('word_link', 'triple', $msg);
+        $result .= $db_con->change_column_name('triple', 'word_link_id', 'triple_id', $msg);
+        $result .= $db_con->change_column_name('triple', 'word_link_condition_id', 'triple_condition_id', $msg);
+        $result .= $db_con->change_column_name('triple', 'word_link_condition_type_id', 'triple_condition_type_id', $msg);
+        $result .= $db_con->change_table_name('user_' . 'word_link', 'user_' . 'triple', $msg);
+        $result .= $db_con->change_column_name('user_' . 'triple', 'word_link_id', 'user_' . 'triple_id', $msg);
+        $result .= $db_con->change_table_name('view_word_link', 'view_term_link', $msg);
+        $result .= $db_con->change_table_name('formula_value', 'result', $msg);
+        $result .= $db_con->change_column_name('result', 'formula_group_id', 'group_id', $msg);
+        $result .= $db_con->change_column_name('result', 'formula_value', 'result', $msg);
+        $result .= $db_con->change_table_name('view_component', 'component', $msg);
+        $result .= $db_con->change_column_name('component', 'view_component_id', component::FLD_ID, $msg);
+        $result .= $db_con->change_column_name('component', 'view_component_name', 'component_name', $msg);
+        $result .= $db_con->change_column_name('component', 'linked_view_component_id', 'linked_component_id', $msg);
+        $result .= $db_con->change_column_name('component', 'view_component_link_type_id', 'component_link_type_id', $msg);
+        $result .= $db_con->change_table_name('user_' . 'view_components', 'user_' . 'component', $msg);
+        $result .= $db_con->change_column_name('user_' . 'component', 'view_component_id', component::FLD_ID, $msg);
+        $result .= $db_con->change_column_name('user_' . 'component', 'view_component_name', 'component_name', $msg);
+        $result .= $db_con->change_table_name('view_component_link', 'component_link', $msg);
+        $result .= $db_con->change_column_name('component_link', 'view_component_id', component::FLD_ID, $msg);
+        $result .= $db_con->change_table_name('user_' . 'view_component_links', 'user_' . 'component_link', $msg);
+        $result .= $db_con->change_column_name('user_' . 'component_link', 'view_component_id', component::FLD_ID, $msg);
+        $result .= $db_con->change_table_name('view_component_link_type', 'component_link_type', $msg);
+        $result .= $db_con->change_column_name('component_link_type', 'view_component_link_id', 'component_link_id', $msg);
+        $result .= $db_con->change_column_name('component_link_type', 'view_component_id', component::FLD_ID, $msg);
+        $result .= $db_con->change_table_name('view_component_position_type', 'position_type', $msg);
+        $result .= $db_con->change_column_name('position_type', 'view_component_position_type_id', 'position_type_id', $msg);
         //
-        $result .= $db_con->change_table_name('languages_form', 'language_form');
-        $result .= $db_con->add_column('user_profile', 'right_level', 'smallint');
-        $result .= $db_con->add_column('user_' . 'word', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'word', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint');
-        $result .= $db_con->add_column('word', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint');
-        $result .= $db_con->add_column('user_' . 'triple', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'triple', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('triple', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('triple', 'word_type_id', 'bigint');
-        $result .= $db_con->add_column('user_' . 'triple', 'word_type_id', 'bigint');
-        $result .= $db_con->add_column('formula', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('formula', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'formula', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('formula', 'usage', 'bigint');
-        $result .= $db_con->add_column('user_' . 'formula', 'usage', 'bigint');
-        $result .= $db_con->add_column('formula_link', 'order_nbr', 'smallint');
-        $result .= $db_con->add_column('formula_link', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('formula_link', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'formula_link', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'formula_link', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('view', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('view', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'view', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'view', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('component', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('component', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'component', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'component', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('component_link', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('component_link', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'component_link', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'component_link', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('values_time_series', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('values_time_series', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'values_time_series', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('user_' . 'values_time_series', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('position_type', 'code_id', 'varchar(50)');
-        $result .= $db_con->add_column('source_type', 'description', 'text');
-        $result .= $db_con->add_column('ref', user_db::FLD_ID, 'bigint');
-        $result .= $db_con->add_column('ref', 'source_id', 'bigint');
-        $result .= $db_con->add_column('ref', 'url', 'text');
-        $result .= $db_con->add_column('ref', 'description', 'text');
-        $result .= $db_con->add_column('user', 'description', 'text');
-        $result .= $db_con->add_column('change_action', 'description', 'text');
-        $result .= $db_con->add_column('language_form', 'description', 'text');
-        $result .= $db_con->change_column_name('language_form', 'lanuages_id', 'language_id');
-        $result .= $db_con->change_column_name('language_form', 'lanuages_form_id', 'language_form_id');
-        $result .= $db_con->change_column_name('language_form', 'lanuages_form_name', 'language_form_name');
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'user_value', 'word_value');
-        $result .= $db_con->change_column_name('values_time_series', 'value_time_serie_id', 'value_time_series_id');
-        $result .= $db_con->change_column_name('ip_range', 'isactive', 'is_active');
-        $result .= $db_con->change_column_name('user', 'isactive', 'is_active');
-        $result .= $db_con->change_column_name('user', 'email_alternativ', 'email_alternative');
-        $result .= $db_con->change_column_name('element_type', 'formula_element_type_name', 'type_name');
-        $result .= $db_con->change_column_name('view', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'view', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('component', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'component', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('component_type', 'component_type_name', 'type_name');
-        $result .= $db_con->change_column_name('formula_type', 'name', 'type_name');
-        $result .= $db_con->change_column_name('ref_type', 'ref_type_name', 'type_name');
-        $result .= $db_con->change_column_name('ref_type', 'source_type_name', 'type_name');
-        $result .= $db_con->change_column_name('source', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'source', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('share_type', 'share_type_name', 'type_name');
-        $result .= $db_con->change_column_name('protection_type', 'protection_type_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'user_profile_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'commen', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('sys_log_status', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('sys_log_status', 'sys_log_status_name', 'type_name');
-        $result .= $db_con->change_column_name('job_type', 'calc_and_cleanup_task_type_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'comment', fields::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('formula', 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name('values_time_series', 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name('user_' . 'values_time_series', 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name('result', 'source_time_word_id', 'source_time_id');
-        if (!$db_con->has_column($db_con->get_table_name('triple'), 'name_generated')) {
-            $result .= $db_con->change_column_name('triple', 'name', 'triple_name');
-            $result .= $db_con->change_column_name('triple', 'description', 'name_given');
-            $result .= $db_con->add_column('triple', 'name_generated', 'text');
-            $result .= $db_con->add_column('triple', 'description', 'text');
+        $result .= $db_con->change_table_name('languages_form', 'language_form', $msg);
+        $result .= $db_con->add_column('user_profile', 'right_level', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'word', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'word', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint', $msg);
+        $result .= $db_con->add_column('word', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint', $msg);
+        $result .= $db_con->add_column('user_' . 'triple', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'triple', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('triple', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('triple', 'word_type_id', 'bigint', $msg);
+        $result .= $db_con->add_column('user_' . 'triple', 'word_type_id', 'bigint', $msg);
+        $result .= $db_con->add_column('formula', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('formula', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'formula', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('formula', 'usage', 'bigint', $msg);
+        $result .= $db_con->add_column('user_' . 'formula', 'usage', 'bigint', $msg);
+        $result .= $db_con->add_column('formula_link', 'order_nbr', 'smallint', $msg);
+        $result .= $db_con->add_column('formula_link', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('formula_link', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'formula_link', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'formula_link', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('view', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('view', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'view', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'view', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('component', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('component', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'component', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'component', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('component_link', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('component_link', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'component_link', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'component_link', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('values_time_series', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('values_time_series', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'values_time_series', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('user_' . 'values_time_series', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('position_type', 'code_id', 'varchar(50)', $msg);
+        $result .= $db_con->add_column('source_type', 'description', 'text', $msg);
+        $result .= $db_con->add_column('ref', user_db::FLD_ID, 'bigint', $msg);
+        $result .= $db_con->add_column('ref', 'source_id', 'bigint', $msg);
+        $result .= $db_con->add_column('ref', 'url', 'text', $msg);
+        $result .= $db_con->add_column('ref', 'description', 'text', $msg);
+        $result .= $db_con->add_column('user', 'description', 'text', $msg);
+        $result .= $db_con->add_column('change_action', 'description', 'text', $msg);
+        $result .= $db_con->add_column('language_form', 'description', 'text', $msg);
+        $result .= $db_con->change_column_name('language_form', 'lanuages_id', 'language_id', $msg);
+        $result .= $db_con->change_column_name('language_form', 'lanuages_form_id', 'language_form_id', $msg);
+        $result .= $db_con->change_column_name('language_form', 'lanuages_form_name', 'language_form_name', $msg);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'user_value', 'word_value', $msg);
+        $result .= $db_con->change_column_name('values_time_series', 'value_time_serie_id', 'value_time_series_id', $msg);
+        $result .= $db_con->change_column_name('ip_range', 'isactive', 'is_active', $msg);
+        $result .= $db_con->change_column_name('user', 'isactive', 'is_active', $msg);
+        $result .= $db_con->change_column_name('user', 'email_alternativ', 'email_alternative', $msg);
+        $result .= $db_con->change_column_name('element_type', 'formula_element_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('view', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('user_' . 'view', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('component', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('user_' . 'component', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('component_type', 'component_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('formula_type', 'name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('ref_type', 'ref_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('ref_type', 'source_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('source', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('user_' . 'source', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('share_type', 'share_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('protection_type', 'protection_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('user_profile', 'user_profile_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('user_profile', 'commen', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('sys_log_status', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('sys_log_status', 'sys_log_status_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('job_type', 'calc_and_cleanup_task_type_name', 'type_name', $msg);
+        $result .= $db_con->change_column_name('user_profile', 'comment', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->change_column_name('formula', 'protection_type_id', 'protect_id', $msg);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'protection_type_id', 'protect_id', $msg);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'protection_type_id', 'protect_id', $msg);
+        $result .= $db_con->change_column_name('values_time_series', 'protection_type_id', 'protect_id', $msg);
+        $result .= $db_con->change_column_name('user_' . 'values_time_series', 'protection_type_id', 'protect_id', $msg);
+        $result .= $db_con->change_column_name('result', 'source_time_word_id', 'source_time_id', $msg);
+        if (!$db_con->has_column($db_con->get_table_name('triple'), 'name_generated', $msg)) {
+            $result .= $db_con->change_column_name('triple', 'name', 'triple_name', $msg);
+            $result .= $db_con->change_column_name('triple', 'description', 'name_given', $msg);
+            $result .= $db_con->add_column('triple', 'name_generated', 'text', $msg);
+            $result .= $db_con->add_column('triple', 'description', 'text', $msg);
         }
-        $result .= $db_con->add_column('triple', 'values', 'bigint');
-        if (!$db_con->has_column($db_con->get_table_name('user_' . 'triple'), 'name_generated')) {
-            $result .= $db_con->change_column_name('user_' . 'triple', 'name', 'triple_name');
-            $result .= $db_con->change_column_name('user_' . 'triple', 'description', 'name_given');
-            $result .= $db_con->add_column('user_' . 'triple', 'name_generated', 'text');
-            $result .= $db_con->add_column('user_' . 'triple', 'description', 'text');
+        $result .= $db_con->add_column('triple', 'values', 'bigint', $msg);
+        if (!$db_con->has_column($db_con->get_table_name('user_' . 'triple'), 'name_generated', $msg)) {
+            $result .= $db_con->change_column_name('user_' . 'triple', 'name', 'triple_name', $msg);
+            $result .= $db_con->change_column_name('user_' . 'triple', 'description', 'name_given', $msg);
+            $result .= $db_con->add_column('user_' . 'triple', 'name_generated', 'text', $msg);
+            $result .= $db_con->add_column('user_' . 'triple', 'description', 'text', $msg);
         }
-        $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint');
-        $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint');
-        $result .= $db_con->add_column('view_term_link', user_db::FLD_ID, 'bigint');
-        $result .= $db_con->add_column('view_term_link', 'description', 'text');
-        $result .= $db_con->add_column('view_term_link', 'excluded', 'smallint');
-        $result .= $db_con->add_column('view_term_link', 'share_type_id', 'smallint');
-        $result .= $db_con->add_column('view_term_link', 'protect_id', 'smallint');
-        $result .= $db_con->add_column('component', 'code_id', 'varchar(100)');
-        $result .= $db_con->add_column('component', 'ui_msg_code_id', 'varchar(100)');
+        $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint', $msg);
+        $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint', $msg);
+        $result .= $db_con->add_column('view_term_link', user_db::FLD_ID, 'bigint', $msg);
+        $result .= $db_con->add_column('view_term_link', 'description', 'text', $msg);
+        $result .= $db_con->add_column('view_term_link', 'excluded', 'smallint', $msg);
+        $result .= $db_con->add_column('view_term_link', 'share_type_id', 'smallint', $msg);
+        $result .= $db_con->add_column('view_term_link', 'protect_id', 'smallint', $msg);
+        $result .= $db_con->add_column('component', 'code_id', 'varchar(100)', $msg);
+        $result .= $db_con->add_column('component', 'ui_msg_code_id', 'varchar(100)', $msg);
         $result .= $db_con->remove_prefix('user_profile', 'code_id', 'usr_role_');
         $result .= $db_con->remove_prefix('sys_log_status', 'code_id', 'log_status_');
         $result .= $db_con->remove_prefix('job_type', 'code_id', 'job_');
@@ -345,37 +350,37 @@ class db_check
         $result .= $db_con->remove_prefix('component_type', 'code_id', 'dsp_comp_type_');
         $result .= $db_con->remove_prefix('verb', 'code_id', 'vrb_');
         $result .= $db_con->change_code_id('verb', 'vrb_contains', 'is_part_of');
-        $result .= $db_con->column_allow_null('word', 'plural');
-        $result .= $db_con->column_allow_null('phrase_type', 'word_symbol');
-        $result .= $db_con->column_allow_null('change_table', 'description');
-        $result .= $db_con->column_allow_null('change_field', 'code_id');
-        $result .= $db_con->column_allow_null('view', fields::FLD_DESCRIPTION);
-        $result .= $db_con->column_allow_null('component_type', 'description');
-        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), fields::FLD_EXCLUDED);
-        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id');
-        $result .= $db_con->column_allow_null('formula_link', 'link_type_id');
-        $result .= $db_con->column_allow_null('user_' . $lib->class_to_name(value::class), 'protect_id');
-        $result .= $db_con->column_allow_null('values_time_series', 'protect_id');
-        $result .= $db_con->column_allow_null('user_' . 'source', 'source_name');
-        $result .= $db_con->column_allow_null('user_' . 'source', 'url');
-        $result .= $db_con->column_allow_null(sys_log_function::class, 'sys_log_function_name');
-        $result .= $db_con->column_allow_null('job', 'start_time');
-        $result .= $db_con->column_allow_null('job', 'end_time');
-        $result .= $db_con->column_allow_null('job', 'row_id');
-        $result .= $db_con->column_force_not_null('user_' . 'source', user_db::FLD_ID);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE);
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE);
-        $result .= $db_con->change_table_name('word_types', 'phrase_type');
-        $result .= $db_con->change_column_name('phrase_type', 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name('word', 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name('triple', 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name('user_' . 'word', 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name('user_' . 'triple', 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name('formula_link_type', 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->column_allow_null('word', 'plural', $msg);
+        $result .= $db_con->column_allow_null('phrase_type', 'word_symbol', $msg);
+        $result .= $db_con->column_allow_null('change_table', 'description', $msg);
+        $result .= $db_con->column_allow_null('change_field', 'code_id', $msg);
+        $result .= $db_con->column_allow_null('view', fields::FLD_DESCRIPTION, $msg);
+        $result .= $db_con->column_allow_null('component_type', 'description', $msg);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), fields::FLD_EXCLUDED, $msg);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id', $msg);
+        $result .= $db_con->column_allow_null('formula_link', 'link_type_id', $msg);
+        $result .= $db_con->column_allow_null('user_' . $lib->class_to_name(value::class), 'protect_id', $msg);
+        $result .= $db_con->column_allow_null('values_time_series', 'protect_id', $msg);
+        $result .= $db_con->column_allow_null('user_' . 'source', 'source_name', $msg);
+        $result .= $db_con->column_allow_null('user_' . 'source', 'url', $msg);
+        $result .= $db_con->column_allow_null(sys_log_function::class, 'sys_log_function_name', $msg);
+        $result .= $db_con->column_allow_null('job', 'start_time', $msg);
+        $result .= $db_con->column_allow_null('job', 'end_time', $msg);
+        $result .= $db_con->column_allow_null('job', 'row_id', $msg);
+        $result .= $db_con->column_force_not_null('user_' . 'source', user_db::FLD_ID, $msg);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE, $msg);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_fields::FLD_VALUE, $msg);
+        $result .= $db_con->change_table_name('word_types', 'phrase_type', $msg);
+        $result .= $db_con->change_column_name('phrase_type', 'word_type_id', phrase::FLD_TYPE, $msg);
+        $result .= $db_con->change_column_name('word', 'word_type_id', phrase::FLD_TYPE, $msg);
+        $result .= $db_con->change_column_name('triple', 'word_type_id', phrase::FLD_TYPE, $msg);
+        $result .= $db_con->change_column_name('user_' . 'word', 'word_type_id', phrase::FLD_TYPE, $msg);
+        $result .= $db_con->change_column_name('user_' . 'triple', 'word_type_id', phrase::FLD_TYPE, $msg);
+        $result .= $db_con->change_column_name('formula_link_type', 'word_type_id', phrase::FLD_TYPE, $msg);
 
-        $result .= $db_con->change_table_name('results', result_two::class);
-        $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_fields::FLD_ID);
+        $result .= $db_con->change_table_name('results', result_two::class, $msg);
+        $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class, $msg);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_fields::FLD_ID, $msg);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
@@ -396,62 +401,62 @@ class db_check
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }
-        $result .= $db_con->add_foreign_key('users_fk_2', 'user', 'user_profile_id', 'user_profile', 'user_profile_id');
+        $result .= $db_con->add_foreign_key('users_fk_2', 'user', 'user_profile_id', 'user_profile', 'user_profile_id', $msg);
         // TODO change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
             global $sys;
             $sys->typ_lst->usr_pro = new user_profile_list();
-            $sys->typ_lst->usr_pro->load($db_con);
+            $sys->typ_lst->usr_pro->load($db_con, $msg);
             $sys->typ_lst->usr_typ = new user_type_list();
-            $sys->typ_lst->usr_typ->load($db_con);
+            $sys->typ_lst->usr_typ->load($db_con, $msg);
             $sys->typ_lst->usr_sta = new user_status_list();
-            $sys->typ_lst->usr_sta->load($db_con);
+            $sys->typ_lst->usr_sta->load($db_con, $msg);
 
             // add missing system users if needed
             $sys_usr = new user();
-            if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
-                $sys_usr->load_by_name(users::SYSTEM_NAME);
-                $sys_usr->set_profile(user_profiles::SYSTEM, $usr_msg);
-                $sys_usr->save_user($usr_msg, $sys_usr);
+            if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM, $msg)) {
+                $sys_usr->load_by_name(users::SYSTEM_NAME, $msg);
+                $sys_usr->set_profile(user_profiles::SYSTEM, $msg);
+                $sys_usr->save_user($msg, $sys_usr);
             }
             // add missing system users if needed
             $usr_admin = new user();
-            if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
-                $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
-                $usr_admin->set_profile(user_profiles::ADMIN, $usr_msg);
-                $usr_admin->save_user($usr_msg, $sys_usr);
+            if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN, $msg)) {
+                $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME, $msg);
+                $usr_admin->set_profile(user_profiles::ADMIN, $msg);
+                $usr_admin->save_user($msg, $sys_usr);
             }
 
             // add missing system test users if needed
             $test_usr = new user();
-            if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
-                $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
-                $test_usr->set_profile(user_profiles::TEST, $usr_msg);
-                $test_usr->save_user($usr_msg, $sys_usr);
+            if (!$test_usr->has_any_user_this_profile(user_profiles::TEST, $msg)) {
+                $test_usr->load_by_name(users::SYSTEM_TEST_NAME, $msg);
+                $test_usr->set_profile(user_profiles::TEST, $msg);
+                $test_usr->save_user($msg, $sys_usr);
                 $test_usr2 = new user();
-                $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
-                $test_usr2->set_profile(user_profiles::TEST, $usr_msg);
-                $test_usr2->save_user($usr_msg, $sys_usr);
+                $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME, $msg);
+                $test_usr2->set_profile(user_profiles::TEST, $msg);
+                $test_usr2->save_user($msg, $sys_usr);
             }
 
             $test_usr_normal = new user();
-            if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL)) {
+            if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL, $msg)) {
                 $test_usr_normal = new user();
-                $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
-                $test_usr_normal->set_profile(user_profiles::NORMAL, $usr_msg);
-                $test_usr_normal->save_user($usr_msg, $sys_usr);
+                $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME, $msg);
+                $test_usr_normal->set_profile(user_profiles::NORMAL, $msg);
+                $test_usr_normal->save_user($msg, $sys_usr);
             }
         }
 
         // prepare the high level upgrade
         $sys_usr = new user();
-        $sys_usr->load_by_name(users::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME, $msg);
 
         // refresh the formula ref_text, because the coding has changed (use "{w" instead of "{t")
         $frm_lst = new formula_list($sys_usr);
-        $frm_lst->db_ref_refresh($db_con);
+        $frm_lst->db_ref_refresh($db_con, $msg);
 
         // Change code_id in verbs from contains to is_part_of
 
@@ -470,17 +475,16 @@ class db_check
         return $result;
     }
 
-// TODO finish
-    function db_move_time_phrase_to_group(): user_message
+    // TODO finish
+    function db_move_time_phrase_to_group(user_message $msg): bool
     {
-        $msg = new user_message();
         // get all values where the time word is used
         $qp = new sql_par(value::class);
 
         // loop over values that needs to be adjusted
         // create the new group including the time
         // update the value
-        return $msg;
+        return $msg->is_ok();
     }
 
     /**

@@ -76,7 +76,7 @@ if ($usr->id > 0) {
 
         // prepare the display
         $msk = new view($usr);
-        $msk->load_by_code_id(view_shared::IMPORT);
+        $msk->load_by_code_id(view_shared::IMPORT, $usr_msg);
 
         // load the cache
         $dto = new data_object();

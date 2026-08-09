@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
@@ -57,6 +58,7 @@ class system_read_tests
 
         global $sys;
         global $db_con;
+        $msg = new user_message();
 
         // init
         $t->name = 'system read db->';
@@ -69,7 +71,7 @@ class system_read_tests
 
         // load the log status list
         $lst = new sys_log_status_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
@@ -80,7 +82,7 @@ class system_read_tests
 
         // load the batch job type list
         $lst = new job_type_list();
-        $result = $lst->load($db_con);
+        $result = $lst->load($db_con, $msg);
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
@@ -93,7 +95,7 @@ class system_read_tests
         // or if the cache is missing or outdated with one select per type list
         $typ_lst = new type_lists();
         $test_name = 'the type lists load from the types cache or fresh from the database';
-        $t->assert_true($test_name, $typ_lst->load_cached($db_con));
+        $t->assert_true($test_name, $typ_lst->load_cached($db_con, $msg));
         $test_name = 'the cached or fresh load fills the phrase types';
         $t->assert_false($test_name, $typ_lst->phr_typ->is_empty());
         $test_name = 'the cached or fresh load fills the verbs';
@@ -105,7 +107,7 @@ class system_read_tests
 
         $t->subheader($ts . 'SQL database read');
 
-        $t->assert_greater_zero('sql_db->count', $db_con->count(formula::class));
+        $t->assert_greater_zero('sql_db->count', $db_con->count(formula::class, $msg));
 
         /*
          * SQL database consistency tests
@@ -113,7 +115,7 @@ class system_read_tests
 
         $t->subheader($ts . 'SQL database consistency');
 
-        $result = $db_con->db_check_missing_owner();
+        $result = $db_con->db_check_missing_owner($msg);
         $t->assert('db_consistency->check ', $result, true);
 
     }

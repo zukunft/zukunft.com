@@ -1,15 +1,15 @@
 CREATE OR REPLACE FUNCTION value_prime_p1_update_log_21000_user
-    (_user_id                 bigint,
-     _change_action_id        smallint,
-     _field_id_numeric_value  smallint,
-     _numeric_value_old       numeric,
-     _numeric_value           numeric,
-     _group_id                bigint,
-     _phrase_id_1             smallint,
-     _phrase_id_2             smallint,
-     _phrase_id_3             smallint,
-     _phrase_id_4             smallint,
-     _source_id               bigint) RETURNS void AS
+    (_user_id                bigint,
+     _change_action_id       smallint,
+     _field_id_numeric_value smallint,
+     _numeric_value_old      numeric,
+     _numeric_value          numeric,
+     _group_id               bigint,
+     _phrase_id_1            smallint,
+     _phrase_id_2            smallint,
+     _phrase_id_3            smallint,
+     _phrase_id_4            smallint,
+     _source_id              bigint) RETURNS void AS
 $$
 BEGIN
 
@@ -18,7 +18,7 @@ BEGIN
 
     UPDATE user_values_prime
        SET numeric_value = _numeric_value,
-           last_update = Now()
+           last_update   = Now()
      WHERE phrase_id_1 = _phrase_id_1
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
@@ -31,8 +31,8 @@ $$ LANGUAGE plpgsql;
 
 PREPARE value_prime_p1_update_log_21000_user_call
         (bigint, smallint, smallint, numeric, numeric, bigint, smallint, smallint, smallint, smallint, bigint) AS
-    SELECT value_prime_p1_update_log_21000_user
-        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+SELECT value_prime_p1_update_log_21000_user
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
 SELECT value_prime_p1_update_log_21000_user
        (3::bigint,
@@ -40,8 +40,8 @@ SELECT value_prime_p1_update_log_21000_user
         6::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
-        32770::bigint,
-        -2::smallint,
+        5::bigint,
+        5::smallint,
         0::smallint,
         0::smallint,
         0::smallint,

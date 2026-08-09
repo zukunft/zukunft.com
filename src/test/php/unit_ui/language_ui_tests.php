@@ -47,6 +47,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -57,6 +58,7 @@ class language_ui_tests
     {
         $html = new html_base();
         $t_lan = new test_languages($t);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui html language ';
@@ -71,7 +73,7 @@ class language_ui_tests
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
-        $t->html_page_test($test_page, 'language', 'language', $t);
+        $t->html_page_test($test_page, 'language', 'language', $msg_ui);
 
         // the popup form class must also accept a language (e.g. of the language add form),
         // which is a type object but not a db object
@@ -85,7 +87,7 @@ class language_ui_tests
         $chg_html = $preview->popup_changes([
             url_var::NAME => $src->name,
             url_var::PRE . url_var::NAME => ''
-        ], $src);
+        ], $src, $msg_ui);
         $t->assert_text_contains($test_name, $chg_html, $src->name);
     }
 

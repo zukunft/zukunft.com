@@ -36,6 +36,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'api_types.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -49,17 +51,19 @@ class figure_list_ui_tests
 
         $html = new html_base();
         $t_fig = new test_figures($t);
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'unit ui html figure list ';
         $t->header($ts);
 
         // test the figure list display functions
-        $lst = new figure_list($t_fig->figure_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
+        $lst = new figure_list($t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('figure list display test');
         $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';
-        $t->html_page_test($test_page, 'figure_list', 'figure_list', $t);
+        $test_page .= 'figure list with link: ' . $lst->display_linked($msg_ui) . '<br>';
+        $t->html_page_test($test_page, 'figure_list', 'figure_list', $msg_ui);
     }
 
 }

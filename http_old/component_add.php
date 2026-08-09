@@ -52,6 +52,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
 // open database
+$msg = new user_message();
 $app = new frontend();
 global $sys;
 $db_con = $app->start("component_add");
@@ -73,28 +74,28 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 
 // load the session user
 $usr = new user;
-$result .= $usr->get();
+$result .= $usr->get($msg);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
     $upd_result = '';
 
-    $usr->load_usr_data();
+    $usr->load_usr_data($msg);
 
     // init the display object to show the standard elements such as the header
     global $sys;
     $dsp_db = new view($usr);
-    $dsp_db->load_by_id($sys->msk_cac->id(views::COMPONENT_ADD));
+    $dsp_db->load_by_id($sys->msk_cac->id(views::COMPONENT_ADD), $usr_msg);
     $msk = new view_ui($dsp_db->api_json());
 
     // create the view component object to apply the user changes to it
     $cmp = new component($usr);
-    $result .= $cmp->load_by_id($cmp_id);
+    $result .= $cmp->load_by_id($cmp_id, $usr_msg);
 
     // get the word used as a sample to illustrate the changes
     $wrd = new word($usr);
     if ($wrd_id != 0) {
-        $result .= $wrd->load_by_id($wrd_id);
+        $result .= $wrd->load_by_id($wrd_id, $usr_msg);
     } else {
         // get the default word for the view $msk
     }
@@ -103,14 +104,14 @@ if ($usr->id > 0) {
     // link or unlink a view
     if ($dsp_link_id > 0) {
         $dsp_link = new view($usr);
-        $result .= $dsp_link->load_by_id($dsp_link_id);
-        $order_nbr = $cmp->next_nbr($dsp_link_id);
+        $result .= $dsp_link->load_by_id($dsp_link_id, $usr_msg);
+        $order_nbr = $cmp->next_nbr($dsp_link_id, $msg);
         $upd_result = $cmp->link($dsp_link, $order_nbr, $usr_msg);
     }
 
     if ($dsp_unlink_id > 0) {
         $dsp_unlink = new view($usr);
-        $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
+        $result .= $dsp_unlink->load_by_id($dsp_unlink_id, $usr_msg);
         $upd_result .= $cmp->unlink($dsp_unlink, $usr_msg);
     }
 
@@ -131,10 +132,10 @@ if ($usr->id > 0) {
             $cmp->type_id = $cmp_type;
         } //
         if (isset($_GET[json_fields::PHRASE_ROW])) {
-            $cmp->reload_row_phrase($_GET[json_fields::PHRASE_ROW]);
+            $cmp->reload_row_phrase($msg, $_GET[json_fields::PHRASE_ROW]);
         } //
         if (isset($_GET[json_fields::PHRASE_COL])) {
-            $cmp->reload_col_phrase($_GET[json_fields::PHRASE_ROW]);
+            $cmp->reload_col_phrase($msg, $_GET[json_fields::PHRASE_ROW]);
         } //
 
         // save the changes
