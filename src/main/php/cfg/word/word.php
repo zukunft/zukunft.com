@@ -777,7 +777,7 @@ class word extends sandbox_code_id
     ): void
     {
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($this->phrase(), $msg, null, foaf_direction::BOTH, $msg);
+        $trp_lst->load_by_phr($this->phrase(), $msg, null, foaf_direction::BOTH);
         $this->phrases_related = $this->select_phrases_related($trp_lst, $per_verb_limit);
     }
 
@@ -1026,9 +1026,8 @@ class word extends sandbox_code_id
 
         $qp = $this->load_sql_by_formula_name($db_con->sql_creator(), $name);
         $db_row = $db_con->get1($qp, $msg);
-        // local buffer until the load functions thread the $msg parameter
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            $this->row_mapper_sandbox($db_row, new user_message($this->get_user()));
+            $this->row_mapper_sandbox($db_row, $msg);
         }
         return $this->id();
     }

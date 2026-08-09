@@ -760,6 +760,9 @@ class formula extends sandbox_code_id
         log_debug(" for " . $wrd->name());
         $result = '';
         $html = new html_base();
+        // the back trace as the legacy url string for the form fields
+        // and the display functions that still expect a string
+        $back_str = $back?->url_encode() ?? '';
 
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);
 
@@ -783,8 +786,8 @@ class formula extends sandbox_code_id
         $result .= $html->dsp_form_hidden("id", $this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
-        if (trim($back) <> '') {
-            $result .= $html->dsp_form_hidden("back", $back);
+        if (trim($back_str) <> '') {
+            $result .= $html->dsp_form_hidden("back", $back_str);
         }
         $result .= '<div class="form-row">';
         $result .= $html->form_field(
@@ -816,7 +819,7 @@ class formula extends sandbox_code_id
         }
         $result .= $html->dsp_form_fld_checkbox(url_var::NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
-        $result .= $html->dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $back_str);
 
         // list the assigned words
         if ($this->id() > 0) {
@@ -825,9 +828,9 @@ class formula extends sandbox_code_id
             // list all words linked to the formula and allow to unlink or add new words
             // TODO Prio 1 create the HTML code for a formula link list
             //$lnk_lst = new formula_link_list();
-            $comp_html = $this->dsp_used4words($add, $wrd, $back, $msg);
+            $comp_html = $this->dsp_used4words($add, $wrd, $back_str, $msg);
             // allow to test and refresh the formula and show some sample values
-            $numbers_html = $this->dsp_test_and_samples($msg, $back);
+            $numbers_html = $this->dsp_test_and_samples($msg, $back_str);
             // display the user changes
             $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, $msg, '', $back);
             if (trim($changes) <> "") {
@@ -835,7 +838,7 @@ class formula extends sandbox_code_id
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, $msg, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, $msg, '', $back_str);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

@@ -316,7 +316,7 @@ class result extends sandbox_value
         $frm->load_by_id($this->frm->id(), $msg);
         $frm_html = $frm;
         $result .= ' based on</br>' . $frm_html->name_link($back);
-        $result .= ' ' . $frm_html->dsp_text($back) . "\n";
+        $result .= ' ' . $frm_html->dsp_text($msg, $back) . "\n";
         $result .= ' ' . $frm_html->btn_edit($back) . "\n";
         $result .= '</br></br>' . "\n";
 
@@ -354,7 +354,7 @@ class result extends sandbox_value
 
                 // select or guess the element time word if needed
                 log_debug('guess the time ... ');
-                $elm_time_phr = $this->src_grp->phrase_list()->assume_time();
+                $elm_time_phr = $this->src_grp->phrase_list()->assume_time($msg);
 
                 $elm_grp->set_phrase_list($this->src_grp->phrase_list());
                 $elm_grp->time_phr = $elm_time_phr;

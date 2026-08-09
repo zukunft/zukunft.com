@@ -926,7 +926,7 @@ class phrase extends combine_named
 
     function export_json(user_message $msg, export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        return $this->obj()->export_json($msg);
+        return $this->obj()->export_json($msg, $exp_typ, $do_load);
     }
 
 

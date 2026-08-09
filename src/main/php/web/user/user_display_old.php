@@ -39,6 +39,7 @@ include_once html_paths::MODEL_FORMULA . 'formula_link.php';
 include_once html_paths::MODEL_GROUP . 'group_db.php';
 include_once html_paths::MODEL_REF . 'source.php';
 include_once html_paths::MODEL_REF . 'source_db.php';
+include_once html_paths::MODEL_COMPONENT . 'component_db.php';
 include_once html_paths::MODEL_USER . 'user_db.php';
 include_once html_paths::MODEL_VERB . 'verb_db.php';
 include_once html_paths::MODEL_VIEW . 'view_db.php';
@@ -69,6 +70,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;

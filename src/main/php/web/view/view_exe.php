@@ -446,7 +446,7 @@ class view_exe extends view_base
             }
 
             // collect the history
-            $changes = $this->dsp_hist(0, $row_limit, '', $back);
+            $changes = $this->dsp_hist(0, $row_limit, '', $msg, $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {

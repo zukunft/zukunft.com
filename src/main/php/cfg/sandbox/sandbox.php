@@ -1396,14 +1396,17 @@ class sandbox extends db_object_seq_id_user
 
         // the admin permission is based on the requesting user of the message and never on the
         // object user, because e.g. an admin owned word must not allow a normal user to change
-        // the protection (a missing user is already reported by set_requesting_user of save)
+        // the protection
         $usr_req = $msg->usr;
-        if ($usr_req == null) {
-            return;
-        }
 
         if ($this->protection_id != null) {
-            if (!$usr_req->is_admin() and !$usr_req->is_system()) {
+            if ($usr_req == null) {
+                // a missing requesting user is an internal inconsistency (already reported by
+                // set_requesting_user of save), so fail closed and deny the protection change
+                // like for a normal user instead of applying it unchecked
+                $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            }
+            if ($usr_req == null or (!$usr_req->is_admin() and !$usr_req->is_system())) {
                 $db_protect_id = $db_obj?->protection_id();
 
                 // only an admin or system user may set the admin protection or higher

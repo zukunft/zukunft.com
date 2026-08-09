@@ -185,24 +185,23 @@ class type_object extends db_object_seq_id
      */
     function row_mapper_typ_obj(array $db_row, user_message $msg, string $class): bool
     {
-        if (parent::row_mapper($db_row, $msg, $this->id_field_typ($class))) {
-            // set the id upfront to allow row mapping
-            if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-                $this->id = ($db_row[language::FLD_ID]);
-            }
-            if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-                $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
-            }
-            if (array_key_exists($this->name_field(), $db_row)) {
-                $this->name = strval($db_row[$this->name_field()]);
-            }
-            if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
-                $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
-            }
-            if (($this->code_id == null or $this->code_id == '')
-                and ($this->name == null or $this->name == '')) {
-                log_err_msg('either the name or code_id must be set', $msg);
-            }
+        parent::row_mapper($db_row, $msg, $this->id_field_typ($class));
+        // set the id upfront to allow row mapping
+        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
+            $this->id = ($db_row[language::FLD_ID]);
+        }
+        if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
+            $this->code_id = strval($db_row[fields::FLD_CODE_ID]);
+        }
+        if (array_key_exists($this->name_field(), $db_row)) {
+            $this->name = strval($db_row[$this->name_field()]);
+        }
+        if (array_key_exists(fields::FLD_DESCRIPTION, $db_row)) {
+            $this->description = strval($db_row[fields::FLD_DESCRIPTION]);
+        }
+        if (($this->code_id == null or $this->code_id == '')
+            and ($this->name == null or $this->name == '')) {
+            log_err_msg('either the name or code_id must be set', $msg);
         }
         return $msg->is_ok();
     }

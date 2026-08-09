@@ -441,7 +441,7 @@ class view extends view_exe
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $msg, $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {

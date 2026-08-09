@@ -209,7 +209,7 @@ class formula extends formula_map
     {
         $result = null;
         $trp_lst = new triple_list($this->get_user());
-        $trp_lst->load_by_phr($phr, $msg, null, foaf_direction::BOTH, $msg);
+        $trp_lst->load_by_phr($phr, $msg, null, foaf_direction::BOTH);
         foreach ($trp_lst->lst() as $trp) {
             if ($trp->get_verb_code_id() == verbs::SYMBOL and $trp->get_to()?->id() == $phr->id()) {
                 $result = $trp->get_from()?->name();

@@ -433,12 +433,17 @@ class test_cleanup extends test_api
                 if ($wrd->id() > 0) {
                     $msg->reset();
                     $owner = $wrd->owner($msg);
+                    // switch the requesting user to the owner only for this word and restore
+                    // it afterwards, because the shared message is also used for the next words
+                    // and the sequence resets after the loop
+                    $usr_before = $msg->usr;
                     $msg->usr = $owner;
                     // reload the word as owner
                     // TODO Prio 1 also reload the other objects as owner before trying to delete them
                     $wrd = $t_db->load_word($msg, $wrd_name);
                     $wrd->del($msg);
                     $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);
+                    $msg->usr = $usr_before;
                 }
             } else {
                 log_info(' ... but keep the read only test word ' . word_names::MATH);

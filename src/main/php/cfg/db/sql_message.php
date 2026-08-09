@@ -7,6 +7,11 @@
 
     $sql_msg is the suggested var name
 
+    TODO Prio 2 merge with user_message e.g. by extending it, because the two classes are near
+                identical twins (same members and functions) and only the api_array, api_mapper,
+                combine_status and get_all_messages signatures have drifted apart, which is a
+                divergence trap for every future message change
+
 
 
 

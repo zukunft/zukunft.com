@@ -767,6 +767,10 @@ class group extends sandbox_multi
         global $db_con;
 
         log_debug($name);
+        // reset the id first, so that on a reused group object a name miss is reported with
+        // id 0 and not with the stale id of the previous load (a found row sets the id again
+        // in the row mapper; unlike load_by_id no requested id is known for a name load)
+        $this->set_id(0);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp, $msg);
     }

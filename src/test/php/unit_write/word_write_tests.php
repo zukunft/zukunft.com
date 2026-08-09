@@ -556,7 +556,8 @@ class word_write_tests
         // check if user 2 can exclude a word without influencing user 1
         $wrd_usr1 = $t_db->load_word($msg, word_names::TEST_RENAMED);
         $wrd_usr2 = $t_db->load_word($msg, word_names::TEST_RENAMED, $t->usr2);
-        $wrd_usr2->del($msg);
+        $msg_usr2 = new user_message($t->usr2);
+        $wrd_usr2->del($msg_usr2);
         $wrd_usr2_reloaded = $t_db->load_word($msg, word_names::TEST_RENAMED, $t->usr2);
         $target = '';
         $result = $wrd_usr2_reloaded->name_dsp();

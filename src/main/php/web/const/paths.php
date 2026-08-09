@@ -56,6 +56,7 @@ class paths
     const string MODEL = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR;
     const string API_OBJECT = PHP_PATH . 'api' . DIRECTORY_SEPARATOR;
     const string DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
+    const string MODEL_COMPONENT = self::MODEL . 'component' . DIRECTORY_SEPARATOR;
     const string MODEL_CONST = self::MODEL . 'const' . DIRECTORY_SEPARATOR;
     const string MODEL_FORMULA = self::MODEL . 'formula' . DIRECTORY_SEPARATOR;
     const string MODEL_GROUP = self::MODEL . 'group' . DIRECTORY_SEPARATOR;

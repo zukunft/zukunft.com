@@ -191,7 +191,8 @@ class result_write_tests
 
     function run_list(test_cleanup $t): void
     {
-        $msg = new user_message();
+        // with the requesting user, because the fallback delete at the end needs it
+        $msg = new user_message($t->usr1);
 
 
         $t_db = new test_db_load($t);

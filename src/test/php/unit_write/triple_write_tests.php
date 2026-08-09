@@ -282,9 +282,9 @@ class triple_write_tests
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $trp = new triple($t->usr2);
         $msg2->reset(true);
-        $trp->load_by_link_id( $wrd_from->id(), $msg, $vrb_is_id, $wrd_to->id() );
-        $trp->del($msg);
-        $result = $msg->text();
+        $trp->load_by_link_id( $wrd_from->id(), $msg2, $vrb_is_id, $wrd_to->id() );
+        $trp->del($msg2);
+        $result = $msg2->text();
         $target = '';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
