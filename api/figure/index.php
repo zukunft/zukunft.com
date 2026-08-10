@@ -72,7 +72,7 @@ if ($db_con->is_open()) {
             // neutral message as a missing id, so the response does not confirm it exists
             if ($val->is_readable_by($usr)) {
                 $fig = $val->figure();
-                $result = $fig->api_json();
+                $result = $fig->api_json([], $msg);
             } else {
                 $msg->add_message_text('figure id is missing');
             }
@@ -81,7 +81,7 @@ if ($db_con->is_open()) {
             $res->load_by_id($fig_id, $msg);
             if ($res->is_readable_by($usr)) {
                 $fig = $res->figure();
-                $result = $fig->api_json();
+                $result = $fig->api_json([], $msg);
             } else {
                 $msg->add_message_text('figure id is missing');
             }

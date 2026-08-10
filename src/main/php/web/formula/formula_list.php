@@ -236,7 +236,8 @@ class formula_list extends ListBase
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
                     $frm_ui = $frm->dsp_obj_old();
-                    $frm_html = new formula($frm->api_json());
+                    $api_msg = new user_message(); // a legacy display function without a message, see display_old
+                    $frm_html = new formula($frm->api_json([], $api_msg));
                     $result = '';
                     if ($frm->name_wrd != null) {
                         $result = $frm_ui->dsp_result($frm->name_wrd->phrase(), $back);

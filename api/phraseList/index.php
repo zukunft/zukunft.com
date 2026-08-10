@@ -89,7 +89,7 @@ if ($db_con->is_open()) {
         }
         // drop the phrases the requester may not read (idor); see phrase::is_readable_by
         $lst->filter_readable_by($usr);
-        $result = $lst->api_json();
+        $result = $lst->api_json([], $msg);
     }
 
     $ctrl = new controller();

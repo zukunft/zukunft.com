@@ -257,9 +257,27 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    and `test_api::assert_api_to_ui`. the seven remaining single argument calls all target the
    backend `user_message::api_array(user_message $msg)`, which is a different function.
 
-   next families by size: `api_json` (8), the three `__construct` (which the earlier audit called
-   cosmetic until the constructor callers pass a real message), then ~20 one-off setters, of which
-   the 21 `type_lists::set_*` are a single mechanical family.
+   **the `api_json` family is HALF done and the defaults stay for now - read this before retrying.**
+   sizing by definitions was misleading: 8 definitions, but ~285 call sites (`api_array` had 6).
+   what IS done and is the actual value: **all 53 production call sites now pass their message**
+   (38 `api/*/index.php`, `http/view.php`, `text_log_functions`, and 13 in `web/`), so the api json
+   creation no longer drops the messages of `api_json_array`. zero production calls rely on the
+   default any more. fixed on the way: `web/hist/hist_log.php` passed `$msg` where the
+   `api_type_list` is expected, which would be a TypeError as soon as that branch runs.
+   what is NOT done: the 8 defaults themselves, because removing them breaks **232 test call
+   sites**. each needs the right message *kind* - a backend receiver needs the cfg `user_message`,
+   a frontend one the web `user_message` - and the receiver cannot be told apart statically with
+   enough confidence (a receiver-name heuristic split them 124/108, but it mis-reads
+   `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver). guessing wrong
+   gives 232 possible TypeErrors, so this needs the developer's test run in the loop, ideally one
+   test folder per commit, or it becomes trivial once the frontend/backend split makes the message
+   kind unambiguous. the three legacy `display_old` / `graph` display functions got a local buffer
+   with a comment, because they have no message at all.
+
+   next families by size: the three `__construct` (which the earlier audit called cosmetic until
+   the constructor callers pass a real message), then ~20 one-off setters, of which the 21
+   `type_lists::set_*` are a single mechanical family with few callers - a better next step than
+   the rest of `api_json`.
 
 3. the deferred items of the log/buffer audit — each needs a test run or a decision, not a quick
    edit (the assessment below says why the safe tier stopped here):

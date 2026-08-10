@@ -68,13 +68,13 @@ if ($db_con->is_open()) {
             $lst->load_by_view_id($msk_id, $msg);
             // drop the components the requester may not read (Insecure direct object references); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($pattern != '') {
             $lst = new component_list($usr);
             $lst->load_names($pattern, $msg);
             // drop the components the requester may not read (Insecure direct object references); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             $msg->add_message_text('view id and pattern missing');
         }

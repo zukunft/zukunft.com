@@ -831,7 +831,7 @@ class user extends db_object
         //$err_lst->dsp_type = $dsp_type;
         //$err_lst->back = $back;
         if ($err_lst->load($msg)) {
-            $err_lst_ui = new sys_log_list($err_lst->api_json());
+            $err_lst_ui = new sys_log_list($err_lst->api_json([], $msg));
             $result = $err_lst_ui->get_html($msg);
         }
 

@@ -1082,7 +1082,7 @@ class phrase_list extends sandbox_list_named
             $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
             $phr_lst = new phrase_list();
-            $phr_lst->set_from_json($this->api_json());
+            $phr_lst->set_from_json($this->api_json([], $msg));
             $wrd_lst = $phr_lst->wrd_lst_all($msg);
             $result .= $wrd_lst->tbl($back);
             foreach ($this->lst() as $phr) {

@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
             $lst->load_by_component_id($cmp_id, $msg);
             // drop the views the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } elseif ($pattern != null) {
             $lst = new view_list($usr);
             // load with the full field set (incl. the view type) so the frontend can
@@ -76,7 +76,7 @@ if ($db_con->is_open()) {
             $lst->load_by_pattern($pattern, $msg);
             // drop the views the requester may not read (idor); see sandbox::is_readable_by
             $lst->filter_readable_by($usr);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             $msg->add_message_text('view id and pattern missing');
         }

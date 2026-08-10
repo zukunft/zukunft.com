@@ -234,7 +234,8 @@ class triple_list extends ListBase
                         $dsp_obj = $lnk->tob()->get_dsp_obj();
                         $result .= $dsp_obj->dsp_tbl_cell(0);
                     }
-                    $lnk_ui = new triple_ui($lnk->api_json());
+                    $api_msg = new user_message(); // a legacy display function without a message, see graph
+                    $lnk_ui = new triple_ui($lnk->api_json([], $api_msg));
                     $result .= $lnk_ui->btn_edit($lnk->fob()->dsp_obj());
                     if ($lnk->fob() != null) {
                         $dsp_obj = $lnk->fob()->get_dsp_obj();

@@ -676,7 +676,7 @@ function log_msg(string  $msg_text,
                     $usr = new user();
                     $usr->load_by_id($user_id, $msg);
                     $msk = new view($usr);
-                    $msk_ui = new view_ui($msk->api_json());
+                    $msk_ui = new view_ui($msk->api_json([], $msg));
                     $result .= $msk_ui->dsp_navbar_simple();
                     // like the critical path: escape the message and do not disclose the function name
                     $result .= htmlspecialchars($msg_text, ENT_QUOTES) . ".<br><br>";

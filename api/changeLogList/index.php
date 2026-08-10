@@ -80,7 +80,7 @@ if ($db_con->is_open()) {
                 $id = (int)$id;
             }
             $lst->load_by_obj_fld($class, $msg, $id, $usr, $fld);
-            $result = $lst->api_json();
+            $result = $lst->api_json([], $msg);
         } else {
             // TODO deprecate
             if ($wrd_id != 0) {
@@ -88,7 +88,7 @@ if ($db_con->is_open()) {
                 $wrd->load_by_id($wrd_id, $msg);
                 $lst = new change_log_list();
                 $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
-                $result = $lst->api_json();
+                $result = $lst->api_json([], $msg);
             } else {
                 $msg->add_message_text('word id missing');
             }

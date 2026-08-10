@@ -66,10 +66,10 @@ if ($db_con->is_open()) {
         $vrb = new verb();
         if ($vrb_id > 0) {
             $vrb->load_by_id($vrb_id, $msg);
-            $result = $vrb->api_json();
+            $result = $vrb->api_json([], $msg);
         } elseif ($vrb_name != '') {
             $vrb->load_by_name($vrb_name, $msg);
-            $result = $vrb->api_json();
+            $result = $vrb->api_json([], $msg);
         } else {
             $msg->add_message_text('verb id or name is missing');
         }

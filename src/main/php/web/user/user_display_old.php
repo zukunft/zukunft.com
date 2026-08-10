@@ -450,7 +450,7 @@ class user_display_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $frm_ui = new formula($frm_usr->formula()->api_json());
+                    $frm_ui = new formula($frm_usr->formula()->api_json([], $msg));
                     $sandbox_item_name = $frm_ui->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
@@ -458,7 +458,7 @@ class user_display_old extends user
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json([], $msg));
                         $sandbox_usr_txt = $phr_ui->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
@@ -467,7 +467,7 @@ class user_display_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $phr_ui = new phrase($frm_usr->phrase()->api_json());
+                        $phr_ui = new phrase($frm_usr->phrase()->api_json([], $msg));
                         $sandbox_std_txt = $phr_ui->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
@@ -499,7 +499,7 @@ class user_display_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $to_ui = new phrase($frm_lnk_other->tob()->api_json());
+                        $to_ui = new phrase($frm_lnk_other->tob()->api_json([], $msg));
                         $sandbox_other .= $to_ui->name_linked();
                     }
                     $sandbox_other = $html->ref(rest_ctrl::PATH_FIXED .'user_formula_link.php?id=' . $this->id() . '&back=' . $back, $sandbox_other) . ' ';
@@ -623,7 +623,7 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json());
+                        $phr_lst_ui = new phrase_list($val_usr->grp->phrase_list()->api_json([], $msg));
                         $sandbox_item_name = $phr_lst_ui->name_linked();
                     }
 

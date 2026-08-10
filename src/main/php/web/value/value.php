@@ -1118,7 +1118,7 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_ui = new source($src->api_json());
+            $scr_ui = new source($src->api_json([], $msg));
             // TODO Prio 0 add the source selector to the value mask
             //$result .= $scr_ui->dsp_select($script, $back);
             $result .= '<br><br>';

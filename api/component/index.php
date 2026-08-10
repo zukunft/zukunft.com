@@ -70,10 +70,10 @@ if ($db_con->is_open()) {
         $cmp = new component($load_usr);
         if ($cmp_id > 0) {
             $cmp->load_by_id($cmp_id, $msg);
-            $result = $cmp->api_json();
+            $result = $cmp->api_json([], $msg);
         } elseif ($cmp_name != '') {
             $cmp->load_by_name($cmp_name, $msg);
-            $result = $cmp->api_json();
+            $result = $cmp->api_json([], $msg);
         } else {
             $msg->add_message_text('component id or name is missing');
         }

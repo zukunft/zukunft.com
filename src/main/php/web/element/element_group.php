@@ -386,7 +386,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES], $msg);
             $fig_ui = new figure();
             $fig_ui->set_from_json($api_json, $msg);
             $result .= $fig_ui->display_linked($msg, $back);
