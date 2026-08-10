@@ -354,7 +354,7 @@ class application
             // check the system setup as the virtual system user, because this is a system call
             $sys->times->switch(system_time_type::DB_CHECK);
             $db_chk = new db_check();
-            $msg = new user_message(user::system());
+            $msg = new user_message(user::system()); // the db check is a system call, see above
             if (!$db_chk->db_check($db_con, $msg)) {
                 echo '\n';
                 echo $msg->all_message_text();
@@ -435,7 +435,7 @@ class application
                 $sys_script->code_id = $sys->script;
                 $sys_usr = new user();
                 $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
-                $msg_sys = new user_message($sys_usr);
+                $msg_sys = new user_message($sys_usr); // the system user saves the script type, merged below
                 $sys_script->save($msg_sys);
                 if ($msg_sys->is_ok()) {
                     $sys_script_id = $sys_script->id();

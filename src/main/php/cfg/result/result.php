@@ -1332,7 +1332,7 @@ class result extends sandbox_value
     // TODO Prio 0 review
     private function save_without_time(): string
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a local buffer only to build the returned message text
         $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
         $res_no_time->save($msg);

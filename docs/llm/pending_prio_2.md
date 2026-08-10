@@ -10,15 +10,20 @@ exception that needs a comment behind it saying why. the coded check is
 `docs/code_user_message_exceptions.md` — that doc is the work list and must shrink, never grow.
 the done passes are in the git history; only what is still open is listed here.
 
-1. **explain or thread the 18 unexplained creations** left in the report. all the named folders are
-   cleared, so the rest is spread thin (cfg/component 3, then 1-2 each in ten more areas).
-   organise the next pass
-   **by pattern, not by folder**: the `diff_msg` (28 defs / 73 calls) and `fill` (35 defs / 47
-   calls) families are settled as "leave" — their callers do merge the return, so the value is low
-   and the risk of a recursive core change is the highest of the review — which leaves mostly
-   message producing leaves and per item buffers. the `fill_by_name` treatment (take `$msg`, return
-   `bool`) stays right for the *small* leaf families: `fill_by_id`, `add_id_by_name`,
+1. **DONE — the report shows 0 unexplained creations.** all 216 creations below the entry points now
+   say why they exist, so the check only has to keep it that way: a new one without a comment
+   changes the generated doc and fails `php_user_message_creation_tests`.
+   the two big families stay as evaluated: `diff_msg` (28 defs / 73 calls) and `fill` (35 defs /
+   47 calls) are recursive cores whose callers do merge the return, so threading them is high risk
+   for low value. the `fill_by_name` treatment (take `$msg`, return `bool`) is still the right shape
+   for the *small* leaf families if one is touched anyway: `fill_by_id`, `add_id_by_name`,
    `sandbox_list::add_user_check`, `id_used_msg`.
+   three real drops were found but deliberately **not** surfaced, each with a TODO Prio 2 on the
+   line, because they all report into an import message and `import_mapper` ends with
+   `return $msg->is_ok()` — surfacing one drops the whole object, which needs a test run:
+   `view::add_term` (a double term view link), `phrase_list::import_map_names` (an empty entry in
+   the "assigned" array) and `component::set_col_sub_phrase` (the never implemented sub phrase
+   suggestion).
 
 2. **remove the 57 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
    that passes nothing silently loses its messages, so the default is the same drop in disguise.

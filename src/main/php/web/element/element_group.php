@@ -81,7 +81,7 @@ class element_group extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if (array_key_exists(json_fields::LIST_ELEMENTS, $json_array)) {
             $msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
         }

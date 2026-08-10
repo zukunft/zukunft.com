@@ -320,7 +320,7 @@ class type_list
      */
     protected function add_obj(object $obj): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;

@@ -634,7 +634,7 @@ function log_msg(string  $msg_text,
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys->log_msg_lst)) {
-            $msg = new user_message();
+            $msg = new user_message(); // the log writer itself, so it cannot report to a request message
             $sys_log = new sys_log();
 
             $sys->log_msg_lst[] = $msg_type_text;

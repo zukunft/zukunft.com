@@ -628,7 +628,7 @@ class value extends sandbox_value
      */
     private function reload(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($this->is_id_set()) {
             $this->load_by_id($this->id(), $msg);
         }
@@ -642,7 +642,7 @@ class value extends sandbox_value
      */
     private function reload_if_needed(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the ok default of this function, replaced by the reload result
         if (!$this->is_loaded()) {
             $msg = $this->reload();
         }

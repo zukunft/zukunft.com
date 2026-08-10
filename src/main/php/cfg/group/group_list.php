@@ -513,7 +513,7 @@ class group_list extends sandbox_list
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message(); // a deprecated private helper without a caller message
 
         // check the parameters
         if ($type == '') {

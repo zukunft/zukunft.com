@@ -358,7 +358,7 @@ class element_list extends sandbox_list
     {
         global $db_con;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
         $msg->add_message_text(

@@ -9,7 +9,7 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-220 creations below the entry points: 145 explained, 57 parameter defaults and 18 still unexplained
+216 creations below the entry points: 159 explained, 57 parameter defaults and 0 still unexplained
 
 ## parameter defaults
 
@@ -73,29 +73,4 @@ shared: /calc/expression.php:231 - user_message                $msg = new user_m
 shared: /calc/expression.php:267 - user_message                $msg = new user_message()
 shared: /calc/expression.php:343 - user_message                $msg = new user_message()
 shared: /calc/expression.php:455 - user_message $msg = new user_message()
-```
-
-## unexplained creations
-
-the remaining rule breaks: explain the exception with a comment or thread the $msg of the caller
-
-```
-frontend: /element/element_group.php:84 - $msg = new user_message();
-frontend: /types/type_list.php:323 - $msg = new user_message();
-frontend: /value/value.php:631 - $msg = new user_message();
-frontend: /value/value.php:645 - $msg = new user_message();
-main backend: /application.php:357 - $msg = new user_message(user::system());
-main backend: /application.php:438 - $msg_sys = new user_message($sys_usr);
-main backend: /component/component.php:718 - return new user_message();
-main backend: /component/component.php:884 - $msg = new user_message();
-main backend: /component/component.php:911 - return new user_message();
-main backend: /element/element_list.php:361 - $msg = new user_message();
-main backend: /group/group.php:1820 - $msg = new user_message();
-main backend: /group/group_list.php:516 - $msg = new user_message();
-main backend: /log/change_link.php:389 - $msg = new user_message();
-main backend: /log/change_link.php:610 - $msg = new user_message();
-main backend: /log_text/text_log_functions.php:637 - $msg = new user_message();
-main backend: /result/result.php:1335 - $msg = new user_message();
-main backend: /verb/verb.php:967 - $msg = new user_message();
-main backend: /verb/verb.php:1103 - $sim_msg = new user_message();
 ```

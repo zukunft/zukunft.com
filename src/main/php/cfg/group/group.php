@@ -1817,7 +1817,7 @@ class group extends sandbox_multi
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->name = $api_json[json_fields::NAME];
