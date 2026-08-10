@@ -40,9 +40,15 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -140,6 +146,35 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $mr_html, word_names::ABB, word_names::PI);
         $test_name = 'most relevant of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list_most_relevant($msg_ui), '');
+
+        $t->subheader($ts . 'columns');
+        $col_html = $t_val->value_list_most_relevant_ui()->columns_by_phrase($msg_ui);
+        $test_name = 'the columns are combined to one wrapping row';
+        $t->assert_text_contains($test_name, $col_html, 'class="row');
+        $test_name = 'each column gets the min width that lets four columns fit on the widest screen';
+        $t->assert_text_contains($test_name, $col_html,
+            'min-width: ' . (int)round(def::FALLBACK_WIDE_SIDE_WIDTH / position_types::MAX_SIDE_COLUMNS) . 'px');
+        $test_name = 'the phrase used by most values heads the first column';
+        $t->assert_text_contains($test_name, $col_html, styles::VALUE_GROUP_TITLE);
+        $test_name = 'the column phrase is shown before its values';
+        $t->assert_text_order($test_name, $col_html, word_names::ABB, word_names::PI);
+        $test_name = 'never more columns than fit on the widest screen';
+        $t->assert_true($test_name,
+            substr_count($col_html, 'class="col"') <= position_types::MAX_SIDE_COLUMNS);
+        $test_name = 'the columns of an empty value list render nothing';
+        $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
+
+        $t->subheader($ts . 'more tail');
+        $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, '', '', 1);
+        $test_name = 'the more tail is a link to the phrase values view';
+        $t->assert_text_contains($test_name, $tail_html, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
+        $test_name = 'the more tail link selects the page phrase';
+        $t->assert_text_contains($test_name, $tail_html, 'id=' . $phr_inhabitant->id());
+        $tail_plain = $t_val->list_all_ui($msg)->list($msg_ui, new phrase_list_ui(), '', '', 1);
+        $test_name = 'without a page phrase the more tail has no link';
+        $t->assert_text_not_contains($test_name, $tail_plain, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
+        $test_name = 'without a page phrase the more count is still shown';
+        $t->assert_text_contains($test_name, $tail_plain, msg_id::MORE->text());
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

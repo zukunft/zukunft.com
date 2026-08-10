@@ -275,3 +275,23 @@ list-rendering function, sort inside it (or require the caller to pass an
 already-sorted list and assert it) — do not rely on the upstream load order.
 A new `object_pages/<name>.html` fragment that reorders between runs is the
 signal that a sort is missing.
+
+## "… more" is always a link that shows more
+
+When a list is truncated to its configured limit, the "… and n more" tail is a
+**link to the view that shows the full list** — never dead text. A count that
+cannot be clicked tells the user something exists and gives no way to see it.
+
+- The values list tail links to the `phrase_values` view of the page phrase
+  (`value_list::more_tail`): `url_new(views::PHRASE_VALUES_ID, $phr->id())`.
+- The related-phrases "…" in a page title links to the `word_related` view
+  (`phrase_list.php`, `views::WORD_RELATED_ID`) — the same pattern.
+- Build the tail text from the message ids (`msg_id::THREE_POINTS`,
+  `msg_id::AND_MORE_BEFORE`, `msg_id::MORE`), never from an inline
+  `' ... and ' . $n . ' more'` literal, so the text is translated.
+
+Only when no target object is known that could select the full list (e.g. the
+unit list, which does not know the page phrase) may the tail stay plain text —
+and that is a gap to close by threading the context, not a licence to skip the
+link. When adding a new truncated list, pick (or create) the "show all" view
+first, then wire the tail to it.

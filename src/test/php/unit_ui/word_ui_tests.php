@@ -195,7 +195,18 @@ class word_ui_tests
         $test_page .= $html->text_h2('values related to ' . $wrd_zh->name());
         $test_page .= 'values by impact: ' . $list->values_by_word($wrd_zh, $msg, $dto) . '<br>';
         $test_page .= 'most relevant: ' . $list->values_most_relevant($wrd_zh, $msg, $dto) . '<br>';
+        // the phrase values view shows the same values in up to four wrapping columns
+        $test_page .= 'in columns: ' . $list->values_in_columns($wrd_zh, $msg, $dto) . '<br>';
         $t->html_page_test($test_page, 'word html components', 'word', $msg);
+
+        $t->subheader($ts . 'values in columns');
+        $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);
+        $test_name = 'the values are shown in a wrapping column row';
+        $t->assert_text_contains($test_name, $col_html, 'class="row');
+        $test_name = 'the phrase of the page is not repeated as a column headline';
+        $t->assert_text_not_contains($test_name, $col_html, styles::VALUE_GROUP_TITLE . '">' . word_names::ZH);
+        $test_name = 'without a word no column is shown';
+        $t->assert($test_name, $list->values_in_columns(null, $msg, $dto), '');
 
         $t->subheader($ts . 'related phrases');
         $test_name = 'the symbol triple of the word is shown';

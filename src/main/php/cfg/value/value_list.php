@@ -1338,6 +1338,22 @@ class value_list extends sandbox_value_list
     }
 
     /**
+     * reduce this value list in place to the given number of the most relevant values
+     * a max of zero or less keeps the complete list, because a limit of zero means "no limit"
+     * like in sql_creator::set_page
+     *
+     * @param int $max the number of values to keep
+     * @return void
+     */
+    function keep_most_relevant(int $max): void
+    {
+        $this->sort();
+        if ($max > 0 and $this->count() > $max) {
+            $this->set_lst(array_slice($this->lst(), 0, $max));
+        }
+    }
+
+    /**
      * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */

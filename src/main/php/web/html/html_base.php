@@ -46,11 +46,13 @@ include_once html_paths::CONST . 'icons.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
 //include_once html_paths::SHARED_CONST . 'files.php';
 //include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once html_paths::SHARED_CONST . 'triples.php';
 //include_once html_paths::SHARED_CONST . 'views.php';
 //include_once html_paths::SHARED_CONST . 'words.php';
 //include_once html_paths::SHARED_ENUM . 'languages.php';
 //include_once html_paths::SHARED_ENUM . 'messages.php';
 //include_once html_paths::SHARED_HELPER . 'Message.php';
+//include_once html_paths::SHARED_TYPES . 'position_types.php';
 //include_once html_paths::SHARED_TYPES . 'view_styles.php';
 //include_once html_paths::SHARED . 'api.php';
 //include_once html_paths::SHARED . 'url_var.php';
@@ -61,11 +63,13 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -2138,6 +2142,47 @@ class html_base
     function div_col_min_width(string $text, int $min_width): string
     {
         return '<div class="col" style="min-width: ' . $min_width . 'px">' . $text . '</div>';
+    }
+
+    /**
+     * combine the given columns to one row that shows them side by side on wide screens
+     * and wraps them onto fewer rows (down to a single stacked column) as the screen gets
+     * narrower than the configured side widths;
+     * used for the fixed columns of a 'side or below' view group (view_exe::dsp_entries)
+     * and for the data driven columns of the phrase values view (value_list::columns_by_phrase)
+     *
+     * @param array $col_lst the html code of the columns; empty columns are skipped
+     * @param user_message $msg to enrich with problems and suggested solutions
+     * @return string the html code of the row with the wrapping columns
+     */
+    function div_row_wrapping_cols(array $col_lst, user_message $msg): string
+    {
+        global $ui_sys;
+
+        if ($ui_sys?->cfg !== null) {
+            $min_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
+                $msg, def::FALLBACK_MIN_SIDE_WIDTH);
+            $wide_width = (int)$ui_sys->cfg->get_by(
+                [triples::SIDE_WIDTH, words::MAX, words::LAYOUT, words::FRONTEND, words::USER],
+                $msg, def::FALLBACK_WIDE_SIDE_WIDTH);
+        } else {
+            $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
+            $wide_width = def::FALLBACK_WIDE_SIDE_WIDTH;
+        }
+        // size each column so that up to MAX_SIDE_COLUMNS fit at the configured wide width
+        // and the flex row wraps to fewer columns as the screen gets narrower;
+        // never narrower than half the min side width so two columns still fit above it
+        $col_width = max(
+            (int)round($wide_width / position_types::MAX_SIDE_COLUMNS),
+            (int)round($min_width / 2));
+        $cols = '';
+        foreach ($col_lst as $col) {
+            if ($col != '') {
+                $cols .= $this->div_col_min_width($col, $col_width);
+            }
+        }
+        return $this->div_row($cols);
     }
 
     function add_style(string $text, ?int $style_id = null): string

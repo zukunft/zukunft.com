@@ -684,7 +684,23 @@ class word extends sandbox_code_id
      */
     function load_values_related(user_message $msg): void
     {
-        $this->values_related = $this->reload_value_list($msg);
+        $this->values_related = $this->reload_value_list($msg, 1, $this->values_read_limit());
+    }
+
+    /**
+     * the configured number of the most relevant values read for one phrase
+     * which is the base of the phrase values view that picks the column phrases from them
+     *
+     * @return int the maximal number of values to read for this word
+     */
+    private function values_read_limit(): int
+    {
+        global $cfg;
+
+        $limit = $cfg?->get_by(
+            [words::READ, words::VALUES, words::LIMIT, words::LISTS, words::FRONTEND, words::USER],
+            def_shared::FALLBACK_PHRASE_VALUES_READ);
+        return (int)($limit ?? def_shared::FALLBACK_PHRASE_VALUES_READ);
     }
 
     /**
@@ -1162,6 +1178,11 @@ class word extends sandbox_code_id
         // load the phrase names of each value group so that the related value list
         // shows the phrase names (and not only the links) in the api and frontend
         $val_lst->load_phrases($msg);
+        // keep only the most relevant values, because the impact of a value is the max impact of
+        // its phrases and therefore not a database field that the query could order by
+        // TODO Prio 2 order and limit already in the sql once the value union query supports it
+        //      (see the TODO in value_list::load_sql_by_phr_lst) and drop the cut here
+        $val_lst->keep_most_relevant($size);
         return $val_lst;
     }
 
