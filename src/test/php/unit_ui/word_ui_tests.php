@@ -476,7 +476,7 @@ class word_ui_tests
             url_var::DESCRIPTION => 'undo context',
             url_var::PLURAL => 'stale plural',
         ];
-        $tab_html = $list->view_tab_box($wrd_tab, true, $tab_url);
+        $tab_html = $list->view_tab_box($wrd_tab, $msg, true, $tab_url);
         $t->assert_text_contains($test_name, $tab_html, $my_tab_ref);
 
         $test_name = '... with the your and instead columns';
@@ -524,18 +524,18 @@ class word_ui_tests
 
         $test_name = 'an admin also sees the admin-only impact overwrite';
         $ui_sys->usr = new user_ui($t->usr_admin->api_json());
-        $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, true), $mtr->text_db_field(fields::FLD_IMPACT));
+        $t->assert_text_contains($test_name, $list->view_tab_box($wrd_tab, $msg, true), $mtr->text_db_field(fields::FLD_IMPACT));
 
         $test_name = 'without overwrites no my and no others tab is shown';
         $ui_sys->usr = new user_ui($t->usr_normal->api_json());
         $wrd_plain = new word($t_wrd->word()->api_json());
-        $plain_html = $list->view_tab_box($wrd_plain, true);
+        $plain_html = $list->view_tab_box($wrd_plain, $msg, true);
         $t->assert_text_not_contains($test_name, $plain_html, $my_tab_ref);
         $t->assert_text_not_contains($test_name, $plain_html, $others_tab_ref);
 
         $test_name = 'without a logged in user no my and no others tab is shown';
         unset($ui_sys->usr);
-        $anon_html = $list->view_tab_box($wrd_tab, true);
+        $anon_html = $list->view_tab_box($wrd_tab, $msg, true);
         $t->assert_text_not_contains($test_name, $anon_html, $my_tab_ref);
         $t->assert_text_not_contains($test_name, $anon_html, $others_tab_ref);
 

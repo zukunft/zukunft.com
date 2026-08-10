@@ -73,7 +73,7 @@ class component_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 
         $t->subheader($ts . 'add ' . components::TEST_ADD_NAME);
-        $t->assert_write_named($t_cmp->component_filled_add(), components::TEST_ADD_NAME);
+        $t->assert_write_named($t_cmp->component_filled_add(), components::TEST_ADD_NAME, $msg);
 
         /*
         // test loading of one component
@@ -120,7 +120,7 @@ class component_write_tests
 
         // check if the component adding has been logged; re-adding a component that a previous run
         // left excluded can land in the user sandbox row, shown with 'user' after the action
-        $log_ui = $t->log_last_ui_by_field($cmp, component::FLD_NAME, $cmp->id());
+        $log_ui = $t->log_last_ui_by_field($cmp, component::FLD_NAME, $cmp->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test View Component"';
@@ -157,7 +157,7 @@ class component_write_tests
 
         // check if the component renaming has been logged (with 'user' after the action if the
         // rename landed in the user sandbox row, like the add above)
-        $log_ui = $t->log_last_ui_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id());
+        $log_ui = $t->log_last_ui_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "System Test View Component Renamed" from "System Test View Component"';
@@ -184,7 +184,7 @@ class component_write_tests
         // check if the component parameter adding have been logged
         // TODO for testing always use the latest table name
         // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
-        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id());
+        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         // TODO Prio 1 fix it
@@ -193,7 +193,7 @@ class component_write_tests
             $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "Just added for testing the user sandbox" from "System Test View Component description"';
         }
         $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
-        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id());
+        $log_ui = $t->log_last_ui_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         // TODO Prio 1 fix it

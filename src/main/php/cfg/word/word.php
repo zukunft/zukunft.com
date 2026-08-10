@@ -767,7 +767,7 @@ class word extends sandbox_code_id
         // default word view, so the views tab of the word page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
-            $msk->load_by_code_id(views_shared::WORD);
+            $msk->load_by_code_id(views_shared::WORD, $msg);
             if ($msk->id() > 0) {
                 $msk_lst->add($msk);
             }
@@ -776,16 +776,22 @@ class word extends sandbox_code_id
     }
 
     /**
-     * add the fully loaded default view of this word to the given list (skipping duplicates and
-     * words without a default view); the view is loaded by id so that it carries its name
+     * add the fully loaded default view of this word to the given list (skipping duplicates,
+     * words without a default view and a view that cannot be loaded); the view is loaded by id
+     * so that it carries its name
      * @param view_list $msk_lst the list the default view is added to
+     * @param user_message $msg to collect the load errors
      */
     private function add_default_view_to(view_list $msk_lst, user_message $msg): void
     {
         if ($this->view != null and $this->view->id() > 0) {
             $msk = new view($this->get_user());
             $msk->load_by_id($this->view->id(), $msg);
-            $msk_lst->add($msk);
+            // a view that cannot be loaded must not enter the list, because a list holding an
+            // unloaded entry is not empty and would suppress the system default view fallback
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
+            }
         }
     }
 

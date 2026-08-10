@@ -737,7 +737,7 @@ class change_log extends db_object_seq_id_user
             $this->set_class($class, true);
             $this->set_field($fld);
             $qp_usr = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
-            $db_row = $this->newer_row($db_row, $db_con->get1($qp_usr));
+            $db_row = $this->newer_row($db_row, $db_con->get1($qp_usr, $msg));
         }
 
         if ($db_row !== false and $db_row !== null and $db_row !== []) {

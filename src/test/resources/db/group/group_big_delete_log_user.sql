@@ -20,5 +20,5 @@ SELECT group_big_delete_log_user
     (3::bigint,
      3::smallint,
      324::smallint,
-     'Pi'::text,
+     'π'::text,
      '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+'::text);

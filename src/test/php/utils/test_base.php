@@ -3221,9 +3221,14 @@ class test_base
      *
      * @param sandbox_named|sandbox_link_named $sbx
      * @param string $name target name of the object
+     * @param user_message $msg to collect the mapping errors
      * @return bool
      */
-    function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
+    function assert_write_named(
+        sandbox_named|sandbox_link_named $sbx,
+        string                           $name,
+        user_message                     $msg
+    ): bool
     {
 
         // check for leftovers but protect the object to add by using a clone
@@ -3248,7 +3253,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_ADD->value);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_ADD->value, $msg);
         } else {
             $result = false;
         }
@@ -3289,7 +3294,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, msg_id::LOG_UPDATE->value, $name);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, msg_id::LOG_UPDATE->value, $msg, $name);
         } else {
             $result = false;
         }
@@ -3461,8 +3466,13 @@ class test_base
      * @param string $key target name of the object
      * @return bool
      */
-    function assert_write(user|ip_range|pod|job $obj, string $key, string $key_name): bool
+    function assert_write(
+        user|ip_range|pod|job $obj,
+        string                $key,
+        string                $key_name
+    ): bool
     {
+        $msg = new user_message($this->usr1);
 
         // check for leftovers
         $del_obj = clone $obj;
@@ -3481,7 +3491,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_log($obj, $this->usr1, $obj->key_field(), $key, msg_id::LOG_ADD->value);
+            $result = $this->write_log($obj, $this->usr1, $obj->key_field(), $key, msg_id::LOG_ADD->value, $msg);
         } else {
             $result = false;
         }
@@ -4521,11 +4531,12 @@ class test_base
         string                        $fld,
         string                        $name,
         string                        $action,
+        user_message                  $msg,
         ?string                       $old_name = ''
     ): bool
     {
         $lib = new library();
-        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
+        $result = $this->log_last_by_field($sbx, $msg, $fld, $sbx->id(), true);
         $target = $usr_req->name() . ' ' . $action . ' ';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= 'to "' . $name . '" from "' . $old_name . '"';
@@ -4545,6 +4556,7 @@ class test_base
      * @param string $fld
      * @param string $name
      * @param string $action
+     * @param user_message $msg to collect the mapping errors
      * @param string|null $old_name
      * @return bool
      */
@@ -4554,11 +4566,12 @@ class test_base
         string                           $fld,
         string                           $name,
         string                           $action,
+        user_message                     $msg,
         ?string                          $old_name = ''
     ): bool
     {
         $lib = new library();
-        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id());
+        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id(), $msg);
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ';
         // a change written to the user sandbox row is logged to the user overlay table and shown
@@ -4581,8 +4594,8 @@ class test_base
 
     private
     function write_named_link_log(
-        triple $lnk,
-        string $action,
+        triple       $lnk,
+        string       $action,
         user_message $msg
     ): bool
     {
@@ -4660,8 +4673,7 @@ class test_base
         }
     }
 
-    private
-    function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    private function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
         $msg = new user_message($usr);
         $id = $sbx->id();
@@ -4672,14 +4684,13 @@ class test_base
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
         if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, fields::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
+            return $this->write_named_log($sbx, fields::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text(), $msg);
         } else {
             return false;
         }
     }
 
-    private
-    function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
+    private function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
         $msg = new user_message($usr);
         $id = $sbx->id();
@@ -4692,7 +4703,7 @@ class test_base
         $sbx->description = $new_description;
         if ($this->assert_true($test_name, $sbx->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
-                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $msg, $old_description);
         } else {
             return false;
         }
@@ -4745,7 +4756,7 @@ class test_base
         $lnk->order_nbr = $new_order_nbr;
         if ($this->assert_true($test_name, $lnk->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                formula_link::FLD_ORDER, $new_order_nbr, msg_id::LOG_UPDATE->value, $old_order_nbr);
+                formula_link::FLD_ORDER, $new_order_nbr, msg_id::LOG_UPDATE->value, $msg, $old_order_nbr);
         } else {
             return false;
         }
@@ -4782,7 +4793,7 @@ class test_base
         $lnk->description = $new_description;
         if ($this->assert_true($test_name, $lnk->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                fields::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $msg, $old_description);
         } else {
             return false;
         }
@@ -4811,11 +4822,12 @@ class test_base
         string       $fld,
         string       $name,
         string       $action,
+        user_message $msg,
         ?string      $old_name = ''
     ): bool
     {
         $lib = new library();
-        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id());
+        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $sbx->id(), $msg);
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . $sbx->get_user()->name() . ' ';
         // a change written to the user sandbox row is logged to the user overlay table and shown
@@ -4847,7 +4859,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'del ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         if ($this->assert_true($test_name, $sbx->del($msg), $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_DEL->value);
+            return $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_DEL->value, $msg);
         } else {
             return false;
         }
@@ -5684,13 +5696,15 @@ class test_base
      */
     function log_last_by_field(
         sandbox|sandbox_multi|db_id_object_non_sandbox $sbx,
+        user_message                                   $msg,
         string                                         $fld = '',
         int|string|null                                $id = null,
         bool                                           $ex_time = false,
         bool                                           $usr_only = false
     ): string
     {
-        return $this->log_last_ui_by_field($sbx, $fld, $id, $usr_only)->dsp($ex_time);
+        $log_ui = $this->log_last_ui_by_field($sbx, $fld, $id, $msg, $usr_only);
+        return $log_ui->dsp($ex_time);
     }
 
     /**
@@ -5705,8 +5719,9 @@ class test_base
      */
     function log_last_ui_by_field(
         sandbox|sandbox_multi|db_id_object_non_sandbox $sbx,
-        string                                         $fld = '',
-        int|string|null                                $id = null,
+        string                                         $fld,
+        int|string|null                                $id,
+        user_message                                   $msg,
         bool                                           $usr_only = false
     ): change_log_ui
     {
@@ -5717,11 +5732,8 @@ class test_base
         } else {
             $log = $sbx->log_object();
         }
-        $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        return new change_log_ui($log->api_json());
         $log->load_by_field_row($sbx::class, $msg, $fld, $id, $usr_only);
-        $log_ui = new change_log_ui($log->api_json());
-        return $log_ui->dsp($ex_time);
+        return new change_log_ui($log->api_json());
     }
 
 

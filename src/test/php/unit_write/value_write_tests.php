@@ -99,7 +99,7 @@ class value_write_tests
         $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepare');
-        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD, $msg);
 
         $t->subheader($ts . 'create');
         $test_name = 'create test word used for test values';
@@ -281,7 +281,7 @@ class value_write_tests
             } elseif ($add_val->is_big()) {
                 $val_class = change_values_big::class;
             }
-            $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
+            $result = $t->log_last_by_field($add_val, $msg, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
         // TODO Prio 2 activate
@@ -322,7 +322,7 @@ class value_write_tests
 
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
-            $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
+            $result = $t->log_last_by_field($add_val2, $msg, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
         // TODO Prio 2 activate
@@ -348,7 +348,7 @@ class value_write_tests
 
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
-            $result = $t->log_last_by_field($added_val, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
+            $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
         // TODO fix it
         $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
@@ -379,7 +379,7 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id, $msg);
         if ($val_usr2->is_id_set()) {
-            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
+            $result = $t->log_last_by_field($val_usr2, $msg, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed to "' . self::NUMBER_CHANGED . '" from "' . self::NUMBER_ADD . '"';
@@ -416,7 +416,7 @@ class value_write_tests
         $val_usr2->load_by_grp($phr_grp, $msg);
         $usr_marker = '';
         if ($val_usr2->is_id_set()) {
-            $log_ui = $t->log_last_ui_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id());
+            $log_ui = $t->log_last_ui_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(), $msg);
             $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
             $result = $log_ui->dsp(true);
         }

@@ -31,7 +31,7 @@ SELECT value_prime_p1_delete_log_user
         3,
         6,
         5,
-        -2,
+        5,
         0,
         0,
         0,

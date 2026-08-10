@@ -330,7 +330,7 @@ class triple extends sandbox_code_id
      */
     function load_by_id_with_related(int|string $id, user_message $msg, int $usr_id = 0): bool
     {
-        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id, $msg);
+        return $this->load_by_id($id, $msg, [url_var::INCL_RELATED => '1'], $usr_id);
     }
 
     /**

@@ -50,7 +50,7 @@ SELECT formula_insert_log_11110011110100000_user
         119,
         'scale minute to sec',
         1,
-        34,
+        36,
         'to convert times in minutes to seconds and the other way round',
         31,
         1,

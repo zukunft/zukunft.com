@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -102,7 +103,7 @@ class word_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 
         $t->subheader($ts . 'sandbox for ' . word_names::TEST_ADD);
-        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), word_names::TEST_ADD, $msg);
 
         $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . word_names::TEST_2021;
         $wrd_time = $t_db->test_word($msg, word_names::TEST_2021, phrase_type_shared::TIME);
@@ -321,12 +322,12 @@ class word_write_tests
         // a word without an own default view and without parents still offers the system
         // default word view, so the views tab of the word page is never empty
         $test_name = '... and the related views fall back to the default word view';
-        $wrd_add->load_views_related();
+        $wrd_add->load_views_related($msg);
         $t->assert_false($test_name, $wrd_add->views_related->is_empty());
 
         $test_name = '... check if the word creation with the name "' . word_names::TEST_ADD . '" has been logged';
         if ($wrd_add->id() > 0) {
-            $log_ui = $t->log_last_ui_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id());
+            $log_ui = $t->log_last_ui_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), $msg);
             $result = $log_ui->dsp(true);
             $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ';
             // re-adding a word that a previous test left excluded can land in the user sandbox
@@ -498,16 +499,16 @@ class word_write_tests
         // the user sandbox row and shown with 'user' after the action if usr1 cannot change the
         // standard row e.g. because a previous run has left the standard row to another owner;
         // all three fields are written by the same save, so the marker of the plural row is reused
-        $log_ui = $t->log_last_ui_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id());
+        $log_ui = $t->log_last_ui_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"' . word_names::TEST_RENAMED . 's"';
         $t->assert('word->load plural for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
-        $result = $t->log_last_by_field($wrd_reloaded, fields::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
+        $result = $t->log_last_by_field($wrd_reloaded, $msg, fields::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "' . word_names::TEST_RENAMED . ' description" from "' . word_names::TEST_ADD_COM . '"';
         $t->assert('word->load description for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
         $t->assert('word->load ref_2 for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
-        $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
+        $result = $t->log_last_by_field($wrd_reloaded, $msg, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"differentiator filler"';
         $t->assert('word->load type_id for "' . word_names::TEST_RENAMED . '" logged', $result, $target);
 
@@ -599,6 +600,13 @@ class word_write_tests
         $result = $wrd_read_ui->name_link($back);
         $t->assert('word->display "' . word_names::MATH . '"', $result, $target);
 
+        // the frontend load of an existing word fills the object from the api
+        $test_name = 'frontend load by id fills the word from the api';
+        $msg_ui = new user_message_ui();
+        $wrd_load_ui = new word_ui();
+        $t->assert_true($test_name, $wrd_load_ui->load_by_id($wrd_read->id(), $msg_ui));
+        $t->assert($test_name . ' name', $wrd_load_ui->name(), word_names::MATH);
+
         // check if user 2 can exclude a word without influencing user 1
         $wrd_usr1 = $t_db->load_word($msg, word_names::TEST_RENAMED);
         $wrd_usr2 = $t_db->load_word($msg, word_names::TEST_RENAMED, $t->usr2);
@@ -614,10 +622,18 @@ class word_write_tests
         $t->assert('but the word "' . word_names::TEST_RENAMED . '" is still the same for user 1', $result, $target);
 
         $test_name = 'delete the word also for user 1';
+        $del_id = $wrd_usr1_reloaded->id();
         $wrd_usr1_reloaded->del($msg);
         $wrd_usr1_deleted = new word($t->usr1);
         $wrd_usr1_deleted->load_by_name(word_names::TEST_RENAMED, $msg);
         $t->assert($test_name, $wrd_usr1_deleted->id(), 0);
+
+        // the frontend load of the deleted word reports a clean not-found message to the user
+        // instead of mapping the backend error json (e.g. for a stale link to a deleted object)
+        $test_name = 'frontend load by the deleted id reports the word as not found';
+        $wrd_del_ui = new word_ui();
+        $t->assert_false($test_name, $wrd_del_ui->load_by_id($del_id, $msg_ui));
+        $t->assert_true($test_name . ' message', $msg_ui->has_msg_id(msg_id::OBJECT_NOT_FOUND));
 
         // TODO test the creation of a new scaling word e.g. dozen for 12
         //      and adding a related formula and calculating values based on the added formula

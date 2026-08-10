@@ -575,9 +575,9 @@ class ui_list extends ui_base
             // row values compared to the standard values); an empty string if the user is not
             // logged in or has no overwrites, which drops the tab (tab_box skips empty tabs)
             $preview = new ui_preview();
-            $my_html = $preview->user_overwrites_table($dbo, $url_array);
+            $my_html = $preview->user_overwrites_table($dbo, $msg, $url_array);
             // tab 4: the shared overwrites that other users have done on this object
-            $others_html = $preview->other_overwrites_table($dbo, $url_array);
+            $others_html = $preview->other_overwrites_table($dbo, $msg, $url_array);
             $result = $html->tab_box([
                 $mtr->txt(msg_id::FORM_SUB_TITLE_VIEWS) => $views_html,
                 $mtr->txt(msg_id::FORM_SUB_TITLE_LOG) => $log_html,

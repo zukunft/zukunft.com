@@ -180,6 +180,7 @@ class word_write_url_tests extends word_url_tests
     {
         // start from a clean state so the base word has no leftover overlay of a previous run
         $this->cleanup_test_words($t);
+        $msg = new user_message();
 
         // usr1 creates and owns the base word with the original description
         $base = test_words::add_owned($t->usr1, word_names::TEST_ADD_COM);
@@ -192,9 +193,9 @@ class word_write_url_tests extends word_url_tests
         // change_word_by_other_user) overwrites the description, so the workflow pages
         // rendered for usr2 also show the 'others' tab with this shared overwrite
         $other = new user();
-        $other->load_by_id($t->usr_normal->id());
+        $other->load_by_id($t->usr_normal->id(), $msg);
         $wrd_other = new word($other);
-        $wrd_other->load_by_name(word_names::TEST_ADD);
+        $wrd_other->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_other->set_description(word_names::TEST_OTHER_COM);
         $other_msg = new user_message($other);
         $wrd_other->save($other_msg);
@@ -206,7 +207,7 @@ class word_write_url_tests extends word_url_tests
         // the page data of the changing user must list the other user's overwrite
         $test_name = 'the others tab data lists the description overwrite of the other user';
         $wrd_chk = new word($t->usr2);
-        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        $wrd_chk->load_by_name(word_names::TEST_ADD, $msg);
         $oth_ovr = $wrd_chk->other_overwrites_api_array(new user_message($t->usr2));
         $oth_found = false;
         foreach ($oth_ovr as $oth_row) {
@@ -220,7 +221,7 @@ class word_write_url_tests extends word_url_tests
         // remove the third user overwrite by setting the description back to the base value,
         // because the shared cleanup only covers usr1 and usr2 (see change_word_by_other_user)
         $wrd_undo = new word($other);
-        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_undo->set_description(word_names::TEST_ADD_COM);
         $undo_msg = new user_message($other);
         $wrd_undo->save($undo_msg);

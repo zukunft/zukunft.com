@@ -53,7 +53,7 @@ SELECT formula_insert_log_11110011110100000_user
         119::smallint,
         'scale minute to sec'::text,
         1::bigint,
-        34::smallint,
+        36::smallint,
         'to convert times in minutes to seconds and the other way round'::text,
         31::smallint,
         1::smallint,
