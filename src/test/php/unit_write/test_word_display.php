@@ -77,7 +77,7 @@ function run_word_display_test(all_tests $t): void
     $target = word_names::COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction, $msg);
-    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json(), $msg_ui);
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
     $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
     // TODO Prio 1 activate
@@ -90,7 +90,7 @@ function run_word_display_test(all_tests $t): void
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction, $msg);
     $wrd_ZH_ui = new word_ui($wrd_ZH->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json(), $msg_ui);
     $result = $wrd_ZH_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
     // loading the link types and rendering the graph reads from the database, so a semi page timeout is used
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target, $t::TIMEOUT_LIMIT_PAGE_SEMI);
@@ -105,7 +105,7 @@ function run_word_display_test(all_tests $t): void
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction, $msg);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json(), $msg_ui);
     $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
@@ -127,7 +127,7 @@ function run_word_display_test(all_tests $t): void
     $lnk_19_to_20 = $t_db->load_triple($msg, word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction, $msg);
     $wrd_2020_ui = new word_ui($wrd_2020->api_json());
-    $link_types_ui = new verb_list_ui($link_types->api_json());
+    $link_types_ui = new verb_list_ui($link_types->api_json(), $msg_ui);
     $result = $wrd_2020_ui->dsp_graph($direction, $msg_ui, $link_types_ui, 0);
     $result = $lib->trim_html($result);
     // TODO Prio 2 activate

@@ -199,7 +199,7 @@ class triple extends sandbox_code_id
         if ($msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
                 if ($url_array[url_var::PHRASE_FROM] != null) {
-                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto, $msg);
+                    $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $msg, $dto);
                 }
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
@@ -207,7 +207,7 @@ class triple extends sandbox_code_id
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
                 if ($url_array[url_var::PHRASE_TO] != null) {
-                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto, $msg);
+                    $this->set_to_by_id($url_array[url_var::PHRASE_TO], $msg, $dto);
                 }
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
@@ -349,7 +349,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
-                $this->set_from_by_id($value);
+                $this->set_from_by_id($value, $msg);
             }
         } elseif (array_key_exists(json_fields::FROM, $json_array)) {
             $value = $json_array[json_fields::FROM];
@@ -358,7 +358,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_from($phr);
             } else {
-                $this->set_from_by_id($value);
+                $this->set_from_by_id($value, $msg);
             }
         } else {
             $this->set_from(new phrase());
@@ -382,7 +382,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
-                $this->set_to_by_id($value);
+                $this->set_to_by_id($value, $msg);
             }
         } elseif (array_key_exists(json_fields::TO, $json_array)) {
             $value = $json_array[json_fields::TO];
@@ -391,7 +391,7 @@ class triple extends sandbox_code_id
                 $phr->api_mapper($value, $msg);
                 $this->set_to($phr);
             } else {
-                $this->set_to_by_id($value);
+                $this->set_to_by_id($value, $msg);
             }
         } else {
             $this->set_to(new phrase());
@@ -548,11 +548,11 @@ class triple extends sandbox_code_id
 
     function set_from_by_id(
         int|string       $id,
-        data_object|null $dto = null,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $dto, $msg);
+        $this->from = $this->set_phrase_by_id($id, $msg, $dto);
     }
 
     function set_verb(verb $vrb): void
@@ -574,11 +574,11 @@ class triple extends sandbox_code_id
 
     function set_to_by_id(
         int|string       $id,
-        data_object|null $dto = null,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $dto, $msg);
+        $this->to = $this->set_phrase_by_id($id, $msg, $dto);
     }
 
     /**
@@ -587,14 +587,14 @@ class triple extends sandbox_code_id
      * a non-numeric value is resolved as the phrase name via the request cache or the backend
      *
      * @param int|string $id the phrase id or the phrase name posted by the edit form
-     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
      * @param user_message $msg to report a phrase name that the user needs to correct
+     * @param data_object|null $dto the request cache used to resolve the phrase without a backend call
      * @return phrase|null the resolved phrase or null if the name is unknown
      */
     private function set_phrase_by_id(
         int|string       $id,
-        data_object|null $dto,
-        user_message     $msg = new user_message()
+        user_message     $msg,
+        data_object|null $dto = null
     ): phrase|null
     {
         $phr = null;

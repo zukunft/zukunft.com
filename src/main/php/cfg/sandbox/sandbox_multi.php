@@ -3249,7 +3249,7 @@ class sandbox_multi extends db_object_multi_user
         sql_db        $db_con,
         sandbox_multi $db_obj,
         sandbox_multi $norm_obj,
-        user_message  $msg = new user_message()
+        user_message  $msg
     ): bool
     {
         // the sql creator is used more than once, so create it upfront

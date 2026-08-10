@@ -25,9 +25,25 @@ the done passes are in the git history; only what is still open is listed here.
    the "assigned" array) and `component::set_col_sub_phrase` (the never implemented sub phrase
    suggestion).
 
-2. **remove the 57 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
+2. **remove the 24 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
    that passes nothing silently loses its messages, so the default is the same drop in disguise.
-   one family per commit with its callers.
+   one family per commit with its callers. done so far: `api_array` (33), the 21 `type_lists::set_*`
+   plus the three list `__construct` (whose `$msg` is now `?user_message $msg = null` with the
+   fallback created in the body, and the five test callers that pass an api json now pass a message
+   too), `update_standard_fields`, `save_fields_func`, `generate_ref_text` and the three
+   `web/triple::set_*_by_id` (reordered to `(id, $msg, $dto = null)`, matching `cfg/ref`).
+
+   what is left needs a decision, not just mechanics:
+   - `api_json` (8) - the documented trap below, 232 test call sites
+   - the `expression` text family `ref_text` / `get_ref_text` / `get_usr_text` / `get_ref_part` /
+     `get_next_term_from_ref` (7) - `ref_text` alone has 25 callers, 24 of them without a message,
+     and it reads like a plain getter used in `log_debug` lines, so making `$msg` mandatory there
+     is a readability trade, not only a mechanical one
+   - `change_log::add_table` / `add_field` / `add_action` (3) - contained on paper, but their only
+     callers are `set_action` / `set_table` / `set_field`, which have no `$msg` and are called all
+     over the change log family, so the cascade is the real size
+   - `set_user_text` (32 callers), `add_by_name_direct` (13), `popup_changes` (5), `add` (2),
+     `import::end` (3 defs) - each small enough for one commit
 
    the `api_json` family (8 defaults) is the trap — read this before retrying. its 53 **production**
    call sites already pass their message, so the drop is fixed there; removing the defaults breaks

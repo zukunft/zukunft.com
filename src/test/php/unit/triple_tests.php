@@ -237,8 +237,8 @@ class triple_tests
         $test_name = 'a triple with only one linked phrase is rejected';
         $trp_ui = new triple_ui();
         $trp_ui->set_name(triple_names::SYSTEM_TEST_ADD);
-        $trp_ui->set_from_by_id(1, $dto_ui);
         $val_msg = new user_message_ui();
+        $trp_ui->set_from_by_id(1, $val_msg, $dto_ui);
         $t->assert_false($test_name, $trp_ui->input_valid($val_msg, url_var::CRUD_UPDATE));
         $test_name = '... and the user is told that both phrases are needed';
         $t->assert_true($test_name, $val_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));

@@ -1615,8 +1615,8 @@ class formula_map extends sandbox_code_id
      * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
     function generate_ref_text(
-        ?term_list   $trm_lst = null,
-        user_message $msg = new user_message()
+        ?term_list   $trm_lst,
+        user_message $msg
     ): bool
     {
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [

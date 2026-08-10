@@ -2405,7 +2405,7 @@ class sandbox extends db_object_seq_id_user
     function update_standard_fields(
         sql_db       $db_con,
         sandbox      $norm_obj,
-        user_message $msg = new user_message()
+        user_message $msg
     ): bool
     {
         // the sql creator is used more than once, so create it upfront

@@ -57,13 +57,17 @@ class verb_list extends type_list
      */
 
     /**
-     * @param string|null $api_json string with the api json message to fill the list
      * the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
+     * @param string|null $api_json string with the api json message to fill the list
+     * @param user_message|null $msg to report the api mapping problems; null loses them
      */
-    function __construct(?string $api_json = null, user_message $msg = new user_message())
+    function __construct(?string $api_json = null, ?user_message $msg = null)
     {
         $this->reset([]);
         if ($api_json != null) {
+            // only the api mapping needs a message; a caller that passes none loses the mapping
+            // problems, so every caller that has one should hand it over
+            $msg = $msg ?? new user_message();
             $this->set_from_json($api_json, $msg);
         }
     }

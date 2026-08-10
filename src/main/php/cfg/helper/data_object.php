@@ -1395,7 +1395,7 @@ class data_object
             // TODO Prio 2 use fast element_list block save process
             foreach ($frm_lst->lst() as $frm) {
                 if ($msg->is_ok() and !$frm->is_excluded()) {
-                    $frm->generate_ref_text($cache);
+                    $frm->generate_ref_text($cache, $msg);
                     if ($frm->id() <= 0) {
                         log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $msg->all_message_text());
                     }

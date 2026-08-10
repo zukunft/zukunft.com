@@ -195,7 +195,7 @@ class test_lib
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-        $dto_ui->typ_lst_cache = new type_lists($api_msg);
+        $dto_ui->typ_lst_cache = new type_lists($api_msg, new user_message());
 
         // import system views from resource json file so that not all details need to be repeated in the test data creation class
         $imp = new import();

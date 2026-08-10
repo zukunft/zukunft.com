@@ -9,7 +9,7 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-216 creations below the entry points: 159 explained, 57 parameter defaults and 0 still unexplained
+186 creations below the entry points: 162 explained, 24 parameter defaults and 0 still unexplained
 
 ## parameter defaults
 
@@ -19,41 +19,10 @@ a default value drops the message of a caller that passes none, so each of these
 frontend: /component/execute/ui_preview.php:210 - user_message                                          $msg = new user_message()
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /sandbox/sandbox_list_named.php:214 - user_message                                                                                         $msg = new user_message()
-frontend: /system/sys_log_list.php:76 - function __construct(?string $api_json = null, user_message $msg = new user_message())
-frontend: /system/sys_log_list.php:153 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-frontend: /types/type_lists.php:153 - function __construct(?string $api_json = null, user_message $msg = new user_message())
-frontend: /types/type_lists.php:406 - function set_user_profiles(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:412 - function set_phrase_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:418 - function set_formula_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:424 - function set_formula_link_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:430 - function set_view_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:436 - function set_view_styles(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:442 - function set_view_link_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:448 - function set_view_relation_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:454 - function set_component_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:460 - function set_component_link_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:466 - function set_position_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:472 - function set_source_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:478 - function set_ref_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:484 - function set_share_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:490 - function set_protection_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:496 - function set_languages(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:502 - function set_language_forms(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:508 - function set_verbs(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:514 - function set_sys_log_statuum(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:520 - function set_job_types(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:526 - function set_change_action_list(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:532 - function set_change_table_list(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_lists.php:538 - function set_change_field_list(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /verb/verb_list.php:63 - function __construct(?string $api_json = null, user_message $msg = new user_message())
-frontend: /word/triple.php:552 - user_message     $msg = new user_message()
-frontend: /word/triple.php:578 - user_message     $msg = new user_message()
-frontend: /word/triple.php:597 - user_message     $msg = new user_message()
-main backend: /formula/formula.php:1531 - user_message $msg = new user_message()
+frontend: /system/sys_log_list.php:160 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /formula/formula_map.php:567 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:578 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:589 - user_message $msg = new user_message()
-main backend: /formula/formula_map.php:1619 - user_message $msg = new user_message()
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_multi.php:179 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
@@ -63,9 +32,7 @@ main backend: /import/import.php:1097 - user_message $msg = new user_message()
 main backend: /log/change_log.php:817 - user_message $msg = new user_message()
 main backend: /log/change_log.php:853 - user_message $msg = new user_message()
 main backend: /log/change_log.php:884 - user_message $msg = new user_message()
-main backend: /sandbox/sandbox.php:2408 - user_message $msg = new user_message()
 main backend: /sandbox/sandbox_list_named.php:505 - user_message                          $msg = new user_message()
-main backend: /sandbox/sandbox_multi.php:3252 - user_message  $msg = new user_message()
 main backend: /system/ip_range_list.php:76 - user_message $msg = new user_message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 shared: /calc/expression.php:199 - user_message                $msg = new user_message()
