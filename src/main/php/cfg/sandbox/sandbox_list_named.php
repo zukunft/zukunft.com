@@ -362,6 +362,7 @@ class sandbox_list_named extends sandbox_list
         msg_id             $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
     ): user_message
     {
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         foreach ($this->lst() as $sbx) {
             $sbx_to_chk = $sbx_lst->get($sbx->id());
@@ -549,6 +550,7 @@ class sandbox_list_named extends sandbox_list
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
         $usr = $this->get_user();
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
@@ -587,6 +589,7 @@ class sandbox_list_named extends sandbox_list
     ): user_message
     {
         $usr = $this->get_user();
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
 
         // loop over the objects of this list because it is expected to be smaller than tha cache list
@@ -610,6 +613,7 @@ class sandbox_list_named extends sandbox_list
 
     function add_id_by_name(array $id_lst, string $class): user_message
     {
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         foreach ($id_lst as $name => $id) {
             if ($id != 0 and $name != '') {
@@ -1207,11 +1211,14 @@ class sandbox_list_named extends sandbox_list
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list();
             $sc_par_lst->add(sql_type::LOG);
+            // a per item buffer, because one object that cannot be written must not stop the list
             $msg = new user_message();
             $qp = $sbx->sql_insert($sc, $msg, $sc_par_lst);
             if ($msg->is_ok()) {
                 $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
+            } else {
+                log_err('sql insert of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
             }
         }
         return $sql_list;
@@ -1231,11 +1238,14 @@ class sandbox_list_named extends sandbox_list
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $sc_par_lst->add(sql_type::LOG);
+                // a per item buffer, because one object that cannot be written must not stop the list
                 $msg = new user_message();
                 $qp = $sbx->sql_update($sc, $db_row, $msg, $sc_par_lst);
                 if ($msg->is_ok() and $qp != null) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
+                } elseif (!$msg->is_ok()) {
+                    log_err('sql update of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
                 }
             }
         }
@@ -1256,11 +1266,14 @@ class sandbox_list_named extends sandbox_list
                 // check always user sandbox and normal name, because reading from the database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $sc_par_lst->add(sql_type::LOG);
+                // a per item buffer, because one object that cannot be written must not stop the list
                 $msg = new user_message();
                 $qp = $sbx->sql_delete($sc, $msg, $sc_par_lst);
                 if ($msg->is_ok()) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
+                } else {
+                    log_err('sql delete of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
                 }
             }
         }
@@ -1306,6 +1319,8 @@ class sandbox_list_named extends sandbox_list
                         // check always user sandbox and normal name, because reading from database for check would take longer
                         $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                         $sc_par_lst->add(sql_type::LOG);
+                        // a per item buffer, because one failing object must not stop the list;
+                        // it is merged into the request message below
                         $upd_usr_msg = new user_message();
                         $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
                         if (!$upd_usr_msg->is_ok()) {

@@ -492,6 +492,7 @@ class sandbox_list extends list_db_write
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
     ): user_message
     {
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         if ($obj_to_add->get_user() == null) {
             $obj_to_add->set_user($this->get_user());

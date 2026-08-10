@@ -1129,11 +1129,11 @@ class ref extends sandbox_link
 
     /**
      * set the log entry parameter for a new reference
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
-        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {

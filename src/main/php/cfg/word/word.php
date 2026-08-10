@@ -1976,7 +1976,7 @@ class word extends sandbox_code_id
                     $this->update('view of word', $msg);
                 } else {
                     if (!$this->has_usr_cfg()) {
-                        if (!$this->add_usr_cfg()) {
+                        if (!$this->add_usr_cfg($msg)) {
                             $msg->add_id(msg_id::ADD_USER_CONFIG_FAILED);
                         }
                     }

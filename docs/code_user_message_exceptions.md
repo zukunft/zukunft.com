@@ -8,7 +8,7 @@ is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every
 directly above it (or trailing on the same line) explaining why a local message
 is needed - typically a buffer that is merged back or a message of a different user
 
-293 creations below the entry points: 26 explained, 88 parameter defaults and 179 still unexplained
+279 creations below the entry points: 62 explained, 88 parameter defaults and 129 still unexplained
 
 ## parameter defaults
 
@@ -93,9 +93,9 @@ main backend: /import/import.php:1101 - user_message $msg = new user_message()
 main backend: /log/change_log.php:818 - user_message $msg = new user_message()
 main backend: /log/change_log.php:854 - user_message $msg = new user_message()
 main backend: /log/change_log.php:885 - user_message $msg = new user_message()
-main backend: /sandbox/sandbox.php:2397 - user_message $msg = new user_message()
-main backend: /sandbox/sandbox_list_named.php:505 - user_message                          $msg = new user_message()
-main backend: /sandbox/sandbox_multi.php:3263 - user_message  $msg = new user_message()
+main backend: /sandbox/sandbox.php:2408 - user_message $msg = new user_message()
+main backend: /sandbox/sandbox_list_named.php:506 - user_message                          $msg = new user_message()
+main backend: /sandbox/sandbox_multi.php:3278 - user_message  $msg = new user_message()
 main backend: /system/ip_range_list.php:76 - user_message $msg = new user_message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 shared: /calc/expression.php:199 - user_message                $msg = new user_message()
@@ -193,58 +193,10 @@ main backend: /log_text/text_log_functions.php:582 - $msg = new user_message();
 main backend: /phrase/phrase.php:802 - $msg = new user_message();
 main backend: /phrase/phrase_list.php:623 - $msg = new user_message();
 main backend: /phrase/term.php:1234 - $msg = new user_message();
-main backend: /ref/ref.php:1136 - $msg = new user_message();
 main backend: /ref/ref.php:1166 - $msg = new user_message();
 main backend: /ref/ref.php:1188 - $msg = new user_message();
 main backend: /ref/ref.php:1370 - $sim_msg = new user_message();
 main backend: /result/result.php:1335 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:1919 - $usr_msg = new user_message();
-main backend: /sandbox/sandbox.php:2079 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:2108 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:2963 - $sim_msg = new user_message();
-main backend: /sandbox/sandbox.php:3027 - $sim_name_msg = new user_message();
-main backend: /sandbox/sandbox.php:3358 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:3400 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:4410 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:4420 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:4434 - $msg = new user_message();
-main backend: /sandbox/sandbox.php:4445 - $msg = new user_message();
-main backend: /sandbox/sandbox_code_id.php:472 - $code_msg = new user_message($usr_req);
-main backend: /sandbox/sandbox_link.php:1201 - $msg = new user_message();
-main backend: /sandbox/sandbox_link.php:1225 - $msg = new user_message();
-main backend: /sandbox/sandbox_link.php:1359 - $msg = new user_message();
-main backend: /sandbox/sandbox_link_list.php:186 - $msg = new user_message();
-main backend: /sandbox/sandbox_link_named.php:310 - $msg = new user_message();
-main backend: /sandbox/sandbox_list.php:495 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:365 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:552 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:590 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:613 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:1210 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:1234 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:1259 - $msg = new user_message();
-main backend: /sandbox/sandbox_list_named.php:1309 - $upd_usr_msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:1771 - $usr_msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2050 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2231 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2294 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2362 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2634 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2696 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:2743 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:3632 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:4198 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:4291 - $msg = new user_message();
-main backend: /sandbox/sandbox_multi.php:4386 - $msg = new user_message();
-main backend: /sandbox/sandbox_named.php:849 - $msg = new user_message();
-main backend: /sandbox/sandbox_named.php:874 - $msg = new user_message();
-main backend: /sandbox/sandbox_named.php:1255 - $msg = new user_message();
-main backend: /sandbox/sandbox_predicated_link.php:90 - $msg = new user_message();
-main backend: /sandbox/sandbox_typed.php:357 - $msg = new user_message();
-main backend: /sandbox/sandbox_value.php:1611 - $msg = new user_message();
-main backend: /sandbox/sandbox_value.php:1641 - $msg = new user_message();
-main backend: /sandbox/sandbox_value.php:2223 - $msg = new user_message();
-main backend: /sandbox/sandbox_value_list.php:606 - $msg = new user_message();
 main backend: /system/job.php:353 - $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req));
 main backend: /system/job.php:359 - $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req));
 main backend: /system/job.php:576 - $msg = new user_message();
@@ -273,8 +225,6 @@ main backend: /view/view.php:1019 - $msg = new user_message();
 main backend: /view/view.php:1041 - $msg = new user_message();
 main backend: /word/triple.php:859 - $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
 main backend: /word/triple.php:863 - $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
-main backend: /word/triple.php:2795 - $msg = new user_message();
-main backend: /word/triple.php:2831 - $msg = new user_message();
 main backend: /word/triple_list.php:838 - $msg_chk = new user_message($msg->usr);
 main backend: /word/triple_list.php:839 - $msg_ins = new user_message($msg->usr);
 main backend: /word/triple_list.php:840 - $msg_reload = new user_message($msg->usr);

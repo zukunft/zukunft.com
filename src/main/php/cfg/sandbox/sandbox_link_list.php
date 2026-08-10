@@ -183,6 +183,7 @@ class sandbox_link_list extends sandbox_list
         bool                                                $allow_duplicates = false
     ): user_message
     {
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
 
         // add only objects that have all mandatory values

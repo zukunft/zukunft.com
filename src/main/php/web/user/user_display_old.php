@@ -238,7 +238,7 @@ class user_display_old extends user
                 // check database consistency and correct it if needed
                 if ($trp_usr->name() == $wrd_std->name()
                     and $trp_usr->is_excluded() == $wrd_std->is_excluded()) {
-                    $trp_usr->del_usr_cfg();
+                    $trp_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row triples
@@ -446,7 +446,7 @@ class user_display_old extends user
                 // check database consistency and correct it if needed
                 if ($frm_usr->predicate_id == $frm_std->predicate_id
                     and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
-                    $frm_usr->del_usr_cfg();
+                    $frm_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row formula_links
@@ -617,7 +617,7 @@ class user_display_old extends user
                 if ($val_usr->number() == $val_std->number()
                     and $val_usr->source === $val_std->source
                     and $val_usr->is_excluded() == $val_std->is_excluded()) {
-                    $val_usr->del_usr_cfg();
+                    $val_usr->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row values
@@ -790,7 +790,7 @@ class user_display_old extends user
                     and $usr_ui->description == $dsp_std->description
                     and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // format the user view
@@ -956,7 +956,7 @@ class user_display_old extends user
                     and $usr_ui->description == $dsp_std->description
                     and $usr_ui->type_id($msg) == $dsp_std->type_id($msg)
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // format the user component
@@ -1125,7 +1125,7 @@ class user_display_old extends user
                 if ($usr_ui->order_nbr == $dsp_std->order_nbr
                     and $usr_ui->position_type == $dsp_std->position_type
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
-                    $usr_ui->del_usr_cfg();
+                    $usr_ui->del_usr_cfg($msg);
                 } else {
 
                     // prepare the row component_links
@@ -1305,7 +1305,7 @@ class user_display_old extends user
                     and $usr_ui->type_id == $dsp_std->type_id
                     and $usr_ui->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
-                    //$usr_ui->del_usr_cfg();
+                    //$usr_ui->del_usr_cfg($msg);
                     $usr_ui->del($msg);
                 } else {
 

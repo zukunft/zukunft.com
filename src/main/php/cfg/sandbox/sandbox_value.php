@@ -1603,12 +1603,12 @@ class sandbox_value extends sandbox_multi
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      * @param change|change_value $log with the target table set
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @return change|change_value with the log id set
      */
-    protected function log_add_common(change|change_value $log): change|change_value
+    protected function log_add_common(change|change_value $log, user_message $msg): change|change_value
     {
         log_debug($this->dsp_id());
-        $msg = new user_message();
         $log->set_action(change_actions::ADD);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
@@ -1632,13 +1632,13 @@ class sandbox_value extends sandbox_multi
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change($this->get_user());
         $log->set_action(change_actions::DELETE);
@@ -2220,6 +2220,8 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
+        // a local buffer only to build the translated text of this internal inconsistency;
+        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
         $msg = new user_message();
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_changed',

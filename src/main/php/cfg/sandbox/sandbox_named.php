@@ -841,12 +841,12 @@ class sandbox_named extends sandbox
      * set the log entry parameter for a new named object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_add(): change
+    function log_add(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
@@ -865,13 +865,13 @@ class sandbox_named extends sandbox
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del(): change
+    function log_del(user_message $msg): change
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
@@ -1252,6 +1252,7 @@ class sandbox_named extends sandbox
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $class_name,

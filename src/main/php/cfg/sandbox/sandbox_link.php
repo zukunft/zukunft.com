@@ -1192,13 +1192,13 @@ class sandbox_link extends sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change_link($this->get_user());
         $log->new_from = $this->fob;
@@ -1216,13 +1216,13 @@ class sandbox_link extends sandbox
 
     /**
      * set the log entry parameter to delete an object
+     * @param user_message $msg to report a failed change log write to the requesting user
      * @returns change_link with the object presets e.g. th object name
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
         log_debug($this->dsp_id());
         $lib = new library();
-        $msg = new user_message();
 
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
@@ -1356,6 +1356,7 @@ class sandbox_link extends sandbox
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
             $lib = new library();

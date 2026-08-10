@@ -2788,11 +2788,11 @@ class triple extends sandbox_link_named
     /**
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a company"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_add(): change_link
+    function log_link_add(user_message $msg): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::TRIPLE);
@@ -2824,11 +2824,11 @@ class triple extends sandbox_link_named
     /**
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a company not anymore"
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_del_link(): change_link
+    function log_del_link(user_message $msg): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->get_user()->name . '"');
-        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::TRIPLE);

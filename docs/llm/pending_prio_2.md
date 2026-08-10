@@ -20,13 +20,46 @@ of all 765 log sites and 263 buffers (safe tier complete, decisions kept below);
 user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
 `$usr_msg->add_message($result_msg->get_last_message())` cleanup (0 sites left).
 
-1. thread `$msg` into the ~180 unexplained creations listed in
+1. thread `$msg` into the unexplained creations listed in
    `docs/code_user_message_exceptions.md`. work the report file by file: either pass the caller's
    `$msg`, or keep the local message and add the comment saying why — a buffer that is merged back,
    a message for a different user (a system-user bootstrap), or a sub-result the caller checks with
    `is_ok()`. a creation that is neither merged nor inspected drops every error it collects, so it
-   is a real bug, not a style issue. the biggest clusters are cfg/sandbox (47), cfg/formula (16),
-   cfg/word (15), cfg/helper (13) and web/sandbox (13).
+   is a real bug, not a style issue.
+
+   **cfg/sandbox is DONE** (47 creations, report count 179 -> 129). what the pass changed:
+   - the change log family now takes the `user_message` its `log_upd*` siblings already had:
+     `log_add` / `log_del` / `log_link_add` / `log_del_link` / `log_upd_link` / `log_upd_common`
+     plus the `log_add_common` / `log_del_common` / `log_del_prime` / `log_del_big` helpers, across
+     both hierarchies (sandbox, sandbox_named, sandbox_link, sandbox_value, sandbox_multi) and the
+     overrides in cfg/word/triple.php and cfg/ref/ref.php. a failed change log write used to vanish
+     - it now reaches the requesting user. the base class "should never happen" stubs use
+     `log_err_msg($txt, $msg)` instead of a bare `log_err`
+   - `sandbox::add_usr_cfg` takes the `$msg` of the caller like its two siblings already did
+     (cfg/value/value_base.php, sandbox_multi) and merges its local buffer back; the buffer stays
+     local because the `is_ok()` gates must judge only this insert. `sandbox_multi::del_usr_cfg`
+     and `save_field_excluded_log` got the same parameter, callers updated
+   - the three `sandbox_list_named` sql list builders (`sql_insert` / `sql_update` / `sql_delete`)
+     now `log_err` the reason when they skip an object instead of dropping it silently
+   - the legitimate locals now carry the explaining comment: the message producing leaves
+     (`id_used_msg`, `add_user_check`, `add_link_by_key`, `diff_msg`, `fill_by_id`, `fill_by_name`,
+     `add_id_by_name`), the missing-override diagnostic buffers and the deliberate duplicate-check
+     buffers (`$sim_msg`, `$sim_name_msg`)
+   - NOT covered by a new test: every changed path is a database write or a `log_err` stub, and
+     `ERROR_LIMIT = 0` means a unit test that deliberately triggers one stops the whole run, so the
+     coverage stays with the existing write tests. what the next test run must confirm is that the
+     change log assertions of unit_write still pass and no workflow snapshot gained a message
+     (checked statically: `can_change` only adds `FORMULA_RENAME_NOT_ALLOWED`, which is dead while
+     `def::UI_CAN_CHANGE_FORMULA_NAME` is true, so the threading adds no user visible text today)
+
+   remaining clusters: cfg/formula (16), cfg/word (13), cfg/helper (13), web/sandbox (13),
+   cfg/system (12), cfg/db (10), cfg/import (9).
+
+   a cross cutting follow-up found during the pass: the "missing function overwrite" stub repeats
+   the same 6 lines in 42 places across 14 files (build a message, `add_err` / `add_warning_with_vars`
+   logs it, return its text). a shared `log_missing_overwrite($fnc_name, $class): string` helper in
+   text_log_functions.php would remove 42 buffers and the duplication in one commit — worth doing
+   before the remaining clusters, because it shrinks them.
 
 2. remove the 88 `user_message $msg = new user_message()` **parameter defaults** listed in the same
    report: a caller that passes nothing silently loses its messages, so the default is the same drop
