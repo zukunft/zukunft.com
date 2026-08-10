@@ -88,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 
@@ -322,14 +323,28 @@ class db_object extends TextIdObject
         $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
         if ($json_array) {
-            $excluded = false;
-            if (array_key_exists(json_fields::EXCLUDED, $json_array)) {
-                $excluded = $json_array[json_fields::EXCLUDED];
-            }
-            if (!$excluded) {
-                $this->api_mapper($json_array, $msg);
-                if ($this->name() != '') {
-                    $result = true;
+            $api_msg = new api_message();
+            $body = $api_msg->validate($json_array);
+            // a backend error json (e.g. the idor-neutral not-found message) or an empty object
+            // means the id does not or no longer points to a database row (e.g. a stale link to a
+            // deleted object), so tell the user instead of mapping the error json, which would
+            // leak the internal mandatory-field messages to the page
+            if (array_key_exists(json_fields::MSG, $body)
+                or ($body[json_fields::ID] ?? 0) == 0) {
+                $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
+                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                    msg_id::VAR_ID => $id,
+                ]);
+            } else {
+                $excluded = false;
+                if (array_key_exists(json_fields::EXCLUDED, $body)) {
+                    $excluded = $body[json_fields::EXCLUDED];
+                }
+                if (!$excluded) {
+                    $this->api_mapper($json_array, $msg);
+                    if ($this->name() != '') {
+                        $result = true;
+                    }
                 }
             }
         }

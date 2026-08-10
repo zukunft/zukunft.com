@@ -153,8 +153,11 @@ class url_test_base
         // the message user is usr1 so the workflow writes are recorded for the preferred test user (see init)
         $this->msg = new user_message();
         $this->msg->usr = $this->usr;
-        // render in test mode so that the snapshot is reproducible without backend calls
-        $this->req = new user_request($this->t->usr1, $this->msg, $this->ui->dto, $do_it, true);
+        // a read run renders in test mode so the snapshot is reproducible without backend calls;
+        // a write run ($do_it) is a real deployment with a real object row, so it renders the real
+        // pages including the backend filled views, my and others tabs, and the snapshot
+        // reproducibility comes from the normalizers (normalize_ids, normalize_change_log_time, ...)
+        $this->req = new user_request($this->t->usr1, $this->msg, $this->ui->dto, $do_it, !$do_it);
         // no page has been rendered yet; default the form method to get until the first render updates it
         $this->http_method = rest_ctrl::GET;
         // a write run (do_it true) persists the change and snapshots into the parallel workflow_write

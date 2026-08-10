@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_CONST . 'sources.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -51,6 +52,7 @@ class source_write_tests
 
         // init
         $t_src = new test_sources($t);
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write source ';
@@ -61,7 +63,7 @@ class source_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 
         $t->subheader($ts . 'for ' . sources::SYSTEM_TEST_ADD);
-        $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD, $msg);
 
         /*
         TODO remove but check upfront the replacement

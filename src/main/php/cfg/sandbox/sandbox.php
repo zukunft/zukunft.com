@@ -533,11 +533,11 @@ class sandbox extends db_object_seq_id_user
         $result = [];
         $std = null;
         // the user list of changed_by() stays null if no other user has changed the object
-        foreach ($this->changed_by()->lst() ?? [] as $other) {
+        foreach ($this->changed_by($msg)->lst() ?? [] as $other) {
             if ($other->id() != $this->get_user()->id()) {
                 $other_obj = clone $this;
                 $other_obj->set_user($other);
-                $other_obj->load_by_id($this->id());
+                $other_obj->load_by_id($this->id(), $msg);
                 // a null share id is the default public share (the default of a nullable field is
                 // resolved at the point of use), so only a set share type can restrict the listing
                 $shr = share_type_shared::PUBLIC;

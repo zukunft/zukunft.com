@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once html_paths::HELPER . 'user_request.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -116,6 +118,11 @@ class word_write_url_tests extends word_url_tests
         // round, snapshotted as a workflow; the final page snapshot shows the change log entries of
         // the confirmed change (the read-only twin renders the same steps in word_url_tests)
         $this->change_word_all_sandbox_fields_write($t);
+
+        // usr1 creates the filled test word, the word page is shown without a login and again
+        // after a real login of usr2: the snapshots show the page before and after the login
+        // and reproduce a page that is (almost) empty after a login
+        $this->word_login_workflow(workflows::WF_WORD_LOGIN_NBR, $t);
 
         // the login - logout - login flow: the back target of the original page survives the
         // login of user 1, the logout and the login of user 2
@@ -180,6 +187,7 @@ class word_write_url_tests extends word_url_tests
     {
         // start from a clean state so the base word has no leftover overlay of a previous run
         $this->cleanup_test_words($t);
+        $msg = new user_message();
 
         // usr1 creates and owns the base word with the original description
         $base = test_words::add_owned($t->usr1, word_names::TEST_ADD_COM);
@@ -192,9 +200,9 @@ class word_write_url_tests extends word_url_tests
         // change_word_by_other_user) overwrites the description, so the workflow pages
         // rendered for usr2 also show the 'others' tab with this shared overwrite
         $other = new user();
-        $other->load_by_id($t->usr_normal->id());
+        $other->load_by_id($t->usr_normal->id(), $msg);
         $wrd_other = new word($other);
-        $wrd_other->load_by_name(word_names::TEST_ADD);
+        $wrd_other->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_other->set_description(word_names::TEST_OTHER_COM);
         $other_msg = new user_message($other);
         $wrd_other->save($other_msg);
@@ -206,7 +214,7 @@ class word_write_url_tests extends word_url_tests
         // the page data of the changing user must list the other user's overwrite
         $test_name = 'the others tab data lists the description overwrite of the other user';
         $wrd_chk = new word($t->usr2);
-        $wrd_chk->load_by_name(word_names::TEST_ADD);
+        $wrd_chk->load_by_name(word_names::TEST_ADD, $msg);
         $oth_ovr = $wrd_chk->other_overwrites_api_array(new user_message($t->usr2));
         $oth_found = false;
         foreach ($oth_ovr as $oth_row) {
@@ -220,7 +228,7 @@ class word_write_url_tests extends word_url_tests
         // remove the third user overwrite by setting the description back to the base value,
         // because the shared cleanup only covers usr1 and usr2 (see change_word_by_other_user)
         $wrd_undo = new word($other);
-        $wrd_undo->load_by_name(word_names::TEST_ADD);
+        $wrd_undo->load_by_name(word_names::TEST_ADD, $msg);
         $wrd_undo->set_description(word_names::TEST_ADD_COM);
         $undo_msg = new user_message($other);
         $wrd_undo->save($undo_msg);
@@ -514,6 +522,60 @@ class word_write_url_tests extends word_url_tests
         // (user::login only sets a token if none is set), so the snapshots stay deterministic
         $this->logout();
         $this->cleanup_test_words($t);
+    }
+
+    /**
+     * the word_login workflow: usr1 creates and owns the all-fields-filled test word, then the
+     * word page is shown without a login, and after a real login of usr2 (like in the browser)
+     * the same page is shown again, so the snapshot files show the page and the url before and
+     * after the login (e.g. the dark blue person icon) and a page that is (almost) empty after
+     * a login is reproduced and kept visible in the snapshot
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 18 for wf18
+     * @param test_cleanup $t the test environment
+     */
+    private function word_login_workflow(int $wf_nbr, test_cleanup $t): void
+    {
+        $this->wf_start($wf_nbr, workflows::WF_WORD_LOGIN, $t->usr2, word_names::TEST_ADD_ID, true);
+
+        // start from a clean state and create the all-fields-filled test word owned by usr1
+        $this->cleanup_test_words($t);
+        $t_wrd = new test_words($t);
+        $wrd = $t_wrd->word_filled_add();
+        $wrd->set_user($t->usr1);
+        $add_msg = new user_message($t->usr1);
+        $wrd->save($add_msg);
+        $test_name = 'the filled word for the login workflow is created';
+        $t->assert_msg($test_name, $add_msg);
+        $this->wf_id = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $this->wf_fixed_id = word_names::TEST_ADD_ID;
+
+        // show: the word page without a login; the request user is removed so that the page
+        // is rendered like for an anonymous visitor
+        $this->logout();
+        $usr_keep = $this->msg->usr;
+        $this->msg->usr = null;
+        $url_arr = test_words::word_add_url($this->msg);
+        $url_arr[url_var::ID] = $this->wf_id;
+        $html = $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
+        $test_name = 'the word page without a login shows the word';
+        $t->assert_text_contains($test_name, $html, word_names::TEST_ADD);
+        $this->msg->usr = $usr_keep;
+
+        // login: log in usr2 for real like the browser, which also sets the session logged flag
+        $this->ensure_test_password($t, users::SYSTEM_TEST_PARTNER_NAME);
+        $this->login_as($t, 'user 2 can log in to view the word page', users::SYSTEM_TEST_PARTNER_NAME);
+        $this->step_path .= workflows::NAME_SEP . workflows::STEP_LOGIN;
+
+        // show: the same word page as the logged in user
+        $html = $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
+        $test_name = 'the word page of the logged in user still shows the word';
+        $t->assert_text_contains($test_name, $html, word_names::TEST_ADD);
+        $test_name = '... and the person icon shows the logged in state';
+        $t->assert_text_contains($test_name, $html, styles::USER_LOGGED);
+
+        // end the login so the following tests run without a logged in session user
+        $this->logout();
     }
 
     /**

@@ -682,6 +682,11 @@ enum messages: string
         . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not found any more after expected to be added to the database';
+    case OBJECT_NOT_FOUND = 'the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with id '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be found; it may have been deleted';
 
     case USER_IP_ADDR_MISSING = 'ip addr for user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END

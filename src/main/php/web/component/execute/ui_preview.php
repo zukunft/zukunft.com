@@ -414,10 +414,11 @@ class ui_preview extends ui_base
      * numbers) are hidden from users without admin or developer rights like in the change log
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the undo links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function user_overwrites_table(db_object $dbo, array $url_array = []): string
+    function user_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -429,8 +430,8 @@ class ui_preview extends ui_base
             foreach ($dbo->user_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
                     // e.g. a null and a zero view id both resolve to 'not set', so a row that
                     // would show the same text on both sides tells the user nothing and is skipped
                     if ($your != $instead) {
@@ -464,10 +465,11 @@ class ui_preview extends ui_base
      * not logged in or no other user has a shared overwrite, so the tab is dropped
      *
      * @param db_object $dbo the word or triple that should be shown to the user
+     * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the apply links
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function other_overwrites_table(db_object $dbo, array $url_array = []): string
+    function other_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -479,8 +481,8 @@ class ui_preview extends ui_base
             foreach ($dbo->other_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''));
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''));
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
                     // like in the my tab a row with the same text on both sides is skipped
                     if ($val != $instead) {
                         // escape the values and the user name (user input rendered raw; stored xss)
@@ -489,7 +491,7 @@ class ui_preview extends ui_base
                             . $html->td($html->esc((string)($ovr[json_fields::USER_NAME] ?? '')))
                             . $html->td($html->esc($val))
                             . $html->td($html->esc($instead))
-                            . $html->td($this->apply_overwrite_link($dbo, $fld, $ovr, $url_array)));
+                            . $html->td($this->apply_overwrite_link($dbo, $fld, $ovr, $msg, $url_array)));
                     }
                 }
             }
@@ -545,13 +547,14 @@ class ui_preview extends ui_base
      * @param db_object $dbo the word or triple shown to the user
      * @param string $fld the db field name of the field that the other user has overwritten
      * @param array $ovr the overwrite entry with the other user's value
+     * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page that is carried into the link
      * @return string the html code of the apply icon link or an empty string if no link can be built
      */
-    private function apply_overwrite_link(db_object $dbo, string $fld, array $ovr, array $url_array = []): string
+    private function apply_overwrite_link(db_object $dbo, string $fld, array $ovr, user_message $msg, array $url_array = []): string
     {
         $fld_var = $dbo->db_fld_to_url()[$fld] ?? '';
-        $current = (string)($dbo->to_url_array()[$fld_var] ?? '');
+        $current = (string)($dbo->to_url_array($msg)[$fld_var] ?? '');
         return $this->overwrite_confirm_link($dbo, $fld,
             (string)($ovr[json_fields::USR_VALUE] ?? ''),
             $current,

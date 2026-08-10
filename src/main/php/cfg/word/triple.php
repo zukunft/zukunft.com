@@ -728,13 +728,17 @@ class triple extends sandbox_link_named
         if ($this->view != null and $this->get_view_id() > 0) {
             $msk = new view($this->get_user());
             $msk->load_by_id($this->get_view_id(), $msg);
-            $msk_lst->add($msk);
+            // a view that cannot be loaded must not enter the list, because a list holding an
+            // unloaded entry is not empty and would suppress the system default view fallback
+            if ($msk->id() > 0) {
+                $msk_lst->add($msk);
+            }
         }
         // a triple without an own default view is shown with the system default triple view,
         // so the views tab of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
             $msk = new view($this->get_user());
-            $msk->load_by_code_id(views_shared::TRIPLE);
+            $msk->load_by_code_id(views_shared::TRIPLE, $msg);
             if ($msk->id() > 0) {
                 $msk_lst->add($msk);
             }

@@ -162,7 +162,7 @@ class base_ui_tests
         $test_name = 'a logged in user never gets the shared cached page';
         $_SESSION[url_var::SESSION_LOGGED] = true;
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
-        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message()) === null);
+        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message_ui()) === null);
         unset($_SESSION[url_var::SESSION_LOGGED]);
 
         // the debug level only controls out-of-band debug output, not the cached html, so it is

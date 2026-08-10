@@ -83,7 +83,7 @@ class view_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_func(), true);
 
         $t->subheader($ts . 'for ' . views::TEST_ADD_NAME);
-        $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME);
+        $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME, $msg);
 
 
         $db_con->import_system_views($t->usr1, $msg_ui);
@@ -138,7 +138,7 @@ class view_write_tests
         // re-adding a view that a previous run left excluded can land in the user sandbox row,
         // which the change log shows with 'user' after the action
         $test_name = 'check if the view adding has been logged for '. views::TEST_ADD_NAME;
-        $log_ui = $t->log_last_ui_by_field($msk, view_fields::FLD_NAME, $msk->id());
+        $log_ui = $t->log_last_ui_by_field($msk, view_fields::FLD_NAME, $msk->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test View"';
@@ -172,7 +172,7 @@ class view_write_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view renaming has been logged to '. views::TEST_RENAMED_NAME;
-        $log_ui = $t->log_last_ui_by_field($msk_renamed, view_fields::FLD_NAME, $msk_renamed->id());
+        $log_ui = $t->log_last_ui_by_field($msk_renamed, view_fields::FLD_NAME, $msk_renamed->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to "System Test View Renamed" from "System Test View"';
@@ -196,14 +196,14 @@ class view_write_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the description view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
-        $log_ui = $t->log_last_ui_by_field($msk_reloaded, fields::FLD_DESCRIPTION, $msk_reloaded->id());
+        $log_ui = $t->log_last_ui_by_field($msk_reloaded, fields::FLD_DESCRIPTION, $msk_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . 'zukunft.com system test changed ' . $usr_marker . 'to "Just added for testing the user sandbox" from "Just added for testing"';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if the view_type view parameter adding have been logged to '. views::TEST_RENAMED_NAME;
-        $log_ui = $t->log_last_ui_by_field($msk_reloaded, view_fields::FLD_TYPE, $msk_reloaded->id());
+        $log_ui = $t->log_last_ui_by_field($msk_reloaded, view_fields::FLD_TYPE, $msk_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"word default"';

@@ -31,7 +31,7 @@ SELECT value_prime_p1_delete_log_user
         3::smallint,
         6::smallint,
         5::bigint,
-        -2::smallint,
+        5::smallint,
         0::smallint,
         0::smallint,
         0::smallint,

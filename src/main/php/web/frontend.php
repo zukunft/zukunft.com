@@ -1007,7 +1007,7 @@ class frontend
                 // mandatory-field-missing message to the rendered test page
                 if (!$test_mode and $dbo instanceof db_object_ui) {
                     $usr_id = $usr?->id() ?? 0;
-                    $dbo->load_by_id($id, [], $usr_id);
+                    $dbo->load_by_id($id, $msg_ui, [], $usr_id);
                 }
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
             }
