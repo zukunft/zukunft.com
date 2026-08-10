@@ -476,12 +476,12 @@ class db_cache extends db_object_seq_id_user
         if ($obj->usr !== $this->usr) {
             $lst->add_field(
                 user_db::FLD_ID,
-                $this->usr?->name,
-                sql_field_type::INT,
-                $obj->usr?->name,
-                user_db::FLD_NAME,
                 $this->usr?->id,
+                sql_field_type::INT,
                 $obj->usr?->id,
+                user_db::FLD_NAME,
+                $this->usr?->name,
+                $obj->usr?->name,
                 sql_field_type::INT
             );
         }

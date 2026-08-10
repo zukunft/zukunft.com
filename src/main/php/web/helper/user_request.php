@@ -73,7 +73,7 @@ class user_request
 
     /**
      * @param user_backend $usr_backend the backend user, updated in place e.g. on login
-     * @param user_message $usr_msg the message buffer enriched with potential errors; must carry the requesting frontend user as $usr_msg->usr
+     * @param user_message $msg the message buffer enriched with potential errors; must carry the requesting frontend user as $msg->usr
      * @param data_object $dto the frontend cache used to reduce the backend loading
      * @param bool $do_it false to skip the database execution e.g. for unit testing
      * @param bool $test_mode true to render a reproducible page without backend calls e.g. for a snapshot test

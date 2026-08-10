@@ -97,6 +97,9 @@ class group_write_tests
             $i++;
         }
 
+        $t->subheader($ts . 'save with existing phrase list');
+        $this->group_save_similar($wrd_add_lst[0], $t_phr->phrase_list_small(), $t_phr->phrase_list_small(), $t);
+
         $t->subheader($ts . 'rename');
         $i = 0;
         foreach ($grp_add_lst as $grp_add) {
@@ -261,6 +264,53 @@ class group_write_tests
             $grp->load_by_name($grp_name, $msg);
             $t->assert_true($test_name, $grp->isset());
         }
+    }
+
+    /**
+     * test that saving a group whose phrase list already has a database row under another name
+     * updates the existing group instead of failing with a duplicate key insert
+     * and that a group name already used for another phrase list is rejected
+     *
+     * @param word $wrd the word that completes the phrase list of the group named groups::TN_ADD_PRIME_FUNC
+     * @param phrase_list $phr_lst the phrase list of the group named groups::TN_ADD_PRIME_FUNC without the word
+     * @param phrase_list $phr_lst_other a phrase list without a group database row for the name conflict test
+     * @param test_cleanup $t the test object with the test settings
+     * @return void
+     */
+    function group_save_similar(
+        word         $wrd,
+        phrase_list  $phr_lst,
+        phrase_list  $phr_lst_other,
+        test_cleanup $t
+    ): void
+    {
+        $msg = new user_message($t->usr1);
+
+        // saving a new group object with the phrase list of an existing group renames the existing group
+        $test_name = 'save with the phrase list of ' . groups::TN_ADD_PRIME_FUNC . ' updates the group name';
+        $phr_lst->add($wrd->phrase());
+        $grp = new group($t->usr1);
+        $grp->set_phrase_list($phr_lst);
+        $grp->set_name(groups::SYSTEM_TEST_RENAMED);
+        $t->assert_true($test_name, $grp->save($msg));
+
+        $test_name = 'the group of ' . groups::TN_ADD_PRIME_FUNC . ' has the new name';
+        $grp_chk = new group($t->usr1);
+        $grp_chk->load_by_id($grp->id(), $msg);
+        $t->assert($test_name, $grp_chk->name(), groups::SYSTEM_TEST_RENAMED, $t::TIMEOUT_LIMIT_DB);
+
+        // rename the group back so that the delete by name test below finds the group
+        $test_name = 'the group name of ' . groups::TN_ADD_PRIME_FUNC . ' is reset for the cleanup';
+        $grp->set_name(groups::TN_ADD_PRIME_FUNC);
+        $t->assert_true($test_name, $grp->save($msg));
+
+        // a group name that is already used for another phrase list must be rejected
+        $test_name = 'a group name already used for another phrase list is rejected';
+        $grp_used = new group($t->usr1);
+        $grp_used->set_phrase_list($phr_lst_other);
+        $grp_used->set_name(groups::TN_ADD_PRIME_FUNC);
+        $t->assert_false($test_name, $grp_used->save($msg));
+        $msg->reset();
     }
 
     /**

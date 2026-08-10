@@ -188,6 +188,27 @@ class group_tests
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+',
             $t::TIMEOUT_LIMIT_PAGE);
 
+        $t->subheader($ts . 'similar');
+        $test_name = 'a group with the same phrase list is the same group';
+        $grp = $t_grp->group();
+        $grp_zh = $t_grp->group_zh();
+        $t->assert_true($test_name, $grp->is_same_std($grp->renamed(groups::TN_RENAMED)));
+        $test_name = 'a group with another phrase list is not the same group';
+        $t->assert_false($test_name, $grp->is_same_std($grp_zh));
+        $test_name = 'a group with the same phrase list but another name is similar';
+        $t->assert_true($test_name, $grp->is_similar($grp->renamed(groups::TN_RENAMED)));
+        $test_name = 'a group with the same name for another phrase list is similar';
+        $t->assert_true($test_name, $grp->is_similar($grp_zh->renamed($grp->name())));
+        $test_name = 'a group with another phrase list and name is not similar';
+        $t->assert_false($test_name, $grp->is_similar($grp_zh));
+        $test_name = 'a missing group is not similar';
+        $t->assert_false($test_name, $grp->is_similar(null));
+        $test_name = 'a new group needs the check for a similar group';
+        $t->assert_true($test_name, $grp->needs_similar_check());
+        $test_name = 'a group matching the database row does not need the check for a similar group';
+        $grp->set_saved();
+        $t->assert_false($test_name, $grp->needs_similar_check());
+
         $t->subheader($ts . 'sql statements - setup');
         $grp = new group($t->usr1);
         $t->assert_sql_table_create($grp);
@@ -200,6 +221,9 @@ class group_tests
         $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
         $t->assert_sql_standard($sc, $grp);
         $t->assert_sql_standard_by_name($sc, $grp);
+        $t->assert_sql_user_changes($sc, $grp);
+        $t->assert_sql_user_changes($sc, $t_grp->group_16());
+        $t->assert_sql_user_changes($sc, $t_grp->group_17_plus());
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         // TODO Prio 0 activate db write
