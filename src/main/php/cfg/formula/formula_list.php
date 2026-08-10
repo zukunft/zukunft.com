@@ -863,7 +863,7 @@ class formula_list extends sandbox_list_named
                 }
 
                 // add the database id to the formula list of words and formulas used until now
-                $chk_lst->fill_by_name($trm_lst, true, false);
+                $chk_lst->fill_by_name($trm_lst, $msg_chk, true, false);
 
                 // get the formulas that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -886,7 +886,7 @@ class formula_list extends sandbox_list_named
                 $db_lst_all->merge($db_lst);
 
                 // fill up the loaded list with db value to select only the formulas that really needs to be inserted
-                $load_lst->fill_by_name($db_lst, true, false);
+                $load_lst->fill_by_name($db_lst, $msg_chk, true, false);
 
                 // refresh reference text
                 $load_lst->refresh_ref_text($trm_lst, $ref_usr_msg);
@@ -955,9 +955,9 @@ class formula_list extends sandbox_list_named
 
 
             // fill up the main list with the words
-            $this->fill_by_name($trm_lst, true);
+            $this->fill_by_name($trm_lst, $msg, true, false);
             // fill up the main list with the formulas to check if anything is missing
-            $this->fill_by_name($db_lst_all, true);
+            $this->fill_by_name($db_lst_all, $msg, true, false);
 
             // report missing formulas
             $this->report_missing($msg, $trm_lst, $imp->file_name);
@@ -1083,25 +1083,24 @@ class formula_list extends sandbox_list_named
      * select the related object by the name
      *
      * @param formula_list|sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param user_message $msg to report a formula of this list that is missing in the given list
      * @param bool $fill_all force to include also the excluded names e.g. for import
      * @param bool $report_missing if true it is expected that all triples are in the given $db_lst
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     * @return bool true if every formula of this list could be filled
      */
     function fill_by_name(
         formula_list|sandbox_list_named $db_lst,
+        user_message                    $msg,
         bool                            $fill_all = false,
         bool                            $report_missing = true
-    ): user_message
+    ): bool
     {
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
-
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $frm) {
             $this->fill_triple_by_name($db_lst, $frm, $msg, $fill_all, $report_missing);
 
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     private function fill_triple_by_name(

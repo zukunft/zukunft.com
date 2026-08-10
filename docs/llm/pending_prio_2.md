@@ -68,8 +68,40 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    `formula_list::save_with_cache` (and 6 similar blocks elsewhere) count as explained without
    repeating the same comment five times.
 
-   remaining clusters: cfg/word (13), cfg/helper (13), web/sandbox (13), cfg/system (12),
-   cfg/db (10), cfg/import (9).
+   **cfg/word is DONE** (report count 103 -> 96, and the folder has no parameter default left
+   either, so it is completely clear). the real find were the four
+   `user_overwrites_api_array(new user_message($usr))` / `other_overwrites_api_array(...)` calls in
+   the `api_json_array` of word and triple: both functions use the message only to collect load
+   errors (they select by `$this->get_user()` / `changed_by()`, never by `$msg->usr`), so the fresh
+   message was a pure drop — a failed overlay read silently emptied the 'my' and 'others' tab. they
+   now share one `$ovr_msg` sub message that keeps the api user and is merged into the request
+   message. checked that this cannot add a message on the healthy path (`load_standard` only
+   reports a zero id, `load_by_id` / `changed_by` / `user_list::load` only report a failed query),
+   so no snapshot gains a notification bar. the three `triple_list` sites are legitimate: two
+   message producing leaves (`fill_by_name`, `fill_missing_verbs`) and the per item `$msg_chk` of
+   `get_ready` that is already merged.
+
+   **the `fill_by_name` family now takes `$msg`** — the first "the message is my return value"
+   leaf converted to the shape the new coding.md rule asks for: `sandbox_list_named` (base),
+   `triple_list` and `formula_list` take `user_message $msg` and return `bool`, and all 13 call
+   sites pass their message. two things had to be decided per call site, not once:
+   - *which* message: inside the import level loop the per level buffer `$msg_chk` is passed, not
+     the request message, so a triple resolved on a later level does not surface as missing
+   - *whether the reporting is wanted*: the pre loop fill, the two post loop fills (the caller runs
+     `report_missing($msg)` right after) and the two `data_object` cache fills now pass
+     `report_missing = false`, because otherwise threading would turn a silent drop into a premature
+     "not found" on every import
+   the base also had a real bug that made the threading unsafe: its else branch reported
+   `USED_OBJECT_ID_AND_NAME_MISSING` for every object that **already had an id**, i.e. on the normal
+   path, and `sandbox_list_named::insert` merged that into the request message. the condition now
+   matches the message wording and the triple twin: nothing to do when the id is set, report only
+   when there is neither id nor name. no test or fixture asserts the old spurious message.
+   the web `sandbox_list_named::fill_by_name` is a separate hierarchy and is untouched.
+
+   remaining clusters: cfg/helper (13), web/sandbox (13), cfg/system (12), cfg/db (10),
+   cfg/import (9). the other "create and return a user_message" leaves are the natural next
+   candidates for the same treatment: `diff_msg`, `fill_by_id`, `add_id_by_name`,
+   `sandbox_list::add_user_check`, `sandbox_link_list::add_link_by_key`, `id_used_msg`.
 
    **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
    `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php

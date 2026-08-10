@@ -8,7 +8,7 @@ is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every
 directly above it (or trailing on the same line) explaining why a local message
 is needed - typically a buffer that is merged back or a message of a different user
 
-259 creations below the entry points: 68 explained, 88 parameter defaults and 103 still unexplained
+254 creations below the entry points: 70 explained, 88 parameter defaults and 96 still unexplained
 
 ## parameter defaults
 
@@ -203,13 +203,6 @@ main backend: /view/view.php:620 - $msg = new user_message();
 main backend: /view/view.php:930 - $result = new user_message();
 main backend: /view/view.php:1019 - $msg = new user_message();
 main backend: /view/view.php:1041 - $msg = new user_message();
-main backend: /word/triple.php:859 - $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
-main backend: /word/triple.php:863 - $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
-main backend: /word/triple_list.php:970 - $msg = new user_message();
-main backend: /word/triple_list.php:1036 - $msg = new user_message();
-main backend: /word/triple_list.php:1059 - $msg_chk = new user_message($msg->usr);
-main backend: /word/word.php:617 - $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
-main backend: /word/word.php:621 - $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
 shared: /helper/MapObject.php:186 - $db_msg = new user_message();
 shared: /helper/MapObject.php:199 - $db_msg = new user_message();
 shared: /helper/Translator.php:177 - $msg = new user_message();

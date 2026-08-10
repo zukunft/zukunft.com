@@ -614,14 +614,19 @@ class word extends sandbox_code_id
                     // and the standard value, so the 'my' tab can show the user overwrites, and
                     // the shared overwrites of the other users for the 'others' tab
                     if (!$typ_lst->test_mode()) {
-                        $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
+                        // a sub message for the user of this api call, which can differ from the
+                        // user of the request message; merged back so a failed overlay read is
+                        // reported instead of silently dropping the tab
+                        $ovr_msg = new user_message($usr);
+                        $usr_ovr = $this->user_overwrites_api_array($ovr_msg);
                         if ($usr_ovr != []) {
                             $vars[json_fields::USER_OVERWRITES] = $usr_ovr;
                         }
-                        $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
+                        $oth_ovr = $this->other_overwrites_api_array($ovr_msg);
                         if ($oth_ovr != []) {
                             $vars[json_fields::OTHER_OVERWRITES] = $oth_ovr;
                         }
+                        $msg->merge($ovr_msg);
                     }
                 }
             }

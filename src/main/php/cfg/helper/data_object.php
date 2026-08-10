@@ -1347,7 +1347,7 @@ class data_object
             $imp->step_end($trp_lst->count(), $trp_per_sec);
 
             // fill up the data_object list to prevent reloading the same triples again
-            $this->triple_list()->fill_by_name($trp_lst);
+            $this->triple_list()->fill_by_name($trp_lst, $msg, false, false);
         }
         return $msg->is_ok();
     }
@@ -1417,7 +1417,7 @@ class data_object
             $msg->merge($usr_msg_lnk);
 
             // fill up the data_object list to prevent reloading the same triples again
-            $this->formula_list()->fill_by_name($frm_lst);
+            $this->formula_list()->fill_by_name($frm_lst, $msg, false, false);
         }
     }
 

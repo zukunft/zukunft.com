@@ -153,6 +153,56 @@ entry points sit outside them) and regenerates
 every parameter default. The doc is the work list: it must shrink with each
 threading pass and a new unexplained creation fails the test by changing it.
 
+A block of buffers that belong together (the per-level messages of an import
+loop) is declared on consecutive lines and shares one comment above the block —
+the check understands that, so don't repeat the same sentence five times.
+
+### "The message is my return value" is not an exception — take `$msg` instead
+
+The most common shape below the entry point is a function that creates a message,
+fills it and returns it:
+
+```php
+function fill_by_name(triple_list $db_lst, bool $fill_all = false): user_message
+{
+    $msg = new user_message();      // <- the exception
+    …
+    return $msg;
+}
+```
+
+This looks legitimate — the message *is* the result — but it moves the decision
+to every caller, and a caller that ignores the return silently drops every error
+in it. Take the message as a parameter and return `bool` instead:
+
+```php
+function fill_by_name(
+    triple_list  $db_lst,
+    user_message $msg,
+    bool         $fill_all = false
+): bool
+{
+    …
+    return $msg->is_ok();
+}
+```
+
+**Two checks before threading such a family**, both of which decide per call
+site, not once for the function:
+
+1. **Which message belongs here?** Inside an import level loop the right target
+   is the per-level buffer (`$msg_chk`), not the request message — a problem that
+   a later level resolves must not survive in the request message.
+2. **Is the callee's reporting wanted at this call site at all?** If the caller
+   already reports the same thing afterwards (`$this->report_missing($msg)`), or
+   the call is a pure cache fill, pass the existing `report_missing`-style flag as
+   `false` rather than letting a premature diagnostic reach the user. Threading
+   `$msg` into a function whose message fires on a *normal* path turns a silent
+   drop into user-visible noise — check what the callee adds and when.
+
+Because the signature is shared, the whole override family changes together (the
+base class plus every child), so this is one commit per family, callers included.
+
 ### The requesting user is set on `$msg` by the http entry point
 
 The **http entry point** (`http/view.php`, and every other script under `http/`

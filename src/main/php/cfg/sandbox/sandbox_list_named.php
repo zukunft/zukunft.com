@@ -580,35 +580,39 @@ class sandbox_list_named extends sandbox_list
      * select the related object by the name
      *
      * @param sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param user_message $msg to report an object that can neither be filled nor identified
      * @param bool $fill_all force to include also the excluded names e.g. for import
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     * @return bool true if every object of this list could be filled
      */
     function fill_by_name(
         sandbox_list_named $db_lst,
+        user_message       $msg,
         bool               $fill_all = false
-    ): user_message
+    ): bool
     {
         $usr = $this->get_user();
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
 
         // loop over the objects of this list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $obj_to_fill) {
-            if ($obj_to_fill->id() == 0 and $obj_to_fill->name($fill_all) != '') {
-                $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
-                if ($db_obj != null) {
-                    $obj_to_fill->fill($db_obj, $usr);
+            // an object that already has a database id needs no fill, so only an object without
+            // an id is looked up and only one without a name too cannot be identified at all
+            if ($obj_to_fill->id() == 0) {
+                if ($obj_to_fill->name($fill_all) != '') {
+                    $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
+                    if ($db_obj != null) {
+                        $obj_to_fill->fill($db_obj, $usr);
+                    }
+                } else {
+                    $lib = new library();
+                    $msg->add(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
+                        msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
+                        msg_id::VAR_NAME => $this->name()
+                    ]);
                 }
-            } else {
-                $lib = new library();
-                $msg->add(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
-                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
-                    msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
-                    msg_id::VAR_NAME => $this->name()
-                ]);
             }
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
     function add_id_by_name(array $id_lst, string $class): user_message
@@ -978,7 +982,7 @@ class sandbox_list_named extends sandbox_list
         $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
         // get the db id from the loaded objects
-        $msg->merge($this->fill_by_name($db_lst, true, false));
+        $this->fill_by_name($db_lst, $msg, true, false);
 
         // get the objects that need to be added
         $db_names = $db_lst->names();
