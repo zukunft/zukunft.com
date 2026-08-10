@@ -1475,6 +1475,22 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * dummy function to be overwritten by the group object
+     * mark that the object matches a database row e.g. if a similar object has been found
+     */
+    function set_saved(): void
+    {
+    }
+
+    /**
+     * @return bool true if a similar object must be checked before adding this object to the database
+     */
+    function needs_similar_check(): bool
+    {
+        return $this->id() == 0;
+    }
+
+    /**
      * if the user is an admin the user can force to be the owner of this object
      * TODO review
      */
@@ -2930,7 +2946,7 @@ class sandbox_multi extends db_object_multi_user
             $similar = null;
 
             // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-            if ($this->id() == 0) {
+            if ($this->needs_similar_check()) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar($msg);
                 if ($similar !== null) {
@@ -2946,7 +2962,13 @@ class sandbox_multi extends db_object_multi_user
                             $similar->load_by_id($similar->id, $msg); // e.g. to get the type_id
                             // prevent that the id of a formula is used for the word with the type formula link
                             if (get_class($this) == get_class($similar)) {
-                                $this->id = $similar->id();
+                                if ($this->is_same($similar)) {
+                                    $this->id = $similar->id();
+                                    $this->set_saved();
+                                } else {
+                                    // e.g. a group name that is already used for another phrase list
+                                    $msg->merge($similar->id_used_msg($this));
+                                }
                             } else {
                                 if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                     or (get_class($this) == triple::class and get_class($similar) == formula::class))) {

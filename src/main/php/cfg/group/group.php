@@ -1021,6 +1021,47 @@ class group extends sandbox_multi
         return $qp;
     }
 
+    /**
+     * create an SQL statement to retrieve the user changes of the current group
+     * e.g. the group name that the user has overwritten
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_user_changes(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $sc_par_lst->add(sql_type::USER);
+        $sc_par_lst->add($this->table_type());
+        $sc->set_class($this::class, $sc_par_lst);
+
+        // remove the user parameter before the query name creation because usr_cfg is enough
+        $qp = new sql_par($this::class, $sc_par_lst->remove(sql_type::USER));
+        $qp->name .= sql::NAME_EXT_USER_CONFIG;
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->get_user()->id);
+        $sc->set_fields($this->all_sandbox_fields());
+        $sc->add_where($this->id_field(), $this->id());
+        // the user table select needs the user as an explicit where condition
+        // like the id_fvt_lst based queries of the values and results
+        $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * @return array with the field names of the group that a user can change
+     */
+    function all_sandbox_fields(): array
+    {
+        return group_db::ALL_SANDBOX_FLD_NAMES;
+    }
+
 
     /*
      * load (to be deprecated)
@@ -1570,6 +1611,39 @@ class group extends sandbox_multi
         return $grp_id->is_big($id);
     }
 
+    /**
+     * check if the given group is by the unique database key the same as this group
+     * the group id encodes the phrase list, so two groups with the same id are the same
+     *
+     * @param object $obj_to_check the group used for the comparison
+     * @return bool true if the given group has the same phrase list
+     */
+    function is_same_std(object $obj_to_check): bool
+    {
+        return $this->id() == $obj_to_check->id();
+    }
+
+    /**
+     * check if the given group prevents adding this group to the database
+     *
+     * @param null|object $obj_to_check the group used for the comparison
+     * @return bool true if the given group has the same phrase list or the same user given name
+     */
+    function is_similar(?object $obj_to_check): bool
+    {
+        $similar = false;
+        if ($obj_to_check != null) {
+            if ($this::class == $obj_to_check::class) {
+                if ($this->is_same_std($obj_to_check)) {
+                    $similar = true;
+                } elseif ($this->name() != '' and $this->name() == $obj_to_check->name()) {
+                    $similar = true;
+                }
+            }
+        }
+        return $similar;
+    }
+
 
     /*
      * modify
@@ -1600,39 +1674,63 @@ class group extends sandbox_multi
      */
 
     /**
+     * @return bool true if a similar group must be checked before the database insert even if the
+     *              id is set, because the group id is given by the phrase list, so a database row
+     *              with the same id can exist e.g. if another user has already named the group
+     */
+    function needs_similar_check(): bool
+    {
+        return !$this->is_saved();
+    }
+
+    /**
      * check if a group with the unique key already exists
      * returns null if no similar group is found
      * or returns the group with the same unique key that is not the actual object
      *
      * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
-     * @return group|null a filled object that has the same name
+     * @return group|null a filled object that has the same phrase list or name
      *                    or null if nothing similar has been found
      */
     function get_similar(user_message $msg): group|null
     {
         $sim = null;
 
-        // check potential duplicate by name
         $db_chk = clone $this;
         $db_chk->reset(true);
-        // check with the standard namespace
-        if ($db_chk->load_standard_by_name($this->name(), $msg)) {
-            if ($db_chk->id() > 0) {
-                log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
+        // check by the id first, because the group id encodes the phrase list,
+        // which is the unique key of a group, so a database row with the same id
+        // can exist even if this group object has never been saved
+        if ($this->is_id_set()) {
+            $db_chk->load_by_id($this->id(), $msg);
+            // the load fills the phrase list even without a database row, so use the saved state
+            if ($db_chk->is_saved()) {
+                log_debug($this->dsp_id() . ' has the same phrase list as the already named "' . $db_chk->dsp_id() . '"');
                 $sim = $db_chk;
             }
         }
-        // check with the user namespace
-        $db_chk->set_user($this->get_user());
-        if ($this->name() != '') {
-            if ($db_chk->load_by_name($this->name(), $msg)) {
+
+        // check potential duplicate by name
+        if ($sim == null) {
+            // check with the standard namespace
+            if ($db_chk->load_standard_by_name($this->name(), $msg)) {
                 if ($db_chk->id() > 0) {
-                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $sim = $db_chk;
                 }
             }
-        } else {
-            log_err_msg('The name must be set to check if a similar object exists', $msg);
+            // check with the user namespace
+            $db_chk->set_user($this->get_user());
+            if ($this->name() != '') {
+                if ($db_chk->load_by_name($this->name(), $msg)) {
+                    if ($db_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $sim = $db_chk;
+                    }
+                }
+            } else {
+                log_err_msg('The name must be set to check if a similar object exists', $msg);
+            }
         }
 
         return $sim;
@@ -1659,6 +1757,7 @@ class group extends sandbox_multi
         $usr_tbl = false;
         if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), $usr_tbl, true)) {
             $this->id = $msg->get_row_id();
+            $this->set_saved();
         }
 
         return $msg->is_ok();

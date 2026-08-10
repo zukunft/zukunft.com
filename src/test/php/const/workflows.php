@@ -129,6 +129,10 @@ class workflows
     // 'in_use' in 'wf10_show_edit_in_use_save' where delete is pressed on an in-use word
     const string STEP_IN_USE = 'in_use';
 
+    // snapshot file name marker for the steps after the real login of the workflow user, e.g. the
+    // 'login' in 'wf18_show_login_show' where the same page is shown again as a logged in user
+    const string STEP_LOGIN = 'login';
+
     // the add_triple_fail workflow name used for the snapshot folder and the test subheader:
     // the negative twin of add_triple where a save without a from and a to phrase keeps the add form
     // with a warning instead of confirming the invalid triple
@@ -177,6 +181,14 @@ class workflows
     const string WF_CHANGE_WORD_ALL_SANDBOX_FIELDS = 'change_word_all_sandbox_fields';
     // the id of the current change_word_all_sandbox_fields workflow; increase it to add the next snapshot set
     const int WF_CHANGE_WORD_ALL_SANDBOX_FIELDS_NBR = 17;
+
+    // the word_login workflow name used for the snapshot folder and the test subheader:
+    // a user with word overwrites logs in for real and views the word page, so the snapshot
+    // shows the page as a logged in user sees it (e.g. the dark blue person icon and the my
+    // tab) and reproduces a page that is (almost) empty after a login
+    const string WF_WORD_LOGIN = 'word_login';
+    // the id of the current word_login workflow; increase it to add the next snapshot set
+    const int WF_WORD_LOGIN_NBR = 18;
 
     /**
      * the user process step that a user reaction action triggers

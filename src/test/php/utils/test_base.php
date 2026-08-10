@@ -2028,11 +2028,11 @@ class test_base
      * e.g. the value a user has changed of word, triple, value or formulas
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word or group
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql_creator $sc, sandbox|sandbox_value $usr_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_user_changes(sql_creator $sc, sandbox|sandbox_multi $usr_obj, array $sc_par_lst_in = []): bool
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
