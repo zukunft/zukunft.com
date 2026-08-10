@@ -213,6 +213,8 @@ class figure_list extends sandbox_list
      */
     function add(?figure $fig_to_add): bool
     {
+        // a local buffer, because this list add reports only the ok flag as its return value
+        // TODO Prio 2 take the user_message of the caller so the reason of a rejected add survives
         $msg = new user_message();
         // check parameters
         if ($fig_to_add != null) {

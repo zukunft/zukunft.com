@@ -8,7 +8,7 @@ is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every
 directly above it (or trailing on the same line) explaining why a local message
 is needed - typically a buffer that is merged back or a message of a different user
 
-260 creations below the entry points: 47 explained, 88 parameter defaults and 125 still unexplained
+259 creations below the entry points: 68 explained, 88 parameter defaults and 103 still unexplained
 
 ## parameter defaults
 
@@ -79,7 +79,7 @@ frontend: /word/triple.php:552 - user_message     $msg = new user_message()
 frontend: /word/triple.php:578 - user_message     $msg = new user_message()
 frontend: /word/triple.php:597 - user_message     $msg = new user_message()
 frontend: /word/word.php:465 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-main backend: /formula/formula.php:1523 - user_message $msg = new user_message()
+main backend: /formula/formula.php:1531 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:567 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:578 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:589 - user_message $msg = new user_message()
@@ -143,22 +143,6 @@ main backend: /db/sql_sync_sequences.php:50 - $msg = new user_message();
 main backend: /db/sql_sync_sequences.php:91 - $msg = new user_message();
 main backend: /db/sql_sync_sequences.php:128 - $msg = new user_message();
 main backend: /element/element_list.php:361 - $msg = new user_message();
-main backend: /formula/expression.php:979 - $msg = new user_message($this->usr);
-main backend: /formula/figure_list.php:216 - $msg = new user_message();
-main backend: /formula/formula.php:195 - $msg = new user_message();
-main backend: /formula/formula.php:632 - $msg = new user_message();
-main backend: /formula/formula.php:765 - $msg = new user_message($this->get_user());
-main backend: /formula/formula_list.php:830 - $msg_chk = new user_message($msg->usr);
-main backend: /formula/formula_list.php:831 - $lst_ins = new user_message($msg->usr);
-main backend: /formula/formula_list.php:832 - $ref_usr_msg = new user_message($msg->usr);
-main backend: /formula/formula_list.php:833 - $trm_usr_msg = new user_message($msg->usr);
-main backend: /formula/formula_list.php:839 - $msg_chk = new user_message($msg->usr);
-main backend: /formula/formula_list.php:840 - $lst_ins = new user_message($msg->usr);
-main backend: /formula/formula_list.php:841 - $ref_usr_msg = new user_message($msg->usr);
-main backend: /formula/formula_list.php:842 - $trm_usr_msg = new user_message($msg->usr);
-main backend: /formula/formula_list.php:1052 - $msg = new user_message();
-main backend: /formula/formula_list.php:1095 - $msg = new user_message();
-main backend: /formula/formula_map.php:1898 - $usr_msg_del = new user_message($msg->usr);
 main backend: /group/group.php:1820 - $msg = new user_message();
 main backend: /group/group_list.php:516 - $msg = new user_message();
 main backend: /helper/config_numbers.php:380 - $msg = new user_message($usr);
@@ -221,12 +205,6 @@ main backend: /view/view.php:1019 - $msg = new user_message();
 main backend: /view/view.php:1041 - $msg = new user_message();
 main backend: /word/triple.php:859 - $usr_ovr = $this->user_overwrites_api_array(new user_message($usr));
 main backend: /word/triple.php:863 - $oth_ovr = $this->other_overwrites_api_array(new user_message($usr));
-main backend: /word/triple_list.php:838 - $msg_chk = new user_message($msg->usr);
-main backend: /word/triple_list.php:839 - $msg_ins = new user_message($msg->usr);
-main backend: /word/triple_list.php:840 - $msg_reload = new user_message($msg->usr);
-main backend: /word/triple_list.php:848 - $msg_chk = new user_message($msg->usr);
-main backend: /word/triple_list.php:849 - $msg_ins = new user_message($msg->usr);
-main backend: /word/triple_list.php:850 - $msg_reload = new user_message($msg->usr);
 main backend: /word/triple_list.php:970 - $msg = new user_message();
 main backend: /word/triple_list.php:1036 - $msg = new user_message();
 main backend: /word/triple_list.php:1059 - $msg_chk = new user_message($msg->usr);

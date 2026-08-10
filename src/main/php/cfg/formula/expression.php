@@ -976,6 +976,9 @@ class expression extends shared_expression
         log_debug('get ' . $type . ' out of "' . $this->ref_text() . '" for user ' . $this->usr->name);
 
         $lib = new library();
+        // a local buffer, because this element split returns a list and its public callers
+        // phr_verb_lst / element_grp_lst have no message
+        // TODO Prio 2 thread the message from the callers of phr_verb_lst / element_grp_lst
         $msg = new user_message($this->usr);
 
         // init result and work vars

@@ -52,8 +52,24 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
      (checked statically: `can_change` only adds `FORMULA_RENAME_NOT_ALLOWED`, which is dead while
      `def::UI_CAN_CHANGE_FORMULA_NAME` is true, so the threading adds no user visible text today)
 
-   remaining clusters: cfg/formula (16), cfg/word (13), cfg/helper (13), web/sandbox (13),
-   cfg/system (12), cfg/db (10), cfg/import (9).
+   **cfg/formula is DONE** (report count 111 -> 103). only one creation was worth threading:
+   `formula::calc_num` now takes the `$msg` of `build_result_list`, its only caller, which already
+   had one — a formula that cannot load its data is exactly the kind of problem the user must see.
+   the rest are legitimate and now say why: the two message producing leaves
+   (`formula_list::save_with_cache_slow` / `fill_by_name`), `formula_map::del_links` (a step gating
+   buffer that is merged at the end), and four read paths whose public callers have no message
+   (`formula::symbol_map` behind `update_latex`, `formula::assign_phr_glst` behind
+   `assign_phr_lst` / `assign_phr_ulst` with 8 test call sites, `expression::element_lst_all`
+   behind `phr_verb_lst` / `element_grp_lst`, and `figure_list::add`) — each carries a TODO Prio 2
+   naming the callers that would have to be threaded first, because the cascade is bigger than the
+   value of the dropped message.
+   the scanner was improved in the same pass: a comment above a **block** of buffers that are
+   declared in consecutive lines now covers the whole block, so the per level import messages of
+   `formula_list::save_with_cache` (and 6 similar blocks elsewhere) count as explained without
+   repeating the same comment five times.
+
+   remaining clusters: cfg/word (13), cfg/helper (13), web/sandbox (13), cfg/system (12),
+   cfg/db (10), cfg/import (9).
 
    **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
    `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php

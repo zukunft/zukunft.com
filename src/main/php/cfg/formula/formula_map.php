@@ -1895,6 +1895,8 @@ class formula_map extends sandbox_code_id
      */
     function del_links(user_message $msg): bool
     {
+        // a local buffer, because each delete step below is only started if the previous one
+        // worked; it is merged into the request message at the end of this function
         $usr_msg_del = new user_message($msg->usr);
 
         $frm_lnk_lst = new formula_link_list($this->get_user());

@@ -185,8 +185,10 @@ class code_user_message_exceptions
     }
 
     /**
-     * a creation is explained by a trailing comment on the same line or by a comment line
-     * directly above it, which is where this codebase states why a local message is needed
+     * a creation is explained by a trailing comment on the same line or by a comment line above it,
+     * which is where this codebase states why a local message is needed; a block of buffers that
+     * belong together (e.g. the per level messages of an import loop) is declared in consecutive
+     * lines and shares the one comment above the block, so the search skips the sibling creations
      *
      * @param array $lines the code lines of the php file
      * @param int $line_idx the zero based line index of the creation
@@ -197,8 +199,15 @@ class code_user_message_exceptions
         $result = false;
         if (str_contains($lines[$line_idx], '//')) {
             $result = true;
-        } elseif ($line_idx > 0) {
-            $result = $this->is_comment($lines[$line_idx - 1]);
+        } else {
+            // walk up over the sibling creations of the same block to its first line
+            $first = $line_idx;
+            while ($first > 0 and preg_match(self::NEW_PATTERN, $lines[$first - 1])) {
+                $first--;
+            }
+            if ($first > 0) {
+                $result = $this->is_comment($lines[$first - 1]);
+            }
         }
         return $result;
     }
