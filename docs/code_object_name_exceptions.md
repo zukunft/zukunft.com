@@ -97,6 +97,7 @@ change_values_time_prime: $chg, $log
 changes_big: $chg, $log, $log_named
 changes_norm: $chg, $log, $log_named
 code_test_coverage: $md_txt
+code_user_message_exceptions: $md_txt
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_ui, $dbo_ui
 component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $new_lnk, $obj, $usr_ui, $vcl

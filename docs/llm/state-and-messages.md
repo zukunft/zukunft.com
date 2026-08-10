@@ -118,6 +118,41 @@ the next section), to every function that needs to know who is asking.
 - **Right**: `function url_to_action(array $url_array, user_message $msg, ...): array`
 - **Wrong**: creating `new user_message()` inside a helper and returning/echoing the message directly
 
+### Created once at the entry point — every other creation is a commented exception
+
+Outside tests, a `user_message` is created **once per request** and only by the
+entry point that answers it: `http/view.php` and the other `http/` scripts for
+the frontend, `api/*/index.php` for the backend. Everything below receives that
+one instance as `$msg`.
+
+A creation below an entry point is therefore an **exception**, and every
+exception carries a comment directly above it (or trailing on the same line)
+saying why a local message is needed:
+
+```php
+// a local buffer, because a failed level is retried on the next import level and
+// only the last level's result is merged into the request message
+$lvl_msg = new user_message($msg->usr);
+…
+$msg->merge($lvl_msg);
+```
+
+The legitimate reasons are narrow: a **buffer that is merged back**, a message
+for a **different user** (a system-user bootstrap), or a **sub-result the caller
+inspects** with `is_ok()`. A fresh message that is neither merged nor inspected
+silently drops every error it collects — that is the bug this rule prevents.
+
+A `user_message $msg = new user_message()` **default parameter value** is the
+same drop in disguise: a caller that passes nothing loses its messages. Treat it
+as a threading gap, not as a solution.
+
+The coded check is `coding_rule_tests::php_user_message_creation_tests`, which
+scans the library trees (backend model, api objects, frontend, shared — the
+entry points sit outside them) and regenerates
+`docs/code_user_message_exceptions.md` with every still-unexplained creation and
+every parameter default. The doc is the work list: it must shrink with each
+threading pass and a new unexplained creation fails the test by changing it.
+
 ### The requesting user is set on `$msg` by the http entry point
 
 The **http entry point** (`http/view.php`, and every other script under `http/`

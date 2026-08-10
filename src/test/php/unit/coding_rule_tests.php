@@ -42,6 +42,7 @@ include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
+include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
+use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use ReflectionClass;
@@ -124,6 +126,7 @@ class coding_rule_tests
         $t->subheader($ts . 'requesting user on the message');
         $this->php_user_message_param_shadow_tests($t);
         $this->php_user_message_user_write_tests($t);
+        $this->php_user_message_creation_tests($t);
 
         $t->subheader($ts . 'backend globals');
         $this->php_cfg_only_allowed_globals_tests($t);
@@ -1212,6 +1215,34 @@ class coding_rule_tests
         // generous timeout is used to avoid a false timeout as the codebase grows
         $test_name = 'user_message->usr writes checked in ' . $files_checked . ' files of ' . $base_path;
         $t->assert_greater($test_name, 0, $files_checked, $t::TIMEOUT_LIMIT_LONG);
+    }
+
+    /**
+     * check that the user_message of a request is created only by the http resp. api entry point:
+     * every 'new user_message(' below the entry points is an exception that needs a comment
+     * explaining why a local message is needed (docs/llm/state-and-messages.md), and the still
+     * unexplained ones are listed in docs/code_user_message_exceptions.md as the remaining rule
+     * breaks, so a new one changes the generated doc and fails this test
+     *
+     * a list instead of one assertion per hit, because the tree still has ~180 open creations:
+     * a per-hit assertion would drown the test output, while the doc keeps the work list reviewable
+     * and shrinks with every threading pass (same pattern as docs/code_object_name_exceptions.md)
+     *
+     * positive (test fires when it should): a new unexplained '$msg = new user_message()' in cfg/
+     *     adds a line to the report, so the generated markdown no longer matches the committed doc
+     * negative (test tolerates good code): a creation with a comment above it counts as explained,
+     *     and the entry points (http/, api/) are outside the scanned trees
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_user_message_creation_tests(test_cleanup $t): void
+    {
+        // scanning the whole source tree takes clearly longer than a normal unit function,
+        // so a generous timeout is used to avoid a false timeout as the codebase grows
+        $test_name = 'check that the docs with the user_message creations is updated';
+        $md_txt = new code_user_message_exceptions()->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_MSG_EXCEPTIONS, '', '', $t::TIMEOUT_LIMIT_LONG);
     }
 
     /**

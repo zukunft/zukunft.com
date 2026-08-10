@@ -1,62 +1,86 @@
 # pending prio 2
 
-### requesting user lives on $msg — implementation steps
+### the user_message of a request — what is left
 
-the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): every http entry point sets the requesting user on the request's user_message once, as early as possible, and every function below takes $msg as a parameter and reads $msg->usr — never a second requesting-user parameter, never a global, never $_SESSION. http/view.php is done; run the steps below one at a time, each as its own commit with tests written first:
+the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): outside tests the user_message is
+created **once per request** by the http resp. api entry point, travels below as the `$msg`
+parameter and carries the requesting user on `$msg->usr`; every creation below an entry point is an
+exception that needs a comment saying why. the coded check is
+`coding_rule_tests::php_user_message_creation_tests`, which regenerates
+`docs/code_user_message_exceptions.md` with every remaining rule break — that doc is the work list
+for the two steps below and must shrink, never grow.
 
-1. done (web/frontend.php reads the requesting user from $msg->usr; the by-reference user parameters of action_login/signup/activate/logout and the backend user of url_to_action stay until the login user switch goes through the api)
+done and removed from this list (see git history for the detail): the seven "requesting user lives
+on $msg" steps — entry points, frontend crud, all 33 api controllers, the bootstrap writers, the
+connection-level query user (`sql_db::$usr_req`), the `reset()` loophole and the review of the 18
+remaining dual user+user_message signatures — plus the two coded checks
+`php_user_message_param_shadow_tests` and `php_user_message_user_write_tests`; the log-vs-$msg audit
+of all 765 log sites and 263 buffers (safe tier complete, decisions kept below); the
+`set_code_id` / `set_ui_msg_code_id` / `set_type` setter families; the doc rule that a
+user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
+`$usr_msg->add_message($result_msg->get_last_message())` cleanup (0 sites left).
 
-2. done (web/sandbox/db_object.php add_via_api / update / del and shared/helper/MapObject.php convertToDb read the requesting user from the message — the backend twin travels inside the message api json via convertMsgToDb — and user_request no longer carries a separate frontend user; a crud call without a message user reports msg_id::USER_MISSING, see the crud guard tests in unit_ui/word_ui_tests.php; no new backend flag was needed because user::api_json_array already emits uses_sandbox)
+1. thread `$msg` into the ~180 unexplained creations listed in
+   `docs/code_user_message_exceptions.md`. work the report file by file: either pass the caller's
+   `$msg`, or keep the local message and add the comment saying why — a buffer that is merged back,
+   a message for a different user (a system-user bootstrap), or a sub-result the caller checks with
+   `is_ok()`. a creation that is neither merged nor inspected drops every error it collects, so it
+   is a real bug, not a style issue. the biggest clusters are cfg/sandbox (47), cfg/formula (16),
+   cfg/word (15), cfg/helper (13) and web/sandbox (13).
 
-3. done (all 33 api/*/index.php and http/setup.php create one backend user_message right after $usr->get() and set $msg->usr = $usr; the controller functions get_json / post_json / put_json / delete / not_permitted / change_permitted take the user_message instead of the string msg and the separate user parameter, and the write path saves directly onto the request message; change_permitted refuses a null message user like an ip user — test helper assert_api_write_blocked_without_user is in the still deactivated "TODO Prio 0 activate" block of unit_write/api_write_tests.php; api/config/index.php also lost its $msg reassignments in favour of merge())
+2. remove the 88 `user_message $msg = new user_message()` **parameter defaults** listed in the same
+   report: a caller that passes nothing silently loses its messages, so the default is the same drop
+   in disguise. making `$msg` mandatory changes every caller, so do one family per commit with its
+   callers, exactly like the setter families above. start with the frontend `api_array` family
+   (~30 defs) because its callers already hold a threaded `$msg`.
 
-4. done (sandbox_multi::change_blocked and sql_db::setup_db read $msg->usr and log_err a missing user instead of overwriting it; the local bootstrap messages — sql_db load_db_code_link_file / add_user_from_env / create_internal_words, text_log_functions sys_log_fnc save, user::db_insert / db_update_user, db_id_object_non_sandbox::del_exe, convert_wikipedia_table and frontend::action_logout — now set their user via the user_message constructor instead of a post-hoc ->usr assignment; the remaining writers below the entry points are frontend::url_to_action:819 (the sanctioned login user switch), user_message::clone_reset (the class itself) and db_object_seq_id_user::set_requesting_user:230 — the last one guards every sandbox save/del with a documented owner fallback for reset() messages, so it is deferred to step 6)
+3. the deferred items of the log/buffer audit — each needs a test run or a decision, not a quick
+   edit (the assessment below says why the safe tier stopped here):
+   - `sandbox_named.php` ~215 and its twin `type_object.php` ~211 now guard the missing-name log
+     with "no NAME and no NAME_GIVEN and no ID", so the false positives are gone; the remaining step
+     is to SURFACE a genuine no-name-at-all submit to `$msg` (`add(MANDATORY_FIELD_NAME_MISSING)` in
+     the guarded branch) — deferred until a test run confirms no test posts a nameless url expecting
+     success
+   - `web/element/element_group.php` ~159 `dsp_values` returns HTML, so surfacing its dropped buffer
+     risks a snapshot break (two such surfacings were already reverted: the import.php
+     "not yet implemented" notices and the `sandbox_named` url_mapper name check); defer until it
+     can be run against the tests
+   - constructors `web/sandbox/db_object.php` ~137 and `web/sandbox/combine_object.php` ~70: an
+     optional `?user_message` param is low-risk but does not fix the drop until the many constructor
+     callers pass a real `$msg` — adding the param alone is cosmetic, so it belongs to step 1's
+     threading pass, not before it
+   - `cfg/value/value_base.php` ~2108 `save_field_trigger_update` is dead code (no callers), so its
+     dropped job-save buffer has no runtime effect — surface it only when the function is wired up
+   - `cfg/import/convert_wikipedia_table.php` ~196 `convert_wiki_json` is test-only and its dropped
+     errors fire only on bad context data the tests do not supply — leave it
+   - 7 sandbox base-class "missing override" stubs discard a throwaway `$msg` (should `log_err` /
+     return `is_ok()`); legacy `*_old` methods — developer-facing, low runtime impact
+   - deliberately NOT surfaced (they belong in the admin log, not the user message):
+     `cfg/group/group.php` ~1156 "save of group description not yet implemented" and the import
+     "not yet implemented" sections — both are dev limitations of the same category
 
-5. done (import.php and user.php read $msg->usr where the message is already threaded; the query user became a connection-level fact instead of a global — sql_db::$usr_req is set once by the entry point / setup_db and read by sql_db::set_class and sql_creator::set_class as the default query user, so both factory- and directly-built sql_creators default to the same user without threading it through the hundreds of set_class call sites; web/frontend.php url_to_html_cached reads $db_con->usr_req until the refresh job goes via the api; system_object::$usr_req is deleted; the sql-generation test setups all_unit_tests.php / group_write_tests / import_write_tests / sandbox_tests set $db_con->usr_req = $t->usr1 so user-scoped query snapshots stay scoped to usr1)
+ASSESSMENT (safe tier complete): everything left above is deferred for one of four reasons — it
+feeds a frontend rendering path (snapshot-regression risk proven by the two reverts), it is dead or
+test-only code, it is a dev-limitation that belongs in the admin log, or it is a
+param-without-callers that would be cosmetic churn until step 1 runs. The genuinely safe and
+valuable fixes are done; the rest needs a working test-run environment or the deliberate end-to-end
+threading pass of steps 1 and 2.
 
-6. done (user_message::reset() now keeps the requesting user by default (keep_usr = true), so the reset loophole is closed; db_object_seq_id_user::set_requesting_user no longer overwrites $msg->usr — it mirrors change_blocked and log_errs a missing requesting user as an internal inconsistency instead of silently patching it with the object owner; the 18 remaining dual user+user_message signatures (down from 32 as earlier passes trimmed them) are all legitimate and split into three groups: subject-user payloads the function operates on (sql_creator::sql_func_log, config_numbers::read_cache / read_db_cache / read_file_cache, sandbox::take_ownership, sandbox_list::load_user_changes / load_sql_user_changes, job_cache_refresh::invalidate_if_outdated, job_db_cleanup::del_old_jobs, user::no_diff / no_non_id_diff / is_same / check_preserved), the requesting user passed explicitly to a pure permission helper that only reads it (user::enforce_profile_privilege, sql_db::add_user_from_env / add_admin_users_from_env), and an optional requesting-user override that defaults to $msg->usr (user::import_obj / save_user); none is a fallback writer, and each keeper's user @param now states which user it is; sandbox::check_protection_change and the sandbox_multi twin no longer take a user parameter — they read the requesting user from $msg->usr and fail closed with msg_id::USER_MISSING if it is not set)
-
-7. done (unit/coding_rule_tests.php now has both coded checks, wired under the 'requesting user on the message' subheader and scanning the library below the entry points — MODEL, API_OBJECT, WEB, SHARED: (a) php_user_message_param_shadow_tests uses a token_get_all parser (msg_param_shadows + helpers) to flag any function that overwrites its own user_message parameter with a fresh new user_message() — the append-only shadow — while tolerating a legitimate local buffer of the same class, a default-value initializer in the signature and the guarded null-init of a nullable parameter (import_convert_xbrl::build_data); a line grep could not tell these apart, so the parser walks each function body, attributes nested-closure bodies to their own scope, and matches $param = new user_message including the namespaced form; validated to catch the del_links-style shadow and to leave the current tree clean; (b) php_user_message_user_write_tests is a line scanner following php_web_config_from_cache_tests that flags a post-hoc $<msg>->usr = write on a message-named variable, skipping comment lines and the sanctioned writers (the user_message class files and web/frontend.php's login user switch); the http and api index.php entry points sit outside the scanned trees; while wiring this, one leftover post-hoc write in user::create_system_user was folded into the user_message constructor so the tree is clean)
-
-All messages to the user should be transported via $msg. Check if there are any e.g. log_warning messages that should better be shown to the user. Use the function that does both in one (log and $msg enrichment if possible)
-
-partly done — audited all 765 log_warning/log_err sites and 263 `= new user_message(` buffers (most are correct: internal-only diagnostics stay off $msg per coding.md 56-57, and ~230 buffers are legitimate per-item buffers that are merge()'d or is_ok()-checked). Fixed the clear, safe cases that need no new user-facing text:
-- user::can_be_changed_by (user.php ~1901) now adds msg_id::USER_NO_UPDATE_PRIVILEGES on the permission-denied branch instead of only log_warning (its sibling USER_MISSING branch already enriched $msg)
-- triple::import_obj (triple.php ~928) and phrase_list::import_lst (phrase_list.php ~588) import save-failures now use log_err_msg($txt, $msg) — the first real uses of the combined log+enrich helper (was 0)
-- triple::phrase_from_api_json (triple.php ~853) dropped its fresh shadow buffer and maps the nested from/to phrase into the threaded $msg, so an invalid nested phrase surfaces
-- user::create_system_user (user.php ~1734) now merges the $msg_sys profile buffer so a failed admin-profile grant at setup is not lost
-  also done (log_warning_msg + new msg_ids):
-- added log_warning_msg / log_warning_msg_ui (text_log_functions.php) — the warning parallel of log_err_msg; adds a generic user notice with a log link at ok=true (non-breaking) plus the technical log; note add_warning_with_vars(msg_id::X, ...) already does log+enrich for a specific warning
-- added msg_ids INTERNAL_WARNING (used by log_warning_msg) and BACKEND_OLDER_THAN_DB
-- wired: db_check.php ~143 backend-older now add_warning_with_vars(BACKEND_OLDER_THAN_DB) (added the msg_id include+use)
-- REVERTED the import.php 544-559 "not yet implemented" surfacing (and removed the IMPORT_PART_NOT_YET_SUPPORTED msg_id): these are standard export metadata sections (pod/time/selection/description/user/users) present in every export, so add_warning_with_vars piled six notices onto $msg on every import — it buried the genuine error in import_tests get_last_message ("Unknown element test") and would spam the user on normal round-trips; a known dev limitation belongs in the admin log (log_warning), not the user message
-- REVERTED the sandbox_named.php ~215 url_mapper surfacing back to log-only: url_mapper only checks url_var::NAME ('k'), but a form can carry the name under url_var::NAME_GIVEN ('kg') or identify an existing object by id, so add(MANDATORY_FIELD_NAME_MISSING) there is a false positive that leaked into the views_by_id snapshot HTML (broke system_view_ui_tests); the user-facing mandatory-name check stays in api_mapper (:143), which reads the canonical json name field
-  also done (signature-change buffers threaded, error-path only, callers already had $msg):
-- cfg/component/component.php formula_from_api_json now takes user_message $msg (was a dropped local buffer) and its single caller in api_mapper passes the threaded $msg, so an invalid nested formula in a component's api json surfaces (note: the "5 siblings 742/775/808/841/873" from the audit were a miscount — component.php has only this one *_from_api_json)
-- web/group/group.php set_phrase_from_json_array now takes user_message $msg and both api_mapper callers pass it, so an invalid phrase in a group's api json surfaces (api_mapper returns $msg->is_ok())
-  still open (need a decision, not just mechanics):
-- DONE (reliable check, still log-only): sandbox_named.php ~215 and its twin type_object.php ~211 now guard the missing-name log with "no NAME and no NAME_GIVEN and no ID", so it stops firing false positives for a form that carries the name under 'kg' or edits an existing object by id (set_name('') is unchanged, so rendering/snapshots are untouched — the log goes to sys_log, not HTML). The remaining step is to SURFACE a genuine no-name-at-all submit to $msg (add(MANDATORY_FIELD_NAME_MISSING) in the guarded branch) — deferred until a test run confirms no test posts a nameless url expecting success. cfg/group/group.php ~1156 group-description-not-saved (candidate for add_info)
-- cfg/value/value_base.php ~2108 save_field_trigger_update is DEAD CODE (no callers anywhere), so its dropped job-save buffer has no runtime effect — surface $result on job failure only when/if the function is wired up
-- leaf buffers that surface into a non-error return value, so they need care (a check+log or an out-param, not just populating the return): cfg/import/convert_wikipedia_table.php ~196 convert_wiki_json is TEST-ONLY (called only from import_tests.php:335/348) and its dropped import_context errors fire only on bad context data the tests do not supply, so the drop is effectively benign — leave it; web/element/element_group.php ~159 dsp_values returns HTML (the rendering path — surfacing risks a snapshot break like the two reverts above), so defer until it can be run against the tests
-- constructors web/sandbox/db_object.php ~137 and web/sandbox/combine_object.php ~70: an optional ?user_message param is low-risk to add but does not fix the drop until the (many) constructor callers pass a real $msg — a deliberate threading pass, not a quick edit; adding the param alone is cosmetic (the default buffer still drops), so it is NOT worth doing in isolation
-
-ASSESSMENT (safe tier complete): every remaining item above has been evaluated and is intentionally left for one of these reasons — it feeds a frontend rendering path (snapshot-regression risk proven by the two reverts), it is dead or test-only code (no runtime effect), it is a dev-limitation "not yet implemented" that belongs in the admin log, or it is a param-without-callers / base-class stub that would be cosmetic churn. The genuinely safe AND valuable buffer/log fixes are done. The rest needs either a working test-run environment (to surface into rendering/import paths and regenerate snapshots) or a deliberate end-to-end threading pass (the constructors, and the separate "$msg at the entry point" prompt below) — not a quick edit.
-  also done / decided:
-- set_code_id($code_id, user $usr): user_message -> ($code_id, user_message $msg): bool across all 6 independent copies (sandbox_code_id, ref, triple, user, sandbox stub, helper/type_object — sandbox_code_id/triple/ref override sandbox's, so they had to change together to stay signature-compatible). The user is now read from $msg->usr and the passed $msg is enriched with NOT_ALLOWED_TO; callers on the api/import path pass the threaded $msg (drop the old $msg->merge), the fill paths that pass a different $usr_req build a merged sub-message, and the internal fill/consistency/row-mapper paths (triple row_mapper, sandbox row-sync, helper/type_object fill) pass a local new user_message($usr) whose result was already discarded. Test factories that only build canonical objects switched to set_code_id_db (no import, no throwaway) where the class has it (word/component); triples (no set_code_id_db) and the unit tests use new user_message. Left the frontend 1-arg web set_code_id and the separate set_ui_msg_code_id untouched. Follow-up worth doing: give triple its own set_code_id_db so its row_mapper (and test_triples) can drop the buffer, matching word/source/component
-- cfg/word/triple_list.php ~874 save_with_cache now calls get_ready($lst_usr_msg, $imp->file_name) instead of the no-arg default, so a triple that is still not ready after all import levels surfaces (IMPORT_TRIPLE_NOT_READY), matching formula_list::save_with_cache; safe against the multi-pass loop because $lst_usr_msg is re-created each level (line 836 comment) and only the final level is merged into $msg (line 914), so a triple resolved on a later level does not falsely surface
-- cfg/group/group.php ~1156 "save of group description not yet implemented" stays log_warning (NOT surfaced): it is a dev-limitation "not yet implemented" of the same category as the reverted import notices, so it belongs in the admin log, not $msg
-- low priority (left as-is): 7 sandbox base-class "missing override" stubs discard a throwaway $msg (should log_err/return is_ok()); legacy *_old methods — developer-facing, low runtime impact
-
-### apply the set_code_id refactor to the other "create-and-return user_message" setters
-
-A tokenizer scan (function takes a `user $usr` param, return type user_message, body creates a fresh `new user_message()`) found 30 more functions with the exact set_code_id shape. Refactor each to `(..., user_message $msg): bool`: read the requesting user from `$msg->usr`, enrich the passed `$msg`, return the bool, and update callers to pass the threaded `$msg` (dropping the old `$msg->merge(...)`), building a merged sub-message where the caller uses a different `$usr_req`, and a local `new user_message($usr)` only where the caller discards the result — exactly as done for set_code_id. Do one family per commit, callers included. Also drop the `user $usr_req = new user()` default-param smell where present.
-
-1. DONE — set_ui_msg_code_id family (the direct twin of set_code_id): all 8 defs (component set_ui_msg_code_id / _vars / _exception / set_ui_msg_value_exception + the 4 sandbox "not expected" stubs) now take user_message $msg and return bool, read the user from $msg->usr, and enrich $msg. Callers: component::api_mapper passes the threaded $msg (dropped the 4 $msg->merge); component::fill uses one shared $ui_msg = new user_message($usr_req) merged into $msg once; sandbox's row-sync consistency block uses one local $ui_msg (result discarded as before). Lint clean, no new param-shadow.
-2. DONE — set_type family (full pattern, dropped the unused #247 type_change_allowed). All setters now take user_message $msg and return bool, reading the user from $msg->usr (with a `$msg->usr ?? $this->get_user()` fallback in sandbox_typed/sandbox_link_named for the user-less frontend-bridge message; job has no get_user so it guards null). Changed: sandbox_typed set_type_id/set_type(stub)/set_type_by_code_id/set_type_by_name, sandbox_link_named set_type_id/by_code_id/by_name, job set_type_id/set_status_id, combine_named passthrough (?? false for null obj), and the 6 child set_type overrides (word/view/triple/source/formula_map/component) that delegate to parent::set_type_by_code_id/name. Callers: api paths pass the threaded $msg; internal fill/row-sync/set_type-wrapper paths pass a local new user_message($usr); ~62 test-factory set_type/set_type_id calls now wrap the user in new user_message() (added the user_message import to test_words/views/sources/components). Left job::set_type/set_status (they keep user $usr_req and build the message) and the web 1-arg set_type_id/void versions untouched. NOTE: a pre-existing bug in job::set_status_id (the allowed branch sets $this->type_id instead of $this->status_id) was left as-is. All lint clean, no param-shadow. Follow-up: no set_type_id_db no-check variant exists — the test factories use throwaway new user_message() instead; a set_type_id_db would let them (and the row-sync/fill paths) drop the buffer.
-3. EVALUATED — do NOT refactor the fill signature. Scope check found ~35 fill overrides (nearly every sandbox/db class, two base hierarchies db_object_seq_id + db_object_multi) and 47 callers, of which only 5 merge the return (all phrase.php) and ~42 discard it. fill is a recursive, deep message-PRODUCING orchestrator (calls parent::fill, then fills sub-objects via more fill calls — sandbox_link from/to, phrase word/triple, triple from/to, merging each) and is legitimately merged by phrase.php — the "leaf the caller merges is legitimate" case. Its only real message is CONFLICT_DB_ID (a rare internal inconsistency), so surfacing value is low while a 35-def + 47-caller change through a recursive core is the highest-risk item of the whole review (the smaller set_type family already needed ~4 regression-fix rounds). Keep fill returning user_message. OPTIONAL small follow-up (caller-side, no signature change): have the few DISCARDING callers that already hold a threaded $msg merge fill's return — e.g. cfg/sandbox/sandbox.php:2902 and cfg/helper/object_mapper.php:137/191 — and leave the recursive / row-mapper / test callers as-is.
-4. EVALUATED — LEAVE all 8 (no signature refactor). Unlike the setters (fresh buffer that most callers DISCARDED → dropped errors), these are entry points or leaves whose caller handles the return: json_file (import entry, callers consume ->get_last_message() as a string result), yaml_file (single caller merges), import_config_yaml (import entry, result assigned), db_insert / db_update_user (save leaves whose caller user::save_user merges; db_update_user is also dual-user with $db_usr the subject), del_exe/db_id_object_non_sandbox (caller merges at :215). Return discarded but low value: create_internal_words (one-time install setup, sql_db.php:1250) and user_list::add (list building, data_object.php:884 / system_object.php:186, only a rare LIST_USER_INVALID). No dropped-error bug, so none justifies a refactor. OPTIONAL caller-side notes (no signature change): (a) sql_db setup 1247-1251 discards import_verbs / import_system_data / create_internal_words / import_config_yaml although it holds a $msg — merging would surface install-time failures; (b) del_exe is inconsistent — db_id_object_non_sandbox::del_exe(user) vs sandbox::del_exe(user_message); aligning both to user_message would be tidy but low value.
-
-create the user_message $msg at the entry point and add it as a parameter to all function that might create a message that needs to be shown to the user
+optional caller-side follow-ups found while evaluating the setter families (no signature change, so
+each is a small standalone commit):
+- `fill` keeps returning a `user_message` (a 35-def / 47-caller change through a recursive core is
+  not worth its low surfacing value), but the few DISCARDING callers that already hold a threaded
+  `$msg` should merge its return — `cfg/sandbox/sandbox.php:2902` and
+  `cfg/helper/object_mapper.php:137/191`; leave the recursive / row-mapper / test callers as-is
+- `sql_db` setup 1247-1251 discards `import_verbs` / `import_system_data` / `create_internal_words`
+  / `import_config_yaml` although it holds a `$msg` — merging would surface install-time failures
+- `del_exe` is inconsistent: `db_id_object_non_sandbox::del_exe(user)` vs
+  `sandbox::del_exe(user_message)`; aligning both to `user_message` would be tidy but is low value
+- give `triple` its own `set_code_id_db` so its `row_mapper` (and `test_triples`) can drop the
+  buffer, matching word/source/component; likewise a `set_type_id_db` no-check variant would let the
+  test factories and the row-sync/fill paths drop their throwaway messages
+- pre-existing bug found in `job::set_status_id`: the allowed branch sets `$this->type_id` instead
+  of `$this->status_id` (left as-is so far)
 
 ## general code cleanup to prevent future issues
 
@@ -326,15 +350,11 @@ add a value change fail workflow to change a value similar to src/test/resources
 
 add a value del workflow fail similar to delete the added value similar to src/test/resources/web/html/workflow/del_word_fail_wf10
 
-add to /docs/llm/* that all function that could create an error that is relevanz for the user needs $msg as parameter to be able to return the specific error with the potential solution to the user. This is relevant for example for src/main/php/cfg/word/triple.php::verb_from_api_json
-
 reduce the number of load and save calls
 
 why does src/test/resources/web/html/workflow/change_word_wf2/wf2_show.html contain 'the name of the word must not be empty'? I guess this should not be the case.
 
-check where something like '$usr_msg->add_message($result_msg->get_last_message());' is used and use instead the merge function
-
-check that save() never fails add() silently
+check that save() never fails add() silently (the rule is coding.md line 56 "never fail silently"; what is still missing is the audit that every save/del path complies)
 
 in test_triples base the fill_url_array on the a ..._filled() function that returns an object and create the url_array using a object_to_url function. Note
 
@@ -772,8 +792,6 @@ after each step src/main/php/web must stay free of `new sql_db` / `new sql_creat
 ### fix error and warnings
 
 ### general
-
-create the user_message $msg object once at the start of each script and use this parameter in every function that might create a message that is relevant for the calling user
 
 check where in the frontend a parameter / configuration values is used that is not yet taken from the config.yaml / user_configuration and at least mark it with a TODO Prio 1
 
