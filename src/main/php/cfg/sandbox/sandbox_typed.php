@@ -354,14 +354,7 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('type_name', $this::class);
     }
 
 

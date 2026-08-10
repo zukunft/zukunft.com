@@ -174,7 +174,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -1043,11 +1042,7 @@ class change_log extends db_object_seq_id_user
         ?sandbox_link $sbx = null
     ): sql_par
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'sql_insert_link',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('sql_insert_link', $this::class);
         return new sql_par($this::class);
     }
 

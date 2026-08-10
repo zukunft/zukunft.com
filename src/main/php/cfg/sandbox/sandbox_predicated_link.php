@@ -35,12 +35,8 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
-//include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'messages.php';
 
 class sandbox_predicated_link extends sandbox_link
 {
@@ -87,14 +83,7 @@ class sandbox_predicated_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'predicate_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('predicate_name', $this::class);
     }
 
 }

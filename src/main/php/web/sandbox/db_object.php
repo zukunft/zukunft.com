@@ -770,12 +770,7 @@ class db_object extends TextIdObject
      */
     function url(): ?string
     {
-        $msg = new user_message();
-        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'url',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('url', $this::class);
     }
 
     /**
@@ -788,12 +783,7 @@ class db_object extends TextIdObject
      */
     private function selector_not_defined(string $function_name): string
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => $function_name,
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message_translated();
+        return log_missing_overwrite_warning($function_name, $this::class);
     }
 
     /**

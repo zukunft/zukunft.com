@@ -8,7 +8,7 @@ is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every
 directly above it (or trailing on the same line) explaining why a local message
 is needed - typically a buffer that is merged back or a message of a different user
 
-279 creations below the entry points: 62 explained, 88 parameter defaults and 129 still unexplained
+260 creations below the entry points: 47 explained, 88 parameter defaults and 125 still unexplained
 
 ## parameter defaults
 
@@ -90,12 +90,12 @@ main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /import/import.php:1101 - user_message $msg = new user_message()
-main backend: /log/change_log.php:818 - user_message $msg = new user_message()
-main backend: /log/change_log.php:854 - user_message $msg = new user_message()
-main backend: /log/change_log.php:885 - user_message $msg = new user_message()
+main backend: /log/change_log.php:817 - user_message $msg = new user_message()
+main backend: /log/change_log.php:853 - user_message $msg = new user_message()
+main backend: /log/change_log.php:884 - user_message $msg = new user_message()
 main backend: /sandbox/sandbox.php:2408 - user_message $msg = new user_message()
 main backend: /sandbox/sandbox_list_named.php:506 - user_message                          $msg = new user_message()
-main backend: /sandbox/sandbox_multi.php:3278 - user_message  $msg = new user_message()
+main backend: /sandbox/sandbox_multi.php:3252 - user_message  $msg = new user_message()
 main backend: /system/ip_range_list.php:76 - user_message $msg = new user_message()
 main backend: /system/list_db_read.php:130 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 shared: /calc/expression.php:199 - user_message                $msg = new user_message()
@@ -119,8 +119,6 @@ frontend: /sandbox/db_object.php:140 - $msg = new user_message();
 frontend: /sandbox/db_object.php:667 - $result = new user_message();
 frontend: /sandbox/db_object.php:704 - $result = new user_message();
 frontend: /sandbox/db_object.php:742 - $result = new user_message();
-frontend: /sandbox/db_object.php:773 - $msg = new user_message();
-frontend: /sandbox/db_object.php:791 - $msg = new user_message();
 frontend: /sandbox/sandbox_list.php:60 - $msg = new user_message();
 frontend: /sandbox/sandbox_list_named.php:281 - $msg = new user_message();
 frontend: /sandbox/sandbox_list_named.php:308 - $msg = new user_message();
@@ -161,8 +159,7 @@ main backend: /formula/formula_list.php:842 - $trm_usr_msg = new user_message($m
 main backend: /formula/formula_list.php:1052 - $msg = new user_message();
 main backend: /formula/formula_list.php:1095 - $msg = new user_message();
 main backend: /formula/formula_map.php:1898 - $usr_msg_del = new user_message($msg->usr);
-main backend: /group/group.php:568 - $msg = new user_message();
-main backend: /group/group.php:1824 - $msg = new user_message();
+main backend: /group/group.php:1820 - $msg = new user_message();
 main backend: /group/group_list.php:516 - $msg = new user_message();
 main backend: /helper/config_numbers.php:380 - $msg = new user_message($usr);
 main backend: /helper/config_numbers.php:568 - $save_msg = new user_message(user::system());
@@ -188,8 +185,7 @@ main backend: /import/import_file.php:196 - $msg = new user_message();
 main backend: /import/import_wikidata.php:154 - $msg = new user_message();
 main backend: /log/change_link.php:389 - $msg = new user_message();
 main backend: /log/change_link.php:610 - $msg = new user_message();
-main backend: /log/change_log.php:1046 - $msg = new user_message();
-main backend: /log_text/text_log_functions.php:582 - $msg = new user_message();
+main backend: /log_text/text_log_functions.php:637 - $msg = new user_message();
 main backend: /phrase/phrase.php:802 - $msg = new user_message();
 main backend: /phrase/phrase_list.php:623 - $msg = new user_message();
 main backend: /phrase/term.php:1234 - $msg = new user_message();

@@ -2365,14 +2365,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'save_fields',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('save_fields', $this::class);
     }
 
     /**
@@ -2639,14 +2632,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function name_field(): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('name_field', $this::class);
     }
 
     /**
@@ -2704,13 +2690,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_id_updated(sandbox_multi $db_rec): bool
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('is_id_updated', $this::class);
         return false;
     }
 
@@ -2753,13 +2733,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same_std(object $obj_to_check): bool
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'is_same_std',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('is_same_std', $this::class);
         return false;
     }
 
@@ -3644,13 +3618,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'id_fvt_lst',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('id_fvt_lst', $this::class);
         return new sql_par_field_list;
     }
 
@@ -4306,8 +4274,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function del_links(): user_message
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
+        // the message built here IS the return value of this function, so the caller merges it
         $msg = new user_message();
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'del_links',
@@ -4403,14 +4370,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function type_name(): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'type_name',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite('type_name', $this::class);
     }
 
 

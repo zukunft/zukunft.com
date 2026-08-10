@@ -565,11 +565,7 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite_warning('name_field', $this::class);
         return group_fields::FLD_NAME;
     }
 

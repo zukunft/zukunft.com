@@ -47,6 +47,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -205,6 +207,16 @@ class sandbox_tests
         $result = $dbo_ui->verb_selector('test_form', null);
         $target = 'verb_selector function is not overwritten by ' . db_object_ui::class;
         $t->assert($test_name, $result, $target);
+
+        // the shared helper behind the dummy parent functions above; only the warning level is
+        // tested, because the error level would raise the error count and ERROR_LIMIT is zero
+        $test_name = 'the missing overwrite helper names the function and the class';
+        $miss_txt = log_missing_overwrite_warning('test_fnc', word::class);
+        $target = 'test_fnc function is not overwritten by ' . word::class;
+        $t->assert($test_name, $miss_txt, $target);
+
+        $test_name = 'the missing overwrite text has no unresolved message variable left';
+        $t->assert_text_not_contains($test_name, $miss_txt, msg_id::VAR_START);
 
         // test if two sources are supposed to be the same
         $src1 = new source($t->usr1);

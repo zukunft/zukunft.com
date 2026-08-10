@@ -307,14 +307,7 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'name_field',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return $msg->get_last_message();
+        return log_missing_overwrite_warning('name_field', $this::class);
     }
 
     /**

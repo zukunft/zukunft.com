@@ -55,11 +55,26 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    remaining clusters: cfg/formula (16), cfg/word (13), cfg/helper (13), web/sandbox (13),
    cfg/system (12), cfg/db (10), cfg/import (9).
 
-   a cross cutting follow-up found during the pass: the "missing function overwrite" stub repeats
-   the same 6 lines in 42 places across 14 files (build a message, `add_err` / `add_warning_with_vars`
-   logs it, return its text). a shared `log_missing_overwrite($fnc_name, $class): string` helper in
-   text_log_functions.php would remove 42 buffers and the duplication in one commit — worth doing
-   before the remaining clusters, because it shrinks them.
+   **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
+   `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php
+   next to log_err_msg; they build the translated text via `library::msg_var_text` without any
+   user_message, so the buffer disappears instead of moving. two functions rather than a level
+   parameter, because that matches log_err / log_warning and needs no new import at the 19 sites.
+   the severity of each site was preserved deliberately: `ERROR_LIMIT = 0`, so turning a warning
+   stub into an error stub would stop the test run the first time a stub fires.
+   of the 42 `MISSING_FUNCTION_OVERWRITE` sites only 21 were throwaway buffers — the other 21
+   correctly enrich the `$msg` of their caller and must NOT be converted; the two left out are
+   `sandbox_multi::del_links` (the message is its return value) and `formula_map::generate_ref_text`
+   (a parameter default, so step 2 below).
+   ONE BEHAVIOUR CHANGE to watch in the next test run: eight of these stubs returned
+   `$msg->get_last_message()`, which reads `msg_text` while `add_err` fills `msg_var_lst` — so they
+   silently returned an **empty string**. They now return the diagnostic text (`type_name`,
+   `name_field`, `predicate_name`, `save_fields`, `db_object::url`). That is the documented
+   "never fail silently" behaviour, but a caller that relied on the empty string would notice.
+   `selector_not_defined` is byte identical (verified against the existing assertion in
+   unit/sandbox_tests.php), and the new helper has its own positive and negative test there.
+   also fixed on the way: `sandbox::sql_key_fields_text` reported the wrong function name
+   ('sql_par_field_list') in its diagnostic.
 
 2. remove the 88 `user_message $msg = new user_message()` **parameter defaults** listed in the same
    report: a caller that passes nothing silently loses its messages, so the default is the same drop

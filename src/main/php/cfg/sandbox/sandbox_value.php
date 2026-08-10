@@ -2220,13 +2220,7 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
-        // a local buffer only to build the translated text of this internal inconsistency;
-        // add_err logs it and the text is the diagnostic return value (the user cannot fix it)
-        $msg = new user_message();
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'db_changed',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
+        log_missing_overwrite('db_changed', $this::class);
         return [];
     }
 
