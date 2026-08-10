@@ -98,10 +98,84 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    when there is neither id nor name. no test or fixture asserts the old spurious message.
    the web `sandbox_list_named::fill_by_name` is a separate hierarchy and is untouched.
 
-   remaining clusters: cfg/helper (13), web/sandbox (13), cfg/system (12), cfg/db (10),
-   cfg/import (9). the other "create and return a user_message" leaves are the natural next
-   candidates for the same treatment: `diff_msg`, `fill_by_id`, `add_id_by_name`,
+   **cfg/helper is DONE** (report count 96 -> 83, only the five `api_json` parameter defaults
+   left). one real bug fixed: `data_object::load` took a `$msg`, reported the name loads into it,
+   but returned a **separate** buffer that only carried the phrase id fill — so its single caller
+   (`import_file` ~270) gated "report the issues on loading the config values" on the fill result
+   alone and a failed `load_by_names` passed as a successful load. every step now reports into one
+   buffer that is merged into `$msg`, and the function returns `bool`.
+   the other twelve are legitimate and now say why: two messages for a **different user**
+   (`config_numbers::write_db_cache` and `type_lists::load_from_types_cache` both act as the system
+   user), the `data_object` constructor field (an object var, not a request message), the per item
+   buffer of `validate_results`, the leaves that return their message (`config_numbers::load_cfg`,
+   `type_object::id_used_msg`, the three `diff_msg`), the two `fill` steps, and
+   `db_cache_page::html_by_url`, which is a backend cache read called from the frontend page cache
+   and therefore cannot take the frontend `user_message` (its TODO Prio 1 is kept).
+
+   **`config_numbers::load_cfg` now takes `$msg`** (and returns `bool`), together with its two
+   wrappers `load_frontend_cfg` / `load_usr_cfg` — which already had a `$msg`, used it for the
+   phrase load and then returned a *second* message from `load_cfg`, so their caller had to merge
+   two channels. all nine call sites pass their message now; six of them discarded the returned
+   message completely, so a failed config load was invisible. `application::load_system_config`
+   got the parameter too (both its callers are `start_api_core` / `start_api`, which have one).
+   the load keeps ONE internal buffer, and that is not laziness: `import_file` only validates the
+   config inside `if (!$msg->is_ok() or $validate)`, so on that path the caller's message is
+   already not ok — threading it straight into the `if ($msg->is_ok())` gate would have **skipped
+   the config cache write** and made the function always return false. the buffer judges only this
+   load, is merged into `$msg`, and carries the config user; the comment on it says exactly that.
+   this is the worked example for the "which message belongs here" check in state-and-messages.md.
+
+   **`sandbox_link_list::add_link_by_key` now takes `$msg`** and returns whether the link was
+   really added. it fixed a silent failure, not just the shape: all four callers dropped the
+   returned message, so the reasons from `can_be_ready` (a mandatory value is missing) and
+   `add_user_check` (the object user does not match the list user) were lost - and both
+   `add_by_key` wrappers set `$added = true` unconditionally after `can_add`, so a link that
+   `add_link_by_key` had silently skipped was still reported as added. the two wrappers already
+   declared a `Message $msg` parameter that they never used; they now pass it on and return the
+   real result. `view::add_component` merges into the `$result` it returns and
+   `formula_map::link_phrase_object` takes the message of its two callers, which both had one.
+   the parameter is typed `user_message|Message` (like `can_be_ready`) because the wrappers hold
+   the shared base class; `Message.php` was added to the include and use block.
+   no caller reads the return value of the two wrappers today, so the corrected `true` cannot
+   break anything - it only stops lying to the next caller.
+   REGRESSION AND FIX (worth reading before the next threading pass): the first version of this
+   change passed the caller's `$msg` into `can_be_ready`, which broke the import_tests assert
+   "JSON import sets a distinct impact for each main stock triple". `can_be_ready` ends with
+   `return $msg->is_ok()` and, during an import where the ids are filled later, reports the link
+   as not ready - so the formula import polluted the shared `$msg`, `get_data_object` skipped the
+   whole next import behind its `if ($msg->is_ok())` guard, and the portfolio triples were never
+   added (all five impacts null, so `count(array_unique(...))` was 1 instead of 5). the readiness
+   check now uses its own message (its verdict is about the link, not about the caller's message)
+   and `formula_map::link_phrase_object` passes an own buffer, because a link without db ids is
+   normal while importing. the trap is written up in state-and-messages.md.
+   LATENT: ~10 more places gate on `db_ready($msg)` / `can_be_ready($msg)` with a passed-in
+   message (ref_list ~309, triple ~513/541, component_list ~458, list_db_write ~187/217,
+   formula_map ~1365, sandbox_list_named ~480/1314, formula_list ~1068). they work today because
+   their callers happen to pass a message that is still ok, but each carries the same defect.
+
+   **`diff_msg` is NOT a refactor candidate after all** — the scope check found 28 definitions and
+   73 call sites with the same recursive `parent::diff_msg()` + merge shape as `fill`, so the
+   evaluated decision for `fill` applies unchanged: the callers do merge the return, so the value
+   is low while the risk is the highest of the whole review. the `fill_by_name` treatment stays
+   right for the *small* leaf families: `fill_by_id`, `add_id_by_name`,
    `sandbox_list::add_user_check`, `sandbox_link_list::add_link_by_key`, `id_used_msg`.
+
+   **web/sandbox is DONE** (report count 83 -> 72, only the `api_json` / `api_array` parameter
+   defaults left). nothing there was worth threading: the eleven creations are two missing
+   overwrite stubs (`ListBase::api_mapper`, `sandbox_named::save_view`), two constructor buffers
+   that already carry a TODO Prio 1, the three "no requesting user" guards of
+   `db_object::add_via_api` / `update` / `del` whose fresh message IS the returned reason, and four
+   leaves - of which the frontend `fill_by_name` has **no caller at all** and `fill_by_id` only a
+   test one, so converting them like the backend twin would be churn on dead code.
+
+   the exception comment now goes **behind the creation on the same line**, not above it (coding.md
+   and state-and-messages.md updated, and the generated doc header says so). the 15 single line
+   leaf comments of the earlier passes were moved accordingly; the longer rationale of
+   `config_numbers::load_cfg` and `data_object::load` moved into the function docblock, where it
+   belongs, leaving a short note on the line. a block of sibling buffers declared on consecutive
+   lines still shares one comment above the block - the check accepts both for that reason.
+
+   remaining clusters: cfg/system (12), cfg/db (10), cfg/import (9).
 
    **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
    `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php

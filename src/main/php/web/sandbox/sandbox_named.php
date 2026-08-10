@@ -340,7 +340,7 @@ r     * unless it is being deleted or excluded (soft-deleted) which does not nee
      */
     function save_view(): user_message
     {
-        return new user_message();
+        return new user_message(); // the ok message IS the return value of this stub, see the TODO above
     }
 
 

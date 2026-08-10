@@ -185,7 +185,7 @@ class test_app
                 $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // preload all types from the database

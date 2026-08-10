@@ -225,7 +225,7 @@ class data_object
         $this->trm_msk_lst = new term_view_list($usr);
         $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
-        $this->msg = new user_message();
+        $this->msg = new user_message(); // an object field of this cache, not the message of a request
         $this->typ_lst = new type_lists();
         $this->sys_msk = new view_sys_list($usr);
     }
@@ -666,19 +666,25 @@ class data_object
     /**
      * load the objects from the database and fill in missing db id
      * e.g. to validate the import
+     *
+     * every step reports into an own message, so that the caller can tell whether THIS load failed
+     * and not whether the request message already carried an error; before only the phrase id fill
+     * decided the result, which let a failed load_by_names pass as a successful load
+     *
      * TODO Prio 2 add the missing lists and vars
      */
-    function load(sql_db $db_con, user_message $msg): user_message
+    function load(sql_db $db_con, user_message $msg): bool
     {
-        $usr_msg = new user_message();
-        $this->load_system_views($db_con, $msg);
+        $usr_msg = new user_message($msg->usr); // judges only this load, see above; merged into $msg below
+        $this->load_system_views($db_con, $usr_msg);
         $wrd_lst = $this->word_list();
-        $wrd_lst->load_by_names($wrd_lst->names(), $msg);
+        $wrd_lst->load_by_names($wrd_lst->names(), $usr_msg);
         $trp_lst = $this->triple_list();
-        $trp_lst->load_by_names($trp_lst->names(), $msg);
+        $trp_lst->load_by_names($trp_lst->names(), $usr_msg);
         $usr_msg->merge($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
         //$this->value_list()->load_by_ids();
-        return $usr_msg;
+        $msg->merge($usr_msg);
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -936,7 +942,7 @@ class data_object
     {
         $failures = 0;
         foreach ($this->res_chk_lst->lst() as $res_chk) {
-            $usr_msg = new user_message();
+            $usr_msg = new user_message(); // a per item buffer to count the failures, merged below
             $this->validate_result($res_chk, $usr_msg);
             if (!$usr_msg->is_ok()) {
                 $failures++;
@@ -1587,7 +1593,7 @@ class data_object
      */
     function diff_msg(data_object $dto): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg->merge($this->word_list()->diff_msg($dto->word_list()));
         $msg->merge($this->triple_list()->diff_msg($dto->triple_list()));
         $msg->merge($this->value_list()->diff_msg($dto->value_list()));

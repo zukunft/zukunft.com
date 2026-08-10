@@ -90,11 +90,11 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
         if ($part == api::CONFIG_ALL or $part == '') {
-            $msg->merge($cfg_lst->load_cfg(null, $usr));
+            $cfg_lst->load_cfg($msg, null, $usr);
         } elseif ($part == api::CONFIG_FRONTEND) {
-            $msg->merge($cfg_lst->load_frontend_cfg($usr, $msg));
+            $cfg_lst->load_frontend_cfg($usr, $msg);
         } elseif ($part == api::CONFIG_USER) {
-            $msg->merge($cfg_lst->load_usr_cfg($usr, $msg));
+            $cfg_lst->load_usr_cfg($usr, $msg);
         } else {
             $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }

@@ -1049,8 +1049,7 @@ class formula_list extends sandbox_list_named
      */
     function save_with_cache_slow(import $imp, term_list $cache): user_message
     {
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($this->lst() as $frm) {
             $frm->save($msg);
             $cache->add($frm->term());

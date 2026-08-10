@@ -287,6 +287,8 @@ class db_object_multi extends db_object_key
      */
     function fill(db_object_multi $obj, user $usr_req): user_message
     {
+        // a local buffer, because this is one step of the recursive fill / diff_msg chain whose caller merges the result; see the evaluated decision in pending_prio_2.md
+        // not to thread the ~28 diff_msg / ~35 fill definitions through their 70+ callers
         $msg = new user_message();
         if ($obj->id() !== 0 and $obj->id() !== '' ) {
             if ($this->id() === 0 or $this->id() === '') {
@@ -334,6 +336,9 @@ class db_object_multi extends db_object_key
      */
     function diff_msg(db_object_multi $obj): user_message
     {
+        // a local buffer, because this is one step of the recursive fill / diff_msg chain
+        // whose caller merges the result; see the evaluated decision in pending_prio_2.md
+        // not to thread the ~28 diff_msg / ~35 fill definitions through their 70+ callers
         $msg = new user_message();
         $lib = new library();
         if ($this->id() != $obj->id()) {

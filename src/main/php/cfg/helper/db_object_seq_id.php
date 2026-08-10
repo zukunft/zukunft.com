@@ -532,6 +532,9 @@ class db_object_seq_id extends db_object
      */
     function diff_msg(CombineObject|db_object_seq_id $obj): user_message
     {
+        // a local buffer, because this is one step of the recursive fill / diff_msg chain
+        // whose caller merges the result; see the evaluated decision in pending_prio_2.md
+        // not to thread the ~28 diff_msg / ~35 fill definitions through their 70+ callers
         $msg = new user_message();
         if ($this->id() != $obj->id()) {
             $lib = new library();
@@ -593,6 +596,9 @@ class db_object_seq_id extends db_object
      */
     function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
+        // a local buffer, because this is one step of the recursive fill / diff_msg chain
+        // whose caller merges the result; see the evaluated decision in pending_prio_2.md
+        // not to thread the ~28 diff_msg / ~35 fill definitions through their 70+ callers
         $msg = new user_message();
         if ($obj::class == phrase::class or $obj::class == term::class) {
             $id = $obj->obj_id();

@@ -137,7 +137,7 @@ class db_object extends TextIdObject
      */
     function __construct(?string $api_json = null)
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a buffer of this constructor, see the TODO above to take the caller's
         parent::__construct();
         if ($api_json != null) {
             $this->set_from_json($api_json, $msg);
@@ -664,7 +664,7 @@ class db_object extends TextIdObject
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
         if ($msg->usr == null) {
-            $result = new user_message();
+            $result = new user_message(); // the guard reports the missing user as its own return value
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
         }
@@ -701,7 +701,7 @@ class db_object extends TextIdObject
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
         if ($msg->usr == null) {
-            $result = new user_message();
+            $result = new user_message(); // the guard reports the missing user as its own return value
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
         }
@@ -739,7 +739,7 @@ class db_object extends TextIdObject
         // a database change without a requesting user on the message is never written
         // (docs/llm/state-and-messages.md)
         if ($msg->usr == null) {
-            $result = new user_message();
+            $result = new user_message(); // the guard reports the missing user as its own return value
             $result->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
             return $result;
         }

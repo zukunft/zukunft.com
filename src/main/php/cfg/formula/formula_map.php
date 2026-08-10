@@ -1260,7 +1260,7 @@ class formula_map extends sandbox_code_id
     function link_phrase(phrase $phr, user_message $msg): bool
     {
         if ($this->get_user() != null) {
-            $this->link_phrase_object($phr);
+            $this->link_phrase_object($phr, $msg);
         } else {
             $msg->add_message_text('user missing');
         }
@@ -1275,7 +1275,7 @@ class formula_map extends sandbox_code_id
      */
     function link_phrase_and_save(phrase $phr, user_message $msg): bool
     {
-        $frm_lnk = $this->link_phrase_object($phr);
+        $frm_lnk = $this->link_phrase_object($phr, $msg);
         $frm_lnk->save($msg);
         return $msg->is_ok();
     }
@@ -1294,9 +1294,10 @@ class formula_map extends sandbox_code_id
     /**
      * create a phrase link to this formula object
      * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $msg to report why the link has not been added to the list
      * @return formula_link with the vars set
      */
-    private function link_phrase_object(phrase $phr): formula_link
+    private function link_phrase_object(phrase $phr, user_message $msg): formula_link
     {
         if ($this->lnk_lst == null) {
             $this->lnk_lst = new formula_link_list($this->get_user());
@@ -1304,7 +1305,11 @@ class formula_map extends sandbox_code_id
         $frm_lnk = new formula_link($this->get_user());
         $frm_lnk->set_formula($this);
         $frm_lnk->set_phrase($phr);
-        $this->lnk_lst->add_link_by_key($frm_lnk);
+        $lnk_msg = new user_message($msg->usr); // a link without the db ids is normal while importing
+        if (!$this->lnk_lst->add_link_by_key($frm_lnk, $lnk_msg)) {
+            log_warning('formula link ' . $frm_lnk->dsp_id() . ' not added to the list of '
+                . $this->dsp_id() . ' because ' . $lnk_msg->all_message_text());
+        }
         return $frm_lnk;
     }
 

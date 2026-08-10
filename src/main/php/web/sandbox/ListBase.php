@@ -125,7 +125,7 @@ class ListBase extends ListOfIdObjects
     {
         $msg = 'set_from_json_array not overwritten by child object ' . $this::class;
         log_err($msg);
-        return new user_message(new user(), $msg);
+        return new user_message(new user(), $msg); // the message IS the return value of this stub
     }
 
     /**
@@ -137,7 +137,7 @@ class ListBase extends ListOfIdObjects
      */
     function api_mapper_list(array $json_array, db_object|IdObject|TextIdObject|CombineObject $dbo): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($json_array as $value) {
             if (is_array($value)) {
                 $new = clone $dbo;

@@ -362,8 +362,7 @@ class sandbox_list_named extends sandbox_list
         msg_id             $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
     ): user_message
     {
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($this->lst() as $sbx) {
             $sbx_to_chk = $sbx_lst->get($sbx->id());
             if ($sbx_to_chk == null) {
@@ -550,8 +549,7 @@ class sandbox_list_named extends sandbox_list
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
         $usr = $this->get_user();
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 if ($this::class == term_list::class) {
@@ -617,8 +615,7 @@ class sandbox_list_named extends sandbox_list
 
     function add_id_by_name(array $id_lst, string $class): user_message
     {
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($id_lst as $name => $id) {
             if ($id != 0 and $name != '') {
                 $sbx_old = $this->get_by_name($name);

@@ -277,8 +277,7 @@ class component_link_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($to_add)) {
-            $this->add_link_by_key($to_add);
-            $added = true;
+            $added = $this->add_link_by_key($to_add, $msg, $allow_duplicates);
         }
         return $added;
     }

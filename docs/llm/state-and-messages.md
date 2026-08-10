@@ -126,16 +126,20 @@ the frontend, `api/*/index.php` for the backend. Everything below receives that
 one instance as `$msg`.
 
 A creation below an entry point is therefore an **exception**, and every
-exception carries a comment directly above it (or trailing on the same line)
-saying why a local message is needed:
+exception carries a comment **behind the creation on the same line** saying why a
+local message is needed — not on the line above, where it reads as a comment on
+the block that follows instead of on the creation itself:
 
 ```php
-// a local buffer, because a failed level is retried on the next import level and
-// only the last level's result is merged into the request message
-$lvl_msg = new user_message($msg->usr);
+$lvl_msg = new user_message($msg->usr); // a buffer, because a failed level is retried
 …
 $msg->merge($lvl_msg);
 ```
+
+Keep it to one short line. Longer rationale (which caller, which gate, why the
+threading would break) belongs in the function's docblock, not stacked above the
+creation. The only creations that still carry a comment *above* them are blocks
+of sibling buffers declared on consecutive lines, which share one comment.
 
 The legitimate reasons are narrow: a **buffer that is merged back**, a message
 for a **different user** (a system-user bootstrap), or a **sub-result the caller
@@ -202,6 +206,35 @@ site, not once for the function:
 
 Because the signature is shared, the whole override family changes together (the
 base class plus every child), so this is one commit per family, callers included.
+
+#### The `return $msg->is_ok()` trap
+
+Nearly 400 functions end with `return $msg->is_ok();`. That is correct when the
+message is the function's own, but it means **the verdict is about the message,
+not about the object** — so passing a shared `$msg` into such a function makes it
+answer the wrong question, and it also dumps its findings into the caller's
+message.
+
+Both halves bite at once. `sandbox_link::can_be_ready($msg)` is a real example:
+
+- with a shared `$msg` that already carries an unrelated error it returns
+  `false` for a perfectly valid link, and
+- during an import — where ids are filled in a later step, so "not ready yet" is
+  the **normal** state — it adds `FROM_MISSING` / `TO_MISSING` notices to the
+  import message.
+
+The second one is unforgiving, because `import::get_data_object()` starts with
+`if ($msg->is_ok())` and `*::import_mapper()` ends with `return $msg->is_ok()`:
+one premature notice and **every following object of that import is silently
+dropped**. That is exactly how threading `$msg` into
+`sandbox_link_list::add_link_by_key` emptied the portfolio import and broke
+`import_tests`' "distinct impact for each main stock triple".
+
+So before threading a message into a readiness / validity check, ask what it
+reports **on the normal path**. Give the check its own message so its verdict is
+about the object, and merge that message into the caller's only when the outcome
+is a real rejection the user must see — an import caller passes its own buffer
+even then.
 
 ### The requesting user is set on `$msg` by the http entry point
 

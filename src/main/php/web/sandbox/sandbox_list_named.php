@@ -278,7 +278,7 @@ class sandbox_list_named extends sandbox_list
         global $ui_sys;
         $usr = $ui_sys->usr;
 
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get($sbx_new->id());
@@ -305,7 +305,7 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_name(sandbox_list_named $lst_new): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name());

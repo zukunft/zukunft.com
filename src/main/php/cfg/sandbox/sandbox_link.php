@@ -1356,8 +1356,7 @@ class sandbox_link extends sandbox
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($obj_to_add->fob() == null or $obj_to_add->tob() == null) {
             $lib = new library();
             $msg->add(msg_id::NAME_ALREADY_EXISTS, [

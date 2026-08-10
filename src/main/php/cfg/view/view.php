@@ -944,7 +944,7 @@ class view extends sandbox_code_id
             $this->cmp_lnk_lst = new component_link_list($this->get_user());
         }
         $lnk->set_view($this);
-        $this->cmp_lnk_lst->add_link_by_key($lnk);
+        $this->cmp_lnk_lst->add_link_by_key($lnk, $result);
 
         return $result;
     }

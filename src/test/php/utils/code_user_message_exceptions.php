@@ -91,8 +91,9 @@ class code_user_message_exceptions
         $md_txt .= 'the user_message of a request is created once by the http resp. api entry point and' . "\n";
         $md_txt .= 'is passed down as the $msg parameter (docs/llm/state-and-messages.md), so every' . "\n";
         $md_txt .= '"new user_message(" below the entry points is an exception that needs a comment' . "\n";
-        $md_txt .= 'directly above it (or trailing on the same line) explaining why a local message' . "\n";
-        $md_txt .= 'is needed - typically a buffer that is merged back or a message of a different user' . "\n";
+        $md_txt .= 'behind the creation on the same line explaining why a local message is needed -' . "\n";
+        $md_txt .= 'typically a buffer that is merged back or a message of a different user; only a' . "\n";
+        $md_txt .= 'block of sibling buffers shares one comment above the block' . "\n";
         $md_txt .= "\n";
         $md_txt .= $all_cnt . ' creations below the entry points: ' . $exp_cnt . ' explained, '
             . $def_cnt . ' parameter defaults and ' . $open_cnt . ' still unexplained' . "\n";
@@ -185,10 +186,10 @@ class code_user_message_exceptions
     }
 
     /**
-     * a creation is explained by a trailing comment on the same line or by a comment line above it,
-     * which is where this codebase states why a local message is needed; a block of buffers that
-     * belong together (e.g. the per level messages of an import loop) is declared in consecutive
-     * lines and shares the one comment above the block, so the search skips the sibling creations
+     * a creation is explained by a comment behind it on the same line, which is where this codebase
+     * states why a local message is needed; a comment line above is also accepted, because a block
+     * of buffers that belong together (e.g. the per level messages of an import loop) is declared
+     * in consecutive lines and shares the one comment above the block
      *
      * @param array $lines the code lines of the php file
      * @param int $line_idx the zero based line index of the creation

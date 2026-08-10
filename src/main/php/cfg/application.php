@@ -141,7 +141,7 @@ class application
         // or with one select per type list if the cache is missing or outdated
         $sys->typ_lst->load_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
@@ -203,7 +203,7 @@ class application
         // or with one select per type list if the cache is missing or outdated
         $sys->load_type_lists_cached($db_con, $msg);
 
-        $this->load_system_config();
+        $this->load_system_config($msg);
 
         // honor the pod switch for the types cache, which is only known once the config is loaded
         global $cfg;
@@ -218,9 +218,10 @@ class application
      * e.g. the permission check of a user without login (user->is_blocked) cannot be done
      * and would allow the database changes that this pod does not permit
      *
+     * @param user_message $msg to report why the system configuration could not be loaded
      * @return void
      */
-    private function load_system_config(): void
+    private function load_system_config(user_message $msg): void
     {
         global $cfg;
 
@@ -232,7 +233,7 @@ class application
         $usr_sys->set_profile_id(user_profiles::SYSTEM_ID);
 
         $cfg = new config_numbers($usr_sys);
-        $cfg->load_cfg(null, $usr_sys);
+        $cfg->load_cfg($msg, null, $usr_sys);
     }
 
     function end_api(sql_db $db_con): void
@@ -375,7 +376,7 @@ class application
                 $sys->load_cache_type($db_con, $msg);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // preload all types from the database

@@ -51,6 +51,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class sandbox_link_list extends sandbox_list
@@ -175,19 +177,17 @@ class sandbox_link_list extends sandbox_list
      * but only if it is not yet part of the list
      * based on the names (not the db id) of the linked objects
      * @param component_link|term_view|view_relation|formula_link $obj_to_add the backend object that should be added
+     * @param user_message|Message $msg to report why a link has not been added e.g. a mandatory value is missing
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @return bool true if the link has really been added to the list
      */
     function add_link_by_key(
         component_link|term_view|view_relation|formula_link $obj_to_add,
+        user_message|Message                                $msg,
         bool                                                $allow_duplicates = false
-    ): user_message
+    ): bool
     {
-        // the message built here IS the return value of this function, so the caller merges it
-        $msg = new user_message();
-
-        // add only objects that have all mandatory values
-        $obj_to_add->can_be_ready($msg);
+        $added = false;
 
         // add a missing user to the object
         // or check if the object user matches the list user
@@ -196,16 +196,23 @@ class sandbox_link_list extends sandbox_list
 
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
         if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
-            // add only objects that have all mandatory values
-            if ($obj_to_add->can_be_ready($msg)) {
+            $rdy_msg = new user_message(); // can_be_ready returns $msg->is_ok(), so it must judge only this link
+            if ($obj_to_add->can_be_ready($rdy_msg)) {
                 $this->add_direct($obj_to_add);
+                $added = true;
+            } else {
+                // only a real rejection reaches the caller, so it can tell the user why the link
+                // is missing; a caller that adds links before the ids are known (the import)
+                // passes an own message, because a link that is not ready yet is normal there
+                $msg->merge($rdy_msg);
             }
         } else {
             log_warning('trying to add linked object via id but add_link_by_key has been called');
             $this->add_link($obj_to_add, $allow_duplicates);
+            $added = true;
         }
 
-        return $msg;
+        return $added;
     }
 
     /**

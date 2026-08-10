@@ -517,7 +517,7 @@ class frontend
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
                 // TODO cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
-                $cfg->load_cfg(null, $usr_sys);
+                $cfg->load_cfg($sys_msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
 
                 // honor the pod switch for the types cache, which is only known once the config is loaded
