@@ -620,7 +620,9 @@ class phrase_list extends sandbox_list_named
      */
     function import_map_names(array $json_obj, ?data_object $dto = null): user_message
     {
-        $msg = new user_message();
+        // TODO Prio 2 formula_map::import_mapper ~440 drops this message, so an empty entry in the
+        //      "assigned" array of an import file is reported to nobody; surfacing needs a test run
+        $msg = new user_message(); // the message IS the return value
         foreach ($json_obj as $word_name) {
             $phr = null;
             $phr = $dto?->get_phrase_by_name($word_name);

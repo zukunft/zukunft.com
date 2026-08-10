@@ -189,21 +189,22 @@ class value_list extends sandbox_value_list
      * set and get
      */
 
-    function set_grp_ids(): user_message
+    /**
+     * set the group id of every value of this list based on its phrase list
+     * a value without a phrase is an internal inconsistency that the user cannot fix,
+     * so it is only logged and this function reports nothing to the user
+     * @return void
+     */
+    function set_grp_ids(): void
     {
-        $msg = new user_message();
-
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
             if ($phr_lst->is_empty()) {
                 log_err('phrase list is empty for value ' . $val->dsp_id());
             } else {
                 $val->set_grp($phr_lst->get_grp_id(false));
-                //$usr_msg->add_message_text('');
             }
         }
-        return $msg;
-
     }
 
     function grp_ids(): group_list
@@ -1304,13 +1305,18 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
-    function fill_phrase_ids_by_names(phrase_list $phr_lst): user_message
+    /**
+     * set the group id of every value of this list from the given phrase list
+     * @param phrase_list $phr_lst the phrases with the database id to fill the values
+     * @param user_message $msg to report a phrase that is missing in the given list
+     * @return bool true if every value could be filled
+     */
+    function fill_phrase_ids_by_names(phrase_list $phr_lst, user_message $msg): bool
     {
-        $msg = new user_message();
         foreach ($this->lst() as $val) {
             $msg->merge($val->set_group_id_by_phrase_list($phr_lst));
         }
-        return $msg;
+        return $msg->is_ok();
     }
 
 

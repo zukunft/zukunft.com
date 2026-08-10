@@ -285,7 +285,7 @@ class test_views extends test_objects
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
-        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_style(view_styles::COL_SM_4, new user_message($this->env->usr1));
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
         $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
@@ -303,7 +303,7 @@ class test_views extends test_objects
         $msk->set_code_id_db(views::TEST_ADD);
         $msk->description = views::START_COM;
         $msk->set_type(view_types::ENTRY, new user_message($this->env->usr1));
-        $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_style(view_styles::COL_SM_4, new user_message($this->env->usr1));
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
         $msk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));

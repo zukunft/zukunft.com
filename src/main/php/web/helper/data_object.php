@@ -209,7 +209,7 @@ class data_object
      */
     function __construct(?string $api_json = null)
     {
-        $this->msg = new user_message();
+        $this->msg = new user_message(); // an object field of this cache, not the message of a request
         if ($api_json != null) {
             $this->val_lst = new value_list();
             $this->res_lst = new result_list();

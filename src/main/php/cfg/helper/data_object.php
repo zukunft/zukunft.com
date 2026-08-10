@@ -681,7 +681,7 @@ class data_object
         $wrd_lst->load_by_names($wrd_lst->names(), $usr_msg);
         $trp_lst = $this->triple_list();
         $trp_lst->load_by_names($trp_lst->names(), $usr_msg);
-        $usr_msg->merge($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
+        $this->value_list()->fill_phrase_ids_by_names($this->phrase_list(), $usr_msg);
         //$this->value_list()->load_by_ids();
         $msg->merge($usr_msg);
         return $usr_msg->is_ok();

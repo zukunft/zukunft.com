@@ -1607,7 +1607,7 @@ class user extends db_id_object_non_sandbox
     {
         if ($this->needs_ip_update($req_ip)) {
             $this->ip_addr = $req_ip;
-            $ip_msg = new user_message();
+            $ip_msg = new user_message(); // a failed ip save must not block the login, see above
             $this->save_user($ip_msg);
             if (!$ip_msg->is_ok()) {
                 log_warning('cannot save the last ip of ' . $this->dsp_id() . ': ' . $ip_msg->get_last_message());
@@ -3030,7 +3030,7 @@ class user extends db_id_object_non_sandbox
         // use the already open database connection of the already started process
         global $db_con;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message(); // the message IS the return value, so the caller merges it
 
         // configure the global database connection object for the select, insert, update and delete queries
         $db_con->set_class($this::class);

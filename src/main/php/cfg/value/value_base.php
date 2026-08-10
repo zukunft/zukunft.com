@@ -657,7 +657,7 @@ class value_base extends sandbox_value
 
     function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the is_ok() gate below must judge only this value; caller merges it
         $db_phr_lst = new phrase_list($this->get_user());
         foreach ($this->phrase_list()->lst() as $phr) {
             if ($phr->id() == 0) {
@@ -1517,7 +1517,7 @@ class value_base extends sandbox_value
      */
     function import_phrase_value(string $phr_name, float $value, ?object $test_obj = null): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // a per value message, because the import counts ok and failed separately
         log_debug();
 
         if ($test_obj) {
@@ -2114,7 +2114,7 @@ class value_base extends sandbox_value
         $usr = $this->get_user();
 
         $result = '';
-        $msg = new user_message($usr);
+        $msg = new user_message($usr); // dead code (no caller), so nothing is dropped, see pending_prio_2.md
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();

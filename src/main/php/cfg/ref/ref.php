@@ -1159,11 +1159,11 @@ class ref extends sandbox_link
 
     /**
      * set the main log entry parameters for updating one reference field
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_upd($db_rec): change_link
+    function log_link_upd($db_rec, user_message $msg): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $msg = new user_message();
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::UPDATE);
         $log->set_table(change_tables::REF);
@@ -1181,11 +1181,11 @@ class ref extends sandbox_link
 
     /**
      * set the log entry parameter to delete a reference
+     * @param user_message $msg to report a failed change log write to the requesting user
      */
-    function log_link_del(): change_link
+    function log_link_del(user_message $msg): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
-        $msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1367,7 +1367,7 @@ class ref extends sandbox_link
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $sim_msg = new user_message();
+            $sim_msg = new user_message(); // the duplicate messages only steer the branch below
             $similar = $this->get_similar($sim_msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {

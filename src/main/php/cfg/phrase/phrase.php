@@ -799,6 +799,8 @@ class phrase extends combine_named
      */
     function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
+        // a step of the recursive fill chain whose caller merges the result; see the evaluated
+        // decision in pending_prio_2.md not to thread the ~35 fill definitions through 47 callers
         $msg = new user_message();
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {

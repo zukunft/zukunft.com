@@ -1231,7 +1231,7 @@ class term extends combine_named
     function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());

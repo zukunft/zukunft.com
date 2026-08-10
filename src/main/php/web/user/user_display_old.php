@@ -1225,7 +1225,7 @@ class user_display_old extends user
         $usr = $ui_sys->usr;
         $result = ''; // reset the html code var
         $html = new html_base();
-        $msg = new user_message();
+        $msg = new user_message(); // a deprecated direct db display function without a caller message
 
         // create the databased link
         $db_con->usr_id = $this->id();

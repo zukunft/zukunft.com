@@ -183,9 +183,12 @@ class MapObject
      */
     function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $msg): db_object_ui|user_ui
     {
+        // a backend message, because the backend api_json_array cannot take the frontend one;
+        // merged into $msg (both extend Message) so a failed mapping is not lost at the boundary
         $db_msg = new user_message();
         $ui_obj = $this->uiObject($obj);
         $ui_obj->api_mapper($obj->api_json_array(new api_type_list([]), $db_msg), $msg);
+        $msg->merge($db_msg);
         return $ui_obj;
     }
 
@@ -196,7 +199,7 @@ class MapObject
      */
     function convertMsgToDb(user_message_ui $ui_msg): user_message
     {
-        $db_msg = new user_message();
+        $db_msg = new user_message(); // the converted message IS the return value of this function
         $db_msg->api_mapper($ui_msg->api_array([], $ui_msg));
         return $db_msg;
     }

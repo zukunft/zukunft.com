@@ -9,7 +9,7 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-225 creations below the entry points: 127 explained, 57 parameter defaults and 41 still unexplained
+220 creations below the entry points: 145 explained, 57 parameter defaults and 18 still unexplained
 
 ## parameter defaults
 
@@ -81,9 +81,7 @@ the remaining rule breaks: explain the exception with a comment or thread the $m
 
 ```
 frontend: /element/element_group.php:84 - $msg = new user_message();
-frontend: /helper/data_object.php:212 - $this->msg = new user_message();
 frontend: /types/type_list.php:323 - $msg = new user_message();
-frontend: /user/user_display_old.php:1228 - $msg = new user_message();
 frontend: /value/value.php:631 - $msg = new user_message();
 frontend: /value/value.php:645 - $msg = new user_message();
 main backend: /application.php:357 - $msg = new user_message(user::system());
@@ -97,28 +95,7 @@ main backend: /group/group_list.php:516 - $msg = new user_message();
 main backend: /log/change_link.php:389 - $msg = new user_message();
 main backend: /log/change_link.php:610 - $msg = new user_message();
 main backend: /log_text/text_log_functions.php:637 - $msg = new user_message();
-main backend: /phrase/phrase.php:802 - $msg = new user_message();
-main backend: /phrase/phrase_list.php:623 - $msg = new user_message();
-main backend: /phrase/term.php:1234 - $msg = new user_message();
-main backend: /ref/ref.php:1166 - $msg = new user_message();
-main backend: /ref/ref.php:1188 - $msg = new user_message();
-main backend: /ref/ref.php:1370 - $sim_msg = new user_message();
 main backend: /result/result.php:1335 - $msg = new user_message();
-main backend: /user/user.php:1610 - $ip_msg = new user_message();
-main backend: /user/user.php:3033 - $usr_msg = new user_message();
-main backend: /user/user_list.php:654 - $msg = new user_message();
-main backend: /value/value_base.php:660 - $msg = new user_message();
-main backend: /value/value_base.php:1520 - $msg = new user_message();
-main backend: /value/value_base.php:2117 - $msg = new user_message($usr);
-main backend: /value/value_list.php:194 - $msg = new user_message();
-main backend: /value/value_list.php:1309 - $msg = new user_message();
 main backend: /verb/verb.php:967 - $msg = new user_message();
 main backend: /verb/verb.php:1103 - $sim_msg = new user_message();
-main backend: /view/view.php:620 - $msg = new user_message();
-main backend: /view/view.php:930 - $result = new user_message();
-main backend: /view/view.php:1019 - $msg = new user_message();
-main backend: /view/view.php:1041 - $msg = new user_message();
-shared: /helper/MapObject.php:186 - $db_msg = new user_message();
-shared: /helper/MapObject.php:199 - $db_msg = new user_message();
-shared: /helper/Translator.php:177 - $msg = new user_message();
 ```

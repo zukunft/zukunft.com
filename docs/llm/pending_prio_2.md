@@ -5,317 +5,81 @@
 the rule (docs/llm/coding.md, docs/llm/state-and-messages.md): outside tests the user_message is
 created **once per request** by the http resp. api entry point, travels below as the `$msg`
 parameter and carries the requesting user on `$msg->usr`; every creation below an entry point is an
-exception that needs a comment saying why. the coded check is
+exception that needs a comment behind it saying why. the coded check is
 `coding_rule_tests::php_user_message_creation_tests`, which regenerates
-`docs/code_user_message_exceptions.md` with every remaining rule break — that doc is the work list
-for the two steps below and must shrink, never grow.
+`docs/code_user_message_exceptions.md` — that doc is the work list and must shrink, never grow.
+the done passes are in the git history; only what is still open is listed here.
 
-done and removed from this list (see git history for the detail): the seven "requesting user lives
-on $msg" steps — entry points, frontend crud, all 33 api controllers, the bootstrap writers, the
-connection-level query user (`sql_db::$usr_req`), the `reset()` loophole and the review of the 18
-remaining dual user+user_message signatures — plus the two coded checks
-`php_user_message_param_shadow_tests` and `php_user_message_user_write_tests`; the log-vs-$msg audit
-of all 765 log sites and 263 buffers (safe tier complete, decisions kept below); the
-`set_code_id` / `set_ui_msg_code_id` / `set_type` setter families; the doc rule that a
-user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
-`$usr_msg->add_message($result_msg->get_last_message())` cleanup (0 sites left).
+1. **explain or thread the 18 unexplained creations** left in the report. all the named folders are
+   cleared, so the rest is spread thin (cfg/component 3, then 1-2 each in ten more areas).
+   organise the next pass
+   **by pattern, not by folder**: the `diff_msg` (28 defs / 73 calls) and `fill` (35 defs / 47
+   calls) families are settled as "leave" — their callers do merge the return, so the value is low
+   and the risk of a recursive core change is the highest of the review — which leaves mostly
+   message producing leaves and per item buffers. the `fill_by_name` treatment (take `$msg`, return
+   `bool`) stays right for the *small* leaf families: `fill_by_id`, `add_id_by_name`,
+   `sandbox_list::add_user_check`, `id_used_msg`.
 
-1. thread `$msg` into the unexplained creations listed in
-   `docs/code_user_message_exceptions.md`. work the report file by file: either pass the caller's
-   `$msg`, or keep the local message and add the comment saying why — a buffer that is merged back,
-   a message for a different user (a system-user bootstrap), or a sub-result the caller checks with
-   `is_ok()`. a creation that is neither merged nor inspected drops every error it collects, so it
-   is a real bug, not a style issue.
+2. **remove the 57 remaining `user_message $msg = new user_message()` parameter defaults**: a caller
+   that passes nothing silently loses its messages, so the default is the same drop in disguise.
+   one family per commit with its callers.
 
-   **cfg/sandbox is DONE** (47 creations, report count 179 -> 129). what the pass changed:
-   - the change log family now takes the `user_message` its `log_upd*` siblings already had:
-     `log_add` / `log_del` / `log_link_add` / `log_del_link` / `log_upd_link` / `log_upd_common`
-     plus the `log_add_common` / `log_del_common` / `log_del_prime` / `log_del_big` helpers, across
-     both hierarchies (sandbox, sandbox_named, sandbox_link, sandbox_value, sandbox_multi) and the
-     overrides in cfg/word/triple.php and cfg/ref/ref.php. a failed change log write used to vanish
-     - it now reaches the requesting user. the base class "should never happen" stubs use
-     `log_err_msg($txt, $msg)` instead of a bare `log_err`
-   - `sandbox::add_usr_cfg` takes the `$msg` of the caller like its two siblings already did
-     (cfg/value/value_base.php, sandbox_multi) and merges its local buffer back; the buffer stays
-     local because the `is_ok()` gates must judge only this insert. `sandbox_multi::del_usr_cfg`
-     and `save_field_excluded_log` got the same parameter, callers updated
-   - the three `sandbox_list_named` sql list builders (`sql_insert` / `sql_update` / `sql_delete`)
-     now `log_err` the reason when they skip an object instead of dropping it silently
-   - the legitimate locals now carry the explaining comment: the message producing leaves
-     (`id_used_msg`, `add_user_check`, `add_link_by_key`, `diff_msg`, `fill_by_id`, `fill_by_name`,
-     `add_id_by_name`), the missing-override diagnostic buffers and the deliberate duplicate-check
-     buffers (`$sim_msg`, `$sim_name_msg`)
-   - NOT covered by a new test: every changed path is a database write or a `log_err` stub, and
-     `ERROR_LIMIT = 0` means a unit test that deliberately triggers one stops the whole run, so the
-     coverage stays with the existing write tests. what the next test run must confirm is that the
-     change log assertions of unit_write still pass and no workflow snapshot gained a message
-     (checked statically: `can_change` only adds `FORMULA_RENAME_NOT_ALLOWED`, which is dead while
-     `def::UI_CAN_CHANGE_FORMULA_NAME` is true, so the threading adds no user visible text today)
+   the `api_json` family (8 defaults) is the trap — read this before retrying. its 53 **production**
+   call sites already pass their message, so the drop is fixed there; removing the defaults breaks
+   **232 test call sites**, each needing the right message *kind* (a backend receiver takes the cfg
+   `user_message`, a frontend one the web `user_message`), and the receiver cannot be told apart
+   statically with enough confidence — a receiver-name heuristic mis-reads
+   `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver. so it needs the
+   test run in the loop, one test folder per commit, or it becomes trivial once the frontend/backend
+   split makes the message kind unambiguous.
+   better next targets: the 21 `type_lists::set_*` setters (one mechanical family, few callers),
+   then the three `__construct` defaults — though the constructors stay cosmetic until their many
+   callers pass a real message.
 
-   **cfg/formula is DONE** (report count 111 -> 103). only one creation was worth threading:
-   `formula::calc_num` now takes the `$msg` of `build_result_list`, its only caller, which already
-   had one — a formula that cannot load its data is exactly the kind of problem the user must see.
-   the rest are legitimate and now say why: the two message producing leaves
-   (`formula_list::save_with_cache_slow` / `fill_by_name`), `formula_map::del_links` (a step gating
-   buffer that is merged at the end), and four read paths whose public callers have no message
-   (`formula::symbol_map` behind `update_latex`, `formula::assign_phr_glst` behind
-   `assign_phr_lst` / `assign_phr_ulst` with 8 test call sites, `expression::element_lst_all`
-   behind `phr_verb_lst` / `element_grp_lst`, and `figure_list::add`) — each carries a TODO Prio 2
-   naming the callers that would have to be threaded first, because the cascade is bigger than the
-   value of the dropped message.
-   the scanner was improved in the same pass: a comment above a **block** of buffers that are
-   declared in consecutive lines now covers the whole block, so the per level import messages of
-   `formula_list::save_with_cache` (and 6 similar blocks elsewhere) count as explained without
-   repeating the same comment five times.
-
-   **cfg/word is DONE** (report count 103 -> 96, and the folder has no parameter default left
-   either, so it is completely clear). the real find were the four
-   `user_overwrites_api_array(new user_message($usr))` / `other_overwrites_api_array(...)` calls in
-   the `api_json_array` of word and triple: both functions use the message only to collect load
-   errors (they select by `$this->get_user()` / `changed_by()`, never by `$msg->usr`), so the fresh
-   message was a pure drop — a failed overlay read silently emptied the 'my' and 'others' tab. they
-   now share one `$ovr_msg` sub message that keeps the api user and is merged into the request
-   message. checked that this cannot add a message on the healthy path (`load_standard` only
-   reports a zero id, `load_by_id` / `changed_by` / `user_list::load` only report a failed query),
-   so no snapshot gains a notification bar. the three `triple_list` sites are legitimate: two
-   message producing leaves (`fill_by_name`, `fill_missing_verbs`) and the per item `$msg_chk` of
-   `get_ready` that is already merged.
-
-   **the `fill_by_name` family now takes `$msg`** — the first "the message is my return value"
-   leaf converted to the shape the new coding.md rule asks for: `sandbox_list_named` (base),
-   `triple_list` and `formula_list` take `user_message $msg` and return `bool`, and all 13 call
-   sites pass their message. two things had to be decided per call site, not once:
-   - *which* message: inside the import level loop the per level buffer `$msg_chk` is passed, not
-     the request message, so a triple resolved on a later level does not surface as missing
-   - *whether the reporting is wanted*: the pre loop fill, the two post loop fills (the caller runs
-     `report_missing($msg)` right after) and the two `data_object` cache fills now pass
-     `report_missing = false`, because otherwise threading would turn a silent drop into a premature
-     "not found" on every import
-   the base also had a real bug that made the threading unsafe: its else branch reported
-   `USED_OBJECT_ID_AND_NAME_MISSING` for every object that **already had an id**, i.e. on the normal
-   path, and `sandbox_list_named::insert` merged that into the request message. the condition now
-   matches the message wording and the triple twin: nothing to do when the id is set, report only
-   when there is neither id nor name. no test or fixture asserts the old spurious message.
-   the web `sandbox_list_named::fill_by_name` is a separate hierarchy and is untouched.
-
-   **cfg/helper is DONE** (report count 96 -> 83, only the five `api_json` parameter defaults
-   left). one real bug fixed: `data_object::load` took a `$msg`, reported the name loads into it,
-   but returned a **separate** buffer that only carried the phrase id fill — so its single caller
-   (`import_file` ~270) gated "report the issues on loading the config values" on the fill result
-   alone and a failed `load_by_names` passed as a successful load. every step now reports into one
-   buffer that is merged into `$msg`, and the function returns `bool`.
-   the other twelve are legitimate and now say why: two messages for a **different user**
-   (`config_numbers::write_db_cache` and `type_lists::load_from_types_cache` both act as the system
-   user), the `data_object` constructor field (an object var, not a request message), the per item
-   buffer of `validate_results`, the leaves that return their message (`config_numbers::load_cfg`,
-   `type_object::id_used_msg`, the three `diff_msg`), the two `fill` steps, and
-   `db_cache_page::html_by_url`, which is a backend cache read called from the frontend page cache
-   and therefore cannot take the frontend `user_message` (its TODO Prio 1 is kept).
-
-   **`config_numbers::load_cfg` now takes `$msg`** (and returns `bool`), together with its two
-   wrappers `load_frontend_cfg` / `load_usr_cfg` — which already had a `$msg`, used it for the
-   phrase load and then returned a *second* message from `load_cfg`, so their caller had to merge
-   two channels. all nine call sites pass their message now; six of them discarded the returned
-   message completely, so a failed config load was invisible. `application::load_system_config`
-   got the parameter too (both its callers are `start_api_core` / `start_api`, which have one).
-   the load keeps ONE internal buffer, and that is not laziness: `import_file` only validates the
-   config inside `if (!$msg->is_ok() or $validate)`, so on that path the caller's message is
-   already not ok — threading it straight into the `if ($msg->is_ok())` gate would have **skipped
-   the config cache write** and made the function always return false. the buffer judges only this
-   load, is merged into `$msg`, and carries the config user; the comment on it says exactly that.
-   this is the worked example for the "which message belongs here" check in state-and-messages.md.
-
-   **`sandbox_link_list::add_link_by_key` now takes `$msg`** and returns whether the link was
-   really added. it fixed a silent failure, not just the shape: all four callers dropped the
-   returned message, so the reasons from `can_be_ready` (a mandatory value is missing) and
-   `add_user_check` (the object user does not match the list user) were lost - and both
-   `add_by_key` wrappers set `$added = true` unconditionally after `can_add`, so a link that
-   `add_link_by_key` had silently skipped was still reported as added. the two wrappers already
-   declared a `Message $msg` parameter that they never used; they now pass it on and return the
-   real result. `view::add_component` merges into the `$result` it returns and
-   `formula_map::link_phrase_object` takes the message of its two callers, which both had one.
-   the parameter is typed `user_message|Message` (like `can_be_ready`) because the wrappers hold
-   the shared base class; `Message.php` was added to the include and use block.
-   no caller reads the return value of the two wrappers today, so the corrected `true` cannot
-   break anything - it only stops lying to the next caller.
-   REGRESSION AND FIX (worth reading before the next threading pass): the first version of this
-   change passed the caller's `$msg` into `can_be_ready`, which broke the import_tests assert
-   "JSON import sets a distinct impact for each main stock triple". `can_be_ready` ends with
-   `return $msg->is_ok()` and, during an import where the ids are filled later, reports the link
-   as not ready - so the formula import polluted the shared `$msg`, `get_data_object` skipped the
-   whole next import behind its `if ($msg->is_ok())` guard, and the portfolio triples were never
-   added (all five impacts null, so `count(array_unique(...))` was 1 instead of 5). the readiness
-   check now uses its own message (its verdict is about the link, not about the caller's message)
-   and `formula_map::link_phrase_object` passes an own buffer, because a link without db ids is
-   normal while importing. the trap is written up in state-and-messages.md.
-   LATENT: ~10 more places gate on `db_ready($msg)` / `can_be_ready($msg)` with a passed-in
-   message (ref_list ~309, triple ~513/541, component_list ~458, list_db_write ~187/217,
-   formula_map ~1365, sandbox_list_named ~480/1314, formula_list ~1068). they work today because
-   their callers happen to pass a message that is still ok, but each carries the same defect.
-
-   **`diff_msg` is NOT a refactor candidate after all** — the scope check found 28 definitions and
-   73 call sites with the same recursive `parent::diff_msg()` + merge shape as `fill`, so the
-   evaluated decision for `fill` applies unchanged: the callers do merge the return, so the value
-   is low while the risk is the highest of the whole review. the `fill_by_name` treatment stays
-   right for the *small* leaf families: `fill_by_id`, `add_id_by_name`,
-   `sandbox_list::add_user_check`, `sandbox_link_list::add_link_by_key`, `id_used_msg`.
-
-   **web/sandbox is DONE** (report count 83 -> 72, only the `api_json` / `api_array` parameter
-   defaults left). nothing there was worth threading: the eleven creations are two missing
-   overwrite stubs (`ListBase::api_mapper`, `sandbox_named::save_view`), two constructor buffers
-   that already carry a TODO Prio 1, the three "no requesting user" guards of
-   `db_object::add_via_api` / `update` / `del` whose fresh message IS the returned reason, and four
-   leaves - of which the frontend `fill_by_name` has **no caller at all** and `fill_by_id` only a
-   test one, so converting them like the backend twin would be churn on dead code.
-
-   the exception comment now goes **behind the creation on the same line**, not above it (coding.md
-   and state-and-messages.md updated, and the generated doc header says so). the 15 single line
-   leaf comments of the earlier passes were moved accordingly; the longer rationale of
-   `config_numbers::load_cfg` and `data_object::load` moved into the function docblock, where it
-   belongs, leaving a short note on the line. a block of sibling buffers declared on consecutive
-   lines still shares one comment above the block - the check accepts both for that reason.
-
-   **cfg/system is DONE** (report count 72 -> 60, only its two parameter defaults left). nothing
-   was threaded, and for once that is the right answer for every site: `job_runner` is the top of
-   a non interactive job (`bin/job_runner.php` only bootstraps and hands over), so its per sweep
-   and per status message IS the entry point message of that job - the same holds for `job::exe`,
-   whose message the runner consumes. `job_list::add` / `has_similar` and
-   `system_time_list::save` are message producing leaves, the four `list_db_write` buffers are per
-   item and already merged on failure, and `job::set_type` / `set_status` keep the `user $usr_req`
-   parameter by the earlier set_type family decision, so their throwaway only feeds the permission
-   check of that user.
-   NOT fixed here on purpose: `list_db_write` ~187/217 gate the loop with
-   `if ($sbx->db_ready($msg))` on the **passed in** message, so after the first failing object
-   every later one is skipped silently - one of the ~10 latent cases listed above, and the same
-   defect class as the import regression. it needs its own commit with a test run, because the
-   fix makes more objects pass the gate.
-
-   **cfg/db is DONE** (report count 60 -> 50) and it is the first folder that is completely clear -
-   it has no parameter default either. again nothing was threaded, because the database layer runs
-   outside a user request: `sql_db::setup` and `reset_config` act as the **system user** at install
-   time, the consistency check timestamp of `db_check` is a system write that is already merged,
-   `get_internal` and `get_value_2key` are internal resp. deprecated reads whose failure belongs in
-   the log, `remove_prefix` is a db upgrade step called by `db_check`, the `set_type` throwaway
-   only feeds the permission check of the given user, and the three `sql_sync_sequences` functions
-   are message producing leaves that `sync()` merges.
-
-   **cfg/import is DONE** (report count 50 -> 41, only its one parameter default left) and with it
-   **every named cluster**. two of the nine were **dead code**: the `$import_result` buffers of the
-   users and the verbs branch were created, never written to (the real messages go to `$msg` via
-   `import_obj`) and then merged - so both they and their pointless `merge()` are removed; the two
-   later `$import_result` uses in the same function are the legitimate ones, assigned from a return
-   and `is_ok()` checked. the rest are message producing leaves (`message_check`, `status_text`,
-   `json_file`, `yaml_file`, `store_text`) plus the two already evaluated exceptions:
-   `convert_wikipedia_table` (test only) and the guarded null init of the nullable parameter in
-   `import_convert_xbrl::build_data`, which is the one case the param shadow check tolerates and
-   now says so on the line.
-   nothing was threaded here on purpose: this is the folder where a premature message is most
-   expensive, because `get_data_object()` opens with `if ($msg->is_ok())` and every
-   `import_mapper()` ends with `return $msg->is_ok()` - see the regression write up above.
-
-   the 41 that remain are spread thin (cfg/value 5, cfg/view 4, shared/helper 3, cfg/user 3,
-   cfg/ref 3, cfg/phrase 3, cfg/component 3, and 1-2 each in a dozen more), so the next pass is
-   better organised by pattern than by folder: the `diff_msg` / `fill` families are settled as
-   "leave", so what is left is mostly leaves and per item buffers.
-
-   **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
-   `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php
-   next to log_err_msg; they build the translated text via `library::msg_var_text` without any
-   user_message, so the buffer disappears instead of moving. two functions rather than a level
-   parameter, because that matches log_err / log_warning and needs no new import at the 19 sites.
-   the severity of each site was preserved deliberately: `ERROR_LIMIT = 0`, so turning a warning
-   stub into an error stub would stop the test run the first time a stub fires.
-   of the 42 `MISSING_FUNCTION_OVERWRITE` sites only 21 were throwaway buffers — the other 21
-   correctly enrich the `$msg` of their caller and must NOT be converted; the two left out are
-   `sandbox_multi::del_links` (the message is its return value) and `formula_map::generate_ref_text`
-   (a parameter default, so step 2 below).
-   ONE BEHAVIOUR CHANGE to watch in the next test run: eight of these stubs returned
-   `$msg->get_last_message()`, which reads `msg_text` while `add_err` fills `msg_var_lst` — so they
-   silently returned an **empty string**. They now return the diagnostic text (`type_name`,
-   `name_field`, `predicate_name`, `save_fields`, `db_object::url`). That is the documented
-   "never fail silently" behaviour, but a caller that relied on the empty string would notice.
-   `selector_not_defined` is byte identical (verified against the existing assertion in
-   unit/sandbox_tests.php), and the new helper has its own positive and negative test there.
-   also fixed on the way: `sandbox::sql_key_fields_text` reported the wrong function name
-   ('sql_par_field_list') in its diagnostic.
-
-2. remove the `user_message $msg = new user_message()` **parameter defaults** listed in the same
-   report: a caller that passes nothing silently loses its messages, so the default is the same drop
-   in disguise. making `$msg` mandatory changes every caller, so do one family per commit with its
-   callers, exactly like the setter families above.
-
-   **the `api_array` family is DONE** (defaults 90 -> 57, report 253 -> 222 creations). all 33
-   `api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message())` are now
-   `(api_type_list|array $typ_lst, user_message $msg)`, so the family is uniform: 36 identical
-   signatures plus the unrelated backend `user_message::api_array(user_message $msg)`.
-   `$typ_lst` had to lose its default as well, because php deprecates an optional parameter before
-   a required one - reordering instead would have touched all 102 call sites rather than 6.
-   of those 102 calls, 92 already passed both arguments; the ones that did not were the two list
-   `api_array` of `ListBase` / `sys_log_list` (they iterate their items, so they now take the
-   message and hand it to each item), `view_base` (passes the `$msg` it already has),
-   `MapObject::convertMsgToDb` (the frontend message converts itself, so it reports into itself)
-   and `test_api::assert_api_to_ui`. the seven remaining single argument calls all target the
-   backend `user_message::api_array(user_message $msg)`, which is a different function.
-
-   **the `api_json` family is HALF done and the defaults stay for now - read this before retrying.**
-   sizing by definitions was misleading: 8 definitions, but ~285 call sites (`api_array` had 6).
-   what IS done and is the actual value: **all 53 production call sites now pass their message**
-   (38 `api/*/index.php`, `http/view.php`, `text_log_functions`, and 13 in `web/`), so the api json
-   creation no longer drops the messages of `api_json_array`. zero production calls rely on the
-   default any more. fixed on the way: `web/hist/hist_log.php` passed `$msg` where the
-   `api_type_list` is expected, which would be a TypeError as soon as that branch runs.
-   what is NOT done: the 8 defaults themselves, because removing them breaks **232 test call
-   sites**. each needs the right message *kind* - a backend receiver needs the cfg `user_message`,
-   a frontend one the web `user_message` - and the receiver cannot be told apart statically with
-   enough confidence (a receiver-name heuristic split them 124/108, but it mis-reads
-   `new formula_list_ui($t_msk->view_list_word()->api_json())` as a ui receiver). guessing wrong
-   gives 232 possible TypeErrors, so this needs the developer's test run in the loop, ideally one
-   test folder per commit, or it becomes trivial once the frontend/backend split makes the message
-   kind unambiguous. the three legacy `display_old` / `graph` display functions got a local buffer
-   with a comment, because they have no message at all.
-
-   next families by size: the three `__construct` (which the earlier audit called cosmetic until
-   the constructor callers pass a real message), then ~20 one-off setters, of which the 21
-   `type_lists::set_*` are a single mechanical family with few callers - a better next step than
-   the rest of `api_json`.
-
-3. the deferred items of the log/buffer audit — each needs a test run or a decision, not a quick
-   edit (the assessment below says why the safe tier stopped here):
-   - `sandbox_named.php` ~215 and its twin `type_object.php` ~211 now guard the missing-name log
-     with "no NAME and no NAME_GIVEN and no ID", so the false positives are gone; the remaining step
-     is to SURFACE a genuine no-name-at-all submit to `$msg` (`add(MANDATORY_FIELD_NAME_MISSING)` in
+3. **the deferred items of the log/buffer audit** — each needs a test run or a decision, not a quick
+   edit:
+   - `sandbox_named.php` ~215 and its twin `type_object.php` ~211 guard the missing-name log with
+     "no NAME and no NAME_GIVEN and no ID", so the false positives are gone; the remaining step is
+     to SURFACE a genuine no-name-at-all submit to `$msg` (`add(MANDATORY_FIELD_NAME_MISSING)` in
      the guarded branch) — deferred until a test run confirms no test posts a nameless url expecting
      success
    - `web/element/element_group.php` ~159 `dsp_values` returns HTML, so surfacing its dropped buffer
      risks a snapshot break (two such surfacings were already reverted: the import.php
      "not yet implemented" notices and the `sandbox_named` url_mapper name check); defer until it
      can be run against the tests
-   - constructors `web/sandbox/db_object.php` ~137 and `web/sandbox/combine_object.php` ~70: an
-     optional `?user_message` param is low-risk but does not fix the drop until the many constructor
-     callers pass a real `$msg` — adding the param alone is cosmetic, so it belongs to step 1's
-     threading pass, not before it
    - `cfg/value/value_base.php` ~2108 `save_field_trigger_update` is dead code (no callers), so its
      dropped job-save buffer has no runtime effect — surface it only when the function is wired up
-   - `cfg/import/convert_wikipedia_table.php` ~196 `convert_wiki_json` is test-only and its dropped
-     errors fire only on bad context data the tests do not supply — leave it
-   - 7 sandbox base-class "missing override" stubs discard a throwaway `$msg` (should `log_err` /
-     return `is_ok()`); legacy `*_old` methods — developer-facing, low runtime impact
    - deliberately NOT surfaced (they belong in the admin log, not the user message):
      `cfg/group/group.php` ~1156 "save of group description not yet implemented" and the import
      "not yet implemented" sections — both are dev limitations of the same category
 
-ASSESSMENT (safe tier complete): everything left above is deferred for one of four reasons — it
-feeds a frontend rendering path (snapshot-regression risk proven by the two reverts), it is dead or
-test-only code, it is a dev-limitation that belongs in the admin log, or it is a
-param-without-callers that would be cosmetic churn until step 1 runs. The genuinely safe and
-valuable fixes are done; the rest needs a working test-run environment or the deliberate end-to-end
-threading pass of steps 1 and 2.
+4. **the `$msg->is_ok()` gate defect**, found by the import regression (the trap itself is written
+   up in state-and-messages.md): ~10 places gate a loop or a branch on `db_ready($msg)` /
+   `can_be_ready($msg)` with a **passed in** message — `ref_list` ~309, `triple` ~513/541,
+   `component_list` ~458, `list_db_write` ~187/217, `formula_map` ~1365, `sandbox_list_named`
+   ~480/1314, `formula_list` ~1068. those functions end with `return $msg->is_ok()`, so once one
+   object fails every later one is skipped silently. they work today only because their callers
+   happen to pass a message that is still ok. the fix makes more objects pass the gate, so it needs
+   its own commit with a test run.
+
+5. **migrate the bare `log_err` calls to `log_err_msg`** (the rule is coding.md and
+   docs/llm/structure.md "log_err alone is the transitional channel"): today ~512 bare `log_err`
+   against 59 `log_err_msg`, and 202 `log_warning` against 1 `log_warning_msg` — so an internal
+   error is still logged for the admin while the user sees a page that silently did nothing.
+   this is explicitly **not** a sweep: it happens whenever a function that contains a `log_err` is
+   touched for another reason, by adding the `user_message $msg` parameter and switching that call.
+   the two documented carve-outs stay bare: no caller can hold a `$msg` (entry point, bootstrap,
+   cron, HTML-only display), or the message fires on a normal path.
+   **the cheap subset is 216 of those 516**: they already sit in a function that HAS a `$msg`
+   parameter, so they need no signature change and no caller touched - only `log_err($txt)` ->
+   `log_err_msg($txt, $msg)`. that subset is also the natural coded check for
+   unit/coding_rule_tests.php (a bare `log_err` inside a function with a `user_message` parameter),
+   and it can be turned on the moment the subset is empty.
 
 optional caller-side follow-ups found while evaluating the setter families (no signature change, so
 each is a small standalone commit):
-- `fill` keeps returning a `user_message` (a 35-def / 47-caller change through a recursive core is
-  not worth its low surfacing value), but the few DISCARDING callers that already hold a threaded
-  `$msg` should merge its return — `cfg/sandbox/sandbox.php:2902` and
+- `fill` keeps returning a `user_message`, but the few DISCARDING callers that already hold a
+  threaded `$msg` should merge its return — `cfg/sandbox/sandbox.php:2902` and
   `cfg/helper/object_mapper.php:137/191`; leave the recursive / row-mapper / test callers as-is
 - `sql_db` setup 1247-1251 discards `import_verbs` / `import_system_data` / `create_internal_words`
   / `import_config_yaml` although it holds a `$msg` — merging would surface install-time failures
@@ -385,8 +149,6 @@ the steps one at a time, each as its own commit with tests written first:
    the /api scripts, so a backend file using a web class (like the api/word/index.php rest_call
    use fixed above) is caught by the unit tests
 
-
-
 ## to be sorted
 
 fix the last violation of the default-value rule (docs/llm/constants.md "Default values are resolved at the point of use, never fabricated in a mapper"): user::api_mapper still fabricates user_profiles::NORMAL_ID for a missing PROFILE_ID (cfg/user/user.php ~515) and the profile branch in db_fields_changed (~3653) has no null guard, so a json-born user without the profile field saved by an admin requester silently demotes the stored profile to normal (enforce_profile_privilege only blocks unprivileged requesters, an admin passes can_set_profile(normal); the frontend api_array omits PROFILE_ID unless is_profile_valid()). Apply the same treatment as for the type and status: map a missing profile to null in api_mapper, add the !== null guard in db_fields_changed, let enforce_profile_privilege treat null as "keep stored" (its int $req_profile_id parameter needs ?int or an early guard), and add the matching negative and positive tests to the "preserved on save" blocks in src/test/php/unit/user_tests.php; also backfill profile_id in the user exception block of horizontal_ui_tests.php like type_id and status_id, because the add url does not transport the profile and the round trip only passes today because the fabricated normal profile matches the filled test user
@@ -445,7 +207,6 @@ create a job that checks for some users (the number of users to check should be 
 Fill the gap: Compare with the actual spec for your existing "auto user and IP whitelist fallback" mechanism, so prompt 7's fallback description is a placeholder — you'll want to fill that in from your existing plan before comparing.
 
 add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
-
 
 ### prepare denial-of-service protection
 
@@ -529,8 +290,6 @@ allow at least admin users to overwrite the impact and usage via GUI
 
 add to /docs/llm/* that instead of "is instance of" a const array should be used for a more specific selections
 
-
-
 ### fine-tuning for the next launch — backlog moved out of pending.md to keep the high-prio list small
 
 before the program or database upgrade script are started the actual program version should be check and the execution should be rejected if there is no mathing script or no new version
@@ -607,17 +366,13 @@ rename the src/test/resources/web/html/workflow/change_word_invalid_wf7 to chang
 
 for each positiv workflow test create a negativ with the test cases that can fail. Let's start with 'add_word_wf1' and create 'add_word_fail_wf9' that has e.g. the steps 'wf9_edit_no_name_save'.
 
-add in the word_default view beside the 'view' and 'changes' a 'your' tab with the use overwrite of the shown e.g. word object, so basically the values from the 'user_words' table
-
 make sure that all selectors create a hidden form field with the original values as done in sandbox::share_type_selector
-
-use function like src/main/php/shared/helper/Translator.php::text_db_table and _action functions always if a db field name is shown to the user. Call the function as late as possible. And add this as a rule to /docs/llm/* for future code changes.
 
 create function like src/main/php/shared/helper/Translator.php::text_db_field for alle types that are part of src/main/resources/db_code_links
 
 see /docs/llm/coding.md and in union queries created by the sql_creator the parameters are added to the par array, but if the parameter name matches, the parameter should not be repeated.
 
-add to /docs/llm/* that the $test_name should always be unique. And write a php_code_check script that checks if the $test_names are unique for all tests
+write a coded check in unit/coding_rule_tests.php that the $test_names are unique for all tests (the rule itself is coding.md "Keep $test_name short but unique")
 
 after adding a word the word as it has been saved in the database should be shown. Because the db id is not yet known, that word name should be used to load the word. this implies that the url for /src/test/resources/web/html/workflow/add_word_wf1/wf1_edit_back_edit_save_cancel_edit_save_add_confirmed_url.txt should contain '"url_part_back": {"mask_id": "word_default", "name": "System Test Word"}' using the short url var for the name 'k'
 
@@ -676,8 +431,6 @@ separate the api $db_con var from the frontend and backend
 
 add a 'Word all values' view that show the values related to a word in up to 4 columns. For the column headline the four phrases with the most number of related values
 
-add to /docs/llm/* that for all html tags that have open and closing tag e.g. <form...></form> a function in html_base should be used. The html_base function should use a const for the html tag.
-
 apply the use of the html_base
 
 create a component with the related formula that should show the formulas of the parent object connected with the verb 'is a' and add this component to the default word and triple views below the direct linked formulas. this component should include a small subheadline with 'from' and the name of the parent object
@@ -690,11 +443,9 @@ The default view for a word should have four columns for width screens > 2800 pi
 1. a group of components with the description, the aliases / symbols and other related phrases
 2. a group with the most relevant value by impact and if it exists a chart on the top and the position type 'side_or_first_below'
 3. a group with the most relevant formulas and results (and later a result charts, just create a TODO) and the position type 'side_or_last_below'
-4. a tab switch for the views with a miniature preview and two buttons: 'view' or 'switch' (see src/main/php/web/html/html_base.php::dsp_link_hist_box)
-5. a second tab with the change log with the latest changes on the top
-   second step:
-6. maybe a preselected third tab with the user changes if the user has done some overwrites
-   the tab switch has the position type 'side_or_last_below'
+4. the tab switch itself is done (ui_list::view_tab_box renders the Views / Changes / My / Others
+   tabs with the preview placeholder and the view and switch buttons); what is missing is the
+   miniature preview instead of the placeholder and the position type 'side_or_last_below'
 
 add the formulas assigned to the parent phrase to the word_default view using also 1/3 of the screen width
 

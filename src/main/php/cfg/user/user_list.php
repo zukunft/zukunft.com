@@ -651,7 +651,7 @@ class user_list
         bool $allow_duplicates = false
     ): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {

@@ -174,7 +174,7 @@ class Translator
             try {
                 return msg_id::get($msg_id_txt);
             } catch (ValueError $error) {
-                $msg = new user_message();
+                $msg = new user_message(); // a local buffer only to build the text of the log entry
                 $msg->add(msg_id::MISSING_TRANSLATION, [
                     msg_id::VAR_MESSAGE_ID => $msg_id_txt,
                     msg_id::VAR_LANGUAGE => $this->lan,
