@@ -303,6 +303,12 @@
       "description": "tab box with the related views (preview plus open and switch buttons) and the change log of this word or triple",
       "type": "view_tab_box",
       "code_id": "view_tab_box_word"
+    },
+    {
+      "name": "values in columns",
+      "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+      "type": "values_in_columns",
+      "code_id": "values_in_columns_phrase"
     }
   ],
   "views": [
@@ -779,6 +785,27 @@
       ],
       "assigned": [
         "currency"
+      ]
+    },
+    {
+      "name": "Values of a phrase",
+      "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
+      "code_id": "phrase_values",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title values"
+        },
+        {
+          "position": "3",
+          "name": "values in columns",
+          "position_type": "combine"
+        }
       ]
     }
   ]

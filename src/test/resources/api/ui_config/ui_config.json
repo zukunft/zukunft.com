@@ -4,7 +4,7 @@
     "user_id": 3,
     "user": "zukunft.com system test",
     "version": "0.0.3",
-    "timestamp": "2026-08-10T10:16:02+00:00",
+    "timestamp": "2026-08-10T19:51:50+00:00",
     "body": {
         "user_profiles": [
             {
@@ -9187,6 +9187,12 @@
                 "code_id": "system_form_field_formula_latex",
                 "description": "the form field for the formula in the latex format",
                 "id": 211
+            },
+            {
+                "name": "values in columns",
+                "code_id": "values_in_columns",
+                "description": "show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+                "id": 212
             }
         ],
         "component_link_types": [
@@ -21356,6 +21362,46 @@
                         "type_id": 188,
                         "position": 4,
                         "position_type": 1
+                    }
+                ]
+            },
+            {
+                "id": 112,
+                "name": "Values of a phrase",
+                "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
+                "type_id": 11,
+                "code_id": "phrase_values",
+                "components": [
+                    {
+                        "link_id": 1050,
+                        "id": 276,
+                        "name": "Word title",
+                        "description": "show the word name as a page title",
+                        "type_id": 192,
+                        "code_id": "title_of_named_with_edit_link_word",
+                        "position": 1,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1051,
+                        "id": 61,
+                        "name": "system sub title values",
+                        "description": "show the language specific sub title for a value list",
+                        "type_id": 145,
+                        "code_id": "system_sub_title_values",
+                        "ui_msg_code_id": "system_sub_title_values",
+                        "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1052,
+                        "id": 317,
+                        "name": "values in columns",
+                        "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+                        "type_id": 212,
+                        "code_id": "values_in_columns_phrase",
+                        "position": 3,
+                        "position_type": 3
                     }
                 ]
             }

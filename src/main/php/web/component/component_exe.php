@@ -446,6 +446,7 @@ class component_exe extends component
             component_types::VALUES_ALL => $base->all($dbo, $back),
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
+            component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_array),
             component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),

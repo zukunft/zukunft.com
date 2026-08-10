@@ -506,6 +506,11 @@ class component_types
     // used by several values, then the remaining values by impact
     const string VALUES_MOST_RELEVANT = "values_most_relevant";
     const int VALUES_MOST_RELEVANT_ID = 207;
+    // the most relevant values of a phrase in up to four columns that wrap on narrow screens,
+    // each column headed by one of the phrases used most often within these values
+    const string VALUES_IN_COLUMNS = "values_in_columns";
+    const int VALUES_IN_COLUMNS_ID = 212;
+    const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns headed by the phrases used most often within the values";
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 93;
 
@@ -742,6 +747,7 @@ class component_types
         self::SYSTEM_SUB_TITLE_VAR,
         self::VALUES_RELATED,
         self::VALUES_MOST_RELEVANT,
+        self::VALUES_IN_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -932,6 +938,7 @@ class component_types
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
+        [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

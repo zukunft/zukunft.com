@@ -74,6 +74,10 @@ class def
     // (up to position_types::MAX_SIDE_COLUMNS) is shown side by side;
     // overridden by config.yaml entry frontend.layout.side width.max
     const int FALLBACK_WIDE_SIDE_WIDTH = 2800;
+    // fallback for the number of the most relevant values read for one phrase and used by the
+    // phrase values view to pick the column phrases;
+    // overridden by config.yaml entry frontend.lists.limit.values.read
+    const int FALLBACK_PHRASE_VALUES_READ = 1000;
     const string ENCODING = 'utf-8'; // the default encoding for the backend
     const string FILE_PHP = '.php'; // the file extension for the code scripts
     const string PROJECT_PATH = '/zukunft.com/'; // the default project path used to filter the exception trace

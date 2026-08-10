@@ -66,6 +66,7 @@ include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -395,6 +397,83 @@ class value_list extends ListBase
     private function relevant_phrase_groups(array $pool, user_message $msg, phrase_list $context_phr_lst, string $back): array
     {
         $min = config::MIN_PHRASE_GROUP;
+        [$phr_by_id, $val_phr_ids] = $this->phrase_ranking($pool, $msg, $context_phr_lst, $min);
+
+        // greedily assign each still-remaining value to the highest-impact phrase group it belongs to
+        $result = '';
+        $remaining = $pool;
+        foreach ($phr_by_id as $id => $phr) {
+            [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+            if (count($members) > $min) {
+                $result .= $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
+                $remaining = $rest;
+            }
+        }
+        return [$result, $remaining];
+    }
+
+    /**
+     * show the values of this list in up to position_types::MAX_SIDE_COLUMNS columns that are shown
+     * side by side on the widest screens and wrap onto fewer columns (down to one) as the screen gets
+     * narrower, using the same wrapping row as the 'side or below' components of a view;
+     * each column is headed by one of the phrases used most often within the values
+     * (e.g. inhabitants for the city of Zurich) and lists the values that use this phrase;
+     * if a column is still free, the values that share no column phrase fill it ordered by impact
+     *
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @param string $back the last view to suggest the best follow-up view
+     * @return string the html code of the value columns or '' if this list is empty
+     */
+    function columns_by_phrase(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        string       $back = ''
+    ): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            $html = new html_base();
+            // a column phrase needs to be used by at least two values, else the column shows one line
+            [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
+                $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+            $col_lst = [];
+            $remaining = $this->lst();
+            foreach ($phr_by_id as $id => $phr) {
+                // no break in the loop, so the free column count is checked per phrase
+                if (count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
+                    [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+                    if ($members != []) {
+                        $col_lst[] = $this->group_block($phr, $members, $context_phr_lst, $msg, $back);
+                        $remaining = $rest;
+                    }
+                }
+            }
+            // the values that share no column phrase fill the last free column
+            if ($remaining != [] and count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
+                $col_lst[] = $this->impact_group($remaining, $msg, $context_phr_lst, $back);
+            }
+            $result = $html->div_row_wrapping_cols($col_lst, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * rank the phrases that can group the given values: per phrase the aggregated impact of the values
+     * using it, highest first; the shared base of the grouped value list and of the value columns
+     *
+     * @param array $pool the values to group
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader and never used as a group
+     * @param int $min the number of values a phrase must group to become a group phrase
+     * @return array [array the group phrases keyed by phrase id ordered by the aggregated impact,
+     *                array per value id the ids of its group phrases]
+     */
+    private function phrase_ranking(
+        array        $pool,
+        user_message $msg,
+        phrase_list  $context_phr_lst,
+        int          $min
+    ): array
+    {
         $ctx_ids = $this->phrase_id_set($context_phr_lst);
 
         // per value the ids of its groupable phrases, plus the count, phrase and aggregated impact per id
@@ -422,23 +501,33 @@ class value_list extends ListBase
         }
         usort($ids, fn($a, $b) => $impact[$b] <=> $impact[$a]
             ?: strcmp($phr_by_id[$a]->name(), $phr_by_id[$b]->name()));
-
-        // greedily assign each still-remaining value to the highest-impact phrase group it belongs to
-        $result = '';
-        $remaining = $pool;
+        $ranked = [];
         foreach ($ids as $id) {
-            $members = array_values(array_filter($remaining,
-                fn(value $val) => isset($val_phr_ids[$val->id()][$id])));
-            if (count($members) > $min) {
-                $result .= $this->group_block($phr_by_id[$id], $members, $context_phr_lst, $msg, $back);
-                $taken = [];
-                foreach ($members as $val) {
-                    $taken[$val->id()] = true;
-                }
-                $remaining = array_values(array_filter($remaining, fn(value $val) => !isset($taken[$val->id()])));
+            $ranked[$id] = $phr_by_id[$id];
+        }
+        return [$ranked, $val_phr_ids];
+    }
+
+    /**
+     * split the given values into the values that use the given group phrase and the remaining values
+     *
+     * @param array $remaining the values still to be placed
+     * @param int|string $phr_id the id of the group phrase
+     * @param array $val_phr_ids per value id the ids of its group phrases
+     * @return array [array the values using the group phrase, array the values still to be placed]
+     */
+    private function split_by_phrase(array $remaining, int|string $phr_id, array $val_phr_ids): array
+    {
+        $members = [];
+        $rest = [];
+        foreach ($remaining as $val) {
+            if (isset($val_phr_ids[$val->id()][$phr_id])) {
+                $members[] = $val;
+            } else {
+                $rest[] = $val;
             }
         }
-        return [$result, $remaining];
+        return [$members, $rest];
     }
 
     /**

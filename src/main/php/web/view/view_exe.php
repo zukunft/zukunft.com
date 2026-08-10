@@ -287,33 +287,7 @@ class view_exe extends view_base
      */
     private function dsp_side_or_below_row(array $col_lst, user_message $msg): string
     {
-        global $ui_sys;
-
-        $html = new html_base();
-        if ($ui_sys?->cfg !== null) {
-            $min_width = (int)$ui_sys->cfg->get_by(
-                [triples::SIDE_WIDTH, words::MIN, words::LAYOUT, words::FRONTEND, words::USER],
-                $msg, def::FALLBACK_MIN_SIDE_WIDTH);
-            $wide_width = (int)$ui_sys->cfg->get_by(
-                [triples::SIDE_WIDTH, words::MAX, words::LAYOUT, words::FRONTEND, words::USER],
-                $msg, def::FALLBACK_WIDE_SIDE_WIDTH);
-        } else {
-            $min_width = def::FALLBACK_MIN_SIDE_WIDTH;
-            $wide_width = def::FALLBACK_WIDE_SIDE_WIDTH;
-        }
-        // size each column so that up to MAX_SIDE_COLUMNS fit at the configured wide width
-        // and the flex row wraps to fewer columns as the screen gets narrower;
-        // never narrower than half the min side width so two columns still fit above it
-        $col_width = max(
-            (int)round($wide_width / position_types::MAX_SIDE_COLUMNS),
-            (int)round($min_width / 2));
-        $cols = '';
-        foreach ($col_lst as $col) {
-            if ($col != '') {
-                $cols .= $html->div_col_min_width($col, $col_width);
-            }
-        }
-        return $html->div_row($cols);
+        return new html_base()->div_row_wrapping_cols($col_lst, $msg);
     }
 
 

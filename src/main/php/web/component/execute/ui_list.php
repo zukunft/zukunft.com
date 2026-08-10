@@ -732,6 +732,35 @@ class ui_list extends ui_base
     }
 
     /**
+     * show the values related to the given phrase in up to four columns that are shown side by side
+     * on wide screens and wrap onto fewer columns as the screen gets narrower; each column is headed
+     * by one of the phrases used most often within the values (e.g. inhabitants for a city)
+     *
+     * @param word|db_object|type_object|null $dbo the phrase the values are related to
+     * @param data_object|null $dto the data cache used until the backend has returned the values
+     * @return string the html code of the value columns or '' if the phrase has no values
+     */
+    function values_in_columns(
+        word|db_object|type_object|null $dbo,
+        user_message                    $msg,
+        ?data_object                    $dto = null
+    ): string
+    {
+        $result = '';
+        // guard the phrase before the value load, because value_related_list reads $dbo::class
+        if ($dbo != null) {
+            $val_lst = $this->value_related_list($dbo, $msg, $dto);
+            // a phrase without any value shows no column at all instead of an empty row
+            if ($val_lst != null) {
+                $phr_lst = new phrase_list();
+                $phr_lst->add_phrase($dbo->phrase());
+                $result = $val_lst->columns_by_phrase($msg, $phr_lst);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the values shown by values_by_word: a word loaded with its related values carries them
      * directly (e.g. the default word view), otherwise they are taken from the data cache
      *

@@ -127,6 +127,28 @@ class value_list_tests
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
 
+        $t->subheader($ts . 'keep most relevant');
+        // the factory adds the low impact value first and the high impact value second
+        $keep_lst = $t_val->value_list_zh_impact();
+        $keep_lst->keep_most_relevant(1);
+        $test_name = 'keep most relevant cuts the list to the requested size';
+        $t->assert($test_name, $keep_lst->count(), 1);
+        $test_name = 'keep most relevant keeps the value with the highest impact';
+        $t->assert($test_name, $keep_lst->lst()[0]->impact(), impacts::HIGH);
+
+        $test_name = 'a max above the list size keeps every value';
+        $all_lst = $t_val->value_list_zh_impact();
+        $all_lst->keep_most_relevant(10);
+        $t->assert($test_name, $all_lst->count(), 2);
+        $test_name = 'a max of zero means no limit and keeps every value';
+        $no_max_lst = $t_val->value_list_zh_impact();
+        $no_max_lst->keep_most_relevant(0);
+        $t->assert($test_name, $no_max_lst->count(), 2);
+        $test_name = 'keep most relevant of an empty value list keeps it empty';
+        $empty_keep_lst = new value_list($t->usr1);
+        $empty_keep_lst->keep_most_relevant(5);
+        $t->assert($test_name, $empty_keep_lst->count(), 0);
+
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t_val->value_list($msg)->api_json();
