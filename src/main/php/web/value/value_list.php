@@ -66,6 +66,7 @@ include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -271,8 +273,7 @@ class value_list extends ListBase
                     } else {
                         $diff = $this->count() - $i;
                         if ($diff > 0) {
-                            // TODO Prio 1 base the translation on the $mtr object
-                            $result .= ' ... and ' . $diff . ' more';
+                            $result .= ' ' . $this->more_tail($diff, $context_phr_lst);
                         }
                     }
                     $i++;
@@ -559,8 +560,7 @@ class value_list extends ListBase
             }
             $diff = count($pool) - $limit;
             if ($diff > 0) {
-                // TODO Prio 1 base the translation on the $mtr object
-                $items .= $html->list_item(' ... and ' . $diff . ' more');
+                $items .= $html->list_item($this->more_tail($diff, $context_phr_lst));
             }
             $result = $html->list_unsorted($items, styles::VALUE_ITEMS);
         }
@@ -619,6 +619,30 @@ class value_list extends ListBase
         $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
         $num = $html->span($val->value_edit($msg, $back), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
+        return $result;
+    }
+
+    /**
+     * the "... and n more" tail of a truncated value list as a link that shows all values
+     * of the page phrase via the phrase values view (docs/llm/frontend.md: a "more" is
+     * always a link that shows more); only if no phrase is known that could select the
+     * full list the tail stays a plain text
+     *
+     * @param int $diff the number of values that are not shown
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader; the first is the page phrase
+     * @return string the html code of the more tail
+     */
+    private function more_tail(int $diff, phrase_list $context_phr_lst): string
+    {
+        $html = new html_base();
+        $txt = msg_id::THREE_POINTS->text() . ' ' . msg_id::AND_MORE_BEFORE->text() . ' '
+            . $diff . ' ' . msg_id::MORE->text();
+        $phr = $context_phr_lst->lst()[0] ?? null;
+        if ($phr != null) {
+            $result = $html->ref($html->url_new(views::PHRASE_VALUES_ID, $phr->id()), $txt);
+        } else {
+            $result = $txt;
+        }
         return $result;
     }
 
@@ -713,8 +737,8 @@ class value_list extends ListBase
                     } else {
                         $diff = $this->count() - $i;
                         if ($diff > 0) {
-                            // TODO Prio 1 base the translation on the $mtr object
-                            $result .= ' ... and ' . $diff . ' more';
+                            // the unit list does not know the page phrase, so the tail has no link target
+                            $result .= ' ' . $this->more_tail($diff, new phrase_list());
                         }
                     }
                     $i++;

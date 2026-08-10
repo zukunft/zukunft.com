@@ -12,10 +12,6 @@ the basic steps to show the start page are
 
 ## main pages
 
-### word and triple
-
-add to /docs/llm/* that "more" should always be a link that shows more. e.g. more in the values table should link to the phrase_values view just created
-
 ### triple
 
 show the missing db fields in the triple default view: the weight, the condition formula
