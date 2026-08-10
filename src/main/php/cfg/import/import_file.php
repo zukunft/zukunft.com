@@ -96,7 +96,7 @@ class import_file
     {
         global $cfg;
 
-        $msg = new user_message($usr);
+        $msg = new user_message($usr); // the message IS the return value, so the caller merges it
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -193,7 +193,7 @@ class import_file
      */
     function yaml_file(string $filename, user $usr): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         $yaml_str = file_get_contents($filename);
         if (!$yaml_str) {

@@ -702,7 +702,7 @@ class import_convert_xbrl
         // e.g. the fair value disclosures with the dimension members as words
         if (count($facts) > 0) {
             if ($msg == null) {
-                $msg = new user_message();
+                $msg = new user_message(); // the guarded init of the nullable parameter, not a shadow
             }
             foreach ($this->facts_json($facts, $source_name, $words, $triples, $msg) as $fact_value) {
                 $values[] = $fact_value;

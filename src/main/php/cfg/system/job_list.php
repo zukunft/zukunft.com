@@ -198,7 +198,7 @@ class job_list extends list_db_write
      */
     function add(job $job): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
@@ -232,7 +232,7 @@ class job_list extends list_db_write
      */
     private function has_similar(job $job): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();

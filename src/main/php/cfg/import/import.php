@@ -505,7 +505,6 @@ class import
         foreach ($json_array as $key => $json_obj) {
             if ($usr_import == null) {
                 if ($key == json_fields::USERS) {
-                    $import_result = new user_message();
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr_import = new user;
@@ -515,7 +514,6 @@ class import
                             $this->users_failed++;
                         }
                     }
-                    $msg->merge($import_result);
                 }
             }
         }
@@ -561,7 +559,6 @@ class import
                 log_warning('import of users not yet implemented');
             } elseif ($key == json_fields::LIST_VERBS) {
                 $this->step_start(msg_id::SAVE_LIST, verb::class);
-                $import_result = new user_message();
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
                     $vrb->set_user($msg->usr);
@@ -573,7 +570,6 @@ class import
                     $this->display_progress($this->verbs_done);
                     $pos++;
                 }
-                $msg->merge($import_result);
                 $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
@@ -1130,7 +1126,7 @@ class import
     private function message_check(array $json_array): user_message
     {
         $lib = new library();
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if (key_exists(json_fields::VERSION, $json_array)) {
             if ($lib->prg_version_is_newer($json_array[json_fields::VERSION])) {
                 $msg->add(msg_id::IMPORT_VERSION_NEWER, [
@@ -1753,7 +1749,7 @@ class import
 
     function status_text(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         $msg_txt = $this->status_text_entry('words', $this->words_done, $this->words_failed);
         $msg_txt = $this->status_text_entry('verbs', $this->verbs_done, $this->verbs_failed, $msg_txt);
         $msg_txt = $this->status_text_entry('triples', $this->triples_done, $this->triples_failed, $msg_txt);

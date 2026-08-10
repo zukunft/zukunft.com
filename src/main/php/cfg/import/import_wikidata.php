@@ -151,7 +151,7 @@ class import_wikidata
      */
     function store_text(string $wikidata_id, string $json, ?string $path = null): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // the message IS the return value, so the caller merges it
         if ($path === null) {
             $path = test_paths::IMPORT_WIKIDATA;
         }

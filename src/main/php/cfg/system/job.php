@@ -350,13 +350,13 @@ class job extends db_object_seq_id_user
     function set_type(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req));
+        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req)); // only for the permission check
     }
 
     function set_status(string $code_id, user $usr_req): void
     {
         global $sys;
-        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req));
+        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req)); // only for the permission check
     }
 
     function type_code_id(): string
@@ -573,7 +573,7 @@ class job extends db_object_seq_id_user
      */
     function exe(): user_message
     {
-        $msg = new user_message();
+        $msg = new user_message(); // one message per job, because a job is its own request (bin/job_runner.php)
 
         $this->start_time = new DateTime();
         $this->save($msg);

@@ -175,7 +175,48 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    belongs, leaving a short note on the line. a block of sibling buffers declared on consecutive
    lines still shares one comment above the block - the check accepts both for that reason.
 
-   remaining clusters: cfg/system (12), cfg/db (10), cfg/import (9).
+   **cfg/system is DONE** (report count 72 -> 60, only its two parameter defaults left). nothing
+   was threaded, and for once that is the right answer for every site: `job_runner` is the top of
+   a non interactive job (`bin/job_runner.php` only bootstraps and hands over), so its per sweep
+   and per status message IS the entry point message of that job - the same holds for `job::exe`,
+   whose message the runner consumes. `job_list::add` / `has_similar` and
+   `system_time_list::save` are message producing leaves, the four `list_db_write` buffers are per
+   item and already merged on failure, and `job::set_type` / `set_status` keep the `user $usr_req`
+   parameter by the earlier set_type family decision, so their throwaway only feeds the permission
+   check of that user.
+   NOT fixed here on purpose: `list_db_write` ~187/217 gate the loop with
+   `if ($sbx->db_ready($msg))` on the **passed in** message, so after the first failing object
+   every later one is skipped silently - one of the ~10 latent cases listed above, and the same
+   defect class as the import regression. it needs its own commit with a test run, because the
+   fix makes more objects pass the gate.
+
+   **cfg/db is DONE** (report count 60 -> 50) and it is the first folder that is completely clear -
+   it has no parameter default either. again nothing was threaded, because the database layer runs
+   outside a user request: `sql_db::setup` and `reset_config` act as the **system user** at install
+   time, the consistency check timestamp of `db_check` is a system write that is already merged,
+   `get_internal` and `get_value_2key` are internal resp. deprecated reads whose failure belongs in
+   the log, `remove_prefix` is a db upgrade step called by `db_check`, the `set_type` throwaway
+   only feeds the permission check of the given user, and the three `sql_sync_sequences` functions
+   are message producing leaves that `sync()` merges.
+
+   **cfg/import is DONE** (report count 50 -> 41, only its one parameter default left) and with it
+   **every named cluster**. two of the nine were **dead code**: the `$import_result` buffers of the
+   users and the verbs branch were created, never written to (the real messages go to `$msg` via
+   `import_obj`) and then merged - so both they and their pointless `merge()` are removed; the two
+   later `$import_result` uses in the same function are the legitimate ones, assigned from a return
+   and `is_ok()` checked. the rest are message producing leaves (`message_check`, `status_text`,
+   `json_file`, `yaml_file`, `store_text`) plus the two already evaluated exceptions:
+   `convert_wikipedia_table` (test only) and the guarded null init of the nullable parameter in
+   `import_convert_xbrl::build_data`, which is the one case the param shadow check tolerates and
+   now says so on the line.
+   nothing was threaded here on purpose: this is the folder where a premature message is most
+   expensive, because `get_data_object()` opens with `if ($msg->is_ok())` and every
+   `import_mapper()` ends with `return $msg->is_ok()` - see the regression write up above.
+
+   the 41 that remain are spread thin (cfg/value 5, cfg/view 4, shared/helper 3, cfg/user 3,
+   cfg/ref 3, cfg/phrase 3, cfg/component 3, and 1-2 each in a dozen more), so the next pass is
+   better organised by pattern than by folder: the `diff_msg` / `fill` families are settled as
+   "leave", so what is left is mostly leaves and per item buffers.
 
    **the missing-overwrite helper is DONE** (report count 129 -> 125, 19 throwaway buffers gone).
    `log_missing_overwrite($fnc_name, $class)` and its `_warning` twin live in text_log_functions.php

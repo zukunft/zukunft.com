@@ -9,7 +9,7 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-255 creations below the entry points: 95 explained, 88 parameter defaults and 72 still unexplained
+253 creations below the entry points: 124 explained, 88 parameter defaults and 41 still unexplained
 
 ## parameter defaults
 
@@ -90,7 +90,7 @@ main backend: /helper/db_object_multi.php:179 - function api_json(api_type_list|
 main backend: /helper/db_object_seq_id.php:348 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-main backend: /import/import.php:1101 - user_message $msg = new user_message()
+main backend: /import/import.php:1097 - user_message $msg = new user_message()
 main backend: /log/change_log.php:817 - user_message $msg = new user_message()
 main backend: /log/change_log.php:853 - user_message $msg = new user_message()
 main backend: /log/change_log.php:884 - user_message $msg = new user_message()
@@ -122,28 +122,9 @@ main backend: /application.php:438 - $msg_sys = new user_message($sys_usr);
 main backend: /component/component.php:718 - return new user_message();
 main backend: /component/component.php:884 - $msg = new user_message();
 main backend: /component/component.php:911 - return new user_message();
-main backend: /db/sql_db.php:1122 - $sys_msg = new user_message(user::system());
-main backend: /db/sql_db.php:1270 - $wrd->set_type(phrase_type_shared::NORMAL, new user_message($usr));
-main backend: /db/sql_db.php:1300 - $sys_msg = new user_message(user::system());
-main backend: /db/sql_db.php:3540 - $msg = new user_message();
-main backend: /db/sql_db.php:3626 - $msg = new user_message();
-main backend: /db/sql_db.php:5533 - $msg = new user_message();
-main backend: /db/sql_db.php:5835 - $sys_msg = new user_message(user::system());
-main backend: /db/sql_sync_sequences.php:50 - $msg = new user_message();
-main backend: /db/sql_sync_sequences.php:91 - $msg = new user_message();
-main backend: /db/sql_sync_sequences.php:128 - $msg = new user_message();
 main backend: /element/element_list.php:361 - $msg = new user_message();
 main backend: /group/group.php:1820 - $msg = new user_message();
 main backend: /group/group_list.php:516 - $msg = new user_message();
-main backend: /import/convert_wikipedia_table.php:196 - $msg = new user_message($usr);
-main backend: /import/import.php:508 - $import_result = new user_message();
-main backend: /import/import.php:564 - $import_result = new user_message();
-main backend: /import/import.php:1133 - $msg = new user_message();
-main backend: /import/import.php:1756 - $msg = new user_message();
-main backend: /import/import_convert_xbrl.php:705 - $msg = new user_message();
-main backend: /import/import_file.php:99 - $msg = new user_message($usr);
-main backend: /import/import_file.php:196 - $msg = new user_message();
-main backend: /import/import_wikidata.php:154 - $msg = new user_message();
 main backend: /log/change_link.php:389 - $msg = new user_message();
 main backend: /log/change_link.php:610 - $msg = new user_message();
 main backend: /log_text/text_log_functions.php:637 - $msg = new user_message();
@@ -154,18 +135,6 @@ main backend: /ref/ref.php:1166 - $msg = new user_message();
 main backend: /ref/ref.php:1188 - $msg = new user_message();
 main backend: /ref/ref.php:1370 - $sim_msg = new user_message();
 main backend: /result/result.php:1335 - $msg = new user_message();
-main backend: /system/job.php:353 - $this->set_type_id($sys->typ_lst->job_typ->id($code_id), new user_message($usr_req));
-main backend: /system/job.php:359 - $this->set_status_id($sys->typ_lst->job_sta->id($code_id), new user_message($usr_req));
-main backend: /system/job.php:576 - $msg = new user_message();
-main backend: /system/job_list.php:201 - $msg = new user_message();
-main backend: /system/job_list.php:235 - $msg = new user_message();
-main backend: /system/job_runner.php:257 - $msg = new user_message($this->usr);
-main backend: /system/job_runner.php:321 - $msg = new user_message($this->usr);
-main backend: /system/list_db_write.php:191 - $ins_usr_msg = new user_message();
-main backend: /system/list_db_write.php:220 - $ins_usr_msg = new user_message();
-main backend: /system/list_db_write.php:254 - $ins_usr_msg = new user_message();
-main backend: /system/list_db_write.php:286 - $ins_usr_msg = new user_message();
-main backend: /system/system_time_list.php:223 - return new user_message();
 main backend: /user/user.php:1610 - $ip_msg = new user_message();
 main backend: /user/user.php:3033 - $usr_msg = new user_message();
 main backend: /user/user_list.php:654 - $msg = new user_message();
