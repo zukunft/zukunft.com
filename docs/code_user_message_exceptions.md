@@ -9,38 +9,16 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-253 creations below the entry points: 124 explained, 88 parameter defaults and 41 still unexplained
+222 creations below the entry points: 124 explained, 57 parameter defaults and 41 still unexplained
 
 ## parameter defaults
 
 a default value drops the message of a caller that passes none, so each of these is a silent message loss waiting for a threading pass
 
 ```
-frontend: /component/component.php:273 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /component/component_link.php:199 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /component/execute/ui_preview.php:210 - user_message                                          $msg = new user_message()
-frontend: /element/element.php:137 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /figure/figure.php:147 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /formula/formula.php:405 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /formula/formula_link.php:188 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /group/group.php:258 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /log/log.php:175 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /phrase/phrase.php:151 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /phrase/term.php:346 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /ref/ref.php:409 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /ref/source.php:192 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /result/result.php:220 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /sandbox/ListBase.php:243 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
-frontend: /sandbox/combine_named.php:186 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /sandbox/db_object.php:384 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /sandbox/sandbox.php:203 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /sandbox/sandbox_code_id.php:119 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /sandbox/sandbox_link.php:130 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /sandbox/sandbox_list_named.php:214 - user_message                                                                                         $msg = new user_message()
-frontend: /sandbox/sandbox_named.php:171 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /sandbox/sandbox_typed.php:128 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /system/job.php:274 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /system/sys_log.php:191 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /system/sys_log_list.php:76 - function __construct(?string $api_json = null, user_message $msg = new user_message())
 frontend: /system/sys_log_list.php:153 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 frontend: /types/type_lists.php:153 - function __construct(?string $api_json = null, user_message $msg = new user_message())
@@ -67,19 +45,10 @@ frontend: /types/type_lists.php:520 - function set_job_types(?array $json_array 
 frontend: /types/type_lists.php:526 - function set_change_action_list(?array $json_array = null, user_message $msg = new user_message()): void
 frontend: /types/type_lists.php:532 - function set_change_table_list(?array $json_array = null, user_message $msg = new user_message()): void
 frontend: /types/type_lists.php:538 - function set_change_field_list(?array $json_array = null, user_message $msg = new user_message()): void
-frontend: /types/type_object.php:268 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /user/user.php:595 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /value/value.php:248 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /verb/verb.php:262 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /verb/verb_list.php:63 - function __construct(?string $api_json = null, user_message $msg = new user_message())
-frontend: /view/term_view.php:151 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /view/view_base.php:203 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /view/view_relation.php:162 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
-frontend: /word/triple.php:498 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 frontend: /word/triple.php:552 - user_message     $msg = new user_message()
 frontend: /word/triple.php:578 - user_message     $msg = new user_message()
 frontend: /word/triple.php:597 - user_message     $msg = new user_message()
-frontend: /word/word.php:465 - function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
 main backend: /formula/formula.php:1531 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:567 - user_message $msg = new user_message()
 main backend: /formula/formula_map.php:578 - user_message $msg = new user_message()

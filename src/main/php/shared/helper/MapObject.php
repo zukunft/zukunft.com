@@ -197,7 +197,7 @@ class MapObject
     function convertMsgToDb(user_message_ui $ui_msg): user_message
     {
         $db_msg = new user_message();
-        $db_msg->api_mapper($ui_msg->api_array());
+        $db_msg->api_mapper($ui_msg->api_array([], $ui_msg));
         return $db_msg;
     }
 

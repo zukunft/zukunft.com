@@ -148,7 +148,7 @@ class phrase extends combine_named
     /**
      * @return array the json message array to send the updated data to the backend
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         if ($this->is_word()) {

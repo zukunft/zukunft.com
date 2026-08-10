@@ -91,7 +91,7 @@ class user_message extends Message
      * TODO Prio 2 add the solution with the prepared job id
      * @return array with the messages
      */
-    function api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message()): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $vars = array();
         $msg_lst = [];

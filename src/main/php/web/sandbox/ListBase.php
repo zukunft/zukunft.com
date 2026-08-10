@@ -247,7 +247,7 @@ class ListBase extends ListOfIdObjects
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $vars = $this->api_array($typ_lst);
+        $vars = $this->api_array($typ_lst, $msg);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
@@ -257,12 +257,12 @@ class ListBase extends ListOfIdObjects
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array($msg) calls
      */
-    function api_array(api_type_list|array $typ_lst = []): array
+    function api_array(api_type_list|array $typ_lst, user_message $msg): array
     {
         $result = array();
         foreach ($this->lst() as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array($typ_lst);
+                $result[] = $obj->api_array($typ_lst, $msg);
             }
         }
         return $result;

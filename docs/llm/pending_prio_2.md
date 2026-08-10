@@ -239,11 +239,27 @@ user-actionable error needs a `$msg` parameter (now coding.md line 57); and the
    also fixed on the way: `sandbox::sql_key_fields_text` reported the wrong function name
    ('sql_par_field_list') in its diagnostic.
 
-2. remove the 88 `user_message $msg = new user_message()` **parameter defaults** listed in the same
+2. remove the `user_message $msg = new user_message()` **parameter defaults** listed in the same
    report: a caller that passes nothing silently loses its messages, so the default is the same drop
    in disguise. making `$msg` mandatory changes every caller, so do one family per commit with its
-   callers, exactly like the setter families above. start with the frontend `api_array` family
-   (~30 defs) because its callers already hold a threaded `$msg`.
+   callers, exactly like the setter families above.
+
+   **the `api_array` family is DONE** (defaults 90 -> 57, report 253 -> 222 creations). all 33
+   `api_array(api_type_list|array $typ_lst = [], user_message $msg = new user_message())` are now
+   `(api_type_list|array $typ_lst, user_message $msg)`, so the family is uniform: 36 identical
+   signatures plus the unrelated backend `user_message::api_array(user_message $msg)`.
+   `$typ_lst` had to lose its default as well, because php deprecates an optional parameter before
+   a required one - reordering instead would have touched all 102 call sites rather than 6.
+   of those 102 calls, 92 already passed both arguments; the ones that did not were the two list
+   `api_array` of `ListBase` / `sys_log_list` (they iterate their items, so they now take the
+   message and hand it to each item), `view_base` (passes the `$msg` it already has),
+   `MapObject::convertMsgToDb` (the frontend message converts itself, so it reports into itself)
+   and `test_api::assert_api_to_ui`. the seven remaining single argument calls all target the
+   backend `user_message::api_array(user_message $msg)`, which is a different function.
+
+   next families by size: `api_json` (8), the three `__construct` (which the earlier audit called
+   cosmetic until the constructor callers pass a real message), then ~20 one-off setters, of which
+   the 21 `type_lists::set_*` are a single mechanical family.
 
 3. the deferred items of the log/buffer audit — each needs a test run or a decision, not a quick
    edit (the assessment below says why the safe tier stopped here):
