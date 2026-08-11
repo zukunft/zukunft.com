@@ -515,21 +515,21 @@ class data_object
      * get
      */
 
-    function get_object_by_name(IdObject|phrase $named_obj): IdObject|phrase|null
+    function get_object_by_name(IdObject|phrase $named_obj, user_message $msg): IdObject|phrase|null
     {
         $sbx = null;
         if ($named_obj::class == word::class) {
-            $sbx = $this->get_word_by_name($named_obj->name());
+            $sbx = $this->get_word_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == phrase::class) {
-            $sbx = $this->get_phrase_by_name($named_obj->name());
+            $sbx = $this->get_phrase_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == source::class) {
-            $sbx = $this->get_source_by_name($named_obj->name());
+            $sbx = $this->get_source_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == formula::class) {
-            $sbx = $this->get_formula_by_name($named_obj->name());
+            $sbx = $this->get_formula_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == view::class) {
-            $sbx = $this->get_view_by_name($named_obj->name());
+            $sbx = $this->get_view_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == component::class) {
-            $sbx = $this->get_component_by_name($named_obj->name());
+            $sbx = $this->get_component_by_name($named_obj->name(), $msg);
         } else {
             log_err('get_object_by_name not yet defined for ' . $named_obj::class);
         }
@@ -539,11 +539,12 @@ class data_object
     /**
      * get a word by the name from this cache object
      * @param string $name the name of the word or triple
+     * @param user_message $msg
      * @return word|null
      */
-    function get_word_by_name(string $name): ?word
+    function get_word_by_name(string $name, user_message $msg): ?word
     {
-        return $this->word_list()->get_by_name($name);
+        return $this->word_list()->get_by_name($name, $msg);
     }
 
     /**
@@ -568,18 +569,18 @@ class data_object
      * @param string $name the name of the word or triple
      * @return phrase|null
      */
-    function get_phrase_by_name(string $name): ?phrase
+    function get_phrase_by_name(string $name, user_message $msg): ?phrase
     {
         if ($this->phr_lst_dirty) {
-            $wrd = $this->word_list()->get_by_name($name);
+            $wrd = $this->word_list()->get_by_name($name, $msg);
             $phr = $wrd?->phrase();
             if ($phr == null) {
-                $trp = $this->triple_list()->get_by_name($name);
+                $trp = $this->triple_list()->get_by_name($name, $msg);
                 $phr = $trp?->phrase();
             }
             return $phr;
         } else {
-            return $this->phrase_list()->get_by_name($name);
+            return $this->phrase_list()->get_by_name($name, $msg);
         }
     }
 
@@ -588,9 +589,9 @@ class data_object
      * @param string $name the name of the source
      * @return source|IdObject|null
      */
-    function get_source_by_name(string $name): source|IdObject|null
+    function get_source_by_name(string $name, user_message $msg): source|IdObject|null
     {
-        return $this->source_list()->get_by_name($name);
+        return $this->source_list()->get_by_name($name, $msg);
     }
 
     /**
@@ -615,9 +616,9 @@ class data_object
      * @param string $name the name of the formula
      * @return formula|IdObject|null
      */
-    function get_formula_by_name(string $name): formula|IdObject|null
+    function get_formula_by_name(string $name, user_message $msg): formula|IdObject|null
     {
-        return $this->formula_list()->get_by_name($name);
+        return $this->formula_list()->get_by_name($name, $msg);
     }
 
     /**
@@ -625,26 +626,26 @@ class data_object
      * @param string $name the name of the word, verb, triple or formula
      * @return term|null the term from cache or null if not found in cache
      */
-    function get_term_by_name(string $name): ?term
+    function get_term_by_name(string $name, user_message $msg): ?term
     {
         if ($this->trm_lst_dirty) {
-            $wrd = $this->word_list()->get_by_name($name);
+            $wrd = $this->word_list()->get_by_name($name, $msg);
             $trm = $wrd?->term();
             if ($trm == null) {
                 $vrb = $this->verb_list()->get_by_name($name);
                 $trm = $vrb?->term();
             }
             if ($trm == null) {
-                $trp = $this->triple_list()->get_by_name($name);
+                $trp = $this->triple_list()->get_by_name($name, $msg);
                 $trm = $trp?->term();
             }
             if ($trm == null) {
-                $frm = $this->formula_list()->get_by_name($name);
+                $frm = $this->formula_list()->get_by_name($name, $msg);
                 $trm = $frm?->term();
             }
             return $trm;
         } else {
-            return $this->term_list()->get_by_name($name);
+            return $this->term_list()->get_by_name($name, $msg);
         }
     }
 
@@ -653,9 +654,9 @@ class data_object
      * @param string $name the name of the source
      * @return view|IdObject|null
      */
-    function get_view_by_name(string $name): view|IdObject|null
+    function get_view_by_name(string $name, user_message $msg): view|IdObject|null
     {
-        return $this->view_list()->get_by_name($name);
+        return $this->view_list()->get_by_name($name, $msg);
     }
 
 
@@ -967,7 +968,7 @@ class data_object
         // use the formula of this data object because the result may only know the formula name
         $frm = null;
         if (isset($res_chk->frm)) {
-            $frm = $this->formula_list()->get_by_name($res_chk->frm->name());
+            $frm = $this->formula_list()->get_by_name($res_chk->frm->name(), $msg);
         }
         $res_name = $res_chk->grp()->phrase_list()->dsp_name();
         if ($frm == null or $frm->usr_text == null or $frm->usr_text == '') {
@@ -1019,9 +1020,9 @@ class data_object
         $this->msg->add_id($msg);
     }
 
-    function get_component_by_name(string $name): component|IdObject|null
+    function get_component_by_name(string $name, user_message $msg): component|IdObject|null
     {
-        return $this->component_list()->get_by_name($name);
+        return $this->component_list()->get_by_name($name, $msg);
     }
 
     function get_value_by_names(array $names): ?value_base
@@ -1128,7 +1129,7 @@ class data_object
                 $src = $val->get_source();
                 if ($src != null) {
                     if ($src->id() == 0 and $src->name() != '') {
-                        $src_saved = $this->source_list()->get_by_name($src->name());
+                        $src_saved = $this->source_list()->get_by_name($src->name(), $msg);
                         if ($src_saved != null) {
                             $val->set_source($src_saved);
                         }
@@ -1148,7 +1149,7 @@ class data_object
                             msg_id::VAR_NAME => $phr->dsp_id()
                         ]);
                     } else {
-                        $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                        $phr_reloaded = $phr_lst->get_by_name($phr->name(), $msg);
                         $this->set_phrase_id($phr, $phr_reloaded, $msg);
                     }
                 }
@@ -1509,7 +1510,7 @@ class data_object
                         msg_id::VAR_NAME => $phr->dsp_id()
                     ]);
                 } else {
-                    $phr_reloaded = $resolved->get_by_name($phr->name());
+                    $phr_reloaded = $resolved->get_by_name($phr->name(), $msg);
                     $this->set_phrase_id($phr, $phr_reloaded, $msg);
                 }
             }
@@ -1537,7 +1538,7 @@ class data_object
                             if ($cmp->name() == '') {
                                 $msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                             } else {
-                                $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
+                                $cmp_reloaded = $cmp_lst->get_by_name($cmp->name(), $msg);
                                 if ($cmp_reloaded == null) {
                                     $msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
@@ -1623,7 +1624,7 @@ class data_object
             if ($trm->name() == '') {
                 $usr_msg->add_type_message($frm->dsp_id(), msg_id::PHRASE_MISSING_FROM->value);
             } else {
-                $trm_reloaded = $trm_lst->get_by_name($trm->name());
+                $trm_reloaded = $trm_lst->get_by_name($trm->name(), $usr_msg);
                 if ($trm_reloaded == null) {
                     $trp_self_ref = true;
                 } else {

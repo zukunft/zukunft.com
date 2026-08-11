@@ -938,14 +938,14 @@ class word_list extends sandbox_list_named
      *
      * @param array $del_wrd_ids is the list of word ids that should be removed from this list object
      */
-    function diff_by_ids(array $del_wrd_ids): void
+    function diff_by_ids(array $del_wrd_ids, user_message $msg): void
     {
         $lib = new library();
         foreach ($del_wrd_ids as $del_wrd_id) {
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
-                    log_debug('exclude (' . $this->get_by_key($del_pos)?->name() . ')');
+                    log_debug('exclude (' . $this->get_by_key($del_pos, $msg)?->name() . ')');
                     $this->unset($del_pos);
                 }
             }
@@ -997,7 +997,7 @@ class word_list extends sandbox_list_named
      * sort a word list by name
      * TODO use the user:sandbox_list_named function
      */
-    function wlsort(): array
+    function wlsort(user_message $msg): array
     {
         log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
@@ -1012,7 +1012,7 @@ class word_list extends sandbox_list_named
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_key) {
             log_debug('get ' . $sorted_key);
-            $wrd_to_add = $this->get_by_key($sorted_key);
+            $wrd_to_add = $this->get_by_key($sorted_key, $msg);
             log_debug('got ' . $wrd_to_add->name());
             $result[] = $wrd_to_add;
         }

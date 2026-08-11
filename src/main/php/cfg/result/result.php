@@ -319,7 +319,7 @@ class result extends sandbox_value
 
         if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
             $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
-            $frm = $frm_lst->get_by_name($frm_name);
+            $frm = $frm_lst->get_by_name($frm_name, $msg);
             if ($frm == null) {
                 if ($db_con->is_open()) {
                     $msg->add(msg_id::FORMULA_MISSING_IMPORT, [

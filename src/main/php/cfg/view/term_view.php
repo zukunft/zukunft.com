@@ -283,7 +283,7 @@ class term_view extends sandbox_link
                 }
             }
             if (is_string($msk_json)) {
-                $msk = $dto?->get_view_by_name($msk_json);
+                $msk = $dto?->get_view_by_name($msk_json, $msg);
                 if ($msk == null) {
                     $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
@@ -318,7 +318,7 @@ class term_view extends sandbox_link
                 }
             }
             if (is_string($trm_json)) {
-                $trm = $dto?->get_term_by_name($trm_json);
+                $trm = $dto?->get_term_by_name($trm_json, $msg);
                 if ($trm == null) {
                     $msg->add(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,

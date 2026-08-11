@@ -601,7 +601,7 @@ class triple extends sandbox_code_id
         if (!is_numeric($id)) {
             // resolve the phrase name from the request cache first to avoid a backend call
             if ($dto != null) {
-                $phr = $dto->phr_lst->get_by_name($id);
+                $phr = $dto->phr_lst->get_by_name($id, $msg);
             }
             if ($phr == null) {
                 $phr_loaded = new phrase();

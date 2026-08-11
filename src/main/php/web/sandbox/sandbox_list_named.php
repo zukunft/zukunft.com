@@ -238,8 +238,8 @@ class sandbox_list_named extends sandbox_list
      */
     private function add_and_report(
         triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject $to_add,
-        bool                                                                                           $allow_duplicates,
-        user_message                                                                                   $msg
+        bool                                                                                            $allow_duplicates,
+        user_message                                                                                    $msg
     ): bool
     {
         $add_msg = new user_message(); // add_obj returns is_ok(), so the double check must judge only this add
@@ -328,7 +328,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_name($sbx_new->name());
+                $sbx_old = $this->get_by_name($sbx_new->name(), $msg);
                 // TODO check if and how a sync of the objects can be done
                 if ($sbx_old == null) {
                     $this->add($sbx_new, $msg);
@@ -369,7 +369,10 @@ class sandbox_list_named extends sandbox_list
      * @param string $name the unique name of the object that should be returned
      * @return IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null
+    function get_by_name(
+        string               $name,
+        user_message|Message $msg
+    ): IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -377,7 +380,7 @@ class sandbox_list_named extends sandbox_list
             $pos = $key_lst[$name];
         }
         if ($pos !== null) {
-            return $this->get_by_key($pos);
+            return $this->get_by_key($pos, $msg);
         } else {
             return null;
         }

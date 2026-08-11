@@ -161,7 +161,7 @@ class triple_list extends ListBase
      * shows all words the link to the given word
      * returns the html code to select a word that can be edited
      */
-    function graph(string $back = ''): string
+    function graph(user_message $msg, string $back = ''): string
     {
         global $ui_sys;
 
@@ -179,11 +179,11 @@ class triple_list extends ListBase
             // reset the vars
             $directional_link_type_id = 0;
 
-            $lnk = $this->get_by_key($lnk_key);
+            $lnk = $this->get_by_key($lnk_key, $msg);
             // get the next link to detect if there is more than one word linked with the same link type
             // TODO check with a unit test if last element is used
             if ($this->count() - 1 > $lnk_key) {
-                $next_lnk = $this->get_by_key($lnk_key + 1);
+                $next_lnk = $this->get_by_key($lnk_key + 1, $msg);
             } else {
                 $next_lnk = $lnk;
             }

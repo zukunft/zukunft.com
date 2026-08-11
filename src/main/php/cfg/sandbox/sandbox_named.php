@@ -281,7 +281,7 @@ class sandbox_named extends sandbox
         // fill up the object if it has only the id of the name
         if ($this->no_id_but_name()) {
             if ($dto != null) {
-                $cac_obj = $dto->get_object_by_name($this);
+                $cac_obj = $dto->get_object_by_name($this, $msg);
                 if ($cac_obj != null) {
                     $this->fill($cac_obj, $this->get_user());
                 }

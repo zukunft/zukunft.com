@@ -1256,11 +1256,11 @@ class result_list extends sandbox_value_list
         return $result;
     }
 
-    function get_first(): result
+    function get_first(user_message $msg): result
     {
         $result = new result($this->get_user());
         if (!$this->is_empty()) {
-            $result = $this->get_by_key(0);
+            $result = $this->get_by_key(0, $msg);
         }
         return $result;
     }

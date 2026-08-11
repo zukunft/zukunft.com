@@ -300,8 +300,8 @@ class expression_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         // create the formulas for testing
-        $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME);
-        $frm_prior = $trm_lst->get_by_name(formula_names::PRIOR);
+        $frm_this = $trm_lst->get_by_name(formula_names::THIS_NAME, $msg);
+        $frm_prior = $trm_lst->get_by_name(formula_names::PRIOR, $msg);
 
         $result = $elm_grp_lst->dsp_id();
         $target = '"' . formula_names::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . formula_names::PRIOR . '" (' . $frm_prior->id_obj() . ') / "' . word_names::PRIOR_NAME . '" ('

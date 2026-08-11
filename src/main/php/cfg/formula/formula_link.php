@@ -329,7 +329,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($frm_json)) {
-                $frm = $dto?->get_formula_by_name($frm_json);
+                $frm = $dto?->get_formula_by_name($frm_json, $msg);
                 if ($frm == null) {
                     $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_json,
@@ -364,7 +364,7 @@ class formula_link extends sandbox_link
                 }
             }
             if (is_string($phr_json)) {
-                $phr = $dto?->get_phrase_by_name($phr_json);
+                $phr = $dto?->get_phrase_by_name($phr_json, $msg);
                 if ($phr == null) {
                     $msg->add(msg_id::PHRASE_MISSING_IMPORT, [
                         msg_id::VAR_PHRASE => $phr_json,

@@ -145,14 +145,50 @@ the done passes are in the git history; only what is still open is listed here.
    watch the namesakes here: `web/formula/formula::ref_text()` takes no argument at all, and
    `shared/calc/expression::set_user_text()` is a different function from
    `formula_map::set_user_text()` - a receiver-blind rewrite breaks both.
-   the remaining 6, with the number of call sites whose caller has no message today:
-   - `sandbox_list_named` (2): the backend `add_by_name_direct` 13, and the frontend `add`, which
-     cannot take a required parameter before `ListBase::add` and its five sibling overrides do
+   **DONE: the frontend `add` family** (1 more, so 17 of the original 22) - `ListBase::add` plus
+   `value_list`, `figure_list`, `group_list` and `sandbox_list_named` all take a required `$msg`,
+   because an override cannot add a required parameter its parent lacks. 66 call sites in `web/`,
+   22 functions that had none took one, then 13 more one level up, and it stopped there.
+   two shapes broke every receiver-based scan and each cost a test run: an **array element**
+   receiver (`$grp_lst[$vrb_id]['phrases']->add(...)`) and a receiver returned from a call
+   (`$measure_lst = $this->measure_lst($msg); $measure_lst->merge(...)`). the sound check is
+   shape-agnostic: match `->method(`, then resolve the receiver class from the file's own `use`
+   imports and look up **that class's** requirement walking the parent chain - never a global
+   per-name minimum, which silently hid `load_fallback` (three `load_fallback` exist, two need
+   no argument). php property hooks (`public phrase_list $phr_lst { get {...} }`) cannot take a
+   parameter at all, so the `data_object` cache refresh uses a named local message.
+
+   **DONE: `ListOf::get_by_key`** (1 more, so 18 of the original 22) - the message is **required**
+   now and threaded, and `msg_id::MISSING_KEY` stays a translatable message id.
+   the type is the **shared** `Message`, not `user_message`: `ListOf` is the parent of both the
+   backend and the frontend lists and had been importing `cfg\user\user_message`, so a web caller
+   could not have passed its own message at all.
+   the threading went three levels: the 14 call sites, then the 11 functions that hold them
+   (`graph`, both `get_by_name`, `diff_by_ids`, `wlsort`, `del`, `name_sort`, `sort_by_id`,
+   `sort_rev_by_id`, `get_first`, `get_first_id`), then their callers - where most already had a
+   message or already build one as their return value (`diff_msg`, `add_id_by_name`,
+   `set_group_id_by_phrase_list`, `fill_by_name`), so only `sql_update`, `sql_delete` and
+   `group_id::get_id` had to take one.
+   the cascade is **stopped at `group_id::get_id`** with a local `$sort_msg`: above it are
+   `is_prime` (45 callers), `is_big` (27) and `get_grp_id` (82), and a `user_message` parameter on
+   a boolean predicate like `group::is_prime()` is the wrong boundary. the message stays a
+   translatable msg_id, it just does not propagate past the key computation.
+   two lessons from getting this wrong twice:
+   - a message parameter with no caller that can use it is **not** a reason to delete the
+     parameter and fall back to a plain `log_err` string - that trades a translatable msg_id for a
+     hardcoded english one and moves the campaign backwards. thread it, or stop the cascade with a
+     named local buffer, but keep the msg_id.
+   - never insert an argument by **function name**: `del` has 21 declarations, so a name-based pass
+     turned 50 correct `->del($msg)` calls into `->del($msg, $msg)` across 49 files. only resolve
+     the receiver class (from the file's `use` imports, the enclosing class for `$this->`, or a
+     `new X()` assignment) and look up **that** class's signature.
+
+   the remaining 4, with the number of call sites whose caller has no message today:
+   - the backend `sandbox_list_named::add_by_name_direct` (13)
    - the three web `__construct(?string $api_json = null, ?user_message $msg = null)` (28):
      these need a decision rather than a cascade - building an **empty** list needs no message at
      all, so the clean shape is a plain constructor plus the existing `set_from_json($json, $msg)`,
      not a required parameter that every `new verb_list()` has to fill with something
-   - `ListOf::get_by_key` (1): 15
 
 4. **the deferred items of the log/buffer audit** — each needs a test run or a decision, not a quick
    edit:

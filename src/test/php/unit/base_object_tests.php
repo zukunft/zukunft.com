@@ -70,13 +70,13 @@ class base_object_tests
         $lst = new ListOf([$t_wrd->word(), $t_wrd->word_inhabitant(), $t_wrd->word_inhabitant()]);
         $t->assert($test_name, 3, $lst->count());
         $test_name = 'get first';
-        $wrd = $lst->get_by_key(0);
+        $usr_msg = new user_message();
+        $wrd = $lst->get_by_key(0, $usr_msg);
         $t->assert($test_name, $wrd->id(), $t_wrd->word()->id());
         $test_name = 'get not existing';
-        $wrd = $lst->get_by_key(4);
+        $wrd = $lst->get_by_key(4, new user_message());
         $t->assert_null($test_name, $wrd);
         $test_name = 'report not existing';
-        $usr_msg = new user_message();
         $lst->get_by_key(4, $usr_msg);
         $t->assert($test_name, $usr_msg->all_message_text(), '4 is missing in ListOf');
         $test_name = 'add object';

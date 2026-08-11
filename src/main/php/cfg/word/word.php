@@ -476,7 +476,7 @@ class word extends sandbox_code_id
                     $this->set_view_id($wrd_view->id());
                 }
             } else {
-                $cac_msk = $dto->get_view_by_name($msk_name);
+                $cac_msk = $dto->get_view_by_name($msk_name, $msg);
                 if ($cac_msk != null) {
                     $wrd_view = $cac_msk;
                 } else {

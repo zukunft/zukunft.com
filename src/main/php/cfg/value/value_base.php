@@ -517,7 +517,7 @@ class value_base extends sandbox_value
 
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto->source_list()?->get_by_name($src_name);
+            $src = $dto->source_list()?->get_by_name($src_name, $msg);
             if ($src == null) {
                 if ($db_con->is_open()) {
                     $msg->add(msg_id::SOURCE_MISSING_IMPORT,
@@ -661,7 +661,7 @@ class value_base extends sandbox_value
         $db_phr_lst = new phrase_list($this->get_user());
         foreach ($this->phrase_list()->lst() as $phr) {
             if ($phr->id() == 0) {
-                $db_phr = $phr_lst->get_by_name($phr->name());
+                $db_phr = $phr_lst->get_by_name($phr->name(), $msg);
                 if ($db_phr == null) {
                     $msg->add(msg_id::PHRASE_MISSING_MSG,
                         [msg_id::VAR_NAME => $phr->name()]);

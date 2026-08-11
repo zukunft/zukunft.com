@@ -1498,7 +1498,7 @@ class sandbox_value extends sandbox_multi
             $load_lst->load_by_names($names, $msg);
         } else {
             foreach ($names as $name) {
-                $phr = $phr_lst->get_by_name($name);
+                $phr = $phr_lst->get_by_name($name, $msg);
                 if ($phr == null) {
                     $phr = new phrase($this->get_user());
                     $phr->load_by_name($name, $msg);

@@ -373,7 +373,7 @@ class expression
     private function get_ref_part(
         string                      $frm_part_text,
         term_list|term_list_ui|null $trm_lst,
-        user_message                $msg
+        user_message|Message        $msg
     ): string
     {
         $result = $frm_part_text;
@@ -397,7 +397,7 @@ class expression
 
                 // check if the preloaded terms can be used for the conversion
                 if ($trm_lst != null) {
-                    $trm = $trm_lst->get_by_name($name);
+                    $trm = $trm_lst->get_by_name($name, $msg);
                     // TODO Prio 1 avoid loading the corresponding formula
                     if ($trm != null) {
                         if ($trm->obj()::class == word::class) {
@@ -483,9 +483,9 @@ class expression
      * @return term|term_ui|null
      */
     private function get_next_term_from_ref(
-        string $frm_part_ref_text,
+        string                      $frm_part_ref_text,
         term_list|term_list_ui|null $trm_lst,
-        user_message $msg
+        user_message                $msg
     ): term|term_ui|null
     {
         $trm = null;

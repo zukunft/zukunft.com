@@ -9,8 +9,8 @@ behind the creation on the same line explaining why a local message is needed -
 typically a buffer that is merged back or a message of a different user; only a
 block of sibling buffers shares one comment above the block
 
-187 creations below the entry points: 179 explained, 8 parameter defaults and 0 still unexplained
-and 5 nullable message parameters
+188 creations below the entry points: 180 explained, 8 parameter defaults and 0 still unexplained
+and 4 nullable message parameters
 
 ## parameter defaults
 
@@ -36,5 +36,4 @@ frontend: /system/sys_log_list.php:80 - function __construct(?string $api_json =
 frontend: /types/type_lists.php:154 - function __construct(?string $api_json = null, ?user_message $msg = null)
 frontend: /verb/verb_list.php:64 - function __construct(?string $api_json = null, ?user_message $msg = null)
 main backend: /sandbox/sandbox_list_named.php:505 - ?user_message                         $msg = null
-shared: /helper/ListOf.php:88 - user_message|null $msg = null
 ```

@@ -1014,7 +1014,7 @@ class triple_list extends sandbox_list_named
     {
         $usr = $this->get_user();
         if ($phr->id() == 0 and $phr->name($fill_all) != '') {
-            $db_obj = $db_lst->get_by_name($phr->name($fill_all), $fill_all);
+            $db_obj = $db_lst->get_by_name($phr->name($fill_all), $msg, $fill_all);
             if ($db_obj != null) {
                 $phr->fill($db_obj, $usr);
             } else {

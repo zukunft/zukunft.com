@@ -72,6 +72,7 @@ class group_tests
         $t_phr = new test_phrases($t);
         $t_grp = new test_groups($t);
         $t_frm = new test_formulas($t);
+        $msg = new user_message();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
@@ -172,19 +173,19 @@ class group_tests
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase(), $msg),
             6052132915249350);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg),
             '9234844886612976128');
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)',
             $t::TIMEOUT_LIMIT_PAGE);
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase()),
+            $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase(), $msg),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+',
             $t::TIMEOUT_LIMIT_PAGE);
 

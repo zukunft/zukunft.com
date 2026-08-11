@@ -366,7 +366,7 @@ class sandbox_list_named extends sandbox_list
         foreach ($this->lst() as $sbx) {
             $sbx_to_chk = $sbx_lst->get($sbx->id());
             if ($sbx_to_chk == null) {
-                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
+                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name(), $msg);
                 if ($sbx_to_chk == null) {
                     $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
                     $msg->add($msg_missing, $vars);
@@ -382,7 +382,7 @@ class sandbox_list_named extends sandbox_list
         foreach ($sbx_lst->lst() as $sbx) {
             $sbx_to_chk = $this->get($sbx->id());
             if ($sbx_to_chk == null) {
-                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
+                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name(), $msg);
                 if ($sbx_to_chk == null) {
                     $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
                     $msg->add($msg_additional, $vars);
@@ -607,7 +607,7 @@ class sandbox_list_named extends sandbox_list
             // an id is looked up and only one without a name too cannot be identified at all
             if ($obj_to_fill->id() == 0) {
                 if ($obj_to_fill->name($fill_all) != '') {
-                    $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
+                    $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $msg, $fill_all);
                     if ($db_obj != null) {
                         $obj_to_fill->fill($db_obj, $usr);
                     }
@@ -629,7 +629,7 @@ class sandbox_list_named extends sandbox_list
         $msg = new user_message(); // the message IS the return value, so the caller merges it
         foreach ($id_lst as $name => $id) {
             if ($id != 0 and $name != '') {
-                $sbx_old = $this->get_by_name($name);
+                $sbx_old = $this->get_by_name($name, $msg);
                 if ($sbx_old != null) {
                     $sbx_old->id = $id;
                 } else {
@@ -679,7 +679,11 @@ class sandbox_list_named extends sandbox_list
      * @param bool $use_all force to include also the excluded names e.g. for import
      * @return word|phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string|null $name, bool $use_all = false): word|phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(
+        string|null $name,
+        user_message $msg,
+        bool $use_all = false
+    ): word|phrase|term|CombineObject|IdObject|TextIdObject|null
     {
         if ($name !== null) {
             if ($use_all) {
@@ -692,7 +696,7 @@ class sandbox_list_named extends sandbox_list
                 $pos = $key_lst[$name];
             }
             if ($pos !== null) {
-                return $this->get_by_key($pos);
+                return $this->get_by_key($pos, $msg);
             } else {
                 return null;
             }
@@ -865,7 +869,7 @@ class sandbox_list_named extends sandbox_list
         $upd_lst->reset();
         foreach ($this->lst() as $sbx) {
             // TODO test if get_by_obj_id is faster
-            $db_sbx = $db_lst->get_by_name($sbx->name());
+            $db_sbx = $db_lst->get_by_name($sbx->name(), $msg);
             if ($db_sbx != null) {
                 // make sure that only an admin user reduces the protection level
                 $sbx->check_protection_change($db_sbx, $msg);
@@ -882,13 +886,13 @@ class sandbox_list_named extends sandbox_list
      * @param sandbox_list_named $db_lst list of sandbox objects as loaded from the database
      * @return sandbox_list_named with the sandbox objects that can be deleted
      */
-    function delete_list(sandbox_list_named $db_lst): sandbox_list_named
+    function delete_list(sandbox_list_named $db_lst, user_message $msg): sandbox_list_named
     {
         $del_lst = clone $this;
         $del_lst->reset();
         foreach ($this->lst() as $sbx) {
             // TODO test if get_by_obj_id is faster
-            $db_sbx = $db_lst->get_by_name($sbx->name(true), true);
+            $db_sbx = $db_lst->get_by_name($sbx->name(true), $msg, true);
             if ($db_sbx != null) {
                 // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other object like values
                 // if ($sbx->is_excluded() and $sbx->not_used()) {
@@ -1080,7 +1084,7 @@ class sandbox_list_named extends sandbox_list
         // on a no update import keep the not empty database fields so that only empty fields are filled up
         if ($imp?->no_upd) {
             foreach ($this->lst() as $sbx) {
-                $dbo = $db_lst->get_by_name($sbx->name());
+                $dbo = $db_lst->get_by_name($sbx->name(), $msg);
                 if ($dbo != null) {
                     // create and fill import object to check the diff without fill up
                     $sbc = $sbx->clone_all();
@@ -1112,7 +1116,7 @@ class sandbox_list_named extends sandbox_list
         if (!$upd_lst->is_empty()) {
 
             // get the sql call to add the missing objects
-            $upd_calls = $upd_lst->sql_update($sc, $db_lst);
+            $upd_calls = $upd_lst->sql_update($sc, $db_lst, $msg);
             $imp->step_start(msg_id::PREPARE, $class, $upd_calls->count());
 
             // get the functions that are already in the database
@@ -1127,7 +1131,7 @@ class sandbox_list_named extends sandbox_list
             $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
 
             // create the missing sql functions and add the first missing object
-            $func_to_create = $func_create_obj->sql_update($sc, $db_lst);
+            $func_to_create = $func_create_obj->sql_update($sc, $db_lst, $msg);
             $func_to_create->exe_update($msg, $class);
             $imp->step_end($func_to_create->count());
 
@@ -1172,13 +1176,13 @@ class sandbox_list_named extends sandbox_list
 
         // get the objects that need to be added
         $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
-        $del_lst = $this->delete_list($db_lst);
+        $del_lst = $this->delete_list($db_lst, $msg);
         $imp->step_end($db_lst->count());
 
         if (!$del_lst->is_empty()) {
 
             // get the sql call to add the missing objects
-            $del_calls = $del_lst->sql_delete($sc, $db_lst);
+            $del_calls = $del_lst->sql_delete($sc, $db_lst, $msg);
             $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
 
             // get the functions that are already in the database
@@ -1193,7 +1197,7 @@ class sandbox_list_named extends sandbox_list
             $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
 
             // create the missing sql functions and add the first missing object
-            $func_to_create = $func_create_obj->sql_delete($sc, $db_lst);
+            $func_to_create = $func_create_obj->sql_delete($sc, $db_lst, $msg);
             $func_to_create->exe_delete($msg, $class);
             $imp->step_end($func_to_create->count());
 
@@ -1240,27 +1244,33 @@ class sandbox_list_named extends sandbox_list
      * get a list of all sql functions that are needed to update all objects of this list to the database
      * @return sql_par_list with the sql function names
      */
-    function sql_update(sql_creator $sc, sandbox_list_named $db_lst): sql_par_list
+    function sql_update(
+        sql_creator $sc,
+        sandbox_list_named $db_lst,
+        user_message $msg
+    ): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name());
+            $db_row = $db_lst->get_by_name($sbx->name(), $msg);
             // another validation check as a second line of defence
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $sc_par_lst->add(sql_type::LOG);
                 // a per item buffer, because one object that cannot be written must not stop the list
-                $msg = new user_message();
-                $qp = $sbx->sql_update($sc, $db_row, $msg, $sc_par_lst);
-                if ($msg->is_ok() and $qp != null) {
+                $msg_upd = new user_message();
+                $qp = $sbx->sql_update($sc, $db_row, $msg_upd, $sc_par_lst);
+                if ($msg_upd->is_ok() and $qp != null) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
-                } elseif (!$msg->is_ok()) {
+                } elseif (!$msg_upd->is_ok()) {
                     log_err('sql update of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
                 }
+                $msg->merge($msg_upd);
             }
         }
+
         return $sql_list;
     }
 
@@ -1268,25 +1278,26 @@ class sandbox_list_named extends sandbox_list
      * get a list of all sql functions that are needed to delete all objects of this list to the database
      * @return sql_par_list with the sql function names
      */
-    function sql_delete(sql_creator $sc, sandbox_list_named $db_lst): sql_par_list
+    function sql_delete(sql_creator $sc, sandbox_list_named $db_lst, user_message $msg): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name());
+            $db_row = $db_lst->get_by_name($sbx->name(), $msg);
             // another validation check as a second line of defence
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
                 // check always user sandbox and normal name, because reading from the database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $sc_par_lst->add(sql_type::LOG);
                 // a per item buffer, because one object that cannot be written must not stop the list
-                $msg = new user_message();
-                $qp = $sbx->sql_delete($sc, $msg, $sc_par_lst);
-                if ($msg->is_ok()) {
+                $msg_del = new user_message();
+                $qp = $sbx->sql_delete($sc, $msg_del, $sc_par_lst);
+                if ($msg_del->is_ok()) {
                     $qp->obj_name = $sbx->name();
                     $sql_list->add_by_name($qp);
                 } else {
                     log_err('sql delete of ' . $sbx->dsp_id() . ' skipped because ' . $msg->all_message_text());
                 }
+                $msg->merge($msg_del);
             }
         }
         return $sql_list;
@@ -1316,7 +1327,7 @@ class sandbox_list_named extends sandbox_list
 
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name());
+            $db_row = $db_lst->get_by_name($sbx->name(), $msg);
             // another validation check as a second line of defence
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
                 // do not overwrite db values not set by the import
@@ -1366,7 +1377,7 @@ class sandbox_list_named extends sandbox_list
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             if ($db_lst != null) {
-                $db_row = $db_lst->get_by_name($sbx->name(true));
+                $db_row = $db_lst->get_by_name($sbx->name(true), $msg);
                 // another validation check as a second line of defence
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
                     // check always user sandbox and normal name, because reading from database for check would take longer

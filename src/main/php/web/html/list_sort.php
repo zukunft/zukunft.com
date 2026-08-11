@@ -109,10 +109,10 @@ class list_sort
             $htp = new word();
             $htp->load_by_name('htp', $msg);
         } else {
-            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION);
-            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION);
-            $usd = $cac?->phr_lst->get_by_name(word_names::USD);
-            $htp = $cac?->phr_lst->get_by_name(word_names::HTP);
+            $trillion = $cac?->phr_lst->get_by_name(word_names::TRILLION, $msg);
+            $billion = $cac?->phr_lst->get_by_name(word_names::BILLION, $msg);
+            $usd = $cac?->phr_lst->get_by_name(word_names::USD, $msg);
+            $htp = $cac?->phr_lst->get_by_name(word_names::HTP, $msg);
         }
 
         // check if the phrase list has at least the most necessary entries

@@ -988,7 +988,7 @@ class formula_list extends sandbox_list_named
         }
         $wrd_lst->save($msg, $imp);
         foreach ($this->lst() as $frm) {
-            $name_wrd = $wrd_lst->get_by_name($frm->name());
+            $name_wrd = $wrd_lst->get_by_name($frm->name(), $msg);
             if ($name_wrd->id() > 0) {
                 $frm->name_wrd = $name_wrd;
             } else {
@@ -1112,7 +1112,7 @@ class formula_list extends sandbox_list_named
     {
         $usr = $this->get_user();
         if ($frm->id() == 0 and $frm->name($fill_all) != '') {
-            $db_obj = $db_lst->get_by_name($frm->name($fill_all), $fill_all);
+            $db_obj = $db_lst->get_by_name($frm->name($fill_all), $msg, $fill_all);
             // a word, triple or verb may share its name with a formula; only a matching formula
             // may fill the id here, otherwise the formula would receive a non-formula id and the
             // later element insert would violate the elements_formula_fk foreign key

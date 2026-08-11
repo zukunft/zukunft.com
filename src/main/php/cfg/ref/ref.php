@@ -358,7 +358,7 @@ class ref extends sandbox_link
         // reset of object not needed, because the calling function has just created the object
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto?->get_source_by_name($src_name);
+            $src = $dto?->get_source_by_name($src_name, $msg);
             if ($src == null) {
                 $src = new source($this->get_user());
                 if ($db_con->is_open()) {
@@ -396,7 +396,7 @@ class ref extends sandbox_link
         }
         if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
             $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
-            $phr = $dto?->get_phrase_by_name($phr_name);
+            $phr = $dto?->get_phrase_by_name($phr_name, $msg);
             if ($phr == null) {
                 $phr = new phrase($this->get_user());
                 if ($db_con->is_open()) {

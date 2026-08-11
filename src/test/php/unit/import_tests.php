@@ -148,7 +148,7 @@ class import_tests
         $impacts = [];
         foreach (['ROG main trading currency', 'UBSG main trading currency', 'ABBN main trading currency',
                      'CFR main trading currency', 'ZURN main trading currency'] as $trp_name) {
-            $impacts[] = $dto->triple_list()->get_by_name($trp_name)?->get_impact();
+            $impacts[] = $dto->triple_list()->get_by_name($trp_name, $msg)?->get_impact();
         }
         $test_name = 'JSON import sets a distinct impact for each main stock triple';
         // reading and mapping the portfolio json file takes longer than a normal unit function, so a file timeout is used

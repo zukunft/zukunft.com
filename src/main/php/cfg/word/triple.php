@@ -505,7 +505,7 @@ class triple extends sandbox_link_named
                     if ($dto == null) {
                         $this->set_from($this->import_phrase($value, $msg));
                     } else {
-                        $phr = $dto->get_phrase_by_name($value);
+                        $phr = $dto->get_phrase_by_name($value, $msg);
                         if ($phr == null) {
                             // create a phrase without saving to the database
                             $phr = new phrase($this->get_user());
@@ -533,7 +533,7 @@ class triple extends sandbox_link_named
                 if ($dto == null) {
                     $this->set_to($this->import_phrase($value, $msg));
                 } else {
-                    $phr = $dto->get_phrase_by_name($value);
+                    $phr = $dto->get_phrase_by_name($value, $msg);
                     if ($phr == null) {
                         // create a phrase without saving to the database
                         $phr = new phrase($this->get_user());
@@ -603,7 +603,7 @@ class triple extends sandbox_link_named
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
-                $cac_msk = $dto->get_view_by_name($value);
+                $cac_msk = $dto->get_view_by_name($value, $msg);
                 if ($cac_msk != null) {
                     $trp_view = $cac_msk;
                 } else {

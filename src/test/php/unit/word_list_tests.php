@@ -191,7 +191,7 @@ class word_list_tests
 
         // diff by ids
         $wrd_lst->merge($wrd_lst2);
-        $wrd_lst->diff_by_ids(array(2));
+        $wrd_lst->diff_by_ids(array(2), $msg);
         $t->assert($t->name . '->diff by id and check by ids', $wrd_lst->ids(), array(1, 3));
 
         // with time
@@ -235,7 +235,7 @@ class word_list_tests
         $t->assert($t->name . '->unsorted', $wrd_lst->name(), '"word3","word1","word2"');
 
         // sorted
-        $wrd_lst->wlsort();
+        $wrd_lst->wlsort($msg);
         $t->assert($t->name . '->sorted', $wrd_lst->name(), '"word1","word2","word3"');
 
         // unfiltered

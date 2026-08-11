@@ -115,7 +115,7 @@ class user_display_old extends user
     /**
      * display word changes by the user which are not (yet) standard
      */
-    function dsp_sandbox_wrd($back): string
+    function dsp_sandbox_wrd(user_message $msg, string $back): string
     {
         log_debug($this->id());
 
@@ -133,7 +133,7 @@ class user_display_old extends user
              WHERE u.user_id = " . $this->id() . "
                AND u.word_id = t.word_id;";
         $db_con->usr_id = $this->id();
-        $wrd_lst = $db_con->get_old($sql);
+        $wrd_lst = $db_con->get_old($sql, $msg);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -201,7 +201,7 @@ class user_display_old extends user
              WHERE u.user_id = " . $this->id() . "
                AND u.triple_id = l.triple_id;";
         }
-        $sbx_lst = $db_con->get_old($sql);
+        $sbx_lst = $db_con->get_old($sql, $msg);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different word_entry_link than a normal viewer
@@ -271,17 +271,17 @@ class user_display_old extends user
                            AND u.triple_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get_old($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other, $msg);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->load_by_id($wrd_lnk_other_row[user_db::FLD_ID], $msg);
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $trp_usr;
-                        $wrd_lnk_other->set_user($usr_other);
+                        $wrd_lnk_other->set_user($usr_other, $msg);
                         $wrd_lnk_other->load_by_id($trp_usr->id(), $msg);
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED]);
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[fields::FLD_EXCLUDED], $msg);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

@@ -253,12 +253,12 @@ class figure_list extends sandbox_list
     /*
      * TODO review
      */
-    function get_first_id(): int
+    function get_first_id(user_message $msg): int
     {
         $result = 0;
         if ($this != null) {
             if (count($this->lst()) > 0) {
-                $fig = $this->get_by_key(0);
+                $fig = $this->get_by_key(0, $msg);
                 if ($fig != null) {
                     $result = $fig->id();
                 }

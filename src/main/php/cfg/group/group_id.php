@@ -59,9 +59,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class group_id extends id
 {
@@ -86,17 +88,21 @@ class group_id extends id
      */
     function get_id(phrase_list $phr_lst, bool $fill = true): int|string
     {
+        // a local message, because a group id is computed from positions this list owns:
+        // a missing key while sorting is an internal inconsistency and not a user decision,
+        // so it is not propagated to the callers (is_prime, is_big, get_grp_id, ...)
+        $sort_msg = new user_message();
         if ($phr_lst->count() <= self::PRIME_PHRASES_STD
             and $phr_lst->prime_only()
             and ($phr_lst->one_positiv() or $phr_lst->count() < self::PRIME_PHRASES_STD)
         ) {
-            $phr_lst = $phr_lst->sort_rev_by_id();
+            $phr_lst = $phr_lst->sort_rev_by_id($sort_msg);
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
-            $phr_lst = $phr_lst->sort_by_id();
+            $phr_lst = $phr_lst->sort_by_id($sort_msg);
             $db_key = $this->alpha_num($phr_lst, $fill);
         } else {
-            $phr_lst = $phr_lst->sort_by_id();
+            $phr_lst = $phr_lst->sort_by_id($sort_msg);
             $db_key = $this->alpha_num_big($phr_lst);
         }
         return $db_key;

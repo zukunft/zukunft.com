@@ -33,7 +33,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -80,19 +79,20 @@ class ListOf
      * TODO Prio 2 maybe rename to get_by_array_key not to confuse it with add_by_key which adds an item with a complex key instead of just a name as unique key
      *
      * @param string|int $key the key of the lst array
-     * @param user_message|null $msg to report missing keys
+     * @param Message $msg to report a missing key; the shared base type, because this list is the
+     *        parent of the backend and the frontend lists and each passes its own message
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
     function get_by_key(
-        string|int        $key,
-        user_message|null $msg = null
+        string|int $key,
+        Message    $msg
     ): IdObject|TextIdObject|CombineObject|null
     {
         if (array_key_exists($key, $this->lst)) {
             return $this->lst[$key];
         } else {
             $lib = new library();
-            $msg?->add(msg_id::MISSING_KEY, [
+            $msg->add(msg_id::MISSING_KEY, [
                 msg_id::VAR_NAME => $key,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             ]);

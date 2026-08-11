@@ -459,7 +459,7 @@ class formula_map extends sandbox_code_id
                 ]);
             } elseif ($dto != null) {
                 $name = $phr_names[0] ?? '';
-                $phr = $dto->phrase_list()->get_by_name($name);
+                $phr = $dto->phrase_list()->get_by_name($name, $msg);
                 if ($phr == null) {
                     $msg->add(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
                         msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
@@ -786,7 +786,7 @@ class formula_map extends sandbox_code_id
         if ($exp->is_valid() or $this->is_predefined()) {
             $frm_trm_lst = $exp->terms($msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
-                $frm_trm = $trm_lst->get_by_name($trm->name());
+                $frm_trm = $trm_lst->get_by_name($trm->name(), $msg);
                 if ($frm_trm != null and $frm_lst != null) {
                     if ($frm_trm->is_formula()) {
                         $frm_lst->add_by_key($frm_trm->get_formula());
